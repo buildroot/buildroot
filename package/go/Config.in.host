@@ -78,13 +78,13 @@ config BR2_PACKAGE_HOST_GO_BIN
 
 endchoice
 
+endif
+
 config BR2_PACKAGE_PROVIDES_HOST_GO
 	string
-	# Default to host-go-src
+	# Default to host-go-bin unless src explicitly requested
 	default "host-go-src" if BR2_PACKAGE_HOST_GO_SRC
-	default "host-go-bin" if BR2_PACKAGE_HOST_GO_BIN
-
-endif
+	default "host-go-bin"
 
 source "package/go/go-bin/Config.in.host"
 source "package/go/go-bootstrap-stage1/Config.in.host"
