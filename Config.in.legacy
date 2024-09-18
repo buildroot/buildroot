@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2024.11"
 
+config BR2_PACKAGE_POPPERJS
+	bool "popperjs has been removed"
+	select BR2_LEGACY
+	help
+	  The project has been renamed to floating-ui.
+
 config BR2_KERNEL_HEADERS_6_10
 	bool "kernel headers version 6.10.x are no longer supported"
 	select BR2_LEGACY
