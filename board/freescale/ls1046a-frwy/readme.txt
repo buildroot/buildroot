@@ -13,7 +13,7 @@ for the software NXP LSDK (Layerscape Software Development Kit), see
   - https://www.nxp.com/docs/en/user-guide/LSDKUG_Rev21.08.pdf
 
 the components from NXP are:
-  - rcw, LSDK 21.08
+  - rcw, lf-6.6.23-2.0.0
   - atf (fork), lf-6.6.23-2.0.0
   - uboot (fork), lf-6.6.23-2.0.0
   - qoriq-fm-ucode (blob), lf-6.6.23-2.0.0
