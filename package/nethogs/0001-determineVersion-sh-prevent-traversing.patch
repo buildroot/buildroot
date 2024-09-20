@@ -1,0 +1,31 @@
+From 6423bdf05d51efc5441c82248098f99e4c1f59c3 Mon Sep 17 00:00:00 2001
+From: Marcus Hoffmann <marcus.hoffmann@othermo.de>
+Date: Fri, 20 Sep 2024 12:06:26 +0200
+Subject: [PATCH] determineVersion.sh: prevent traversing into outer git repo
+ for git-describe call
+
+When building nethogs inside another git repo (as is i.e. done as part
+of a buildroot build) the version is picked up from the outer git repo,
+which is confusing as well as introducing reproducibility problems when
+rebuilding the same nethogs version produces different results if the
+outer repository changes.
+
+Upstream: https://github.com/raboof/nethogs/commit/6423bdf05d51efc5441c82248098f99e4c1f59c3
+Signed-off-by: Marcus Hoffmann <buildroot@bubu1.eu>
+---
+ determineVersion.sh | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/determineVersion.sh b/determineVersion.sh
+index 7c5f1de..3d80d9d 100755
+--- a/determineVersion.sh
++++ b/determineVersion.sh
+@@ -1,3 +1,6 @@
+ #!/bin/bash
+-
+-(git describe --tags 2>/dev/null || pwd | sed -e "s/.*\\///" | sed -e "s/[^-]*//") | tail -c +2
++if [ $(git rev-parse --show-toplevel 2>/dev/null) == $(pwd) ]; then
++  git describe --tags 2>/dev/null | tail -c +2
++else
++  pwd | sed -e "s/.*\\///" | sed -e "s/[^-]*//" | tail -c +2
++fi
