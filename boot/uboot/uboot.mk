@@ -54,7 +54,7 @@ endif
 
 ifeq ($(BR2_TARGET_UBOOT_FORMAT_ELF),y)
 UBOOT_BINS += u-boot
-# To make elf usable for debuging on ARC use special target
+# To make elf usable for debugging on ARC use special target
 ifeq ($(BR2_arc),y)
 UBOOT_MAKE_TARGET += mdbtrick
 endif
