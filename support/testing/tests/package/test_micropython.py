@@ -16,7 +16,7 @@ class TestMicroPython(infra.basetest.BRTest):
     def run_upy_code(self, python_code, opts=""):
         cmd = f'micropython {opts} -c "{python_code}"'
         output, ret = self.emulator.run(cmd)
-        self.assertEqual(ret, 0, f"could not run '{cmd}', returnd {ret}: '{output}'")
+        self.assertEqual(ret, 0, f"could not run '{cmd}', returned {ret}: '{output}'")
         return output
 
     def test_run(self):
