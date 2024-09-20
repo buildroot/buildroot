@@ -76,7 +76,7 @@ class TestDdrescue(infra.basetest.BRTest):
         # Where a normal 'dd' fails, 'ddrescue' is expected to succeed
         self.assertRunOk(f"ddrescue {dm_dev} {ddrescue_img}")
 
-        # ddrescue does not normaly write any output data when there
+        # ddrescue does not normally write any output data when there
         # is I/O error on the input. The intent is to preserve any
         # data that could have been read in a previous pass. There is
         # one exception, when the output is a non-existing regular
