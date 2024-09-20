@@ -43,12 +43,12 @@ class TestAcpica(infra.basetest.BRTest):
         cmd += " | grep -F '\"Hello Buildroot!\"'"
         self.assertRunOk(cmd)
 
-        # INT1 is exepcted to be 12345678
+        # INT1 is expected to be 12345678
         cmd = "acpiexec -b 'evaluate INT1' dsdt.aml"
         cmd += " | grep -F 12345678"
         self.assertRunOk(cmd)
 
-        # Evalute the TEST method which prints its argument
+        # Evaluate the TEST method which prints its argument
         cmd = "acpiexec -b 'evaluate TST2 \"Hello World\"' dsdt.aml"
         cmd += " | grep -F 'Arg0=Hello World'"
         self.assertRunOk(cmd)
