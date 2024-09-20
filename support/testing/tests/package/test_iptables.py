@@ -40,7 +40,7 @@ class TestIptables(infra.basetest.BRTest):
         self.assertRunOk("iptables --version")
 
         # We delete all rules in all chains. We also set default
-        # policies to ACCEPT for INPUT and OUPUT chains. This should
+        # policies to ACCEPT for INPUT and OUTPUT chains. This should
         # already be the case (default Kernel config). This makes sure
         # this test starts from a known state and also those common
         # command invocations works.
