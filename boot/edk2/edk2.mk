@@ -24,7 +24,7 @@ endif
 else
 EDK2_BUILD_TYPE = RELEASE
 # DEBUG_ON_SERIAL_PORT is only valid in debug builds, so useless to set
-# it (enabled or disabled) on a relase build.
+# it (enabled or disabled) on a release build.
 endif
 
 # Build system notes.
