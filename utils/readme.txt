@@ -14,7 +14,7 @@ brmake
 check-package
     a script that checks the coding style across the buildroot tree. It
     checks package's Config.in and .mk files, runs shellcheck for all shell
-    scripts, flake8 for python files, checks for typoes, etc.
+    scripts, flake8 for python files, checks for typos, etc.
     It checks the .checkpackageignore file if errors should be ignored and
     errors if there's a file listed that doesn't produce an error.
 
