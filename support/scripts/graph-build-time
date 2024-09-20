@@ -311,7 +311,7 @@ def read_data(input_file):
     reader = csv.reader(input_file, delimiter=':')
     pkgs = []
 
-    # Auxilliary function to find a package by name in the list.
+    # Auxiliary function to find a package by name in the list.
     def getpkg(name):
         for p in pkgs:
             if p.name == name:
