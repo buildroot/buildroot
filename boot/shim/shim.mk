@@ -22,7 +22,7 @@ SHIM_MAKE_OPTS = \
 
 # shim has some assembly function that is not present in Thumb mode:
 # Error: selected processor does not support `mrc p15,0,r2,c9,c13,0' in Thumb mode
-# so, we desactivate Thumb mode
+# so, we deactivate Thumb mode
 ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
 SHIM_CFLAGS += -marm
 endif
