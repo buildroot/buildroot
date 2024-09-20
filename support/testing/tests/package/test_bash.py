@@ -28,7 +28,7 @@ class TestBash(infra.basetest.BRTest):
         self.assertEqual(out[0], "", "Already running bash instead of busybox' sh")
 
         self.assertRunOk("bash -il")
-        # Twist! The above command is still runing, it's just that
+        # Twist! The above command is still running, it's just that
         # bash did display the prompt we expect. Check we are indeed
         # actually bash
         out, _ = self.emulator.run('echo "${BASH}"')
