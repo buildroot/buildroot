@@ -143,7 +143,7 @@ fi
 
 # Check bash
 # We only check bash is available, setting SHELL appropriately is done
-# in the top-level Makefile, and we mimick the same sequence here
+# in the top-level Makefile, and we mimic the same sequence here
 if   [ -n "${BASH}" ]; then :
 elif [ -x /bin/bash ]; then :
 elif [ -z "$( sh -c 'echo $BASH' )" ]; then
