@@ -109,7 +109,7 @@ class TestCryptSetup(infra.basetest.BRTest):
         self.assertRunOk(f"cryptsetup close {dm_name}")
 
         # We are NOT supposed to find our plain text message on the
-        # crypted storage device.
+        # encrypted storage device.
         _, ret = self.emulator.run(f"grep -Fq '{msg}' {dev}", timeout=10)
         self.assertNotEqual(ret, 0)
 
