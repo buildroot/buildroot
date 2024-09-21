@@ -22,11 +22,7 @@ selections are highly application-specific.
 Once you have a known working configuration, run +make
 savedefconfig+. This will generate a minimal +defconfig+ file at the
 root of the Buildroot source tree. Move this file into the +configs/+
-directory, and rename it +<boardname>_defconfig+. If the configuration
-is a bit more complicated, it is nice to manually reformat it and
-separate it into sections, with a comment before each section. Typical
-sections are _Architecture_, _Toolchain options_ (typically just linux
-headers version), _Firmware_, _Bootloader_, _Kernel_, and _Filesystem_.
+directory, and rename it +<boardname>_defconfig+.
 
 Always use fixed versions or commit hashes for the different
 components, not the "latest" version. For example, set
