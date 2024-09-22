@@ -1,4 +1,4 @@
-From a35dffe950d7bb0f7988d78ec4a963c5ce67e3c8 Mon Sep 17 00:00:00 2001
+From aa232855cf717835a5d16954f1fd8ead315a5fa6 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?J=C3=B6rg=20Krause?= <joerg.krause@embedded.rocks>
 Date: Mon, 7 Dec 2015 01:14:33 +0100
 Subject: [PATCH] add executable
@@ -22,18 +22,18 @@ Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
  2 files changed, 11 insertions(+)
 
 diff --git a/setuptools/command/install.py b/setuptools/command/install.py
-index c49fcda93..851950522 100644
+index e2ec1abdd..e78ace3d4 100644
 --- a/setuptools/command/install.py
 +++ b/setuptools/command/install.py
-@@ -18,6 +18,7 @@ class install(orig.install):
-     """Use easy_install to install the package, w/dependencies"""
+@@ -26,6 +26,7 @@ class install(orig.install):
+     distribution: Distribution  # override distutils.dist.Distribution with setuptools.dist.Distribution
  
      user_options = orig.install.user_options + [
 +        ('executable=', 'e', "specify final destination interpreter path"),
          ('old-and-unmanageable', None, "Try not to use this!"),
          (
              'single-version-externally-managed',
-@@ -50,6 +51,7 @@ class install(orig.install):
+@@ -60,6 +61,7 @@ class install(orig.install):
          )
  
          super().initialize_options()
@@ -42,10 +42,10 @@ index c49fcda93..851950522 100644
          self.single_version_externally_managed = None
  
 diff --git a/setuptools/command/install_scripts.py b/setuptools/command/install_scripts.py
-index f44281b49..9e91cad87 100644
+index 7b90611d1..216cadf80 100644
 --- a/setuptools/command/install_scripts.py
 +++ b/setuptools/command/install_scripts.py
-@@ -14,6 +14,13 @@ class install_scripts(orig.install_scripts):
+@@ -18,6 +18,13 @@ class install_scripts(orig.install_scripts):
      def initialize_options(self):
          orig.install_scripts.initialize_options(self)
          self.no_ep = False
@@ -59,7 +59,7 @@ index f44281b49..9e91cad87 100644
  
      def run(self) -> None:
          self.run_command("egg_info")
-@@ -40,6 +47,8 @@ class install_scripts(orig.install_scripts):
+@@ -45,6 +52,8 @@ class install_scripts(orig.install_scripts):
          )
          bs_cmd = self.get_finalized_command('build_scripts')
          exec_param = getattr(bs_cmd, 'executable', None)
