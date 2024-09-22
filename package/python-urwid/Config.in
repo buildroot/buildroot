@@ -1,5 +1,7 @@
 config BR2_PACKAGE_PYTHON_URWID
 	bool "python-urwid"
+	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime
+	select BR2_PACKAGE_PYTHON_WCWIDTH # runtime
 	help
 	  Urwid is a console user interface library for Python
 
