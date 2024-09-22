@@ -1,6 +1,7 @@
 config BR2_PACKAGE_PYTHON_TYPING_INSPECT
 	bool "python-typing-inspect"
 	select BR2_PACKAGE_PYTHON_MYPY_EXTENSIONS # runtime
+	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime
 	help
 	  Runtime inspection utilities for typing module.
 
