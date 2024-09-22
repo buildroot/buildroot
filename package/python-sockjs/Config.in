@@ -1,6 +1,7 @@
 config BR2_PACKAGE_PYTHON_SOCKJS
 	bool "python-sockjs"
 	select BR2_PACKAGE_PYTHON_AIOHTTP # runtime
+	select BR2_PACKAGE_PYTHON_ASYNC_TIMEOUT # runtime
 	help
 	  SockJS server implementation for aiohttp.
 
