@@ -4,14 +4,17 @@
 #
 ################################################################################
 
-PYTHON_TWISTED_VERSION = 22.10.0
-PYTHON_TWISTED_SOURCE = Twisted-$(PYTHON_TWISTED_VERSION).tar.gz
-PYTHON_TWISTED_SITE = https://files.pythonhosted.org/packages/b2/ce/cbb56597127b1d51905b0cddcc3f314cc769769efc5e9a8a67f4617f7bca
-PYTHON_TWISTED_SETUP_TYPE = setuptools
+PYTHON_TWISTED_VERSION = 24.7.0
+PYTHON_TWISTED_SOURCE = twisted-$(PYTHON_TWISTED_VERSION).tar.gz
+PYTHON_TWISTED_SITE = https://files.pythonhosted.org/packages/8b/bf/f30eb89bcd14a21a36b4cd3d96658432d4c590af3c24bbe08ea77fa7bbbb
+PYTHON_TWISTED_SETUP_TYPE = pep517
 PYTHON_TWISTED_LICENSE = MIT
 PYTHON_TWISTED_LICENSE_FILES = LICENSE
 PYTHON_TWISTED_CPE_ID_VENDOR = twistedmatrix
 PYTHON_TWISTED_CPE_ID_PRODUCT = twisted
-PYTHON_TWISTED_DEPENDENCIES = python-incremental host-python-incremental
+PYTHON_TWISTED_DEPENDENCIES = \
+	host-python-hatchling \
+	host-python-hatch-fancy-pypi-readme \
+	host-python-incremental
 
 $(eval $(python-package))
