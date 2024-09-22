@@ -5,6 +5,8 @@ config BR2_PACKAGE_PYTHON_TPM2_PYTSS
 	select BR2_PACKAGE_PYTHON_ASN1CRYPTO # runtime
 	select BR2_PACKAGE_PYTHON_CFFI # runtime
 	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime
+	select BR2_PACKAGE_PYTHON_PACKAGING # runtime
+	select BR2_PACKAGE_PYTHON_PYYAML # runtime
 	select BR2_PACKAGE_TPM2_TSS
 	help
 	  TPM 2.0 TSS Bindings for Python.
