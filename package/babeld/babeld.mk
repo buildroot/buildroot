@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BABELD_VERSION = 1.13
+BABELD_VERSION = 1.13.1
 BABELD_SITE = https://www.irif.fr/~jch/software/files
 BABELD_LICENSE = MIT
 BABELD_LICENSE_FILES = LICENCE
