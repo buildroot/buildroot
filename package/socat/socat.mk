@@ -36,7 +36,7 @@ endif
 # automake, so we can't use the normal autoreconf logic.
 
 SOCAT_DEPENDENCIES = host-autoconf
-# incompatibile license (GPL-3.0+)
+# incompatible license (GPL-3.0+)
 SOCAT_CONF_OPTS = --disable-readline
 
 ifeq ($(BR2_PACKAGE_LIBOPENSSL):$(BR2_STATIC_LIBS),y:)
