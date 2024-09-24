@@ -58,7 +58,7 @@ endif
 # context-sensitive by cpp.  SDL_cpuinfo.h is included by SDL.h.
 # Including altivec.h makes arbitrary code break."
 #
-# Acording to a bug report in GCC [1]:
+# According to a bug report in GCC [1]:
 # "You need to use -std=g++11 or undefine bool after the include of altivec.h
 # as context sensitive keywords is not part of the C++11 standard".
 # So use gnu++11 instead of c++11 only for altivec system.
