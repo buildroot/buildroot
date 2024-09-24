@@ -30,7 +30,7 @@ endef
 
 SMCROUTE_POST_INSTALL_TARGET_HOOKS += SMCROUTE_PRUNE_COMPAT_SCRIPT
 
-# We will asume that CONFIG_NET and CONFIG_INET are already
+# We will assume that CONFIG_NET and CONFIG_INET are already
 # set in the kernel configuration provided by the user.
 define SMCROUTE_LINUX_CONFIG_FIXUPS
 	$(call KCONFIG_ENABLE_OPT,CONFIG_IP_MULTICAST)
