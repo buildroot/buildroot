@@ -1,0 +1,54 @@
+config BR2_PACKAGE_DPDK_ARCH_SUPPORTS
+	bool
+	# DPDK can be used for the following little endian architecture
+	default y if BR2_aarch64
+	# DPDK requires SSE4.2 for x86_64 since v17.08
+	default y if BR2_x86_64 && BR2_X86_CPU_HAS_SSE42
+
+config BR2_PACKAGE_DPDK
+	bool "dpdk"
+	depends on BR2_PACKAGE_DPDK_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_THREADS # DPDK design
+	depends on BR2_USE_MMU # pthread() memory mappings
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C11/stdatomic.h
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_19
+	depends on BR2_TOOLCHAIN_USES_GLIBC
+	select BR2_PACKAGE_HOST_PYTHON3 # host-python-pyelftools
+	help
+	  DPDK (Data Plane Development Kit) is a set of libraries
+	  and drivers for fast packet processing.
+
+	  http://dpdk.org/
+
+	  Optional but recommended kernel configurations:
+	    - CONFIG_VFIO_IOMMU_TYPE1
+	    - CONFIG_VFIO_VIRQFD
+	    - CONFIG_VFIO
+	    - CONFIG_VFIO_NOIOMMU
+	    - CONFIG_VFIO_PCI
+	    - CONFIG_VFIO_PCI_MMAP
+	    - CONFIG_HUGETLBFS
+	    - CONFIG_HUGETLB_PAGE
+	    - CONFIG_PROC_PAGE_MONITOR
+
+	  For x86 only, the following can also be useful:
+	    - CONFIG_HPET
+	    - CONFIG_HPET_MMAP
+
+if BR2_PACKAGE_DPDK
+
+config BR2_PACKAGE_DPDK_EXAMPLES
+	bool "Install examples"
+
+config BR2_PACKAGE_DPDK_TESTS
+	bool "Install tests"
+
+endif
+
+comment "DPDK needs a toolchain w/ dynamic library, threads, wchar, kernel headers >= 4.19"
+	depends on BR2_USE_MMU # pthread() memory mappings
+	depends on BR2_PACKAGE_DPDK_ARCH_SUPPORTS
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_USES_GLIBC || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_19

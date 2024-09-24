@@ -1,0 +1,43 @@
+From c5ea091a74bbfa5fb095d2c6fe15be3a7b15cacb Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Sun, 8 Sep 2024 13:20:14 +0200
+Subject: [PATCH] Fix aarch64 build
+
+The condition on which DPDK meson skip the -march detection for Aarch64
+seems incorrect or incomplete. This patch changes the condition in order
+to better match the comment (that the options are decided in
+config/arm/meson.build). It actually test for the architecture name.
+
+While this patch might need some discussion with DPDK maintainers to
+cover all situations, it can still be useful here in Buildroot, as it
+fixes the Aarch64 cross compilation.
+
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+Signed-off-by: Vincent Jardin <vjardin@free.fr>
+Upstream: to be proposed https://patches.dpdk.org/project/dpdk/list/
+Links: cherry-picked from https://github.com/jolivain/dpdk/commit/c5ea091a74bbfa5fb095d2c6fe15be3a7b15cacb
+---
+ config/meson.build | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/config/meson.build b/config/meson.build
+index 8c8b019c25..ea48e55ce3 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -176,10 +176,10 @@ if not is_ms_compiler
+     else
+         machine_args += '-march=' + cpu_instruction_set
+         # arm manages generic/auto config in config/arm/meson.build
+-        if cpu_instruction_set != 'generic' and cpu_instruction_set != 'auto'
+-            compiler_arch_support = cc.has_argument('-march=' + cpu_instruction_set)
+-        else
++        if host_machine.cpu_family().startswith('aarch')
+             compiler_arch_support = true
++        else
++            compiler_arch_support = cc.has_argument('-march=' + cpu_instruction_set)
+         endif
+     endif
+     if not compiler_arch_support
+--
+2.46.0
+
