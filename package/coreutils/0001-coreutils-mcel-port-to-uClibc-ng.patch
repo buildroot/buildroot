@@ -1,0 +1,35 @@
+From c4e923a98f34fe5f5ec3b49543e90716ec2a45fc Mon Sep 17 00:00:00 2001
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Date: Tue, 24 Sep 2024 18:08:31 +0200
+Subject: [PATCH] coreutils: mcel: port to uClibc-ng
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Problem reported by Waldemar Brodkorb in:
+https://lists.gnu.org/r/bug-gnulib/2024-08/msg00130.html
+* lib/mcel.h (mcel_scan): Don't treat uClibc-ng like glibc.
+
+Upstream: https://git.savannah.gnu.org/cgit/gnulib.git/commit/?id=9765bc796b3e6ceaa7a10ba07c9c2f1e272a4249
+Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+---
+ lib/mcel.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/lib/mcel.h b/lib/mcel.h
+index f6f006c..dca4d08 100644
+--- a/lib/mcel.h
++++ b/lib/mcel.h
+@@ -221,7 +221,8 @@ mcel_scan (char const *p, char const *lim)
+ 
+   /* An initial mbstate_t; initialization optimized for some platforms.
+      For details about these and other platforms, see wchar.in.h.  */
+-#if defined __GLIBC__ && 2 < __GLIBC__ + (2 <= __GLIBC_MINOR__)
++#if (defined __GLIBC__ && 2 < __GLIBC__ + (2 <= __GLIBC_MINOR__) \
++	&& !defined __UCLIBC__)
+   /* Although only a trivial optimization, it's worth it for GNU.  */
+   mbstate_t mbs; mbs.__count = 0;
+ #elif (defined __FreeBSD__ || defined __DragonFly__ || defined __OpenBSD__ \
+-- 
+2.39.2
+
