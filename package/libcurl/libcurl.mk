@@ -190,11 +190,6 @@ LIBCURL_CONF_OPTS += \
 	--disable-tftp
 endif
 
-define LIBCURL_FIX_DOT_PC
-	printf 'Requires: openssl\n' >>$(@D)/libcurl.pc.in
-endef
-LIBCURL_POST_PATCH_HOOKS += $(if $(BR2_PACKAGE_LIBCURL_OPENSSL),LIBCURL_FIX_DOT_PC)
-
 ifeq ($(BR2_PACKAGE_LIBCURL_CURL),)
 define LIBCURL_TARGET_CLEANUP
 	rm -rf $(TARGET_DIR)/usr/bin/curl
