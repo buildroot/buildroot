@@ -1,0 +1,8 @@
+config BR2_PACKAGE_HOST_ANDES_SPI_BURN
+	bool "host andes-spi-burn"
+	depends on BR2_riscv
+	help
+	  Andes Technology SPI_burn tool to program bootloader and
+	  device-tree blob onto flash memory of AE350 platform.
+
+	  https://github.com/andestech/IntelJ3
