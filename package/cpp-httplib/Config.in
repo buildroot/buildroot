@@ -1,0 +1,21 @@
+comment "cpp-httplib needs a toolchain w/ C++, wchar, threads"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS
+
+config BR2_PACKAGE_CPP_HTTPLIB
+	bool "cpp-httplib"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_USE_WCHAR
+	help
+	  A C++ header-only HTTP/HTTPS server and client library.
+
+	  https://github.com/yhirose/cpp-httplib
+
+if BR2_PACKAGE_CPP_HTTPLIB
+config BR2_PACKAGE_CPP_HTTPLIB_COMPILE
+	bool "compile as a shared library"
+	select BR2_PACKAGE_HOST_PYTHON3
+	help
+	  Build as library
+
+endif # BR2_PACKAGE_CPP_HTTPLIB
