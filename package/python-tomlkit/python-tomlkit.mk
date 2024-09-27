@@ -11,5 +11,7 @@ PYTHON_TOMLKIT_SETUP_TYPE = pep517
 PYTHON_TOMLKIT_LICENSE = MIT
 PYTHON_TOMLKIT_LICENSE_FILES = LICENSE
 PYTHON_TOMLKIT_DEPENDENCIES = host-python-poetry-core
+HOST_PYTHON_TOMLKIT_DEPENDENCIES = host-python-poetry-core
 
 $(eval $(python-package))
+$(eval $(host-python-package))
