@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_PYDANTIC_SETTINGS
+	bool "python-pydantic-settings"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-pydantic -> python-pydantic-core
+	select BR2_PACKAGE_PYTHON_DOTENV # runtime
+	select BR2_PACKAGE_PYTHON_PYDANTIC # runtime
+	help
+	  Settings management using Pydantic.
+
+	  https://github.com/pydantic/pydantic-settings
