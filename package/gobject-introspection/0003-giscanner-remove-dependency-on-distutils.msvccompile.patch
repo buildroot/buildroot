@@ -1,0 +1,104 @@
+From c8310afa42dfa598097eb0e003cef7965b5ed7be Mon Sep 17 00:00:00 2001
+From: Christoph Reiter <reiter.christoph@gmail.com>
+Date: Wed, 28 Aug 2024 21:26:02 +0200
+Subject: [PATCH] giscanner: remove dependency on distutils.msvccompiler
+
+It was removed with setuptools 74.0.0. Since we still depend on the
+MSVCCompiler class use new_compiler() to get it some other way.
+
+Remove any reference to MSVC9Compiler, which was for Visual Studio 2008
+which we no longer support anyway.
+
+Fixes #515
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Upstream: https://gitlab.gnome.org/GNOME/gobject-introspection/-/commit/a2139dba59eac283a7f543ed737f038deebddc19
+---
+ giscanner/ccompiler.py    |  7 +++----
+ giscanner/msvccompiler.py | 14 +++++++-------
+ 2 files changed, 10 insertions(+), 11 deletions(-)
+
+diff --git a/giscanner/ccompiler.py b/giscanner/ccompiler.py
+index 2912fe0e..766c9a36 100644
+--- a/giscanner/ccompiler.py
++++ b/giscanner/ccompiler.py
+@@ -26,7 +26,6 @@ import tempfile
+ import sys
+ import distutils
+ 
+-from distutils.msvccompiler import MSVCCompiler
+ from distutils.unixccompiler import UnixCCompiler
+ from distutils.cygwinccompiler import Mingw32CCompiler
+ from distutils.sysconfig import get_config_vars
+@@ -167,7 +166,7 @@ class CCompiler(object):
+         # Now, create the distutils ccompiler instance based on the info we have.
+         if compiler_name == 'msvc':
+             # For MSVC, we need to create a instance of a subclass of distutil's
+-            # MSVC9Compiler class, as it does not provide a preprocess()
++            # MSVCCompiler class, as it does not provide a preprocess()
+             # implementation
+             from . import msvccompiler
+             self.compiler = msvccompiler.get_msvc_compiler()
+@@ -453,7 +452,7 @@ class CCompiler(object):
+             return self.compiler.linker_exe
+ 
+     def check_is_msvc(self):
+-        return isinstance(self.compiler, MSVCCompiler)
++        return self.compiler.compiler_type == "msvc"
+ 
+     # Private APIs
+     def _set_cpp_options(self, options):
+@@ -479,7 +478,7 @@ class CCompiler(object):
+                     # macros for compiling using distutils
+                     # get dropped for MSVC builds, so
+                     # escape the escape character.
+-                    if isinstance(self.compiler, MSVCCompiler):
++                    if self.check_is_msvc():
+                         macro_value = macro_value.replace('\"', '\\\"')
+                 macros.append((macro_name, macro_value))
+             elif option.startswith('-U'):
+diff --git a/giscanner/msvccompiler.py b/giscanner/msvccompiler.py
+index 0a543982..e333a80f 100644
+--- a/giscanner/msvccompiler.py
++++ b/giscanner/msvccompiler.py
+@@ -19,30 +19,30 @@
+ #
+ 
+ import os
+-import distutils
++from typing import Type
+ 
+ from distutils.errors import DistutilsExecError, CompileError
+-from distutils.ccompiler import CCompiler, gen_preprocess_options
++from distutils.ccompiler import CCompiler, gen_preprocess_options, new_compiler
+ from distutils.dep_util import newer
+ 
+ # Distutil's MSVCCompiler does not provide a preprocess()
+ # Implementation, so do our own here.
+ 
+ 
++DistutilsMSVCCompiler: Type = type(new_compiler(compiler="msvc"))
++
++
+ def get_msvc_compiler():
+     return MSVCCompiler()
+ 
+ 
+-class MSVCCompiler(distutils.msvccompiler.MSVCCompiler):
++class MSVCCompiler(DistutilsMSVCCompiler):
+ 
+     def __init__(self, verbose=0, dry_run=0, force=0):
+-        super(distutils.msvccompiler.MSVCCompiler, self).__init__()
++        super(DistutilsMSVCCompiler, self).__init__()
+         CCompiler.__init__(self, verbose, dry_run, force)
+         self.__paths = []
+         self.__arch = None  # deprecated name
+-        if os.name == 'nt':
+-            if isinstance(self, distutils.msvc9compiler.MSVCCompiler):
+-                self.__version = distutils.msvc9compiler.VERSION
+         self.initialized = False
+         self.preprocess_options = None
+         if self.check_is_clang_cl():
+-- 
+2.34.1
+
