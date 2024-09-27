@@ -1,6 +1,8 @@
 config BR2_PACKAGE_EBTABLES
 	bool "ebtables"
 	depends on BR2_USE_MMU # fork()
+	# https://lore.kernel.org/all/20210518181730.13436-1-patrickdepinguin@gmail.com/
+	depends on !BR2_KERNEL_64_USERLAND_32
 	help
 	  Ethernet bridge frame table administration
 
