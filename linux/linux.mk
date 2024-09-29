@@ -139,7 +139,7 @@ endef
 endif
 
 ifeq ($(BR2_LINUX_KERNEL_NEEDS_HOST_PYTHON3),y)
-LINUX_DEPENDENCIES += host-python3
+LINUX_DEPENDENCIES += $(BR2_PYTHON3_HOST_DEPENDENCY)
 endif
 
 # If host-uboot-tools is selected by the user, assume it is needed to
