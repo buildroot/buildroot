@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-KBD_VERSION = 2.5.1
+KBD_VERSION = 2.6.4
 KBD_SOURCE = kbd-$(KBD_VERSION).tar.xz
 KBD_SITE = $(BR2_KERNEL_MIRROR)/linux/utils/kbd
 KBD_CONF_OPTS = \
