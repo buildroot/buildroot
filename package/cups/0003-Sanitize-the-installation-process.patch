@@ -1,4 +1,4 @@
-From e35f809c435c224954a5c7bff3f5729c5b3bc0ba Mon Sep 17 00:00:00 2001
+From 61177952e054be9569ce011218ab032c03b4db5a Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Thu, 21 Jan 2016 23:21:06 +0100
 Subject: [PATCH] Sanitize the installation process
@@ -30,10 +30,10 @@ Signed-off-by: Olivier Schonken <olivier.schonken@gmail.com>
  4 files changed, 17 insertions(+), 18 deletions(-)
 
 diff --git a/Makedefs.in b/Makedefs.in
-index 3afef0a..3e4f1bd 100644
+index a2342d5c0..0d8df733b 100644
 --- a/Makedefs.in
 +++ b/Makedefs.in
-@@ -40,14 +40,14 @@ SHELL		=	/bin/sh
+@@ -46,14 +46,14 @@ SHELL		=	/bin/sh
  # Installation programs...
  #
  
@@ -55,10 +55,10 @@ index 3afef0a..3e4f1bd 100644
  #
  # Default user, group, and system groups for the scheduler...
 diff --git a/conf/Makefile b/conf/Makefile
-index 933d7d9..6ac5e19 100644
+index 62aa0c6fd..3cced869c 100644
 --- a/conf/Makefile
 +++ b/conf/Makefile
-@@ -72,11 +72,11 @@ install:	all install-data install-headers install-libs install-exec
+@@ -67,11 +67,11 @@ install:	all install-data install-headers install-libs install-exec
  install-data:
  	for file in $(KEEP); do \
  		if test -r $(SERVERROOT)/$$file ; then \
@@ -74,10 +74,10 @@ index 933d7d9..6ac5e19 100644
  	$(INSTALL_DIR) -m 755 $(DATADIR)/mime
  	for file in $(REPLACE); do \
 diff --git a/notifier/Makefile b/notifier/Makefile
-index 3206dd0..c34a4d7 100644
+index fa2c7f2f7..34f7a0d6b 100644
 --- a/notifier/Makefile
 +++ b/notifier/Makefile
-@@ -62,7 +62,7 @@ install:	all install-data install-headers install-libs install-exec
+@@ -57,7 +57,7 @@ install:	all install-data install-headers install-libs install-exec
  #
  
  install-data:
@@ -87,10 +87,10 @@ index 3206dd0..c34a4d7 100644
  
  #
 diff --git a/scheduler/Makefile b/scheduler/Makefile
-index 251f017..25f2f5f 100644
+index 57b169387..aefa89719 100644
 --- a/scheduler/Makefile
 +++ b/scheduler/Makefile
-@@ -146,28 +146,27 @@ install-data:
+@@ -142,28 +142,27 @@ install-data:
  	echo Creating $(SERVERBIN)/driver...
  	$(INSTALL_DIR) -m 755 $(SERVERBIN)/driver
  	echo Creating $(SERVERROOT)...
@@ -127,5 +127,5 @@ index 251f017..25f2f5f 100644
  		echo Installing init scripts...; \
  		$(INSTALL_DIR) -m 755 $(BUILDROOT)$(INITDIR)/init.d; \
 -- 
-2.6.4
+2.34.1
 
