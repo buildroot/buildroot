@@ -62,7 +62,7 @@ arches = {
         'prefix': 'armeb',
     },
     'armv7m': {
-        'conditions': ['BR2_arm', 'BR2_ARM_CPU_ARMV7M'],
+        'conditions': ['BR2_arm', 'BR2_ARM_CPU_ARMV7M', 'BR2_BINFMT_FLAT'],
         'test_options': ['BR2_arm', 'BR2_cortex_m4'],
         'prefix': 'arm',
     },
