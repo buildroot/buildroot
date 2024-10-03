@@ -26,8 +26,8 @@ Running on the FVP
 Download the FVP from one of the following sources, corresponding to your host
 computer:
 
-- https://developer.arm.com/-/media/Files/downloads/ecosystem-models/FM_11_25/FVP_Base_RevC-2xAEMvA_11.25_15_Linux64.tgz
-- https://developer.arm.com/-/media/Files/downloads/ecosystem-models/FM_11_25/FVP_Base_RevC-2xAEMvA_11.25_15_Linux64_armv8l.tgz
+- https://developer.arm.com/-/cdn-downloads/permalink/Fixed-Virtual-Platforms/FM-11.27/FVP_Base_RevC-2xAEMvA_11.27_19_Linux64.tgz
+- https://developer.arm.com/-/cdn-downloads/permalink/Fixed-Virtual-Platforms/FM-11.27/FVP_Base_RevC-2xAEMvA_11.27_19_Linux64_armv8l.tgz
 
 The FVP will be located under one of the corresponding folders:
 
