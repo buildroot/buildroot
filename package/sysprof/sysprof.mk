@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SYSPROF_VERSION_MAJOR = 46
+SYSPROF_VERSION_MAJOR = 47
 SYSPROF_VERSION = $(SYSPROF_VERSION_MAJOR).0
 SYSPROF_SOURCE = sysprof-$(SYSPROF_VERSION).tar.xz
 SYSPROF_SITE = https://download.gnome.org/sources/sysprof/$(SYSPROF_VERSION_MAJOR)
