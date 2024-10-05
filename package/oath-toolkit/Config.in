@@ -1,0 +1,27 @@
+config BR2_PACKAGE_OATH_TOOLKIT
+	bool "oath-toolkit"
+	depends on BR2_USE_WCHAR
+	help
+	  OATH Toolkit provide components to build one-time password
+	  authentication systems. It contains shared C libraries,
+	  command line tools and a PAM module. Supported technologies
+	  include the event-based HOTP algorithm (RFC 4226), the
+	  time-based TOTP algorithm (RFC 6238), and Portable Symmetric
+	  Key Container (PSKC, RFC 6030) to manage secret key
+	  data. OATH stands for Open AuTHentication, which is the
+	  organization that specify the algorithms.
+
+	  https://www.nongnu.org/oath-toolkit/
+
+if BR2_PACKAGE_OATH_TOOLKIT
+
+config BR2_PACKAGE_OATH_TOOLKIT_PSKC
+	bool "enable PSKC"
+	select BR2_PACKAGE_LIBXML2
+	help
+	  Enable the Portable Symmetric Key Container (PSKC) support.
+
+endif
+
+comment "oath-toolkit needs a toolchain w/ wchar"
+	depends on !BR2_USE_WCHAR
