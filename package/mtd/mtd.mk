@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MTD_VERSION = 2.2.0
+MTD_VERSION = 2.2.1
 MTD_SOURCE = mtd-utils-$(MTD_VERSION).tar.bz2
 MTD_SITE = https://infraroot.at/pub/mtd
 MTD_LICENSE = GPL-2.0
