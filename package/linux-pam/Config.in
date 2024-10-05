@@ -5,7 +5,6 @@ config BR2_PACKAGE_LINUX_PAM
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_USE_MMU # fork()
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C11/stdatomic.h
-	select BR2_PACKAGE_FLEX
 	help
 	  A Security Framework that Provides Authentication for
 	  Applications
