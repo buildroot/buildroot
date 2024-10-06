@@ -1,4 +1,4 @@
-From 6d6b953cf7d2b8d06e7b0363b1b06cb2e902aa0f Mon Sep 17 00:00:00 2001
+From 760ac03a8d8870ad47776075c1e59b6395d308bf Mon Sep 17 00:00:00 2001
 From: Simon Rowe <simon.rowe@nutanix.com>
 Date: Thu, 23 Mar 2023 10:07:02 +0000
 Subject: [PATCH] log: use freopen() to reopen standard streams
@@ -19,17 +19,19 @@ with
 
 Taken from: https://github.com/gentoo/gentoo/blob/master/sys-fs/lvm2/files/lvm2-2.03.14-freopen_n2.patch
 Signed-off-by: Simon Rowe <simon.rowe@nutanix.com>
+[Julien: rebased patch on v2.03.27]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
 ---
  lib/log/log.c | 4 ++++
  1 file changed, 4 insertions(+)
 
 diff --git a/lib/log/log.c b/lib/log/log.c
-index 7b4d537b3..5f62c048c 100644
+index 3eda7d343..0bcd9552d 100644
 --- a/lib/log/log.c
 +++ b/lib/log/log.c
 @@ -208,7 +208,11 @@ int reopen_standard_stream(FILE **stream, const char *mode)
  
- 	_check_and_replace_standard_log_streams(old_stream, new_stream);
+ 	_check_and_replace_standard_log_streams(*stream, new_stream);
  
 +#ifdef __GLIBC__
  	*stream = new_stream;
@@ -40,5 +42,5 @@ index 7b4d537b3..5f62c048c 100644
  }
  
 -- 
-2.22.3
+2.46.2
 
