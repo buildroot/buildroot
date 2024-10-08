@@ -3,7 +3,7 @@ set -e
 DEVICE_TYPE="buildroot-x86_64"
 ARTIFACT_NAME="1.0"
 
-function parse_args {
+parse_args() {
     local o O opts
     o='a:o:d:'
     O='artifact-name:,data-part-size:,device-type:'
@@ -28,8 +28,8 @@ function parse_args {
     done
 }
 
-  # Create a persistent directory to mount the data partition at.
-function mender_fixup {
+# Create a persistent directory to mount the data partition at.
+mender_fixup() {
     pushd "${TARGET_DIR}"
     if [[ -L var/lib/mender ]]; then
         rm var/lib/mender
@@ -44,7 +44,7 @@ function mender_fixup {
     popd
 }
 
-function main {
+main() {
     parse_args "${@}"
     mender_fixup
     echo "device_type=${DEVICE_TYPE}" > "${TARGET_DIR}/etc/mender/device_type"
