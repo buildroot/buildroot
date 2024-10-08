@@ -64,6 +64,19 @@ The tool can also be used for packages in a br2-external:
 $ check-package -b /path/to/br2-ext-tree/package/my-package/*
 ----
 
+The +check-package+ script requires you install +shellcheck+ and the
+Python PyPi packages +flake8+ and +python-magic+. The Buildroot code
+base is currently tested against version 0.7.1 of ShellCheck. If you
+use a different version of ShellCheck, you may see additional,
+unfixed, warnings.
+
+If you have Docker or Podman you can run +check-package+ without
+installing dependencies:
+
+----
+$ ./utils/docker-run ./utils/check-package
+----
+
 [[testing-package]]
 ==== How to test your package
 
