@@ -417,6 +417,8 @@ class BuildrootPackage():
                 self.build_backend = build_backend
                 if build_backend == 'flit_core.buildapi':
                     self.setup_metadata['method'] = 'flit'
+                elif build_backend == 'hatchling.build':
+                    self.setup_metadata['method'] = 'hatch'
                 elif build_backend == 'setuptools.build_meta':
                     self.setup_metadata['method'] = 'setuptools'
                 else:
