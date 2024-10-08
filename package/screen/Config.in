@@ -1,6 +1,8 @@
 config BR2_PACKAGE_SCREEN
 	bool "screen"
 	depends on BR2_USE_MMU # fork()
+	depends on BR2_USE_WCHAR
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_8 # C17
 	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	select BR2_PACKAGE_NCURSES
 	help
@@ -13,3 +15,8 @@ config BR2_PACKAGE_SCREEN
 	  multiple character sets).
 
 	  http://www.gnu.org/software/screen/
+
+comment "screen needs a toolchain w/ wchar, gcc >= 8"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_8
