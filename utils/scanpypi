@@ -424,6 +424,9 @@ class BuildrootPackage():
                         self.setup_metadata['method'] = 'pep517'
                     else:
                         self.setup_metadata['method'] = 'unknown'
+            else:
+                self.build_backend = 'setuptools.build_meta'
+                self.setup_metadata = {'method': 'setuptools'}
         except FileNotFoundError:
             self.build_backend = 'setuptools.build_meta'
             self.setup_metadata = {'method': 'setuptools'}
