@@ -48,6 +48,17 @@ config BR2_PACKAGE_DOCKER_ENGINE_DRIVER_VFS
 	help
 	  Build the vfs filesystem driver for Docker.
 
+config BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT
+	bool "support docker-init"
+	select BR2_PACKAGE_TINI # runtime
+	help
+	  Support providing a minimal init process for containers,
+	  using tini. Required to use "docker run --init".
+
+	  This does not change the Docker engine build, the
+	  docker-init symlink is provided by the tini package
+	  itself. This option only adds the dependency.
+
 endif
 
 comment "docker-engine needs a glibc or musl toolchain w/ threads, headers >= 3.17"
