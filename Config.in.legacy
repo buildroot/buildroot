@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2024.11"
 
+config BR2_KERNEL_HEADERS_6_10
+	bool "kernel headers version 6.10.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 6.10.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
 config BR2_PACKAGE_IPMITOOL_PEN_REG_URI
 	string "IANA PEN registry moved to iana-assignment package"
 	help
