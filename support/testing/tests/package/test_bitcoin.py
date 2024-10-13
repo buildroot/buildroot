@@ -130,7 +130,7 @@ class TestBitcoin(infra.basetest.BRTest):
         # #1. We should receive the 50 BTC reward at this address.
         cmd = self.cli_cmd
         cmd += f" generatetoaddress {req_blk_count} {btc_addr1}"
-        self.assertRunOk(cmd)
+        self.assertRunOk(cmd, timeout=30)
 
         # We should now see the previously created blocks.
         cur_blk_cnt = self.get_block_count()
@@ -169,7 +169,7 @@ class TestBitcoin(infra.basetest.BRTest):
         # the previous transaction (but this will not give the 50 BTC
         # reward).
         cmd = f"{self.cli_cmd} generatetoaddress 1 {btc_addr2}"
-        self.assertRunOk(cmd)
+        self.assertRunOk(cmd, timeout=30)
 
         # We should see one more block.
         cur_blk_cnt = self.get_block_count()
