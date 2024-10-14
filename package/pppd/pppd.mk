@@ -6,8 +6,8 @@
 
 # The tarball provided at https://download.samba.org/pub/ppp/ does not
 # include the license files yet so we use the github tarball.
-PPPD_VERSION = e1266c76d1ad39f98f11676e34f180f78c5a510c
-PPPD_SITE = $(call github,ppp-project,ppp,$(PPPD_VERSION))
+PPPD_VERSION = 2.5.1
+PPPD_SITE = $(call github,ppp-project,ppp,ppp-$(PPPD_VERSION))
 PPPD_LICENSE = LGPL-2.0+, LGPL, BSD-4-Clause, BSD-3-Clause, GPL-2.0+
 PPPD_LICENSE_FILES = LICENSE.BSD LICENSE.GPL-2
 PPPD_CPE_ID_VENDOR = point-to-point_protocol_project
