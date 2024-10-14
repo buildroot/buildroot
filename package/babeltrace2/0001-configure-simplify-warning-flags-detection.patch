@@ -40,6 +40,8 @@ Reviewed-by: Michael Jeanson <mjeanson@efficios.com>
 [Retrieved from:
 https://github.com/efficios/babeltrace/commit/28ba44ad9ca14153e96c94a9100423ea224c1af3]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Dario: adapt to 2.0.6]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  configure.ac                    |  74 +++++++++------
  m4/ax_compiler_flags.m4         | 158 -------------------------------
@@ -56,7 +58,7 @@ diff --git a/configure.ac b/configure.ac
 index 055fba101..7ebcf2ad4 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -660,25 +660,35 @@ target.
+@@ -694,25 +694,35 @@
  CFLAGS=${save_CFLAGS}
  
  # Detect C and LD warning flags supported by the compiler.
@@ -110,14 +112,11 @@ index 055fba101..7ebcf2ad4 100644
  		dnl
  		dnl Some versions of SWIG (like 3.0.12) generate code that produces
  		dnl -Wcast-function-type warnings.  This warning is present in gcc >= 8.  This
-@@ -692,24 +702,32 @@ AX_COMPILER_FLAGS(
- 		dnl
+@@ -727,24 +737,32 @@
  		dnl Ref: https://github.com/swig/swig/issues/1259
  		-Wno-cast-function-type dnl
+ 		-Wno-suggest-attribute=format dnl
 -	])
--
--# CFLAGS from AX_COMPILER_FLAGS.
--AM_CFLAGS="${AM_CFLAGS} ${WARN_CFLAGS}"
 +		-Wno-missing-field-initializers dnl
 +	],
 +	[WARN_CFLAGS],
@@ -131,6 +130,9 @@ index 055fba101..7ebcf2ad4 100644
 +	[WARN_CFLAGS="${WARN_CFLAGS} -Werror"]
 +)
  
+-# CFLAGS from AX_COMPILER_FLAGS.
+-AM_CFLAGS="${AM_CFLAGS} ${WARN_CFLAGS}"
+-
 -# The test used in AX_COMPILER_FLAGS, generated using AC_LANG_PROGRAM, is
 +# The test used in AX_APPEND_COMPILE_FLAGS, generated using AC_LANG_PROGRAM, is
  # written in such a way that it triggers a -Wold-style-definition warning.  So
