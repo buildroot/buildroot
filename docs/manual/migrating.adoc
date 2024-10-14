@@ -184,3 +184,14 @@ sed -r -i -e 's/(\.tar\.gz)$/-cargo2\1/' $(
 
 Note that the hash _will_ have changed, so that needs to be updated
 (manually) as well.
+
+[[migrating-mender]]
+=== Migrating to 2025.02
+
+Mender now requires a special bootstrap artifact to be placed in
++/var/lib/mender+. This replaces the +artifact_info+ file. Just like a
+normal artifact, the bootstrap artifact is generated with
+host-mender-artifact. See +board/mender/x86_64/post-image-efi.sh+ for an
+example of how to generate the bootstrap.mender file. See 
+https://docs.mender.io/release-information/release-notes-changelog/mender-client#mender-3-5-0-1[the
+release notes], under features, for more information.

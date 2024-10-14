@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 BOARD_DIR="$(realpath "$(dirname "$0")")"
+DATA_PART="${BINARIES_DIR}"/data-part
 DATA_PART_SIZE="32M"
 DEVICE_TYPE="buildroot-x86_64"
 ARTIFACT_NAME="1.0"
@@ -33,12 +34,33 @@ parse_args() {
 # Create the data partition
 make_data_partition() {
     "${HOST_DIR}/sbin/mkfs.ext4" \
+        -d "${DATA_PART}" \
         -F \
         -r 1 \
         -N 0 \
         -m 5 \
         -L "data" \
         "${BINARIES_DIR}/data-part.ext4" "${DATA_PART_SIZE}"
+}
+
+# Generate a mender bootstrap artifact.
+# See https://github.com/mendersoftware/mender/blob/3.5.3/Documentation/automatic-bootstrap-artifact.md
+generate_mender_bootstrap_artifact() {
+
+  rm -rf "${DATA_PART}"
+  mkdir -p "${DATA_PART}"
+  img_checksum=$(sha256sum "${BINARIES_DIR}"/rootfs.ext4 |awk '{print $1}')
+
+  "${HOST_DIR}"/bin/mender-artifact \
+    write bootstrap-artifact \
+    --compression lzma \
+    --artifact-name "${ARTIFACT_NAME}" \
+    --device-type "${DEVICE_TYPE}" \
+    --provides "rootfs-image.version:${ARTIFACT_NAME}" \
+    --provides "rootfs-image.checksum:${img_checksum}" \
+    --clears-provides "rootfs-image.*" \
+    --output-path "${DATA_PART}"/bootstrap.mender \
+    --version 3
 }
 
 # Create a mender image.
@@ -60,6 +82,7 @@ generate_image() {
 # Main function.
 main() {
     parse_args "${@}"
+    generate_mender_bootstrap_artifact
     make_data_partition
     generate_image
     generate_mender_image

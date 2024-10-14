@@ -7,9 +7,12 @@ class TestMenderInfra(infra.basetest.BRTest):
     config = infra.basetest.BASIC_TOOLCHAIN_CONFIG + \
              """
              BR2_PACKAGE_MENDER=y
+             BR2_PACKAGE_HOST_MENDER_ARTIFACT=y
              BR2_TARGET_ROOTFS_CPIO=y
+             BR2_ROOTFS_POST_BUILD_SCRIPT="{}"
              BR2_ROOTFS_OVERLAY="{}"
              """.format(
+                 infra.filepath("tests/package/test_mender/post-build.sh"),
                  # overlay to add a fake 'fw_printenv', used by Mender
                  infra.filepath("tests/package/test_mender/rootfs-overlay"))
 

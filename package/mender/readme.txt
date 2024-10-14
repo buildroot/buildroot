@@ -118,6 +118,10 @@ then you would typically create the Mender Artifact in a post image
 script (BR2_ROOTFS_POST_IMAGE_SCRIPT). See the generate_mender_image
 method in board/mender/x86_64/post-image-efi.sh for a working example.
 
+Additionally, mender requires a bootstrap.mender file which is also
+generated using the host-mender-artifact package. See the
+generate_mender_bootstrap_artifact method in
+board/mender/x86_64/post-image-efi.sh for an example
 
 Configuring Mender with certificates
 ------------------------------------
