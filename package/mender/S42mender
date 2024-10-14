@@ -8,22 +8,6 @@ PIDFILE="/var/run/${DAEMON}.pid"
 DAEMON_ARGS="daemon"
 
 start() {
-	# If /var/lib/mender is a symlink to /var/run/mender, and
-	#   - the filesystem is RO (i.e. we can not rm the symlink),
-	#     create the directory pointed to by the symlink.
-	#   - the filesystem is RW (i.e. we can rm the symlink),
-	#     replace the symlink with an actual directory
-	if [ -L /var/lib/mender ] && [ "$(readlink /var/lib/mender)" = "/var/run/mender" ]
-	then
-		if rm -f /var/lib/mender >/dev/null 2>&1; then
-			mkdir -p /var/lib/mender
-		else
-			echo "No persistent location to store mender data. Data will be lost"
-			echo "at reboot. Are you sure this is what you want to do?"
-			mkdir -p "$(readlink /var/lib/mender)"
-		fi
-	fi
-
 	printf "Starting mender service: "
 	umask 077
 	start-stop-daemon -bmSqp "$PIDFILE" -x ${DAEMON_PATH} -- ${DAEMON_ARGS}
