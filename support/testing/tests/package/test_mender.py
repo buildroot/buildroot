@@ -20,8 +20,6 @@ class TestMenderInfra(infra.basetest.BRTest):
         self.emulator.login()
 
     def run_mender_test(self):
-        # Check if the Daemon is running
-        self.assertRunOk("ls /var/run/mender.pid")
         self.assertRunOk("ps aux | egrep [m]ender")
 
         # Check if a simple Mender command is correctly executed
@@ -35,6 +33,9 @@ class TestMenderInfra(infra.basetest.BRTest):
 class TestMenderRW(TestMenderInfra):
     def test_run(self):
         TestMenderInfra.base_test_run(self)
+
+        # Check if the Daemon is running
+        self.assertRunOk("ls /var/run/mender.pid")
         self.run_mender_test()
 
 
@@ -47,4 +48,21 @@ class TestMenderRO(TestMenderInfra):
 
     def test_run(self):
         TestMenderInfra.base_test_run(self)
+
+        # Check if the Daemon is running
+        self.assertRunOk("ls /var/run/mender.pid")
+        self.run_mender_test()
+
+
+class TestMenderSystemd(TestMenderInfra):
+    config = \
+        """
+        {}
+        BR2_INIT_SYSTEMD=y
+        """.format(TestMenderInfra.config)
+
+    def test_run(self):
+        TestMenderInfra.base_test_run(self)
+        output, _ = self.emulator.run("systemctl is-active mender-client")
+        self.assertEqual(output[0], "active")
         self.run_mender_test()
