@@ -28,13 +28,23 @@ In Buildroot the following packages are provided:
     - This will install the client on target rootfs
 - BR2_PACKAGE_HOST_MENDER_ARTIFACT
     - This will install the 'mender-artifact' tool in host rootfs.
+- BR2_PACKAGE_MENDER_CONNECT
+    - This installs a client that allows for remote terminal access
+      to mender clients registered on a mender server.
+- BR2_PACKAGE_MENDER_GRUBENV
+    - This package provides boot scripts to integrate mender into grub.
+      Mender recommends every client to use this package, including boards
+      using uboot as the primary bootloader.
 
 To fully utilize atomic image-based deployments using the A/B update
 strategy, additional integration is required in the bootloader. This
 integration is board specific.
 
-Currently supported bootloaders are GRUB and U-boot, and for reference
-integrations please visit:
+Currently supported bootloaders are GRUB and U-boot. Buildroot provides
+a reference integration at board/mender/x86_64/ using the
+mender_x86_64_efi_defconfig file.
+
+Additional support and integrations are found at:
 
     https://github.com/mendersoftware/buildroot-mender
 
@@ -46,12 +56,7 @@ files that need your attention:
 
 - /etc/mender/mender.conf
     - main configuration file for the Mender client
-    - https://docs.mender.io/client-configuration/configuration-file/configuration-options
-
-- /etc/mender/artifact_info
-    - The name of the image or update that will be built. This is what the
-      device will report that it is running, and different updates must have
-      different names
+    - https://docs.mender.io/client-installation/configuration/configuration-options
 
 - /var/lib/mender/device_type
     - A string that defines the type of device
@@ -110,40 +115,9 @@ Creating Mender Artifacts
 To create Mender Artifacts based on Buildroot build output you must
 include BR2_PACKAGE_HOST_MENDER_ARTIFACT in your configuration, and
 then you would typically create the Mender Artifact in a post image
-script (BR2_ROOTFS_POST_IMAGE_SCRIPT). Below is an example of such a
-script:
+script (BR2_ROOTFS_POST_IMAGE_SCRIPT). See the generate_mender_image
+method in board/mender/x86_64/post-image-efi.sh for a working example.
 
-    #!/bin/sh
-
-    set -e
-    set -x
-
-    device_type=$(cat ${TARGET_DIR}/var/lib/mender/device_type | sed 's/[^=]*=//')
-    artifact_name=$(cat ${TARGET_DIR}/etc/mender/artifact_info | sed 's/[^=]*=//')
-
-    if [ -z "${device_type}" ] || [ -z "${artifact_name}" ]; then
-        echo "missing files required by Mender"
-        exit 1
-    fi
-
-    ${HOST_DIR}/usr/bin/mender-artifact write rootfs-image \
-        --update ${BINARIES_DIR}/rootfs.ext4 \
-        --output-path ${BINARIES_DIR}/${artifact_name}.mender \
-        --artifact-name ${artifact_name} \
-        --device-type ${device_type}
-
-As you can see some properties are extracted from target rootfs, and
-this is because these values are used for compatibility checks,
-meaning that the information must be present in both rootfs and in
-Mender Artifact meta data.
-
-- device_type - must be an exact match between rootfs and Mender
-                Artifact meta-data to apply update. You can set an
-                array of devices here as well, e.g if your image is
-                compatible with multiple hardware revisions
-
-- artifact_name - must be an exact match between rootfs and Mender
-                  Artifact meta-data to apply update.
 
 Configuring Mender with certificates
 ------------------------------------
