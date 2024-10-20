@@ -1,3 +1,41 @@
+2024.08.1, released October 20th, 2024
+
+	Important / security related fixes.
+
+	Per-package-directories fixes for the .gdbinit file and RPATH
+	fixups for SDK.
+
+	Legal-info: Ensure host-tar and redist directory exists when
+	using override-srcdir, as otherwise the tarball generation
+	(silently) fails.
+
+	utils/check-package: Also check for correct indentation of
+	help lines.
+
+	A large number of typo fixes.
+
+	Defconfigs: imx6slevk: Bump Linux kernel to 6.6.51 to fix
+	build issue with GCC 13
+
+	Updated/fixed packages: asterisk, aubio, bind, busybox, cairo,
+	cryptsetup, cups, expat, ffmpeg, genpart, glibc, gnutls, go,
+	grub2, libarchive, libcurl, libilbc, libpcap, lighttpd, linux,
+	linux-pam, mosquitto, mtd, nginx, php, procps-ng, pure-ftpd,
+	python-django, python3, qt6core5compat, qt6svg, qt6tools,
+	rp-pppoe, samba4, sysklogd, wireplumber, wpewebkit, xenomai
+
+	Issues resolved:
+	- procps-ng: build failure when linking to systemd
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/28
+	- orange pi 2w does not boot
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/36
+	- glibc configure fails on aarch64 with mathvec SVE ACLE error
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/40
+	- Kernel Build from Custom Git Repo fails with hash-error
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/46
+	- package/linux-pam: Remove unneeded flex dependency
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/47
+
 2024.08, released September 6th, 2024
 
 	Various fixes.
