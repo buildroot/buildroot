@@ -1,3 +1,42 @@
+2024.02.7, released October 21th, 2024
+
+	Important / security related fixes.
+
+	Per-package-directories fixes for the .gdbinit file and RPATH
+	fixups for SDK.
+
+	utils/check-package: Also check for correct indentation of
+	help lines.
+
+	A large number of typo fixes.
+
+	Updated/fixed packages: aer-inject, armadillo, asterisk,
+	aumix, babeld, bind, botan, cache-calibrator, clamav,
+	comix-cursors, cryptsetup, cups, dovecot, dovecot-pigeonhole,
+	expat, fbset, genpart, glibc, gnu-efi, gnutls, go, grub2,
+	libarchive, libcuefile, libcurl, libglob, libgpg-error,
+	libilbc, libkcapi, libopenssl, libpcap, libuecc, linux-pam,
+	mosquitto, nginx, ntpsec, p910nd, php, postgresql, proftpd,
+	pure-ftpd, python-django, python-huepy, python-sqlparse,
+	python-unittest-xml-reporting, python3, qt6base, qt6svg,
+	rp-pppoe, sofia-sip, strongswan, szip, tllist, unbound,
+	wpebackend-fdo, wpewebkit, x264, xenomai, xserver_xorg-server,
+	zabbix
+
+	New packages: go-bootstrap-stage3
+
+	Issues resolved:
+	- procps-ng: build failure when linking to systemd
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/28
+	- orange pi 2w does not boot
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/36
+	- glibc configure fails on aarch64 with mathvec SVE ACLE error
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/40
+	- Kernel Build from Custom Git Repo fails with hash-error
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/46
+	- package/linux-pam: Remove unneeded flex dependency
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/47
+
 2024.02.6, released September 9th, 2024
 
 	Important / security related fixes.
