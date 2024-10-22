@@ -1,4 +1,4 @@
-From daecf59cc8b294265666482a4766aaa3148c308b Mon Sep 17 00:00:00 2001
+From 8ca0465fda181bd20e5d30c36fb2aea56ed27b6b Mon Sep 17 00:00:00 2001
 From: Khem Raj <raj.khem@gmail.com>
 Date: Sat, 30 Nov 2019 11:43:32 -0800
 Subject: [PATCH] Fix build on 32bit arches with 64bit time_t
@@ -8,8 +8,7 @@ input.h [1]
 
 [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=152194fe9c3f
 
-[Retrieved from:
-https://github.com/LibVNC/x11vnc/commit/daecf59cc8b294265666482a4766aaa3148c308b]
+Upstream: https://github.com/LibVNC/x11vnc/commit/daecf59cc8b294265666482a4766aaa3148c308b
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  src/uinput.c | 25 +++++++++++++++++++++----
@@ -107,3 +106,6 @@ index 28fbad3..d71bcde 100644
  	ev.type = EV_KEY;
  	ev.code = (unsigned char) scancode;
  	ev.value = down;
+-- 
+2.43.0
+
