@@ -1,0 +1,4 @@
+config BR2_PACKAGE_HOST_ARM_GNU_TOOLCHAIN_SUPPORTS
+	bool "host arm-gnu-toolchain"
+	default y if BR2_HOSTARCH = "aarch64"
+	default y if BR2_HOSTARCH = "x86_64"
