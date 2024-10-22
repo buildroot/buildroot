@@ -1,0 +1,48 @@
+From 08d57adf499264fcd32461a4092cd799c474d669 Mon Sep 17 00:00:00 2001
+From: Alexander Tsoy <alexander@tsoy.me>
+Date: Tue, 28 Jan 2020 22:21:01 +0300
+Subject: [PATCH] Fix build with -fno-common
+
+GCC 10 defaults to -fno-common
+
+Upstream: https://github.com/LibVNC/x11vnc/commit/a48b0b1cd887d7f3ae67f525d7d334bd2feffe60
+Signed-off-by: Thomas Devoogdt <thomas.devoogdt@barco.com>
+---
+ src/util.c | 3 +++
+ src/util.h | 6 +++---
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/src/util.c b/src/util.c
+index a82a1a4..6a52ebf 100644
+--- a/src/util.c
++++ b/src/util.c
+@@ -47,6 +47,9 @@ int hxl = 0;
+ #ifdef LIBVNCSERVER_HAVE_LIBPTHREAD
+ MUTEX(x11Mutex);
+ MUTEX(scrollMutex);
++MUTEX(clientMutex);
++MUTEX(inputMutex);
++MUTEX(pointerMutex);
+ #endif
+ 
+ int nfix(int i, int n);
+diff --git a/src/util.h b/src/util.h
+index 35c1afd..99b5dd1 100644
+--- a/src/util.h
++++ b/src/util.h
+@@ -102,9 +102,9 @@ extern struct timeval _mysleep;
+ #ifdef LIBVNCSERVER_HAVE_LIBPTHREAD
+ extern MUTEX(x11Mutex);
+ extern MUTEX(scrollMutex);
+-MUTEX(clientMutex);
+-MUTEX(inputMutex);
+-MUTEX(pointerMutex);
++extern MUTEX(clientMutex);
++extern MUTEX(inputMutex);
++extern MUTEX(pointerMutex);
+ #endif
+ 
+ #define X_INIT INIT_MUTEX(x11Mutex)
+-- 
+2.43.0
+
