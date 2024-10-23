@@ -1,0 +1,50 @@
+From f7825edbd1c85380cfb5ef0cf2c16c910954f57c Mon Sep 17 00:00:00 2001
+From: Charlie Johnston <charlie.johnston@loftorbital.com>
+Date: Mon, 5 Aug 2024 13:07:25 -0700
+Subject: [PATCH] verifyimage: Fix segmentation fault that occurs during
+ verifyimage.
+
+In commit d02322b, the behavior of ReadBinaryFile was changed such
+that it no longer populated iHT. This caused VerifyAuthentication
+to access a null iHT value resulting a segmentation fault.
+
+This fix changes VerifyAuthentication to call ReadHeaderTableDetails
+instead, where the old functionality of ReadBinaryFile now lives.
+
+Signed-off-by: Charlie Johnston <charlie.johnston@loftorbital.com>
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+Upstream: https://github.com/Xilinx/bootgen/pull/36
+---
+ verifyimage-versal.cpp | 2 +-
+ verifyimage-zynqmp.cpp | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/verifyimage-versal.cpp b/verifyimage-versal.cpp
+index 5490663..5656e50 100755
+--- a/verifyimage-versal.cpp
++++ b/verifyimage-versal.cpp
+@@ -34,7 +34,7 @@
+ /*******************************************************************************/
+ void VersalReadImage::VerifyAuthentication(bool verifyImageOption)
+ {
+-    ReadBinaryFile();
++    ReadHeaderTableDetails();
+ 
+     if (iHT->headerAuthCertificateWordOffset != 0)
+     {
+diff --git a/verifyimage-zynqmp.cpp b/verifyimage-zynqmp.cpp
+index d4812e6..d73272c 100755
+--- a/verifyimage-zynqmp.cpp
++++ b/verifyimage-zynqmp.cpp
+@@ -50,7 +50,7 @@ static void RearrangeEndianess(uint8_t *array, uint32_t size)
+ /*******************************************************************************/
+ void ZynqMpReadImage::VerifyAuthentication(bool verifyImageOption)
+ {
+-    ReadBinaryFile();
++    ReadHeaderTableDetails();
+ 
+     if (iHT->headerAuthCertificateWordOffset != 0)
+     {
+-- 
+2.39.5
+
