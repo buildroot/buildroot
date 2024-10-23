@@ -18,7 +18,8 @@ fi
 
 #modify the config.txt
 CFG_PATH=${BINARIES_DIR}/rpi-firmware/config.txt
-grep -q "^dtoverlay=reComputer-R100x$" $CFG_PATH || echo "dtoverlay=reComputer-R100x" >> $CFG_PATH
+grep -q "^enable_uart=1$" $CFG_PATH || echo "enable_uart=1" >> $CFG_PATH
+grep -q "^dtoverlay=reComputer-R110x$" $CFG_PATH || echo "dtoverlay=reComputer-R110x" >> $CFG_PATH
 grep -q "^gpu_mem=128$" $CFG_PATH || echo "gpu_mem=128" >> $CFG_PATH
 
 #create dir /boot/

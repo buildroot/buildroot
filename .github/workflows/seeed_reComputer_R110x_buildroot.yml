@@ -28,7 +28,7 @@ jobs:
           cache-name: cache-download-files
         with:
           path: ${{ github.workspace }}/seeed-linux-buildroot/dl/
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/seeed-linux-buildroot/configs/reComputer_R100x_64_defconfig') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/seeed-linux-buildroot/configs/reComputer_R110x_64_defconfig') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
@@ -37,7 +37,7 @@ jobs:
       - name: Configure Buildroot
         run: |
           cd ${{ github.workspace }}/seeed-linux-buildroot/
-          make reComputer_R100x_64_defconfig
+          make reComputer_R110x_64_defconfig
 
       - name: Build
         run: |
@@ -47,8 +47,8 @@ jobs:
       - name: Pack
         run: |
           cd ${{ github.workspace }}/seeed-linux-buildroot/output/images/
-          tar -zcvf buildroot-recomputer-r100x.tar.gz sdcard.img
-          echo "PACKAGE=${{ github.workspace }}/seeed-linux-buildroot/output/images/buildroot-recomputer-r100x.tar.gz" >> $GITHUB_ENV
+          tar -zcvf buildroot-recomputer-r110x.tar.gz sdcard.img
+          echo "PACKAGE=${{ github.workspace }}/seeed-linux-buildroot/output/images/buildroot-recomputer-r110x.tar.gz" >> $GITHUB_ENV
 
       - name: Upload package
         uses: actions/upload-artifact@master

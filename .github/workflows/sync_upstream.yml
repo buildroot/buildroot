@@ -52,7 +52,11 @@ jobs:
           if [ "$LOCAL_VERSION" != "$REMOTE_VERSION" ];then
             sed -i '/BR2_LINUX_KERNEL_CUSTOM_TARBALL_LOCATION/d' reTerminal_64_defconfig
             echo "$REMOTE_VERSION" >> reTerminal_64_defconfig
+            echo "$REMOTE_VERSION" >> recomputer_R100x_64_defconfig
+            echo "$REMOTE_VERSION" >> recomputer_R110x_64_defconfig
             git add reTerminal_64_defconfig
+            git add recomputer_R100x_64_defconfig
+            git add recomputer_R110x_64_defconfig
             git commit -m "sync kernel version with upstream" -a
           fi
 
