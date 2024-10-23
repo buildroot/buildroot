@@ -1,0 +1,42 @@
+From 9c78557af0a5e521cdb46a4ca7630f2987d2523e Mon Sep 17 00:00:00 2001
+From: Rich Felker <dalias@aerifal.cx>
+Date: Sat, 10 Aug 2024 19:49:24 -0400
+Subject: [PATCH] use hidden visibility for C entry point function _start_c
+
+the file-level crt_arch.h asm fragments generally make direct
+(non-PLT) calls from _start to _start_c, which is only valid when
+there is a local, non-interposable definition for _start_c. generally,
+the linker is expected to know that local definitions in a main
+executable (as opposed to shared library) output are non-interposable,
+making this work, but historically there have been linker bugs in this
+area, and microblaze is reportedly still broken, flagging the
+relocation for the call as a textrel.
+
+the equivalent _dlstart_c, called from the same crt_arch.h asm
+fragments, has always used hidden visibility without problem, and
+semantically it should be hidden, so make it hidden. this ensures the
+direct call is always valid regardless of whether the linker properly
+special-cases main executable output.
+
+Upstream: https://git.musl-libc.org/cgit/musl/commit/?id=9c78557af0a5e521cdb46a4ca7630f2987d2523e
+Signed-off-by: J. Neuschäfer <j.neuschaefer@gmx.net>
+---
+ crt/crt1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/crt/crt1.c b/crt/crt1.c
+index 8fe8ab5d..10601215 100644
+--- a/crt/crt1.c
++++ b/crt/crt1.c
+@@ -11,7 +11,7 @@ weak void _fini();
+ int __libc_start_main(int (*)(), int, char **,
+ 	void (*)(), void(*)(), void(*)());
+
+-void _start_c(long *p)
++hidden void _start_c(long *p)
+ {
+ 	int argc = p[0];
+ 	char **argv = (void *)(p+1);
+--
+2.45.2
+
