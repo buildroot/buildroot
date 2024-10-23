@@ -419,6 +419,8 @@ class BuildrootPackage():
                     self.setup_metadata['method'] = 'flit'
                 elif build_backend == 'hatchling.build':
                     self.setup_metadata['method'] = 'hatch'
+                elif build_backend == 'poetry.core.masonry.api':
+                    self.setup_metadata['method'] = 'poetry'
                 elif build_backend == 'setuptools.build_meta':
                     self.setup_metadata['method'] = 'setuptools'
                 else:

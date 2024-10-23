@@ -51,8 +51,8 @@ On line 13, we declare our dependencies, so that they are built
 before the build process of our package starts.
 
 On line 14, we declare the specific Python build system being used. In
-this case the +setuptools+ Python build system is used. The six
-supported ones are +flit+, +hatch+, +pep517+, +setuptools+,
+this case the +setuptools+ Python build system is used. The seven
+supported ones are +flit+, +hatch+, +pep517+, +poetry+, +setuptools+,
 +setuptools-rust+ and +maturin+.
 
 Finally, on line 16, we invoke the +python-package+ macro that
@@ -96,14 +96,14 @@ Note that:
 One variable specific to the Python infrastructure is mandatory:
 
 * +PYTHON_FOO_SETUP_TYPE+, to define which Python build system is used
-  by the package. The five supported values are +flit+, +hatch+,
-  +pep517+ and +setuptools+, +setuptools-rust+ and +maturin+. If you
-  don't know which one is used in your package, look at the +setup.py+
-  or +pyproject.toml+ file in your package source code, and see whether
-  it imports things from the +flit+ module or the +setuptools+
-  module. If the package is using a +pyproject.toml+ file without any
-  build-system requires and with a local in-tree backend-path one
-  should use +pep517+.
+  by the package. The seven supported values are +flit+, +hatch+,
+  +pep517+, +poetry+, +setuptools+, +setuptools-rust+ and +maturin+.
+  If you don't know which one is used in your package, look at the
+  +setup.py+ or +pyproject.toml+ file in your package source code,
+  and see whether it imports things from the +flit+ module or the
+  +setuptools+ module. If the package is using a +pyproject.toml+
+  file without any build-system requires and with a local in-tree
+  backend-path one should use +pep517+.
 
 A few additional variables, specific to the Python infrastructure, can
 optionally be defined, depending on the package's needs. Many of them
