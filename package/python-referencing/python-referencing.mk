@@ -10,13 +10,9 @@ PYTHON_REFERENCING_SITE = https://files.pythonhosted.org/packages/99/5b/73ca1f8e
 PYTHON_REFERENCING_SETUP_TYPE = pep517
 PYTHON_REFERENCING_LICENSE = MIT
 PYTHON_REFERENCING_LICENSE_FILES = COPYING
-PYTHON_REFERENCING_DEPENDENCIES = \
-	host-python-hatchling \
-	host-python-hatch-vcs
+PYTHON_REFERENCING_DEPENDENCIES = host-python-hatch-vcs
 
-HOST_PYTHON_REFERENCING_DEPENDENCIES = \
-	host-python-hatchling \
-	host-python-hatch-vcs
+HOST_PYTHON_REFERENCING_DEPENDENCIES = host-python-hatch-vcs
 
 # This is a runtime dependency, but we don't have the concept of
 # runtime dependencies for host packages.
