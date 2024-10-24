@@ -11,9 +11,9 @@ PYTHON_URLLIB3_LICENSE = MIT
 PYTHON_URLLIB3_LICENSE_FILES = LICENSE.txt
 PYTHON_URLLIB3_CPE_ID_VENDOR = python
 PYTHON_URLLIB3_CPE_ID_PRODUCT = urllib3
-PYTHON_URLLIB3_SETUP_TYPE = pep517
-PYTHON_URLLIB3_DEPENDENCIES = host-python-hatchling host-python-hatch-vcs
-HOST_PYTHON_URLLIB3_DEPENDENCIES = host-python-hatchling host-python-hatch-vcs
+PYTHON_URLLIB3_SETUP_TYPE = hatch
+PYTHON_URLLIB3_DEPENDENCIES = host-python-hatch-vcs
+HOST_PYTHON_URLLIB3_DEPENDENCIES = host-python-hatch-vcs
 
 $(eval $(python-package))
 $(eval $(host-python-package))
