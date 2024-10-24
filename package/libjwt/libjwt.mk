@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBJWT_VERSION = 1.17.0
+LIBJWT_VERSION = 1.17.2
 LIBJWT_SITE = https://github.com/benmcollins/libjwt/releases/download/v$(LIBJWT_VERSION)
 LIBJWT_SOURCE = libjwt-$(LIBJWT_VERSION).tar.bz2
 LIBJWT_DEPENDENCIES = host-pkgconf jansson
