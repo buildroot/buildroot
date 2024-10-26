@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2024.11"
 
+config BR2_PACKAGE_QEMU_TARGET_NIOS2
+	bool "qemu nios2 support has been removed"
+	select BR2_LEGACY
+	help
+	  NIOS2 support has been removed since Qemu 9.1.0.
+
 config BR2_PACKAGE_POPPERJS
 	bool "popperjs has been removed"
 	select BR2_LEGACY
