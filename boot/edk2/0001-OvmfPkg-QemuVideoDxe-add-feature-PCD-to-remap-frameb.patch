@@ -1,0 +1,129 @@
+From 921c78f57a16b00debd58899a48e7045015c374b Mon Sep 17 00:00:00 2001
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 17 Jun 2024 17:07:41 +0200
+Subject: [PATCH] OvmfPkg/QemuVideoDxe: add feature PCD to remap framebuffer
+ W/C
+
+Some platforms (such as SBSA-QEMU on recent builds of the emulator) only
+tolerate misaligned accesses to normal memory, and raise alignment
+faults on such accesses to device memory, which is the default for PCIe
+MMIO BARs.
+
+When emulating a PCIe graphics controller, the framebuffer is typically
+exposed via a MMIO BAR, while the disposition of the region is closer to
+memory (no side effects on reads or writes, except for the changing
+picture on the screen; direct random access to any pixel in the image).
+
+In order to permit the use of such controllers on platforms that only
+tolerate these types of accesses for normal memory, it is necessary to
+remap the memory. Use the DXE services to set the desired capabilities
+and attributes.
+
+Hide this behavior under a feature PCD so only platforms that really
+need it can enable it. (OVMF on x86 has no need for this)
+
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+Upstream: https://github.com/tianocore/edk2/commit/c1d1910be6e04a8b1a73090cf2881fb698947a6e
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ OvmfPkg/OvmfPkg.dec                   |  5 +++++
+ OvmfPkg/QemuVideoDxe/Gop.c            | 19 +++++++++++++++++++
+ OvmfPkg/QemuVideoDxe/Qemu.h           |  2 +-
+ OvmfPkg/QemuVideoDxe/QemuVideoDxe.inf |  4 ++++
+ 4 files changed, 29 insertions(+), 1 deletion(-)
+
+diff --git a/OvmfPkg/OvmfPkg.dec b/OvmfPkg/OvmfPkg.dec
+index 51be9a5959..2c40de8a13 100644
+--- a/OvmfPkg/OvmfPkg.dec
++++ b/OvmfPkg/OvmfPkg.dec
+@@ -444,3 +444,8 @@
+ 
+   ## This feature flag indicates the firmware build supports secure boot.
+   gUefiOvmfPkgTokenSpaceGuid.PcdSecureBootSupported|FALSE|BOOLEAN|0x6d
++
++  ## Whether QemuVideoDxe should perform a EFI_MEMORY_WC remap of the PCI
++  #  framebuffer. This might be required on platforms that do not tolerate
++  #  misaligned accesses otherwise.
++  gUefiOvmfPkgTokenSpaceGuid.PcdRemapFrameBufferWriteCombine|FALSE|BOOLEAN|0x75
+diff --git a/OvmfPkg/QemuVideoDxe/Gop.c b/OvmfPkg/QemuVideoDxe/Gop.c
+index b11eed7558..a29c025afd 100644
+--- a/OvmfPkg/QemuVideoDxe/Gop.c
++++ b/OvmfPkg/QemuVideoDxe/Gop.c
+@@ -9,6 +9,8 @@
+ 
+ #include "Qemu.h"
+ 
++#include <Library/DxeServicesTableLib.h>
++
+ STATIC
+ VOID
+ QemuVideoCompleteModeInfo (
+@@ -54,6 +56,7 @@ QemuVideoCompleteModeData (
+   EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *Info;
+   EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR     *FrameBufDesc;
+   QEMU_VIDEO_MODE_DATA                  *ModeData;
++  EFI_STATUS                            Status;
+ 
+   ModeData = &Private->ModeData[Mode->Mode];
+   Info     = Mode->Info;
+@@ -79,6 +82,22 @@ QemuVideoCompleteModeData (
+     (UINT64)Mode->FrameBufferSize
+     ));
+ 
++  if (FeaturePcdGet (PcdRemapFrameBufferWriteCombine)) {
++    Status = gDS->SetMemorySpaceCapabilities (
++                    FrameBufDesc->AddrRangeMin,
++                    FrameBufDesc->AddrLen,
++                    EFI_MEMORY_UC | EFI_MEMORY_WC | EFI_MEMORY_XP
++                    );
++    ASSERT_EFI_ERROR (Status);
++
++    Status = gDS->SetMemorySpaceAttributes (
++                    FrameBufDesc->AddrRangeMin,
++                    FrameBufDesc->AddrLen,
++                    EFI_MEMORY_WC | EFI_MEMORY_XP
++                    );
++    ASSERT_EFI_ERROR (Status);
++  }
++
+   FreePool (FrameBufDesc);
+   return EFI_SUCCESS;
+ }
+diff --git a/OvmfPkg/QemuVideoDxe/Qemu.h b/OvmfPkg/QemuVideoDxe/Qemu.h
+index 57341a0bbf..a3da725fbf 100644
+--- a/OvmfPkg/QemuVideoDxe/Qemu.h
++++ b/OvmfPkg/QemuVideoDxe/Qemu.h
+@@ -13,7 +13,7 @@
+ #ifndef _QEMU_H_
+ #define _QEMU_H_
+ 
+-#include <Uefi.h>
++#include <PiDxe.h>
+ #include <Protocol/GraphicsOutput.h>
+ #include <Protocol/PciIo.h>
+ #include <Protocol/DriverSupportedEfiVersion.h>
+diff --git a/OvmfPkg/QemuVideoDxe/QemuVideoDxe.inf b/OvmfPkg/QemuVideoDxe/QemuVideoDxe.inf
+index 43a6e07faa..4c0870171b 100644
+--- a/OvmfPkg/QemuVideoDxe/QemuVideoDxe.inf
++++ b/OvmfPkg/QemuVideoDxe/QemuVideoDxe.inf
+@@ -44,6 +44,7 @@
+ 
+ [LibraryClasses]
+   BaseMemoryLib
++  DxeServicesTableLib
+   FrameBufferBltLib
+   DebugLib
+   DevicePathLib
+@@ -61,6 +62,9 @@
+   gEfiDevicePathProtocolGuid                    # PROTOCOL BY_START
+   gEfiPciIoProtocolGuid                         # PROTOCOL TO_START
+ 
++[FeaturePcd]
++  gUefiOvmfPkgTokenSpaceGuid.PcdRemapFrameBufferWriteCombine
++
+ [Pcd]
+   gUefiOvmfPkgTokenSpaceGuid.PcdOvmfHostBridgePciDevId
+   gUefiOvmfPkgTokenSpaceGuid.PcdVideoResolutionSource
+-- 
+2.45.0
+
