@@ -10,6 +10,8 @@ Upstream: N/A (specific to buildroot)
 Signed-off-by: Jens Maus <mail@jens-maus.de>
 [Dario: make the patch to be applied with fuzz factor 0]
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+[Bernd: rebased against 5.34.2]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  configure.ac          | 2 +-
  libmonit/configure.ac | 2 +-
@@ -21,7 +23,7 @@ index 3c3d30a2..f4c5ea07 100644
 +++ b/configure.ac
 @@ -8,7 +8,7 @@
  # Example: 5.0_beta2
- AC_INIT([monit], [5.33.0], [monit-general@nongnu.org])
+ AC_INIT([monit], [5.34.2], [monit-general@nongnu.org])
  AC_CONFIG_AUX_DIR(config)
 -AC_CONFIG_MACRO_DIR([m4])
 +AC_CONFIG_MACRO_DIRS([m4 config])
