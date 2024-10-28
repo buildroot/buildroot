@@ -1,7 +1,8 @@
 config BR2_PACKAGE_PYTHON_YARL
 	bool "python-yarl"
-	select BR2_PACKAGE_PYTHON_MULTIDICT
-	select BR2_PACKAGE_PYTHON_IDNA
+	select BR2_PACKAGE_PYTHON_IDNA # runtime
+	select BR2_PACKAGE_PYTHON_MULTIDICT # runtime
+	select BR2_PACKAGE_PYTHON_PROPCACHE # runtime
 	help
 	  Yet another URL library.
 
