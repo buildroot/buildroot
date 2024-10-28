@@ -21,7 +21,8 @@ JAILHOUSE_MAKE_OPTS = \
 ifeq ($(BR2_PACKAGE_JAILHOUSE_HELPER_SCRIPTS),y)
 JAILHOUSE_DEPENDENCIES += \
 	host-python-mako \
-	host-python-setuptools
+	host-python-setuptools \
+	python3
 JAILHOUSE_MAKE_OPTS += \
 	HAS_PYTHON_MAKO="yes" \
 	PYTHON_PIP_USABLE="yes"
