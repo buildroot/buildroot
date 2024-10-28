@@ -29,7 +29,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_OATH_TOOLKIT_PSKC),y)
 OATH_TOOLKIT_CONF_OPTS += --enable-pskc
-OATH_TOOLKIT_DEPENDENCIES += libxml2
+OATH_TOOLKIT_DEPENDENCIES += host-libxml2 libxml2
 else
 OATH_TOOLKIT_CONF_OPTS += --disable-pskc
 endif
