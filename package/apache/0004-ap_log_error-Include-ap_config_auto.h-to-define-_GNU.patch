@@ -1,0 +1,40 @@
+From f7a85d0d2b76db75dc976e8dfa1101c954ea1a74 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Mon, 28 Oct 2024 23:13:05 +0100
+Subject: [PATCH] ap_log_error: Include ap_config_auto.h to define
+ _GNU_SOURCE
+
+gettid() needs _GNU_SOURCE defined which is provided by ap_config_auto.h
+
+Fixes buildroot error:
+http://autobuild.buildroot.net/results/2f6/2f6b7bbb4c97e4c91b3abd6bb205e237e57045fa//build-end.log
+
+log.c: In function 'log_tid':
+log.c:637:21: error: implicit declaration of function 'gettid'; did you mean 'getgid'? [-Wimplicit-function-declaration]
+  637 |         pid_t tid = gettid();
+
+Upstream: https://github.com/apache/httpd/pull/496
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ server/log.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/server/log.c b/server/log.c
+index 91dcf2c3eb..e709288858 100644
+--- a/server/log.c
++++ b/server/log.c
+@@ -21,6 +21,10 @@
+  *
+  */
+ 
++#if !defined(WIN32) && !defined(NETWARE)
++#include "ap_config_auto.h"
++#endif
++
+ #include "apr.h"
+ #include "apr_general.h"        /* for signal stuff */
+ #include "apr_strings.h"
+-- 
+2.39.5
+
