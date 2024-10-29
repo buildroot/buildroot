@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2024.11"
 
+config BR2_PACKAGE_PROCPS_NS_ORIGINAL_TOP
+	bool "BR2_PACKAGE_PROCPS_NS_ORIGINAL_TOP has been renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_PROCPS_NG_ORIGINAL_TOP
+	help
+	  The option has been renamed to
+	  BR2_PACKAGE_PROCPS_NG_ORIGINAL_TOP.
+
 config BR2_PACKAGE_QEMU_TARGET_NIOS2
 	bool "qemu nios2 support has been removed"
 	select BR2_LEGACY
