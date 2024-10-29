@@ -25,6 +25,8 @@ endef
 define SSHGUARD_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 0644 $(@D)/examples/sshguard.service \
 		$(TARGET_DIR)/usr/lib/systemd/system/sshguard.service
+	$(SED) 's:/usr/local/sbin/sshguard:/usr/sbin/sshguard:g' \
+		$(TARGET_DIR)/usr/lib/systemd/system/sshguard.service
 endef
 
 $(eval $(autotools-package))
