@@ -44,6 +44,7 @@ class Emulator(object):
     def __init__(self, builddir, downloaddir, logtofile, timeout_multiplier):
         self.qemu = None
         self.repl = None
+        self.builddir = builddir
         self.downloaddir = downloaddir
         self.logfile = infra.open_log_file(builddir, "run", logtofile)
         # We use elastic runners on the cloud to runs our tests. Those runners
@@ -116,11 +117,14 @@ class Emulator(object):
         self.logfile.write(f"> host loadavg: {ldavg_str}\n")
         self.logfile.write(f"> timeout multiplier: {self.timeout_multiplier}\n")
         self.logfile.write("> starting qemu with '%s'\n" % " ".join(qemu_cmd))
+        host_bin = os.path.join(self.builddir, "host", "bin")
+        br_path = host_bin + os.pathsep + os.environ["PATH"]
         self.qemu = pexpect.spawn(qemu_cmd[0], qemu_cmd[1:],
                                   timeout=5 * self.timeout_multiplier,
                                   encoding='utf-8',
                                   codec_errors='replace',
-                                  env={"QEMU_AUDIO_DRV": "none"})
+                                  env={"QEMU_AUDIO_DRV": "none",
+                                       "PATH": br_path})
         # We want only stdout into the log to avoid double echo
         self.qemu.logfile_read = self.logfile
 
