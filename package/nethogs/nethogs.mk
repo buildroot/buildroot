@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETHOGS_VERSION = 0.8.7
+NETHOGS_VERSION = 0.8.8
 NETHOGS_SITE = $(call github,raboof,nethogs,v$(NETHOGS_VERSION))
 NETHOGS_LICENSE = GPL-2.0+
 NETHOGS_LICENSE_FILES = COPYING
