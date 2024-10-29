@@ -79,7 +79,7 @@ define CHRONY_INSTALL_TARGET_CMDS
 endef
 
 define CHRONY_INSTALL_INIT_SYSV
-	$(INSTALL) -D -m 755 package/chrony/S49chrony $(TARGET_DIR)/etc/init.d/S49chrony
+	$(INSTALL) -D -m 755 package/chrony/S49chronyd $(TARGET_DIR)/etc/init.d/S49chronyd
 endef
 
 define CHRONY_INSTALL_INIT_SYSTEMD
