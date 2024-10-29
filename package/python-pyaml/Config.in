@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_PYAML
+	bool "python-pyaml"
+	select BR2_PACKAGE_PYTHON_PYYAML # runtime
+	help
+	  PyYAML-based module to produce a bit more pretty and
+	  readable YAML-serialized data.
+
+	  https://github.com/mk-fg/pretty-yaml
