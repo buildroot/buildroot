@@ -28,7 +28,7 @@ start() {
 }
 
 stop() {
-	printf "Stopping sshd: "
+	printf "Stopping %s: " "$DAEMON"
 	start-stop-daemon --stop --pidfile "$PIDFILE" \
 		--exec "/usr/sbin/$DAEMON"
 	status=$?
@@ -50,7 +50,7 @@ restart() {
 }
 
 reload() {
-	printf "Reloading sshd config: "
+	printf "Reloading %s config: " "$DAEMON"
 	start-stop-daemon --stop --signal HUP -q --pidfile "$PIDFILE" \
 		--exec "/usr/sbin/$DAEMON"
 	status=$?
