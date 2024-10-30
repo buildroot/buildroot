@@ -1,0 +1,57 @@
+From 2480f4d9d2fa97e5511ed0914ee529a344e969a7 Mon Sep 17 00:00:00 2001
+From: Robert Edmonds <edmonds@users.noreply.github.com>
+Date: Wed, 20 Mar 2024 22:43:30 -0400
+Subject: [PATCH] CGenerator: Protect against being invoked against "edition"
+ syntax .proto files
+
+The Google protobuf project is currently experimenting with a new syntax
+for .proto files called "editions". Since protobuf-c is a proto2/proto3
+compiler, after the previous commit reimplementing `FieldSyntax()`, the
+protobuf compiler will abort like this if presented with an "editions"
+syntax .proto file due to the safety check in `FieldSyntax()`:
+
+    $ protoc --experimental_editions --c_out=. test.proto
+    protoc-gen-c: ./protoc-c/c_helpers.h:178: int google::protobuf::compiler::c::FieldSyntax(const google::protobuf::FieldDescriptor*): Assertion `syntax == "proto2" || syntax == "proto3"' failed.
+    --c_out: protoc-gen-c: Plugin killed by signal 6.
+
+On protobuf 26, our `CodeGenerator` can implement certain methods to
+declare that we "support" editions, and then reject any other edition
+except proto2 and proto3, which have apparently been retroactively
+declared to be "editions". Of course this needs to be wrapped in a
+version guard.
+
+With this protection in place, the protobuf compiler cleanly exits with
+a nice error message like this:
+
+    $ protoc --experimental_editions --c_out=. test.proto
+    WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+    E0000 00:00:1710988958.296200   20022 descriptor.cc:4620] Invalid proto descriptor for file "test.proto":
+    E0000 00:00:1710988958.296239   20022 descriptor.cc:4623]   test.proto: Edition 2023 is later than the maximum supported edition PROTO3
+    --c_out: protoc-gen-c: Plugin failed with status code 1.
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Upstream: https://github.com/protobuf-c/protobuf-c/pull/711
+---
+ protoc-c/c_generator.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/protoc-c/c_generator.h b/protoc-c/c_generator.h
+index b8b44aa..4aeb579 100644
+--- a/protoc-c/c_generator.h
++++ b/protoc-c/c_generator.h
+@@ -93,6 +93,12 @@ class PROTOC_C_EXPORT CGenerator : public CodeGenerator {
+                 const std::string& parameter,
+                 OutputDirectory* output_directory,
+                 std::string* error) const;
++
++#if GOOGLE_PROTOBUF_VERSION >= 5026000
++  uint64_t GetSupportedFeatures() const { return CodeGenerator::FEATURE_SUPPORTS_EDITIONS; }
++  Edition GetMinimumEdition() const { return Edition::EDITION_PROTO2; }
++  Edition GetMaximumEdition() const { return Edition::EDITION_PROTO3; }
++#endif
+ };
+ 
+ }  // namespace c
+-- 
+2.34.1
+
