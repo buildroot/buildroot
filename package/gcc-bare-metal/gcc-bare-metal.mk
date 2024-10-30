@@ -5,7 +5,7 @@
 ################################################################################
 
 GCC_BARE_METAL_VERSION = 14.2.0
-GCC_BARE_METAL_SITE = https://ftp.gnu.org/gnu/gcc/gcc-$(GCC_BARE_METAL_VERSION)
+GCC_BARE_METAL_SITE = $(BR2_GNU_MIRROR)/gcc/gcc-$(GCC_BARE_METAL_VERSION)
 GCC_BARE_METAL_SOURCE = gcc-$(GCC_BARE_METAL_VERSION).tar.xz
 
 GCC_BARE_METAL_LICENSE = GPL-2.0, GPL-3.0, LGPL-2.1, LGPL-3.0
