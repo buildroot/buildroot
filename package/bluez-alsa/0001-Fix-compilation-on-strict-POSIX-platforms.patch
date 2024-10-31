@@ -1,0 +1,90 @@
+From ef85a335ad8919930f62d80ae99a74a5e766fc3b Mon Sep 17 00:00:00 2001
+From: Arkadiusz Bokowy <arkadiusz.bokowy@gmail.com>
+Date: Sun, 25 Aug 2024 08:42:39 +0200
+Subject: [PATCH] Fix compilation on strict POSIX platforms
+
+Signed-off-by: Nicolas Cavallari <nicolas.cavallari@green-communications.fr>
+Upstream: https://github.com/arkq/bluez-alsa/commit/070ed35ac5cef8138ed4
+---
+ src/main.c            | 2 +-
+ test/mock/mock.c      | 2 +-
+ utils/aplay/aplay.c   | 1 +
+ utils/cli/cli.c       | 1 +
+ utils/rfcomm/rfcomm.c | 1 +
+ 5 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/src/main.c b/src/main.c
+index e93cb33..597ac01 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -13,12 +13,12 @@
+ #endif
+ 
+ #include <getopt.h>
++#include <libgen.h>
+ #include <signal.h>
+ #include <stdbool.h>
+ #include <stdint.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <string.h>
+ #include <strings.h>
+ #include <time.h>
+ 
+diff --git a/test/mock/mock.c b/test/mock/mock.c
+index 83a8ab5..b5bcedd 100644
+--- a/test/mock/mock.c
++++ b/test/mock/mock.c
+@@ -16,12 +16,12 @@
+ #include <assert.h>
+ #include <errno.h>
+ #include <getopt.h>
++#include <libgen.h>
+ #include <signal.h>
+ #include <stdbool.h>
+ #include <stdint.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+-#include <string.h>
+ #include <strings.h>
+ #include <sys/stat.h>
+ 
+diff --git a/utils/aplay/aplay.c b/utils/aplay/aplay.c
+index 999d1ef..49b0d65 100644
+--- a/utils/aplay/aplay.c
++++ b/utils/aplay/aplay.c
+@@ -15,6 +15,7 @@
+ #include <assert.h>
+ #include <errno.h>
+ #include <getopt.h>
++#include <libgen.h>
+ #include <math.h>
+ #include <poll.h>
+ #include <pthread.h>
+diff --git a/utils/cli/cli.c b/utils/cli/cli.c
+index d480ef1..299c44c 100644
+--- a/utils/cli/cli.c
++++ b/utils/cli/cli.c
+@@ -13,6 +13,7 @@
+ #endif
+ 
+ #include <getopt.h>
++#include <libgen.h>
+ #include <stdarg.h>
+ #include <stdbool.h>
+ #include <stdint.h>
+diff --git a/utils/rfcomm/rfcomm.c b/utils/rfcomm/rfcomm.c
+index 9eba57f..20c1214 100644
+--- a/utils/rfcomm/rfcomm.c
++++ b/utils/rfcomm/rfcomm.c
+@@ -15,6 +15,7 @@
+ #include <ctype.h>
+ #include <errno.h>
+ #include <getopt.h>
++#include <libgen.h>
+ #include <poll.h>
+ #include <stdbool.h>
+ #include <stdint.h>
+-- 
+2.45.2
+
