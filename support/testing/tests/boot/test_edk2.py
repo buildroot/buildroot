@@ -33,6 +33,10 @@ class TestEdk2(infra.basetest.BRTest):
         BR2_PACKAGE_HOST_MTOOLS=y
         """
 
+    def setUp(self):
+        self.skipTest("Incompatible QEmu 5.2.0 (Docker image) / "
+                      "EDK2 (stable202405) versions.")
+
     def test_run(self):
         hda = os.path.join(self.builddir, "images", "disk.img")
         flash0 = os.path.join(self.builddir, "images", "SBSA_FLASH0.fd")
