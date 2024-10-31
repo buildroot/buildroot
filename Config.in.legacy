@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2024.11"
 
+config BR2_PACKAGE_BSDIFF
+	bool "bsdiff has been removed"
+	select BR2_LEGACY
+	help
+	  The bsdiff package was removed as it is not maintained
+	  anymore (no commit since 2014).
+
 config BR2_PACKAGE_PROCPS_NS_ORIGINAL_TOP
 	bool "BR2_PACKAGE_PROCPS_NS_ORIGINAL_TOP has been renamed"
 	select BR2_LEGACY
