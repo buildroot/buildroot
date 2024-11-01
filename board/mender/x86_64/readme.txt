@@ -11,14 +11,14 @@ Mender UEFI PC sample config
 
   $ make
 
-2. Write the Pendrive
+2. Write the image
 
-  The build process will create a Pendrive image called disk.img in
+  The build process will create a all-in-one image called disk.img in
   output/images.
 
   Write the image to a pendrive:
 
-  $ dd if=output/images/disk.img of=/dev/${pendrive}; sync
+  $ dd if=output/images/disk.img of=/dev/sdX; sync
 
   Once the process is complete, insert it into the target PC and boot.
 
@@ -66,4 +66,4 @@ particular needs, as this option changes the mender artifact name.
 Using mender
 ========================
 Please read the mender documentation at:
-https://docs.mender.io/2.2/getting-started
+https://docs.mender.io
