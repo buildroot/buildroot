@@ -25,22 +25,6 @@ HOST_RUST_DEPENDENCIES = \
 
 HOST_RUST_VERBOSITY = $(if $(VERBOSE),2,0)
 
-# Some vendor crates contain Cargo.toml.orig files. The associated
-# .cargo-checksum.json file will contain a checksum for Cargo.toml.orig but
-# support/scripts/apply-patches.sh will delete them. This will cause the build
-# to fail, as Cargo will not be able to find the file and verify the checksum.
-# So, remove all Cargo.toml.orig entries from the affected .cargo-checksum.json
-# files
-define HOST_RUST_EXCLUDE_ORIG_FILES
-	for file in $$(find $(@D) -name '*.orig'); do \
-		crate=$$(dirname $${file}); \
-		fn=$${crate}/.cargo-checksum.json; \
-		sed -i -e 's/"Cargo.toml.orig":"[a-z0-9]\+",//g' $${fn}; \
-	done
-endef
-
-HOST_RUST_POST_EXTRACT_HOOKS += HOST_RUST_EXCLUDE_ORIG_FILES
-
 define HOST_RUST_CONFIGURE_CMDS
 	( \
 		echo '[build]'; \
