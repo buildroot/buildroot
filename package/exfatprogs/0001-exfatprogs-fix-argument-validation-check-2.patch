@@ -1,0 +1,41 @@
+From 5055bc4e852e18ddbfc618623cdaa2c0572d5f0e Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@smile.fr>
+Date: Sat, 2 Nov 2024 19:27:46 +0100
+Subject: [PATCH] exfatprogs: fix argument validation check (2)
+
+Since commit 7d354e5be83ed3bb981c59b3435ff64da56d185d
+("exfatprogs: fix argument validation check"), exfatlabel tool
+error out when we try to set a new volume serial or label.
+
+  exfatlabel /dev/sda1 "new label"
+  exfatlabel -i /dev/sda1 0x12345678
+
+Error out only if too few argument is given, ignore
+additional arguments.
+
+Fixes:
+https://gitlab.com/buildroot.org/buildroot/-/jobs/8199992419
+
+Upstream: https://github.com/exfatprogs/exfatprogs/pull/279
+
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ label/label.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/label/label.c b/label/label.c
+index 12d027b..9c8aff3 100644
+--- a/label/label.c
++++ b/label/label.c
+@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
+ 	if (version_only)
+ 		exit(EXIT_FAILURE);
+ 
+-	if (argc - optind != 1)
++	if (argc - optind < 1)
+ 		usage();
+ 
+ 	ui.dev_name = argv[serial_mode + 1];
+-- 
+2.45.0
+
