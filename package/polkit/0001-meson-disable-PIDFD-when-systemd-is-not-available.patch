@@ -1,0 +1,53 @@
+From 51a1c5b5ab616fe0243b40baddb4864199bbe624 Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@smile.fr>
+Date: Sat, 2 Nov 2024 23:33:16 +0100
+Subject: [PATCH] meson: disable PIDFD when systemd is not available
+
+Since the Polkit version bump 125, TestPolkitInitd fail due to an
+upstream issue related to the new PIDFD support introduced in
+Polkit 124 [1].
+
+The PIDFD issue only affect OS without systemd.
+
+Only enable PIDFD support when systemd is available until
+upstream fix the issue.
+
+Fixes:
+https://gitlab.com/buildroot.org/buildroot/-/jobs/8199992596
+
+[1] https://github.com/polkit-org/polkit/issues/451
+
+Upstream: Not applicable
+
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ meson.build | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 302c189..5c247f4 100644
+--- a/meson.build
++++ b/meson.build
+@@ -202,8 +202,6 @@ if enable_logind
+ endif
+ config_data.set('HAVE_LIBSYSTEMD', enable_logind)
+ 
+-config_data.set('HAVE_PIDFD_OPEN', cc.get_define('SYS_pidfd_open', prefix: '#include <sys/syscall.h>') != '')
+-
+ # systemd unit / sysuser / tmpfiles.d file installation directories
+ systemdsystemunitdir = get_option('systemdsystemunitdir')
+ systemd_dep = dependency('systemd', required : false)
+@@ -222,6 +220,10 @@ else
+   tmpfiles_dir = '/usr/lib/tmpfiles.d'
+ endif
+ 
++# PIDFD is broken with sysvinit based OS since 124 release
++# https://github.com/polkit-org/polkit/issues/451
++config_data.set('HAVE_PIDFD_OPEN', systemd_dep.found() and cc.get_define('SYS_pidfd_open', prefix: '#include <sys/syscall.h>') != '')
++
+ # User for running polkitd
+ polkitd_user = get_option('polkitd_user')
+ config_data.set_quoted('POLKITD_USER', polkitd_user)
+-- 
+2.45.0
+
