@@ -54,7 +54,7 @@ generate_mender_image() {
 }
 
 generate_image() {
-    sh support/scripts/genimage.sh -c "${BOARD_DIR}/genimage-efi.cfg"
+    support/scripts/genimage.sh -c "${BOARD_DIR}/genimage-efi.cfg"
 }
 
 # Main function.
