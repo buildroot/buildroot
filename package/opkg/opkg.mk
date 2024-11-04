@@ -13,7 +13,7 @@ OPKG_INSTALL_STAGING = YES
 OPKG_CONF_OPTS = \
 	--enable-sha256 \
 	--without-acl \
-	--without-xattrs
+	--without-xattr
 
 ifeq ($(BR2_PACKAGE_OPKG_GPG_SIGN),y)
 OPKG_CONF_OPTS += --enable-gpg
