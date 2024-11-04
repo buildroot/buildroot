@@ -44,6 +44,13 @@ else
 OPKG_CONF_OPTS += --disable-bzip2
 endif
 
+ifeq ($(BR2_PACKAGE_LIBSOLV),y)
+OPKG_DEPENDENCIES += libsolv
+OPKG_CONF_OPTS += --with-libsolv
+else
+OPKG_CONF_OPTS += --without-libsolv
+endif
+
 ifeq ($(BR2_PACKAGE_LZ4),y)
 OPKG_DEPENDENCIES += lz4
 OPKG_CONF_OPTS += --enable-lz4
