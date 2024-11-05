@@ -10,6 +10,7 @@
 
 import argparse
 import inspect
+import fileinput
 import magic
 import os
 import re
@@ -91,6 +92,9 @@ def parse_args():
                         "functions that would be called for each file (debug)")
     parser.add_argument("--failed-only", action="store_true", help="print only"
                         " the name of the functions that failed (debug)")
+    parser.add_argument("--patch", "-p", action="store_true",
+                        help="The 'files' are patch files to be sent to the"
+                        " Buildroot mailing list")
 
     parser.add_argument("--test-suite", action="store_true", help="Run the"
                         " test-suite")
@@ -294,6 +298,30 @@ def check_file_using_lib(fname):
     return nwarnings, nlines
 
 
+def patch_modified_files(patches):
+    """
+    Find files modified in a patch file
+
+    :param patches: Patch files to read, as a list of paths or '-' for stdin
+    :returns: List of modified filenames
+    """
+
+    files = []
+    with fileinput.input(files=patches) as fp:
+        # Search for unified-diff to-file lines
+        for line in fp:
+            if line.startswith('+++'):
+                line = line.removeprefix('+++').strip()
+
+                # Remove the prefix git adds to filenames
+                if line.startswith('b/'):
+                    line = line.removeprefix('b/')
+
+                files.append(line)
+    files.sort()
+    return files
+
+
 def __main__():
     global flags
     flags = parse_args()
@@ -301,14 +329,17 @@ def __main__():
     if flags.test_suite:
         return checkpackagelib.base.run_test_suite()
 
+    if flags.patch:
+        files_to_check = patch_modified_files(flags.files)
+    else:
+        files_to_check = flags.files
+
     if flags.intree_only:
         # change all paths received to be relative to the base dir
         base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        files_to_check = [os.path.relpath(os.path.abspath(f), base_dir) for f in flags.files]
+        files_to_check = [os.path.relpath(os.path.abspath(f), base_dir) for f in files_to_check]
         # move current dir so the script find the files
         os.chdir(base_dir)
-    else:
-        files_to_check = flags.files
 
     if len(files_to_check) == 0:
         print("No files to check style")
