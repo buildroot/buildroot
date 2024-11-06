@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IOTOOLS_VERSION = 1.7
+IOTOOLS_VERSION = 1.8
 IOTOOLS_SITE = $(call github,andy-shev,iotools,v$(IOTOOLS_VERSION))
 IOTOOLS_LICENSE = GPL-2.0+
 IOTOOLS_LICENSE_FILES = COPYING
