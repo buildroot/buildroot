@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GRPC_VERSION = 1.51.1
+GRPC_VERSION = 1.66.1
 GRPC_SITE = $(call github,grpc,grpc,v$(GRPC_VERSION))
 GRPC_LICENSE = Apache-2.0, BSD-3-Clause (third_party code), MPL-2.0 (etc/roots.pem)
 GRPC_LICENSE_FILES = LICENSE
@@ -29,6 +29,7 @@ GRPC_CONF_OPTS = \
 	-DgRPC_RE2_PROVIDER=package \
 	-DgRPC_SSL_PROVIDER=package \
 	-DgRPC_ZLIB_PROVIDER=package \
+	-DgRPC_BUILD_CODEGEN=OFF \
 	-DgRPC_BUILD_GRPC_CPP_PLUGIN=OFF \
 	-DgRPC_BUILD_GRPC_CSHARP_PLUGIN=OFF \
 	-DgRPC_BUILD_GRPC_NODE_PLUGIN=OFF \

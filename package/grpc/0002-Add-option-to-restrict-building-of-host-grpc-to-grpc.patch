@@ -1,4 +1,4 @@
-From 0f2c73b62bdc612f9d5cdd8e0c765995470d4f8b Mon Sep 17 00:00:00 2001
+From 6aab068a6bd92e215b61eaab61062bf1d97bc065 Mon Sep 17 00:00:00 2001
 From: Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>
 Date: Tue, 25 May 2021 14:55:23 +0200
 Subject: [PATCH] Add option to restrict building of (host-)grpc to
@@ -15,17 +15,17 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Updated for 1.48.0:
 Signed-off-by: Michael Nosthoff <buildroot@heine.tech>
 ---
- CMakeLists.txt | 39 +++++++++++++++++++++++++++++++++++----
- 1 file changed, 35 insertions(+), 4 deletions(-)
+ CMakeLists.txt | 36 +++++++++++++++++++++++++++++++-----
+ 1 file changed, 31 insertions(+), 5 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 0dcae6b1aee5..57b3963a43b0 100644
+index 2565dc5c84..94f8fd3e93 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -49,12 +49,16 @@ option(gRPC_BUILD_TESTS "Build tests" OFF)
+@@ -50,12 +50,16 @@ set(gRPC_BUILD_MSVC_MP_COUNT 0 CACHE STRING "The maximum number of processes for
+ option(gRPC_BUILD_TESTS "Build tests" OFF)
  option(gRPC_BUILD_CODEGEN "Build codegen" ON)
- option(gRPC_BUILD_CSHARP_EXT "Build C# extensions" ON)
- option(gRPC_BACKWARDS_COMPATIBILITY_MODE "Build libraries that are binary compatible across a larger number of OS and libc versions" OFF)
+ option(gRPC_DOWNLOAD_ARCHIVES "Download archives for empty 3rd party directories" ON)
 +option(gRPC_BUILD_PLUGIN_SUPPORT_ONLY "Build plugin support only" OFF)
  
  set(gRPC_INSTALL_default ON)
@@ -39,7 +39,7 @@ index 0dcae6b1aee5..57b3963a43b0 100644
  set(gRPC_INSTALL ${gRPC_INSTALL_default} CACHE BOOL
      "Generate installation target")
  
-@@ -563,6 +567,8 @@ add_custom_target(plugins
+@@ -662,6 +666,8 @@ add_custom_target(plugins
    DEPENDS ${_gRPC_PLUGIN_LIST}
  )
  
@@ -48,7 +48,7 @@ index 0dcae6b1aee5..57b3963a43b0 100644
  add_custom_target(tools_c
    DEPENDS
  )
-@@ -574,6 +580,8 @@ add_custom_target(tools_cxx
+@@ -673,6 +679,8 @@ add_custom_target(tools_cxx
  add_custom_target(tools
    DEPENDS tools_c tools_cxx)
  
@@ -57,33 +57,16 @@ index 0dcae6b1aee5..57b3963a43b0 100644
  protobuf_generate_grpc_cpp_with_import_path_correction(
    src/proto/grpc/channelz/channelz.proto src/proto/grpc/channelz/channelz.proto
  )
-@@ -1307,6 +1315,7 @@ if(gRPC_BUILD_TESTS)
+@@ -1660,7 +1668,7 @@ if(gRPC_BUILD_TESTS)
      DEPENDS buildtests_c buildtests_cxx)
  endif()
  
+-
 +if (NOT gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
  
  add_library(address_sorting
    third_party/address_sorting/address_sorting.c
-@@ -1359,6 +1368,8 @@ if(gRPC_INSTALL)
-   )
- endif()
- 
-+endif() # gRPC_BUILD_PLUGIN_SUPPORT_ONLY
-+
- if(gRPC_BUILD_TESTS)
- 
- add_library(end2end_tests
-@@ -1512,6 +1523,8 @@ target_link_libraries(end2end_tests
- 
- endif()
- 
-+if(NOT gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
-+
- add_library(gpr
-   src/core/lib/gpr/alloc.cc
-   src/core/lib/gpr/atm.cc
-@@ -2504,6 +2517,8 @@ if(gRPC_INSTALL)
+@@ -2855,6 +2863,8 @@ if(gRPC_INSTALL)
    )
  endif()
  
@@ -92,16 +75,34 @@ index 0dcae6b1aee5..57b3963a43b0 100644
  if(gRPC_BUILD_TESTS)
  
  add_library(grpc_test_util
-@@ -2618,6 +2633,8 @@ endif()
+@@ -2987,6 +2997,8 @@ endif()
  
  endif()
  
 +if(NOT gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
 +
  add_library(grpc_unsecure
-   src/core/ext/filters/census/grpc_context.cc
-   src/core/ext/filters/channel_idle/channel_idle_filter.cc
-@@ -3102,6 +3119,8 @@ if(gRPC_INSTALL)
+   src/core/channelz/channel_trace.cc
+   src/core/channelz/channelz.cc
+@@ -3547,6 +3559,8 @@ if(gRPC_INSTALL)
+   )
+ endif()
+ 
++endif() # gRPC_BUILD_PLUGIN_SUPPORT_ONLY
++
+ if(gRPC_BUILD_TESTS)
+ 
+ add_library(gtest
+@@ -3621,6 +3635,8 @@ target_link_libraries(gtest
+ 
+ endif()
+ 
++if(NOT gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
++
+ add_library(upb_base_lib
+   third_party/upb/upb/base/status.c
+ )
+@@ -4108,6 +4124,8 @@ if(gRPC_INSTALL)
    )
  endif()
  
@@ -110,7 +111,7 @@ index 0dcae6b1aee5..57b3963a43b0 100644
  if(gRPC_BUILD_TESTS)
  
  if(gRPC_BUILD_CODEGEN)
-@@ -3185,6 +3204,8 @@ endif()
+@@ -4193,6 +4211,8 @@ endif()
  
  endif()
  
@@ -119,24 +120,24 @@ index 0dcae6b1aee5..57b3963a43b0 100644
  add_library(grpc++
    src/core/ext/transport/binder/client/binder_connector.cc
    src/core/ext/transport/binder/client/channel_create.cc
-@@ -3635,6 +3656,7 @@ if(gRPC_INSTALL)
+@@ -4684,6 +4704,7 @@ if(gRPC_INSTALL)
    )
  endif()
  
 +endif() # gRPC_BUILD_PLUGIN_SUPPORT_ONLY
  
  if(gRPC_BUILD_CODEGEN)
- add_library(grpc++_reflection
-@@ -3889,6 +3911,8 @@ target_link_libraries(grpc++_test_util
+ add_library(grpc++_reflection ${_gRPC_STATIC_WIN32}
+@@ -4967,6 +4988,8 @@ target_link_libraries(grpc++_test_util
  
  endif()
  
 +if(NOT gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
 +
  add_library(grpc++_unsecure
+   src/cpp/client/call_credentials.cc
    src/cpp/client/channel_cc.cc
-   src/cpp/client/client_callback.cc
-@@ -4181,6 +4205,7 @@ if(gRPC_INSTALL)
+@@ -5707,6 +5730,7 @@ if(gRPC_INSTALL)
    )
  endif()
  
@@ -144,7 +145,7 @@ index 0dcae6b1aee5..57b3963a43b0 100644
  
  add_library(grpc_plugin_support
    src/compiler/cpp_generator.cc
-@@ -4240,7 +4265,7 @@ foreach(_hdr
+@@ -5769,7 +5793,7 @@ foreach(_hdr
  endforeach()
  
  
@@ -153,25 +154,7 @@ index 0dcae6b1aee5..57b3963a43b0 100644
    install(TARGETS grpc_plugin_support EXPORT gRPCTargets
      RUNTIME DESTINATION ${gRPC_INSTALL_BINDIR}
      BUNDLE DESTINATION  ${gRPC_INSTALL_BINDIR}
-@@ -4324,6 +4349,8 @@ endif()
- 
- endif()
- 
-+if(NOT gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
-+
- add_library(upb
-   third_party/upb/third_party/utf8_range/naive.c
-   third_party/upb/third_party/utf8_range/range2-neon.c
-@@ -4393,6 +4420,8 @@ if(gRPC_INSTALL)
-   )
- endif()
- 
-+endif() # gRPC_BUILD_PLUGIN_SUPPORT_ONLY
-+
- 
- if(gRPC_BUILD_TESTS)
- 
-@@ -11085,7 +11114,7 @@ target_link_libraries(grpc_completion_queue_test
+@@ -16520,7 +16544,7 @@ target_link_libraries(grpc_completion_queue_test
  
  
  endif()
@@ -180,16 +163,16 @@ index 0dcae6b1aee5..57b3963a43b0 100644
  
  add_executable(grpc_cpp_plugin
    src/compiler/cpp_plugin.cc
-@@ -11115,7 +11144,7 @@ target_link_libraries(grpc_cpp_plugin
+@@ -16548,7 +16572,7 @@ target_link_libraries(grpc_cpp_plugin
  
  
  
 -if(gRPC_INSTALL)
 +if(gRPC_INSTALL OR gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
-   install(TARGETS grpc_cpp_plugin EXPORT gRPCTargets
+   install(TARGETS grpc_cpp_plugin EXPORT gRPCPluginTargets
      RUNTIME DESTINATION ${gRPC_INSTALL_BINDIR}
      BUNDLE DESTINATION  ${gRPC_INSTALL_BINDIR}
-@@ -23128,7 +23157,7 @@ endif()
+@@ -37968,7 +37992,7 @@ endif()
  
  
  
@@ -198,12 +181,13 @@ index 0dcae6b1aee5..57b3963a43b0 100644
  
  if(gRPC_INSTALL)
    install(EXPORT gRPCTargets
-@@ -23225,3 +23254,5 @@ generate_pkgconfig(
-   "-lgrpc++_unsecure"
-   ""
-   "grpc++_unsecure.pc")
+@@ -38089,3 +38113,5 @@ generate_pkgconfig(
+   "-lgrpcpp_otel_plugin"
+   "-laddress_sorting -lupb_textformat_lib -lupb_json_lib -lupb_wire_lib -lupb_message_lib -lutf8_range_lib -lupb_mini_descriptor_lib -lupb_mem_lib -lupb_base_lib"
+   "grpcpp_otel_plugin.pc")
 +
 +endif() # gRPC_BUILD_PLUGIN_SUPPORT_ONLY
+\ No newline at end of file
 -- 
-2.43.0
+2.34.1
 
