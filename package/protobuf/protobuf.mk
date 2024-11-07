@@ -7,45 +7,53 @@
 # When bumping this package, make sure to also verify if the
 # python-protobuf package still works and to update its hash,
 # as they share the same version/site variables.
-PROTOBUF_VERSION = 21.12
-PROTOBUF_SOURCE = protobuf-cpp-3.$(PROTOBUF_VERSION).tar.gz
+PROTOBUF_VERSION = 28.1
 PROTOBUF_SITE = https://github.com/protocolbuffers/protobuf/releases/download/v$(PROTOBUF_VERSION)
 PROTOBUF_LICENSE = BSD-3-Clause
 PROTOBUF_LICENSE_FILES = LICENSE
 PROTOBUF_CPE_ID_VENDOR = google
 
 # N.B. Need to use host protoc during cross compilation.
-PROTOBUF_DEPENDENCIES = host-protobuf
-PROTOBUF_CONF_OPTS = --with-protoc=$(HOST_DIR)/bin/protoc
+PROTOBUF_DEPENDENCIES = host-protobuf libabseil-cpp
+PROTOBUF_CONF_OPTS = \
+	-Dprotobuf_ABSL_PROVIDER=package \
+	-Dprotobuf_ALLOW_CCACHE=ON \
+	-Dprotobuf_BUILD_CONFORMANCE=OFF \
+	-Dprotobuf_BUILD_LIBPROTOC=OFF \
+	-Dprotobuf_BUILD_LIBUPB=ON \
+	-Dprotobuf_BUILD_PROTOBUF_BINARIES=ON \
+	-Dprotobuf_BUILD_PROTOC_BINARIES=OFF \
+	-Dprotobuf_BUILD_TESTS=OFF \
+	-Dprotobuf_DISABLE_RTTI=OFF \
+	-Dprotobuf_INSTALL=ON \
+	-DWITH_PROTOC=$(HOST_DIR)/bin/protoc
 
-PROTOBUF_CXXFLAGS = $(TARGET_CXXFLAGS)
-
-ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_85180),y)
-PROTOBUF_CXXFLAGS += -O0
-endif
-
-ifeq ($(BR2_or1k),y)
-PROTOBUF_CXXFLAGS += -mcmodel=large
-endif
-
-PROTOBUF_CONF_ENV = CXXFLAGS="$(PROTOBUF_CXXFLAGS)"
+HOST_PROTOBUF_DEPENDENCIES = host-libabseil-cpp
+HOST_PROTOBUF_CONF_OPTS = \
+	-Dprotobuf_ABSL_PROVIDER=package \
+	-Dprotobuf_ALLOW_CCACHE=ON \
+	-Dprotobuf_BUILD_CONFORMANCE=OFF \
+	-Dprotobuf_BUILD_LIBPROTOC=ON \
+	-Dprotobuf_BUILD_LIBUPB=OFF \
+	-Dprotobuf_BUILD_PROTOBUF_BINARIES=ON \
+	-Dprotobuf_BUILD_PROTOC_BINARIES=ON \
+	-Dprotobuf_BUILD_TESTS=OFF \
+	-Dprotobuf_DISABLE_RTTI=OFF \
+	-Dprotobuf_INSTALL=ON \
+	-Dprotobuf_WITH_ZLIB=OFF
 
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
-PROTOBUF_CONF_ENV += LIBS=-latomic
+PROTOBUF_CONF_OPTS += -DCMAKE_EXE_LINKER_FLAGS=-latomic
 endif
 
 PROTOBUF_INSTALL_STAGING = YES
 
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 PROTOBUF_DEPENDENCIES += zlib
+PROTOBUF_CONF_OPTS += -Dprotobuf_WITH_ZLIB=ON
+else
+PROTOBUF_CONF_OPTS += -Dprotobuf_WITH_ZLIB=OFF
 endif
 
-define PROTOBUF_REMOVE_UNNECESSARY_TARGET_FILES
-	rm -rf $(TARGET_DIR)/usr/bin/protoc
-	rm -rf $(TARGET_DIR)/usr/lib/libprotoc.so*
-endef
-
-PROTOBUF_POST_INSTALL_TARGET_HOOKS += PROTOBUF_REMOVE_UNNECESSARY_TARGET_FILES
-
-$(eval $(autotools-package))
-$(eval $(host-autotools-package))
+$(eval $(cmake-package))
+$(eval $(host-cmake-package))

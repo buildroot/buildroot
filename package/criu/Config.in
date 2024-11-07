@@ -19,7 +19,7 @@ config BR2_PACKAGE_CRIU
 	bool "criu"
 	depends on BR2_PACKAGE_CRIU_ARCH_SUPPORTS
 	depends on BR2_HOST_GCC_AT_LEAST_7 # protobuf-c
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_8 # -march=armv7-a+fp
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_8 # -march=armv7-a+fp, protobuf
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_18 # rseq.h
 	depends on !BR2_TOOLCHAIN_USES_UCLIBC # no aio.h
 	depends on !BR2_STATIC_LIBS # protobuf, libbsd
