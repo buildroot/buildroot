@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-KISMET_VERSION = 2023-07-R1
-KISMET_SOURCE = kismet-$(KISMET_VERSION).tar.xz
-KISMET_SITE = http://www.kismetwireless.net/code
+KISMET_VERSION = 52bcb902e36b2df1562cfbe644b113362248d029
+KISMET_SITE = $(call github,kismetwireless,kismet,$(KISMET_VERSION))
 KISMET_DEPENDENCIES = \
 	host-pkgconf \
 	libpcap \
@@ -37,6 +36,13 @@ else
 KISMET_CONF_OPTS += --disable-libcap
 endif
 
+ifeq ($(BR2_PACKAGE_LIBRTLSDR),y)
+KISMET_DEPENDENCIES += librtlsdr
+KISMET_CONF_OPTS += --enable-librtlsdr
+else
+KISMET_CONF_OPTS += --disable-librtlsdr
+endif
+
 ifeq ($(BR2_PACKAGE_LIBUSB),y)
 KISMET_DEPENDENCIES += libusb
 KISMET_CONF_OPTS += --enable-libusb
@@ -58,6 +64,13 @@ else
 KISMET_CONF_OPTS += --disable-lmsensors
 endif
 
+ifeq ($(BR2_PACKAGE_MOSQUITTO),y)
+KISMET_DEPENDENCIES += mosquitto
+KISMET_CONF_OPTS += --enable-mosquitto
+else
+KISMET_CONF_OPTS += --disable-mosquitto
+endif
+
 ifeq ($(BR2_PACKAGE_PCRE2),y)
 KISMET_DEPENDENCIES += pcre2
 KISMET_CONF_OPTS += --enable-pcre --enable-require-pcre2
@@ -69,7 +82,7 @@ KISMET_CONF_OPTS += --disable-pcre
 endif
 
 ifeq ($(BR2_PACKAGE_KISMET_PYTHON_TOOLS),y)
-KISMET_DEPENDENCIES += python3 python-setuptools
+KISMET_DEPENDENCIES += python3 host-python-setuptools
 KISMET_CONF_OPTS += \
 	--enable-python-tools \
 	--with-python-interpreter=$(HOST_DIR)/bin/python$(PYTHON3_VERSION_MAJOR)
