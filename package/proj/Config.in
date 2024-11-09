@@ -14,6 +14,18 @@ config BR2_PACKAGE_PROJ
 
 	  http://proj4.org/
 
+if BR2_PACKAGE_PROJ
+
+config BR2_PACKAGE_PROJ_APPS
+	bool "build apps"
+	select BR2_PACKAGE_LIBCURL
+	help
+	  Build and install proj command line apps. Those command line
+	  applications are: cct, cs2cs, geod, gie, invgeod, invproj,
+	  proj, projinfo, projsync.
+
+endif
+
 comment "proj needs a toolchain w/ C++, gcc >= 4.7, NPTL, wchar"
 	depends on !BR2_INSTALL_LIBSTDCPP || \
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_7 || \
