@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-USBREDIR_VERSION = 0.13.0
+USBREDIR_VERSION = 0.14.0
 USBREDIR_SOURCE = usbredir-$(USBREDIR_VERSION).tar.xz
-USBREDIR_SITE = http://spice-space.org/download/usbredir
+USBREDIR_SITE = https://www.spice-space.org/download/usbredir
 USBREDIR_LICENSE = LGPL-2.1+ (libraries)
 USBREDIR_LICENSE_FILES = COPYING.LIB
 USBREDIR_INSTALL_STAGING = YES
