@@ -1,0 +1,12 @@
+config BR2_PACKAGE_BFSCRIPTS
+	bool "bfscripts"
+	depends on BR2_USE_MMU # bash
+	select BR2_PACKAGE_BUSYBOX_SHOW_OTHERS # bash
+	select BR2_PACKAGE_BASH # runtime
+	help
+	  Collection of scripts that are used for Mellanox/NVIDIA
+	  Bluefield SoC management.
+
+	  Currently, it installs: bfcfg, bfrshlog and bfup.
+
+	  https://github.com/Mellanox/bfscripts
