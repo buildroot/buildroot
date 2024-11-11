@@ -1,3 +1,43 @@
+2024.11-rc1, released November 11th, 2024
+
+	Fixes all over the tree and package updates.
+
+	Toolchain:
+
+	- binutils 2.43 added, binutils 2.42 becomes the default.
+	- glibc updated to 2.40
+	- ARM, Bootlin and Synopsys external toolchains updated
+	- Support added for ARM FDPIC, which allows to use shared
+	  libraries on ARM noMMU targets
+
+	Go support: allow using a pre-built Go compiler, using the new
+	go-bin package.
+
+	New defconfigs: friendlyarm_nanopi_neo, nvidia_bf3,
+	stm32f746_disco_sd, ti_am62px_sk, versal_vek280
+
+	Removed defconfigs: qemu_nios2_10m50
+
+	New packages: andes-spi-burn, bfscripts, cpp-httplib, dlib,
+	dpdk, evilwm, go-bin, iana-assignments, iotools, lua-uuid,
+	oath-toolkit, perl-mime-base32, python-aiohappyeyeballs,
+	python-aiomqtt, python-argcomplete, python-dotenv,
+	python-dunamai, python-immutabledict, python-iterable-io,
+	python-path, python-poetry-dynamic-versioning,
+	python-propcache, python-proto-plus, python-psygnal,
+	python-pyaml, python-pydantic-settings, python-pyqt5-sip,
+	python-pysnmpcrypto, python-rgbmatrix, python-sdbus,
+	python-sdbus-networkmanager, python-simple-websocket,
+	python-tinyhtml5, python-zipstream-ng, qt6charts, qt6scxml,
+	superiotool, tailscale, tinyinit, uefisettings
+
+	Removed packages: bsdiff, popperjs
+
+	Added tests: erofs filesystem, audit, dosfstools, dtc,
+	exfatprogs, go-bin, iputils, oath-toolkit, parted, pppd, pv,
+	pyqt5, python-sdbus, python-sdbus-networkmanager, rrdtool,
+	unbound, which
+
 2024.08.1, released October 20th, 2024
 
 	Important / security related fixes.
