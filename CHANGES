@@ -38,6 +38,14 @@
 	pyqt5, python-sdbus, python-sdbus-networkmanager, rrdtool,
 	unbound, which
 
+	Issues resolved:
+	- host rpath fixups misses needed directory
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/39
+	- procps-ng: build failure when linking to systemd
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/28
+	- ripgrep leaves /usr/crates2.json / .crates.toml files
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/17
+
 2024.08.1, released October 20th, 2024
 
 	Important / security related fixes.
