@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MEMTEST86_VERSION = 6.20
+MEMTEST86_VERSION = 7.20
 MEMTEST86_SITE = $(call github,memtest86plus,memtest86plus,v$(MEMTEST86_VERSION))
 MEMTEST86_LICENSE = GPL-2.0
 MEMTEST86_LICENSE_FILES = LICENSE
