@@ -42,7 +42,7 @@ jobs:
       - name: Build
         run: |
           cd ${{ github.workspace }}/seeed-linux-buildroot/
-          make
+          sudo make
 
       - name: Pack
         run: |

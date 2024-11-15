@@ -42,13 +42,13 @@ jobs:
       - name: Build
         run: |
           cd ${{ github.workspace }}/seeed-linux-buildroot/
-          make
+          sudo make
 
       - name: Pack
         run: |
           cd ${{ github.workspace }}/seeed-linux-buildroot/output/images/
-          tar -zcvf buildroot-image.tar.gz sdcard.img
-          echo "PACKAGE=${{ github.workspace }}/seeed-linux-buildroot/output/images/buildroot-image.tar.gz" >> $GITHUB_ENV
+          tar -zcvf buildroot-reTerminal-image.tar.gz sdcard.img
+          echo "PACKAGE=${{ github.workspace }}/seeed-linux-buildroot/output/images/buildroot-reTerminal-image.tar.gz" >> $GITHUB_ENV
 
       - name: Upload package
         uses: actions/upload-artifact@master
