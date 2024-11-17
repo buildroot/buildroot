@@ -5,7 +5,7 @@
 ################################################################################
 
 BC_VERSION = 1.07.1
-BC_SITE = http://ftp.gnu.org/gnu/bc
+BC_SITE = $(BR2_GNU_MIRROR)/bc
 BC_DEPENDENCIES = host-flex
 BC_LICENSE = GPL-2.0+, LGPL-2.1+
 BC_LICENSE_FILES = COPYING COPYING.LIB
