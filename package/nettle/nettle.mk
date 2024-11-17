@@ -5,7 +5,7 @@
 ################################################################################
 
 NETTLE_VERSION = 3.10
-NETTLE_SITE = https://ftp.gnu.org/gnu/nettle
+NETTLE_SITE = $(BR2_GNU_MIRROR)/nettle
 NETTLE_DEPENDENCIES = host-m4 gmp
 NETTLE_INSTALL_STAGING = YES
 NETTLE_LICENSE = Dual GPL-2.0+/LGPL-3.0+
