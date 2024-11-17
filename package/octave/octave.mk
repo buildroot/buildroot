@@ -5,7 +5,7 @@
 ################################################################################
 
 OCTAVE_VERSION = 9.2.0
-OCTAVE_SITE = https://ftp.gnu.org/gnu/octave
+OCTAVE_SITE = $(BR2_GNU_MIRROR)/octave
 OCTAVE_SOURCE = octave-$(OCTAVE_VERSION).tar.lz
 OCTAVE_LICENSE = GPL-3.0+
 OCTAVE_LICENSE_FILES = COPYING
