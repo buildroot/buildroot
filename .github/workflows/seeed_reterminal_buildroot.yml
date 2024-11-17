@@ -14,6 +14,43 @@ jobs:
     steps:
       - name: Initialization environment
         run: |
+          sudo apt-get remove aria2 ansible shellcheck rpm xorriso zsync \
+          clang-6.0 lldb-6.0 lld-6.0 clang-format-6.0 clang-8 lldb-8 lld-8 clang-format-8 \
+          clang-9 lldb-9 lld-9 clangd-9 clang-format-9 \
+          esl-erlang gfortran-8 gfortran-9 \
+          cabal-install-2.0 cabal-install-2.2 \
+          cabal-install-2.4 cabal-install-3.0 cabal-install-3.2 heroku imagemagick \
+          libmagickcore-dev libmagickwand-dev libmagic-dev ant ant-optional kubectl \
+          mercurial apt-transport-https mono-complete mysql-client libmysqlclient-dev \
+          mysql-server mssql-tools unixodbc-dev yarn bazel chrpath libssl-dev libxft-dev \
+          libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev \
+          php-zmq snmp pollinate libpq-dev postgresql-client ruby-full \
+          sphinxsearch subversion mongodb-org -yq >/dev/null 2>&1 \
+          || echo "failed main apt-get remove"
+          echo "Removing large packages"
+          sudo apt-get remove -y '^dotnet-.*'
+          sudo apt-get remove -y '^llvm-.*'
+          sudo apt-get remove -y 'php.*'
+          sudo apt-get remove -y azure-cli google-cloud-sdk hhvm google-chrome-stable firefox powershell
+          sudo apt-get autoremove -y >/dev/null 2>&1
+          sudo apt-get clean
+          sudo apt-get autoremove -y >/dev/null 2>&1
+          sudo apt-get autoclean -y >/dev/null 2>&1
+          #echo "https://github.com/actions/virtual-environments/issues/709"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          echo "remove big /usr/local"
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf /usr/local/lib/android >/dev/null 2>&1
+          sudo rm -rf /usr/share/dotnet/sdk > /dev/null 2>&1
+          sudo rm -rf /usr/share/dotnet/shared > /dev/null 2>&1
+          sudo rm -rf /usr/share/swift > /dev/null 2>&1
+          sudo -E apt-get -qq update
+          sudo -E apt-get -qq autoremove --purge
+          sudo -E apt-get -qq clean
+          sudo timedatectl set-timezone "$TZ"
+
+      - name: Initialization environment
+        run: |
           sudo -E apt-get -qq update
           sudo -E apt-get install sed make binutils build-essential gcc g++ bash patch \
           gzip bzip2 perl tar cpio unzip rsync file bc wget python cvs git \
@@ -28,9 +65,9 @@ jobs:
           cache-name: cache-download-files
         with:
           path: ${{ github.workspace }}/seeed-linux-buildroot/dl/
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/seeed-linux-buildroot/configs/reTerminal_64_defconfig') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
           restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-${{ env.cache-name }}
             ${{ runner.os }}-build-
             ${{ runner.os }}-
         
@@ -47,11 +84,30 @@ jobs:
       - name: Pack
         run: |
           cd ${{ github.workspace }}/seeed-linux-buildroot/output/images/
-          tar -zcvf buildroot-reTerminal-image.tar.gz sdcard.img
+          sudo tar -zcvf buildroot-reTerminal-image.tar.gz sdcard.img
           echo "PACKAGE=${{ github.workspace }}/seeed-linux-buildroot/output/images/buildroot-reTerminal-image.tar.gz" >> $GITHUB_ENV
 
-      - name: Upload package
-        uses: actions/upload-artifact@master
+      - name: Upload image
+        id: artifact-upload-step
+        uses: actions/upload-artifact@v4
         with:
-          name: buildroot deploy
+          name: Buildroot-reTerminal
           path: ${{env.PACKAGE}}
+
+      - name: Create release
+        id: create-release
+        uses: actions/create-release@v1.1.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: reTerminal-${{ github.run_number }}
+          
+      - name: Uploading reTerminal image to release
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ${{env.PACKAGE}}
+          asset_name: buildroot-reTerminal.zip
+          asset_content_type: application/zip
