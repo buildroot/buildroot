@@ -948,7 +948,7 @@ config BR2_FORTIFY_SOURCE_2
 	# gcc bug https://gcc.gnu.org/bugzilla/show_bug.cgi?id=61164
 	depends on !BR2_TOOLCHAIN_BUILDROOT || BR2_TOOLCHAIN_GCC_AT_LEAST_6
 	help
-	  This option sets _FORTIFY_SOURCES to 2 and some more
+	  This option sets _FORTIFY_SOURCE to 2 and some more
 	  checking is added, but some conforming programs might fail.
 	  Also adds checks at run-time (detected buffer overflow
 	  terminates the program)
@@ -957,7 +957,7 @@ config BR2_FORTIFY_SOURCE_3
 	bool "Extended"
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_12
 	help
-	  This option sets _FORTIFY_SOURCES to 3 and even more
+	  This option sets _FORTIFY_SOURCE to 3 and even more
 	  checking is added compared to level 2. Extends checks at
 	  run-time that can introduce an additional performance
 	  overhead.
