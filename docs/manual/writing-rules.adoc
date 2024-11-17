@@ -141,9 +141,9 @@ endif
 === The +genimage.cfg+ file
 
 +genimage.cfg+ files contain the output image layout that genimage utility
-uses to create final .img file.
-
-An example follows:
+uses to create final .img file. See the
+https://github.com/pengutronix/genimage/blob/master/README.rst[upstream
+documentation] for details. In Buildroot it is formatted as follows.
 
 ----
 image efi-part.vfat {
@@ -198,22 +198,30 @@ image sdimage.img {
   chance, the byte count.  In comments instead use +GB+, +MB+, +KB+
   (not +kb+) in place of +G+, +M+, +K+.
 
-* For GPT partitions, the +partition-type-uuid+ value must be +U+ for
-  the EFI System Partition (expanded to
-  +c12a7328-f81f-11d2-ba4b-00a0c93ec93b+ by _genimage_), +F+ for a FAT
-  partition (expanded to +ebd0a0a2-b9e5-4433-87c0-68b6b72699c7+ by
-  _genimage_) or +L+ for the root filesystem or other filesystems
-  (expanded to +0fc63daf-8483-4772-8e79-3d69d8477de4+ by
-  _genimage_). Even though +L+ is the default value of _genimage_, we
-  prefer to have it explicitly specified in our +genimage.cfg+
-  files. Finally, these shortcuts should be used without double
-  quotes, e.g +partition-type-uuid = U+. If an explicit GUID is
-  specified, lower-case letters should be used.
+* Every +partition+ of a GPT image (e.g. +partition-table-type = gpt+) must
+  explicitly set +partition-type-uuid+. It must not be double-quoted. Buildroot
+  follows the
+  https://uapi-group.org/specifications/specs/discoverable_partitions_specification/[UAPI
+  Discoverable Partitions Specification] whenever possible. This means that the
+  partitions define a specific +partition-type-uuid+ depending on the intended
+  mountpoint.
+  +
+  _genimage_ provides
+  https://github.com/pengutronix/genimage/?tab=readme-ov-file#the-image-section[shortcuts
+  for many of the partition types in the Discoverable Partitions Specification],
+  and these shortcuts must be used whenever possible. If a GUID shortcut is not
+  supported by _genimage_, the full GUID must be written in lower-case letters.
+  Some common shortcuts are as follows:
 
-The +genimage.cfg+ files are the input for the genimage tool used in
-Buildroot to generate the final image file(i.e. sdcard.img). For further
-details about the _genimage_ language, refer to
-https://github.com/pengutronix/genimage/blob/master/README.rst[].
+** +U+ for the EFI System Partition (expanded to
+   +c12a7328-f81f-11d2-ba4b-00a0c93ec93b+ by _genimage_).
+
+** +root-\{arch\}+ for the root filesystem partition, where +\{arch\}+ is the
+   system architecture (for example +root-x86+, +root-x86-64+, +root-arm+, or
+   +root-arm64+).
+
+** +L+ for other Linux filesystem partitions (expanded to
+   +0fc63daf-8483-4772-8e79-3d69d8477de4+ by _genimage_).
 
 
 === The documentation
