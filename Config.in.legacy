@@ -144,6 +144,15 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2025.02"
+
+config BR2_PACKAGE_QUAGGA
+	bool "quagga has been removed"
+	select BR2_LEGACY
+	help
+	  The quagga package was removed as it is not maintained
+	  anymore and the upstream repo is gone.
+
 comment "Legacy options removed in 2024.11"
 
 config BR2_PACKAGE_BSDIFF
