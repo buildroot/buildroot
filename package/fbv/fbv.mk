@@ -5,8 +5,8 @@
 ################################################################################
 
 FBV_VERSION = 1.0b
-FBV_SITE = http://s-tech.elsat.net.pl/fbv
-
+# upstream (http://s-tech.elsat.net.pl/fbv) dead
+FBV_SITE = http://sources.buildroot.net/fbv
 FBV_LICENSE = GPL-2.0
 FBV_LICENSE_FILES = COPYING
 
