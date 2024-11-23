@@ -5,7 +5,8 @@
 ################################################################################
 
 GAMIN_VERSION = 0.1.10
-GAMIN_SITE = http://www.gnome.org/~veillard/gamin/sources
+# upstream (http://www.gnome.org/~veillard/gamin/sources) dead
+GAMIN_SITE = http://sources.buildroot.net/gamin
 GAMIN_AUTORECONF = YES
 GAMIN_INSTALL_STAGING = YES
 GAMIN_LICENSE = LGPL-2.0+
