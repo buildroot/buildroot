@@ -95,6 +95,14 @@ config BR2_ARM_CPU_ARMV8A
 	bool
 	select BR2_USE_MMU
 
+# Armv9.0-A base specification is a super-set of Armv8.5-A. It is
+# fully compatible with Armv8. This symbol is defined to allow checks
+# for doing Armv9 optimization. Armv8 is also selected for
+# compatibility.
+config BR2_ARM_CPU_ARMV9A
+	bool
+	select BR2_ARM_CPU_ARMV8A
+
 choice
 	prompt "Target Architecture Variant"
 	default BR2_cortex_a53 if BR2_ARCH_IS_64
@@ -496,6 +504,14 @@ config BR2_saphira
 	select BR2_ARM_CPU_HAS_FP_ARMV8
 	select BR2_ARM_CPU_ARMV8A
 	select BR2_ARCH_NEEDS_GCC_AT_LEAST_8
+
+comment "armv9.0a cores"
+config BR2_neoverse_n2
+	bool "neoverse-N2 (aka perseus)"
+	depends on BR2_ARCH_IS_64
+	select BR2_ARM_CPU_HAS_FP_ARMV8
+	select BR2_ARM_CPU_ARMV9A
+	select BR2_ARCH_NEEDS_GCC_AT_LEAST_11
 endchoice
 
 config BR2_ARM_ENABLE_NEON
@@ -889,6 +905,8 @@ config BR2_GCC_TARGET_CPU
 	default "tsv110"	if BR2_tsv110
 	# armv8.4a
 	default "saphira"	if BR2_saphira
+	# armv9.0a
+	default "neoverse-n2"	if BR2_neoverse_n2
 
 config BR2_GCC_TARGET_ABI
 	default "aapcs-linux"	if BR2_arm || BR2_armeb
