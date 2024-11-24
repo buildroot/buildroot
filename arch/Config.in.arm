@@ -506,6 +506,12 @@ config BR2_saphira
 	select BR2_ARCH_NEEDS_GCC_AT_LEAST_8
 
 comment "armv9.0a cores"
+config BR2_cortex_a710
+	bool "Cortex-A710 (aka matterhorn)"
+	depends on BR2_ARCH_IS_64
+	select BR2_ARM_CPU_HAS_FP_ARMV8
+	select BR2_ARM_CPU_ARMV9A
+	select BR2_ARCH_NEEDS_GCC_AT_LEAST_12
 config BR2_neoverse_n2
 	bool "neoverse-N2 (aka perseus)"
 	depends on BR2_ARCH_IS_64
@@ -906,6 +912,7 @@ config BR2_GCC_TARGET_CPU
 	# armv8.4a
 	default "saphira"	if BR2_saphira
 	# armv9.0a
+	default "cortex-a710"	if BR2_cortex_a710
 	default "neoverse-n2"	if BR2_neoverse_n2
 
 config BR2_GCC_TARGET_ABI
