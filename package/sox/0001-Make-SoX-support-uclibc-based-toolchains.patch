@@ -1,0 +1,40 @@
+From 5d51acafe9c38fb05939b4d2d6a9dcde12476458 Mon Sep 17 00:00:00 2001
+From: Gustavo Zacarias <gustavo@zacarias.com.ar>
+Date: Sat, 29 Jun 2024 12:28:54 +0200
+Subject: [PATCH] Make SoX support uclibc-based toolchains
+
+From:
+http://sourceforge.net/p/sox/bugs/179/
+
+Signed-off-by: Gustavo Zacarias <gustavo@zacarias.com.ar>
+[Julien: rebased patch on package git version 7524160,
+and regenerated with git format-patch]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ src/formats.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/src/formats.c b/src/formats.c
+index 3fcf4382..9fc001bd 100644
+--- a/src/formats.c
++++ b/src/formats.c
+@@ -466,7 +466,7 @@ static void UNUSED rewind_pipe(FILE * fp)
+ #if defined _FSTDIO || defined _NEWLIB_VERSION || defined __APPLE__
+   fp->_p -= PIPE_AUTO_DETECT_SIZE;
+   fp->_r += PIPE_AUTO_DETECT_SIZE;
+-#elif defined __GLIBC__
++#elif defined __GLIBC__ && ! defined __UCLIBC__
+   fp->_IO_read_ptr = fp->_IO_read_base;
+ #elif defined _MSC_VER && _MSC_VER >= 1900
+   #define NO_REWIND_PIPE
+@@ -477,7 +477,6 @@ static void UNUSED rewind_pipe(FILE * fp)
+   /* To fix this #error, either simply remove the #error line and live without
+    * file-type detection with pipes, or add support for your compiler in the
+    * lines above.  Test with cat monkey.wav | ./sox --info - */
+-  #error FIX NEEDED HERE
+   #define NO_REWIND_PIPE
+   (void)fp;
+ #endif
+-- 
+2.45.2
+

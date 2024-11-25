@@ -1,0 +1,15 @@
+config BR2_PACKAGE_ESPFLASH
+	bool "espflash"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HAS_UDEV
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  Serial flasher utilities for Espressif devices, based
+	  loosely on esptool.py. Supports the ESP32,
+	  ESP32-C2/C3/C6, ESP32-H2, ESP32-P4, and ESP32-S2/S3.
+
+	  https://github.com/esp-rs/espflash
+
+comment "espflash needs udev /dev management"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	depends on !BR2_PACKAGE_HAS_UDEV

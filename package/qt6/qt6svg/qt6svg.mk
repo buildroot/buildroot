@@ -36,4 +36,8 @@ QT6SVG_DEPENDENCIES = \
 	host-pkgconf \
 	qt6base
 
+HOST_QT6SVG_DEPENDENCIES = \
+	host-qt6base
+
 $(eval $(cmake-package))
+$(eval $(host-cmake-package))

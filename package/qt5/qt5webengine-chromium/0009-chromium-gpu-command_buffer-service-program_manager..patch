@@ -1,0 +1,38 @@
+From dbb4ea2d1f410df29eee5a0a06bfb8318b0781dc Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 13 Jul 2024 18:17:25 +0200
+Subject: [PATCH] chromium/gpu/command_buffer/service/program_manager.cc:
+ StringPiece::as_string() is gone
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fix:
+
+chromium/gpu/command_buffer/service/program_manager.cc:623:25: error: ‘using re2::StringPiece = class absl::string_view’ {aka ‘class absl::string_view’} has no member named ‘as_string’
+
+By taking a small subset of upstream commit
+https://github.com/chromium/chromium/commit/8d7cdb7b45abb2725200cde990d795024b405e79;
+
+Upstream: https://github.com/chromium/chromium/commit/8d7cdb7b45abb2725200cde990d795024b405e79
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ chromium/gpu/command_buffer/service/program_manager.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/chromium/gpu/command_buffer/service/program_manager.cc b/chromium/gpu/command_buffer/service/program_manager.cc
+index 021530c7e39..5fb3e2b768e 100644
+--- a/chromium/gpu/command_buffer/service/program_manager.cc
++++ b/chromium/gpu/command_buffer/service/program_manager.cc
+@@ -620,7 +620,7 @@ std::string Program::ProcessLogInfo(const std::string& log) {
+       output += hashed_name;
+   }
+ 
+-  return output + input.as_string();
++  return output + std::string(input);
+ }
+ 
+ void Program::UpdateLogInfo() {
+-- 
+2.25.1
+

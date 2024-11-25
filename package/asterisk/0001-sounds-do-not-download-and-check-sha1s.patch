@@ -1,4 +1,4 @@
-From 3e8a9e9a1c7eae515eb628778c3c8a04338b3bb3 Mon Sep 17 00:00:00 2001
+From 63f685e468bef94d8938b7a9c1a18c6c00840219 Mon Sep 17 00:00:00 2001
 From: "Yann E. MORIN" <yann.morin.1998@free.fr>
 Date: Tue, 27 Dec 2016 11:21:09 +0100
 Subject: [PATCH] sounds: do not download and check sha1s
@@ -20,16 +20,18 @@ However, that poses at least two problems:
 
 So we just do without the sha1 download and checks.
 
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+[Julien: rebase patch on tag 20.7.0]
 Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
 ---
  sounds/Makefile | 10 ----------
  1 file changed, 10 deletions(-)
 
 diff --git a/sounds/Makefile b/sounds/Makefile
-index 84d0f45..7a80d56 100644
+index 288b8139a9..260434e504 100644
 --- a/sounds/Makefile
 +++ b/sounds/Makefile
-@@ -100,17 +100,7 @@ ifneq ($(SOUNDS_CACHE_DIR),)
+@@ -101,17 +101,7 @@ ifneq ($(SOUNDS_CACHE_DIR),)
  	  if test ! -f "$$(SOUNDS_CACHE_DIR)/$$@"; then \
  	    (cd "$$(SOUNDS_CACHE_DIR)"; $$(DOWNLOAD) $$(SOUNDS_URL)/$$@); \
  	  fi; \
@@ -48,5 +50,5 @@ index 84d0f45..7a80d56 100644
  else
  	$(CMD_PREFIX) \
 -- 
-2.7.4
+2.45.2
 

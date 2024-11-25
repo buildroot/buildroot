@@ -1,0 +1,37 @@
+From 2812c2005cfa4bfc5741651c8310e36f28c0327e Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 14 Jul 2024 11:41:56 +0200
+Subject: [PATCH] core/libsparse/sparse_read.c: add missing output_file.h
+ include
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+sparse_read.c uses read_all() without including the header file
+containing its prototype, causing:
+
+core/libsparse/sparse_read.c:122:31: error: implicit declaration of function ‘read_all’ [-Wimplicit-function-declaration]
+
+Fix this by including output_file.h.
+
+Upstream: N/A, we're too far from upstream
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ core/libsparse/sparse_read.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/core/libsparse/sparse_read.c b/core/libsparse/sparse_read.c
+index 704bcfa..0a8f838 100644
+--- a/core/libsparse/sparse_read.c
++++ b/core/libsparse/sparse_read.c
+@@ -32,6 +32,7 @@
+ #include "sparse_crc32.h"
+ #include "sparse_file.h"
+ #include "sparse_format.h"
++#include "output_file.h"
+ 
+ #if defined(__APPLE__) && defined(__MACH__)
+ #define lseek64 lseek
+-- 
+2.45.2
+

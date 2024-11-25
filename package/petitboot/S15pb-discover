@@ -12,7 +12,9 @@ fi
 
 start() {
 	printf 'Starting %s: ' "$DAEMON"
-	mkdir -p /var/log/petitboot
+	# shellcheck disable=SC2174 # only apply -m to deepest dir
+	mkdir -p -m 0775 /var/log/petitboot
+	chown petituser:petitgroup /var/log/petitboot
 
 	# shellcheck disable=SC2086 # we need the word splitting
 	start-stop-daemon -S -q -b -m -p "$PIDFILE" -x "/usr/sbin/$DAEMON" \

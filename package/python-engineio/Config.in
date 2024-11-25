@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_ENGINEIO
 	bool "python-engineio"
+	select BR2_PACKAGE_PYTHON_SIMPLE_WEBSOCKET # runtime
 	select BR2_PACKAGE_PYTHON3_ZLIB
 	help
 	  Engine.IO server.

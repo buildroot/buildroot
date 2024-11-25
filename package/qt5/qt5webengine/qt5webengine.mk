@@ -61,7 +61,6 @@ QT5WEBENGINE_DEPENDENCIES += \
 	host-freetype \
 	host-gperf \
 	host-harfbuzz \
-	host-icu \
 	host-ninja \
 	host-nodejs \
 	host-pkgconf \
@@ -71,7 +70,6 @@ QT5WEBENGINE_DEPENDENCIES += \
 	host-python3 \
 	host-webp \
 	host-zlib \
-	ffmpeg \
 	freetype \
 	jpeg \
 	lcms2 \
@@ -80,14 +78,11 @@ QT5WEBENGINE_DEPENDENCIES += \
 	libvpx \
 	libxml2 \
 	libxslt \
-	re2 \
 	snappy \
 	webp
 
 QT5WEBENGINE_CONF_OPTS += \
 	-webengine-embedded-build \
-	-webengine-ffmpeg \
-	-webengine-icu \
 	-webengine-opus \
 	-webengine-webchannel \
 	-webengine-webp \
@@ -108,7 +103,6 @@ QT5WEBENGINE_CONF_OPTS += \
 	-feature-webengine-system-ninja \
 	-feature-webengine-system-nss \
 	-feature-webengine-system-png \
-	-feature-webengine-system-re2 \
 	-feature-webengine-system-snappy \
 	-feature-webengine-system-zlib
 

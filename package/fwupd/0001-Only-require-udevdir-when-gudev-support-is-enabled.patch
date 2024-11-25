@@ -1,0 +1,35 @@
+From a784ef9b904778b511a6284f46d983906939de6c Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Thu, 18 Jul 2024 09:44:15 -0600
+Subject: [PATCH] Only require udevdir when gudev support is enabled
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Upstream: https://github.com/fwupd/fwupd/commit/a784ef9b904778b511a6284f46d983906939de6c
+---
+ meson.build | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 22282d73e..f49d08d29 100644
+--- a/meson.build
++++ b/meson.build
+@@ -273,10 +273,12 @@ if build_daemon
+   if not polkit.found()
+     warning('Polkit is disabled, the daemon will allow ALL client actions')
+   endif
+-  udevdir = get_option('udevdir')
+-  if udevdir == '' and host_machine.system() == 'linux'
+-    udev = dependency('udev')
+-    udevdir = udev.get_variable(pkgconfig: 'udevdir')
++  if gudev.found()
++    udevdir = get_option('udevdir')
++    if udevdir == '' and host_machine.system() == 'linux'
++      udev = dependency('udev')
++      udevdir = udev.get_variable(pkgconfig: 'udevdir')
++    endif
+   endif
+ endif
+ libm = cc.find_library('m', required: false)
+-- 
+2.34.1
+

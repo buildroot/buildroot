@@ -1,0 +1,38 @@
+From 9485c21f8f36a78a754ccba3c4ce30867af9655d Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Fri, 26 Jul 2024 09:13:16 +0200
+Subject: [PATCH] liburing.pc.in: add -D_GNU_SOuRCE to Cflags
+
+Add -D_GNU_SOURCE to Cflags to avoid the following musl build failure
+with applications using liburing (e.g. libdex) raised since version 2.6
+and c427ed678f39fd144d784f2e970bd8c52f425e14 which reverted
+c34070e08199491fe9653617364f4aea9b9b22be:
+
+In file included from ../src/dex-uring-aio-backend.c:29:
+/home/autobuild/autobuild/instance-7/output-1/host/mips-buildroot-linux-musl/sysroot/usr/include/liburing.h:224:39: error: unknown type name 'cpu_set_t'
+  224 |                                 const cpu_set_t *mask);
+      |                                       ^~~~~~~~~
+/home/autobuild/autobuild/instance-7/output-1/host/mips-buildroot-linux-musl/sysroot/usr/include/liburing.h:1212:48: error: unknown type name 'loff_t'; did you mean 'off_t'?
+ 1212 |                                        int fd, loff_t len)
+      |                                                ^~~~~~
+      |                                                off_t
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/axboe/liburing/commit/9485c21f8f36a78a754ccba3c4ce30867af9655d
+---
+ liburing.pc.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/liburing.pc.in b/liburing.pc.in
+index 2c879b2..790c22e 100644
+--- a/liburing.pc.in
++++ b/liburing.pc.in
+@@ -9,4 +9,4 @@ Description: io_uring library
+ URL: https://git.kernel.dk/cgit/liburing/
+ 
+ Libs: -L${libdir} -luring
+-Cflags: -I${includedir}
++Cflags: -I${includedir} -D_GNU_SOURCE
+-- 
+2.43.0
+

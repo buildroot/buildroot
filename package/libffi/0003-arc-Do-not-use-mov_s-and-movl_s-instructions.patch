@@ -1,0 +1,45 @@
+From 97c273519e41a7ef2841cb7531c6eda01fc69dc2 Mon Sep 17 00:00:00 2001
+From: Yuriy Kolerov <ykolerov@synopsys.com>
+Date: Wed, 17 Jul 2024 19:19:30 +0300
+Subject: [PATCH] arc: Do not use mov_s and movl_s instructions
+
+mov_s and movl_s instructions use a restricted set of registers.
+However, a list of available registers for such instructions for
+one ARC target may not match a list for another ARC targets. For
+example, it is applicable to ARC700 and ARC HS3x/4x - build
+fails because mov_s formats may be incompatible in some cases.
+
+The easiest and the most straightforward way to fix this issue
+is to use mov and movl instead of mov_s and movl_s.
+
+Signed-off-by: Yuriy Kolerov <ykolerov@synopsys.com>
+Upstream: https://github.com/libffi/libffi/pull/844
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/arc/arcompact.S | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/arc/arcompact.S b/src/arc/arcompact.S
+index 1d7f1a1..e749341 100644
+--- a/src/arc/arcompact.S
++++ b/src/arc/arcompact.S
+@@ -39,14 +39,14 @@
+ #define LARG ldl
+ #define SARG stl
+ #define ADDPTR addl
+-#define MOVPTR movl_s
++#define MOVPTR movl
+ #else
+ #define PTRS 4
+ #define FLTS 4
+ #define LARG ld
+ #define SARG st
+ #define ADDPTR add
+-#define MOVPTR mov_s
++#define MOVPTR mov
+ #endif
+ 
+ #define FRAME_LEN (8 * PTRS + 16)
+-- 
+2.46.0
+

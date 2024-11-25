@@ -120,7 +120,7 @@ class CVE:
     def parse_node(self, node):
         """
         Parse the node inside the configurations section to extract the
-        cpe information usefull to know if a product is affected by
+        cpe information useful to know if a product is affected by
         the CVE. Actually only the product name and the version
         descriptor are needed, but we also provide the vendor name.
         """

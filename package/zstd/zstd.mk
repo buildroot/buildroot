@@ -4,13 +4,16 @@
 #
 ################################################################################
 
-ZSTD_VERSION = 1.5.5
+ZSTD_VERSION = 1.5.6
 ZSTD_SITE = https://github.com/facebook/zstd/releases/download/v$(ZSTD_VERSION)
 ZSTD_INSTALL_STAGING = YES
 ZSTD_LICENSE = BSD-3-Clause or GPL-2.0
 ZSTD_LICENSE_FILES = LICENSE COPYING
 ZSTD_CPE_ID_VENDOR = facebook
 ZSTD_CPE_ID_PRODUCT = zstandard
+
+# The package is a dependency to ccache so ccache cannot be a dependency
+HOST_ZSTD_ADD_CCACHE_DEPENDENCY = NO
 
 ZSTD_OPTS += PREFIX=/usr
 ZSTD_OPTS += ZSTD_LEGACY_SUPPORT=0

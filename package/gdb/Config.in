@@ -52,14 +52,14 @@ config BR2_PACKAGE_GDB_SERVER
 	depends on !BR2_TOOLCHAIN_EXTERNAL_GDB_SERVER_COPY
 	help
 	  Build the gdbserver stub to run on the target.
-	  A full gdb is needed to debug the progam.
+	  A full gdb is needed to debug the program.
 
 config BR2_PACKAGE_GDB_DEBUGGER
 	bool "full debugger"
 	depends on BR2_USE_WCHAR
 	depends on !BR2_sh
 	select BR2_PACKAGE_GMP
-	select BR2_PACKAGE_MPFR if (BR2_GDB_VERSION_14 || BR2_arc)
+	select BR2_PACKAGE_MPFR if !(BR2_GDB_VERSION_13)
 	select BR2_PACKAGE_NCURSES
 	select BR2_PACKAGE_ZLIB
 

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBGPG_ERROR_VERSION = 1.48
+LIBGPG_ERROR_VERSION = 1.50
 LIBGPG_ERROR_SITE = https://www.gnupg.org/ftp/gcrypt/libgpg-error
 LIBGPG_ERROR_SOURCE = libgpg-error-$(LIBGPG_ERROR_VERSION).tar.bz2
 LIBGPG_ERROR_LICENSE = GPL-2.0+, LGPL-2.1+
@@ -26,4 +26,10 @@ else
 LIBGPG_ERROR_CONF_OPTS += --disable-threads
 endif
 
+HOST_LIBGPG_ERROR_CONF_OPTS = \
+	--enable-threads \
+	--enable-install-gpg-error-config \
+	--disable-tests
+
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))

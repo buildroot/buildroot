@@ -1,0 +1,9 @@
+config BR2_PACKAGE_KMON
+	bool "kmon"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  kmon provides a terminal UI for managing kernel modules
+	  and monitoring kernel activities.
+
+	  https://github.com/orhun/kmon

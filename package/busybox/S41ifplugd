@@ -1,0 +1,85 @@
+#!/bin/sh
+
+DAEMON="ifplugd"
+
+# Each ifplugd instance handles only one interface, so this script is
+# designed to be symlinked per interface. For each interface create a
+# symlink with .IFACE appended to the name. E.g. to launch ifplugd for
+# eth1 create a symlink from /etc/init.d/S41ifplugd.eth1 to this
+# script. DEFAULT_IFACE sets the interface the non-symlink script will
+# use, set it to empty in /etc/default/ifplugd to disable the default
+# instance and use symlinked instances only.
+DEFAULT_IFACE="eth0"
+# If your action script is not in the default location
+# /etc/ifplugd/ifplugd.action, use the "-r" option to set the
+# location.
+IFPLUGD_ARGS="-M"
+
+# shellcheck source=/dev/null
+[ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
+
+NAME_IFACE="$(basename "$0" | cut -s -d. -f2)"
+if [ -n "$NAME_IFACE" ]; then
+	IFACE="${NAME_IFACE}"
+elif [ -n "$DEFAULT_IFACE" ]; then
+	IFACE="${DEFAULT_IFACE}"
+else
+	# no interface configured
+	exit 0
+fi
+
+# check-package disable Variables
+PIDFILE="/var/run/${DAEMON}.${IFACE}.pid"
+IFPLUGD_ARGS="${IFPLUGD_ARGS} -i ${IFACE}"
+
+# BusyBox' ifplugd does not create a pidfile, so pass "-n" in the
+# command line and use "--make-pidfile" to instruct start-stop-daemon
+# to create one.
+start() {
+	printf 'Starting %s for %s: ' "$DAEMON" "$IFACE"
+	# shellcheck disable=SC2086 # we need the word splitting
+	start-stop-daemon --start --background --make-pidfile \
+		--pidfile "$PIDFILE" --exec "/usr/sbin/$DAEMON" \
+		-- -n $IFPLUGD_ARGS
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+stop() {
+	printf 'Stopping %s for %s: ' "$DAEMON" "$IFACE"
+	start-stop-daemon --stop --pidfile "$PIDFILE" --exec "/usr/sbin/$DAEMON"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+		return "$status"
+	fi
+	while start-stop-daemon --stop --test --quiet --pidfile "$PIDFILE" \
+		--exec "/sbin/$DAEMON"; do
+		sleep 0.1
+	done
+	rm -f "$PIDFILE"
+	return "$status"
+}
+
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+	start|stop|restart)
+		"$1";;
+	reload)
+		# Restart, since there is no true "reload" feature.
+		restart;;
+	*)
+		echo "Usage: $0 {start|stop|restart|reload}"
+		exit 1
+esac

@@ -10,7 +10,7 @@
 First, let's see how to write a +.mk+ file for a rebar-based package,
 with an example :
 
-------------------------------
+----
 01: ################################################################################
 02: #
 03: # erlang-foobar
@@ -23,7 +23,7 @@ with an example :
 10: ERLANG_FOOBAR_DEPENDENCIES = host-libaaa libbbb
 11:
 12: $(eval $(rebar-package))
---------------------------------
+----
 
 On line 7, we declare the version of the package.
 
@@ -51,13 +51,9 @@ Just like the generic infrastructure, the +rebar+ infrastructure works
 by defining a number of variables before calling the +rebar-package+
 macro.
 
-First, all the package metadata information variables that exist in
-the generic infrastructure also exist in the +rebar+ infrastructure:
-+ERLANG_FOOBAR_VERSION+, +ERLANG_FOOBAR_SOURCE+,
-+ERLANG_FOOBAR_PATCH+, +ERLANG_FOOBAR_SITE+,
-+ERLANG_FOOBAR_SUBDIR+, +ERLANG_FOOBAR_DEPENDENCIES+,
-+ERLANG_FOOBAR_INSTALL_STAGING+, +ERLANG_FOOBAR_INSTALL_TARGET+,
-+ERLANG_FOOBAR_LICENSE+ and +ERLANG_FOOBAR_LICENSE_FILES+.
+All the package metadata information variables that exist in the
+xref:generic-package-reference[generic package infrastructure] also
+exist in the +rebar+ infrastructure.
 
 A few additional variables, specific to the +rebar+ infrastructure,
 can also be defined. Many of them are only useful in very specific

@@ -25,9 +25,68 @@ config BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
 	# Go doesn't support CGO linking on MIPS64x platforms
 	# See: https://github.com/karalabe/xgo/issues/46
 	depends on !BR2_mips64 && !BR2_mips64el
+	# go uses dlfcn.h + cgo for its plugin module
+	depends on !BR2_STATIC_LIBS
+	# cgo supports uses threads
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 
 # Host go packages should depend on BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS
 config BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS
 	bool
 	default y
+	depends on BR2_PACKAGE_HOST_GO_BOOTSTRAP_STAGE3_ARCH_SUPPORTS || BR2_PACKAGE_HOST_GO_BIN_HOST_ARCH_SUPPORTS
+
+# CGO linking for the host. Since we use the same compiler for target
+# and host, if the target can't do CGO linking, then the host can't.
+# But if the target is not supported by Go, then the host can do CGO
+# linking (except when it itself does not support CGO linking).
+config BR2_PACKAGE_HOST_GO_HOST_CGO_LINKING_SUPPORTS
+	bool
+	default y if BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS
+	default y if !BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS
+	depends on BR2_HOSTARCH != "mips64"
+	depends on BR2_HOSTARCH != "mips64el"
+
+# Go packages should select BR2_PACKAGE_HOST_GO
+config BR2_PACKAGE_HOST_GO
+	bool "host go"
+	depends on BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS
+
+if BR2_PACKAGE_HOST_GO
+
+choice
+	prompt "Go compiler variant"
+	default BR2_PACKAGE_HOST_GO_SRC if BR2_PACKAGE_HOST_GO_BOOTSTRAP_STAGE3_ARCH_SUPPORTS
+	default BR2_PACKAGE_HOST_GO_BIN if BR2_PACKAGE_HOST_GO_BIN_HOST_ARCH_SUPPORTS
+	help
+	  Select a Go compiler variant.
+
+	  Default to 'host-go-src'.
+
+config BR2_PACKAGE_HOST_GO_SRC
+	bool "host go (source)"
 	depends on BR2_PACKAGE_HOST_GO_BOOTSTRAP_STAGE3_ARCH_SUPPORTS
+	help
+	  This package will build the go compiler for the host.
+
+config BR2_PACKAGE_HOST_GO_BIN
+	bool "host go (pre-built)"
+	depends on BR2_PACKAGE_HOST_GO_BIN_HOST_ARCH_SUPPORTS
+	help
+	  This package will install pre-built versions of the compiler
+
+endchoice
+
+endif
+
+config BR2_PACKAGE_PROVIDES_HOST_GO
+	string
+	# Default to host-go-bin unless src explicitly requested
+	default "host-go-src" if BR2_PACKAGE_HOST_GO_SRC
+	default "host-go-bin"
+
+source "package/go/go-bin/Config.in.host"
+source "package/go/go-bootstrap-stage1/Config.in.host"
+source "package/go/go-bootstrap-stage2/Config.in.host"
+source "package/go/go-bootstrap-stage3/Config.in.host"

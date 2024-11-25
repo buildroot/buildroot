@@ -1,4 +1,4 @@
-From 618220bfb55c875d6a4d197cb24fe632ac93ec85 Mon Sep 17 00:00:00 2001
+From 6e8915572db65cf63b7a82f9b24af6f9cad92ba7 Mon Sep 17 00:00:00 2001
 From: Wolfgang Grandegger <wg@grandegger.com>
 Date: Mon, 20 Feb 2017 16:29:24 +0100
 Subject: [PATCH] Add option to make the rpath relative under a specified root
@@ -43,15 +43,17 @@ pending.
 Signed-off-by: Wolfgang Grandegger <wg@grandegger.com>
 [Fabrice: update for 0.13]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
- src/patchelf.cc | 196 ++++++++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 175 insertions(+), 21 deletions(-)
+ src/patchelf.cc | 199 +++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 171 insertions(+), 28 deletions(-)
 
 diff --git a/src/patchelf.cc b/src/patchelf.cc
-index 1d9a772..35b4a33 100644
+index fd1e7b7b61c3..f3b7ba8867bf 100644
 --- a/src/patchelf.cc
 +++ b/src/patchelf.cc
-@@ -46,6 +46,10 @@ static bool debugMode = false;
+@@ -45,6 +45,10 @@ static bool debugMode = false;
  
  static bool forceRPath = false;
  
@@ -62,8 +64,8 @@ index 1d9a772..35b4a33 100644
  static std::vector<std::string> fileNames;
  static std::string outputFileName;
  static bool alwaysWrite = false;
-@@ -77,6 +81,49 @@ static unsigned int getPageSize(){
-     return pageSize;
+@@ -81,6 +85,49 @@ static bool hasAllowedPrefix(const std::string & s, const std::vector<std::strin
+     return std::any_of(allowedPrefixes.begin(), allowedPrefixes.end(), [&](const std::string & i) { return !s.compare(0, i.size(), i); });
  }
  
 +static bool absolutePathExists(const std::string & path, std::string & canonicalPath)
@@ -112,23 +114,23 @@ index 1d9a772..35b4a33 100644
  
  template<ElfFileParams>
  class ElfFile
-@@ -183,9 +230,13 @@ public:
+@@ -197,9 +244,13 @@ public:
  
-     void setInterpreter(const string & newInterpreter);
+     void setInterpreter(const std::string & newInterpreter);
  
 -    typedef enum { rpPrint, rpShrink, rpSet, rpAdd, rpRemove } RPathOp;
 +    typedef enum { rpPrint, rpShrink, rpMakeRelative, rpSet, rpAdd, rpRemove} RPathOp;
-+
+ 
+-    void modifyRPath(RPathOp op, const std::vector<std::string> & allowedRpathPrefixes, std::string newRPath);
 +    bool libFoundInRPath(const std::string & dirName,
 +                         const std::vector<std::string> neededLibs,
 +                         std::vector<bool> & neededLibFound);
- 
--    void modifyRPath(RPathOp op, const std::vector<std::string> & allowedRpathPrefixes, std::string newRPath);
++
 +    void modifyRPath(RPathOp op, std::string rootDir, const std::vector<std::string> & allowedRpathPrefixes, std::string newRPath, const std::string & fileName);
  
-     void addNeeded(set<string> libs);
+     void addNeeded(const std::set<std::string> & libs);
  
-@@ -1041,8 +1092,28 @@ static void concatToRPath(string & rpath, const string & path)
+@@ -1267,8 +1318,28 @@ static void concatToRPath(std::string & rpath, const std::string & path)
  
  
  template<ElfFileParams>
@@ -157,9 +159,9 @@ index 1d9a772..35b4a33 100644
 +void ElfFile<ElfFileParamNames>::modifyRPath(RPathOp op, std::string rootDir,
 +    const std::vector<std::string> & allowedRpathPrefixes, std::string newRPath, const std::string & fileName)
  {
-     Elf_Shdr & shdrDynamic = findSection(".dynamic");
+     auto shdrDynamic = findSection(".dynamic");
  
-@@ -1096,6 +1167,11 @@ void ElfFile<ElfFileParamNames>::modifyRPath(RPathOp op, string newRPath)
+@@ -1314,6 +1385,11 @@ void ElfFile<ElfFileParamNames>::modifyRPath(RPathOp op,
          return;
      }
  
@@ -171,7 +173,7 @@ index 1d9a772..35b4a33 100644
      if (op == rpShrink && !rpath) {
          debug("no RPATH to shrink\n");
          return;
-@@ -1120,31 +1196,80 @@ void ElfFile<ElfFileParamNames>::modifyRPath(RPathOp op, string newRPath)
+@@ -1343,31 +1419,80 @@ void ElfFile<ElfFileParamNames>::modifyRPath(RPathOp op,
                  continue;
              }
  
@@ -271,7 +273,7 @@ index 1d9a772..35b4a33 100644
      if (op == rpRemove) {
          if (!rpath) {
              debug("no RPATH to delete\n");
-@@ -1413,7 +1543,9 @@ static bool shrinkRPath = false;
+@@ -1736,7 +1861,9 @@ static bool removeRPath = false;
  static bool setRPath = false;
  static bool addRPath = false;
  static bool printRPath = false;
@@ -281,7 +283,7 @@ index 1d9a772..35b4a33 100644
  static std::set<std::string> neededLibsToRemove;
  static std::map<std::string, std::string> neededLibsToReplace;
  static std::set<std::string> neededLibsToAdd;
-@@ -1438,16 +1570,18 @@ static void patchElf2(ElfFile & elfFile)
+@@ -1760,16 +1887,18 @@ static void patchElf2(ElfFile && elfFile, const FileContents & fileContents, con
          elfFile.setInterpreter(newInterpreter);
  
      if (printRPath)
@@ -305,7 +307,7 @@ index 1d9a772..35b4a33 100644
  
      if (printNeeded) elfFile.printNeededLibs();
  
-@@ -1508,6 +1642,9 @@ void showHelp(const string & progName)
+@@ -1821,6 +1950,9 @@ void showHelp(const std::string & progName)
    [--remove-rpath]\n\
    [--shrink-rpath]\n\
    [--allowed-rpath-prefixes PREFIXES]\t\tWith '--shrink-rpath', reject rpath entries not starting with the allowed prefix\n\
@@ -315,8 +317,8 @@ index 1d9a772..35b4a33 100644
    [--print-rpath]\n\
    [--force-rpath]\n\
    [--add-needed LIBRARY]\n\
-@@ -1564,6 +1701,17 @@ int main(int argc, char * * argv)
-             setRPath = true;
+@@ -1889,6 +2021,17 @@ int mainWrapped(int argc, char * * argv)
+             addRPath = true;
              newRPath = argv[i];
          }
 +        else if (arg == "--make-rpath-relative") {
@@ -334,5 +336,5 @@ index 1d9a772..35b4a33 100644
              printRPath = true;
          }
 -- 
-1.9.1
+2.43.0
 

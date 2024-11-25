@@ -1,0 +1,147 @@
+From ef88ee98855008cd8c8de807a12917a556e2ce7d Mon Sep 17 00:00:00 2001
+From: Adam Duskett <aduskett@gmail.com>
+Date: Fri, 28 Jul 2017 08:18:22 -0400
+Subject: [PATCH] Misc fixes from Archlinux
+
+Patch from:
+    https://git.archlinux.org/svntogit/packages.git/plain/gsm/trunk/gsm.patch
+
+Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Signed-off-by: Adam Duskett <aduskett@gmail.com>
+Refresh for 1.0.17
+[Fabrice: refresh for 1.0.22]
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+[Julien: regenerate with git format-patch for 1.0.22,
+as Fabrice refresh is incomplete for applying with fuzz 0]
+---
+ Makefile | 49 ++++++++++++++++++++++++-------------------------
+ 1 file changed, 24 insertions(+), 25 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 2ad5e5d..2cb0b06 100644
+--- a/Makefile
++++ b/Makefile
+@@ -44,7 +44,7 @@ WAV49	= -DWAV49
+ # CCFLAGS 	= -c -O
+ 
+ CC		= gcc -ansi -pedantic
+-CCFLAGS 	= -c -O2 -DNeedFunctionPrototypes=1 -Wall -Wno-comment
++CCFLAGS 	= -c -O2 -fPIC -DNeedFunctionPrototypes=1 -Wall -Wno-comment
+ 
+ LD 		= $(CC)
+ 
+@@ -96,7 +96,7 @@ TOAST_INSTALL_MAN = $(TOAST_INSTALL_ROOT)/man/man1
+ #  Other tools
+ 
+ SHELL		= /bin/sh
+-LN		= ln
++LN		= ln -s -f
+ BASENAME 	= basename
+ AR		= ar
+ ARFLAGS		= cr
+@@ -139,7 +139,7 @@ LFLAGS	= $(LDFLAGS) $(LDINC)
+ 
+ # Targets
+ 
+-LIBGSM	= $(LIB)/libgsm.a
++LIBGSMSO = $(LIB)/libgsm.so
+ 
+ TOAST	= $(BIN)/toast
+ UNTOAST	= $(BIN)/untoast
+@@ -257,7 +257,7 @@ STUFF = 	ChangeLog			\
+ # Install targets
+ 
+ GSM_INSTALL_TARGETS =	\
+-		$(GSM_INSTALL_LIB)/libgsm.a		\
++		$(GSM_INSTALL_LIB)/libgsm.so		\
+ 		$(GSM_INSTALL_INC)/gsm.h		\
+ 		$(GSM_INSTALL_MAN)/gsm.3		\
+ 		$(GSM_INSTALL_MAN)/gsm_explode.3	\
+@@ -279,7 +279,7 @@ TOAST_INSTALL_TARGETS =	\
+ 
+ # Target rules
+ 
+-all:		$(LIBGSM) $(TOAST) $(TCAT) $(UNTOAST)
++all:		$(LIBGSMSO) $(TOAST) $(TCAT) $(UNTOAST)
+ 		@-echo $(ROOT): Done.
+ 
+ tst:		$(TST)/lin2cod $(TST)/cod2lin $(TOAST) $(TST)/test-result
+@@ -299,24 +299,23 @@ install:	toastinstall gsminstall
+ 
+ # The basic API: libgsm
+ 
+-$(LIBGSM):	$(LIB) $(GSM_OBJECTS)
+-		-rm $(RMFLAGS) $(LIBGSM)
+-		$(AR) $(ARFLAGS) $(LIBGSM) $(GSM_OBJECTS)
+-		$(RANLIB) $(LIBGSM)
+-
++$(LIBGSMSO): $(LIB) $(GSM_OBJECTS)
++	$(LD) -shared -Wl,-soname,libgsm.so.1 -o $@.1.0.13 $(GSM_OBJECTS)
++	$(LN) libgsm.so.1.0.13 $(LIBGSMSO).1
++	$(LN) libgsm.so.1.0.13 $(LIBGSMSO)
+ 
+ # Toast, Untoast and Tcat -- the compress-like frontends to gsm.
+ 
+-$(TOAST):	$(BIN) $(TOAST_OBJECTS) $(LIBGSM)
+-		$(LD) $(LFLAGS) -o $(TOAST) $(TOAST_OBJECTS) $(LIBGSM) $(LDLIB)
++$(TOAST):	$(BIN) $(TOAST_OBJECTS) $(LIBGSMSO)
++		$(LD) $(LFLAGS) -o $(TOAST) $(TOAST_OBJECTS) $(LIBGSMSO) $(LDLIB)
+ 
+ $(UNTOAST):	$(BIN) $(TOAST)
+ 		-rm $(RMFLAGS) $(UNTOAST)
+-		$(LN) $(TOAST) $(UNTOAST)
++		$(LN) toast $(UNTOAST)
+ 
+ $(TCAT):	$(BIN) $(TOAST)
+ 		-rm $(RMFLAGS) $(TCAT)
+-		$(LN) $(TOAST) $(TCAT)
++		$(LN) toast $(TCAT)
+ 
+ 
+ # The local bin and lib directories
+@@ -425,7 +424,7 @@ semi-clean:
+ 			-print | xargs rm $(RMFLAGS)
+ 
+ clean:	semi-clean
+-		-rm $(RMFLAGS) $(LIBGSM) $(ADDTST)/add		\
++		-rm $(RMFLAGS) $(LIBGSMSO)* $(ADDTST)/add		\
+ 			$(TOAST) $(TCAT) $(UNTOAST)	\
+ 			$(ROOT)/gsm-1.0.tar.gz
+ 
+@@ -473,22 +472,22 @@ $(ADDTST)/add:	$(ADDTST)/add_test.o
+ $(TST)/test-result:	$(TST)/lin2cod $(TST)/cod2lin $(TOAST) $(TST)/run
+ 			( cd $(TST); ./run ) 
+ 
+-$(TST)/lin2txt:		$(TST)/lin2txt.o $(LIBGSM)
++$(TST)/lin2txt:		$(TST)/lin2txt.o $(LIBGSMSO)
+ 			$(LD) $(LFLAGS) -o $(TST)/lin2txt \
+-				$(TST)/lin2txt.o $(LIBGSM) $(LDLIB)
++				$(TST)/lin2txt.o $(LIBGSMSO) $(LDLIB)
+ 
+-$(TST)/lin2cod:		$(TST)/lin2cod.o $(LIBGSM)
++$(TST)/lin2cod:		$(TST)/lin2cod.o $(LIBGSMSO)
+ 			$(LD) $(LFLAGS) -o $(TST)/lin2cod \
+-				$(TST)/lin2cod.o $(LIBGSM) $(LDLIB)
++				$(TST)/lin2cod.o $(LIBGSMSO) $(LDLIB)
+ 
+-$(TST)/gsm2cod:		$(TST)/gsm2cod.o $(LIBGSM)
++$(TST)/gsm2cod:		$(TST)/gsm2cod.o $(LIBGSMSO)
+ 			$(LD) $(LFLAGS) -o $(TST)/gsm2cod \
+-				$(TST)/gsm2cod.o $(LIBGSM) $(LDLIB)
++				$(TST)/gsm2cod.o $(LIBGSMSO) $(LDLIB)
+ 
+-$(TST)/cod2txt:		$(TST)/cod2txt.o $(LIBGSM)
++$(TST)/cod2txt:		$(TST)/cod2txt.o $(LIBGSMSO)
+ 			$(LD) $(LFLAGS) -o $(TST)/cod2txt \
+-				$(TST)/cod2txt.o $(LIBGSM) $(LDLIB)
++				$(TST)/cod2txt.o $(LIBGSMSO) $(LDLIB)
+ 
+-$(TST)/cod2lin:		$(TST)/cod2lin.o $(LIBGSM)
++$(TST)/cod2lin:		$(TST)/cod2lin.o $(LIBGSMSO)
+ 			$(LD) $(LFLAGS) -o $(TST)/cod2lin \
+-				$(TST)/cod2lin.o $(LIBGSM) $(LDLIB)
++				$(TST)/cod2lin.o $(LIBGSMSO) $(LDLIB)
+-- 
+2.45.2
+

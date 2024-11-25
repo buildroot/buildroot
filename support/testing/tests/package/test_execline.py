@@ -21,3 +21,8 @@ class TestExecline(infra.basetest.BRTest):
         output, exit_code = self.emulator.run("execlineb -c 'echo hello world'")
         self.assertEqual(exit_code, 0)
         self.assertEqual(output[0].strip(), "hello world")
+
+        _, exit_code = self.emulator.run("mkfifo testpipe")
+        self.assertEqual(exit_code, 0)
+        _, exit_code = self.emulator.run("execlineb -c 'eltest -p testpipe'")
+        self.assertEqual(exit_code, 0)

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IBM_SW_TPM2_VERSION = 5452af422edeff70fcae8ea99dd28a0922051d7b
+IBM_SW_TPM2_VERSION = rev183-2024-03-27
 IBM_SW_TPM2_SITE = https://git.code.sf.net/p/ibmswtpm2/tpm2
 IBM_SW_TPM2_SITE_METHOD = git
 IBM_SW_TPM2_LICENSE = BSD-3-Clause

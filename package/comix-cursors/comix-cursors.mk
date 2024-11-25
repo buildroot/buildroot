@@ -5,8 +5,8 @@
 ################################################################################
 
 COMIX_CURSORS_VERSION = 0.9.1
-COMIX_CURSORS_SITE = https://limitland.gitlab.io/comixcursors
-COMIX_CURSORS_SOURCE = ComixCursors-$(COMIX_CURSORS_VERSION).tar.bz2
+COMIX_CURSORS_SITE = $(call gitlab,limitland,comixcursors,$(COMIX_CURSORS_VERSION))
+COMIX_CURSORS_SOURCE = comixcursors-$(COMIX_CURSORS_VERSION).tar.bz2
 COMIX_CURSORS_LICENSE = GPL-3.0
 COMIX_CURSORS_STRIP_COMPONENTS = 0
 

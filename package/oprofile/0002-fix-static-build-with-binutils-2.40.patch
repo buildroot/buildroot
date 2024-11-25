@@ -1,0 +1,62 @@
+From 1e4cd78bca2bd6e0d17b6cb9caf1b172d7bac564 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 6 May 2024 08:41:49 +0200
+Subject: [PATCH] fix static build with binutils >= 2.40
+
+sframe library was added by binutils 2.40 and
+https://github.com/bminor/binutils-gdb/commit/19e559f1c91bfaedbd2f91d85ee161f3f03fda3c
+resulting in the following static build failure:
+
+/home/buildroot/autobuild/run/instance-1/output-1/build/binutils-2.41/bfd/elf-sframe.c:220: undefined reference to `sframe_decode'
+
+[...]
+
+configure: error: bfd library not found
+
+Fixes:
+ - http://autobuild.buildroot.org/results/a9f3e09e6543b3773440c011e93bd41e357691e4
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://sourceforge.net/p/oprofile/bugs/295
+---
+ configure.ac   | 2 +-
+ m4/binutils.m4 | 7 +++++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index dc447f89..72ef0a21 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -334,7 +334,7 @@ AX_CHECK_DOCBOOK
+ dnl finally restore the original libs setting
+ LIBS="$ORIG_SAVE_LIBS"
+ LIBERTY_LIBS="-liberty $DL_LIB $INTL_LIB"
+-BFD_LIBS="-lbfd -liberty $DL_LIB $INTL_LIB $Z_LIB"
++BFD_LIBS="-lbfd -liberty $DL_LIB $INTL_LIB $SFRAME_LIB $Z_LIB"
+ POPT_LIBS="-lpopt"
+ AC_SUBST(LIBERTY_LIBS)
+ AC_SUBST(BFD_LIBS)
+diff --git a/m4/binutils.m4 b/m4/binutils.m4
+index c50e2f3c..e1ccd8e7 100644
+--- a/m4/binutils.m4
++++ b/m4/binutils.m4
+@@ -10,11 +10,14 @@ AC_CHECK_FUNCS(xmemdup)
+ AC_CHECK_LIB(dl, dlopen, LIBS="$LIBS -ldl"; DL_LIB="-ldl", DL_LIB="")
+ AC_CHECK_LIB(intl, main, LIBS="$LIBS -lintl"; INTL_LIB="-lintl", INTL_LIB="")
+ 
+-AC_CHECK_LIB(bfd, bfd_openr, LIBS="-lbfd $LIBS"; Z_LIB="",
++AC_CHECK_LIB(bfd, bfd_openr, LIBS="-lbfd $LIBS"; SFRAME_LIB=""; Z_LIB="",
+ 	[AC_CHECK_LIB(z, compress,
+ dnl Use a different bfd function here so as not to use cached result from above
+ 		[AC_CHECK_LIB(bfd, bfd_fdopenr, LIBS="-lbfd -lz $LIBS"; Z_LIB="-lz",
+-			[AC_MSG_ERROR([bfd library not found])], -lz)
++dnl Use a different bfd function here so as not to use cached result from above
++			[AC_CHECK_LIB(bfd, bfd_close, LIBS="-lbfd -lsframe -lz $LIBS"; SFRAME_LIB="-lsframe"; Z_LIB="-lz",
++				[AC_MSG_ERROR([bfd library not found])], -lsframe -lz)
++			], -lz)
+ 		],
+ 		[AC_MSG_ERROR([libz library not found; required by libbfd])])
+ 	]
+-- 
+2.43.0
+

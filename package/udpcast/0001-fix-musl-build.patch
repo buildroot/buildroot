@@ -15,8 +15,9 @@ Fixes:
  - http://autobuild.buildroot.org/results/30208c6f175967fed6de690447a09e0c86547b24
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
-[Upstream status:
-https://udpcast.linux.lu/mailman3/hyperkitty/list/udpcast@udpcast.linux.lu/thread/4MBES2CPUSUNIZTC7NXCQYS2GAE4DQSG/]
+Upstream: https://udpcast.linux.lu/mailman3/hyperkitty/list/udpcast@udpcast.linux.lu/thread/4MBES2CPUSUNIZTC7NXCQYS2GAE4DQSG/
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
 diff '--color=auto' -Nura udpcast-20211207.orig/receivedata.c udpcast-20211207/receivedata.c
 --- udpcast-20211207.orig/receivedata.c	2022-08-13 21:48:06.226588614 +0200
@@ -27,5 +28,5 @@ diff '--color=auto' -Nura udpcast-20211207.orig/receivedata.c udpcast-20211207/r
  #include <unistd.h>
 +#include <stddef.h>
  #include <stdlib.h>
- #include <sys/time.h>
  #include <errno.h>
+ 

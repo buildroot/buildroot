@@ -62,7 +62,7 @@ $ echo 'name: NAME_OF_YOUR_TREE' >external.desc
 Be careful when choosing a name: It has to be unique and be made
 with only ASCII characters from the set +[A-Za-z0-9_]+.
 
- * Then, change every occurence of +BR2_EXTERNAL+ in your br2-external
+ * Then, change every occurrence of +BR2_EXTERNAL+ in your br2-external
    tree with the new variable:
 +
 ----
@@ -123,3 +123,64 @@ LIBFOO_PRE_PATCH_HOOKS += LIBFOO_ARCH_PATCHES
 
 Note that no package in Buildroot has architecture-specific patches, and
 that such patches will most probably not be accepted.
+
+[[migrating-git-attributes]]
+=== Migrating to 2024.05
+
+The download backends have been extended in various ways.
+
+* All locally generated tarballs are even more reproducible. Before
+  2024.05, it was possible that the access mode of files in the archives
+  were not consistent when the download directory has specific ACLs (e.g.
+  with the +default+ ACL set). This impacts the archives generated for
+  git and subversion repositories, as well as those for vendored cargo
+  and go packages.
+* The git download backend now properly expands the `export-subst`
+  https://git-scm.com/docs/gitattributes[git attribute] when generating
+  archives.
+* A newer +tar+ version, _1.35_, is required to generate the archives.
+  For compatibility reasons, +tar+ 1.35 changes the way it stores some
+  fields (`devmajor` and `devminor`), which has an impact in the metadata
+  stored in the archives (but the content of files is not affected).
+
+To accommodate those changes, the archive suffix has been updated or
+added:
+
+* for git: +-git4+
+* for subversion: +-svn5+
+* for cargo (rust) packages: +-cargo2+
+* for go packages: +-go2+
+
+Note that, if two such prefixes would apply to a generated archive, like
+for a cargo package downloaded from git, both suffixes need to be added,
+first the one for the download mechanism, then the one for the vendoring,
+e.g.: +libfoo-1.2.3-git4-cargo2.tar.gz+.
+
+Because of this, the hash file of any custom packages or custom versions
+for kernel and bootloaders must be updated. The following sed scripts can
+automate the rename in the hash file (assuming such files are kept under
+git):
+
+----
+# For git and svn packages, which originally had -br2 resp. -br3 suffix
+sed -r -i -e 's/-br2/-git4/; s/-br3/-svn5/' $(
+    git grep -l -E -- '-br2|-br3' -- '*.hash'
+)
+
+# For go packages, which originally had no suffix
+sed -r -i -e 's/(\.tar\.gz)$/-go2\1/' $(
+    git grep -l -E '\$\(eval \$\((host-)?golang-package\)\)' -- '*.mk' \
+    |sed -r -e 's/\.mk$/.hash/' \
+    |sort -u
+)
+
+# For cargo packages, which originally had no suffix
+sed -r -i -e 's/(\.tar\.gz)$/-cargo2\1/' $(
+    git grep -l -E '\$\(eval \$\((host-)?cargo-package\)\)' -- '*.mk' \
+    |sed -r -e 's/\.mk$/.hash/' \
+    |sort -u
+)
+----
+
+Note that the hash _will_ have changed, so that needs to be updated
+(manually) as well.

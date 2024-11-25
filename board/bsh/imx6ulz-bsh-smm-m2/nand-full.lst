@@ -1,0 +1,40 @@
+# @_flash.bin            | bootloader
+# @_image   [_flash.bin] | image burn to nand, default is the same as bootloader
+# @_filesystem           | filesystem to burn
+# @_kernel               | kernel image
+# @_dtb                  | dtb image
+
+# This command will be run when i.MX6/7 i.MX8MM, i.MX8MQ
+SDP: boot -f _flash.bin
+
+# These commands will be run when use SPL and will be skipped if no spl
+# SDPU will be deprecated. please use SDPV instead of SDPU
+# {
+SDPU: delay 1000
+SDPU: write -f _flash.bin -offset 0x57c00
+SDPU: jump
+# }
+
+# These commands will be run when use SPL and will be skipped if no spl
+# if (SPL support SDPV)
+# {
+SDPV: delay 1000
+SDPV: write -f _flash.bin -offset 0x11000
+SDPV: jump
+# }
+
+FB: ucmd setenv fastboot_buffer ${loadaddr}
+FB[-t 60000]: ucmd nand erase.chip
+FB[-t 60000]: ucmd ubi part rootfs
+FB[-t 60000]: ucmd ubi create root -
+FB: download -f _filesystem
+FB[-t 60000]: ucmd ubi write ${loadaddr} root ${filesize}
+
+FB: download -f _kernel
+FB[-t 60000]: ucmd nand write ${loadaddr} kernel ${filesize}
+
+FB: download -f _dtb
+FB[-t 8000]: ucmd nand write ${loadaddr} nanddtb ${filesize}
+FB: ucmd setenv loadaddr 0x82000000
+
+FB: done

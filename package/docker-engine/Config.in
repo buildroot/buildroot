@@ -9,6 +9,7 @@ config BR2_PACKAGE_DOCKER_ENGINE
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17 # libseccomp
 	select BR2_PACKAGE_CGROUPFS_MOUNT if !BR2_PACKAGE_SYSTEMD # runtime dependency
 	select BR2_PACKAGE_CONTAINERD # runtime dependency
+	select BR2_PACKAGE_HOST_GO
 	select BR2_PACKAGE_IPTABLES # runtime dependency
 	select BR2_PACKAGE_LIBSECCOMP
 	help
@@ -46,6 +47,17 @@ config BR2_PACKAGE_DOCKER_ENGINE_DRIVER_VFS
 	select BR2_PACKAGE_GVFS
 	help
 	  Build the vfs filesystem driver for Docker.
+
+config BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT
+	bool "support docker-init"
+	select BR2_PACKAGE_TINI # runtime
+	help
+	  Support providing a minimal init process for containers,
+	  using tini. Required to use "docker run --init".
+
+	  This does not change the Docker engine build, the
+	  docker-init symlink is provided by the tini package
+	  itself. This option only adds the dependency.
 
 endif
 

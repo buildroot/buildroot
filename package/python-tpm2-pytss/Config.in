@@ -1,0 +1,18 @@
+config BR2_PACKAGE_PYTHON_TPM2_PYTSS
+	bool "python-tpm2-pytss"
+	depends on !BR2_STATIC_LIBS # tpm2-tss
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-cryptography
+	select BR2_PACKAGE_PYTHON_ASN1CRYPTO # runtime
+	select BR2_PACKAGE_PYTHON_CFFI # runtime
+	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime
+	select BR2_PACKAGE_PYTHON_PACKAGING # runtime
+	select BR2_PACKAGE_PYTHON_PYYAML # runtime
+	select BR2_PACKAGE_TPM2_TSS
+	help
+	  TPM 2.0 TSS Bindings for Python.
+
+	  https://github.com/tpm2-software/tpm2-pytss
+
+comment "python-tpm2-pytss needs a toolchain w/ dynamic library"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	depends on BR2_STATIC_LIBS

@@ -1,0 +1,10 @@
+config BR2_PACKAGE_EVILWM
+	bool "evilwm"
+	depends on BR2_PACKAGE_XORG7
+	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_XLIB_LIBX11
+	select BR2_PACKAGE_XLIB_LIBXRANDR
+	help
+	  A minimalist window manager for the X Window System
+
+	  https://www.6809.org.uk/evilwm/

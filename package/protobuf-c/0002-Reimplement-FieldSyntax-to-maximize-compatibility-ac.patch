@@ -1,0 +1,84 @@
+From ee3d9e5423c93ee6b828fdda8e7fef13a77634eb Mon Sep 17 00:00:00 2001
+From: Robert Edmonds <edmonds@users.noreply.github.com>
+Date: Wed, 20 Mar 2024 22:25:54 -0400
+Subject: [PATCH] Reimplement FieldSyntax() to maximize compatibility across
+ protobuf versions
+
+Recent versions of Google protobuf have broken the interfaces for
+determining the syntax version of a .proto file. The current protobuf-c
+1.5.0 release does not compile with Google protobuf 26.0 due to the most
+recentage breakage. There is a possible workaround involving the Google
+protobuf `FileDescriptorLegacy` class, which is documented as:
+
+// TODO Remove this deprecated API entirely.
+
+So we probably shouldn't rely on it.
+
+Instead, this commit obtains the `FileDescriptorProto` corresponding
+to the passed in `FieldDescriptor` and interrogates the `syntax` field
+directly. This is a single implementation with no version-specific
+workarounds. Hopefully this won't break in the next Google protobuf
+release.
+
+I tested the `FieldSyntax()` implementation in this commit across a
+number of different Google protobuf releases and found that it worked
+(`make && make check`) on all of them:
+
+- Google protobuf 3.6.1.3 (Ubuntu 20.04)
+- Google protobuf 3.12.4 (Ubuntu 22.04)
+- Google protobuf 3.21.12 (Debian 12 + Debian unstable)
+- Google protobuf 3.25.2 (Debian experimental)
+- Google protobuf 26.1-dev
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Upstream: https://github.com/protobuf-c/protobuf-c/pull/711
+---
+ protoc-c/c_helpers.h | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
+
+diff --git a/protoc-c/c_helpers.h b/protoc-c/c_helpers.h
+index 062d330..be28b60 100644
+--- a/protoc-c/c_helpers.h
++++ b/protoc-c/c_helpers.h
+@@ -70,10 +70,6 @@
+ #include <protobuf-c/protobuf-c.pb.h>
+ #include <google/protobuf/io/printer.h>
+ 
+-#if GOOGLE_PROTOBUF_VERSION >= 4023000
+-# include <google/protobuf/descriptor_legacy.h>
+-#endif
+-
+ namespace google {
+ namespace protobuf {
+ namespace compiler {
+@@ -173,13 +169,21 @@ struct NameIndex
+ int compare_name_indices_by_name(const void*, const void*);
+ 
+ // Return the syntax version of the file containing the field.
+-// This wrapper is needed to be able to compile against protobuf2.
+ inline int FieldSyntax(const FieldDescriptor* field) {
+-#if GOOGLE_PROTOBUF_VERSION >= 4023000
+-  return FileDescriptorLegacy(field->file()).syntax() == FileDescriptorLegacy::SYNTAX_PROTO3 ? 3 : 2;
+-#else
+-  return field->file()->syntax() == FileDescriptor::SYNTAX_PROTO3 ? 3 : 2;
+-#endif
++  auto proto = FileDescriptorProto();
++  field->file()->CopyTo(&proto);
++
++  if (proto.has_syntax()) {
++    auto syntax = proto.syntax();
++    assert(syntax == "proto2" || syntax == "proto3");
++    if (syntax == "proto2") {
++      return 2;
++    } else if (syntax == "proto3") {
++      return 3;
++    }
++  }
++
++  return 2;
+ }
+ 
+ // Work around changes in protobuf >= 22.x without breaking compilation against
+-- 
+2.34.1
+

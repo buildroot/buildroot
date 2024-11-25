@@ -40,12 +40,13 @@ shift $((OPTIND-1)) # Get rid of our options
 # 10 minutes should do the trick.
 _cvs() {
     if [ -z "${quiet}" ]; then
-        printf '%s ' timeout 10m ${CVS} "${@}"; printf '\n'
+        printf '%s ' timeout 10m "${CVS}" "${@}"; printf '\n'
     fi
     _plain_cvs "$@"
 }
 # Note: please keep command below aligned with what is printed above
 _plain_cvs() {
+    # shellcheck disable=SC2086  # We really want word splitting in CVS
     eval timeout 10m ${CVS} "${@}"
 }
 
@@ -67,4 +68,4 @@ export TZ=UTC
 _cvs ${quiet} -z3 -d"'${uri}'" \
      co "${@}" -d "'${basename}'" ${select} "'${rev}'" -P "'${rawname}'"
 
-tar czf "${output}" "${basename}"
+${TAR} czf "${output}" "${basename}"

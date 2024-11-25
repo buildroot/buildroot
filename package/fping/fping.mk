@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FPING_VERSION = 5.1
+FPING_VERSION = 5.2
 FPING_SITE = http://fping.org/dist
 FPING_LICENSE = BSD-like
 FPING_LICENSE_FILES = COPYING

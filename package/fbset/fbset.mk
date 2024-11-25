@@ -5,7 +5,7 @@
 ################################################################################
 
 FBSET_VERSION = 2.1
-FBSET_SITE = http://users.telenet.be/geertu/Linux/fbdev
+FBSET_SITE = http://g33rt.be/migrated/Linux/fbdev
 FBSET_DEPENDENCIES = host-bison host-flex
 FBSET_LICENSE = GPL-2.0
 FBSET_LICENSE_FILES = fbset.c

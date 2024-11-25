@@ -1,4 +1,3 @@
-board/aarch64-efi/post-image.sh Shellcheck
 board/amarula/vyasa/post-build.sh Shellcheck
 board/andes/ae350/patches/uboot/0001-mmc-ftsdc010_mci-Support-DTS-of-ftsdc010-driver-for-.patch lib_patch.Upstream
 board/andes/ae350/patches/uboot/0002-spl-Align-device-tree-blob-address-at-8-byte-boundar.patch lib_patch.Upstream
@@ -8,11 +7,10 @@ board/arcturus/aarch64-ucls1012a/post-image.sh Shellcheck
 board/aspeed/common/post-image.sh Shellcheck
 board/asus/tinker/post-build.sh Shellcheck
 board/atmel/flasher.sh Shellcheck
-board/beaglebone/patches/linux/0001-keep-jtag-clock-alive-for-debugger.patch lib_patch.Upstream
-board/beaglebone/post-build.sh Shellcheck
-board/beagleboneai/patches/uboot/0001-am57xx_evm-fixes.patch lib_patch.Upstream
-board/beagleboneai/post-build.sh Shellcheck
-board/beaglev/post-build.sh Shellcheck
+board/beagleboard/beaglebone-qt5/patches/linux/0001-keep-jtag-clock-alive-for-debugger.patch lib_patch.Upstream
+board/beagleboard/beaglebone/post-build.sh Shellcheck
+board/beagleboard/beagleboneai/patches/uboot/0001-am57xx_evm-fixes.patch lib_patch.Upstream
+board/beagleboard/beagleboneai/post-build.sh Shellcheck
 board/beelink/gs1/post-build.sh Shellcheck
 board/boundarydevices/common/post-build.sh Shellcheck
 board/boundarydevices/common/post-image.sh Shellcheck
@@ -23,16 +21,13 @@ board/bsh/imx8mn-bsh-smm-s2-pro/post-image.sh Shellcheck
 board/bsh/imx8mn-bsh-smm-s2/flash.sh Shellcheck lib_shellscript.EmptyLastLine
 board/bsh/imx8mn-bsh-smm-s2/post-build.sh Shellcheck
 board/canaan/k210-soc/post-build.sh Shellcheck
-board/canaan/k210-soc/rootfs_overlay/sbin/init Shellcheck
 board/chromebook/elm/sign.sh Shellcheck
 board/chromebook/mksd.sh Shellcheck
-board/chromebook/snow/linux-4.15-dts-tpm.patch lib_patch.ApplyOrder lib_patch.Upstream
 board/chromebook/snow/sign.sh Shellcheck
 board/ci20/patches/uboot/0001-mips-Remove-default-endiannes.patch lib_patch.Upstream
 board/cubietech/cubieboard2/post-image.sh Shellcheck
 board/freescale/common/imx/imx8-bootloader-prepare.sh Shellcheck
 board/freescale/common/mxs/post-image.sh Shellcheck
-board/freescale/imx6sabre/patches/uboot/0001-mx6qsabre_common-boot-Linux-to-init-in-mfgtools-mode.patch lib_patch.Upstream
 board/friendlyarm/nanopi-r2s/post-build.sh Shellcheck
 board/hardkernel/odroidc2/post-image.sh Shellcheck
 board/hardkernel/odroidc2/rootfs_overlay/etc/init.d/S09modload Shellcheck lib_sysv.Variables
@@ -48,7 +43,6 @@ board/lego/ev3/post-image.sh Shellcheck
 board/lemaker/bananapro/patches/linux/0001-arch-arm-boot-dts-sun7i-a20-bananapro.dts-disable-00.patch lib_patch.Upstream
 board/lemaker/bananapro/post-build.sh Shellcheck
 board/lemaker/bananapro/post-image.sh Shellcheck
-board/mender/x86_64/post-image-efi.sh lib_shellscript.ConsecutiveEmptyLines
 board/minnowboard/post-build.sh Shellcheck
 board/nexbox/a95x/post-build.sh Shellcheck
 board/nexbox/a95x/post-image.sh Shellcheck
@@ -69,7 +63,6 @@ board/orangepi/orangepi-zero/patches/linux/0003-ARM-dts-orange-pi-zero-enable-sp
 board/orangepi/orangepi-zero/patches/linux/0004-ARM-dts-orange-pi-zero-enable-uart.patch lib_patch.Upstream
 board/pine64/rock64/patches/uboot/0001-Makefile-rk3328-needs-itb-image-to-boot-properly.patch lib_patch.Upstream
 board/pine64/rock64/post-build.sh Shellcheck
-board/pine64/rockpro64/post-build.sh Shellcheck
 board/qemu/aarch64-sbsa/assemble-flash-images Shellcheck
 board/qemu/x86/post-build.sh Shellcheck
 board/qemu/x86_64/post-build.sh Shellcheck
@@ -85,22 +78,15 @@ board/solidrun/clearfog/post-build.sh Shellcheck
 board/solidrun/macchiatobin/post-build-mainline.sh Shellcheck
 board/solidrun/macchiatobin/post-build.sh Shellcheck
 board/stmicroelectronics/common/stm32f4xx/stm32-post-build.sh Shellcheck
-board/stmicroelectronics/common/stm32mp157/post-image.sh Shellcheck
+board/stmicroelectronics/common/stm32mp1xx/post-image.sh Shellcheck
 board/stmicroelectronics/stm32f429-disco/flash.sh Shellcheck
 board/stmicroelectronics/stm32f469-disco/flash_sd.sh Shellcheck
 board/stmicroelectronics/stm32f469-disco/flash_xip.sh Shellcheck
-board/stmicroelectronics/stm32f469-disco/post-build.sh Shellcheck
 board/synopsys/axs10x/post-build.sh Shellcheck
 board/technologic/ts4900/post-image.sh Shellcheck
 board/toradex/apalis-imx6/post-image.sh Shellcheck
 board/udoo/common/post-build.sh Shellcheck
-board/udoo/mx6qdl/patches/linux/0000-udoo-disable-usbh1.patch lib_patch.Upstream
 boot/afboot-stm32/0003-Makefile-disable-stack-protector.patch lib_patch.Upstream
-boot/at91bootstrap/0001-eabi-fix.patch lib_patch.Upstream
-boot/at91bootstrap/0002-gcc-4.6.x-ldscript-fix.patch lib_patch.Upstream
-boot/at91bootstrap/0003-u-boot-relocation-fix.patch lib_patch.Upstream
-boot/at91dataflashboot/0001-do-not-install.patch lib_patch.Upstream
-boot/at91dataflashboot/0002-eabi-fixes.patch lib_patch.Upstream
 boot/optee-os/3.13.0/0001-core-zlib-fix-build-warning-when-_LFS64_LARGEFILE-is.patch lib_patch.Upstream
 boot/syslinux/0001-bios-Fix-alignment-change-with-gcc-5.patch lib_patch.Upstream
 boot/syslinux/0002-Disable-PIE-to-avoid-FTBFS-on-amd64.patch lib_patch.Upstream
@@ -116,6 +102,159 @@ boot/syslinux/0013-Fix-build-with-gnu-efi-version-3.0.9.patch lib_patch.Upstream
 boot/syslinux/0014-Fix-build-with-binutils-note-gnu-property-section.patch lib_patch.Upstream
 boot/syslinux/0016-Workaround-multiple-definition-of-symbol-errors.patch lib_patch.Upstream
 boot/syslinux/0017-Replace-builtin-strlen-that-appears-to-get-optimized.patch lib_patch.Upstream
+configs/am574x_idk_defconfig lib_defconfig.ForceCheckHash
+configs/andes_ae350_45_defconfig lib_defconfig.ForceCheckHash
+configs/arcturus_ucls1012a_defconfig lib_defconfig.ForceCheckHash
+configs/arcturus_ucp1020_defconfig lib_defconfig.ForceCheckHash
+configs/arm_foundationv8_defconfig lib_defconfig.ForceCheckHash
+configs/aspeed_ast2500evb_defconfig lib_defconfig.ForceCheckHash
+configs/aspeed_ast2600evb_defconfig lib_defconfig.ForceCheckHash
+configs/asus_tinker-s_rk3288_defconfig lib_defconfig.ForceCheckHash
+configs/asus_tinker_rk3288_defconfig lib_defconfig.ForceCheckHash
+configs/at91sam9260eknf_defconfig lib_defconfig.ForceCheckHash
+configs/at91sam9g20dfc_defconfig lib_defconfig.ForceCheckHash
+configs/at91sam9g45m10ek_defconfig lib_defconfig.ForceCheckHash
+configs/at91sam9rlek_defconfig lib_defconfig.ForceCheckHash
+configs/atmel_sama5d27_som1_ek_mmc_dev_defconfig lib_defconfig.ForceCheckHash
+configs/atmel_sama5d2_xplained_mmc_defconfig lib_defconfig.ForceCheckHash
+configs/atmel_sama5d2_xplained_mmc_dev_defconfig lib_defconfig.ForceCheckHash
+configs/atmel_sama5d3_xplained_defconfig lib_defconfig.ForceCheckHash
+configs/atmel_sama5d3_xplained_dev_defconfig lib_defconfig.ForceCheckHash
+configs/atmel_sama5d3_xplained_mmc_defconfig lib_defconfig.ForceCheckHash
+configs/atmel_sama5d3_xplained_mmc_dev_defconfig lib_defconfig.ForceCheckHash
+configs/atmel_sama5d3xek_defconfig lib_defconfig.ForceCheckHash
+configs/atmel_sama5d4_xplained_defconfig lib_defconfig.ForceCheckHash
+configs/atmel_sama5d4_xplained_dev_defconfig lib_defconfig.ForceCheckHash
+configs/atmel_sama5d4_xplained_mmc_defconfig lib_defconfig.ForceCheckHash
+configs/atmel_sama5d4_xplained_mmc_dev_defconfig lib_defconfig.ForceCheckHash
+configs/avenger96_defconfig lib_defconfig.ForceCheckHash
+configs/avnet_rzboard_v2l_defconfig lib_defconfig.ForceCheckHash
+configs/bananapi_m2_berry_defconfig lib_defconfig.ForceCheckHash
+configs/bananapi_m2_ultra_defconfig lib_defconfig.ForceCheckHash
+configs/bananapi_m2_zero_defconfig lib_defconfig.ForceCheckHash
+configs/bananapro_defconfig lib_defconfig.ForceCheckHash
+configs/beelink_gs1_defconfig lib_defconfig.ForceCheckHash
+configs/broadcom_northstar_defconfig lib_defconfig.ForceCheckHash
+configs/canaan_kd233_defconfig lib_defconfig.ForceCheckHash
+configs/ci20_defconfig lib_defconfig.ForceCheckHash
+configs/cubieboard2_defconfig lib_defconfig.ForceCheckHash
+configs/engicam_imx6qdl_icore_defconfig lib_defconfig.ForceCheckHash
+configs/engicam_imx6qdl_icore_qt5_defconfig lib_defconfig.ForceCheckHash
+configs/engicam_imx6qdl_icore_rqs_defconfig lib_defconfig.ForceCheckHash
+configs/engicam_imx6ul_geam_defconfig lib_defconfig.ForceCheckHash
+configs/engicam_imx6ul_isiot_defconfig lib_defconfig.ForceCheckHash
+configs/freescale_imx28evk_defconfig lib_defconfig.ForceCheckHash
+configs/freescale_p1025twr_defconfig lib_defconfig.ForceCheckHash
+configs/freescale_t1040d4rdb_defconfig lib_defconfig.ForceCheckHash
+configs/freescale_t2080_qds_rdb_defconfig lib_defconfig.ForceCheckHash
+configs/friendlyarm_nanopi_r2s_defconfig lib_defconfig.ForceCheckHash
+configs/galileo_defconfig lib_defconfig.ForceCheckHash
+configs/globalscale_espressobin_defconfig lib_defconfig.ForceCheckHash
+configs/grinn_chiliboard_defconfig lib_defconfig.ForceCheckHash
+configs/grinn_liteboard_defconfig lib_defconfig.ForceCheckHash
+configs/hifive_unleashed_defconfig lib_defconfig.ForceCheckHash
+configs/imx23evk_defconfig lib_defconfig.ForceCheckHash
+configs/imx6-sabreauto_defconfig lib_defconfig.ForceCheckHash
+configs/imx6-sabresd_defconfig lib_defconfig.ForceCheckHash
+configs/imx6-sabresd_qt5_defconfig lib_defconfig.ForceCheckHash
+configs/imx6slevk_defconfig lib_defconfig.ForceCheckHash
+configs/imx6sx-sdb_defconfig lib_defconfig.ForceCheckHash
+configs/imx6ulevk_defconfig lib_defconfig.ForceCheckHash
+configs/imx6ullevk_defconfig lib_defconfig.ForceCheckHash
+configs/imx6ulpico_defconfig lib_defconfig.ForceCheckHash
+configs/imx7d-sdb_defconfig lib_defconfig.ForceCheckHash
+configs/imx7dpico_defconfig lib_defconfig.ForceCheckHash
+configs/imx8mqevk_defconfig lib_defconfig.ForceCheckHash
+configs/imxrt1050-evk_defconfig lib_defconfig.ForceCheckHash
+configs/khadas_vim3_defconfig lib_defconfig.ForceCheckHash
+configs/kontron_bl_imx8mm_defconfig lib_defconfig.ForceCheckHash
+configs/kontron_pitx_imx8m_defconfig lib_defconfig.ForceCheckHash
+configs/kontron_smarc_sal28_defconfig lib_defconfig.ForceCheckHash
+configs/linksprite_pcduino_defconfig lib_defconfig.ForceCheckHash
+configs/mangopi_mq1rdw2_defconfig lib_defconfig.ForceCheckHash
+configs/mender_x86_64_efi_defconfig lib_defconfig.ForceCheckHash
+configs/microchip_sam9x60ek_mmc_defconfig lib_defconfig.ForceCheckHash
+configs/microchip_sam9x60ek_mmc_dev_defconfig lib_defconfig.ForceCheckHash
+configs/microchip_sama5d27_wlsom1_ek_mmc_defconfig lib_defconfig.ForceCheckHash
+configs/microchip_sama5d27_wlsom1_ek_mmc_dev_defconfig lib_defconfig.ForceCheckHash
+configs/microchip_sama5d2_icp_mmc_defconfig lib_defconfig.ForceCheckHash
+configs/microchip_sama5d2_icp_mmc_dev_defconfig lib_defconfig.ForceCheckHash
+configs/microchip_sama7g5ek_mmc_defconfig lib_defconfig.ForceCheckHash
+configs/microchip_sama7g5ek_mmc_dev_defconfig lib_defconfig.ForceCheckHash
+configs/minnowboard_max_defconfig lib_defconfig.ForceCheckHash
+configs/mx53loco_defconfig lib_defconfig.ForceCheckHash
+configs/mx6udoo_defconfig lib_defconfig.ForceCheckHash
+configs/nexbox_a95x_defconfig lib_defconfig.ForceCheckHash
+configs/nitrogen6sx_defconfig lib_defconfig.ForceCheckHash
+configs/nitrogen6x_defconfig lib_defconfig.ForceCheckHash
+configs/nitrogen7_defconfig lib_defconfig.ForceCheckHash
+configs/nitrogen8m_defconfig lib_defconfig.ForceCheckHash
+configs/nitrogen8mm_defconfig lib_defconfig.ForceCheckHash
+configs/nitrogen8mn_defconfig lib_defconfig.ForceCheckHash
+configs/nitrogen8mp_defconfig lib_defconfig.ForceCheckHash
+configs/octavo_osd32mp1_brk_defconfig lib_defconfig.ForceCheckHash
+configs/octavo_osd32mp1_red_defconfig lib_defconfig.ForceCheckHash
+configs/odroidc2_defconfig lib_defconfig.ForceCheckHash
+configs/odroidxu4_defconfig lib_defconfig.ForceCheckHash
+configs/olimex_a10_olinuxino_lime_defconfig lib_defconfig.ForceCheckHash
+configs/olimex_a13_olinuxino_defconfig lib_defconfig.ForceCheckHash
+configs/olimex_a20_olinuxino_micro_defconfig lib_defconfig.ForceCheckHash
+configs/olimex_a33_olinuxino_defconfig lib_defconfig.ForceCheckHash
+configs/olimex_a64_olinuxino_defconfig lib_defconfig.ForceCheckHash
+configs/olpc_xo175_defconfig lib_defconfig.ForceCheckHash
+configs/olpc_xo1_defconfig lib_defconfig.ForceCheckHash
+configs/orangepi_lite2_defconfig lib_defconfig.ForceCheckHash
+configs/orangepi_one_defconfig lib_defconfig.ForceCheckHash
+configs/orangepi_one_plus_defconfig lib_defconfig.ForceCheckHash
+configs/orangepi_pc2_defconfig lib_defconfig.ForceCheckHash
+configs/orangepi_pc_plus_defconfig lib_defconfig.ForceCheckHash
+configs/orangepi_zero3_defconfig lib_defconfig.ForceCheckHash
+configs/orangepi_zero_defconfig lib_defconfig.ForceCheckHash
+configs/orangepi_zero_plus2_defconfig lib_defconfig.ForceCheckHash
+configs/orangepi_zero_plus_defconfig lib_defconfig.ForceCheckHash
+configs/pc_x86_64_bios_defconfig lib_defconfig.ForceCheckHash
+configs/pc_x86_64_efi_defconfig lib_defconfig.ForceCheckHash
+configs/pcengines_apu2_defconfig lib_defconfig.ForceCheckHash
+configs/pine64_defconfig lib_defconfig.ForceCheckHash
+configs/pine64_pinecube_defconfig lib_defconfig.ForceCheckHash
+configs/pine64_sopine_defconfig lib_defconfig.ForceCheckHash
+configs/pine64_star64_defconfig lib_defconfig.ForceCheckHash
+configs/riotboard_defconfig lib_defconfig.ForceCheckHash
+configs/roc_pc_rk3399_defconfig lib_defconfig.ForceCheckHash
+configs/rock64_defconfig lib_defconfig.ForceCheckHash
+configs/rock_pi_n8_defconfig lib_defconfig.ForceCheckHash
+configs/roseapplepi_defconfig lib_defconfig.ForceCheckHash
+configs/s6lx9_microboard_defconfig lib_defconfig.ForceCheckHash
+configs/sipeed_lichee_rv_defconfig lib_defconfig.ForceCheckHash
+configs/sipeed_lichee_rv_dock_defconfig lib_defconfig.ForceCheckHash
+configs/sipeed_licheepi_nano_defconfig lib_defconfig.ForceCheckHash
+configs/sipeed_licheepi_zero_defconfig lib_defconfig.ForceCheckHash
+configs/sipeed_maix_bit_defconfig lib_defconfig.ForceCheckHash
+configs/sipeed_maix_bit_sdcard_defconfig lib_defconfig.ForceCheckHash
+configs/sipeed_maix_dock_defconfig lib_defconfig.ForceCheckHash
+configs/sipeed_maix_dock_sdcard_defconfig lib_defconfig.ForceCheckHash
+configs/sipeed_maix_go_defconfig lib_defconfig.ForceCheckHash
+configs/sipeed_maix_go_sdcard_defconfig lib_defconfig.ForceCheckHash
+configs/sipeed_maixduino_defconfig lib_defconfig.ForceCheckHash
+configs/sipeed_maixduino_sdcard_defconfig lib_defconfig.ForceCheckHash
+configs/snps_arc700_axs101_defconfig lib_defconfig.ForceCheckHash
+configs/snps_arc700_nsim_defconfig lib_defconfig.ForceCheckHash
+configs/snps_archs38_axs103_defconfig lib_defconfig.ForceCheckHash
+configs/snps_archs38_haps_defconfig lib_defconfig.ForceCheckHash
+configs/snps_archs38_hsdk_defconfig lib_defconfig.ForceCheckHash
+configs/socrates_cyclone5_defconfig lib_defconfig.ForceCheckHash
+configs/solidrun_clearfog_gt_8k_defconfig lib_defconfig.ForceCheckHash
+configs/solidrun_macchiatobin_defconfig lib_defconfig.ForceCheckHash
+configs/stm32mp157c_odyssey_defconfig lib_defconfig.ForceCheckHash
+configs/terasic_de10nano_cyclone5_defconfig lib_defconfig.ForceCheckHash
+configs/toradex_apalis_imx6_defconfig lib_defconfig.ForceCheckHash
+configs/ts4900_defconfig lib_defconfig.ForceCheckHash
+configs/ts5500_defconfig lib_defconfig.ForceCheckHash
+configs/ts7680_defconfig lib_defconfig.ForceCheckHash
+configs/uevm5432_defconfig lib_defconfig.ForceCheckHash
+configs/visionfive_defconfig lib_defconfig.ForceCheckHash
+configs/wandboard_defconfig lib_defconfig.ForceCheckHash
+configs/warp7_defconfig lib_defconfig.ForceCheckHash
 linux/5.10.162-cip24-rt10/0001-arch-microblaze-mm-init.c-fix-build.patch lib_patch.Upstream
 package/18xx-ti-utils/0001-plt.h-fix-build-with-gcc-10.patch lib_patch.Upstream
 package/4th/0001-avoid-regen-during-install.patch lib_patch.Upstream
@@ -171,7 +310,6 @@ package/avahi/S05avahi-setup.sh lib_sysv.Indent lib_sysv.Variables
 package/avahi/S50avahi-daemon lib_sysv.Indent lib_sysv.Variables
 package/babeld/S50babeld Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/babeltrace2/0001-configure-simplify-warning-flags-detection.patch lib_patch.Upstream
-package/bandwidthd/0001-src-bandwidthd.h-fix-build-with-gcc-10.patch lib_patch.Upstream
 package/bash/0001-input.h-add-missing-include-on-stdio.h.patch lib_patch.Upstream
 package/bash/0002-parse.y-fix-compilation-for-non-multibyte-builds.patch lib_patch.Upstream
 package/bash/0003-configure-invert-condition-for-strtoimax-builtin.patch lib_patch.Upstream
@@ -181,17 +319,12 @@ package/bc/0003-dc-fix-exit-code-of-q-command.patch lib_patch.Upstream
 package/bc/0004-no-gen-libmath.patch lib_patch.Upstream
 package/bcache-tools/0001-Don-t-inline-crc64-for-gcc-5-compatability.patch lib_patch.Upstream
 package/bctoolbox/0001-Fix-Libs.private-flags-for-mbedtls.patch lib_patch.Upstream
-package/bcusdk/0001-fd_set-requires-inclusion-of-sys-select.h.patch lib_patch.Upstream
 package/bcusdk/0002-eibd-fix-endless-recursion-when-using-USB-backends.patch lib_patch.Upstream
 package/bearssl/0001-Fix-missing-objdir-dependency.patch lib_patch.Upstream
-package/beecrypt/0001-cppglue.cxx-cplusplus-only.patch lib_patch.Upstream
-package/beecrypt/0002-build-system.patch lib_patch.Upstream
-package/beecrypt/0003-don-t-check-for-cplusplus-compiler.patch lib_patch.Upstream
 package/benejson/0001-c-std.patch lib_patch.Upstream
 package/benejson/0002-Use-print-as-a-function-for-Py3-compatibility.patch lib_patch.Upstream
 package/berkeleydb/0001-cwd-db_config.patch lib_patch.Upstream
 package/berkeleydb/0002-atomic_compare_exchange.patch lib_patch.Upstream
-package/bind/0001-cross.patch lib_patch.Upstream
 package/bind/S81named Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/bird/0001-configure.ac-fix-build-with-autoconf-2.70.patch lib_patch.Upstream
 package/bmx7/0001-Fix-schedule.c-378-36-error-SIOCGSTAMP-undeclared.patch lib_patch.Upstream
@@ -202,7 +335,6 @@ package/brickd/S70brickd Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/bridge-utils/0001-fix-build-on-musl.patch lib_patch.Upstream
 package/brltty/0001-Fix-linking-error-on-mips64el.patch lib_patch.Upstream
 package/brltty/S10brltty Shellcheck lib_sysv.Indent lib_sysv.Variables
-package/bsdiff/0001-Add-missing-header-for-u_char.patch lib_patch.Upstream
 package/bustle/0001-Makefile-fix-pcap-config-call.patch lib_patch.Upstream
 package/busybox/0001-networking-libiproute-use-linux-if_packet.h-instead-.patch lib_patch.Upstream
 package/busybox/0002-Makefile.flags-strip-non-l-arguments-returned-by-pkg.patch lib_patch.Upstream
@@ -219,20 +351,15 @@ package/c-icap/0001-Required-fixes-to-compile-and-run-under-cygwin.patch lib_pat
 package/c-icap/S96cicap Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/ca-certificates/0001-mozilla-certdata2pem.py-make-cryptography-module-opt.patch lib_patch.Upstream
 package/cache-calibrator/0001-Fix-conflicting-round-function.patch lib_patch.Upstream
-package/cairo/0001-_arc_max_angle_for_tolerance_normalized-fix-infinite.patch lib_patch.Upstream
-package/cairo/0002-Fix-mask-usage-in-image-compositor.patch lib_patch.Upstream
 package/caps/0001-Fix-stdint-types-with-musl.patch lib_patch.Upstream
-package/cdrkit/0001-no-rcmd.patch lib_patch.Upstream
+package/cdrkit/0001-fix-build-with-uClibc.patch lib_patch.Upstream
 package/cdrkit/0002-define-__THROW-to-avoid-build-issue-with-musl.patch lib_patch.Upstream
 package/cdrkit/0003-Add-extern-to-char-outfile-declaration-to-fix-build-.patch lib_patch.Upstream
 package/cfm/S65cfm lib_sysv.Indent lib_sysv.Variables
-package/cgic/0001-prepare_makefile.patch lib_patch.Upstream
-package/cgic/0002-file_enhancements.patch lib_patch.Upstream
-package/cgic/0003-restore-cgiFormFileGetTempfileName.patch lib_patch.Upstream
 package/cgroupfs-mount/S30cgroupfs Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/chipmunk/0001-Fix-build-failure-on-musl.patch lib_patch.Upstream
 package/chocolate-doom/0001-Remove-redundant-demoextend-definition.patch lib_patch.Upstream
-package/chrony/S49chrony Shellcheck lib_sysv.Indent lib_sysv.Variables
+package/chrony/S49chronyd lib_sysv.Variables
 package/cmake/0001-rename-cmake-rootfile.patch lib_patch.Upstream
 package/cmocka/0001-Don-t-redefine-uintptr_t.patch lib_patch.Upstream
 package/collectd/0001-src-netlink.c-remove-REG_NOERROR.patch lib_patch.Upstream
@@ -281,12 +408,6 @@ package/dhcp/S80dhcp-relay Shellcheck lib_sysv.Variables
 package/dhcp/S80dhcp-server Shellcheck lib_sysv.Variables
 package/dhcp/dhclient-script Shellcheck lib_shellscript.TrailingSpace
 package/dhcpcd/S41dhcpcd lib_sysv.Indent lib_sysv.Variables
-package/dhcpdump/0001-use-non-bsd-structures.patch lib_patch.Upstream
-package/dhrystone/0001-cmdline-nruns.patch lib_patch.Sob lib_patch.Upstream
-package/dhrystone/0002-HZ.patch lib_patch.Sob lib_patch.Upstream
-package/dhrystone/0003-exit.patch lib_patch.Sob lib_patch.Upstream
-package/dhrystone/0004-headers.patch lib_patch.Sob lib_patch.Upstream
-package/dhrystone/0005-prototypes.patch lib_patch.Sob lib_patch.Upstream
 package/dht/0001-cmake.patch lib_patch.Upstream
 package/dillo/0001-usr-local-include.patch lib_patch.Upstream
 package/dillo/0002-Fix-openssl-detection.patch lib_patch.Upstream
@@ -304,8 +425,6 @@ package/dmalloc/0004-Makefile-use-the-configure-detected-or-user-supplied.patch 
 package/dmalloc/0005-configure-use-LD-instead-of-hard-coding-ld.patch lib_patch.Upstream
 package/dmraid/0001-fix-compilation-under-musl.patch lib_patch.Upstream
 package/dmraid/S20dmraid lib_sysv.Variables
-package/dnsmasq/S80dnsmasq Shellcheck
-package/docker-engine/S60dockerd Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/docopt-cpp/0001-only-build-one-target-use-BUILD_SHARED_LIBS-where-appropriate.patch lib_patch.Upstream
 package/domoticz/S99domoticz Shellcheck
 package/dovecot/0001-auth-Fix-handling-passdbs-with-identical-driver-args.patch lib_patch.Upstream
@@ -315,12 +434,6 @@ package/dropbear/S50dropbear Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/dt/0001-adjust-os-symlink.patch lib_patch.Upstream
 package/dt/0002-dt-default-source-define.patch lib_patch.Upstream
 package/dtc/0001-Fix-include-guards-for-older-kernel-u-boot-sources.patch lib_patch.Upstream
-package/dvb-apps/0001-Fix-generate-keynames.patch lib_patch.Upstream
-package/dvb-apps/0002-Fix-compiler-warning-flags.patch lib_patch.Upstream
-package/dvb-apps/0003-handle-static-shared-only-build.patch lib_patch.Upstream
-package/dvb-apps/0004-Makefile-remove-test.patch lib_patch.Upstream
-package/dvb-apps/0005-utils-fix-build-with-kernel-headers-4.14.patch lib_patch.Upstream
-package/dvb-apps/0006-fix-glibc-2.31.patch lib_patch.Upstream
 package/dvblast/0001-missing-lm.patch lib_patch.Upstream
 package/dvblast/0002-fix-int-types.patch lib_patch.Upstream
 package/dvbsnoop/0001-musl-types-h.patch lib_patch.Upstream
@@ -329,27 +442,17 @@ package/dvdrw-tools/0002-Include-sysmacros.h-to-compile-with-newer-gcc.patch lib
 package/earlyoom/0001-main.c-fix-build-with-kernel-4.3.patch lib_patch.Upstream
 package/earlyoom/S02earlyoom Shellcheck lib_sysv.Indent
 package/ebtables/0001-replace-ebtables-save-perl-script-with-bash.patch lib_patch.Upstream
-package/ebtables/0002-ebtables.h-restore-KERNEL_64_USERSPACE_32-checks.patch lib_patch.Upstream
-package/ebtables/0003-configure.ac-add-option-enable-kernel-64-userland-32.patch lib_patch.Upstream
 package/ecryptfs-utils/0001-musl.patch lib_patch.Upstream
 package/ecryptfs-utils/0002-openssl110.patch lib_patch.Upstream
 package/ecryptfs-utils/0003-fix-parallel-build-issue.patch lib_patch.Upstream
 package/efl/0001-ecore_evas-engines-drm-meson.build-use-gl_deps-as-en.patch lib_patch.Upstream
 package/efl/0002-ecore_evas-engines-drm-meson.build-fix-gl_drm-includ.patch lib_patch.Upstream
 package/efl/0003-ecore_fb-fix-build-with-tslib.patch lib_patch.Upstream
-package/eigen/0001-Adds-new-CMake-Options-for-controlling-build-components.patch lib_patch.Upstream
-package/ejabberd/0001-Makefile.in-do-not-download-or-compile-dependencies.patch lib_patch.Upstream
-package/ejabberd/0002-fix-ejabberdctl.patch lib_patch.Upstream
-package/ejabberd/0003-correct-includes.patch lib_patch.Upstream
-package/ejabberd/S50ejabberd Shellcheck lib_sysv.Indent lib_sysv.Variables
-package/ejabberd/check-erlang-lib Shellcheck
+package/eigen/0001-Adds-new-CMake-Options-for-controlling-build-compone.patch lib_patch.Upstream
 package/elftosb/0001-fixes-includes.patch lib_patch.Upstream
 package/elftosb/0002-force-cxx-compiler.patch lib_patch.Upstream
 package/elfutils/0001-Add-a-enable-disable-progs-configure-option.patch lib_patch.Upstream
 package/elfutils/0002-Really-make-Werror-conditional-to-BUILD_WERROR.patch lib_patch.Upstream
-package/empty/0001-respect-LDFLAGS.patch lib_patch.Upstream
-package/erlang-p1-sip/0001-correct-include.patch lib_patch.Upstream
-package/erlang-p1-xmpp/0001-fix-includes.patch lib_patch.Upstream
 package/erlang-rebar/0001-src-rebar_port_compiler-add-fPIC-to-LDFLAGS-by-defau.patch lib_patch.Upstream
 package/espeak/0001-Fix-build-of-shared-library-on-architectures-needing.patch lib_patch.Upstream
 package/espeak/0002-tr_languages-cast-string_ordinal-init-values.patch lib_patch.Upstream
@@ -361,14 +464,9 @@ package/evemu/0004-src-evemu.c-fix-build-with-kernels-4.16.patch lib_patch.Upstr
 package/exim/0001-Build-buildconfig-for-the-host.patch lib_patch.Upstream
 package/exim/0002-Don-t-make-backup-copies-of-installed-files.patch lib_patch.Upstream
 package/exim/0003-Skip-version-check-and-symlink-installation.patch lib_patch.Upstream
-package/exim/0004-exim_lock-fix-lstat-related-build-errors.patch lib_patch.Upstream
-package/exim/0005-sieve-fix-build-errors.patch lib_patch.Upstream
 package/exim/S86exim lib_sysv.Indent lib_sysv.Variables
 package/expect/0001-enable-cross-compilation.patch lib_patch.Upstream
 package/expect/0002-allow-tcl-build-directory.patch lib_patch.Upstream
-package/faifa/0001-sha2.c-explicitly-include-endian.h-for-BYTE_ORDER-ma.patch lib_patch.Upstream
-package/faifa/0002-hpav_cfg.c-do-not-include-linux-if_ether.h-for-musl-.patch lib_patch.Upstream
-package/faifa/0003-Makefile.in-fix-asbolute-symlink-of-libfaifa.so.patch lib_patch.Upstream
 package/fail2ban/S60fail2ban Shellcheck lib_sysv.Variables
 package/fakedate/fakedate Shellcheck
 package/falcosecurity-libs/0001-cmake-Permit-setting-GRPC_CPP_PLUGIN.patch lib_patch.Upstream
@@ -378,13 +476,6 @@ package/fbterm/0001-fbio.cpp-improxy.cpp-fbterm.cpp-fix-musl-compile.patch lib_p
 package/fbterm/0002-mouse.cpp-fix-musl-compile.patch lib_patch.Upstream
 package/fbterm/0003-C++11-compliance.patch lib_patch.Upstream
 package/fbterm/0004-iconv.patch lib_patch.Upstream
-package/fbv/0001-cross.patch lib_patch.Sob lib_patch.Upstream
-package/fbv/0002-fix-24bpp-support-on-big-endian.patch lib_patch.Sob lib_patch.Upstream
-package/fbv/0003-fix-bgr555.patch lib_patch.Upstream
-package/fbv/0004-giflib.patch lib_patch.Upstream
-package/fbv/0005-include.patch lib_patch.Sob lib_patch.Upstream
-package/fbv/0006-libpng15.patch lib_patch.Upstream
-package/fbv/0007-gif.c-fic-build-with-gcc-10.patch lib_patch.Upstream
 package/fcgiwrap/0001-use-LIBS-from-configure.patch lib_patch.Upstream
 package/fcgiwrap/0002-link-with-libsystemd-instead-of-libsystemd-daemon.patch lib_patch.Upstream
 package/ffmpeg/0001-swscale-x86-yuv2rgb-Fix-build-without-SSSE3.patch lib_patch.Upstream
@@ -392,7 +483,6 @@ package/ffmpeg/0002-avcodec-vaapi_h264-skip-decode-if-pic-has-no-slices.patch li
 package/ffmpeg/0003-libavutil-Fix-mips-build.patch lib_patch.Upstream
 package/ffmpeg/0004-configure-add-extralibs-to-extralibs_xxx.patch lib_patch.Upstream
 package/ficl/0001-fix-Makefile.patch lib_patch.Upstream
-package/ficl/0002-Makefile.linux-pass-LDFLAGS.patch lib_patch.Upstream
 package/flatbuffers/0001-include-flatbuffers-base.h-fix-build-on-musl.patch lib_patch.Upstream
 package/flex/0001-build-AC_USE_SYSTEM_EXTENSIONS-in-configure.ac.patch lib_patch.Upstream
 package/flex/0002-build-make-it-possible-to-disable-the-build-of-the-f.patch lib_patch.Upstream
@@ -414,27 +504,14 @@ package/ftop/0001-overflow.patch lib_patch.Upstream
 package/fwts/0001-build-do-not-use-Werror.patch lib_patch.Upstream
 package/fxdiv/0001-CMake-don-t-enable-CXX-unless-building-tests-benchma.patch lib_patch.Upstream
 package/fxload/0001-fix-static-build.patch lib_patch.Upstream
-package/gamin/0001-no-abstract-sockets.patch lib_patch.Upstream
-package/gamin/0002-no-const-return.patch lib_patch.Sob lib_patch.Upstream
-package/gamin/0003-fix-missing-PTHREAD_MUTEX_RECURSIVE_NP.patch lib_patch.Upstream
-package/gcc/11.4.0/0001-or1k-Add-mcmodel-option-to-handle-large-GOTs.patch lib_patch.Upstream
-package/gcc/11.4.0/0004-disable-split-stack-for-non-thread-builds.patch lib_patch.Upstream
-package/gcc/12.3.0/0001-disable-split-stack-for-non-thread-builds.patch lib_patch.Upstream
-package/gcc/13.2.0/0001-disable-split-stack-for-non-thread-builds.patch lib_patch.Upstream
+package/gcc/12.4.0/0001-disable-split-stack-for-non-thread-builds.patch lib_patch.Upstream
+package/gcc/13.3.0/0001-disable-split-stack-for-non-thread-builds.patch lib_patch.Upstream
+package/gcc/14.2.0/0001-disable-split-stack-for-non-thread-builds.patch lib_patch.Upstream
 package/gcc/8.4.0/0001-xtensa-fix-PR-target-91880.patch lib_patch.Upstream
 package/gcc/8.4.0/0002-Revert-re-PR-target-92095-internal-error-with-O1-mcp.patch lib_patch.Upstream
 package/gcc/8.4.0/0003-libsanitizer-Remove-cyclades-from-libsanitizer.patch lib_patch.Upstream
 package/gcc/8.4.0/0004-disable-split-stack-for-non-thread-builds.patch lib_patch.Upstream
 package/gcr/0001-meson-Fix-unknown-kw-argument-in-gnome.generate_gir.patch lib_patch.Upstream
-package/gdb/12.1/0001-ppc-ptrace-Define-pt_regs-uapi_pt_regs-on-GLIBC-syst.patch lib_patch.Upstream
-package/gdb/12.1/0002-sh-ptrace-Define-pt_-dsp-regs-uapi_pt_-dsp-regs-on-G.patch lib_patch.Upstream
-package/gdb/12.1/0003-use-asm-sgidefs.h.patch lib_patch.Upstream
-package/gdb/12.1/0004-gdbserver-fix-build-for-m68k.patch lib_patch.Upstream
-package/gdb/12.1/0005-nat-fork-inferior-include-linux-ptrace.h.patch lib_patch.Upstream
-package/gdb/12.1/0006-Fix-getrandom-compile-for-uclibc-v1.0.35.patch lib_patch.Upstream
-package/gdb/12.1/0007-fix-musl-build-on-riscv.patch lib_patch.Upstream
-package/gdb/12.1/0008-gdbserver-Makefile.in-fix-NLS-build.patch lib_patch.Upstream
-package/gdb/12.1/0009-gdb-Fix-native-build-on-xtensa.patch lib_patch.Upstream
 package/gdb/13.2/0001-ppc-ptrace-Define-pt_regs-uapi_pt_regs-on-GLIBC-syst.patch lib_patch.Upstream
 package/gdb/13.2/0002-sh-ptrace-Define-pt_-dsp-regs-uapi_pt_-dsp-regs-on-G.patch lib_patch.Upstream
 package/gdb/13.2/0003-use-asm-sgidefs.h.patch lib_patch.Upstream
@@ -444,16 +521,24 @@ package/gdb/13.2/0006-Fix-getrandom-compile-for-uclibc-v1.0.35.patch lib_patch.U
 package/gdb/13.2/0007-fix-musl-build-on-riscv.patch lib_patch.Upstream
 package/gdb/13.2/0008-gdbserver-Makefile.in-fix-NLS-build.patch lib_patch.Upstream
 package/gdb/13.2/0009-gdb-Fix-native-build-on-xtensa.patch lib_patch.Upstream
-package/gdb/14.1/0001-ppc-ptrace-Define-pt_regs-uapi_pt_regs-on-GLIBC-syst.patch lib_patch.Upstream
-package/gdb/14.1/0002-sh-ptrace-Define-pt_-dsp-regs-uapi_pt_-dsp-regs-on-G.patch lib_patch.Upstream
-package/gdb/14.1/0003-use-asm-sgidefs.h.patch lib_patch.Upstream
-package/gdb/14.1/0004-gdbserver-fix-build-for-m68k.patch lib_patch.Upstream
-package/gdb/14.1/0005-nat-fork-inferior-include-linux-ptrace.h.patch lib_patch.Upstream
-package/gdb/14.1/0006-Fix-getrandom-compile-for-uclibc-v1.0.35.patch lib_patch.Upstream
-package/gdb/14.1/0007-fix-musl-build-on-riscv.patch lib_patch.Upstream
-package/gdb/14.1/0008-gdbserver-Makefile.in-fix-NLS-build.patch lib_patch.Upstream
-package/gdb/14.1/0009-gdb-Fix-native-build-on-xtensa.patch lib_patch.Upstream
-package/gengetopt/0001-configure.ac-add-disable-doc-option.patch lib_patch.Upstream
+package/gdb/14.2/0001-ppc-ptrace-Define-pt_regs-uapi_pt_regs-on-GLIBC-syst.patch lib_patch.Upstream
+package/gdb/14.2/0002-sh-ptrace-Define-pt_-dsp-regs-uapi_pt_-dsp-regs-on-G.patch lib_patch.Upstream
+package/gdb/14.2/0003-use-asm-sgidefs.h.patch lib_patch.Upstream
+package/gdb/14.2/0004-gdbserver-fix-build-for-m68k.patch lib_patch.Upstream
+package/gdb/14.2/0005-nat-fork-inferior-include-linux-ptrace.h.patch lib_patch.Upstream
+package/gdb/14.2/0006-Fix-getrandom-compile-for-uclibc-v1.0.35.patch lib_patch.Upstream
+package/gdb/14.2/0007-fix-musl-build-on-riscv.patch lib_patch.Upstream
+package/gdb/14.2/0008-gdbserver-Makefile.in-fix-NLS-build.patch lib_patch.Upstream
+package/gdb/14.2/0009-gdb-Fix-native-build-on-xtensa.patch lib_patch.Upstream
+package/gdb/15.1/0001-ppc-ptrace-Define-pt_regs-uapi_pt_regs-on-GLIBC-syst.patch lib_patch.Upstream
+package/gdb/15.1/0002-sh-ptrace-Define-pt_-dsp-regs-uapi_pt_-dsp-regs-on-G.patch lib_patch.Upstream
+package/gdb/15.1/0003-use-asm-sgidefs.h.patch lib_patch.Upstream
+package/gdb/15.1/0004-gdbserver-fix-build-for-m68k.patch lib_patch.Upstream
+package/gdb/15.1/0005-nat-fork-inferior-include-linux-ptrace.h.patch lib_patch.Upstream
+package/gdb/15.1/0006-Fix-getrandom-compile-for-uclibc-v1.0.35.patch lib_patch.Upstream
+package/gdb/15.1/0007-fix-musl-build-on-riscv.patch lib_patch.Upstream
+package/gdb/15.1/0008-gdbserver-Makefile.in-fix-NLS-build.patch lib_patch.Upstream
+package/gdb/15.1/0009-gdb-Fix-native-build-on-xtensa.patch lib_patch.Upstream
 package/genpart/0001-fix-return-code.patch lib_patch.Upstream
 package/genromfs/0001-build-system.patch lib_patch.Sob lib_patch.Upstream
 package/gensio/0001-Fix-missing-EVP_PKEY_ED25519-build-error-on-libressl.patch lib_patch.Upstream
@@ -465,23 +550,14 @@ package/glorytun/0002-aegis256.c-fix-aarch64-build-with-uclibc.patch lib_patch.U
 package/gnu-efi/0001-Make.defaults-don-t-override-ARCH-when-cross-compili.patch lib_patch.Upstream
 package/gnupg/0001-build-Always-use-EXTERN_UNLESS_MAIN_MODULE-pattern.patch lib_patch.Upstream
 package/gnuplot/0001-configure-add-without-demo-option.patch lib_patch.Upstream
-package/go/0001-build.go-explicit-option-for-crosscompilation.patch lib_patch.Upstream
+package/go/go-src/0001-build.go-explicit-option-for-crosscompilation.patch lib_patch.Upstream
 package/gob2/0001-dont-include-from-prefix.patch lib_patch.Upstream
 package/gobject-introspection/0001-disable-tests.patch lib_patch.Upstream
 package/gobject-introspection/0002-Add-rpath-links-to-ccompiler.patch lib_patch.Upstream
-package/gobject-introspection/0003-giscanner-ignore-error-return-codes-from-ldd-wrapper.patch lib_patch.Upstream
-package/gpm/0001-Added-musl-support-to-libgpm-and-the-daemon.patch lib_patch.Upstream
-package/gpm/0002-Install-unversioned-solibrary.patch lib_patch.Upstream
-package/gpm/0003-src-Makefile.in-Really-install-unversioned-solibrary.patch lib_patch.Upstream
-package/gpm/0004-Use-sigemptyset-API-instead-of-__sigemptyset.patch lib_patch.Upstream
-package/gpm/0005-fix-building-w-newer-glibc.patch lib_patch.Upstream
-package/gpm/0006-src-headers-daemon.h-avoid-redefinition-of-last_sele.patch lib_patch.Upstream
 package/gpsd/S50gpsd Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/gptfdisk/0001-gptcurses-partially-revert-Tweaks-for-building-on-th.patch lib_patch.Upstream
-package/gptfdisk/0002-Fix-failure-crash-of-sgdisk-when-compiled-with-lates.patch lib_patch.Upstream
 package/graphite2/0001-don-t-install-a-libtool-file-with-static-library.patch lib_patch.Upstream
 package/grpc/0002-wrap_memcpy.cc-add-GPR_DISABLE_WRAPPED_MEMCPY.patch lib_patch.Upstream
-package/grpc/0003-host-grpc-only-cpp-plugin.patch lib_patch.Upstream
 package/grpc/0004-disable-unconditionally-downloading-api-repos.patch lib_patch.Upstream
 package/gstreamer1/gstd/0001-Don-t-require-gstd-check-user-xenv.sh-for-systemd-se.patch lib_patch.Upstream
 package/guile/0001-calculate-csqrt_manually.patch lib_patch.Upstream
@@ -497,8 +573,6 @@ package/heirloom-mailx/0001-fix-libressl-support.patch lib_patch.Upstream
 package/hplip/0001-build-use-pkg-config-to-discover-libusb.patch lib_patch.Upstream
 package/hplip/0002-configure.in-fix-AM_INIT_AUTOMAKE-call.patch lib_patch.Upstream
 package/htpdate/S43htpdate Shellcheck
-package/httping/0001-fix-math-library-linking.patch lib_patch.Upstream
-package/httping/0002-Makefile-allow-build-without-gettext.patch lib_patch.Upstream
 package/i2pd/S99i2pd Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/i7z/0001-fix-build-with-gcc-10.patch lib_patch.Upstream
 package/ibm-sw-tpm2/0001-Use-LONG_BIT-to-define-RADIX_BITS.patch lib_patch.Upstream
@@ -549,15 +623,12 @@ package/irrlicht/0002-makefile-override-LDFLAGS-and-remove-obsolete-X11R6-.patch
 package/iucode-tool/S00iucode-tool lib_sysv.Variables
 package/iwd/S40iwd Shellcheck lib_sysv.Variables
 package/janus-gateway/0001-disable-ssp.patch lib_patch.Upstream
-package/janus-gateway/0002-Add-test-for-Wunused-but-set-variable.patch lib_patch.Upstream
 package/jose/0001-lib-hsh.c-rename-hsh-local-variable.patch lib_patch.Upstream
 package/jose/0002-man-add-option-to-skip-building-man-pages.patch lib_patch.Upstream
 package/kexec-lite/0001-clean-restart.patch lib_patch.Upstream
 package/keyutils/0001-fix-install-rule.patch lib_patch.Upstream
 package/keyutils/0002-cifs.patch lib_patch.Sob lib_patch.Upstream
 package/kmod/0001-fix-O_CLOEXEC.patch lib_patch.Upstream
-package/kodi-texturepacker/0001-texturepacker.patch lib_patch.Upstream
-package/kodi-texturepacker/0002-fix-texture-packer-cmake-source-dir.patch lib_patch.Upstream
 package/kodi/S50kodi Shellcheck lib_sysv.Variables
 package/latencytop/0001-makefile.patch lib_patch.Upstream
 package/lbase64/0001-retro-compatible-with-Lua-5.1.patch lib_patch.Upstream
@@ -593,7 +664,7 @@ package/libeXosip2/0001-src-eXtl_dtls.c-fix-build-with-libressl-3.4.1.patch lib_
 package/libedit/0001-check-bsd-functions-in-libbsd.patch lib_patch.Upstream
 package/libevent/0001-Don-t-define-BIO_get_init-for-LibreSSL-3-5.patch lib_patch.Upstream
 package/libfcgi/0001-link-against-math.patch lib_patch.Upstream
-package/libfcgi/0002-disable-examples.patch lib_patch.Sob lib_patch.Upstream
+package/libfcgi/0002-disable-examples.patch lib_patch.Upstream
 package/libffi/0001-Fix-use-of-compact-eh-frames-on-MIPS.patch lib_patch.Upstream
 package/libfm/0001-modules-fix-cross-compilation.patch lib_patch.Upstream
 package/libfreeimage/0001-no-root-install.patch lib_patch.Upstream
@@ -608,10 +679,8 @@ package/libftdi1/0003-CMakeLists.txt-fix-static-build-with-libusb-and-lato.patch
 package/libfuse/0001-fix-aarch64-build.patch lib_patch.Upstream
 package/libfuse/0002-util-ulockmgr_server-c-conditionally-define-closefrom-fix-glibc-2-34.patch lib_patch.Upstream
 package/libgcrypt/0001-configure.ac-add-an-option-to-disable-tests.patch lib_patch.Upstream
-package/libglfw/0001-Wayland-Remove-extra-cmake-modules-dependency.patch lib_patch.Upstream
-package/libglfw/0002-src-CMakeLists.txt-allow-override-of-wayland-pkgdata.patch lib_patch.Upstream
 package/libgpiod/0001-build-add-a-configure-switch-for-building-examples.patch lib_patch.Upstream
-package/libgsm/0001-misc-fixes-from-archlinux.patch lib_patch.Upstream
+package/libgsm/0001-Misc-fixes-from-Archlinux.patch lib_patch.Upstream
 package/libgtk2/0001-reduce-dependencies.patch lib_patch.Upstream
 package/libgtk3/0001-Remove-Gdk-dependency-from-gtk-encode-symbolic-svg.patch lib_patch.Upstream
 package/libhdhomerun/0001-dont-strip.patch lib_patch.Upstream
@@ -636,7 +705,6 @@ package/libloki/0001-allow-to-install-to-a-specific-location-using-DESTDI.patch 
 package/libloki/0002-use-ln-snf.patch lib_patch.Upstream
 package/libmad/0001-mips-h-constraint-removal.patch lib_patch.Sob lib_patch.Upstream
 package/libmad/0002-configure-ac-automake-foreign.patch lib_patch.Upstream
-package/libmanette/0001-Meson-Un-hardcode-building-a-shared-library.patch lib_patch.Upstream
 package/libmng/0001-jpeg-9a.patch lib_patch.Upstream
 package/libmodsecurity/0001-configure.ac-drop-usage-of-git-at-configure-time.patch lib_patch.Upstream
 package/libmodsecurity/0002-modsecurity.pc.in-add-lstdc.patch lib_patch.Upstream
@@ -647,7 +715,6 @@ package/libmpeg2/0004-fix-sparc.patch lib_patch.Upstream
 package/libnetfilter_conntrack/0001-conntrack-fix-build-with-kernel-5-15-and-musl.patch lib_patch.Upstream
 package/libnfc/0001-autotools-make-example-build-optional.patch lib_patch.Upstream
 package/libnids/0001-libpcap-use-pkg-config.patch lib_patch.Upstream
-package/libnl/0001-Add-musl-workaround-to-the-libc-compat.h-copy.patch lib_patch.Upstream
 package/libnss/0001-Bug-1801182-Allow-overriding-OS_ARCH-OS_TEST-and-OS_.patch lib_patch.Upstream
 package/liboauth/0001-Fixes-build-issue-with-OpenSSL-1.1.0.patch lib_patch.Upstream
 package/libodb-mysql/0001-fix-syntax-issue-while-checking-ldflags.patch lib_patch.Upstream
@@ -666,8 +733,7 @@ package/libressl/0001-always-expose-SSL_OP_NO_TLSv1_3.patch lib_patch.Upstream
 package/libroxml/0001-src-roxml_mem.h-add-missing-extern.patch lib_patch.Upstream
 package/librsvg/0001-gdk-pixbuf-loader-Makefile.am-set-GDK_PIXBUF_MODULED.patch lib_patch.Upstream
 package/librtlsdr/0001-Makefile.am-respect-DESTDIR-with-install-udev-rules.patch lib_patch.Upstream
-package/libselinux/0001-fix-musl-build.patch lib_patch.Upstream
-package/libselinux/0002-Do-not-use-PYCEXT-and-rely-on-the-installed-file-nam.patch lib_patch.Upstream
+package/libselinux/0001-Do-not-use-PYCEXT-and-rely-on-the-installed-file-nam.patch lib_patch.Upstream
 package/libsepol/0001-support-static-only.patch lib_patch.Upstream
 package/libserial/0001-SerialPort.cpp-fix-build-when-size_t-is-an-unsigned-.patch lib_patch.Upstream
 package/libserial/0002-SerialPort.cpp-don-t-use-high-baudrates-when-not-ava.patch lib_patch.Upstream
@@ -695,7 +761,6 @@ package/libsvgtiny/0004-Build-Include-gperf-generated-code-directly.patch lib_pa
 package/libtalloc/0001-buildtools-wafsamba-add-disable-stack-protector-opti.patch lib_patch.Upstream
 package/libtelnet/0001-fix-compilation-without-zlib.patch lib_patch.Upstream
 package/libtheora/0001-link-libtheoradec.patch lib_patch.Upstream
-package/libtheora/0002-fix-autoreconf.patch lib_patch.Upstream
 package/libtomcrypt/0001-fix-CVE-2019-17362.patch lib_patch.Upstream
 package/libtommath/0001-Build-test-bn_mp_set_double-c-on-more-platforms.patch lib_patch.Upstream
 package/libtorrent/0001-libtorrent.pc.in-add-Libs.Private.patch lib_patch.Upstream
@@ -703,7 +768,6 @@ package/libubootenv/0001-src-CMakeLists.txt-do-not-force-the-build-of-a-share.pa
 package/libuhttpd/0001-add-compatibility-for-wolfssl-5-0.patch lib_patch.Upstream
 package/libuio/0001-configure.ac-set-automake-strictness-to-foreign.patch lib_patch.Upstream
 package/liburcu/0001-Only-blacklist-ARM-gcc-4.8.0-and-4.8.1.patch lib_patch.Upstream
-package/libusbgx/0001-Add-include-of-sys-sysmacro.h.patch lib_patch.Upstream
 package/libvpx/0001-vpx_mem-vpx_mem.h-Fix-compilation-with-uClibc.patch lib_patch.Upstream
 package/libwebsock/0001-Switch-to-use-pkg-config-to-detect-libevent-and-open.patch lib_patch.Upstream
 package/libwebsock/0002-fix-ssl.patch lib_patch.Upstream
@@ -753,16 +817,6 @@ package/lua-gd/0001-Protect-declaration-of-LgdImageCreateFromPng-with-GD.patch l
 package/lua-lunix/0001-remove-link-with-librt.patch lib_patch.Upstream
 package/lua-sdl2/0001-Do-not-reference-host-directory-for-headers.patch lib_patch.Upstream
 package/lua-sdl2/0002-CMakeLists-do-not-require-C.patch lib_patch.Upstream
-package/lua/5.1.5/0001-root-path.patch lib_patch.Upstream
-package/lua/5.1.5/0002-shared-libs-for-lua.patch lib_patch.Upstream
-package/lua/5.1.5/0011-linenoise.patch lib_patch.Upstream
-package/lua/5.1.5/0012-fix-reader-at-eoz.patch lib_patch.Upstream
-package/lua/5.3.6/0001-root-path.patch lib_patch.Upstream
-package/lua/5.3.6/0002-shared-libs-for-lua.patch lib_patch.Upstream
-package/lua/5.3.6/0003-linenoise.patch lib_patch.Upstream
-package/lua/5.4.6/0001-root-path.patch lib_patch.Upstream
-package/lua/5.4.6/0002-shared-libs-for-lua.patch lib_patch.Upstream
-package/lua/5.4.6/0011-linenoise.patch lib_patch.Upstream
 package/luajit/0001-no-bin-symlink.patch lib_patch.Upstream
 package/luajit/0002-install-inc.patch lib_patch.Upstream
 package/luasyslog/0001-remove-AX_LUA_LIBS.patch lib_patch.Upstream
@@ -771,7 +825,6 @@ package/lugaru/0001-ImageIO-fix-invalid-conversion.patch lib_patch.Upstream
 package/lugaru/0002-Fix-mismatched-usage-length-build-fail-on-g.patch lib_patch.Upstream
 package/lvm2/0001-cmdline-use-freopen-to-reopen-standard-streams.patch lib_patch.Upstream
 package/lvm2/0002-log-use-freopen-to-reopen-standard-streams.patch lib_patch.Upstream
-package/lz4/0001-build-Support-BUILD_SHARED-no.patch lib_patch.Upstream
 package/lzma/0001-Remove-static-from-LDFLAGS.patch lib_patch.Upstream
 package/lzop/0001-allow-overriding-modification-time.patch lib_patch.Upstream
 package/macchanger/0001-Fix-missing-include-for-caddr_t.patch lib_patch.Upstream
@@ -804,8 +857,6 @@ package/metacity/0001-add-libm-reference.patch lib_patch.Upstream
 package/metacity/0002-gconf.patch lib_patch.Upstream
 package/metacity/0003-mag-add-libm-reference.patch lib_patch.Upstream
 package/mfgtools/0001-lnx_def.h-fix-conflicting-declaration-of-__time64_t.patch lib_patch.Upstream
-package/midori/0001-disable-vala-fatal-warnings.patch lib_patch.Upstream
-package/midori/0002-add-option-to-specify-path-to-g-ir-compiler.patch lib_patch.Upstream
 package/mii-diag/0001-strchr.patch lib_patch.Sob lib_patch.Upstream
 package/mimic/0001-Fix-linking-on-gcc-10.2.0-or-newer.patch lib_patch.Upstream
 package/mini-snmpd/0001-linux.c-fix-musl-build.patch lib_patch.Upstream
@@ -816,7 +867,6 @@ package/mongodb/0001-ssl_manager.cpp-fix-build-with-gcc-7-and-fpermissive.patch 
 package/mongodb/0002-src-mongo-db-exec-plan_stats.h-fix-build-with-gcc-11.patch lib_patch.Upstream
 package/mongrel2/0001-Do-not-run-tests.patch lib_patch.Upstream
 package/mongrel2/0002-Fix-Makefiles-for-cross-compilation.patch lib_patch.Upstream
-package/mongrel2/0003-fix-build-with-gcc-4.8.patch lib_patch.Upstream
 package/monit/0001-no-force-static.patch lib_patch.Upstream
 package/mono-gtksharp3/0001-Fixes-MONO_PROFILE_ENTER_LEAVE-undeclared.patch lib_patch.Upstream
 package/mono-gtksharp3/0002-Mono-compilation-error-branch.patch lib_patch.Upstream
@@ -825,7 +875,6 @@ package/mono/0002-Ongoing-work-on-the-cmake-build.patch lib_patch.Upstream
 package/mosquitto/S50mosquitto Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/motion/S99motion Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/mpd/0001-src-event-meson.build-add-atomic-dependency-for-spar.patch lib_patch.Upstream
-package/mpd/S95mpd lib_sysv.Variables
 package/mpir/0001-mpn-arm-udiv.asm-workaround-binutils-bug-14887.patch lib_patch.Upstream
 package/mpv/0001-fix-powerpc64-altivec.patch lib_patch.Upstream
 package/mraa/0001-include-Declare-gVERSION-global-as-extern.patch lib_patch.Upstream
@@ -842,8 +891,6 @@ package/musl/0001-avoid-kernel-if_ether.h.patch lib_patch.Upstream
 package/musl/0002-package-musl-Make-scheduler-functions-Linux-compatib.patch lib_patch.Upstream
 package/nano/0001-lib-getrandom.c-fix-build-with-uclibc-1.0.35.patch lib_patch.Upstream
 package/nanocom/0001-fix-build-with-gcc-10.patch lib_patch.Upstream
-package/ncftp/0001-fix-gcc-10.patch lib_patch.Upstream
-package/ncmpc/0001-meson.build-add-atomic-dependency-for-sparc.patch lib_patch.Upstream
 package/ne10/0001-CMakeLists-don-t-hard-code-thumb-code-generation.patch lib_patch.Upstream
 package/ne10/0002-fix-build-without-C.patch lib_patch.Upstream
 package/neard/S53neard Shellcheck lib_sysv.Indent lib_sysv.Variables
@@ -864,7 +911,6 @@ package/netsurf/0002-do-not-cross-compile-nsgenbind.patch lib_patch.Upstream
 package/netsurf/0003-fix-compilation-without-curl.patch lib_patch.Upstream
 package/netsurf/0004-framebuffer-Fix-internal-font-generated-source-for-GCC-10.patch lib_patch.Upstream
 package/nettle/0001-disable-testsuite-examples.patch lib_patch.Upstream
-package/network-manager/S45network-manager Shellcheck lib_sysv.ConsecutiveEmptyLines lib_sysv.EmptyLastLine lib_sysv.Variables
 package/nfs-utils/S60nfs Shellcheck lib_sysv.ConsecutiveEmptyLines lib_sysv.Variables
 package/nginx-modsecurity/0001-config-use-pkg-config.patch lib_patch.Upstream
 package/nginx/0001-auto-type-sizeof-rework-autotest-to-be-cross-compila.patch lib_patch.Upstream
@@ -872,14 +918,12 @@ package/nginx/0002-auto-feature-add-mechanism-allowing-to-force-feature.patch li
 package/nginx/0003-auto-set-ngx_feature_run_force_result-for-each-featu.patch lib_patch.Upstream
 package/nginx/0004-auto-lib-libxslt-conf-use-pkg-config.patch lib_patch.Upstream
 package/nginx/0005-auto-unix-make-sys_nerr-guessing-cross-friendly.patch lib_patch.Upstream
-package/nginx/0006-auto-lib-openssl-conf-use-pkg-config.patch lib_patch.Upstream
-package/nginx/0007-auto-lib-libgd-conf-use-pkg-config.patch lib_patch.Upstream
-package/nginx/0008-src-os-unix-ngx_linux_config.h-only-include-dlfcn.h-.patch lib_patch.Upstream
-package/nginx/0009-auto-os-linux-fix-build-with-libxcrypt.patch lib_patch.Upstream
-package/nginx/0010-Allow-forcing-of-endianness-for-cross-compilation.patch lib_patch.Upstream
+package/nginx/0006-auto-lib-libgd-conf-use-pkg-config.patch lib_patch.Upstream
+package/nginx/0007-src-os-unix-ngx_linux_config.h-only-include-dlfcn.h-.patch lib_patch.Upstream
+package/nginx/0008-Allow-forcing-of-endianness-for-cross-compilation.patch lib_patch.Upstream
 package/nginx/S50nginx lib_sysv.Indent lib_sysv.Variables
 package/nilfs-utils/0001-nilfs_cleanerd-link-dynamically.patch lib_patch.Upstream
-package/nmap/0001-libdnet-wrapper-configure.patch lib_patch.Upstream
+package/nmap/0001-libdnet-always-build-a-static-library.patch lib_patch.Upstream
 package/nodejs/nodejs-src/0001-add-qemu-wrapper-support.patch lib_patch.Upstream
 package/nodejs/nodejs-src/0002-check-if-uclibc-has-backtrace-support.patch lib_patch.Upstream
 package/nodejs/nodejs-src/0003-include-obj-name-in-shared-intermediate.patch lib_patch.Upstream
@@ -889,27 +933,12 @@ package/norm/0001-protolib-drop-linux-version-check.patch lib_patch.Upstream
 package/norm/0002-Use-print-as-function-call-for-Python3-compatibility.patch lib_patch.Upstream
 package/norm/0003-Fix-mixed-tabs-spaces-in-protolib-wscript.patch lib_patch.Upstream
 package/nss-pam-ldapd/S45nslcd Shellcheck lib_sysv.EmptyLastLine lib_sysv.Indent lib_sysv.Variables
-package/ntp/0001-nano.patch lib_patch.Upstream
-package/ntp/0002-ntp-syscalls-fallback.patch lib_patch.Upstream
+package/ntp/0001-ntp-syscalls-fallback.patch lib_patch.Upstream
 package/ntp/S49ntp.in lib_sysv.Variables
 package/ntpsec/0001-wscript-remove-checks-for-bsd-string.h-fixes-host-co.patch lib_patch.Upstream
-package/numactl/0001-link-with-latomic-if-needed-again.patch lib_patch.Upstream
 package/nuttcp/0001-susv3-legacy.patch lib_patch.Upstream
 package/nvidia-driver/0001-use-LDFLAGS.patch lib_patch.Upstream
 package/octave/0001-Fix-BLAS-library-integer-size-detection.patch lib_patch.Upstream
-package/odb/0001-tm.h-include-in-gcc.hxx-appears-to-be-no-longer-nece.patch lib_patch.Upstream
-package/odb/0002-Remove-gratuitous-classes.patch lib_patch.Upstream
-package/odb/0003-Initial-work-to-make-ODB-compatible-with-GCC-6.patch lib_patch.Upstream
-package/odb/0004-Make-compilable-with-GCC-6-in-C-14-mode.patch lib_patch.Upstream
-package/odb/0005-Fix-bug-in-GCC-6-input_location-translation.patch lib_patch.Upstream
-package/odb/0006-Adapt-to-changes-in-GCC-8.patch lib_patch.Upstream
-package/odb/0007-Switch-to-C-11-get-rid-of-auto_ptr-use.patch lib_patch.Upstream
-package/odb/0008-Fix-GCC-8-adaptation-to-be-compatible-with-previous-.patch lib_patch.Upstream
-package/odb/0009-Handle-namespace-aliases-when-parsing-GCC-tree.patch lib_patch.Upstream
-package/odb/0010-Add-initial-support-for-GCC-9.patch lib_patch.Upstream
-package/odb/0011-Adjust-to-changes-in-GCC-10.patch lib_patch.Upstream
-package/odb/0012-Adjust-to-changes-in-GCC-11.patch lib_patch.Upstream
-package/odb/0013-Resolve-name-lookup-ambiguity-causing-error-with-GCC.patch lib_patch.Upstream
 package/ofono/0001-uclibc-backtrace.patch lib_patch.Upstream
 package/ofono/S46ofono lib_sysv.Variables
 package/ola/0001-ola-fix-compilation-with-musl-1-2-3.patch lib_patch.Upstream
@@ -919,7 +948,6 @@ package/olsr/0003-pud-adapt-to-API-changes-in-gpsd-3-20.patch lib_patch.Upstream
 package/olsr/0005-lib-pud-src-gpsdclient.c-drop-handling-of-gpsdata-fi.patch lib_patch.Upstream
 package/olsr/0006-build-patch-for-gpsd-3-25.patch lib_patch.Upstream
 package/olsr/S50olsr Shellcheck lib_sysv.Indent lib_sysv.Variables
-package/omxplayer/0001-Update-Makefile-to-be-compatible-with-buildroot.patch lib_patch.Upstream
 package/open-plc-utils/0001-Remove-OWNER-and-GROUPS-parameters-to-install.patch lib_patch.Upstream
 package/open2300/0001-fix-makefile.patch lib_patch.Upstream
 package/openjdk/17.0.9+9/0001-Add-ARCv2-ISA-processors-support-to-Zero.patch lib_patch.Upstream
@@ -940,7 +968,6 @@ package/openrc/0003-init.d-agetty-replace-sbin-agetty-by-sbin-getty.patch lib_pa
 package/openrc/0004-init.d-agetty-start-agetty-after-all-sevices.patch lib_patch.Upstream
 package/openrc/0005-runlevels-do-not-add-agetty.tty-1-6-if-MKSYSVINIT-ye.patch lib_patch.Upstream
 package/openrc/0006-Also-create-run-lock-subsys-directory.patch lib_patch.Upstream
-package/openssh/S50sshd lib_sysv.EmptyLastLine lib_sysv.Indent lib_sysv.Variables
 package/openswan/0001-lib-libopenswan-constants.c-workaround-missing-ns_t_.patch lib_patch.Upstream
 package/opentyrian/0001-Move-definitions-that-don-t-need-to-be-exposed-from-opl-h-to-opl-c.patch lib_patch.Upstream
 package/openvmtools/0001-no_cflags_werror.patch lib_patch.Upstream
@@ -996,10 +1023,8 @@ package/pistache/0001-src-common-transport.cc-fallback-value-for-RUSAGE_TH.patch
 package/pistache/0002-src-server-listener.cc-fix-libressl-build.patch lib_patch.Upstream
 package/pixman/0001-Disable-tests.patch lib_patch.Upstream
 package/pkgconf/0001-Only-prefix-with-the-sysroot-a-subset-of-variables.patch lib_patch.Upstream
-package/pkgconf/0002-Revert-main-assume-modversion-insted-of-version-if-o.patch lib_patch.Upstream
 package/pkgconf/pkg-config.in Shellcheck
 package/poke/0001-configure.ac-HELP2MAN-replace-by-true-when-cross-com.patch lib_patch.Upstream
-package/poke/0002-lib-getrandom.c-fix-build-with-uclibc-1.0.35.patch lib_patch.Upstream
 package/policycoreutils/0001-Add-DESTDIR-to-all-paths-that-use-an-absolute-path.patch lib_patch.Upstream
 package/policycoreutils/0002-Add-PREFIX-to-host-paths.patch lib_patch.Upstream
 package/postgresql/S50postgresql lib_sysv.Variables
@@ -1008,9 +1033,6 @@ package/pptp-linux/0002-fix-parallel-build.patch lib_patch.Upstream
 package/prboom/0001-libpng-1.4.patch lib_patch.Upstream
 package/prboom/0002-configure-remove-predefined-O2-optimization-flag.patch lib_patch.Upstream
 package/prelink-cross/0001-src-rtld-dl-tls.c-Fix-TLS-offsets-computation-for-s3.patch lib_patch.Upstream
-package/procps-ng/0001-configure-Add--disable-w.patch lib_patch.Upstream
-package/procps-ng/0002-escape-c-Fix-missing-nl_langinfo-on-certain-configs.patch lib_patch.Upstream
-package/procps-ng/0003-fix-pifd_open-check.patch lib_patch.Upstream
 package/procps-ng/S02sysctl lib_sysv.Variables
 package/proftpd/S50proftpd Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/prosody/0001-enable-syslog.patch lib_patch.Upstream
@@ -1027,10 +1049,6 @@ package/pulseaudio/0001-shm.c-use-_Static_assert-instead-of-static_assert-fo.pat
 package/pulseaudio/S50pulseaudio lib_sysv.ConsecutiveEmptyLines lib_sysv.EmptyLastLine lib_sysv.Indent lib_sysv.Variables
 package/pulseview/0001-Replace-obsolete-deprecated-Qt-methods.patch lib_patch.Upstream
 package/pulseview/0002-Fix-broken-build-due-to-C-template-behind-C-linkage.patch lib_patch.Upstream
-package/pulseview/0003-Support-glibmm-2.68.patch lib_patch.Upstream
-package/python-aiohttp-remotes/0001-Fix-flit_core-build-requires-backend.patch lib_patch.Upstream
-package/python-automat/0001-Remove-uneeded-dependency-to-wheel.patch lib_patch.Upstream
-package/python-daphne/0001-remove-pytest-runner-requirement.patch lib_patch.Upstream
 package/python-pybind/0001-pybind11-commands.py-support-STAGING_DIR.patch lib_patch.Upstream
 package/python-pylibftdi/0001-do-not-use-find-library.patch lib_patch.Upstream
 package/python-pyqt5/0001-configure-skip-qtdetail.patch lib_patch.Upstream
@@ -1044,37 +1062,15 @@ package/python-web2py/S51web2py Shellcheck lib_sysv.Variables
 package/python-ws4py/0001-Adjust-ws4py-for-Python-3.7-syntax.patch lib_patch.Upstream
 package/python3/0001-Make-the-build-of-pyc-files-conditional.patch lib_patch.Upstream
 package/python3/0002-Disable-buggy_getaddrinfo-configure-test-when-cross-.patch lib_patch.Upstream
-package/python3/0003-Add-infrastructure-to-disable-the-build-of-certain-e.patch lib_patch.Upstream
-package/python3/0004-Adjust-library-header-paths-for-cross-compilation.patch lib_patch.Upstream
-package/python3/0005-Don-t-look-in-usr-lib-termcap-for-libraries.patch lib_patch.Upstream
-package/python3/0006-Don-t-add-multiarch-paths.patch lib_patch.Upstream
-package/python3/0007-Abort-on-failed-module-build.patch lib_patch.Upstream
-package/python3/0008-Serial-ioctl-workaround.patch lib_patch.Upstream
-package/python3/0009-Do-not-adjust-the-shebang-of-Python-scripts-for-cros.patch lib_patch.Upstream
-package/python3/0010-Misc-python-config.sh.in-ensure-sed-invocations-only.patch lib_patch.Upstream
-package/python3/0011-Add-an-option-to-disable-pydoc.patch lib_patch.Upstream
-package/python3/0012-Add-an-option-to-disable-lib2to3.patch lib_patch.Upstream
-package/python3/0013-Add-option-to-disable-the-sqlite3-module.patch lib_patch.Upstream
-package/python3/0014-Add-an-option-to-disable-the-tk-module.patch lib_patch.Upstream
-package/python3/0015-Add-an-option-to-disable-the-curses-module.patch lib_patch.Upstream
-package/python3/0016-Add-an-option-to-disable-expat.patch lib_patch.Upstream
-package/python3/0017-Add-an-option-to-disable-CJK-codecs.patch lib_patch.Upstream
-package/python3/0018-Add-an-option-to-disable-NIS.patch lib_patch.Upstream
-package/python3/0019-Add-an-option-to-disable-unicodedata.patch lib_patch.Upstream
-package/python3/0020-Add-an-option-to-disable-IDLE.patch lib_patch.Upstream
-package/python3/0021-Add-an-option-to-disable-decimal.patch lib_patch.Upstream
-package/python3/0022-Add-an-option-to-disable-the-ossaudiodev-module.patch lib_patch.Upstream
-package/python3/0023-Add-an-option-to-disable-openssl-support.patch lib_patch.Upstream
-package/python3/0024-Add-an-option-to-disable-the-readline-module.patch lib_patch.Upstream
-package/python3/0025-Add-options-to-disable-zlib-bzip2-and-xz-modules.patch lib_patch.Upstream
-package/python3/0026-python-config.sh-don-t-reassign-prefix.patch lib_patch.Upstream
-package/python3/0027-Add-an-option-to-disable-uuid-module.patch lib_patch.Upstream
-package/python3/0028-fix-building-on-older-distributions.patch lib_patch.Upstream
-package/python3/0029-configure.ac-fixup-CC-print-multiarch-output-for-mus.patch lib_patch.Upstream
-package/python3/0030-Add-an-option-to-disable-the-berkeleydb-module.patch lib_patch.Upstream
-package/python3/0031-lib-crypt-uClibc-ng-doesn-t-set-errno-when-encryptio.patch lib_patch.Upstream
-package/qemu/0001-tests-fp-disable-fp-bench-build-by-default.patch lib_patch.Upstream
-package/qemu/0002-softmmu-qemu-seccomp.c-add-missing-header-for-CLONE_.patch lib_patch.Upstream
+package/python3/0003-Add-an-option-to-disable-pydoc.patch lib_patch.Upstream
+package/python3/0004-Add-an-option-to-disable-lib2to3.patch lib_patch.Upstream
+package/python3/0005-Add-an-option-to-disable-IDLE.patch lib_patch.Upstream
+package/python3/0006-configure.ac-move-PY_STDLIB_MOD_SET_NA-further-up.patch lib_patch.Upstream
+package/python3/0007-Add-option-to-disable-the-sqlite3-module.patch lib_patch.Upstream
+package/python3/0008-Add-an-option-to-disable-the-tk-module.patch lib_patch.Upstream
+package/python3/0009-Add-an-option-to-disable-the-curses-module.patch lib_patch.Upstream
+package/python3/0010-Add-an-option-to-disable-expat.patch lib_patch.Upstream
+package/python3/0011-configure.ac-fixup-CC-print-multiarch-output-for-mus.patch lib_patch.Upstream
 package/qextserialport/0001-Create-a-main-include-file-QExtSerialPort.patch lib_patch.Upstream
 package/qextserialport/0002-Tell-qmake-to-add-a-pkgconfig-file-to-ease-usage-wit.patch lib_patch.Upstream
 package/qt5/qt5base/0001-qtbase-Fix-build-error-when-using-EGL.patch lib_patch.Upstream
@@ -1105,11 +1101,9 @@ package/qt5cinex/0001-Fix-execution-problem-with-Qt5.3.patch lib_patch.Upstream
 package/quagga/0001-fix-ipctl-forwarding.patch lib_patch.Upstream
 package/quagga/0002-lib-prefix.h-fix-build-with-gcc-10.patch lib_patch.Upstream
 package/quagga/0003-Fix-build-with-gcc-10.patch lib_patch.Upstream
-package/quotatool/0001-fix-missing-__P-definition-for-musl-compile.patch lib_patch.Upstream
 package/racehound/0001-Fix-module-install-path-lib-instead-of-usr-lib-prefi.patch lib_patch.Upstream
 package/rapidxml/0001-ensure-internal-print-operations-are-declared-before.patch lib_patch.Upstream
 package/raspberrypi-usbboot/0001-Makefile-allow-passing-CFLAGS-LDFLAGS.patch lib_patch.Upstream
-package/rdesktop/0001-8bit-colors.patch lib_patch.Sob lib_patch.Upstream
 package/read-edid/0001-Fix-install-file-list.patch lib_patch.Upstream
 package/read-edid/0002-Fix-compiler-check.patch lib_patch.Upstream
 package/read-edid/0003-fix-build-with-gcc-10.patch lib_patch.Upstream
@@ -1123,7 +1117,6 @@ package/ripgrep/0001-puts-jemalloc-allocator-behind-a-cargo-feature-flag.patch l
 package/riscv-isa-sim/0001-riscv-disable-precompiled-headers.patch lib_patch.Upstream
 package/rng-tools/S21rngd Shellcheck lib_sysv.Variables
 package/rocksdb/0001-build_tools-build_detect_platform-fix-C-tests.patch lib_patch.Upstream
-package/rp-pppoe/0001-src-pppoe.h-fix-build-with-musl-libc.patch lib_patch.Upstream
 package/rpcbind/0001-Remove-yellow-pages-support.patch lib_patch.Upstream
 package/rpcbind/S30rpcbind lib_sysv.EmptyLastLine lib_sysv.Indent lib_sysv.Variables
 package/rpi-userland/0001-Add-.pc-files-for-the-OpenGLESv2-EGL-and-bcm_host-li.patch lib_patch.Upstream
@@ -1134,29 +1127,20 @@ package/rpi-userland/0005-dtmerge-add-missing-include-for-va_list.patch lib_patc
 package/rpi-userland/0006-interface-vcos-pthreads-CMakeLists.txt-fix-build-wit.patch lib_patch.Upstream
 package/rpi-userland/0007-GLES2-gl2ext.h-add-GLint64-GLuint64-and-GLsync-typed.patch lib_patch.Upstream
 package/rt-tests/0001-Fix-a-build-issue-with-uClibc-ng.patch lib_patch.Upstream
-package/rt-tests/0002-Makefile-drop-explicit-undefine-PYLIB-for-compatibil.patch lib_patch.Upstream
-package/rtmpdump/0001-include-limits.h.patch lib_patch.Upstream
 package/rtorrent/0001-Added--disable-execinfo-option-to-configure.patch lib_patch.Upstream
-package/rtty/0001-CMakeLists.txt-prefer-pkg_check_modules.patch lib_patch.Upstream
 package/rubix/0001-dont-use-legacy-functions.patch lib_patch.Upstream
 package/rubix/0002-misc-fixes.patch lib_patch.Sob lib_patch.Upstream
-package/rygel/0001-meson.build-fix-g_ir_compiler-calls.patch lib_patch.Upstream
 package/rygel/S99rygel Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/s6-linux-init/0001-configure-add-D_GNU_SOURCE.patch lib_patch.Upstream
-package/s6-linux-utils/0001-src-s6-linux-utils-rngseed.c-fix-build-with-glibc.patch lib_patch.Upstream
 package/safeclib/0001-fix-armv7-asm-inline-error-GH-115.patch lib_patch.Upstream
-package/samba4/0001-libreplace-disable-libbsd-support.patch lib_patch.Upstream
-package/samba4/0002-build-find-pre-built-heimdal-build-tools-in-case-of-.patch lib_patch.Upstream
-package/samba4/0003-ldap_message_test.c-include-stdint.h-before-cmoka.h.patch lib_patch.Upstream
+package/samba4/0001-build-find-pre-built-heimdal-build-tools-in-case-of-.patch lib_patch.Upstream
+package/samba4/0002-ldap_message_test.c-include-stdint.h-before-cmoka.h.patch lib_patch.Upstream
 package/samba4/S91smb Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/sane-backends/0001-sane_backend-add-missing-config.h.patch lib_patch.Upstream
-package/screen/0001-Do-not-use-memcpy-as-an-alternative-for-bcopy-memmov.patch lib_patch.Upstream
-package/screen/0002-Do-not-create-backup-of-old-installed-binary.patch lib_patch.Upstream
-package/screen/0003-Change-binary-permission-flags-even-if-chown-fails.patch lib_patch.Upstream
-package/screen/0004-Support-overriding-SCREEN-to-get-a-non-versioned-bin.patch lib_patch.Upstream
-package/screen/0005-Renamed-sched.h-to-eventqueue.h.patch lib_patch.Upstream
-package/screen/0006-comm.h-now-depends-on-term.h.patch lib_patch.Upstream
-package/screen/0007-comm.h-needed-for-list_-display-generic-.o.patch lib_patch.Upstream
+package/screen/0001-Do-not-create-backup-of-old-installed-binary.patch lib_patch.Upstream
+package/screen/0002-Change-binary-permission-flags-even-if-chown-fails.patch lib_patch.Upstream
+package/screen/0003-Support-overriding-SCREEN-to-get-a-non-versioned-bin.patch lib_patch.Upstream
+package/screen/0004-Renamed-sched.h-to-eventqueue.h.patch lib_patch.Upstream
 package/scrub/0001-configure-ac-make-sure-m4-macros-are-included-in-the-build.patch lib_patch.Upstream
 package/sdl/0001-use-correct-directfb-config.patch lib_patch.Upstream
 package/sdl/0002-fix-compilation-with-libx11.patch lib_patch.Upstream
@@ -1177,7 +1161,6 @@ package/setserial/0002-tiocghayesesp-build-fix.patch lib_patch.Upstream
 package/shadowsocks-libev/0001-configure.ac-use-pkg-config-to-find-netfilter_conntr.patch lib_patch.Upstream
 package/shadowsocks-libev/0002-fix-maybe-uninitialized-errors.patch lib_patch.Upstream
 package/shadowsocks-libev/0003-lib-Makefile.am-remove-static-from-LDFLAGS.patch lib_patch.Upstream
-package/shairport-sync/0001-configure.ac-find-sndfile-through-pkg-config.patch lib_patch.Upstream
 package/shairport-sync/S99shairport-sync Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/shared-mime-info/0001-Remove-incorrect-dependency-from-install-data-hook.patch lib_patch.Upstream
 package/shellinabox/0001-Makefile-disable-always-building-statically.patch lib_patch.Upstream
@@ -1188,7 +1171,6 @@ package/smcroute/S41smcroute NotExecutable lib_sysv.Indent lib_sysv.Variables
 package/smstools3/0001-fix-Makefile.patch lib_patch.Upstream
 package/smstools3/0002-fix-build-with-gcc-10.x.patch lib_patch.Upstream
 package/smstools3/S50smsd Shellcheck lib_sysv.Variables
-package/snmppp/0001-fix-build-without-v3.patch lib_patch.Upstream
 package/snort/0001-configure.in-Avoid-path-poisoning-with-libpcap.patch lib_patch.Upstream
 package/snort/0002-configure.in-Allow-to-override-the-INADDR_NONE-check.patch lib_patch.Upstream
 package/snort/0003-configure.in-convert-AC_RUN_IFELSE-to-AC_CHECK_MEMBE.patch lib_patch.Upstream
@@ -1209,7 +1191,7 @@ package/softether/0008-librt.patch lib_patch.Upstream
 package/softether/0009-uclibc-ai-addrconfig.patch lib_patch.Upstream
 package/solarus/0001-cmake-remove-Werror.patch lib_patch.Upstream
 package/solarus/0002-Add-a-basic-FindOpenGLES2.cmake.patch lib_patch.Sob lib_patch.Upstream
-package/sox/0001-uclibc.patch lib_patch.Upstream
+package/sox/0001-Make-SoX-support-uclibc-based-toolchains.patch lib_patch.Upstream
 package/sox/0002-configure.ac-put-back-disable-stack-protector.patch lib_patch.Upstream
 package/sox/0003-configure.ac-fix-static-linking-with-id3tag.patch lib_patch.Upstream
 package/sox/0004-configure.ac-fix-static-linking-with-magic.patch lib_patch.Upstream
@@ -1232,7 +1214,6 @@ package/suricata/0001-configure.ac-allow-the-user-to-override-RUST_TARGET.patch 
 package/suricata/S99suricata Shellcheck
 package/swupdate/swupdate.sh Shellcheck
 package/sylpheed/0001-harden-link-checker-before-accepting-click.patch lib_patch.Upstream
-package/sysprof/0001-define-NT_GNU_BUILD_ID.patch lib_patch.Upstream
 package/sysrepo/S51sysrepo-plugind Shellcheck lib_sysv.Indent
 package/sysvinit/0001-Makefile-disable-stack-protector-strong.patch lib_patch.Upstream
 package/tar/0001-lib-getrandom.c-fix-build-with-uclibc-1.0.35.patch lib_patch.Upstream
@@ -1241,8 +1222,6 @@ package/taskd/0001-Fix-missing-cmakedefine-HAVE_GET_CURRENT_DIR_NAME.patch lib_p
 package/taskd/0002-Use-correct-variables-for-GnuTLS-detection.patch lib_patch.Upstream
 package/taskd/0003-CMakeLists-use-pkg-config-uuid-detection.patch lib_patch.Upstream
 package/tcf-agent/S55tcf-agent Shellcheck lib_sysv.Variables
-package/tcl/0001-Disable-tcl-compatibility-layers.patch lib_patch.Upstream
-package/tftpd/0001-Use-extern-qualifier-to-fix-gcc-10.x-build.patch lib_patch.Upstream
 package/tftpd/S80tftpd-hpa Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/ti-gfx/0001-newclkapi.patch lib_patch.Upstream
 package/ti-gfx/0002-fix-build-omaplfb-linux.patch lib_patch.Upstream
@@ -1256,7 +1235,6 @@ package/tinyalsa/0001-include-time.h-before-asound.h.patch lib_patch.Upstream
 package/tinycbor/0001-Makefile-add-DISABLE_WERROR.patch lib_patch.Upstream
 package/tinycompress/0001-wave-add-time.h-missing-header-inclusion.patch lib_patch.Upstream
 package/tinydtls/0001-sha2-sha2.c-fix-build-on-big-endian.patch lib_patch.Upstream
-package/tinyproxy/0001-prevent-junk-from-showing-up-in-error-page-in-invalid-requests.patch lib_patch.Upstream
 package/tinyxml/0001-In-stamp-always-advance-the-pointer-if-p-0xef.patch lib_patch.Upstream
 package/tpm2-abrmd/S80tpm2-abrmd Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/tpm2-tss/0001-Temporary-fix-for-build-without-C.patch lib_patch.Upstream
@@ -1276,12 +1254,10 @@ package/uboot-tools/0001-drop-configh-from-tools.patch lib_patch.Upstream
 package/uboot-tools/0002-tools-only-in-no-dot-config-targets.patch lib_patch.Upstream
 package/uboot-tools/0003-tools-Makefile-fix-C-LD-FLAGS-with-CROSS_BUILD_TOOLS.patch lib_patch.Upstream
 package/ubus/0001-Install-server-and-client-examples.patch lib_patch.Upstream
-package/udpcast/0001-fix-musl-build.patch lib_patch.Upstream
 package/uemacs/01-clear-ixon-termios-flag.patch lib_patch.Upstream
 package/uhd/0001-host-CMakeLists-add-boost-unit_test_framework-requir.patch lib_patch.Upstream
 package/uhttpd/0001-Remove-Werror.patch lib_patch.Upstream
 package/uhttpd/0002-Fix-TCP_FASTOPEN-related-compile-error.patch lib_patch.Upstream
-package/umtprd/0001-Fix-output_dir-make-dependency.patch lib_patch.Upstream
 package/unbound/S70unbound Shellcheck
 package/unifdef/0001-Makefile-fix-error-on-install.patch lib_patch.Upstream
 package/unscd/S46unscd Shellcheck lib_sysv.Indent lib_sysv.Variables
@@ -1303,12 +1279,6 @@ package/vala/vala-wrapper Shellcheck
 package/valgrind/0001-workaround-SIGSEGV-on-PPC.patch lib_patch.Upstream
 package/valgrind/0002-Define-PTRACE_GETSIGINFO-on-PowerPC-when-not-availab.patch lib_patch.Upstream
 package/vboot-utils/0001-Add-missing-definition-of-MTD_CHAR_MAJOR.patch lib_patch.Upstream
-package/vboot-utils/0002-Add-missing-header-include-for-ssize_t.patch lib_patch.Upstream
-package/vboot-utils/0003-Avoid-RSA-type-redefinition.patch lib_patch.Upstream
-package/vboot-utils/0004-Disable-static-futility.patch lib_patch.Upstream
-package/vboot-utils/0005-include-sys-sysmacros.h-for-major.patch lib_patch.Upstream
-package/vboot-utils/0006-Update-for-openssl-1.1.patch lib_patch.Upstream
-package/vboot-utils/0007-Make-vboot_version-extern-in-header.patch lib_patch.Upstream
 package/vdr/0001-getloadavg.patch lib_patch.Upstream
 package/vlc/0001-Disable-building-of-statically-linked-vlc-binary.patch lib_patch.Upstream
 package/vlc/0002-automake-add-subdir-objects-option.patch lib_patch.Upstream
@@ -1355,9 +1325,7 @@ package/wilc-driver/0004-Fix-struct-station_parameters-Linux-6.1-build-failur.pa
 package/wilc-driver/0005-Fix-cast-warnings.patch lib_patch.Upstream
 package/wipe/0001-musl.patch lib_patch.Upstream
 package/wireless_tools/0001-remove-bzero.patch lib_patch.Upstream
-package/wireshark/0001-cmake-lemon-wipe-CMAKE_-EXE_LINKER_FLAGS-SYSROOT-if-.patch lib_patch.Upstream
 package/woff2/0001-CMake-Handle-multiple-libraries-being-returned-for-B.patch lib_patch.Upstream
-package/wpa_supplicant/0001-build-re-enable-options-for-libwpa_client.so-and-.patch lib_patch.Upstream
 package/wpa_supplicant/ifupdown.sh Shellcheck
 package/x11r7/xapp_luit/0001-posix-openpt.patch lib_patch.Upstream
 package/x11r7/xapp_xdm/S99xdm lib_sysv.Indent lib_sysv.Variables
@@ -1378,23 +1346,15 @@ package/x11r7/xdriver_xf86-video-imx/0003-support-glibc-2.20.patch lib_patch.Ups
 package/x11r7/xdriver_xf86-video-imx/0004-Make-video-API-forward-and-backward-compatible.patch lib_patch.Upstream
 package/x11r7/xdriver_xf86-video-imx/0005-xf86-video-imxfb-fix-m4-hardcodded-paths.patch lib_patch.Upstream
 package/x11r7/xdriver_xf86-video-imx/0006-xserver-1.14-compat.patch lib_patch.Upstream
-package/x11r7/xdriver_xf86-video-mach64/0001-cross-compile.patch lib_patch.Sob lib_patch.Upstream
+package/x11r7/xdriver_xf86-video-mach64/0001-cross-compile.patch lib_patch.Upstream
 package/x11r7/xdriver_xf86-video-nouveau/0001-nouveau-fixup-driver-for-new-X-server-ABI.patch lib_patch.Upstream
-package/x11r7/xdriver_xf86-video-tdfx/0001-cross.patch lib_patch.Sob lib_patch.Upstream
+package/x11r7/xdriver_xf86-video-tdfx/0001-cross.patch lib_patch.Upstream
 package/x11r7/xserver_xorg-server/0001-include-misc.h-fix-uClibc-build.patch lib_patch.Upstream
 package/x11r7/xserver_xorg-server/S40xorg Shellcheck lib_sysv.Variables
-package/x11vnc/0001-Fix-build-on-32bit-arches-with-64bit-time_t.patch lib_patch.Upstream
-package/x11vnc/0002-scan-limit-access-to-shared-memory-segments-to-current-user.patch lib_patch.Upstream
-package/x265/0001-fix-gcc-options.patch lib_patch.Upstream
 package/xen/0001-9pfs-include-linux-limits.h-for-XATTR_SIZE_MAX.patch lib_patch.Upstream
 package/xen/0002-Fix-build-with-64-bits-time_t.patch lib_patch.Upstream
 package/xen/0003-libs-light-fix-tv_sec-printf-format.patch lib_patch.Upstream
 package/xen/0004-libs-light-fix-tv_sec-fprintf-format.patch lib_patch.Upstream
-package/xenomai/3.0.10/0001-lib-boilerplate-iniparser-Allow-building-with-GCC-10-2-2020101.patch lib_patch.Upstream
-package/xenomai/3.0.10/0002-Add-disable-demo-testsuite-options.patch lib_patch.Upstream
-package/xenomai/3.0.10/0003-lib-cobalt-copperplate-Use-valid-addresses-for-pthread_setspecific.patch lib_patch.Upstream
-package/xfsprogs/0001-mdrestore-do-not-do-dynamic-linking-of-libtool-libra.patch lib_patch.Upstream
-package/xfsprogs/0002-libxfs-do-not-try-to-run-the-crc32selftest.patch lib_patch.Upstream
 package/xinetd/0001-ar.patch lib_patch.Upstream
 package/xinetd/0002-destdir.patch lib_patch.Upstream
 package/xinetd/0003-rpc-fix.patch lib_patch.Upstream
@@ -1408,8 +1368,6 @@ package/yajl/0003-Link-with-shared-libyajl-in-a-shared-build.patch lib_patch.Ups
 package/yajl/0004-Link-libyajl-_s-with-libm-when-isnan-is-not-brought-.patch lib_patch.Upstream
 package/ympd/0001-only-c-language.patch lib_patch.Upstream
 package/ympd/0002-added-forward-declarations.patch lib_patch.Upstream
-package/zabbix/0001-m4-netsnmp.m4-fix-shared-netsnmp-build.patch lib_patch.Upstream
-package/zabbix/0002-fix-build-with-libressl-3.5.0.patch lib_patch.Upstream
 package/zic/0001-remove-dependency-check-on-version-file.patch lib_patch.Upstream
 package/zip/0001-configure-Remove-Check-C-compiler-type-optimization-.patch lib_patch.Upstream
 package/zip/0002-configure-Don-t-use-host-CPP.patch lib_patch.Upstream
@@ -1420,7 +1378,6 @@ package/zip/0006-unix-configure-borrow-the-LFS-test-from-autotools.patch lib_pat
 package/zip/0007-timezone.c-needs-time.h-fixes-musl-compile.patch lib_patch.Upstream
 package/zip/0008-fix-musl-static-build.patch lib_patch.Upstream
 package/zmqpp/0001-Allow-building-shared-or-static-library-only.patch lib_patch.Upstream
-package/zziplib/0001-implant-ZZIP_LIBLATEST-for-zzip_lib.patch lib_patch.Upstream
 support/dependencies/check-host-asciidoc.sh Shellcheck
 support/dependencies/check-host-cmake.sh Shellcheck
 support/dependencies/check-host-gzip.sh Shellcheck
@@ -1431,9 +1388,6 @@ support/dependencies/check-host-tar.sh Shellcheck
 support/dependencies/check-host-xzcat.sh Shellcheck
 support/dependencies/dependencies.sh Shellcheck
 support/download/bzr Shellcheck lib_shellscript.ConsecutiveEmptyLines
-support/download/cargo-post-process Shellcheck
-support/download/cvs Shellcheck
-support/download/dl-wrapper Shellcheck
 support/download/file Shellcheck
 support/download/go-post-process Shellcheck
 support/download/hg Shellcheck

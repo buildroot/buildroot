@@ -74,6 +74,40 @@ def test_Ifdef(testname, filename, string, expected):
     assert warnings == expected
 
 
+get_package_prefix_from_filename = [
+    ('linux extension',
+     'linux/linux-ext-aufs.mk',
+     ['aufs', 'AUFS']),
+    ('linux tool',
+     'package/linux-tools/linux-tool-gpio.mk.in',
+     ['gpio', 'GPIO']),
+    ('boot',
+     'boot/binaries-marvell/binaries-marvell.mk',
+     ['binaries-marvell', 'BINARIES_MARVELL']),
+    ('toolchain',
+     'toolchain/toolchain-external/toolchain-external-bootlin/toolchain-external-bootlin.mk',
+     ['toolchain-external-bootlin', 'TOOLCHAIN_EXTERNAL_BOOTLIN']),
+    ('package, underscore, subfolder',
+     'package/x11r7/xapp_bitmap/xapp_bitmap.mk',
+     ['xapp_bitmap', 'XAPP_BITMAP']),
+    ('package, starting with number',
+     'package/4th/4th.mk',
+     ['4th', '4TH']),
+    ('package, long name',
+     'package/perl-mojolicious-plugin-authentication/perl-mojolicious-plugin-authentication.mk',
+     ['perl-mojolicious-plugin-authentication', 'PERL_MOJOLICIOUS_PLUGIN_AUTHENTICATION']),
+    ('package, case sensitive',
+     'package/libeXosip2/libeXosip2.mk',
+     ['libeXosip2', 'LIBEXOSIP2']),
+    ]
+
+
+@pytest.mark.parametrize('testname,filename,expected', get_package_prefix_from_filename)
+def test_get_package_prefix_from_filename(testname, filename, expected):
+    prefix_lower, prefix_upper = m.get_package_prefix_from_filename(filename)
+    assert [prefix_lower, prefix_upper] == expected
+
+
 Indent = [
     ('ignore comment at beginning of line',
      'any',
@@ -512,27 +546,27 @@ TypoInPackageVariable = [
     ('bad =',
      'any.mk',
      'OTHER_VAR = \n',
-     [['any.mk:1: possible typo: OTHER_VAR -> *ANY*',
+     [['any.mk:1: possible typo, variable not properly prefixed: OTHER_VAR -> *ANY_XXXX* (url#_tips_and_tricks)',
        'OTHER_VAR = \n']]),
     ('bad +=',
      'any.mk',
      'OTHER_VAR += \n',
-     [['any.mk:1: possible typo: OTHER_VAR -> *ANY*',
+     [['any.mk:1: possible typo, variable not properly prefixed: OTHER_VAR -> *ANY_XXXX* (url#_tips_and_tricks)',
        'OTHER_VAR += \n']]),
     ('ignore missing space',
      'any.mk',
      'OTHER_VAR= \n',
-     [['any.mk:1: possible typo: OTHER_VAR -> *ANY*',
+     [['any.mk:1: possible typo, variable not properly prefixed: OTHER_VAR -> *ANY_XXXX* (url#_tips_and_tricks)',
        'OTHER_VAR= \n']]),
     ('use path in the warning',
      './any.mk',
      'OTHER_VAR = \n',
-     [['./any.mk:1: possible typo: OTHER_VAR -> *ANY*',
+     [['./any.mk:1: possible typo, variable not properly prefixed: OTHER_VAR -> *ANY_XXXX* (url#_tips_and_tricks)',
        'OTHER_VAR = \n']]),
     ('another name',
      'other.mk',
      'ANY_VAR = \n',
-     [['other.mk:1: possible typo: ANY_VAR -> *OTHER*',
+     [['other.mk:1: possible typo, variable not properly prefixed: ANY_VAR -> *OTHER_XXXX* (url#_tips_and_tricks)',
        'ANY_VAR = \n']]),
     ('libc exception',
      './any.mk',
@@ -549,7 +583,7 @@ TypoInPackageVariable = [
     ('host (bad)',
      'any.mk',
      'HOST_OTHER_VAR = \n',
-     [['any.mk:1: possible typo: HOST_OTHER_VAR -> *ANY*',
+     [['any.mk:1: possible typo, variable not properly prefixed: HOST_OTHER_VAR -> *ANY_XXXX* (url#_tips_and_tricks)',
        'HOST_OTHER_VAR = \n']]),
     ('provides',
      'any.mk',
@@ -565,8 +599,15 @@ TypoInPackageVariable = [
      'any.mk',
      'ANY_PROVIDES = other\n'
      'OTHERS_VAR = \n',
-     [['any.mk:2: possible typo: OTHERS_VAR -> *ANY*',
+     [['any.mk:2: possible typo, variable not properly prefixed: OTHERS_VAR -> *ANY_XXXX* (url#_tips_and_tricks)',
        'OTHERS_VAR = \n']]),
+    ('linux tool',
+     'package/linux-tools/linux-tool-cpupower.mk.in',
+     'CPUPOWER_DEPENDENCIES =\n'
+     'POWER_DEPENDENCIES +=\n',
+     [['package/linux-tools/linux-tool-cpupower.mk.in:2: possible typo, variable not properly prefixed: '
+         'POWER_DEPENDENCIES -> *CPUPOWER_XXXX* (url#_tips_and_tricks)',
+       'POWER_DEPENDENCIES +=\n']]),
     ]
 
 
@@ -602,13 +643,13 @@ UselessFlag = [
     ('generic',
      'any.mk',
      'ANY_INSTALL_IMAGES = NO\n'
-     'ANY_INSTALL_REDISTRIBUTE = YES\n'
+     'ANY_REDISTRIBUTE = YES\n'
      'ANY_INSTALL_STAGING = NO\n'
      'ANY_INSTALL_TARGET = YES\n',
      [['any.mk:1: useless default value (url#_infrastructure_for_packages_with_specific_build_systems)',
        'ANY_INSTALL_IMAGES = NO\n'],
       ['any.mk:2: useless default value (url#_infrastructure_for_packages_with_specific_build_systems)',
-       'ANY_INSTALL_REDISTRIBUTE = YES\n'],
+       'ANY_REDISTRIBUTE = YES\n'],
       ['any.mk:3: useless default value (url#_infrastructure_for_packages_with_specific_build_systems)',
        'ANY_INSTALL_STAGING = NO\n'],
       ['any.mk:4: useless default value (url#_infrastructure_for_packages_with_specific_build_systems)',
@@ -618,9 +659,9 @@ UselessFlag = [
      'ifneq (condition)\n'
      'ANY_INSTALL_IMAGES = NO\n'
      'endif\n'
-     'ANY_INSTALL_REDISTRIBUTE = YES\n',
+     'ANY_REDISTRIBUTE = YES\n',
      [['any.mk:4: useless default value (url#_infrastructure_for_packages_with_specific_build_systems)',
-       'ANY_INSTALL_REDISTRIBUTE = YES\n']]),
+       'ANY_REDISTRIBUTE = YES\n']]),
     ]
 
 

@@ -8,6 +8,8 @@ main ()
 		exit 1
 	fi
 
+	FIT_EXTERNAL_POSITION=0x5000
+
 	if grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8M=y$" ${BR2_CONFIG}; then
 		dd if=${BINARIES_DIR}/u-boot-spl.bin of=${BINARIES_DIR}/u-boot-spl-padded.bin bs=4 conv=sync
 		cat ${BINARIES_DIR}/u-boot-spl-padded.bin ${BINARIES_DIR}/ddr_fw.bin > ${BINARIES_DIR}/u-boot-spl-ddr.bin
@@ -16,7 +18,7 @@ main ()
 		else
 			BL31=${BINARIES_DIR}/bl31.bin BL33=${BINARIES_DIR}/u-boot-nodtb.bin ATF_LOAD_ADDR=0x00910000 ${HOST_DIR}/bin/mkimage_fit_atf.sh ${UBOOT_DTB} > ${BINARIES_DIR}/u-boot.its
 		fi
-		${HOST_DIR}/bin/mkimage -E -p 0x3000 -f ${BINARIES_DIR}/u-boot.its ${BINARIES_DIR}/u-boot.itb
+		${HOST_DIR}/bin/mkimage -E -p ${FIT_EXTERNAL_POSITION} -f ${BINARIES_DIR}/u-boot.its ${BINARIES_DIR}/u-boot.itb
 		rm -f ${BINARIES_DIR}/u-boot.its
 
 		${HOST_DIR}/bin/mkimage_imx8 -fit -signed_hdmi ${BINARIES_DIR}/signed_hdmi_imx8m.bin -loader ${BINARIES_DIR}/u-boot-spl-ddr.bin 0x7E1000 -second_loader ${BINARIES_DIR}/u-boot.itb 0x40200000 0x60000 -out ${BINARIES_DIR}/imx8-boot-sd.bin
@@ -28,7 +30,7 @@ main ()
 		else
 			BL31=${BINARIES_DIR}/bl31.bin BL33=${BINARIES_DIR}/u-boot-nodtb.bin ATF_LOAD_ADDR=0x00920000 ${HOST_DIR}/bin/mkimage_fit_atf.sh ${UBOOT_DTB} > ${BINARIES_DIR}/u-boot.its
 		fi
-		${HOST_DIR}/bin/mkimage -E -p 0x3000 -f ${BINARIES_DIR}/u-boot.its ${BINARIES_DIR}/u-boot.itb
+		${HOST_DIR}/bin/mkimage -E -p ${FIT_EXTERNAL_POSITION} -f ${BINARIES_DIR}/u-boot.its ${BINARIES_DIR}/u-boot.itb
 		rm -f ${BINARIES_DIR}/u-boot.its
 
 		${HOST_DIR}/bin/mkimage_imx8 -fit -loader ${BINARIES_DIR}/u-boot-spl-ddr.bin 0x7E1000 -second_loader ${BINARIES_DIR}/u-boot.itb 0x40200000 0x60000 -out ${BINARIES_DIR}/imx8-boot-sd.bin
@@ -40,7 +42,7 @@ main ()
 		else
 			BL31=${BINARIES_DIR}/bl31.bin BL33=${BINARIES_DIR}/u-boot-nodtb.bin ATF_LOAD_ADDR=0x00960000 ${HOST_DIR}/bin/mkimage_fit_atf.sh ${UBOOT_DTB} > ${BINARIES_DIR}/u-boot.its
 		fi
-		${HOST_DIR}/bin/mkimage -E -p 0x3000 -f ${BINARIES_DIR}/u-boot.its ${BINARIES_DIR}/u-boot.itb
+		${HOST_DIR}/bin/mkimage -E -p ${FIT_EXTERNAL_POSITION} -f ${BINARIES_DIR}/u-boot.its ${BINARIES_DIR}/u-boot.itb
 		rm -f ${BINARIES_DIR}/u-boot.its
 
 		${HOST_DIR}/bin/mkimage_imx8 -v v2 -fit -loader ${BINARIES_DIR}/u-boot-spl-ddr.bin 0x912000 -second_loader ${BINARIES_DIR}/u-boot.itb 0x40200000 0x60000 -out ${BINARIES_DIR}/imx8-boot-sd.bin
@@ -52,10 +54,29 @@ main ()
 		else
 			BL31=${BINARIES_DIR}/bl31.bin BL33=${BINARIES_DIR}/u-boot-nodtb.bin ATF_LOAD_ADDR=0x00970000 ${HOST_DIR}/bin/mkimage_fit_atf.sh ${UBOOT_DTB} > ${BINARIES_DIR}/u-boot.its
 		fi
-		${HOST_DIR}/bin/mkimage -E -p 0x3000 -f ${BINARIES_DIR}/u-boot.its ${BINARIES_DIR}/u-boot.itb
+		${HOST_DIR}/bin/mkimage -E -p ${FIT_EXTERNAL_POSITION} -f ${BINARIES_DIR}/u-boot.its ${BINARIES_DIR}/u-boot.itb
 		rm -f ${BINARIES_DIR}/u-boot.its
 
 		${HOST_DIR}/bin/mkimage_imx8 -v v2 -fit -loader ${BINARIES_DIR}/u-boot-spl-ddr.bin 0x920000 -second_loader ${BINARIES_DIR}/u-boot.itb 0x40200000 0x60000 -out ${BINARIES_DIR}/imx8-boot-sd.bin
+	elif grep -Eq "^BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULP=y$" "${BR2_CONFIG}"; then
+		SPL_LOAD_ADDR=0x22020000
+		ATF_LOAD_ADDR=0x20040000
+		"${HOST_DIR}/bin/mkimage_imx8" -commit > "${BINARIES_DIR}/mkimg.commit"
+		cat "${BINARIES_DIR}/u-boot.bin" "${BINARIES_DIR}/mkimg.commit" > "${BINARIES_DIR}/u-boot-hash.bin"
+		rm -f "${BINARIES_DIR}/mkimg.commit"
+		if grep -Eq "^BR2_TARGET_OPTEE_OS=y$" "${BR2_CONFIG}"; then
+			"${HOST_DIR}/bin/mkimage_imx8" -soc ULP -c -ap "${BINARIES_DIR}/bl31.bin" a35 ${ATF_LOAD_ADDR} -ap "${BINARIES_DIR}/u-boot-hash.bin" a35 0x80200000 -ap "${BINARIES_DIR}/tee.bin" a35 0xa6000000 -out "${BINARIES_DIR}/u-boot-atf-container.img"
+		else
+			"${HOST_DIR}/bin/mkimage_imx8" -soc ULP -c -ap "${BINARIES_DIR}/bl31.bin" a35 ${ATF_LOAD_ADDR} -ap "${BINARIES_DIR}/u-boot-hash.bin" a35 0x80200000 -out "${BINARIES_DIR}/u-boot-atf-container.img"
+		fi
+		if [ -e "${BINARIES_DIR}/m33_image.bin" ]; then
+			"${HOST_DIR}/bin/mkimage_imx8" -soc ULP -append "${BINARIES_DIR}/ahab-container.img" -c -upower "${BINARIES_DIR}/upower.bin" -m4 "${BINARIES_DIR}/m33_image.bin" 0 0x1ffc2000 -ap "${BINARIES_DIR}/u-boot-spl.bin" a35 ${SPL_LOAD_ADDR} -out "${BINARIES_DIR}/imx8-boot-sd.bin"
+		else
+			"${HOST_DIR}/bin/mkimage_imx8" -soc ULP -append "${BINARIES_DIR}/ahab-container.img" -c -upower "${BINARIES_DIR}/upower.bin" 0 0x1ffc2000 -ap "${BINARIES_DIR}/u-boot-spl.bin" a35 ${SPL_LOAD_ADDR} -out "${BINARIES_DIR}/imx8-boot-sd.bin"
+		fi
+		flashbin_size="$(wc -c "${BINARIES_DIR}/imx8-boot-sd.bin" | awk '{print $1}')"
+		pad_cnt=$(($((flashbin_size + 0x400 - 1)) / 0x400))
+		dd if="${BINARIES_DIR}/u-boot-atf-container.img" of="${BINARIES_DIR}/imx8-boot-sd.bin" bs=1K seek=${pad_cnt}
 	else
 		${HOST_DIR}/bin/mkimage_imx8 -commit > ${BINARIES_DIR}/mkimg.commit
 		cat ${BINARIES_DIR}/u-boot.bin ${BINARIES_DIR}/mkimg.commit > ${BINARIES_DIR}/u-boot-hash.bin

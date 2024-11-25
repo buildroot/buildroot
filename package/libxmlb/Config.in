@@ -1,0 +1,17 @@
+config BR2_PACKAGE_LIBXMLB
+	bool "libxmlb"
+	depends on !BR2_STATIC_LIBS # glib2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # glib2
+	depends on BR2_USE_MMU # glib2
+	depends on BR2_USE_WCHAR # glib2
+	select BR2_PACKAGE_LIBGLIB2
+	help
+	  The libxmlb library takes XML source, and converts it
+	  to a structured binary representation with a deduplicated
+	  string table where the strings have the NULs included.
+
+	  https://github.com/hughsie/libxmlb
+
+comment "libxmlb needs a toolchain w/ wchar, threads, dynamic library"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS

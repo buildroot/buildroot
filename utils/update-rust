@@ -1,0 +1,144 @@
+#!/usr/bin/env python3
+
+import argparse
+import pathlib
+import urllib.request
+
+# When updating this list, also update:
+# - package/rustc/Config.in.host:
+#       BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
+# - package/rustc/rustc.mk:
+#       RUSTC_HOST_NAME
+RUST_HOSTS = [
+    "aarch64-unknown-linux-gnu",
+    "i686-unknown-linux-gnu",
+    "powerpc-unknown-linux-gnu",
+    "powerpc64-unknown-linux-gnu",
+    "powerpc64le-unknown-linux-gnu",
+    "riscv64gc-unknown-linux-gnu",
+    "s390x-unknown-linux-gnu",
+    "x86_64-unknown-linux-gnu",
+]
+
+# When updating this list, also update one of:
+# - package/rustc/Config.in.host:
+#       BR2_PACKAGE_HOST_RUSTC_TARGET_TIER1_PLATFORMS
+#       BR2_PACKAGE_HOST_RUSTC_TARGET_TIER2_HOST_TOOLS_PLATFORMS
+#       BR2_PACKAGE_HOST_RUSTC_TARGET_TIER2_PLATFORMS
+# - package/rustc/rustc.mk:
+#       RUSTC_TARGET_NAME
+# and check whether one of the following needs updating:
+# - package/rustc/Config.in.host:
+#       BR2_PACKAGE_HOST_RUSTC_ARCH
+#       BR2_PACKAGE_HOST_RUSTC_ABI
+RUST_TARGETS = [
+    "aarch64-unknown-linux-gnu",
+    "aarch64-unknown-linux-musl",
+    "arm-unknown-linux-gnueabi",
+    "arm-unknown-linux-gnueabihf",
+    "arm-unknown-linux-musleabi",
+    "arm-unknown-linux-musleabihf",
+    "armv5te-unknown-linux-gnueabi",
+    "armv5te-unknown-linux-musleabi",
+    "armv7-unknown-linux-gnueabi",
+    "armv7-unknown-linux-gnueabihf",
+    "armv7-unknown-linux-musleabi",
+    "armv7-unknown-linux-musleabihf",
+    "i586-unknown-linux-gnu",
+    "i586-unknown-linux-musl",
+    "i686-unknown-linux-gnu",
+    "i686-unknown-linux-musl",
+    "powerpc-unknown-linux-gnu",
+    "powerpc64-unknown-linux-gnu",
+    "powerpc64le-unknown-linux-gnu",
+    "riscv64gc-unknown-linux-gnu",
+    "s390x-unknown-linux-gnu",
+    "sparc64-unknown-linux-gnu",
+    "x86_64-unknown-linux-gnu",
+    "x86_64-unknown-linux-musl",
+]
+
+RUST_DIST_URL = "https://static.rust-lang.org/dist"
+
+LICENSES = {
+    "APACHE": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+    "MIT": "23f18e03dc49df91622fe2a76176497404e46ced8a715d9d2b67a7446571cca3",
+}
+
+
+def update_mk_file(mk_file, new_version):
+    with mk_file.open("r") as fd:
+        lines = fd.readlines()
+
+    version_var = pathlib.Path(mk_file).stem.upper().replace("-", "_") + "_VERSION"
+    with mk_file.open("w") as fd:
+        for line in lines:
+            words = line.split()
+            if len(words) == 3 and words[0] == version_var and words[1] == "=":
+                fd.write(f"{words[0]} = {new_version}\n")
+            else:
+                fd.write(line)
+
+
+def gen_hash_file_src(hash_file, new_version):
+    with hash_file.open("w") as fd:
+        fd.write("# Generated with utils/update-rust\n# Do not edit manually\n\n")
+        f_name = f"rustc-{new_version}-src.tar.xz"
+        print(f"\r\033[KUpdating {f_name}", end="")
+        h_url = f"{RUST_DIST_URL}/{f_name}.sha256"
+        with urllib.request.urlopen(h_url) as r:
+            if r.status != 200:
+                raise RuntimeError(f"No hash for {f_name}. Has source been removed?")
+            # rstrip() content, and explicitly add the \n, in case
+            # a hash file does not have a trailing \n.
+            fd.write(f"# From {h_url}\nsha256  {r.read().decode().rstrip()}\n")
+        fd.write("# Locally generated\n")
+        for license in LICENSES:
+            fd.write(f"sha256  {LICENSES[license]}  LICENSE-{license}\n")
+
+
+def gen_hash_file_bin(hash_file, new_version):
+    with hash_file.open("w") as fd:
+        fd.write("# Generated with utils/update-rust\n# Do not edit manually\n\n")
+        for host in RUST_HOSTS:
+            f_name = f"rust-{new_version}-{host}.tar.xz"
+            print(f"\r\033[KUpdating {f_name}", end="")
+            h_url = f"{RUST_DIST_URL}/{f_name}.sha256"
+            with urllib.request.urlopen(h_url) as r:
+                if r.status != 200:
+                    raise RuntimeError(f"No hash for {f_name}. Has host {host} been removed?")
+                # rstrip() content, and explicitly add the \n, in case
+                # a hash file does not have a trailing \n.
+                fd.write(f"# From {h_url}\nsha256  {r.read().decode().rstrip()}\n")
+        for target in RUST_TARGETS:
+            f_name = f"rust-std-{new_version}-{target}.tar.xz"
+            print(f"\r\033[KUpdating {f_name}", end="")
+            h_url = f"{RUST_DIST_URL}/{f_name}.sha256"
+            with urllib.request.urlopen(h_url) as r:
+                if r.status != 200:
+                    raise RuntimeError(f"No hash for {f_name}. Has target {target} been removed?")
+                # rstrip() content, and explicitly add the \n, in case
+                # a hash file does not have a trailing \n.
+                fd.write(f"# From {h_url}\nsha256  {r.read().decode().rstrip()}\n")
+        fd.write("# Locally generated\n")
+        for license in LICENSES:
+            fd.write(f"sha256  {LICENSES[license]}  LICENSE-{license}\n")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Update rust")
+    parser.add_argument("version", help="Rust version to update to", type=str)
+
+    args = parser.parse_args()
+
+    TOPDIR = pathlib.Path(__file__).parent.parent
+    update_mk_file(TOPDIR / "package/rust/rust.mk", args.version)
+    update_mk_file(TOPDIR / "package/rust-bin/rust-bin.mk", args.version)
+    gen_hash_file_src(TOPDIR / "package/rust/rust.hash", args.version)
+    gen_hash_file_bin(TOPDIR / "package/rust-bin/rust-bin.hash", args.version)
+
+    print("\r\033[K", end="")
+
+
+if __name__ == "__main__":
+    main()

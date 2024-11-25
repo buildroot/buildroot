@@ -15,20 +15,26 @@ expose the package's +menuconfig+ target as +foo-menuconfig+ in
 Buildroot, and to handle the copying back and forth of the configuration
 file in a correct way.
 
-The +kconfig-package+ infrastructure is based on the +generic-package+
-infrastructure. All variables supported by +generic-package+ are
-available in +kconfig-package+ as well. See
-xref:generic-package-reference[] for more details.
+The main macro of the kconfig package infrastructure is
++kconfig-package+. It is similar to the +generic-package+ macro.
+
+Just like the generic infrastructure, the kconfig infrastructure works
+by defining a number of variables before calling the +kconfig-package+
+macro.
+
+All the package metadata information variables that exist in the
+xref:generic-package-reference[generic package infrastructure] also
+exist in the kconfig infrastructure.
 
 In order to use the +kconfig-package+ infrastructure for a Buildroot
 package, the minimally required lines in the +.mk+ file, in addition to
 the variables required by the +generic-package+ infrastructure, are:
 
-------------------------------
+----
 FOO_KCONFIG_FILE = reference-to-source-configuration-file
 
 $(eval $(kconfig-package))
-------------------------------
+----
 
 This snippet creates the following make targets:
 

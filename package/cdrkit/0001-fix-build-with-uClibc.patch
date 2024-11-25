@@ -1,0 +1,28 @@
+From 13823cfe42f33e947f8375f5a3f9ee177c699960 Mon Sep 17 00:00:00 2001
+From: Peter Korsgaard <jacmet@sunsite.dk>
+Date: Sat, 13 Jul 2024 10:57:57 +0200
+Subject: [PATCH] fix build with uClibc
+
+cdrkit unconditionally enables code using rcmd(3), which isn't available
+on uClibc.
+
+Signed-off-by: Peter Korsgaard <jacmet@sunsite.dk>
+---
+ include/xconfig.h.in | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/include/xconfig.h.in b/include/xconfig.h.in
+index c130600..00f2044 100644
+--- a/include/xconfig.h.in
++++ b/include/xconfig.h.in
+@@ -187,7 +187,6 @@
+  *	they are placed before the large file tests.
+  */
+ 
+-#define HAVE_RCMD 1		/* rcmd() is present in libc/libsocket */
+ #define HAVE_SOCKET 1		/* socket() is present in libc/libsocket */
+ #define HAVE_SOCKETPAIR 1		/* socketpair() is present in libc/libsocket */
+ #define HAVE_GETSERVBYNAME 1	/* getservbyname() is present in libc/libsocket */
+-- 
+2.45.2
+

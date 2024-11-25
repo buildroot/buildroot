@@ -1,0 +1,26 @@
+config BR2_PACKAGE_QBEE_AGENT
+	bool "qbee-agent"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	depends on BR2_USE_MMU # bash
+	depends on !BR2_STATIC_LIBS # shadow
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14 # shadow
+	select BR2_PACKAGE_HOST_GO
+	select BR2_PACKAGE_IPTABLES # runtime
+	select BR2_PACKAGE_BUSYBOX_SHOW_OTHERS # bash
+	select BR2_PACKAGE_SHADOW # runtime
+	select BR2_PACKAGE_BASH # runtime
+	help
+	  Qbee is a device management platform that comprise of an
+	  open-source agent and a hosted SaaS backend.  This config
+	  installs pre-built static binaries made with the official
+	  public signing key for qbee.io. The binaries will work
+	  seamlessly with the qbee.io device management backend.
+
+	  https://github.com/qbee-io/qbee-agent
+	  https://qbee.io
+
+comment "qbee-agent needs a toolchain w/ headers >= 4.14, dynamic library"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	depends on BR2_USE_MMU
+	depends on BR2_STATIC_LIBS || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14

@@ -1,4 +1,4 @@
-From 1438211660e700b2c9505863aae1cc957236b7c8 Mon Sep 17 00:00:00 2001
+From 90ed7f5cbe088912fbe0f3f45606de75602c1404 Mon Sep 17 00:00:00 2001
 From: Alex Suykov <alex.suykov@gmail.com>
 Date: Thu, 21 Jan 2016 21:59:46 +0100
 Subject: [PATCH] Add missing definition of MTD_CHAR_MAJOR
@@ -11,12 +11,12 @@ Signed-off-by: Alex Suykov <alex.suykov@gmail.com>
  1 file changed, 4 insertions(+)
 
 diff --git a/cgpt/cgpt_wrapper.c b/cgpt/cgpt_wrapper.c
-index dcfaab9..4d07aad 100644
+index afa4940e..38504aa6 100644
 --- a/cgpt/cgpt_wrapper.c
 +++ b/cgpt/cgpt_wrapper.c
-@@ -25,6 +25,10 @@
+@@ -33,6 +33,10 @@
  #include "cgpt_nor.h"
- #include "cryptolib.h"
+ #include "file_keys.h"
  
 +#ifndef MTD_CHAR_MAJOR
 +#define MTD_CHAR_MAJOR 90
@@ -26,5 +26,5 @@ index dcfaab9..4d07aad 100644
  // off device, and hence we should not wrap around cgpt.
  static bool has_dash_D(int argc, const char *const argv[]) {
 -- 
-2.6.4
+2.34.1
 

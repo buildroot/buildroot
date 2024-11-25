@@ -1,0 +1,132 @@
+From 71d96b9be632b5231b28277d9e72f6a6c5308e24 Mon Sep 17 00:00:00 2001
+From: Dan Harrington <harringtond@chromium.org>
+Date: Fri, 4 Jun 2021 16:46:25 +0000
+Subject: [PATCH] Migrate presubmit to python3
+
+Fixed a couple warnings I found when running the unit
+tests in python3.
+
+Bug: 1212110
+Change-Id: I3d1b5859b5c517ad5eea30cb816fad0389715f73
+Reviewed-on: https://chromium-review.googlesource.com/c/chromium/src/+/2934203
+Reviewed-by: Jesse Doherty <jwd@chromium.org>
+Commit-Queue: Dan H <harringtond@chromium.org>
+Cr-Commit-Position: refs/heads/master@{#889331}
+Upstream: https://github.com/chromium/chromium/commit/f90f49df8db04dcb72f7ce0c4d0b2fe329bab00c
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ chromium/tools/metrics/ukm/PRESUBMIT.py       |  2 +
+ .../tools/metrics/ukm/gen_builders_test.py    |  4 +-
+ chromium/tools/metrics/ukm/ukm_model.py       | 56 +++++++++++--------
+ 3 files changed, 37 insertions(+), 25 deletions(-)
+
+diff --git a/chromium/tools/metrics/ukm/PRESUBMIT.py b/chromium/tools/metrics/ukm/PRESUBMIT.py
+index 28fab1cffb7..99b13be681b 100644
+--- a/chromium/tools/metrics/ukm/PRESUBMIT.py
++++ b/chromium/tools/metrics/ukm/PRESUBMIT.py
+@@ -8,6 +8,8 @@ See http://dev.chromium.org/developers/how-tos/depottools/presubmit-scripts
+ for more details on the presubmit API built into gcl.
+ """
+ 
++USE_PYTHON3 = True
++
+ UKM_XML = 'ukm.xml'
+ 
+ 
+diff --git a/chromium/tools/metrics/ukm/gen_builders_test.py b/chromium/tools/metrics/ukm/gen_builders_test.py
+index 1ca15e52c9a..0015320a524 100755
+--- a/chromium/tools/metrics/ukm/gen_builders_test.py
++++ b/chromium/tools/metrics/ukm/gen_builders_test.py
+@@ -25,8 +25,8 @@ class GenBuildersTest(unittest.TestCase):
+ 
+   def testGenerateCode(self):
+     relpath = '.'
+-    data = ukm_model.UKM_XML_TYPE.Parse(
+-        open('../../tools/metrics/ukm/ukm.xml').read())
++    with open('../../tools/metrics/ukm/ukm.xml') as f:
++      data = ukm_model.UKM_XML_TYPE.Parse(f.read())
+     event = data[ukm_model._EVENT_TYPE.tag][0]
+     metric = event[ukm_model._METRIC_TYPE.tag][0]
+     self.assertIsNotNone(event)
+diff --git a/chromium/tools/metrics/ukm/ukm_model.py b/chromium/tools/metrics/ukm/ukm_model.py
+index ec24dd57360..b36899db189 100644
+--- a/chromium/tools/metrics/ukm/ukm_model.py
++++ b/chromium/tools/metrics/ukm/ukm_model.py
+@@ -39,15 +39,16 @@ _INDEX_TYPE = models.ObjectNodeType(
+     ],
+     single_line=True)
+ 
+-_STATISTICS_TYPE =  models.ObjectNodeType(
++_STATISTICS_TYPE = models.ObjectNodeType(
+     'statistics',
+     attributes=[
+-      ('export', str, r'^(?i)(|true|false)$'),
++        ('export', str, r'(?i)^(|true|false)$'),
+     ],
+     children=[
+         models.ChildType(_QUANTILES_TYPE.tag, _QUANTILES_TYPE, multiple=False),
+-        models.ChildType(
+-            _ENUMERATION_TYPE.tag, _ENUMERATION_TYPE, multiple=False),
++        models.ChildType(_ENUMERATION_TYPE.tag,
++                         _ENUMERATION_TYPE,
++                         multiple=False),
+     ])
+ 
+ _HISTORY_TYPE =  models.ObjectNodeType(
+@@ -90,25 +91,34 @@ _METRIC_TYPE =  models.ObjectNodeType(
+             _AGGREGATION_TYPE.tag, _AGGREGATION_TYPE, multiple=True),
+     ])
+ 
+-_EVENT_TYPE =  models.ObjectNodeType(
+-    'event',
+-    attributes=[
+-      ('name', str, r'^[A-Za-z0-9.]+$'),
+-      ('singular', str, r'^(?i)(|true|false)$'),
+-    ],
+-    alphabetization=[
+-        (_OBSOLETE_TYPE.tag, _KEEP_ORDER),
+-        (_OWNER_TYPE.tag, _KEEP_ORDER),
+-        (_SUMMARY_TYPE.tag, _KEEP_ORDER),
+-        (_METRIC_TYPE.tag, _LOWERCASE_FN('name')),
+-    ],
+-    extra_newlines=(1, 1, 1),
+-    children=[
+-        models.ChildType(_OBSOLETE_TYPE.tag, _OBSOLETE_TYPE, multiple=False),
+-        models.ChildType(_OWNER_TYPE.tag, _OWNER_TYPE, multiple=True),
+-        models.ChildType(_SUMMARY_TYPE.tag, _SUMMARY_TYPE, multiple=False),
+-        models.ChildType(_METRIC_TYPE.tag, _METRIC_TYPE, multiple=True),
+-    ])
++_EVENT_TYPE = models.ObjectNodeType('event',
++                                    attributes=[
++                                        ('name', str, r'^[A-Za-z0-9.]+$'),
++                                        ('singular', str,
++                                         r'(?i)^(|true|false)$'),
++                                    ],
++                                    alphabetization=[
++                                        (_OBSOLETE_TYPE.tag, _KEEP_ORDER),
++                                        (_OWNER_TYPE.tag, _KEEP_ORDER),
++                                        (_SUMMARY_TYPE.tag, _KEEP_ORDER),
++                                        (_METRIC_TYPE.tag,
++                                         _LOWERCASE_FN('name')),
++                                    ],
++                                    extra_newlines=(1, 1, 1),
++                                    children=[
++                                        models.ChildType(_OBSOLETE_TYPE.tag,
++                                                         _OBSOLETE_TYPE,
++                                                         multiple=False),
++                                        models.ChildType(_OWNER_TYPE.tag,
++                                                         _OWNER_TYPE,
++                                                         multiple=True),
++                                        models.ChildType(_SUMMARY_TYPE.tag,
++                                                         _SUMMARY_TYPE,
++                                                         multiple=False),
++                                        models.ChildType(_METRIC_TYPE.tag,
++                                                         _METRIC_TYPE,
++                                                         multiple=True),
++                                    ])
+ 
+ _UKM_CONFIGURATION_TYPE = models.ObjectNodeType(
+     'ukm-configuration',
+-- 
+2.25.1
+

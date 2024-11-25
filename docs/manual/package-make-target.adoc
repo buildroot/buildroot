@@ -12,9 +12,9 @@ For packages relying on the Buildroot infrastructure, there are
 numerous special make targets that can be called independently like
 this:
 
-------------
+----
 make <package>-<target>
-------------
+----
 
 The package build targets are (in the order they are executed):
 
@@ -80,6 +80,10 @@ graphs.
 | +graph-rdepends+  | Generate a graph of this package reverse
   dependencies (i.e the packages that depend on it, directly or
   indirectly)
+
+| +graph-both-depends+ | Generate a graph of this package in both
+  directions (i.e the packages that depend on it and on which it
+  depends, directly or indirectly)
 
 | +dirclean+        | Remove the whole package build directory
 

@@ -1,10 +1,13 @@
 config BR2_PACKAGE_PYTHON_SELENIUM
 	bool "python-selenium"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
 	select BR2_PACKAGE_PYTHON_CERTIFI # runtime
 	select BR2_PACKAGE_PYTHON_PYSOCKS # runtime
 	select BR2_PACKAGE_PYTHON_TRIO # runtime
 	select BR2_PACKAGE_PYTHON_TRIO_WEBSOCKET # runtime
+	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime
 	select BR2_PACKAGE_PYTHON_URLLIB3 # runtime
+	select BR2_PACKAGE_PYTHON_WEBSOCKET_CLIENT # runtime
 	help
 	  Python language bindings for Selenium WebDriver.
 

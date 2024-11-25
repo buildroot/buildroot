@@ -1,0 +1,51 @@
+From 3f35bfccff2d1dacdfe9844712be1e042d028700 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sun, 17 Mar 2024 21:56:53 +0100
+Subject: [PATCH] arch/riscv/riscv_features.c: fix uclibc build
+
+Fix the following uclibc build failure raised since version 2.1.4 and
+https://github.com/zlib-ng/zlib-ng/commit/6ff8b52cefe56a824fae1d53fdd687bcde2e53c9:
+
+/home/autobuild/autobuild/instance-2/output-1/build/zlib-ng-2.1.6/arch/riscv/riscv_features.c:4:10: fatal error: sys/auxv.h: No such file or directory
+    4 | #include <sys/auxv.h>
+      |          ^~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/06a7d8e59ec4de7c711d3f4a4624f67b97d78afe
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/zlib-ng/zlib-ng/commit/3f35bfccff2d1dacdfe9844712be1e042d028700
+---
+ arch/riscv/riscv_features.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/arch/riscv/riscv_features.c b/arch/riscv/riscv_features.c
+index 506b480c11..1e3f45e0a7 100644
+--- a/arch/riscv/riscv_features.c
++++ b/arch/riscv/riscv_features.c
+@@ -1,9 +1,12 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+-#include <sys/auxv.h>
+ #include <sys/utsname.h>
+ 
++#if defined(__linux__) && defined(HAVE_SYS_AUXV_H)
++#  include <sys/auxv.h>
++#endif
++
+ #include "../../zbuild.h"
+ #include "riscv_features.h"
+ 
+@@ -33,7 +36,11 @@ void Z_INTERNAL riscv_check_features_compile_time(struct riscv_cpu_features *fea
+ }
+ 
+ void Z_INTERNAL riscv_check_features_runtime(struct riscv_cpu_features *features) {
++#if defined(__linux__) && defined(HAVE_SYS_AUXV_H)
+     unsigned long hw_cap = getauxval(AT_HWCAP);
++#else
++    unsigned long hw_cap = 0;
++#endif
+     features->has_rvv = hw_cap & ISA_V_HWCAP;
+ }
+ 

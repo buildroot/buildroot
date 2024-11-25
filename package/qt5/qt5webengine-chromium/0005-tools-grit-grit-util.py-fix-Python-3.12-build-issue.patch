@@ -1,0 +1,70 @@
+From 5201c34a4c0f2fed56f6cff3acada3da2405a363 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 13 Jul 2024 16:02:38 +0200
+Subject: [PATCH] tools/grit/grit/util.py: fix Python 3.12 build issue
+
+This commit is an extract from upstream commit
+https://github.com/chromium/chromium/commit/b3abd7e4c9467415da3a5e13d9500d2ab3abc2ec
+which is too large to be backported.
+
+It fixes:
+
+Traceback (most recent call last):
+  File "/home/thomas/buildroot/buildroot/output/build/qt5webengine-5.15.14/src/core/release/../../3rdparty/chromium/tools/grit/grit.py", line 14, in <module>
+    import grit.grit_runner
+  File "/home/thomas/buildroot/buildroot/output/build/qt5webengine-5.15.14/src/3rdparty/chromium/tools/grit/grit/grit_runner.py", line 19, in <module>
+    from grit import util
+  File "/home/thomas/buildroot/buildroot/output/build/qt5webengine-5.15.14/src/3rdparty/chromium/tools/grit/grit/util.py", line 21, in <module>
+    from six.moves import html_entities as entities
+ModuleNotFoundError: No module named 'six.moves'
+
+Upstream: https://github.com/chromium/chromium/commit/b3abd7e4c9467415da3a5e13d9500d2ab3abc2ec (part of)
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ chromium/tools/grit/grit/util.py | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/chromium/tools/grit/grit/util.py b/chromium/tools/grit/grit/util.py
+index 528d766ad6b..77db06adffb 100644
+--- a/chromium/tools/grit/grit/util.py
++++ b/chromium/tools/grit/grit/util.py
+@@ -8,6 +8,7 @@
+ from __future__ import print_function
+ 
+ import codecs
++import html.entities
+ import io
+ import os
+ import re
+@@ -17,8 +18,6 @@ import tempfile
+ from xml.sax import saxutils
+ 
+ import six
+-from six import StringIO
+-from six.moves import html_entities as entities
+ 
+ from grit import lazy_re
+ 
+@@ -226,7 +225,7 @@ def WrapOutputStream(stream, encoding = 'utf-8'):
+ def ChangeStdoutEncoding(encoding = 'utf-8'):
+   '''Changes STDOUT to print characters using the specified encoding.'''
+   # If we're unittesting, don't reconfigure.
+-  if isinstance(sys.stdout, StringIO):
++  if isinstance(sys.stdout, io.StringIO):
+     return
+ 
+   if sys.version_info.major < 3:
+@@ -280,8 +279,8 @@ def UnescapeHtml(text, replace_nbsp=True):
+       if name == 'nbsp' and not replace_nbsp:
+         return match.group()  # Don't replace &nbsp;
+       assert name != None
+-      if name in entities.name2codepoint:
+-        return six.unichr(entities.name2codepoint[name])
++      if name in html.entities.name2codepoint:
++        return six.unichr(html.entities.name2codepoint[name])
+       else:
+         return match.group()  # Unknown HTML character entity - don't replace
+ 
+-- 
+2.25.1
+

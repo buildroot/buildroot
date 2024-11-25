@@ -1,11 +1,13 @@
 config BR2_PACKAGE_ATOP
 	bool "atop"
-	depends on BR2_USE_MMU # fork()
-	depends on BR2_USE_WCHAR # ncurses wchar
+	depends on BR2_USE_MMU # fork(), libglib2
+	depends on BR2_USE_WCHAR # ncurses wchar, libglib2
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_14 # PERF_FLAG_FD_CLOEXEC
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
 	select BR2_PACKAGE_NCURSES
 	select BR2_PACKAGE_NCURSES_WCHAR
 	select BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_LIBGLIB2
 	help
 	  Atop is an ASCII full-screen performance monitor for Linux
 	  that is capable of reporting the activity of all processes
@@ -20,7 +22,8 @@ config BR2_PACKAGE_ATOP
 
 	  http://www.atoptool.nl
 
-comment "atop needs a toolchain w/ wchar, headers >= 3.14"
+comment "atop needs a toolchain w/ wchar, headers >= 3.14, threads"
 	depends on BR2_USE_MMU
 	depends on !BR2_USE_WCHAR || \
-		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_14
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_14 || \
+		!BR2_TOOLCHAIN_HAS_THREADS

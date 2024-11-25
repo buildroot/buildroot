@@ -11,5 +11,27 @@ config BR2_PACKAGE_TPM2_PKCS11
 
 	  https://github.com/tpm2-software/tpm2-pkcs11
 
+if BR2_PACKAGE_TPM2_PKCS11
+
+config BR2_PACKAGE_TPM2_PKCS11_PYTHON_TOOLS
+	bool "Install python tools (tpm2_ptool)"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-bcrypt, python-cryptography
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_BCRYPT # runtime
+	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime
+	select BR2_PACKAGE_PYTHON_PYASN1 # runtime
+	select BR2_PACKAGE_PYTHON_PYASN1_MODULES # runtime
+	select BR2_PACKAGE_PYTHON_PYYAML # runtime
+	select BR2_PACKAGE_PYTHON_TPM2_PYTSS # runtime
+	select BR2_PACKAGE_PYTHON3_SQLITE # runtime
+	help
+	  Enable Python-related tools (tpm2_ptool)
+
+comment "python tools needs python3"
+	depends on !BR2_PACKAGE_PYTHON3
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+
+endif
+
 comment "tpm2-pkcs11 needs a toolchain w/ dynamic library, threads"
 	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS

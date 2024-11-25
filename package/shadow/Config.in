@@ -2,7 +2,6 @@ menuconfig BR2_PACKAGE_SHADOW
 	bool "shadow"
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14
-	depends on !BR2_TOOLCHAIN_USES_UCLIBC # reallocarray, explicit_bzero
 	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	help
 	  Utilities to deal with user accounts.
@@ -57,6 +56,5 @@ config BR2_PACKAGE_SHADOW_YESCRYPT
 
 endif # BR2_PACKAGE_SHADOW
 
-comment "shadow needs a glibc or musl toolchain w/ headers >= 4.14, dynamic library"
-	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14 || \
-		BR2_STATIC_LIBS || BR2_TOOLCHAIN_USES_UCLIBC
+comment "shadow needs a toolchain w/ headers >= 4.14, dynamic library"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14 || BR2_STATIC_LIBS

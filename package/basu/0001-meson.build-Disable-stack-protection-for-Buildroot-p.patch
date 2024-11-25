@@ -1,0 +1,39 @@
+From 6133c87299bce32c13dcf1692842ea5f2890c5ad Mon Sep 17 00:00:00 2001
+From: Sergey Bobrenok <bobrofon@gmail.com>
+Date: Wed, 28 Feb 2024 16:29:17 +0300
+Subject: [PATCH] meson.build: Disable stack protection for Buildroot packaging
+
+In Buildroot, the SSP flags are passed via the wrapper, and only flags
+supported by the toolchain will be used. So the SSP flags can be
+safely removed from the build files.
+
+Fixes:
+  src/basic/libbasic.a.p/log.c.o: in function `write_to_console.isra.0':
+  log.c:(.text.write_to_console.isra.0+0x154): undefined reference to `__stack_chk_fail_local'
+
+Upstream: N/A [Buildroot specific]
+
+Signed-off-by: Sergey Bobrenok <bobrofon@gmail.com>
+---
+ meson.build | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 6f79707..51fd400 100644
+--- a/meson.build
++++ b/meson.build
+@@ -75,9 +75,6 @@ possible_cc_flags = [
+         '-fdiagnostics-show-option',
+         '-fno-strict-aliasing',
+         '-fvisibility=hidden',
+-        '-fstack-protector',
+-        '-fstack-protector-strong',
+-        '--param=ssp-buffer-size=4',
+ ]
+ 
+ # --as-needed and --no-undefined are provided by meson by default,
+
+base-commit: 684a41d68cfbb05e38aacb60a8548e21ddfbecdb
+-- 
+2.43.2
+

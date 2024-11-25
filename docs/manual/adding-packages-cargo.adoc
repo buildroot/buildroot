@@ -14,7 +14,7 @@ called "crates".
 
 The +Config.in+ file of Cargo-based package 'foo' should contain:
 
----------------------------
+----
 01: config BR2_PACKAGE_FOO
 02: 	bool "foo"
 03: 	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
@@ -23,11 +23,11 @@ The +Config.in+ file of Cargo-based package 'foo' should contain:
 06: 	  This is a comment that explains what foo is.
 07:
 08: 	  http://foosoftware.org/foo/
----------------------------
+----
 
 And the +.mk+ file for this package should contain:
 
-------------------------------
+----
 01: ################################################################################
 02: #
 03: # foo
@@ -41,7 +41,7 @@ And the +.mk+ file for this package should contain:
 11: FOO_LICENSE_FILES = COPYING
 12:
 13: $(eval $(cargo-package))
---------------------------------
+----
 
 The Makefile starts with the definition of the standard variables for
 package declaration (lines 7 to 11).
@@ -64,10 +64,9 @@ Just like the generic infrastructure, the Cargo infrastructure works
 by defining a number of variables before calling the +cargo-package+
 or +host-cargo-package+ macros.
 
-First, all the package metadata information variables that exist in
-the generic infrastructure also exist in the Cargo infrastructure:
-+FOO_VERSION+, +FOO_SOURCE+, +FOO_PATCH+, +FOO_SITE+,
-+FOO_DEPENDENCIES+, +FOO_LICENSE+, +FOO_LICENSE_FILES+, etc.
+All the package metadata information variables that exist in the
+xref:generic-package-reference[generic package infrastructure] also
+exist in the Cargo infrastructure.
 
 A few additional variables, specific to the Cargo infrastructure, can
 also be defined. Many of them are only useful in very specific cases,
@@ -94,7 +93,9 @@ takes care of downloading such dependencies as part of the download
 step of packages that use the +cargo-package+ infrastructure. Such
 dependencies are then kept together with the package source code in
 the tarball cached in Buildroot's +DL_DIR+, and therefore the hash of
-the package's tarball includes such dependencies.
-
-This mechanism ensures that any change in the dependencies will be
-detected, and allows the build to be performed completely offline.
+the package's tarball doesn't only cover the source of the package
+itself, but also covers the sources of the dependencies. Thus, a change
+injected into one of the dependencies will also be discovered by the
+hash check. In addition,  this mechanism allows the build to be
+performed completely offline since cargo will not do any downloads
+during the build. This mechanism is called vendoring the dependencies.

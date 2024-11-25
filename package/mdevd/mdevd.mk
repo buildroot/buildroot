@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-MDEVD_VERSION = 0.1.6.0
-MDEVD_SITE = http://skarnet.org/software/mdevd
+MDEVD_VERSION = 0.1.6.4
+MDEVD_SITE = https://skarnet.org/software/mdevd
 MDEVD_LICENSE = ISC
 MDEVD_LICENSE_FILES = COPYING
 MDEVD_INSTALL_STAGING = YES

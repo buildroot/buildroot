@@ -4,12 +4,15 @@
 #
 ################################################################################
 
-PKGCONF_VERSION = 1.6.3
+PKGCONF_VERSION = 2.3.0
 PKGCONF_SITE = https://distfiles.ariadne.space/pkgconf
 PKGCONF_SOURCE = pkgconf-$(PKGCONF_VERSION).tar.xz
 PKGCONF_LICENSE = pkgconf license
 PKGCONF_LICENSE_FILES = COPYING
 PKGCONF_CPE_ID_VENDOR = pkgconf
+
+# The package is a dependency to ccache so ccache cannot be a dependency
+HOST_PKGCONF_ADD_CCACHE_DEPENDENCY = NO
 
 # We are a ccache dependency, so we can't use ccache
 HOST_PKGCONF_CONF_ENV = \

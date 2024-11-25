@@ -1,0 +1,66 @@
+From 4bd8af5dbd1f58bf631b4d5af90086f214553157 Mon Sep 17 00:00:00 2001
+From: Boris Kolpackov <boris@codesynthesis.com>
+Date: Thu, 25 Apr 2024 07:15:47 +0200
+Subject: [PATCH] Update ODB compiler plugin to work with GCC 14
+
+Upstream: https://git.codesynthesis.com/cgit/odb/odb/commit/?id=acb0c5194690d2751d2211bf91aec21da2fadc26
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ odb/cxx-lexer.cxx |  4 +++-
+ odb/processor.cxx | 18 +++++++++++++++---
+ 2 files changed, 18 insertions(+), 4 deletions(-)
+
+diff --git a/odb/cxx-lexer.cxx b/odb/cxx-lexer.cxx
+index acd13be6..e283abd5 100644
+--- a/odb/cxx-lexer.cxx
++++ b/odb/cxx-lexer.cxx
+@@ -217,7 +217,9 @@ cxx_string_lexer ()
+   linemap_init (&line_map_);
+ #endif
+ 
+-#if BUILDING_GCC_MAJOR > 4 || BUILDING_GCC_MAJOR == 4 && BUILDING_GCC_MINOR > 6
++#if BUILDING_GCC_MAJOR >= 14
++  line_map_.m_round_alloc_size = ggc_round_alloc_size;
++#elif BUILDING_GCC_MAJOR > 4 || BUILDING_GCC_MAJOR == 4 && BUILDING_GCC_MINOR > 6
+   line_map_.round_alloc_size = ggc_round_alloc_size;
+ #endif
+ 
+diff --git a/odb/processor.cxx b/odb/processor.cxx
+index c787e0d1..8f273545 100644
+--- a/odb/processor.cxx
++++ b/odb/processor.cxx
+@@ -438,8 +438,14 @@ namespace
+               // functions. Note that TREE_PUBLIC() returns something
+               // other than what we need.
+               //
+-              if (!DECL_NONSTATIC_MEMBER_FUNCTION_P (f) ||
+-                  TREE_PRIVATE (f) || TREE_PROTECTED (f))
++              if (
++#if BUILDING_GCC_MAJOR >= 14
++                !DECL_OBJECT_MEMBER_FUNCTION_P (f)
++#else
++                !DECL_NONSTATIC_MEMBER_FUNCTION_P (f)
++#endif
++                  || TREE_PRIVATE (f)
++                  || TREE_PROTECTED (f))
+                 continue;
+ 
+               found_type r (k == "get"
+@@ -548,7 +554,13 @@ namespace
+ #endif
+               // We are only interested in non-static member functions.
+               //
+-              if (!DECL_NONSTATIC_MEMBER_FUNCTION_P (f))
++              if (
++#if BUILDING_GCC_MAJOR >= 14
++                !DECL_OBJECT_MEMBER_FUNCTION_P (f)
++#else
++                !DECL_NONSTATIC_MEMBER_FUNCTION_P (f)
++#endif
++              )
+                 continue;
+ 
+               if ((k == "get"
+-- 
+2.45.2
+

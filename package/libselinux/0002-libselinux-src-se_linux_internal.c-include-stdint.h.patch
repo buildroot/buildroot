@@ -1,0 +1,45 @@
+From f6143706e2fc0f1ae16cb3667722deb9cc51c244 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Sat, 11 May 2024 08:09:38 +0200
+Subject: [PATCH] libselinux/src/se_linux_internal.c: include stdint.h
+
+Include stdint.h to avoid the following uclibc build failure raised
+since version 3.6 and
+https://github.com/SELinuxProject/selinux/commit/cb8289c2b237e5f66e4a7608ecc6c68abeaeaf55:
+
+selinux_internal.c: In function 'reallocarray':
+selinux_internal.c:25:29: error: 'SIZE_MAX' undeclared (first use in this function)
+   25 |         if (size && nmemb > SIZE_MAX / size) {
+      |                             ^~~~~~~~
+selinux_internal.c:6:1: note: 'SIZE_MAX' is defined in header '<stdint.h>'; did you forget to '#include <stdint.h>'?
+    5 | #include <string.h>
+  +++ |+#include <stdint.h>
+    6 |
+selinux_internal.c:25:29: note: each undeclared identifier is reported only once for each function it appears in
+   25 |         if (size && nmemb > SIZE_MAX / size) {
+      |                             ^~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/7e627744beaa4f7fdfd488dfacbaafc074a999f7
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/SELinuxProject/selinux/pull/435
+---
+ libselinux/src/selinux_internal.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/selinux_internal.c b/src/selinux_internal.c
+index 06852359..f6385908 100644
+--- a/src/selinux_internal.c
++++ b/src/selinux_internal.c
+@@ -1,6 +1,7 @@
+ #include "selinux_internal.h"
+ 
+ #include <errno.h>
++#include <stdint.h>
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-- 
+2.43.0
+

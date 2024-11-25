@@ -1,4 +1,4 @@
-From e9a88fddc149fc52cdc5a8997f9fd3a29416c643 Mon Sep 17 00:00:00 2001
+From 221b57404b29190e0b37f03b81dd3ee6a0fc9ce0 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@freescale.com>
 Date: Tue, 12 Aug 2014 10:17:31 +0200
 Subject: [PATCH] mx6qsabre_common: boot Linux to /init in mfgtools mode
@@ -15,17 +15,20 @@ buildroot system entirely through USB.
 
 Signed-off-by: Vincent Stehlé <vincent.stehle@freescale.com>
 Signed-off-by: Julien Olivain <julien.olivain@oss.nxp.com>
+[Julien: rebased patch on lf-6.6.23-2.0.0]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+Upstream: Not applicable, Buildroot specific.
 ---
  include/configs/imx_env.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/include/configs/imx_env.h b/include/configs/imx_env.h
-index c03748d93f..aa1a8bf488 100644
+index 1b34478fc3f..9106d59ff9f 100644
 --- a/include/configs/imx_env.h
 +++ b/include/configs/imx_env.h
-@@ -29,7 +29,7 @@
+@@ -54,7 +54,7 @@
  
- #define CONFIG_MFG_ENV_SETTINGS_DEFAULT \
+ #define CFG_MFG_ENV_SETTINGS_DEFAULT \
  	"mfgtool_args=setenv bootargs console=${console},${baudrate} " \
 -		"rdinit=/linuxrc " \
 +		"rdinit=/init " \
@@ -33,5 +36,5 @@ index c03748d93f..aa1a8bf488 100644
  		"\0" \
  	"kboot="MFG_BOOT_CMD"\0"\
 -- 
-2.26.2
+2.45.2
 

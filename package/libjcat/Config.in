@@ -1,0 +1,15 @@
+config BR2_PACKAGE_LIBJCAT
+	bool "libjcat"
+	depends on BR2_USE_WCHAR # libglib2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
+	depends on BR2_USE_MMU # libglib2
+	select BR2_PACKAGE_JSON_GLIB
+	select BR2_PACKAGE_LIBGLIB2
+	help
+	  Library for reading and writing Jcat files.
+
+	  https://github.com/hughsie/libjcat
+
+comment "libjcat needs a toolchain w/ wchar, threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS

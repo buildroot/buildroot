@@ -16,7 +16,7 @@ Quoting from the bug report:
      were correct.  I _think_ I got them all.  -iwj.
      -- Ian Jackson <iwj@ubuntu.com>  Tue,  4 Apr 2006 17:21:02 +0100
 
-Upsteam:
+Upstream:
 https://sources.debian.org/patches/bc/1.07.1-2/05_notice_read_write_errors.diff/
 
 [Reformatted to GIT for 1.0.7.1 by Matt W]
@@ -26,6 +26,10 @@ Origin: other
 Bug-Debian: http://bugs.debian.org/488735
 
 Signed-off-by: Matthew Weber <matthew.weber@rockwellcollins.com>
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[Bernd:
+ Updated to incorporate changes by Matthias Klose <doko@debian.org>
+ on 2024-03-13 that fix Debian bug https://bugs.debian.org/1065375]
 ---
  bc/execute.c | 10 +++++++++-
  bc/main.c    |  3 +++
@@ -276,6 +280,14 @@ diff --git a/dc/dc.c b/dc/dc.c
 index 6a2bb26..ccdb1c2 100644
 --- a/dc/dc.c
 +++ b/dc/dc.c
+@@ -45,6 +45,7 @@
+ #include <getopt.h>
+ #include "dc.h"
+ #include "dc-proto.h"
++#include "number.h"
+ 
+ #ifndef EXIT_SUCCESS	/* C89 <stdlib.h> */
+ # define EXIT_SUCCESS	0
 @@ -59,6 +59,7 @@ static void
  bug_report_info DC_DECLVOID()
  {
@@ -304,6 +316,14 @@ diff --git a/dc/eval.c b/dc/eval.c
 index 05a3d9e..6c54e61 100644
 --- a/dc/eval.c
 +++ b/dc/eval.c
+@@ -41,6 +41,7 @@
+ #endif
+ #include "dc.h"
+ #include "dc-proto.h"
++#include "number.h"
+ 
+ typedef enum {DC_FALSE, DC_TRUE} dc_boolean;
+ 
 @@ -97,12 +97,15 @@ static int input_pushback;
  static int
  input_fil DC_DECLVOID()
@@ -512,6 +532,14 @@ diff --git a/dc/misc.c b/dc/misc.c
 index cd23602..cd910b8 100644
 --- a/dc/misc.c
 +++ b/dc/misc.c
+@@ -47,6 +47,7 @@
+ #include <getopt.h>
+ #include "dc.h"
+ #include "dc-proto.h"
++#include "number.h"
+ 
+ #ifndef EXIT_FAILURE	/* C89 <stdlib.h> */
+ # define EXIT_FAILURE	1
 @@ -89,6 +89,7 @@ dc_show_id DC_DECLARG((fp, id, suffix))
  		fprintf(fp, "'%c' (%#o)%s", (unsigned int) id, id, suffix);
  	else
@@ -593,8 +621,11 @@ diff --git a/dc/stack.c b/dc/stack.c
 index 49422df..174411d 100644
 --- a/dc/stack.c
 +++ b/dc/stack.c
-@@ -35,7 +35,10 @@
+@@ -33,9 +33,13 @@
+ #include "dc.h"
+ #include "dc-proto.h"
  #include "dc-regdef.h"
++#include "number.h"
  
  /* an oft-used error message: */
 -#define Empty_Stack	fprintf(stderr, "%s: stack empty\n", progname)
@@ -657,6 +688,14 @@ diff --git a/dc/string.c b/dc/string.c
 index dee9169..389d899 100644
 --- a/dc/string.c
 +++ b/dc/string.c
+@@ -45,6 +45,7 @@
+ #endif
+ #include "dc.h"
+ #include "dc-proto.h"
++#include "number.h"
+ 
+ /* here is the completion of the dc_string type: */
+ struct dc_string {
 @@ -94,6 +94,7 @@ dc_out_str DC_DECLARG((value, discard_flag))
  	dc_discard discard_flag DC_DECLEND
  {

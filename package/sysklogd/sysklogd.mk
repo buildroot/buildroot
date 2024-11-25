@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SYSKLOGD_VERSION = 2.5.2
+SYSKLOGD_VERSION = 2.6.2
 SYSKLOGD_SITE = https://github.com/troglobit/sysklogd/releases/download/v$(SYSKLOGD_VERSION)
 SYSKLOGD_LICENSE = BSD-3-Clause
 SYSKLOGD_LICENSE_FILES = LICENSE
@@ -16,6 +16,7 @@ SYSKLOGD_CPE_ID_VALID = YES
 SYSKLOGD_CONF_OPTS = \
 	--bindir=/usr/bin \
 	--sbindir=/sbin \
+	--with-dns-delay=$(BR2_PACKAGE_SYSKLOGD_DNS_DELAY) \
 	--with-suspend-time=$(BR2_PACKAGE_SYSKLOGD_REMOTE_DELAY)
 
 # Disable/Enable utilities

@@ -11,6 +11,8 @@ So let's disable the build of unit tests by default and introduce
 
 Signed-off-by: Sergio Prado <sergio.prado@e-labworks.com>
 Upstream: https://github.com/mono/libgdiplus/pull/701
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  Makefile.am  | 8 ++++++--
  configure.ac | 4 ++++
@@ -38,8 +40,8 @@ diff --git a/configure.ac b/configure.ac
 index 098fd0a664bd..c126ff091e58 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -39,6 +39,10 @@ if test $warnaserror = "yes"; then
-   GDIPLUS_CFLAGS="$GDIPLUS_CFLAGS -Werror -Wno-unknown-warning-option -Wno-clobbered -Wno-typedef-redefinition"
+@@ -47,6 +47,10 @@
+   GDIPLUS_CFLAGS="$GDIPLUS_CFLAGS -Werror -Wno-unknown-warning-option -Wno-clobbered"
  fi
  
 +AC_ARG_ENABLE(unittests, AS_HELP_STRING([--enable-unittests],[Enable building unit tests.]),[unittests=yes],[unittests=no])

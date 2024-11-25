@@ -1,0 +1,8 @@
+config BR2_PACKAGE_HOST_TIPIDEE
+	bool "host tipidee"
+	depends on BR2_USE_MMU # skalibs
+	select BR2_PACKAGE_SKALIBS
+	help
+	  This package builds the tipidee-config tool for the host.
+
+	  https://skarnet.org/software/tipidee/

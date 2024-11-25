@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IMX_SECO_VERSION = 5.9.0
+IMX_SECO_VERSION = 5.9.4
 IMX_SECO_SITE = $(FREESCALE_IMX_SITE)
 IMX_SECO_SOURCE = imx-seco-$(IMX_SECO_VERSION).bin
 

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MOSQUITTO_VERSION = 2.0.18
+MOSQUITTO_VERSION = 2.0.20
 MOSQUITTO_SITE = https://mosquitto.org/files/source
 MOSQUITTO_LICENSE = EPL-2.0 or EDLv1.0
 MOSQUITTO_LICENSE_FILES = LICENSE.txt epl-v20 edl-v10
@@ -91,7 +91,11 @@ endif
 
 MOSQUITTO_MAKE_DIRS = lib client
 ifeq ($(BR2_PACKAGE_MOSQUITTO_BROKER),y)
-MOSQUITTO_MAKE_DIRS += src
+MOSQUITTO_MAKE_DIRS += src apps/mosquitto_ctrl apps/mosquitto_passwd
+endif
+
+ifeq ($(BR2_PACKAGE_MOSQUITTO_BROKER_DYNAMIC_SECURITY_PLUGIN),y)
+MOSQUITTO_MAKE_DIRS += plugins/dynamic-security
 endif
 
 define MOSQUITTO_BUILD_CMDS

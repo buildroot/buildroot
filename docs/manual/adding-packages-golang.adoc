@@ -13,7 +13,7 @@ build system and use bundled dependencies.
 First, let's see how to write a +.mk+ file for a go package,
 with an example :
 
-------------------------
+----
 01: ################################################################################
 02: #
 03: # foo
@@ -26,7 +26,7 @@ with an example :
 10: FOO_LICENSE_FILES = LICENSE
 11:
 12: $(eval $(golang-package))
-------------------------
+----
 
 On line 7, we declare the version of the package.
 
@@ -49,23 +49,23 @@ infrastructure should depend on +BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS+
 because Buildroot will automatically add a dependency on +host-go+
 to such packages.
 If you need CGO support in your package, you must add a dependency on
-+BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS+.
++BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS+; for host packages,
+add a dependency on +BR2_PACKAGE_HOST_GO_HOST_CGO_LINKING_SUPPORTS+.
 
 The main macro of the Go package infrastructure is
 +golang-package+. It is similar to the +generic-package+ macro. The
 ability to build host packages is also available, with the
 +host-golang-package+ macro.
 Host packages built by +host-golang-package+ macro should depend on
-BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS.
++BR2_PACKAGE_HOST_GO_HOST_ARCH_SUPPORTS+.
 
 Just like the generic infrastructure, the Go infrastructure works
-by defining a number of variables before calling the +golang-package+.
+by defining a number of variables before calling the +golang-package+
+macro.
 
 All the package metadata information variables that exist in the
 xref:generic-package-reference[generic package infrastructure] also
-exist in the Go infrastructure: +FOO_VERSION+, +FOO_SOURCE+,
-+FOO_PATCH+, +FOO_SITE+, +FOO_SUBDIR+, +FOO_DEPENDENCIES+,
-+FOO_LICENSE+, +FOO_LICENSE_FILES+, +FOO_INSTALL_STAGING+, etc.
+exist in the Go infrastructure.
 
 Note that it is not necessary to add +host-go+ in the
 +FOO_DEPENDENCIES+ variable of a package, since this basic dependency

@@ -1,4 +1,4 @@
-From d170b19e500d85381369e379771be8d7816bcc92 Mon Sep 17 00:00:00 2001
+From 832765d12879fabf799dd80af6e8fee9cd298934 Mon Sep 17 00:00:00 2001
 From: Adam Duskett <Aduskett@gmail.com>
 Date: Tue, 21 Jul 2020 13:08:50 -0700
 Subject: [PATCH] force position independent code
@@ -16,17 +16,19 @@ cause relocation errors when shared libraries link against the built static
 libraries.
 
 Signed-off-by: Adam Duskett <Aduskett@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  CMake/AbseilHelpers.cmake | 2 ++
  1 file changed, 2 insertions(+)
 
 diff --git a/CMake/AbseilHelpers.cmake b/CMake/AbseilHelpers.cmake
-index 86ff9eb..bdb7a89 100644
+index 3bd33ce8718d..7f269bd20c21 100644
 --- a/CMake/AbseilHelpers.cmake
 +++ b/CMake/AbseilHelpers.cmake
-@@ -209,6 +209,8 @@ function(absl_cc_library)
-     set_property(TARGET ${_NAME} PROPERTY CXX_STANDARD ${ABSL_CXX_STANDARD})
-     set_property(TARGET ${_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
+@@ -292,6 +292,8 @@ Cflags: -I\${includedir}${PC_CFLAGS}\n")
+       target_compile_features(${_NAME} PUBLIC ${ABSL_INTERNAL_CXX_STD_FEATURE})
+     endif()
  
 +    # Without this setting, other programs such as GRPC will fail when linking.
 +    set_property(TARGET ${_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
@@ -34,5 +36,5 @@ index 86ff9eb..bdb7a89 100644
      # to have properly named lib files.  This is a no-op when we are not being
      # installed.
 -- 
-2.26.2
+2.43.0
 

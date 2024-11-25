@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBISCSI_VERSION = 1.19.0
+LIBISCSI_VERSION = 1.20.0
 LIBISCSI_SITE = $(call github,sahlberg,libiscsi,$(LIBISCSI_VERSION))
 LIBISCSI_LICENSE = GPL-2.0+, LGPL-2.1+
 LIBISCSI_LICENSE_FILES = COPYING LICENCE-GPL-2.txt LICENCE-LGPL-2.1.txt

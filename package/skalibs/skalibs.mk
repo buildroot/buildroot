@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-SKALIBS_VERSION = 2.12.0.1
-SKALIBS_SITE = http://skarnet.org/software/skalibs
+SKALIBS_VERSION = 2.14.2.0
+SKALIBS_SITE = https://skarnet.org/software/skalibs
 SKALIBS_LICENSE = ISC
 SKALIBS_LICENSE_FILES = COPYING
 SKALIBS_INSTALL_STAGING = YES

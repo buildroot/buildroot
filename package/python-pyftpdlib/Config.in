@@ -1,5 +1,7 @@
 config BR2_PACKAGE_PYTHON_PYFTPDLIB
 	bool "python-pyftpdlib"
+	select BR2_PACKAGE_PYTHON_PYASYNCHAT # runtime
+	select BR2_PACKAGE_PYTHON_PYASYNCORE # runtime
 	help
 	  Extremely fast and scalable Python FTP server library.
 

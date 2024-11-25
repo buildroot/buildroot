@@ -44,4 +44,24 @@ TPM2_PKCS11_CONF_OPTS += \
 	--with-p11kitconfigdir=/usr/share/p11-kit/modules
 endif
 
+ifeq ($(BR2_PACKAGE_TPM2_PKCS11_PYTHON_TOOLS),y)
+TPM2_PKCS11_DEPENDENCIES += python-tpm2-pytss
+
+define TPM2_PKCS11_BUILD_TOOLS
+	(cd $(@D)/tools; \
+	$(PKG_PYTHON_SETUPTOOLS_ENV) \
+		$(HOST_DIR)/bin/python setup.py build)
+endef
+TPM2_PKCS11_POST_BUILD_HOOKS += TPM2_PKCS11_BUILD_TOOLS
+
+define TPM2_PKCS11_INSTALL_TARGET_TOOLS
+	(cd $(@D)/tools; \
+	$(PKG_PYTHON_SETUPTOOLS_ENV) \
+		$(HOST_DIR)/bin/python setup.py install \
+		$(PKG_PYTHON_SETUPTOOLS_INSTALL_OPTS) \
+		--root=$(TARGET_DIR))
+endef
+TPM2_PKCS11_POST_INSTALL_TARGET_HOOKS += TPM2_PKCS11_INSTALL_TARGET_TOOLS
+endif
+
 $(eval $(autotools-package))

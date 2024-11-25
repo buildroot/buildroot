@@ -1,0 +1,14 @@
+config BR2_PACKAGE_BATS_FILE
+	bool "bats-file"
+	select BR2_PACKAGE_BATS_SUPPORT # runtime
+	help
+	  bats-file is a helper library providing common filesystem
+	  related assertions and helpers for Bats.
+
+	  Assertions are functions that perform a test and output
+	  relevant information on failure to help debugging. They return
+	  1 on failure and 0 otherwise. Output, formatted for
+	  readability, is sent to the standard error to make assertions
+	  usable outside of @test blocks too.
+
+	  https://github.com/bats-core/bats-file

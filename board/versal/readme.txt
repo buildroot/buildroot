@@ -1,15 +1,23 @@
+This document describes the Buildroot support for the following
+Xilinx Versal boards:
+
 ******************************************
-Xilinx VCK190 board - Versal
+Supported Versal Boards:
+Xilinx VCK190 board
+Xilinx VEK280 board
+Xilinx VPK180 board
 ******************************************
 
-This document describes the Buildroot support for the VCK190
-board by Xilinx, based on Versal.  It has been tested with the 
-VCK190 production board.
-
-Evaluation board features can be found here with the link below.
+Evaluation board features can be found here with the links below.
 
 VCK190:
 https://www.xilinx.com/products/boards-and-kits/vck190.html
+
+VEK280:
+https://www.xilinx.com/products/boards-and-kits/vek280.html
+
+VPK180:
+https://www.xilinx.com/products/boards-and-kits/vpk180.html
 
 
 How to build it

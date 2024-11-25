@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GDBM_VERSION = 1.23
+GDBM_VERSION = 1.24
 GDBM_SITE = $(BR2_GNU_MIRROR)/gdbm
 GDBM_LICENSE = GPL-3.0+
 GDBM_LICENSE_FILES = COPYING

@@ -5,6 +5,7 @@ config BR2_PACKAGE_EMBIGGEN_DISK
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on !BR2_TOOLCHAIN_USES_UCLIBC # no fexecve
 	depends on BR2_USE_MMU # util-linux
+	select BR2_PACKAGE_HOST_GO
 	select BR2_PACKAGE_UTIL_LINUX # sfdisk
 	select BR2_PACKAGE_UTIL_LINUX_BINARIES # sfdisk
 	help

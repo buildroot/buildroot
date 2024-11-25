@@ -1,0 +1,21 @@
+config BR2_PACKAGE_LIBZENOH_C_ARCH_SUPPORTS
+	bool
+	default y if BR2_aarch64
+	default y if BR2_arm
+	default y if BR2_x86_64
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+
+config BR2_PACKAGE_LIBZENOH_C
+	bool "libzenoh-c"
+	depends on BR2_PACKAGE_LIBZENOH_C_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_USES_GLIBC
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  This package provides a C binding based on the main
+	  Zenoh implementation written in Rust.
+
+	  https://github.com/eclipse-zenoh/zenoh-c
+
+comment "libzenoh-c needs a glibc toolchain"
+	depends on BR2_PACKAGE_LIBZENOH_C_ARCH_SUPPORTS
+	depends on !BR2_TOOLCHAIN_USES_GLIBC

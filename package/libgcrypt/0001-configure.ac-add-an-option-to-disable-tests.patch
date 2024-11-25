@@ -15,6 +15,8 @@ Fixes:
  - http://autobuild.buildroot.org/results/50a8ba572e3fafd3c6a39bd54bcfcaf78b5ad325
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Bernd: rebased for version 1.11.0]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  Makefile.am  |  7 ++++++-
  configure.ac | 10 ++++++++++
@@ -38,13 +40,13 @@ index 7fa4fa4d..f0bd90e4 100644
 -SUBDIRS =         compat mpi cipher random src $(doc) tests
 +SUBDIRS =         compat mpi cipher random src $(doc) $(tests)
  
- EXTRA_DIST = autogen.sh autogen.rc README.GIT LICENSES      	           \
-              ChangeLog-2011 build-aux/ChangeLog-2011 doc/ChangeLog-2011    \
+ EXTRA_DIST = autogen.sh autogen.rc README.GIT LICENSES			   \
+ 	     ChangeLog-2011 build-aux/ChangeLog-2011 doc/ChangeLog-2011	   \
 diff --git a/configure.ac b/configure.ac
 index e8c8cd39..1a6b61e5 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3231,6 +3231,16 @@ AC_ARG_ENABLE([doc], AC_HELP_STRING([--disable-doc],
+@@ -3777,6 +3777,16 @@ AC_ARG_ENABLE([doc], AC_HELP_STRING([--disable-doc],
  AM_CONDITIONAL([BUILD_DOC], [test "x$build_doc" != xno])
  
  

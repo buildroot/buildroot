@@ -1,0 +1,32 @@
+From 806641b5ef504488f871b5cbd9e5c356d67d0bd1 Mon Sep 17 00:00:00 2001
+From: Edgar Bonet <bonet@grenoble.cnrs.fr>
+Date: Tue, 24 Sep 2024 20:03:18 -0700
+Subject: [PATCH] check for defined(FE_UNDERFLOW)
+
+According to fenv(3), the macro FE_UNDERFLOW is defined by fenv.h only
+if the implementation supports handling of the underflow exception. Do
+not assume the presence of fenv.h implies FE_UNDERFLOW is defined.
+
+Signed-off-by: Edgar Bonet <bonet@grenoble.cnrs.fr>
+Upstream: https://sourceforge.net/p/gnuplot/gnuplot-main/ci/926d2c26d31f4b69feda372c76a28643ef45359d/
+Upstream: https://sourceforge.net/p/gnuplot/gnuplot-main/ci/806641b5ef504488f871b5cbd9e5c356d67d0bd1/
+---
+ src/complexfun.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/complexfun.c b/src/complexfun.c
+index 7a5d9a13f..7ddb4ed60 100644
+--- a/src/complexfun.c
++++ b/src/complexfun.c
+@@ -86,7 +86,7 @@
+ 	int_error(NO_CARET, "%s: error present on entry (errno %d %s)", who, errno, strerror(errno));
+ #endif
+ 
+-#ifdef HAVE_FENV_H
++#if defined (HAVE_FENV_H) && defined (FE_UNDERFLOW)
+ #define handle_underflow( who, var ) \
+     if (errno) { \
+ 	if (fetestexcept(FE_UNDERFLOW)) { \
+-- 
+2.34.1
+

@@ -33,6 +33,8 @@ Signed-off-by: Gustavo Zacarias <gustavo@zacarias.com.ar>
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 [Romain: Use pycryptodomex]
 Signed-off-by: Romain Naour <romain.naour@gmail.com>
+[Bernd: rebased for version 4.15]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  Makefile         |   2 +-
  utils/key2pub.py | 146 ++++++++++++++++++++++++-----------------------
@@ -49,7 +51,7 @@ index a3ead30..8da38d0 100644
 -	$(Q)./utils/key2pub.py --$* $(wildcard $(PUBKEY_DIR)/*.pem) $@
 +	$(Q) python utils/key2pub.py --$* $(wildcard $(PUBKEY_DIR)/*.pem) $@
  
- $(LIBREG): regdb.h reglib.h reglib.c
+ $(LIBREG): reglib.c regdb.h reglib.h
  	$(NQ) '  CC  ' $@
 diff --git a/utils/key2pub.py b/utils/key2pub.py
 index 9bb04cd..8a0ba2a 100755

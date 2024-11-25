@@ -1,0 +1,41 @@
+From fb1cf079346a2838cc44f7116cb4a790e40cc5bf Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Tue, 2 Jul 2024 15:08:18 -0600
+Subject: [PATCH] Allow enabling/disabling the use of genpeimg binary
+
+In some cases we may want to force the use of python3-pefile instead
+of genpeimg such as when cross compiling, add a feature option to
+allow disabling genpeimg.
+
+Upstream: https://github.com/fwupd/fwupd-efi/commit/fb1cf079346a2838cc44f7116cb4a790e40cc5bf
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+---
+ meson.build       | 2 +-
+ meson_options.txt | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index a3ce068..a5612a6 100644
+--- a/meson.build
++++ b/meson.build
+@@ -17,7 +17,7 @@ prefix = get_option('prefix')
+ libdir = join_paths(prefix, get_option('libdir'))
+ libexecdir = join_paths(prefix, get_option('libexecdir'))
+ 
+-genpeimg = find_program ('genpeimg', required: false)
++genpeimg = find_program ('genpeimg', required: get_option('genpeimg'))
+ 
+ efi_app_location = join_paths(libexecdir, 'fwupd', 'efi')
+ host_cpu = host_machine.cpu_family()
+diff --git a/meson_options.txt b/meson_options.txt
+index 26161e1..588ae29 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -7,3 +7,4 @@ option('efi_sbat_distro_summary', type : 'string', value : '', description : 'SB
+ option('efi_sbat_distro_pkgname', type : 'string', value : '', description : 'SBAT distribution package name, e.g. fwupd')
+ option('efi_sbat_distro_version', type : 'string', value : '', description : 'SBAT distribution version, e.g. fwupd-1.5.6.fc33')
+ option('efi_sbat_distro_url', type : 'string', value : '', description : 'SBAT distribution URL, e.g. https://src.fedoraproject.org/rpms/fwupd')
++option('genpeimg', type : 'feature', description : 'Use genpeimg to add NX support to binaries')
+-- 
+2.34.1
+

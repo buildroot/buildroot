@@ -1,0 +1,27 @@
+From 2085cab74a0a84df8b965addf007775a7225c9ec Mon Sep 17 00:00:00 2001
+From: Kurt Nalty <46026992+kurtnalty@users.noreply.github.com>
+Date: Sat, 29 Dec 2018 23:47:17 -0600
+Subject: [PATCH] Add include <string.h>
+
+Added
+ line 28, #include <string.h>                 /* strcpy, bzero     */
+for musl compilation
+
+Upstream: https://github.com/telmich/gpm/commit/2085cab74a0a84df8b965addf007775a7225c9ec
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/daemon/old_main.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/daemon/old_main.c b/src/daemon/old_main.c
+index 2581e26..ab7a87f 100644
+--- a/src/daemon/old_main.c
++++ b/src/daemon/old_main.c
+@@ -25,6 +25,7 @@
+ #include <signal.h>                 /* guess again       */
+ #include <errno.h>                  /* guess again       */
+ #include <unistd.h>                 /* unlink            */
++#include <string.h>                 /* strcpy, bzero     */
+ #include <sys/stat.h>               /* chmod             */
+
+ #include <linux/kd.h>               /* linux hd*         */

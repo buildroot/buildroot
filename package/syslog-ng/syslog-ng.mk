@@ -6,15 +6,13 @@
 
 # When updating the version, please check at runtime if the version in
 # syslog-ng.conf header needs to be updated
-SYSLOG_NG_VERSION = 4.3.1
+SYSLOG_NG_VERSION = 4.7.1
 SYSLOG_NG_SITE = https://github.com/balabit/syslog-ng/releases/download/syslog-ng-$(SYSLOG_NG_VERSION)
 SYSLOG_NG_LICENSE = LGPL-2.1+ (syslog-ng core), GPL-2.0+ (modules)
 SYSLOG_NG_LICENSE_FILES = COPYING GPL.txt LGPL.txt
 SYSLOG_NG_CPE_ID_VENDOR = oneidentity
 SYSLOG_NG_DEPENDENCIES = host-bison host-flex host-pkgconf \
-	libglib2 openssl pcre2
-# We're patching configure.ac
-SYSLOG_NG_AUTORECONF = YES
+	json-c libglib2 openssl pcre2
 SYSLOG_NG_CONF_OPTS = --disable-manpages --localstatedir=/var/run \
 	--disable-java --disable-java-modules --disable-mongodb \
 	--disable-python
@@ -48,13 +46,6 @@ else
 SYSLOG_NG_CONF_OPTS += --disable-smtp
 endif
 
-ifeq ($(BR2_PACKAGE_JSON_C),y)
-SYSLOG_NG_DEPENDENCIES += json-c
-SYSLOG_NG_CONF_OPTS += --enable-json
-else
-SYSLOG_NG_CONF_OPTS += --disable-json
-endif
-
 ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBUUID),y)
 SYSLOG_NG_DEPENDENCIES += util-linux
 endif
@@ -72,8 +63,13 @@ ifeq ($(BR2_PACKAGE_LIBCURL),y)
 SYSLOG_NG_DEPENDENCIES += libcurl
 SYSLOG_NG_CONF_OPTS += --enable-http
 SYSLOG_NG_CONF_OPTS += --with-libcurl="$(STAGING_DIR)/usr"
+ifeq ($(BR2_INSTALL_LIBSTDCPP),y)
+SYSLOG_NG_CONF_OPTS += --enable-cloud-auth
 else
-SYSLOG_NG_CONF_OPTS += --disable-http
+SYSLOG_NG_CONF_OPTS += --disable-cloud-auth
+endif
+else
+SYSLOG_NG_CONF_OPTS += --disable-http --disable-cloud-auth
 endif
 
 ifeq ($(BR2_PACKAGE_RABBITMQ_C),y)

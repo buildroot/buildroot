@@ -1,5 +1,6 @@
 config BR2_PACKAGE_LUA_LIVR
 	bool "lua-livr"
+	select BR2_PACKAGE_LUA_COMPAT53 if BR2_PACKAGE_LUAINTERPRETER_ABI_VERSION_5_1 # runtime
 	help
 	  Lightweight validator supporting Language Independent
 	  Validation Rules Specification (LIVR).

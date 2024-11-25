@@ -1,19 +1,21 @@
-From 11ea78c4d253bb90296e2dd8c3f7fbf59ba397b6 Mon Sep 17 00:00:00 2001
+From 86dd032d77166b7ed59d08c99fbe47b8b7667406 Mon Sep 17 00:00:00 2001
 From: Bernd Kuhls <bernd.kuhls@t-online.de>
 Date: Thu, 17 Aug 2017 06:30:31 +0200
 Subject: [PATCH] configure: enable build on uclinux
 
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  configure.ac | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index c680bda7..1a7980a0 100644
+index eee42d4240f8..b0445f92e0b5 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -327,7 +327,7 @@ AC_ARG_ENABLE([sysfsgpio],
-   [build_sysfsgpio=$enableval], [build_sysfsgpio=no])
+@@ -342,7 +342,7 @@ AC_ARG_ENABLE([xlnx_pcie_xvc],
+   [build_xlnx_pcie_xvc=$enableval], [build_xlnx_pcie_xvc=no])
  
  AS_CASE([$host_os],
 -  [linux*], [],
@@ -22,5 +24,5 @@ index c680bda7..1a7980a0 100644
      AS_IF([test "x$build_sysfsgpio" = "xyes"], [
        AC_MSG_ERROR([sysfsgpio is only available on linux])
 -- 
-2.11.0
+2.43.0
 

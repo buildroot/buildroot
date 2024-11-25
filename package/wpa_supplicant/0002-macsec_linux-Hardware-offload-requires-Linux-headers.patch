@@ -1,0 +1,53 @@
+From 809d9d8172db8e2a08ff639875f838b5b86d2641 Mon Sep 17 00:00:00 2001
+From: Sergey Matyukevich <geomatsi@gmail.com>
+Date: Thu, 22 Aug 2024 00:03:41 +0300
+Subject: [PATCH] macsec_linux: Hardware offload requires Linux headers >= v5.7
+
+Hardware offload in Linux macsec driver is enabled in compile time if
+libnl version is >= v3.6. This is not sufficient for successful build
+since enum 'macsec_offload' has been added to Linux header if_link.h
+in kernels v5.6 and v5.7, see commits:
+- https://github.com/torvalds/linux/commit/21114b7feec29e4425a3ac48a037569c016a46c8
+- https://github.com/torvalds/linux/commit/76564261a7db80c5f5c624e0122a28787f266bdf
+
+New libnl with older Linux headers is a valid combination. This is how
+hostapd build failure has been detected by Buildroot autobuilder, see:
+- http://autobuild.buildroot.net/results/b59d5bc5bd17683a3a1e3577c40c802e81911f84/
+
+Extend compile time condition for the enablement of the macsec hardware
+offload adding Linux headers version check.
+
+Fixes: 40c139664439 ("macsec_linux: Add support for MACsec hardware offload")
+Signed-off-by: Sergey Matyukevich <geomatsi@gmail.com>
+
+Upstream: https://w1.fi/cgit/hostap/commit/?id=809d9d8172db8e2a08ff639875f838b5b86d2641
+
+---
+ src/drivers/driver_macsec_linux.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/drivers/driver_macsec_linux.c b/src/drivers/driver_macsec_linux.c
+index c86715498..fad47a292 100644
+--- a/src/drivers/driver_macsec_linux.c
++++ b/src/drivers/driver_macsec_linux.c
+@@ -19,6 +19,7 @@
+ #include <netlink/route/link.h>
+ #include <netlink/route/link/macsec.h>
+ #include <linux/if_macsec.h>
++#include <linux/version.h>
+ #include <inttypes.h>
+ 
+ #include "utils/common.h"
+@@ -32,7 +33,8 @@
+ 
+ #define UNUSED_SCI 0xffffffffffffffff
+ 
+-#if LIBNL_VER_NUM >= LIBNL_VER(3, 6)
++#if (LIBNL_VER_NUM >= LIBNL_VER(3, 6) && \
++     LINUX_VERSION_CODE >= KERNEL_VERSION(5, 7, 0))
+ #define LIBNL_HAS_OFFLOAD
+ #endif
+ 
+-- 
+2.46.0
+

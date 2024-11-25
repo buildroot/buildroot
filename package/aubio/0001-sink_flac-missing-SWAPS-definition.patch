@@ -1,0 +1,45 @@
+From aebf4fb23df2c4ec8857aef05a468991054a58c1 Mon Sep 17 00:00:00 2001
+From: Thomas Perale <thomas.perale@mind.be>
+Date: Thu, 19 Sep 2024 18:57:16 +0200
+Subject: [PATCH] [sink_flac] missing SWAPS definition
+
+On big endian architecture with libflac enabled the following error
+would happen when cross-compiling aubio with buildroot.
+
+```
+[ 75/243] Linking build/tests/test-pitchshift
+/home/autobuild/autobuild/instance-16/output-1/per-package/aubio/host/bin/../lib/gcc/mips64-buildroot-linux-gnu/13.3.0/../../../../mips64-buildroot-linux-gnu/bin/ld: src/libaubio.so: undefined reference to `SWAPS'
+collect2: error: ld returned 1 exit status
+
+Waf: Leaving directory `/home/autobuild/autobuild/instance-16/output-1/build/aubio-152d6819b360c2e7b379ee3f373d444ab3df0895/build'
+Build failed
+```
+
+Indeed there is a missing definition of the `SWAPS` macro in
+`/src/io/sink_flac.c` file.
+This commit copy the `SWAPS` definition from the
+`/src/io/sink_wavwrite.c` file in `sink_flac.c` to fix this issue.
+
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+Upstream: https://github.com/aubio/aubio/pull/407
+---
+ src/io/sink_flac.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/io/sink_flac.c b/src/io/sink_flac.c
+index 04144793..0a1cbc26 100644
+--- a/src/io/sink_flac.c
++++ b/src/io/sink_flac.c
+@@ -36,6 +36,9 @@
+ 
+ #define MAX_WRITE_SIZE 4096
+ 
++// swap endian of a short
++#define SWAPS(x) ((x & 0xff) << 8) | ((x & 0xff00) >> 8)
++
+ // swap host to little endian
+ #if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+ #define HTOLES(x) SWAPS(x)
+-- 
+2.46.0
+

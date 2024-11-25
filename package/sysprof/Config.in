@@ -1,31 +1,32 @@
 config BR2_PACKAGE_SYSPROF
 	bool "sysprof"
-	depends on BR2_USE_WCHAR # glib2
-	depends on BR2_TOOLCHAIN_HAS_THREADS # glib2
-	depends on BR2_USE_MMU # glib2
-	# In its util.h file, sysprof contains architecture-specific
-	# code
-	depends on BR2_i386 || BR2_x86_64 || BR2_powerpc || BR2_sh4a || BR2_sh4aeb
+	depends on BR2_USE_WCHAR # glib2, libdex, json-glib
+	depends on BR2_TOOLCHAIN_HAS_THREADS # glib2, libdex, json-glib, polkit
+	depends on BR2_USE_MMU # glib2, libdex, json-glib
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # libunwind, polkit
+	depends on BR2_PACKAGE_LIBUNWIND_ARCH_SUPPORTS
+	depends on !BR2_STATIC_LIBS # libdex, libunwind, polkit
+	depends on !BR2_OPTIMIZE_FAST # polkit
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_12
+	select BR2_PACKAGE_JSON_GLIB
+	select BR2_PACKAGE_LIBDEX
 	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_LIBUNWIND
+	select BR2_PACKAGE_POLKIT
 	help
 	  Sysprof is a statistical, system-wide profiler that can
 	  profile user and kernel code using the perf API.
 
 	  http://sysprof.com
 
-if BR2_PACKAGE_SYSPROF
-
-config BR2_PACKAGE_SYSPROF_GUI
-	bool "sysprof GUI"
-	depends on BR2_PACKAGE_LIBGTK2
-	select BR2_PACKAGE_LIBGLADE
-	select BR2_PACKAGE_GDK_PIXBUF
-	help
-	  GUI for the sysprof system-wide statistical profiler.
-
-endif
-
-comment "sysprof needs a toolchain w/ wchar, threads"
+comment "sysprof needs a toolchain w/ dynamic library, wchar, threads, C++, gcc >= 7, headers >= 5.12"
 	depends on BR2_USE_MMU
-	depends on BR2_i386 || BR2_x86_64 || BR2_powerpc || BR2_sh4a || BR2_sh4aeb
-	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_PACKAGE_LIBUNWIND_ARCH_SUPPORTS
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_7 || \
+		BR2_STATIC_LIBS || !BR2_INSTALL_LIBSTDCPP || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_12
+
+comment "sysprof can't be built with Optimize for fast"
+	depends on BR2_OPTIMIZE_FAST

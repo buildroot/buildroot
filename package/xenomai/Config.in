@@ -51,7 +51,7 @@ choice
 	  in the Linux Kernel -> Linux Kernel Extensions menu.
 
 config BR2_PACKAGE_XENOMAI_LATEST_VERSION
-	bool "Latest version (3.0.10)"
+	bool "Latest version (3.2.x)"
 
 config BR2_PACKAGE_XENOMAI_CUSTOM_VERSION
 	bool "Custom version"
@@ -81,7 +81,7 @@ config BR2_PACKAGE_XENOMAI_REPOSITORY_VERSION
 
 config BR2_PACKAGE_XENOMAI_VERSION
 	string
-	default "3.0.10" if BR2_PACKAGE_XENOMAI_LATEST_VERSION
+	default "3.2.5" if BR2_PACKAGE_XENOMAI_LATEST_VERSION
 	default BR2_PACKAGE_XENOMAI_CUSTOM_VERSION_VALUE \
 		if BR2_PACKAGE_XENOMAI_CUSTOM_VERSION
 	default "custom" if BR2_PACKAGE_XENOMAI_CUSTOM_TARBALL

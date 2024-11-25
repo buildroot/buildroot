@@ -1,0 +1,38 @@
+From ctxnop@gmail.com  Sun Jul 21 12:10:52 2024
+From: ctxnop@gmail.com (Nop)
+Date: Sun, 21 Jul 2024 14:10:52 +0200
+Subject: [PATCH] menuconfig: GCC failing saying ncurses is not found
+
+Newer GCC increased diagnostics levels resulting in considering the
+test code to be invalid. The resulting message was misleading, saying
+that ncurses was not found, while the check failed for an unrelated
+reason which was hidden because GCC stderr was redirected to
+/dev/null.
+
+Signed-off-by: ctxnop <ctxnop@gmail.com>
+Upstream: http://lists.busybox.net/pipermail/busybox/2024-July/090840.html
+[Fiona: rephrased commit message for clarity]
+Signed-off-by: Fiona Klute (WIWA) <fiona.klute@gmx.de>
+---
+ scripts/kconfig/lxdialog/check-lxdialog.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/kconfig/lxdialog/check-lxdialog.sh
+b/scripts/kconfig/lxdialog/check-lxdialog.sh
+index 5075ebf2d..c644d1d48 100755
+--- a/scripts/kconfig/lxdialog/check-lxdialog.sh
++++ b/scripts/kconfig/lxdialog/check-lxdialog.sh
+@@ -45,9 +45,9 @@ trap "rm -f $tmp" 0 1 2 3 15
+
+ # Check if we can link to ncurses
+ check() {
+-        $cc -x c - -o $tmp 2>/dev/null <<'EOF'
++	$cc -x c - -o $tmp <<'EOF'
+ #include CURSES_LOC
+-main() {}
++int main() { return 0; }
+ EOF
+ 	if [ $? != 0 ]; then
+ 	    echo " *** Unable to find the ncurses libraries or the"       1>&2
+--
+2.45.2

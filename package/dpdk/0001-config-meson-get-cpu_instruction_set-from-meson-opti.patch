@@ -1,0 +1,35 @@
+From 121e5d019f0bb6dec0ace2b361611edd10fc8ff8 Mon Sep 17 00:00:00 2001
+From: Lee Chee Yang <chee.yang.lee@intel.com>
+Date: Wed, 6 Dec 2023 16:58:10 +0800
+Subject: [PATCH] config/meson: get cpu_instruction_set from meson option
+
+Workaround error:
+| ../git/config/meson.build:178:8: ERROR: Problem encountered: Compiler
+does not support "x86_64" arch flag.
+
+Upstream-Status: Inappropriate [ yocto specific to set cpu_instruction_set ]
+
+Signed-off-by: Lee Chee Yang <chee.yang.lee@intel.com>
+Links: https://git.yoctoproject.org/meta-dpdk/plain/recipes-extended/dpdk/dpdk/0001-config-meson-get-cpu_instruction_set-from-meson-opti.patch
+Upstream: Not applicable, see Yocto's status, above
+Signed-off-by: Vincent Jardin <vjardin@free.fr>
+---
+ config/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/config/meson.build b/config/meson.build
+index a9ccd56deb..f310c7adf6 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -105,7 +105,7 @@ platform = get_option('platform')
+ 
+ # set the cpu_instruction_set and cflags for it
+ if meson.is_cross_build()
+-    cpu_instruction_set = host_machine.cpu()
++    cpu_instruction_set = get_option('cpu_instruction_set')
+ else
+     cpu_instruction_set = get_option('cpu_instruction_set')
+     machine = get_option('machine')
+-- 
+2.37.3
+

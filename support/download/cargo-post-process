@@ -2,12 +2,20 @@
 
 set -e
 
+# shellcheck source=helpers source-path=SCRIPTDIR
 . "${0%/*}/helpers"
 
-while getopts "n:o:" OPT; do
+if [ "${BR_CARGO_MANIFEST_PATH}" ]; then
+    printf 'Setting BR_CARGO_MANIFEST_PATH is no longer supported; use post-process options.\n' >&2
+    exit 1
+fi
+
+manifest=Cargo.toml
+while getopts "n:o:m:" OPT; do
     case "${OPT}" in
     o)  output="${OPTARG}";;
     n)  base_name="${OPTARG}";;
+    m)  manifest="${OPTARG}";;
     :)  error "option '%s' expects a mandatory argument\n" "${OPTARG}";;
     \?) error "unknown option '%s'\n" "${OPTARG}";;
     esac
@@ -28,7 +36,7 @@ mkdir -p .cargo/
 mkdir -p "${CARGO_HOME}"
 flock "${CARGO_HOME}"/.br-lock \
 cargo vendor \
-    --manifest-path ${BR_CARGO_MANIFEST_PATH-Cargo.toml} \
+    --manifest-path "${manifest}" \
     --locked VENDOR \
     > .cargo/config
 

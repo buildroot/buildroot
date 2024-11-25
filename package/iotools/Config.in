@@ -1,0 +1,14 @@
+config BR2_PACKAGE_IOTOOLS
+	bool "iotools"
+	help
+	  Tools for poking all types of IO, supported are:
+	  - CMOS NVRAM (via /dev/nvram)
+	  - CPU ID (x86)
+	  - IO port (x86, PowerPC)
+	  - MMIO
+	  - MSR (x86)
+	  - PCI configuration space
+	  - SCOM (PowerPC)
+	  - SMBus
+
+	  https://github.com/andy-shev/iotools

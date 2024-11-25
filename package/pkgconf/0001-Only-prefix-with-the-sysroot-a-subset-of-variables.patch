@@ -1,4 +1,4 @@
-From 267a57022699453e8d8f517519df25ac6bf6ac4e Mon Sep 17 00:00:00 2001
+From c1f9e60f46f2207f9dd07dd290ad5a2da05ad41d Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Date: Sun, 16 Dec 2018 11:52:18 +0100
 Subject: [PATCH] Only prefix with the sysroot a subset of variables
@@ -23,19 +23,19 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 [Updated to include gobject-introspection paths]
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 ---
- libpkgconf/tuple.c | 60 ++++++++++++++++++++++++++++++++--------------
- 1 file changed, 42 insertions(+), 18 deletions(-)
+ libpkgconf/tuple.c | 65 ++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 46 insertions(+), 19 deletions(-)
 
 diff --git a/libpkgconf/tuple.c b/libpkgconf/tuple.c
-index 8523709..7cd2fff 100644
+index 83f6a47..a2aa427 100644
 --- a/libpkgconf/tuple.c
 +++ b/libpkgconf/tuple.c
-@@ -161,6 +161,21 @@ dequote(const char *value)
+@@ -178,6 +178,21 @@ dequote(const char *value)
  	return buf;
  }
  
 +static char *
-+pkgconf_tuple_parse_sysroot(const pkgconf_client_t *client, pkgconf_list_t *vars, const char *value, bool add_sysroot);
++pkgconf_tuple_parse_sysroot(const pkgconf_client_t *client, pkgconf_list_t *vars, const char *value, unsigned int flags, bool add_sysroot);
 +
 +const char *sysrooted_keys[] = {
 +	"g_ir_scanner",
@@ -49,21 +49,19 @@ index 8523709..7cd2fff 100644
 +	NULL,
 +};
 +
- /*
-  * !doc
-  *
-@@ -181,6 +193,8 @@ pkgconf_tuple_add(const pkgconf_client_t *client, pkgconf_list_t *list, const ch
+ static const char *
+ find_sysroot(const pkgconf_client_t *client, pkgconf_list_t *vars)
+ {
+@@ -237,14 +252,20 @@ pkgconf_tuple_add(const pkgconf_client_t *client, pkgconf_list_t *list, const ch
  {
  	char *dequote_value;
- 	pkgconf_tuple_t *tuple = calloc(sizeof(pkgconf_tuple_t), 1);
+ 	pkgconf_tuple_t *tuple = calloc(1, sizeof(pkgconf_tuple_t));
 +	bool add_sysroot = false;
 +	int i;
  
  	pkgconf_tuple_find_delete(list, key);
  
-@@ -188,9 +202,13 @@ pkgconf_tuple_add(const pkgconf_client_t *client, pkgconf_list_t *list, const ch
- 
- 	PKGCONF_TRACE(client, "adding tuple to @%p: %s => %s (parsed? %d)", list, key, dequote_value, parse);
+ 	dequote_value = dequote(value);
  
 +	for (i = 0; sysrooted_keys[i] != NULL; i++)
 +		if (!strcmp(key, sysrooted_keys[i]))
@@ -71,77 +69,81 @@ index 8523709..7cd2fff 100644
 +
  	tuple->key = strdup(key);
  	if (parse)
--		tuple->value = pkgconf_tuple_parse(client, list, dequote_value);
-+		tuple->value = pkgconf_tuple_parse_sysroot(client, list, dequote_value, add_sysroot);
+-		tuple->value = pkgconf_tuple_parse(client, list, dequote_value, flags);
++		tuple->value = pkgconf_tuple_parse_sysroot(client, list, dequote_value, flags, add_sysroot);
  	else
  		tuple->value = strdup(dequote_value);
  
-@@ -234,27 +252,14 @@ pkgconf_tuple_find(const pkgconf_client_t *client, pkgconf_list_t *list, const c
+@@ -294,22 +315,8 @@ pkgconf_tuple_find(const pkgconf_client_t *client, pkgconf_list_t *list, const c
  	return NULL;
  }
  
 -/*
 - * !doc
 - *
-- * .. c:function:: char *pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const char *value)
+- * .. c:function:: char *pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const char *value, unsigned int flags)
 - *
 - *    Parse an expression for variable substitution.
 - *
 - *    :param pkgconf_client_t* client: The pkgconf client object to access.
 - *    :param pkgconf_list_t* list: The variable list to search for variables (along side the global variable list).
 - *    :param char* value: The ``key=value`` string to parse.
+- *    :param uint flags: Any flags to consider while parsing.
 - *    :return: the variable data with any variables substituted
 - *    :rtype: char *
 - */
 -char *
--pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const char *value)
+-pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const char *value, unsigned int flags)
 +static char *
-+pkgconf_tuple_parse_sysroot(const pkgconf_client_t *client, pkgconf_list_t *vars, const char *value, bool add_sysroot)
++pkgconf_tuple_parse_sysroot(const pkgconf_client_t *client, pkgconf_list_t *vars, const char *value, unsigned int flags, bool add_sysroot)
  {
  	char buf[PKGCONF_BUFSIZE];
  	const char *ptr;
- 	char *bptr = buf;
+@@ -318,7 +325,7 @@ pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const
+ 	if (!(client->flags & PKGCONF_PKG_PKGF_FDO_SYSROOT_RULES) &&
+ 		(!(flags & PKGCONF_PKG_PROPF_UNINSTALLED) || (client->flags & PKGCONF_PKG_PKGF_PKGCONF1_SYSROOT_RULES)))
+ 	{
+-		if (*value == '/' && client->sysroot_dir != NULL && strncmp(value, client->sysroot_dir, strlen(client->sysroot_dir)))
++		if (add_sysroot && *value == '/' && client->sysroot_dir != NULL && strncmp(value, client->sysroot_dir, strlen(client->sysroot_dir)))
+ 			bptr += pkgconf_strlcpy(buf, client->sysroot_dir, sizeof buf);
+ 	}
  
--	if (*value == '/' && client->sysroot_dir != NULL && strncmp(value, client->sysroot_dir, strlen(client->sysroot_dir)))
-+	if (add_sysroot && *value == '/' && client->sysroot_dir != NULL && strncmp(value, client->sysroot_dir, strlen(client->sysroot_dir)))
- 		bptr += pkgconf_strlcpy(buf, client->sysroot_dir, sizeof buf);
- 
- 	for (ptr = value; *ptr != '\0' && bptr - buf < PKGCONF_BUFSIZE; ptr++)
-@@ -294,7 +299,7 @@ pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const
- 
- 				if (kv != NULL)
+@@ -381,7 +388,7 @@ pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const
  				{
--					parsekv = pkgconf_tuple_parse(client, vars, kv);
-+					parsekv = pkgconf_tuple_parse_sysroot(client, vars, kv, add_sysroot);
+ 					size_t nlen;
  
- 					strncpy(bptr, parsekv, PKGCONF_BUFSIZE - (bptr - buf));
- 					bptr += strlen(parsekv);
-@@ -339,6 +344,25 @@ pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const
+-					parsekv = pkgconf_tuple_parse(client, vars, kv, flags);
++					parsekv = pkgconf_tuple_parse_sysroot(client, vars, kv, flags, add_sysroot);
+ 					nlen = pkgconf_strlcpy(bptr, parsekv, remain);
+ 					free(parsekv);
+ 
+@@ -432,6 +439,26 @@ pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const
  	return strdup(buf);
  }
  
 +/*
 + * !doc
 + *
-+ * .. c:function:: char *pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const char *value)
++ * .. c:function:: char *pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const char *value, unsigned int flags)
 + *
 + *    Parse an expression for variable substitution.
 + *
 + *    :param pkgconf_client_t* client: The pkgconf client object to access.
 + *    :param pkgconf_list_t* list: The variable list to search for variables (along side the global variable list).
 + *    :param char* value: The ``key=value`` string to parse.
++ *    :param uint flags: Any flags to consider while parsing.
 + *    :return: the variable data with any variables substituted
 + *    :rtype: char *
 + */
 +char *
-+pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const char *value)
++pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const char *value, unsigned int flags)
 +{
-+	return pkgconf_tuple_parse_sysroot(client, vars, value, true);
++	return pkgconf_tuple_parse_sysroot(client, vars, value, flags, true);
 +}
 +
  /*
   * !doc
   *
 -- 
-2.19.2
+2.34.1
 

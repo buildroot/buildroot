@@ -1,0 +1,152 @@
+From fd7ce4b6a9e268e60071c94852f7f00f6e60ef11 Mon Sep 17 00:00:00 2001
+From: Steffen Persvold <spersvold@gmail.com>
+Date: Mon, 15 Jul 2024 11:16:36 +0200
+Subject: [PATCH] Add missing function declarations
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes:
+
+GCC14 will give errors for missing function declarations and
+missing return types :
+
+dhry_1.c:75:1: error: return type defaults to ‘int’ [-Wimplicit-int]
+   75 | main(int argc, char *argv[])
+      | ^~~~
+dhry_1.c: In function ‘main’:
+dhry_1.c:159:5: error: implicit declaration of function ‘Proc_5’ [-Wimplicit-function-declaration]
+  159 |     Proc_5();
+      |     ^~~~~~
+
+Upstream: dead
+Signed-off-by: Steffen Persvold <spersvold@gmail.com>
+---
+ dhry_1.c | 26 +++++++++++++++++---------
+ dhry_2.c |  8 ++++----
+ 2 files changed, 21 insertions(+), 13 deletions(-)
+
+diff --git a/dhry_1.c b/dhry_1.c
+index 3ed1716..cad5840 100644
+--- a/dhry_1.c
++++ b/dhry_1.c
+@@ -32,6 +32,7 @@ int             Arr_2_Glob [50] [50];
+ extern char     *malloc ();
+ #endif
+ Enumeration     Func_1 ();
++Boolean         Func_2 ();
+   /* forward declaration necessary since Enumeration may not simply be int */
+ 
+ #ifndef REG
+@@ -71,8 +72,17 @@ float           Microseconds,
+ 
+ /* end of variables for time measurement */
+ 
+-
+-main(int argc, char *argv[])
++/* forward declarations */
++void Proc_1 ();
++void Proc_2 ();
++void Proc_3 ();
++void Proc_4 ();
++void Proc_5 ();
++void Proc_6 ();
++void Proc_7 ();
++void Proc_8 ();
++
++int main(int argc, char *argv[])
+ /*****/
+ 
+   /* main program, corresponds to procedures        */
+@@ -295,7 +305,7 @@ main(int argc, char *argv[])
+ }
+ 
+ 
+-Proc_1 (Ptr_Val_Par)
++void Proc_1 (Ptr_Val_Par)
+ /******************/
+ 
+ REG Rec_Pointer Ptr_Val_Par;
+@@ -329,7 +339,7 @@ REG Rec_Pointer Ptr_Val_Par;
+ } /* Proc_1 */
+ 
+ 
+-Proc_2 (Int_Par_Ref)
++void Proc_2 (Int_Par_Ref)
+ /******************/
+     /* executed once */
+     /* *Int_Par_Ref == 1, becomes 4 */
+@@ -352,7 +362,7 @@ One_Fifty   *Int_Par_Ref;
+ } /* Proc_2 */
+ 
+ 
+-Proc_3 (Ptr_Ref_Par)
++void Proc_3 (Ptr_Ref_Par)
+ /******************/
+     /* executed once */
+     /* Ptr_Ref_Par becomes Ptr_Glob */
+@@ -367,7 +377,7 @@ Rec_Pointer *Ptr_Ref_Par;
+ } /* Proc_3 */
+ 
+ 
+-Proc_4 () /* without parameters */
++void Proc_4 () /* without parameters */
+ /*******/
+     /* executed once */
+ {
+@@ -379,7 +389,7 @@ Proc_4 () /* without parameters */
+ } /* Proc_4 */
+ 
+ 
+-Proc_5 () /* without parameters */
++void Proc_5 () /* without parameters */
+ /*******/
+     /* executed once */
+ {
+@@ -399,5 +409,3 @@ register int    l;
+         while (l--) *d++ = *s++;
+ }
+ #endif
+-
+-
+diff --git a/dhry_2.c b/dhry_2.c
+index 63a3d3e..25051e7 100644
+--- a/dhry_2.c
++++ b/dhry_2.c
+@@ -26,8 +26,9 @@
+ extern  int     Int_Glob;
+ extern  char    Ch_1_Glob;
+ 
++Boolean Func_3 ();
+ 
+-Proc_6 (Enum_Val_Par, Enum_Ref_Par)
++void Proc_6 (Enum_Val_Par, Enum_Ref_Par)
+ /*********************************/
+     /* executed once */
+     /* Enum_Val_Par == Ident_3, Enum_Ref_Par becomes Ident_2 */
+@@ -61,7 +62,7 @@ Enumeration *Enum_Ref_Par;
+ } /* Proc_6 */
+ 
+ 
+-Proc_7 (Int_1_Par_Val, Int_2_Par_Val, Int_Par_Ref)
++void Proc_7 (Int_1_Par_Val, Int_2_Par_Val, Int_Par_Ref)
+ /**********************************************/
+     /* executed three times                                      */ 
+     /* first call:      Int_1_Par_Val == 2, Int_2_Par_Val == 3,  */
+@@ -81,7 +82,7 @@ One_Fifty      *Int_Par_Ref;
+ } /* Proc_7 */
+ 
+ 
+-Proc_8 (Arr_1_Par_Ref, Arr_2_Par_Ref, Int_1_Par_Val, Int_2_Par_Val)
++void Proc_8 (Arr_1_Par_Ref, Arr_2_Par_Ref, Int_1_Par_Val, Int_2_Par_Val)
+ /*********************************************************************/
+     /* executed once      */
+     /* Int_Par_Val_1 == 3 */
+@@ -189,4 +190,3 @@ Enumeration Enum_Par_Val;
+   else /* not executed */
+     return (false);
+ } /* Func_3 */
+-
+-- 
+2.45.2
+

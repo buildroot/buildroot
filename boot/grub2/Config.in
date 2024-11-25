@@ -53,7 +53,7 @@ config BR2_TARGET_GRUB2_I386_PC
 	depends on BR2_i386 || BR2_x86_64
 	select BR2_TARGET_GRUB2_HAS_LEGACY_BOOT
 	help
-	  Select this option if the platform you're targetting is a
+	  Select this option if the platform you're targeting is a
 	  x86 or x86-64 legacy BIOS based platform.
 
 config BR2_TARGET_GRUB2_I386_EFI
@@ -62,7 +62,7 @@ config BR2_TARGET_GRUB2_I386_EFI
 	select BR2_TARGET_GRUB2_HAS_PTF
 	select BR2_TARGET_GRUB2_HAS_EFI_BOOT
 	help
-	  Select this option if the platform you're targetting has a
+	  Select this option if the platform you're targeting has a
 	  32 bits EFI BIOS. Note that some x86-64 platforms use a 32
 	  bits EFI BIOS, and this option should be used in this case.
 
@@ -72,7 +72,7 @@ config BR2_TARGET_GRUB2_X86_64_EFI
 	select BR2_TARGET_GRUB2_HAS_PTF
 	select BR2_TARGET_GRUB2_HAS_EFI_BOOT
 	help
-	  Select this option if the platform you're targetting has a
+	  Select this option if the platform you're targeting has a
 	  64 bits EFI BIOS.
 
 config BR2_TARGET_GRUB2_ARM_UBOOT
@@ -80,7 +80,7 @@ config BR2_TARGET_GRUB2_ARM_UBOOT
 	depends on BR2_arm
 	select BR2_TARGET_GRUB2_HAS_LEGACY_BOOT
 	help
-	  Select this option if the platform you're targetting is an
+	  Select this option if the platform you're targeting is an
 	  ARM u-boot platform, and you want to boot Grub 2 as an u-boot
 	  compatible image.
 
@@ -90,7 +90,7 @@ config BR2_TARGET_GRUB2_ARM_EFI
 	select BR2_TARGET_GRUB2_HAS_PTF
 	select BR2_TARGET_GRUB2_HAS_EFI_BOOT
 	help
-	  Select this option if the platform you're targetting is an
+	  Select this option if the platform you're targeting is an
 	  ARM platform and you want to boot Grub 2 as an EFI
 	  application.
 
@@ -99,7 +99,7 @@ config BR2_TARGET_GRUB2_ARM64_EFI
 	depends on BR2_aarch64
 	select BR2_TARGET_GRUB2_HAS_EFI_BOOT
 	help
-	  Select this option if the platform you're targetting is an
+	  Select this option if the platform you're targeting is an
 	  Aarch64 platform and you want to boot Grub 2 as an EFI
 	  application.
 
@@ -108,7 +108,7 @@ config BR2_TARGET_GRUB2_RISCV64_EFI
 	depends on BR2_RISCV_64
 	select BR2_TARGET_GRUB2_HAS_EFI_BOOT
 	help
-	  Select this option if the platform you're targetting is a
+	  Select this option if the platform you're targeting is a
 	  64bit RISC-V platform and you want to boot Grub 2 as an EFI
 	  application.
 

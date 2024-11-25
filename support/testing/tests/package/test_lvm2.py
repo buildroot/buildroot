@@ -5,13 +5,11 @@ import infra.basetest
 
 
 class TestLvm2(infra.basetest.BRTest):
-    # This test creates a lvm2 volume. A specific Kernel need to be
-    # built with a config fragment enabling this support. This test
-    # also uses resize2fs from e2fsprogs.
-    kernel_fragment = \
-        infra.filepath("tests/package/test_lvm2/linux-lvm2.fragment")
+    # The lvm2 package has _LINUX_CONFIG_FIXUPS, so we cannot use
+    # the runtime test pre-built Kernel. We need to compile a Kernel
+    # to make sure it will include the required configuration.
     config = \
-        f"""
+        """
         BR2_aarch64=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TARGET_GENERIC_GETTY_PORT="ttyAMA0"
@@ -20,7 +18,6 @@ class TestLvm2(infra.basetest.BRTest):
         BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="6.1.77"
         BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG=y
         BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE="board/qemu/aarch64-virt/linux.config"
-        BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES="{kernel_fragment}"
         BR2_LINUX_KERNEL_NEEDS_HOST_OPENSSL=y
         BR2_PACKAGE_E2FSPROGS=y
         BR2_PACKAGE_E2FSPROGS_RESIZE2FS=y

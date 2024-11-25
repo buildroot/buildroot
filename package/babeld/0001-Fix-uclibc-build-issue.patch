@@ -1,0 +1,38 @@
+From f8e5fbb33690b516b8516590def5136e6619de4c Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Tue, 17 Sep 2024 21:48:01 +0200
+Subject: [PATCH] Fix uclibc build issue
+
+This patch fixes the following compilation error raised by the bump to
+version 1.13.1 in Buildroot [1] using uclibc as the C library for the
+cross-compilation toolchain:
+
+net.c: In function 'babel_send':
+net.c:199:27: error: 'IPV6_DONTFRAG' undeclared (first use in this function)
+  199 |         cmsg->cmsg_type = IPV6_DONTFRAG;;
+
+[1] https://patchwork.ozlabs.org/project/buildroot/patch/20240917201030.11583-1-dario.binacchi@amarulasolutions.com/
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://github.com/jech/babeld/pull/121
+---
+ net.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/net.c b/net.c
+index 7a7b57844e6c..30de3dafe1d9 100644
+--- a/net.c
++++ b/net.c
+@@ -37,6 +37,10 @@ THE SOFTWARE.
+ #include <arpa/inet.h>
+ #include <errno.h>
+ 
++#if defined(__UCLIBC__)
++#include <linux/in6.h>
++#endif
++
+ #include "babeld.h"
+ #include "util.h"
+ #include "net.h"
+-- 
+2.43.0
+

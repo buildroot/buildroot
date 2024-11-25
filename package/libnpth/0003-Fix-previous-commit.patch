@@ -1,0 +1,39 @@
+From 75c68399ef3bbb5d024f2a60474a7214fa479016 Mon Sep 17 00:00:00 2001
+From: NIIBE Yutaka <gniibe@fsij.org>
+Date: Mon, 13 May 2024 11:13:23 +0900
+Subject: [PATCH] Fix previous commit.
+
+Signed-off-by: NIIBE Yutaka <gniibe@fsij.org>
+
+Upstream: https://git.gnupg.org/cgi-bin/gitweb.cgi?p=npth.git;a=commit;h=75c68399ef3bbb5d024f2a60474a7214fa479016
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ src/npth.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/src/npth.c b/src/npth.c
+index f02540c..8dced17 100644
+--- a/src/npth.c
++++ b/src/npth.c
+@@ -178,6 +178,18 @@ static int initialized_or_any_threads;
+ typedef int (*trylock_func_t) (void *);
+ 
+ #ifndef HAVE_PTHREAD_MUTEX_TIMEDLOCK
++#define REQUIRE_THE_BUSY_WAIT_FOR_IMPLEMENTATION 1
++#endif
++
++#if !HAVE_PTHREAD_RWLOCK_TIMEDRDLOCK && HAVE_PTHREAD_RWLOCK_TRYRDLOCK
++#define REQUIRE_THE_BUSY_WAIT_FOR_IMPLEMENTATION 1
++#endif
++
++#if !HAVE_PTHREAD_RWLOCK_TIMEDWRLOCK && HAVE_PTHREAD_RWLOCK_TRYWRLOCK
++#define REQUIRE_THE_BUSY_WAIT_FOR_IMPLEMENTATION 1
++#endif
++
++#if REQUIRE_THE_BUSY_WAIT_FOR_IMPLEMENTATION
+ static int
+ busy_wait_for (trylock_func_t trylock, void *lock,
+ 	       const struct timespec *abstime)
+-- 
+2.30.2
+

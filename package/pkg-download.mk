@@ -8,6 +8,7 @@
 ################################################################################
 
 # Download method commands
+export CURL := $(call qstrip,$(BR2_CURL))
 export WGET := $(call qstrip,$(BR2_WGET))
 export SVN := $(call qstrip,$(BR2_SVN))
 export CVS := $(call qstrip,$(BR2_CVS))
@@ -19,9 +20,11 @@ export SFTP := $(call qstrip,$(BR2_SFTP))
 export LOCALFILES := $(call qstrip,$(BR2_LOCALFILES))
 
 # Version of the format of the archives we generate in the corresponding
-# download backend:
-BR_FMT_VERSION_git = -br1
-BR_FMT_VERSION_svn = -br3
+# download backend and post-process:
+BR_FMT_VERSION_git = -git4
+BR_FMT_VERSION_svn = -svn5
+BR_FMT_VERSION_go = -go2
+BR_FMT_VERSION_cargo = -cargo2
 
 DL_WRAPPER = support/download/dl-wrapper
 
@@ -100,30 +103,37 @@ endif
 # source from the list returned by DOWNLOAD_URIS.
 #
 # Argument 1 is the source location
-# Argument 2 is the upper-case package name
-# Argument 3 is a space-separated list of optional arguments
+# Argument 2 is a space-separated list of optional arguments
 #
 ################################################################################
 
+# Restore the user's original umask during the whole download, in case he has
+# provisions set to share the download directory with his group (or others).
+ifneq ($(BR_ORIG_UMASK),)
+DOWNLOAD_SET_UMASK = umask $(BR_ORIG_UMASK);
+endif
+
 define DOWNLOAD
-	$(Q)mkdir -p $($(2)_DL_DIR)
-	$(Q)$(EXTRA_ENV) $($(2)_DL_ENV) \
+	$(Q)$(DOWNLOAD_SET_UMASK) mkdir -p $($(PKG)_DL_DIR)
+	$(Q)$(DOWNLOAD_SET_UMASK) $(EXTRA_ENV) \
+	$($(PKG)_DL_ENV) \
+	TAR="$(TAR)" \
 	BR_NO_CHECK_HASH_FOR="$(if $(BR2_DOWNLOAD_FORCE_CHECK_HASHES),,$(BR_NO_CHECK_HASH_FOR))" \
-		flock $($(2)_DL_DIR)/.lock $(DL_WRAPPER) \
-		-c '$($(2)_DL_VERSION)' \
-		-d '$($(2)_DL_DIR)' \
+		flock $($(PKG)_DL_DIR)/.lock $(DL_WRAPPER) \
+		-c '$($(PKG)_DL_VERSION)' \
+		-d '$($(PKG)_DL_DIR)' \
 		-D '$(DL_DIR)' \
 		-f '$(notdir $(1))' \
-		$(foreach f,$($(2)_HASH_FILES),-H '$(f)') \
-		-n '$($(2)_BASENAME_RAW)' \
-		-N '$($(2)_RAWNAME)' \
-		-o '$($(2)_DL_DIR)/$(notdir $(1))' \
-		$(if $(filter YES,$($(2)_SVN_EXTERNALS)),-r) \
-		$(if $($(2)_GIT_SUBMODULES),-r) \
-		$(if $($(2)_GIT_LFS),-l) \
-		$(foreach uri,$(call DOWNLOAD_URIS,$(1),$(2)),-u $(uri)) \
-		$(3) \
+		$(foreach f,$($(PKG)_HASH_FILES),-H '$(f)') \
+		-n '$($(PKG)_DL_SUBDIR)-$($(PKG)_VERSION)' \
+		-N '$($(PKG)_RAWNAME)' \
+		-o '$($(PKG)_DL_DIR)/$(notdir $(1))' \
+		$(if $(filter YES,$($(PKG)_SVN_EXTERNALS)),-r) \
+		$(if $($(PKG)_GIT_SUBMODULES),-r) \
+		$(if $($(PKG)_GIT_LFS),-l) \
+		$(foreach uri,$(call DOWNLOAD_URIS,$(1),$(PKG)),-u $(uri)) \
+		$(2) \
 		$(QUIET) \
 		-- \
-		$($(2)_DL_OPTS)
+		$($(PKG)_DL_OPTS)
 endef

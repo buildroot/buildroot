@@ -55,6 +55,9 @@ config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MN
 config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MP
 	bool "imx8mp"
 
+config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULP
+	bool "imx8ulp"
+
 config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X
 	bool "imx8x"
 
@@ -70,7 +73,28 @@ config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93
 endchoice
 
 choice
-	prompt "i.MX Silicon Revision"
+	prompt "i.MX 8ULP Silicon Revision"
+	default BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULPA2
+	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULP
+	help
+	  Some packages related to the selected i.MX platform need to
+	  know the silicon revision of the platform they will run on.
+
+	  Note - mismatches may result in a failure to boot!
+
+config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULPA0
+	bool "imx8ulpa0"
+
+config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULPA1
+	bool "imx8ulpa1"
+
+config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULPA2
+	bool "imx8ulpa2"
+
+endchoice
+
+choice
+	prompt "i.MX 93 Silicon Revision"
 	default BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93A1
 	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93
 	help
@@ -104,6 +128,7 @@ config BR2_PACKAGE_FREESCALE_IMX_PLATFORM
 	default "IMX8MM" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MM
 	default "IMX8MN" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MN
 	default "IMX8MP" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MP
+	default "IMX8ULP" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULP
 	default "IMX91" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX91
 	default "IMX93" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93
 
@@ -130,13 +155,19 @@ config BR2_PACKAGE_FREESCALE_IMX_HAS_VIV_GPU
 		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MM || \
 		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MN || \
 		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MP || \
+		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULP || \
 		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X || \
 		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8DXL
 
 config BR2_PACKAGE_FREESCALE_IMX_HAS_ELE
 	bool
-	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX91 || \
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULP || \
+		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX91 || \
 		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93
+
+config BR2_PACKAGE_FREESCALE_IMX_HAS_UPOWER
+	bool
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULP
 
 source "package/freescale-imx/imx-alsa-plugins/Config.in"
 source "package/freescale-imx/imx-codec/Config.in"
@@ -150,6 +181,7 @@ source "package/freescale-imx/imx-vpu-hantro/Config.in"
 source "package/freescale-imx/imx-vpuwrap/Config.in"
 source "package/freescale-imx/firmware-ele-imx/Config.in"
 source "package/freescale-imx/firmware-imx/Config.in"
+source "package/freescale-imx/firmware-upower/Config.in"
 source "package/freescale-imx/imx-sc-firmware/Config.in"
 source "package/freescale-imx/imx-seco/Config.in"
 source "package/freescale-imx/imx-vpu-hantro-daemon/Config.in"

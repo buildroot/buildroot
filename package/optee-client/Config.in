@@ -17,6 +17,44 @@ config BR2_PACKAGE_OPTEE_CLIENT
 
 if BR2_PACKAGE_OPTEE_CLIENT
 
+choice
+	prompt "optee-client version"
+	default BR2_PACKAGE_OPTEE_CLIENT_LATEST
+	help
+	  Select the version of optee-client you want to use
+
+config BR2_PACKAGE_OPTEE_CLIENT_LATEST
+	bool "4.3.0"
+	help
+	  Use the latest release tag from the optee-client official Git
+	  repository.
+
+config BR2_PACKAGE_OPTEE_CLIENT_CUSTOM_TARBALL
+	bool "Custom tarball"
+	help
+	  This option allows to specify a URL pointing to an
+	  optee-client source tarball. This URL can use any protocol
+	  recognized by Buildroot, like http://, ftp://, file://
+	  or scp://.
+
+	  When pointing to a local tarball using file://, you may want
+	  to use a make variable like $(TOPDIR) to reference the root of
+	  the Buildroot tree.
+
+endchoice
+
+if BR2_PACKAGE_OPTEE_CLIENT_CUSTOM_TARBALL
+
+config BR2_PACKAGE_OPTEE_CLIENT_CUSTOM_TARBALL_LOCATION
+	string "URL of custom optee-client tarball"
+
+endif
+
+config BR2_PACKAGE_OPTEE_CLIENT_VERSION
+	string
+	default "4.3.0"		if BR2_PACKAGE_OPTEE_CLIENT_LATEST
+	default "custom"	if BR2_PACKAGE_OPTEE_CLIENT_CUSTOM_TARBALL
+
 config BR2_PACKAGE_OPTEE_CLIENT_TEE_FS_PATH
 	string "Path for normal world OS secure storage"
 	default "/data/tee"

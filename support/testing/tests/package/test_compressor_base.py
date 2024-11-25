@@ -24,7 +24,7 @@ class TestCompressorBase(infra.basetest.BRTest):
                        in unset, the default value is "compress_cmd" appended
                        with " -t".
     compressed_file_ext
-                     - the file extention of compressed files created by the
+                     - the file extension of compressed files created by the
                        compress command. (ex: ".gz")
                        if unset, the default value is a dot "." appended with
                        the value of "compress_cmd".

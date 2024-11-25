@@ -11,7 +11,7 @@ LUA_AUGEAS_LICENSE_FILES = COPYRIGHT
 LUA_AUGEAS_DEPENDENCIES = luainterpreter augeas host-pkgconf
 
 # LDFLAGS=$(LDFLAGS) is present to pass LDFLAGS from environment to the command
-# line. With LDFLAGS set in the command line, related ordinary asignment present
+# line. With LDFLAGS set in the command line, related ordinary assignment present
 # in the makefile are ignored and so lua-augeas makefile cannot not add '-L/lib'
 # to this value.
 LUA_AUGEAS_CONF_OPTS= \

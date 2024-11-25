@@ -24,6 +24,8 @@ http://autobuild.buildroot.net/results/c17/c17bbb12d9deadd64a441b36e324cfbbe8aba
 Signed-off-by: Matthew Weber <matthew.weber@rockwellcollins.com>
 [Updated for 0.57.1 - get_builtin_option() vs. get_option(OptionKey())]
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+[Bernd: rebased for 1.6.0]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  mesonbuild/compilers/mixins/clike.py | 3 +++
  1 file changed, 3 insertions(+)
@@ -32,10 +34,18 @@ diff --git a/mesonbuild/compilers/mixins/clike.py b/mesonbuild/compilers/mixins/
 index 09ad837b1..b7f6b9f22 100644
 --- a/mesonbuild/compilers/mixins/clike.py
 +++ b/mesonbuild/compilers/mixins/clike.py
-@@ -978,6 +978,9 @@ class CLikeCompiler(Compiler):
-         elif env.machines[self.for_machine].is_cygwin():
-             shlibext = ['dll', 'dll.a']
-             prefixes = ['cyg'] + prefixes
+@@ -27,6 +27,7 @@
+ from ... import mlog
+ from ...linkers.linkers import GnuLikeDynamicLinkerMixin, SolarisDynamicLinker, CompCertDynamicLinker
+ from ...mesonlib import LibType
++from ...options import OptionKey
+ from .. import compilers
+ from ..compilers import CompileCheckMode
+ from .visualstudio import VisualStudioLikeCompiler
+@@ -1038,6 +1038,9 @@ class CLikeCompiler(Compiler):
+             # TI C6000 compiler can use both extensions for static or dynamic libs.
+             stlibext = ['a', 'lib']
+             shlibext = ['dll', 'so']
 +        elif env.coredata.get_option(OptionKey('default_library')) == 'static':
 +            # Linux/BSDs
 +            shlibext = ['a']

@@ -1,0 +1,55 @@
+From eb5c49e4c0a1068363dc81f70ea2a65ad0f91c0f Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Sat, 14 Sep 2024 12:20:36 +0200
+Subject: [PATCH] smokey: fix build failure
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This patch fixes the following building failure raised on bumping Xenomai
+to version 3.2.5 in Buildroot:
+
+In file included from helpers.c:29:
+../../include/smokey/smokey.h:258:39: error: unknown type name ‘bool’
+  258 | int smokey_modprobe(const char *name, bool silent);
+      |                                       ^~~~
+../../include/smokey/smokey.h:27:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+   26 | #include <xenomai/init.h>
+  +++ |+#include <stdbool.h>
+   27 |
+In file included from init.c:33:
+../../include/smokey/smokey.h:258:39: error: unknown type name ‘bool’
+  258 | int smokey_modprobe(const char *name, bool silent);
+      |                                       ^~~~
+../../include/smokey/smokey.h:26:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+   25 | #include <copperplate/clockobj.h>
+  +++ |+#include <stdbool.h>
+   26 | #include <xenomai/init.h>
+helpers.c:299:39: error: unknown type name ‘bool’
+  299 | int smokey_modprobe(const char *name, bool silent)
+      |                                       ^~~~
+helpers.c:30:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+   29 | #include <smokey/smokey.h>
+  +++ |+#include <stdbool.h>
+
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://lore.kernel.org/xenomai/20240914131026.1035993-1-dario.binacchi@amarulasolutions.com/T/#u
+---
+ include/smokey/smokey.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/smokey/smokey.h b/include/smokey/smokey.h
+index cf9701966db8..45dd0dcd017b 100644
+--- a/include/smokey/smokey.h
++++ b/include/smokey/smokey.h
+@@ -19,6 +19,7 @@
+ #define _XENOMAI_SMOKEY_SMOKEY_H
+ 
+ #include <stdarg.h>
++#include <stdbool.h>
+ #include <pthread.h>
+ #include <boilerplate/list.h>
+ #include <boilerplate/libc.h>
+-- 
+2.43.0
+

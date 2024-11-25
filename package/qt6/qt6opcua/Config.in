@@ -1,0 +1,14 @@
+config BR2_PACKAGE_QT6OPCUA
+	bool "qt6opcua"
+	select BR2_PACKAGE_QT6BASE_NETWORK
+	# qt6opcuda needs host-qt6opcua, and host-qt6opcua needs
+	# network support in qt6base.
+	select BR2_PACKAGE_HOST_QT6BASE_NETWORK
+
+	help
+	  Qt is a cross-platform application and UI framework for
+	  developers using C++.
+
+	  This package corresponds to the qt6opcua module.
+
+	  https://doc.qt.io/qt-6/qtopcua-index.html

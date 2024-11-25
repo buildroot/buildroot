@@ -1,4 +1,4 @@
-From 980d5143089bf32ef8a6dfdf1bb9e9fe92fa7bf5 Mon Sep 17 00:00:00 2001
+From 12e0257495de41202827fabd5935f2e5a92ae8a6 Mon Sep 17 00:00:00 2001
 From: Julien Olivain <ju.o@free.fr>
 Date: Sun, 9 Jan 2022 13:38:48 +0100
 Subject: [PATCH] riscv: disable precompiled headers
@@ -16,12 +16,12 @@ Signed-off-by: Julien Olivain <ju.o@free.fr>
  1 file changed, 3 deletions(-)
 
 diff --git a/riscv/riscv.mk.in b/riscv/riscv.mk.in
-index 2347ce6..4f56eaf 100644
+index 469c48dc..c61cadaf 100644
 --- a/riscv/riscv.mk.in
 +++ b/riscv/riscv.mk.in
-@@ -35,9 +35,6 @@ riscv_hdrs = \
- 
- riscv_install_hdrs = mmio_plugin.h
+@@ -45,9 +45,6 @@ riscv_install_hdrs = \
+ 	triggers.h \
+ 	vector_unit.h \
  
 -riscv_precompiled_hdrs = \
 -	insn_template.h \
@@ -30,5 +30,5 @@ index 2347ce6..4f56eaf 100644
  	processor.cc \
  	execute.cc \
 -- 
-2.34.1
+2.45.2
 

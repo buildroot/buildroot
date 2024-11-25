@@ -1,0 +1,24 @@
+config BR2_PACKAGE_GTKIOSTREAM_ARCH_SUPPORTS
+	bool
+	default y if BR2_ENDIAN = "LITTLE"
+
+config BR2_PACKAGE_GTKIOSTREAM
+	bool "gtkiostream"
+	depends on BR2_PACKAGE_GTKIOSTREAM_ARCH_SUPPORTS
+	depends on BR2_INSTALL_LIBSTDCPP # eigen
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_PACKAGE_ALSA_LIB_MIXER if BR2_PACKAGE_ALSA_LIB
+	select BR2_PACKAGE_EIGEN
+	select BR2_PACKAGE_FFTW
+	select BR2_PACKAGE_FFTW_DOUBLE
+	select BR2_PACKAGE_FFTW_SINGLE
+	help
+	  This package provides many useful software engineering and
+	  signal processing includes and linkable library.
+
+	  https://github.com/flatmax/gtkiostream
+
+comment "gtkiostream needs a toolchain w/ C++, threads"
+	depends on BR2_PACKAGE_GTKIOSTREAM_ARCH_SUPPORTS
+	depends on !BR2_INSTALL_LIBSTDCPP || \
+		!BR2_TOOLCHAIN_HAS_THREADS

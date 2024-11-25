@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GTEST_VERSION = 1.14.0
+GTEST_VERSION = 1.15.2
 GTEST_SITE = $(call github,google,googletest,v$(GTEST_VERSION))
 GTEST_INSTALL_STAGING = YES
 GTEST_INSTALL_TARGET = NO
@@ -18,7 +18,7 @@ GTEST_CPE_ID_PRODUCT = google_test
 # gtest.
 # So, force to build gtest as a static library.
 #
-# For further details, refer to the explaination given in the README file from
+# For further details, refer to the explanation given in the README file from
 # the gtest sources.
 GTEST_CONF_OPTS = -DBUILD_SHARED_LIBS=OFF
 

@@ -1,0 +1,34 @@
+From 4baa4ff25a583456d781e553604a79c51a46bd53 Mon Sep 17 00:00:00 2001
+From: Maarten ter Huurne <maarten@treewalker.org>
+Date: Mon, 15 Sep 2014 00:06:20 +0200
+Subject: [PATCH] Support overriding SCREEN to get a non-versioned binary
+
+If a packager runs "make install SCREEN=screen", do not create
+"screen" as a symlink to itself.
+
+Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+[Julien: rebase on top of 4.9.1]
+[Julien: rebase on top of 5.0.0]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ Makefile.in | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Makefile.in b/Makefile.in
+index 5bb5ed8..d03129e 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -80,8 +80,10 @@ install_bin: screen installdirs
+ 	$(INSTALL_PROGRAM) screen $(DESTDIR)$(bindir)/$(SCREEN)
+ 	-chown root $(DESTDIR)$(bindir)/$(SCREEN)
+ 	-chmod 4755 $(DESTDIR)$(bindir)/$(SCREEN)
++ifneq (${SCREEN},screen)
+ 	rm -f $(DESTDIR)$(bindir)/screen
+ 	(cd $(DESTDIR)$(bindir) && ln -f -s $(SCREEN) screen)
++endif
+ 	cp $(srcdir)/utf8encodings/?? $(DESTDIR)$(SCREENENCODINGS)
+ 
+ ###############################################################################
+-- 
+2.46.2
+

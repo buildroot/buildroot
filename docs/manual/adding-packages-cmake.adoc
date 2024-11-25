@@ -10,7 +10,7 @@
 First, let's see how to write a +.mk+ file for a CMake-based package,
 with an example :
 
-------------------------
+----
 01: ################################################################################
 02: #
 03: # libfoo
@@ -26,7 +26,7 @@ with an example :
 13: LIBFOO_DEPENDENCIES = libglib2 host-pkgconf
 14:
 15: $(eval $(cmake-package))
-------------------------
+----
 
 On line 7, we declare the version of the package.
 
@@ -75,11 +75,9 @@ Just like the generic infrastructure, the CMake infrastructure works
 by defining a number of variables before calling the +cmake-package+
 macro.
 
-First, all the package metadata information variables that exist in
-the generic infrastructure also exist in the CMake infrastructure:
-+LIBFOO_VERSION+, +LIBFOO_SOURCE+, +LIBFOO_PATCH+, +LIBFOO_SITE+,
-+LIBFOO_SUBDIR+, +LIBFOO_DEPENDENCIES+, +LIBFOO_INSTALL_STAGING+,
-+LIBFOO_INSTALL_TARGET+.
+All the package metadata information variables that exist in the
+xref:generic-package-reference[generic package infrastructure] also
+exist in the CMake infrastructure.
 
 A few additional variables, specific to the CMake infrastructure, can
 also be defined. Many of them are only useful in very specific cases,

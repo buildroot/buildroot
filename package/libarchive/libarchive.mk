@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBARCHIVE_VERSION = 3.7.2
+LIBARCHIVE_VERSION = 3.7.7
 LIBARCHIVE_SOURCE = libarchive-$(LIBARCHIVE_VERSION).tar.xz
 LIBARCHIVE_SITE = https://www.libarchive.de/downloads
 LIBARCHIVE_INSTALL_STAGING = YES
@@ -44,6 +44,16 @@ LIBARCHIVE_CONF_OPTS += --enable-bsdcat=shared
 endif
 else
 LIBARCHIVE_CONF_OPTS += --disable-bsdcat
+endif
+
+ifeq ($(BR2_PACKAGE_LIBARCHIVE_BSDUNZIP),y)
+ifeq ($(BR2_STATIC_LIBS),y)
+LIBARCHIVE_CONF_OPTS += --enable-bsdunzip=static
+else
+LIBARCHIVE_CONF_OPTS += --enable-bsdunzip=shared
+endif
+else
+LIBARCHIVE_CONF_OPTS += --disable-bsdunzip
 endif
 
 ifeq ($(BR2_PACKAGE_ACL),y)

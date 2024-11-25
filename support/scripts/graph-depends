@@ -159,11 +159,11 @@ def check_circular_deps(deps):
 
 # This functions trims down the dependency list of all packages.
 # It applies in sequence all the dependency-elimination methods.
-def remove_extra_deps(deps, rootpkg, transitive, arrow_dir):
+def remove_extra_deps(deps, rootpkg, transitive, direct):
     # For the direct dependencies, find and eliminate mandatory
     # deps, and add them to the root package. Don't do it for a
     # reverse graph, because mandatory deps are only direct deps.
-    if arrow_dir == "forward":
+    if direct:
         for pkg in list(deps.keys()):
             if not pkg == rootpkg:
                 for d in get_mandatory_deps(pkg, deps):
@@ -197,15 +197,15 @@ def print_attrs(outfile, pkg, pkg_type, pkg_version, depth, colors):
     outfile.write("%s [color=%s,style=filled]\n" % (name, color))
 
 
-done_deps = []
-
-
 # Print the dependency graph of a package
 def print_pkg_deps(outfile, dict_deps, dict_types, dict_versions, stop_list, exclude_list,
-                   arrow_dir, draw_graph, depth, max_depth, pkg, colors):
+                   direct, draw_graph, depth, max_depth, pkg, colors, done_deps=None):
+    if done_deps is None:
+        done_deps = []
     if pkg in done_deps:
         return
     done_deps.append(pkg)
+
     if draw_graph:
         print_attrs(outfile, pkg, dict_types[pkg], dict_versions[pkg], depth, colors)
     elif depth != 0:
@@ -232,9 +232,12 @@ def print_pkg_deps(outfile, dict_deps, dict_types, dict_versions, stop_list, exc
                     break
             if add:
                 if draw_graph:
-                    outfile.write("%s -> %s [dir=%s]\n" % (pkg_node_name(pkg), pkg_node_name(d), arrow_dir))
+                    if direct:
+                        outfile.write("%s -> %s [dir=%s]\n" % (pkg_node_name(pkg), pkg_node_name(d), "forward"))
+                    else:
+                        outfile.write("%s -> %s [dir=%s]\n" % (pkg_node_name(d), pkg_node_name(pkg), "forward"))
                 print_pkg_deps(outfile, dict_deps, dict_types, dict_versions, stop_list, exclude_list,
-                               arrow_dir, draw_graph, depth + 1, max_depth, d, colors)
+                               direct, draw_graph, depth + 1, max_depth, d, colors, done_deps)
 
 
 def parse_args():
@@ -266,9 +269,9 @@ def parse_args():
                         default=False)
     parser.add_argument("--no-transitive", dest="transitive", action='store_false',
                         help="Draw (do not draw) transitive dependencies")
-    parser.add_argument("--direct", dest="direct", action='store_true', default=True,
+    parser.add_argument("--direct", dest="direct", action='store_true', default=False,
                         help="Draw direct dependencies (the default)")
-    parser.add_argument("--reverse", dest="direct", action='store_false',
+    parser.add_argument("--reverse", dest="reverse", action='store_true', default=False,
                         help="Draw reverse dependencies")
     parser.add_argument("--quiet", '-q', dest="quiet", action='store_true',
                         help="Quiet")
@@ -293,6 +296,9 @@ def main():
             sys.exit(1)
         outfile = open(args.outfile, "w")
 
+    if not args.direct and not args.reverse:
+        args.direct = True
+
     if args.package is None:
         mode = MODE_FULL
         rootpkg = 'all'
@@ -313,13 +319,9 @@ def main():
     if args.exclude_mandatory:
         exclude_list += MANDATORY_DEPS
 
-    if args.direct:
-        arrow_dir = "forward"
-    else:
-        if mode == MODE_FULL:
-            logging.error("--reverse needs a package")
-            sys.exit(1)
-        arrow_dir = "back"
+    if args.reverse and mode == MODE_FULL:
+        logging.error("--reverse needs a package")
+        sys.exit(1)
 
     draw_graph = not args.flat_list
 
@@ -331,23 +333,33 @@ def main():
         logging.error("Error: incorrect color list '%s'" % args.colors)
         sys.exit(1)
 
-    deps, rdeps, dict_types, dict_versions = brpkgutil.get_dependency_tree()
-    dict_deps = deps if args.direct else rdeps
-
-    check_circular_deps(dict_deps)
-    if check_only:
-        sys.exit(0)
-
-    dict_deps = remove_extra_deps(dict_deps, rootpkg, args.transitive, arrow_dir)
-
     # Start printing the graph data
-    if draw_graph:
+    if not check_only and draw_graph:
         outfile.write("digraph G {\n")
 
-    print_pkg_deps(outfile, dict_deps, dict_types, dict_versions, stop_list, exclude_list,
-                   arrow_dir, draw_graph, 0, args.depth, rootpkg, colors)
+    deps, rdeps, dict_types, dict_versions = brpkgutil.get_dependency_tree()
 
-    if draw_graph:
+    # forward
+    if args.direct:
+        dict_deps = deps
+        direct = True
+        check_circular_deps(dict_deps)
+        if not check_only:
+            dict_deps = remove_extra_deps(dict_deps, rootpkg, args.transitive, direct)
+            print_pkg_deps(outfile, dict_deps, dict_types, dict_versions, stop_list, exclude_list,
+                           direct, draw_graph, 0, args.depth, rootpkg, colors)
+
+    # reverse
+    if args.reverse:
+        dict_deps = rdeps
+        direct = False
+        check_circular_deps(dict_deps)
+        if not check_only:
+            dict_deps = remove_extra_deps(dict_deps, rootpkg, args.transitive, direct)
+            print_pkg_deps(outfile, dict_deps, dict_types, dict_versions, stop_list, exclude_list,
+                           direct, draw_graph, 0, args.depth, rootpkg, colors)
+
+    if not check_only and draw_graph:
         outfile.write("}\n")
     else:
         outfile.write("\n")

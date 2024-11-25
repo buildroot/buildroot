@@ -1,13 +1,15 @@
 Good old 'uclinux is also linux'
 
 Signed-off-by: Gustavo Zacarias <gustavo@zacarias.com.ar>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
 diff -Nura libhid-0.2.16.orig/configure.ac libhid-0.2.16/configure.ac
 --- libhid-0.2.16.orig/configure.ac	2014-06-22 09:35:50.277261742 -0300
 +++ libhid-0.2.16/configure.ac	2014-06-22 09:36:10.688951947 -0300
-@@ -80,6 +80,7 @@
+@@ -79,6 +79,7 @@
+ AC_C_STRINGIZE
  
- MD_CONF_DEBUGGING
  MD_CONF_COMPILER
 +AM_CONDITIONAL(OS_LINUX, test "$MD_OS" = "uclinux")
  AM_CONDITIONAL(OS_LINUX, test "$MD_OS" = "linux")

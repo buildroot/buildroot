@@ -1,0 +1,50 @@
+Remove optional imp python module dependency.
+
+Upstream already removed py-compile entirely in their git repository,
+so the patch is not appropriate for upstream.
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: not appropriate
+
+diff -Nur avahi-0.8.orig/py-compile avahi-0.8/py-compile
+--- avahi-0.8.orig/py-compile	2020-02-18 07:58:21.192417644 +0100
++++ avahi-0.8/py-compile	2024-08-17 15:03:07.328733849 +0200
+@@ -116,7 +116,7 @@
+ fi
+ 
+ $PYTHON -c "
+-import sys, os, py_compile, imp
++import sys, os, py_compile
+ 
+ files = '''$files'''
+ 
+@@ -129,15 +129,12 @@
+ 	    continue
+     sys.stdout.write(file)
+     sys.stdout.flush()
+-    if hasattr(imp, 'get_tag'):
+-        py_compile.compile(filepath, imp.cache_from_source(filepath), path)
+-    else:
+-        py_compile.compile(filepath, filepath + 'c', path)
++    py_compile.compile(filepath, filepath + 'c', path)
+ sys.stdout.write('\n')" || exit $?
+ 
+ # this will fail for python < 1.5, but that doesn't matter ...
+ $PYTHON -O -c "
+-import sys, os, py_compile, imp
++import sys, os, py_compile
+ 
+ # pypy does not use .pyo optimization
+ if hasattr(sys, 'pypy_translation_info'):
+@@ -153,10 +150,7 @@
+ 	    continue
+     sys.stdout.write(file)
+     sys.stdout.flush()
+-    if hasattr(imp, 'get_tag'):
+-        py_compile.compile(filepath, imp.cache_from_source(filepath, False), path)
+-    else:
+-        py_compile.compile(filepath, filepath + 'o', path)
++    py_compile.compile(filepath, filepath + 'o', path)
+ sys.stdout.write('\n')" 2>/dev/null || :
+ 
+ # Local Variables:

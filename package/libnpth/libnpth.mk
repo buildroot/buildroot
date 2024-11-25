@@ -13,5 +13,7 @@ LIBNPTH_INSTALL_STAGING = YES
 # 0001-Fix-INSERT_EXPOSE_RWLOCK_API-for-musl-C-library.patch
 LIBNPTH_AUTORECONF = YES
 LIBNPTH_CONF_OPTS = --disable-tests
+HOST_LIBNPTH_CONF_OPTS = --disable-tests
 
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))

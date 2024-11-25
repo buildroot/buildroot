@@ -1,0 +1,96 @@
+From 42e798e3f8b4a092be26bc91c9f87e5593f0d302 Mon Sep 17 00:00:00 2001
+From: Gwyn Ciesla <gwync@protonmail.com>
+Date: Wed, 31 Jan 2024 14:40:42 -0600
+Subject: [PATCH] Swap calloc parameters for -Wcalloc-transposed-args
+
+Upstream: https://github.com/dparrish/libcli/pull/93
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ libcli.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/libcli.c b/libcli.c
+index 88c23d8..32ceeae 100644
+--- a/libcli.c
++++ b/libcli.c
+@@ -427,7 +427,7 @@ struct cli_command *cli_register_command(struct cli_def *cli, struct cli_command
+   struct cli_command *c;
+ 
+   if (!command) return NULL;
+-  if (!(c = calloc(sizeof(struct cli_command), 1))) return NULL;
++  if (!(c = calloc(1, sizeof(struct cli_command)))) return NULL;
+   c->command_type = CLI_REGULAR_COMMAND;
+   c->callback = callback;
+   c->next = NULL;
+@@ -597,7 +597,7 @@ struct cli_def *cli_init() {
+   struct cli_def *cli;
+   struct cli_command *c;
+ 
+-  if (!(cli = calloc(sizeof(struct cli_def), 1))) return 0;
++  if (!(cli = calloc(1, sizeof(struct cli_def)))) return 0;
+ 
+   cli->buf_size = 1024;
+   if (!(cli->buffer = calloc(cli->buf_size, 1))) {
+@@ -1957,7 +1957,7 @@ int cli_match_filter_init(struct cli_def *cli, int argc, char **argv, struct cli
+   char *search_flags = cli_get_optarg_value(cli, "search_flags", NULL);
+ 
+   filt->filter = cli_match_filter;
+-  filt->data = state = calloc(sizeof(struct cli_match_filter_state), 1);
++  filt->data = state = calloc(1, sizeof(struct cli_match_filter_state));
+   if (!state) return CLI_ERROR;
+ 
+   if (!strcmp(cli->pipeline->current_stage->words[0], "include")) {
+@@ -2050,7 +2050,7 @@ int cli_range_filter_init(struct cli_def *cli, int argc, char **argv, struct cli
+   //    from the command line processing and continue
+ 
+   filt->filter = cli_range_filter;
+-  filt->data = state = calloc(sizeof(struct cli_range_filter_state), 1);
++  filt->data = state = calloc(1, sizeof(struct cli_range_filter_state));
+   if (state) {
+     state->from = from;
+     state->to = to;
+@@ -2087,7 +2087,7 @@ int cli_count_filter_init(struct cli_def *cli, int argc, UNUSED(char **argv), st
+   }
+ 
+   filt->filter = cli_count_filter;
+-  if (!(filt->data = calloc(sizeof(int), 1))) return CLI_ERROR;
++  if (!(filt->data = calloc(1, sizeof(int)))) return CLI_ERROR;
+ 
+   return CLI_OK;
+ }
+@@ -2144,7 +2144,7 @@ struct cli_command *cli_register_filter(struct cli_def *cli, const char *command
+   struct cli_command *c;
+ 
+   if (!command) return NULL;
+-  if (!(c = calloc(sizeof(struct cli_command), 1))) return NULL;
++  if (!(c = calloc(1, sizeof(struct cli_command)))) return NULL;
+ 
+   c->command_type = CLI_FILTER_COMMAND;
+   c->init = init;
+@@ -2256,7 +2256,7 @@ struct cli_optarg *cli_register_optarg(struct cli_command *cmd, const char *name
+       goto CLEANUP;
+     }
+   }
+-  if (!(optarg = calloc(sizeof(struct cli_optarg), 1))) goto CLEANUP;
++  if (!(optarg = calloc(1, sizeof(struct cli_optarg)))) goto CLEANUP;
+   if (!(optarg->name = strdup(name))) goto CLEANUP;
+   if (help && !(optarg->help = strdup(help))) goto CLEANUP;
+ 
+@@ -2532,7 +2532,7 @@ struct cli_command *cli_int_register_buildmode_command(struct cli_def *cli, stru
+   struct cli_command *c;
+ 
+   if (!command) return NULL;
+-  if (!(c = calloc(sizeof(struct cli_command), 1))) return NULL;
++  if (!(c = calloc(1, sizeof(struct cli_command)))) return NULL;
+ 
+   c->flags = flags;
+   c->callback = callback;
+@@ -3095,7 +3095,7 @@ int cli_int_execute_pipeline(struct cli_def *cli, struct cli_pipeline *pipeline)
+     struct cli_pipeline_stage *stage = &pipeline->stage[stage_num];
+     pipeline->current_stage = stage;
+     cli->found_optargs = stage->found_optargs;
+-    *filt = calloc(sizeof(struct cli_filter), 1);
++    *filt = calloc(1, sizeof(struct cli_filter));
+     if (*filt) {
+       if ((rc = stage->command->init(cli, stage->num_words, stage->words, *filt) != CLI_OK)) {
+         break;

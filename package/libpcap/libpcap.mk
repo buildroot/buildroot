@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBPCAP_VERSION = 1.10.4
+LIBPCAP_VERSION = 1.10.5
 LIBPCAP_SITE = https://www.tcpdump.org/release
 LIBPCAP_LICENSE = BSD-3-Clause
 LIBPCAP_LICENSE_FILES = LICENSE
@@ -55,6 +55,10 @@ endif
 # microblaze/sparc/sparc64 need -fPIC instead of -fpic
 ifeq ($(BR2_microblaze)$(BR2_sparc)$(BR2_sparc64),y)
 LIBPCAP_CFLAGS += -fPIC
+endif
+
+ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_104028),y)
+LIBPCAP_CFLAGS += -O2
 endif
 
 $(eval $(autotools-package))

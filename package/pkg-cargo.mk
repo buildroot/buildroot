@@ -192,7 +192,7 @@ $(2)_DL_ENV += CARGO_HOME=$$(BR_CARGO_HOME)
 
 # If building in a sub directory, use that to find the Cargo.toml
 ifneq ($$($(2)_SUBDIR),)
-$(2)_DL_ENV += BR_CARGO_MANIFEST_PATH=$$($(2)_SUBDIR)/Cargo.toml
+$(2)_DOWNLOAD_POST_PROCESS_OPTS += -m$$($(2)_SUBDIR)/Cargo.toml
 endif
 
 # Because we append vendored info, we can't rely on the values being empty
@@ -279,6 +279,7 @@ define $(2)_INSTALL_TARGET_CMDS
 			--root $$(TARGET_DIR)/usr/ \
 			--bins \
 			--path ./ \
+			--no-track \
 			--force \
 			--locked \
 			-Z target-applies-to-host \
@@ -298,6 +299,7 @@ define $(2)_INSTALL_CMDS
 			--root $$(HOST_DIR) \
 			--bins \
 			--path ./ \
+			--no-track \
 			--force \
 			--locked \
 			$$($(2)_CARGO_INSTALL_OPTS)

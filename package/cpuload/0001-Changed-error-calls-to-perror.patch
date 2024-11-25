@@ -1,0 +1,115 @@
+From ffd61eaa72acf123dea0c80ed3774656289ab49f Mon Sep 17 00:00:00 2001
+From: roiec <roiec@D-H-ROIEC-LX-WW1.com>
+Date: Wed, 5 Jan 2022 17:12:05 +0200
+Subject: [PATCH] Changed 'error' calls to 'perror'
+
+Upstream: https://github.com/kelvincheung/cpuload/pull/1
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+---
+ .gitignore           | 60 ++++++++++++++++++++++++++++++++++++++++++++
+ src/graph_cpu_load.c |  4 +--
+ src/read_cpu_stat.c  |  2 +-
+ 3 files changed, 63 insertions(+), 3 deletions(-)
+ create mode 100644 .gitignore
+
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..c2ae907
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,60 @@
++# Prerequisites
++*.d
++
++# Object files
++*.o
++*.ko
++*.obj
++*.elf
++
++# Linker output
++*.ilk
++*.map
++*.exp
++
++# Precompiled Headers
++*.gch
++*.pch
++
++# Libraries
++*.lib
++*.a
++*.la
++*.lo
++
++# Shared objects (inc. Windows DLLs)
++*.dll
++*.so
++*.so.*
++*.dylib
++
++# Executables
++*.exe
++*.out
++*.app
++*.i*86
++*.x86_64
++*.hex
++
++# Debug files
++*.dSYM/
++*.su
++*.idb
++*.pdb
++
++# Kernel Module Compile Results
++*.mod*
++*.cmd
++.tmp_versions/
++modules.order
++Module.symvers
++Mkfile.old
++dkms.conf
++
++#images
++*.tgz
++*.img
++
++
++#build
++configure
+diff --git a/src/graph_cpu_load.c b/src/graph_cpu_load.c
+index e4b7785..525d9ed 100644
+--- a/src/graph_cpu_load.c
++++ b/src/graph_cpu_load.c
+@@ -132,7 +132,7 @@ void graph_new_line(char *str, unsigned long color)
+ 	graph_last_x = graph_last_y = -1;
+ 
+ 	if (graph_data_index >= MAX_GRAPH_DATA - 2)
+-		error("Too many graph data.");
++		perror("Too many graph data.");
+ 
+ 	graph_data[graph_data_index++] = DATUM_COLOR;
+ 	graph_data[graph_data_index++] = color;
+@@ -145,7 +145,7 @@ void graph_new_line(char *str, unsigned long color)
+ void graph_add_point(int size, int amount)
+ {
+ 	if (graph_data_index >= MAX_GRAPH_DATA - 4)
+-		error("Too many graph data.");
++		perror("Too many graph data.");
+ 
+ 	graph_data[graph_data_index++] = DATUM_SIZE;
+ 	graph_data[graph_data_index++] = size;
+diff --git a/src/read_cpu_stat.c b/src/read_cpu_stat.c
+index 3d014be..ff51d7f 100644
+--- a/src/read_cpu_stat.c
++++ b/src/read_cpu_stat.c
+@@ -46,7 +46,7 @@ ProcessList *cpudata_new(void)
+ 	fclose(file);
+ 
+ 	if (cpu > cpus -1) {
+-		error("too many cpus");
++		perror("too many cpus");
+ 		exit(1);
+ 	}
+ 

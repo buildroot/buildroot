@@ -1,0 +1,33 @@
+From 29c4e0038b212e953cc59ac8b31d4541db758a3d Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Tue, 3 Sep 2024 17:43:44 +0200
+Subject: [PATCH] Fix build failure due to getpagesize implicit declaration
+
+The patch fixes the following build error:
+
+calibrator.c: In function 'runCache':
+calibrator.c:267:24: error: implicit declaration of function 'getpagesize' [-Wimplicit-function-declaration]
+
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: sent to Stefan Manegold Stefan.Manegold@cwi.nl
+---
+ calibrator.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/calibrator.c b/calibrator.c
+index e045dfdcb96b..fd2fadb26020 100644
+--- a/calibrator.c
++++ b/calibrator.c
+@@ -37,9 +37,7 @@
+  * THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
+-/*
+ #include        <unistd.h>
+-*/
+ #include        <stdlib.h>
+ #include	<stdio.h>
+ #include	<math.h>
+-- 
+2.43.0
+

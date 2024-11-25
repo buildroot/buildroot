@@ -1,0 +1,50 @@
+From 1c78aa3541f730e9624504168fb0e1f413e5cbb8 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Fri, 2 Aug 2024 19:28:36 +0200
+Subject: [PATCH] m4/ccforbuild.m4: include <stdlib.h> in test program
+
+The GMP_PROG_CC_FOR_BUILD_WORKS and GMP_PROG_EXEEXT_FOR_BUILD macros
+do various checks to verify if the host compiler works, but their test
+programs lack the inclusion of <stdlib.h>, needed for exit(). This
+causes a build failure with gcc 14.x:
+
+conftest.c: In function 'main':
+conftest.c:4:3: error: implicit declaration of function 'exit' [-Wimplicit-function-declaration]
+    4 |   exit(0);
+
+which then causes the configure script to think that the host compiler
+does not work:
+
+configure: error: Specified CC_FOR_BUILD doesn't seem to work
+
+so let's include <stdlib.h> to fix this issue.
+
+Upstream: https://sourceforge.net/p/bcusdk/patches/4/
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ m4/ccforbuild.m4 | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/m4/ccforbuild.m4 b/m4/ccforbuild.m4
+index a466cab..389deaa 100644
+--- a/m4/ccforbuild.m4
++++ b/m4/ccforbuild.m4
+@@ -66,6 +66,7 @@ AC_DEFUN([GMP_PROG_CC_FOR_BUILD_WORKS],
+ # remove anything that might look like compiler output to our "||" expression
+ rm -f conftest* a.out b.out a.exe a_out.exe
+ cat >conftest.c <<EOF
++#include <stdlib.h>
+ int
+ main ()
+ {
+@@ -140,6 +141,7 @@ AC_DEFUN([GMP_PROG_EXEEXT_FOR_BUILD],
+ AC_CACHE_CHECK([for build system executable suffix],
+                gmp_cv_prog_exeext_for_build,
+ [cat >conftest.c <<EOF
++#include <stdlib.h>
+ int
+ main ()
+ {
+-- 
+2.45.2
+

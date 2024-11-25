@@ -19,7 +19,7 @@ define LIBMAD_APPLY_DEBIAN_PATCHES
 	fi
 endef
 
-LIBMAD_POST_PATCH_HOOKS += LIBMAD_APPLY_DEBIAN_PATCHES
+LIBMAD_PRE_PATCH_HOOKS += LIBMAD_APPLY_DEBIAN_PATCHES
 
 # debian/patches/md_size.diff
 LIBMAD_IGNORE_CVES += CVE-2017-8372 CVE-2017-8373
@@ -33,7 +33,7 @@ LIBMAD_AUTORECONF = YES
 
 # libmad has some assembly function that is not present in Thumb mode:
 # Error: selected processor does not support `smull r6,r7,r3,r1' in Thumb mode
-# so, we desactivate Thumb mode
+# so, we deactivate Thumb mode
 ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
 LIBMAD_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -marm"
 endif

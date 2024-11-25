@@ -15,7 +15,7 @@ LIBXCRYPT_INSTALL_STAGING = YES
 LIBXCRYPT_CONF_OPTS = --disable-werror
 HOST_LIBXCRYPT_CONF_OPTS = --disable-werror
 
-# Disable obsolete and unsecure API
+# Disable obsolete and insecure API
 LIBXCRYPT_CONF_OPTS += --disable-obsolete_api
 HOST_LIBXCRYPT_CONF_OPTS += --disable-obsolete_api
 

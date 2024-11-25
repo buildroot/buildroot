@@ -19,7 +19,7 @@ tools are only ever going to run on a Linux host (by their virtue of
 dealing with SELinux), so the search will be reliably done by looking in
 PATH, so we can let Popen() bubble the resolving of an unqualified
 command, down to execvpe() (or the similar actual syscall of the exec*()
-familly). If ausearch is then not found, Popen() raises an exception
+family). If ausearch is then not found, Popen() raises an exception
 that is wy more informative then:
     FileNotFoundError: [Errno 2] No such file or directory: 'ausearch'
 

@@ -1,0 +1,46 @@
+From c265971648f82464a76f797c4c20a09def078be9 Mon Sep 17 00:00:00 2001
+From: Andi Kleen <ak@linux.intel.com>
+Date: Thu, 16 May 2024 09:03:24 -0700
+Subject: [PATCH] Don't fail build when set_mempolicy_home_node syscall is
+ unknown
+
+Instead just warn at build and return ENOSYS. This fixes build
+on architectures like arm without kernel headers installed.
+
+Fixes #219
+
+Upstream: https://github.com/numactl/numactl/commit/87342c3b9a42aadbe1398ca8233d13ab524aa64f
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+---
+ syscall.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/syscall.c b/syscall.c
+index 63b3e53..392f736 100644
+--- a/syscall.c
++++ b/syscall.c
+@@ -144,7 +144,7 @@
+ #if defined(__x86_64__) || defined(__aarch64__)
+ #define __NR_set_mempolicy_home_node 450
+ #else
+-#error "Add syscalls for your architecture or update kernel headers"
++#warning "Add syscalls for your architecture or update kernel headers"
+ #endif
+ 
+ #endif
+@@ -261,7 +261,12 @@ long WEAK move_pages(int pid, unsigned long count,
+ 
+ int WEAK set_mempolicy_home_node(void *start, unsigned long len, int home_node, int flags)
+ {
++#ifndef __NR_set_mempolicy_home_node
++   errno = ENOSYS;
++   return -1;
++#else
+    return syscall(__NR_set_mempolicy_home_node, start, len, home_node, flags);
++#endif
+ }
+ 
+ /* SLES8 glibc doesn't define those */
+-- 
+2.46.2
+

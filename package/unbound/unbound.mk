@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-UNBOUND_VERSION = 1.19.1
-UNBOUND_SITE = https://www.unbound.net/downloads
+UNBOUND_VERSION = 1.21.0
+UNBOUND_SITE = https://nlnetlabs.nl/downloads/unbound
 UNBOUND_INSTALL_STAGING = YES
 UNBOUND_DEPENDENCIES = host-pkgconf expat libevent openssl
 UNBOUND_LICENSE = BSD-3-Clause
@@ -18,17 +18,10 @@ UNBOUND_CONF_OPTS = \
 	--with-pidfile=/var/run/unbound.pid \
 	--with-rootkey-file=/etc/unbound/root.key \
 	--enable-tfo-server \
+	--enable-tfo-client \
 	--with-libevent=$(STAGING_DIR)/usr \
 	--with-libexpat=$(STAGING_DIR)/usr \
 	--with-ssl=$(STAGING_DIR)/usr
-
-# uClibc-ng does not have MSG_FASTOPEN
-# so TCP Fast Open client mode disabled for it
-ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
-UNBOUND_CONF_OPTS += --disable-tfo-client
-else
-UNBOUND_CONF_OPTS += --enable-tfo-client
-endif
 
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS_NPTL),y)
 UNBOUND_CONF_OPTS += --with-pthreads
@@ -52,6 +45,10 @@ endif
 define UNBOUND_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 755 package/unbound/S70unbound \
 		$(TARGET_DIR)/etc/init.d/S70unbound
+endef
+
+define UNBOUND_USERS
+	unbound -1 unbound -1 * /etc/unbound - - unbound daemon
 endef
 
 $(eval $(autotools-package))

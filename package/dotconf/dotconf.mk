@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DOTCONF_VERSION = 1.3
+DOTCONF_VERSION = 1.4.1
 DOTCONF_SITE = $(call github,williamh,dotconf,v$(DOTCONF_VERSION))
 DOTCONF_LICENSE = LGPL-2.1
 DOTCONF_LICENSE_FILES = COPYING

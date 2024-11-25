@@ -9,6 +9,7 @@ config BR2_PACKAGE_QEMU_ARCH_SUPPORTS_TARGET
 	default y if BR2_powerpc64
 	default y if BR2_powerpc64le
 	default y if BR2_riscv
+	default y if BR2_s390x
 	default y if BR2_x86_64
 
 comment "QEMU requires a toolchain with wchar, threads, gcc >= 8"
@@ -122,15 +123,10 @@ comment "systems emulation needs a toolchain w/ dynamic library"
 
 config BR2_PACKAGE_QEMU_LINUX_USER
 	bool "Enable Linux user-land emulation"
-	# Incompatible "struct sigevent" definition on musl
-	depends on !BR2_TOOLCHAIN_USES_MUSL
 	help
 	  Say 'y' to build Linux user-land emulators.
 
 # Note: bsd-user can not be build on Linux
-
-comment "Linux user-land emulation needs a glibc or uClibc toolchain"
-	depends on BR2_TOOLCHAIN_USES_MUSL
 
 config BR2_PACKAGE_QEMU_CHOOSE_TARGETS
 	bool "Select individual emulator targets"
@@ -256,11 +252,6 @@ config BR2_PACKAGE_QEMU_TARGET_MIPSN32EL
 	help
 	  MIPS N32 architecture, little-endian.
 
-config BR2_PACKAGE_QEMU_TARGET_NIOS2
-	bool "nios2"
-	help
-	  Nios II architecture.
-
 config BR2_PACKAGE_QEMU_TARGET_OR1K
 	bool "or1k"
 	select BR2_PACKAGE_QEMU_FDT if BR2_PACKAGE_QEMU_SYSTEM
@@ -289,7 +280,7 @@ config BR2_PACKAGE_QEMU_TARGET_RISCV32
 	bool "riscv32"
 	select BR2_PACKAGE_QEMU_FDT if BR2_PACKAGE_QEMU_SYSTEM
 	help
-	  RISC-V 33-bit architecture.
+	  RISC-V 32-bit architecture.
 
 config BR2_PACKAGE_QEMU_TARGET_RISCV64
 	bool "riscv64"

@@ -12,13 +12,15 @@ Avoids:
   <command-line>:0:0: note: this is the location of the previous definition
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
 Index: redis-2.6.11/src/fmacros.h
 ===================================================================
 --- redis-2.6.11.orig/src/fmacros.h	2013-03-25 22:09:15.000000000 +0100
 +++ redis-2.6.11/src/fmacros.h	2013-03-25 22:09:40.000000000 +0100
-@@ -42,7 +42,12 @@
- #define _XOPEN_SOURCE
+@@ -55,8 +55,13 @@
+ #define _POSIX_C_SOURCE 199506L
  #endif
  
 +#ifndef _LARGEFILE_SOURCE
@@ -29,4 +31,5 @@ Index: redis-2.6.11/src/fmacros.h
  #define _FILE_OFFSET_BITS 64
 +#endif
  
- #endif
+ /* deprecate unsafe functions
+  *

@@ -1,0 +1,28 @@
+From 6ac6f816dbfc83d8cd4f4f163b0f8ff1062d883e Mon Sep 17 00:00:00 2001
+From: Albert Chu <chu11@llnl.gov>
+Date: Mon, 25 Mar 2024 13:57:45 -0700
+Subject: [PATCH] ipmi-sensors: add missing include
+
+Signed-off-by: Albert Chu <chu11@llnl.gov>
+[Waldemar: removed Changelog patching]
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://git.savannah.gnu.org/cgit/freeipmi.git/commit/?h=freeipmi-1-6-0-stable&id=6ac6f816dbfc83d8cd4f4f163b0f8ff1062d883e
+---
+ ipmi-sensors/ipmi-sensors-oem-intel.c | 1 +
+ 1 files changed, 1 insertions(+)
+
+diff --git a/ipmi-sensors/ipmi-sensors-oem-intel.c b/ipmi-sensors/ipmi-sensors-oem-intel.c
+index 5e0f3733a..3fc022e3d 100644
+--- a/ipmi-sensors/ipmi-sensors-oem-intel.c
++++ b/ipmi-sensors/ipmi-sensors-oem-intel.c
+@@ -34,6 +34,7 @@
+ #include "ipmi-sensors-oem-intel.h"
+ #include "ipmi-sensors-oem-intel-s5500wb.h"
+ #include "ipmi-sensors-oem-intel-s2600jf.h"
++#include "ipmi-sensors-oem-intel-s2600wp.h"
+ #include "ipmi-sensors-oem-intel-quanta-qssc-s4r.h"
+ #include "ipmi-sensors-oem-intel-node-manager.h"
+ 
+-- 
+2.39.2
+

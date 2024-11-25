@@ -22,9 +22,9 @@ menuconfig BR2_PACKAGE_SYSTEMD
 	depends on !BR2_STATIC_LIBS # kmod
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	depends on BR2_TOOLCHAIN_HAS_SSP
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14 # LOOP_SET_BLOCK_SIZE
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5
-	depends on BR2_HOST_GCC_AT_LEAST_5 # host-systemd
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_15
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_8
+	depends on BR2_HOST_GCC_AT_LEAST_8 # host-systemd
 	select BR2_PACKAGE_HAS_UDEV
 	select BR2_PACKAGE_DBUS if !BR2_PACKAGE_DBUS_BROKER # runtime
 	select BR2_PACKAGE_LIBCAP
@@ -99,7 +99,7 @@ menuconfig BR2_PACKAGE_SYSTEMD
 
 	  Notice that systemd selects the fsck wrapper from util-linux
 	  but no particular fsck.<fstype> is selected. You must choose
-	  the apropriate ones (e.g. e2fsck, from the e2fsprogs
+	  the appropriate ones (e.g. e2fsck, from the e2fsprogs
 	  package) according to the system configuration.
 
 	  https://freedesktop.org/wiki/Software/systemd/
@@ -113,6 +113,7 @@ config BR2_PACKAGE_SYSTEMD_BOOT
 	bool "systemd-boot"
 	depends on BR2_i386 || BR2_x86_64
 	select BR2_PACKAGE_GNU_EFI
+	select BR2_PACKAGE_SYSTEMD_EFI
 	help
 	  systemd-boot is a simple UEFI boot manager which executes
 	  configured EFI images. The default entry is selected by a
@@ -160,6 +161,9 @@ config BR2_PACKAGE_SYSTEMD_BOOT_EFI_ARCH
 	default "ia32"  if BR2_i386
 	default "x64"   if BR2_x86_64
 	depends on BR2_PACKAGE_SYSTEMD_BOOT
+
+config BR2_PACKAGE_SYSTEMD_EFI
+	bool "enable EFI support"
 
 config BR2_PACKAGE_SYSTEMD_JOURNAL_REMOTE
 	bool "enable journal remote tools"
@@ -212,7 +216,7 @@ config BR2_PACKAGE_SYSTEMD_PSTORE
 	help
 	  When this features is enabled, additional tools and services
 	  are built to support archiving contents of the persistent
-	  storage filesytem.
+	  storage filesystem.
 
 	  https://www.freedesktop.org/software/systemd/man/systemd-pstore.html
 
@@ -239,6 +243,7 @@ config BR2_PACKAGE_SYSTEMD_HOMED
 	depends on BR2_USE_MMU # cryptsetup -> lvm2
 	depends on !BR2_STATIC_LIBS # cryptsetup -> lvm2
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # cryptsetup -> json-c
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12 # fscrypt_key
 	select BR2_PACKAGE_CRYPTSETUP
 	select BR2_PACKAGE_OPENSSL
 	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL
@@ -249,11 +254,11 @@ config BR2_PACKAGE_SYSTEMD_HOMED
 
 	  https://www.freedesktop.org/software/systemd/man/systemd-homed.service.html
 
-comment "homed support needs a toolchain w/ threads, dynamic library"
+comment "homed support needs a toolchain w/ threads, dynamic library, kernel headers >= 4.12"
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
-		BR2_STATIC_LIBS
+		BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12
 
 config BR2_PACKAGE_SYSTEMD_HOSTNAMED
 	bool "enable hostname daemon"
@@ -327,6 +332,15 @@ config BR2_PACKAGE_SYSTEMD_MACHINED
 	  them.
 
 	  https://www.freedesktop.org/software/systemd/man/systemd-machined.service.html
+
+config BR2_PACKAGE_SYSTEMD_NSRESOURCED
+	bool "enable nsresourced"
+	help
+	  systemd-nsresourced is a system service that permits
+	  transient delegation of a a UID/GID range to a user
+	  namespace allocated by a client, via a Varlink IPC API.
+
+	  https://www.freedesktop.org/software/systemd/man/systemd-nsresourced.service.html
 
 config BR2_PACKAGE_SYSTEMD_MYHOSTNAME
 	bool "enable myhostname NSS plugin"
@@ -482,6 +496,16 @@ config BR2_PACKAGE_SYSTEMD_SYSEXT
 
 	  https://www.freedesktop.org/software/systemd/man/systemd-sysext.html
 
+config BR2_PACKAGE_SYSTEMD_MOUNTFSD
+	bool "enable mountfsd support"
+	help
+	  systemd-mountfsd is a system service that dissects disk
+	  images, and returns mount file descriptors for the file
+	  systems contained therein to clients, via a Varlink IPC
+	  API.
+
+	  https://www.freedesktop.org/software/systemd/man/systemd-mountfsd.service.html
+
 config BR2_PACKAGE_SYSTEMD_SYSUPDATE
 	bool "enable sysupdate support"
 	select BR2_PACKAGE_OPENSSL
@@ -578,5 +602,29 @@ config BR2_PACKAGE_SYSTEMD_VCONSOLE_DEFAULT_KEYMAP
 	help
 	  Default keymap for the system. Leave empty to not set a
 	  default keymap.
+
+# See for which architectures QEMU_MACHINE_TYPE is defined in
+# src/vmspawn/vmspawn-util.h
+config BR2_PACKAGE_SYSTEMD_VMSPAWN_ARCH_SUPPORTS
+	bool
+	default y if BR2_aarch64 || BR2_aarch64_be
+	default y if BR2_arm || BR2_armeb
+	default y if BR2_i386
+	default y if BR2_mips || BR2_mips64 || BR2_mipsel || BR2_mips64el
+	default y if BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le
+	default y if BR2_riscv
+	default y if BR2_s390x
+	default y if BR2_x86_64
+
+config BR2_PACKAGE_SYSTEMD_VMSPAWN
+	bool "enable vmspawn"
+	depends on BR2_PACKAGE_SYSTEMD_VMSPAWN_ARCH_SUPPORTS
+	help
+	  systemd-vmspawn may be used to start a virtual machine
+	  from an OS image. In many ways it is similar to
+	  systemd-nspawn, but launches a full virtual machine
+	  instead of using namespaces.
+
+	  https://www.freedesktop.org/software/systemd/man/systemd-vmspawn.html
 
 endif

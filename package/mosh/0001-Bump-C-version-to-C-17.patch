@@ -1,0 +1,49 @@
+From eee1a8cf413051c2a9104e8158e699028ff56b26 Mon Sep 17 00:00:00 2001
+From: Alex Chernyakhovsky <alex@achernya.com>
+Date: Sun, 30 Jul 2023 16:19:46 -0400
+Subject: [PATCH] Bump C++ version to C++17
+
+Protobuf versions since 3.6.0 have long had a C++11 dependency; even
+more recent versions have picked up an Abseil dependency bumping that
+to C++14. Since it is now 2023, defaulting to C++17 is reasonable, so
+remove the conditional C++ standards version check that mosh
+previously had and replace it with an unconditional C++17 check.
+
+This means that all future commits can use C++17 features. According
+to https://en.cppreference.com/w/cpp/compiler_support/17 this means
+that minimum effective compiler versions for mosh become:
+
+gcc 7 (May 2017)
+clang 5 (September 2017)
+
+This, in turn, implies that future versions of mosh will no longer be
+available for RHEL/CentOS 7 (June 2014).
+
+Closes: #1267
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Upstream: https://github.com/mobile-shell/mosh/commit/eee1a8cf413051c2a9104e8158e699028ff56b26
+---
+ configure.ac | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index ee70c7b..7f7dc3b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -22,9 +22,9 @@ AS_IF([test x"$PROTOC" = x],
+ # automake 1.12 seems to require this, but automake 1.11 doesn't recognize it
+ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+ 
+-# Protobuf 3.6+ requires C++11.
+-AS_IF([pkg-config --atleast-version 3.6.0 protobuf],
+-  [AX_CXX_COMPILE_STDCXX([11])])
++# Protobuf transitively requires at least C++14, get ahead of the
++# curve and require at least C++17.
++AX_CXX_COMPILE_STDCXX([17])
+ 
+ WARNING_CXXFLAGS=""
+ PICKY_CXXFLAGS=""
+-- 
+2.34.1
+

@@ -1,0 +1,87 @@
+From 6c71182dde4d37fd70ee8015f61935254ae6f9a6 Mon Sep 17 00:00:00 2001
+From: Maxim Kochetkov <fido_max@inbox.ru>
+Date: Thu, 19 Sep 2024 10:04:05 +0300
+Subject: [PATCH] Fix compile without threads
+
+All mutexes should be wrapped by #ifdef ENABLE_THREAD_SAFETY.
+
+Fixes: https://git.postgresql.org/gitweb/?p=postgresql.git;a=commit;h=52afe563206e753f4c45c014fee2459ad0855826
+Signed-off-by: Maxim Kochetkov <fido_max@inbox.ru>
+Signed-off-by: Maxim Kochetkov <m.kochetkov@yadro.com>
+Upstream: N/A, as --disable-thread-safety will disappear in PostgreSQL 17.
+---
+ src/interfaces/ecpg/ecpglib/misc.c | 6 ++++++
+ src/interfaces/libpq/fe-misc.c     | 6 ++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/src/interfaces/ecpg/ecpglib/misc.c b/src/interfaces/ecpg/ecpglib/misc.c
+index 4b54322926..5a4d2e847e 100644
+--- a/src/interfaces/ecpg/ecpglib/misc.c
++++ b/src/interfaces/ecpg/ecpglib/misc.c
+@@ -538,7 +538,9 @@ ecpg_gettext(const char *msgid)
+ 	 * might as well do it the same way everywhere.
+ 	 */
+ 	static volatile bool already_bound = false;
++#ifdef ENABLE_THREAD_SAFETY
+ 	static pthread_mutex_t binddomain_mutex = PTHREAD_MUTEX_INITIALIZER;
++#endif
+ 
+ 	if (!already_bound)
+ 	{
+@@ -549,7 +551,9 @@ ecpg_gettext(const char *msgid)
+ 		int			save_errno = errno;
+ #endif
+ 
++#ifdef ENABLE_THREAD_SAFETY
+ 		(void) pthread_mutex_lock(&binddomain_mutex);
++#endif
+ 
+ 		if (!already_bound)
+ 		{
+@@ -566,7 +570,9 @@ ecpg_gettext(const char *msgid)
+ 			already_bound = true;
+ 		}
+ 
++#ifdef ENABLE_THREAD_SAFETY
+ 		(void) pthread_mutex_unlock(&binddomain_mutex);
++#endif
+ 
+ #ifdef WIN32
+ 		SetLastError(save_errno);
+diff --git a/src/interfaces/libpq/fe-misc.c b/src/interfaces/libpq/fe-misc.c
+index 488f7d6e55..2185e0ba7a 100644
+--- a/src/interfaces/libpq/fe-misc.c
++++ b/src/interfaces/libpq/fe-misc.c
+@@ -1232,7 +1232,9 @@ libpq_binddomain(void)
+ 	 * might as well do it the same way everywhere.
+ 	 */
+ 	static volatile bool already_bound = false;
++#ifdef ENABLE_THREAD_SAFETY
+ 	static pthread_mutex_t binddomain_mutex = PTHREAD_MUTEX_INITIALIZER;
++#endif
+ 
+ 	if (!already_bound)
+ 	{
+@@ -1243,7 +1245,9 @@ libpq_binddomain(void)
+ 		int			save_errno = errno;
+ #endif
+ 
++#ifdef ENABLE_THREAD_SAFETY
+ 		(void) pthread_mutex_lock(&binddomain_mutex);
++#endif
+ 
+ 		if (!already_bound)
+ 		{
+@@ -1260,7 +1264,9 @@ libpq_binddomain(void)
+ 			already_bound = true;
+ 		}
+ 
++#ifdef ENABLE_THREAD_SAFETY
+ 		(void) pthread_mutex_unlock(&binddomain_mutex);
++#endif
+ 
+ #ifdef WIN32
+ 		SetLastError(save_errno);
+-- 
+2.45.2
+

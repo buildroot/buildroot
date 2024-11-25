@@ -16,7 +16,16 @@ config BR2_PACKAGE_HTTPING
 
 if BR2_PACKAGE_HTTPING
 
-config BR2_PACKAGE_HTTPING_TFO
-	bool "TCP Fast Open (TFO) support"
+config BR2_PACKAGE_HTTPING_SSL
+	bool "enable SSL support"
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_CA_CERTIFICATES # runtime
+
+config BR2_PACKAGE_HTTPING_TUI
+	bool "enable TUI support"
+	select BR2_PACKAGE_NCURSES
+	select BR2_PACKAGE_NCURSES_WCHAR
+	select BR2_PACKAGE_FFTW
+	select BR2_PACKAGE_FFTW_DOUBLE
 
 endif

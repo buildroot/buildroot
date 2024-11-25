@@ -18,10 +18,8 @@ class TestInitSystemNone(InitSystemBase):
         if index != 0:
             self.emulator.logfile.write("==> System does not boot")
             raise SystemError("System does not boot")
-        index = self.emulator.qemu.expect(["#", pexpect.TIMEOUT], timeout=60)
-        if index != 0:
-            self.emulator.logfile.write("==> System does not boot")
-            raise SystemError("System does not boot")
+
+        self.emulator.connect_shell()
 
         out, exit_code = self.emulator.run("sh -c 'echo $PPID'")
         self.assertEqual(exit_code, 0)

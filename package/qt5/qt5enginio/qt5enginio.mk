@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-# Qt5Enginio does not follow Qt versionning
+# Qt5Enginio does not follow Qt versioning
 # see https://bugreports.qt.io/browse/QTBUG-50111
 QT5ENGINIO_VERSION = 1.6.3
 QT5ENGINIO_SITE = https://download.qt.io/official_releases/qt/5.6/5.6.3/submodules

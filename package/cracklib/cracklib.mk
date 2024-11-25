@@ -22,6 +22,8 @@ CRACKLIB_CONF_OPTS += --without-zlib
 endif
 
 ifeq ($(BR2_PACKAGE_PYTHON3),y)
+# py-compile must be rebuilt because python 3.12 removed imp module
+CRACKLIB_AUTORECONF = YES
 CRACKLIB_CONF_OPTS += --with-python
 CRACKLIB_CONF_ENV += \
 	ac_cv_path_PYTHON=$(HOST_DIR)/bin/python3 \

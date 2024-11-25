@@ -10,7 +10,7 @@
 First, let's see how to write a +.mk+ file for a QMake-based package, with
 an example :
 
-------------------------
+----
 01: ################################################################################
 02: #
 03: # libfoo
@@ -24,7 +24,7 @@ an example :
 11: LIBFOO_DEPENDENCIES = bar
 12:
 13: $(eval $(qmake-package))
-------------------------
+----
 
 On line 7, we declare the version of the package.
 
@@ -51,13 +51,11 @@ Just like the generic infrastructure, the QMake infrastructure works
 by defining a number of variables before calling the +qmake-package+
 macro.
 
-First, all the package metadata information variables that exist in
-the generic infrastructure also exist in the QMake infrastructure:
-+LIBFOO_VERSION+, +LIBFOO_SOURCE+, +LIBFOO_PATCH+, +LIBFOO_SITE+,
-+LIBFOO_SUBDIR+, +LIBFOO_DEPENDENCIES+, +LIBFOO_INSTALL_STAGING+,
-+LIBFOO_INSTALL_TARGET+.
+All the package metadata information variables that exist in the
+xref:generic-package-reference[generic package infrastructure] also
+exist in the QMake infrastructure.
 
-An additional variable, specific to the QMake infrastructure, can
+A few additional variables, specific to the QMake infrastructure, can
 also be defined.
 
 * +LIBFOO_CONF_ENV+, to specify additional environment variables to

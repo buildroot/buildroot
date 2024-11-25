@@ -1,0 +1,22 @@
+comment "firmware-upower needs an i.MX platform with uPower"
+	depends on !BR2_PACKAGE_FREESCALE_IMX_HAS_UPOWER
+
+config BR2_PACKAGE_FIRMWARE_UPOWER
+	bool "firmware-upower"
+	depends on BR2_PACKAGE_FREESCALE_IMX_HAS_UPOWER
+	help
+	  NXP i.MX uPower firmware present on i.MX 8ULP SoC.
+
+	  This library is provided by NXP as-is and doesn't have an
+	  upstream.
+
+if BR2_PACKAGE_FIRMWARE_UPOWER
+
+config BR2_PACKAGE_FIRMWARE_UPOWER_UPOWER_FIRMWARE_NAME
+	string
+	default "upower_a0.bin" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULPA0
+	default "upower_a1.bin" if \
+		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULPA1 || \
+		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULPA2
+
+endif # BR2_PACKAGE_FIRMWARE_UPOWER

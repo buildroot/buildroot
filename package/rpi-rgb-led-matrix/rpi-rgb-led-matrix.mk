@@ -4,7 +4,8 @@
 #
 ################################################################################
 
-RPI_RGB_LED_MATRIX_VERSION = a56338db0f003d5236f2ce98c73a591d64a70852
+# When updating the version, please also update python-rgbmatrix
+RPI_RGB_LED_MATRIX_VERSION = f55736f7595bc028451658996eedea9742688bbc
 RPI_RGB_LED_MATRIX_SITE = $(call github,hzeller,rpi-rgb-led-matrix,$(RPI_RGB_LED_MATRIX_VERSION))
 RPI_RGB_LED_MATRIX_LICENSE = GPL-2.0
 RPI_RGB_LED_MATRIX_LICENSE_FILES = COPYING

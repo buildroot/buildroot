@@ -31,7 +31,7 @@ class Flake8(_Tool):
 
 class Shellcheck(_Tool):
     def run(self):
-        cmd = ['shellcheck', self.filename]
+        cmd = ['shellcheck', "--external-sources", self.filename]
         try:
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout = p.communicate()[0]

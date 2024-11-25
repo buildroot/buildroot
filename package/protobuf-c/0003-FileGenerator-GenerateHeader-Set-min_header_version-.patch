@@ -1,0 +1,44 @@
+From a6cf1aa386067e26d582cc1d1e327787595c9f13 Mon Sep 17 00:00:00 2001
+From: Robert Edmonds <edmonds@users.noreply.github.com>
+Date: Wed, 20 Mar 2024 21:48:10 -0400
+Subject: [PATCH] FileGenerator::GenerateHeader(): Set `min_header_version`
+ unconditionally
+
+Previously, we were conditionally trying to set `min_header_version` to
+the lowest possible value, and relying on a "legacy" Google interface to
+determine the file descriptor's syntax version as part of that
+determination.
+
+Instead, simply bump the minimum version to 1003000 (1.3.0). This
+release was almost 7 years ago. In practice protobuf-c users should not
+be shipping pre-compiled .pb-c.c/.pb-c.h files, anyway.
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Upstream: https://github.com/protobuf-c/protobuf-c/pull/711
+---
+ protoc-c/c_file.cc | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/protoc-c/c_file.cc b/protoc-c/c_file.cc
+index ca0ad34..c6d8a24 100644
+--- a/protoc-c/c_file.cc
++++ b/protoc-c/c_file.cc
+@@ -117,14 +117,7 @@ FileGenerator::~FileGenerator() {}
+ void FileGenerator::GenerateHeader(io::Printer* printer) {
+   std::string filename_identifier = FilenameIdentifier(file_->name());
+ 
+-  int min_header_version = 1000000;
+-#if GOOGLE_PROTOBUF_VERSION >= 4023000
+-  if (FileDescriptorLegacy(file_).syntax() == FileDescriptorLegacy::SYNTAX_PROTO3) {
+-#else
+-  if (file_->syntax() == FileDescriptor::SYNTAX_PROTO3) {
+-#endif
+-    min_header_version = 1003000;
+-  }
++  const int min_header_version = 1003000;
+ 
+   // Generate top of header.
+   printer->Print(
+-- 
+2.34.1
+

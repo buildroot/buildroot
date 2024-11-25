@@ -1,0 +1,9 @@
+config BR2_PACKAGE_CHICKEN
+	bool "chicken"
+	depends on BR2_USE_MMU
+	help
+	  CHICKEN is a compiler for the Scheme programming language.
+	  This package contains the runtime, the interpreter, and
+	  the (native for target) compiler.
+
+	  https://call-cc.org

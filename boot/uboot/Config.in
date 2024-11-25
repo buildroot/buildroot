@@ -3,7 +3,7 @@ config BR2_TARGET_UBOOT
 	help
 	  Build "Das U-Boot" Boot Monitor
 
-	  https://www.denx.de/wiki/U-Boot
+	  https://docs.u-boot.org/en/latest/
 
 if BR2_TARGET_UBOOT
 choice
@@ -41,7 +41,7 @@ choice
 	  Select the specific U-Boot version you want to use
 
 config BR2_TARGET_UBOOT_LATEST_VERSION
-	bool "2024.01"
+	bool "2024.10"
 
 config BR2_TARGET_UBOOT_CUSTOM_VERSION
 	bool "Custom version"
@@ -85,7 +85,7 @@ endif
 
 config BR2_TARGET_UBOOT_VERSION
 	string
-	default "2024.01"	if BR2_TARGET_UBOOT_LATEST_VERSION
+	default "2024.10"	if BR2_TARGET_UBOOT_LATEST_VERSION
 	default BR2_TARGET_UBOOT_CUSTOM_VERSION_VALUE \
 		if BR2_TARGET_UBOOT_CUSTOM_VERSION
 	default "custom"	if BR2_TARGET_UBOOT_CUSTOM_TARBALL
@@ -135,6 +135,42 @@ config BR2_TARGET_UBOOT_CONFIG_FRAGMENT_FILES
 	  A space-separated list of configuration fragment files,
 	  that will be merged to the main U-Boot configuration file.
 endif
+
+# Hidden boolean that allows to select BR2_TARGET_UBOOT_NEEDS_XXD when
+# needed.
+config BR2_TARGET_UBOOT_DEFAULT_ENV_FILE_ENABLED
+	bool
+	default y if BR2_TARGET_UBOOT_DEFAULT_ENV_FILE != ""
+	select BR2_TARGET_UBOOT_NEEDS_XXD
+
+config BR2_TARGET_UBOOT_DEFAULT_ENV_FILE
+	string "Text file with default environment"
+	depends on BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG
+	help
+	  Text file containing the variables to be used as the default
+	  environment in U-Boot.
+
+	  If empty, let U-Boot generate the default environment from the
+	  source code and other U-Boot configuration values, which is
+	  the default behaviour.
+
+	  If set to the path to a file, instructs U-Boot to define the
+	  entire U-Boot default environment from the provided file,
+	  disabling all the default behaviour.
+
+	  From the U-Boot documentation:
+
+	    The format is the same as accepted by the mkenvimage tool,
+	    with lines containing key=value pairs. Blank lines and
+	    lines beginning with '#' are ignored.
+
+	  Based on the USE_DEFAULT_ENV_FILE and DEFAULT_ENV_FILE U-Boot
+	  configuration variables.
+
+	  For more info see:
+	  https://docs.u-boot.org/en/latest/usage/environment.html#external-environment-file
+
+	  Requires U-Boot >= v2018.05.
 
 config BR2_TARGET_UBOOT_NEEDS_DTC
 	bool "U-Boot needs dtc"
@@ -240,17 +276,6 @@ config BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE
 	  U-Boot, and that the TEE variable pointing to OPTEE's
 	  tee.elf, is passed during the Buildroot build.
 
-config BR2_TARGET_UBOOT_NEEDS_TI_K3_BOOT_FIRMWARE
-	bool "U-Boot needs ti-k3-boot-firmware"
-	depends on BR2_TARGET_TI_K3_BOOT_FIRMWARE
-	help
-	  TI K3 devices needs at least ti-sysfw (System Firmware) when
-	  built with u-boot's binman tool.
-
-	  Some TI K3 devices using a split firmware boot flow (AM62,
-	  j721e) also need the Device Manager (DM) firmware to be
-	  available for the U-Boot build.
-
 config BR2_TARGET_UBOOT_NEEDS_OPENSBI
 	bool "U-Boot needs OpenSBI"
 	depends on BR2_TARGET_OPENSBI
@@ -284,14 +309,13 @@ config BR2_TARGET_UBOOT_NEEDS_ROCKCHIP_RKBIN
 
 config BR2_TARGET_UBOOT_USE_BINMAN
 	bool "U-Boot use binman"
-	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-rpds-py -> python-jsonschema
 	select BR2_TARGET_UBOOT_NEEDS_PYTHON3
 	select BR2_TARGET_UBOOT_NEEDS_PYELFTOOLS
 	select BR2_TARGET_UBOOT_NEEDS_PYLIBFDT
 	help
 	  Use binman tool for generation and signing of boot images.
 
-	  https://docs.u-boot.org/en/v2024.01/develop/package/binman.html
+	  https://docs.u-boot.org/en/v2024.10/develop/package/binman.html
 
 menu "U-Boot binary format"
 
@@ -524,9 +548,23 @@ config BR2_TARGET_UBOOT_ZYNQMP
 
 if BR2_TARGET_UBOOT_ZYNQMP
 
-config BR2_TARGET_UBOOT_ZYNQMP_PMUFW
-	string "PMU firmware location"
+config BR2_TARGET_UBOOT_ZYNQMP_PMUFW_PREBUILT
+	bool "xilinx-prebuilt pmufw.elf"
 	depends on BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG
+	depends on BR2_TARGET_XILINX_PREBUILT_ZYNQMP || BR2_TARGET_XILINX_PREBUILT_KRIA
+	help
+	  Use xilinx-prebuilt boot package for downloading prebuilt
+	  zynqmp pmufw.elf from
+	    https://github.com/Xilinx/soc-prebuilt-firmware repo.
+
+	  U-Boot build process will generate a boot.bin (to be loaded by
+	  by the ZynqMP boot ROM) containing both the U-Boot SPL and the
+	  PMU firmware in the Xilinx-specific boot format.
+
+config BR2_TARGET_UBOOT_ZYNQMP_PMUFW
+	string "Custom PMU firmware location"
+	depends on BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG
+	depends on !BR2_TARGET_UBOOT_ZYNQMP_PMUFW_PREBUILT
 	help
 	  Location of a PMU firmware binary.
 

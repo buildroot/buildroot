@@ -1,0 +1,10 @@
+config BR2_PACKAGE_UEFISETTINGS
+	bool "uefisettings"
+	depends on BR2_ARCH_IS_64
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  The tool to read/get/extract and write/change/modify
+	  BIOS/UEFI settings from Linux terminal.
+
+	  https://github.com/linuxboot/uefisettings

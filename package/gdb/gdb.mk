@@ -166,7 +166,7 @@ endif
 # gdb.
 # GDB fork from ARC GNU tools 2023.09 is based on GDB14 branch and so
 # requires MPFR as well.
-ifeq ($(BR2_GDB_VERSION_14)$(BR2_arc):$(BR2_PACKAGE_GDB_DEBUGGER),y:y)
+ifeq ($(BR2_PACKAGE_GDB_DEBUGGER):$(BR2_GDB_VERSION_13),y:)
 GDB_DEPENDENCIES += mpfr
 GDB_CONF_OPTS += --with-mpfr=$(STAGING_DIR)
 else
@@ -272,7 +272,7 @@ HOST_GDB_CONF_OPTS = \
 # GDB newer than 14.x need host-mpfr
 # GDB fork from ARC GNU tools 2023.09 is based on GDB14 branch and so
 # requires MPFR as well.
-ifeq ($(BR2_GDB_VERSION_14)$(BR2_arc),y)
+ifeq ($(BR2_GDB_VERSION_13),)
 HOST_GDB_DEPENDENCIES += host-mpfr
 HOST_GDB_CONF_OPTS += --with-mpfr=$(HOST_DIR)
 else

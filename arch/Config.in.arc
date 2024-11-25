@@ -3,7 +3,7 @@ choice
 	default BR2_arc770d
 	depends on BR2_arc
 	help
-	    Specific CPU to use
+	  Specific CPU to use
 
 config BR2_arc750d
 	bool "ARC 750D"
@@ -40,12 +40,12 @@ config BR2_archs38_full
 config BR2_archs4x_rel31
 	bool "ARC HS48 rel 31"
 	help
-	   Build for HS48 release 3.1
+	  Build for HS48 release 3.1
 
 config BR2_archs4x
 	bool "ARC HS48"
 	help
-	   Latest release of HS48 processor
+	  Latest release of HS48 processor
 	   - Dual and Quad multiply and MAC operations
 	   - Double-precision FPU
 

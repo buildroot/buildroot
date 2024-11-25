@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_GRPC_REQUESTS
 	bool "python-grpc-requests"
+	depends on BR2_PACKAGE_HOST_PROTOBUF_ARCH_SUPPORTS # python-google-api-core, python-protobuf
 	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-cryptography
 	depends on BR2_PACKAGE_PYTHON_GRPCIO_ARCH_SUPPORTS # python-grpcio
 	depends on BR2_INSTALL_LIBSTDCPP # python-grpcio
@@ -7,12 +8,14 @@ config BR2_PACKAGE_PYTHON_GRPC_REQUESTS
 	select BR2_PACKAGE_PYTHON_GOOGLE_API_CORE # runtime
 	select BR2_PACKAGE_PYTHON_GRPCIO # runtime
 	select BR2_PACKAGE_PYTHON_GRPCIO_REFLECTION # runtime
+	select BR2_PACKAGE_PYTHON_PROTOBUF # runtime
 	help
 	  grpc for Humans. grpc reflection support client.
 
 	  https://github.com/wesky93/grpc_requests
 
 comment "python-grpcio-requests needs a toolchain w/ C++"
+	depends on BR2_PACKAGE_HOST_PROTOBUF_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_PYTHON_GRPCIO_ARCH_SUPPORTS
 	depends on !BR2_INSTALL_LIBSTDCPP

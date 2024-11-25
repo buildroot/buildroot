@@ -1,7 +1,8 @@
 config BR2_PACKAGE_SIMPLE_MAIL
 	bool "simple-mail"
-	depends on BR2_PACKAGE_QT5
-	select BR2_PACKAGE_QT5BASE_NETWORK
+	depends on BR2_PACKAGE_QT5 || BR2_PACKAGE_QT6
+	select BR2_PACKAGE_QT5BASE_NETWORK if BR2_PACKAGE_QT5
+	select BR2_PACKAGE_QT6BASE_NETWORK if BR2_PACKAGE_QT6
 	select BR2_PACKAGE_OPENSSL
 	help
 	  An SMTP library written in C++ for Qt.

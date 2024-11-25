@@ -27,6 +27,7 @@ HOST_ELFUTILS_CONF_OPTS = \
 	--with-bzlib \
 	--with-lzma \
 	--without-zstd \
+	--disable-demangler \
 	--disable-progs
 
 ELFUTILS_LDFLAGS = $(TARGET_LDFLAGS) \
@@ -41,6 +42,10 @@ ELFUTILS_DEPENDENCIES += musl-fts argp-standalone
 endif
 
 ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
+ELFUTILS_CONF_OPTS += --disable-symbol-versioning
+endif
+
+ifeq ($(BR2_microblaze),y)
 ELFUTILS_CONF_OPTS += --disable-symbol-versioning
 endif
 

@@ -10,9 +10,6 @@ config BR2_PACKAGE_ZABBIX
 
 	  https://zabbix.com
 
-comment "zabbix need glibc"
-	depends on !BR2_TOOLCHAIN_USES_GLIBC
-
 if BR2_PACKAGE_ZABBIX
 
 comment "zabbix server needs C++ and threads or wchar and dynamic libs"
@@ -81,3 +78,6 @@ comment "zabbix web UI requires PHP"
 endif
 
 endif
+
+comment "zabbix need glibc"
+	depends on !BR2_TOOLCHAIN_USES_GLIBC

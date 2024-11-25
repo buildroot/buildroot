@@ -19,10 +19,8 @@ config BR2_PACKAGE_RRDTOOL_RRDGRAPH
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # pango -> harfbuzz
 	depends on BR2_INSTALL_LIBSTDCPP # freetype support from pango
 	select BR2_PACKAGE_CAIRO
-	select BR2_PACKAGE_CAIRO_PDF
 	select BR2_PACKAGE_CAIRO_PNG
-	select BR2_PACKAGE_CAIRO_PS
-	select BR2_PACKAGE_CAIRO_SVG
+	select BR2_PACKAGE_CAIRO_ZLIB
 	select BR2_PACKAGE_PANGO
 	help
 	  This enables the graphing capabilities ('rrdgraph').

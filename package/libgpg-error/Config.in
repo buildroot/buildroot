@@ -15,6 +15,7 @@ config BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS
 		BR2_sh4a	|| BR2_sh4aeb		|| \
 		BR2_sparc	|| BR2_sparc64		|| \
 		BR2_x86_64
+	depends on BR2_USE_MMU # fork()
 
 config BR2_PACKAGE_LIBGPG_ERROR
 	bool "libgpg-error"

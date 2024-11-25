@@ -47,4 +47,22 @@ ifeq ($(BR2_MIPS_NABI64)x$(BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_10),yx)
 LIBGPGME_CONF_OPTS += --disable-linux-getdents
 endif
 
+HOST_LIBGPGME_DEPENDENCIES = host-libassuan host-libgpg-error
+
+# C++ bindings require a C++11 capable gcc, and -Wsuggest-override support
+# Let's assume the host toolchain always has C++
+HOST_LIBGPGME_LANGUAGE_BINDINGS = \
+	cl \
+	$(if $(BR2_HOST_GCC_AT_LEAST_5),cpp)
+
+HOST_LIBGPGME_CONF_OPTS = \
+	--with-gpg-error-prefix=$(HOST_DIR) \
+	--with-libassuan-prefix=$(HOST_DIR) \
+	--disable-gpgsm-test \
+	--disable-gpgconf-test \
+	--disable-g13-test \
+	--disable-gpg-test \
+	--enable-languages=$(subst $(space),$(comma),$(HOST_LIBGPGME_LANGUAGE_BINDINGS))
+
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))

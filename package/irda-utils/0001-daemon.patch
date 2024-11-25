@@ -2,7 +2,7 @@ written by Mike Frysinger
 
 https://sourceforge.net/tracker/?func=detail&aid=3132053&group_id=5616&atid=305616
 
-Rather than using the fork function (which doesnt work on nommu
+Rather than using the fork function (which doesn't work on nommu
 systems), simply use the daemon() function instead (which does
 work). this should work the same before and after for all systems.
 

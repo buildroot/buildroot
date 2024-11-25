@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-TPM2_TOOLS_VERSION = 5.2
+TPM2_TOOLS_VERSION = 5.7
 TPM2_TOOLS_SITE = https://github.com/tpm2-software/tpm2-tools/releases/download/$(TPM2_TOOLS_VERSION)
 TPM2_TOOLS_LICENSE = BSD-3-Clause
-TPM2_TOOLS_LICENSE_FILES = doc/LICENSE
+TPM2_TOOLS_LICENSE_FILES = docs/LICENSE
 TPM2_TOOLS_CPE_ID_VALID = YES
 TPM2_TOOLS_SELINUX_MODULES = tpm2
 TPM2_TOOLS_DEPENDENCIES = libcurl openssl tpm2-tss host-pkgconf

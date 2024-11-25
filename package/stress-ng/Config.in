@@ -4,6 +4,7 @@ config BR2_PACKAGE_STRESS_NG
 	# perf.c needs PERF_COUNT_HW_REF_CPU_CYCLES
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_3
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	# fenv.h lacks FE_INVALID, FE_OVERFLOW & FE_UNDERFLOW on nios2 and ARC
 	depends on !BR2_nios2
 	depends on !BR2_arc
@@ -15,8 +16,8 @@ config BR2_PACKAGE_STRESS_NG
 
 	  https://github.com/ColinIanKing/stress-ng
 
-comment "stress-ng needs a toolchain w/ headers >= 3.3"
+comment "stress-ng needs a toolchain w/ threads, headers >= 3.3"
 	depends on !BR2_nios2 && !BR2_arc
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_USE_MMU
-	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_3
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_3 || !BR2_TOOLCHAIN_HAS_THREADS

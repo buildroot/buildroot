@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MPG123_VERSION = 1.32.3
+MPG123_VERSION = 1.32.6
 MPG123_SOURCE = mpg123-$(MPG123_VERSION).tar.bz2
 MPG123_SITE = https://downloads.sourceforge.net/project/mpg123/mpg123/$(MPG123_VERSION)
 MPG123_INSTALL_STAGING = YES
@@ -15,7 +15,7 @@ MPG123_DEPENDENCIES = host-pkgconf
 
 # mpg123 has some assembly function that is not present in Thumb mode:
 # Error: selected processor does not support `smull r3,ip,r2,r10' in Thumb mode
-# so, we desactivate Thumb mode
+# so, we deactivate Thumb mode
 ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
 MPG123_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -marm"
 endif

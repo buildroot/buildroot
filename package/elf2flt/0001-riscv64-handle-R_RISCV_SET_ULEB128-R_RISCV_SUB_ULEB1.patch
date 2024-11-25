@@ -1,0 +1,30 @@
+From 5b8288257c66c76cc578935276dc5b512010b6a3 Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Wed, 21 Aug 2024 07:23:19 +0200
+Subject: [PATCH] riscv64: handle R_RISCV_SET_ULEB128/R_RISCV_SUB_ULEB128
+
+For C++ applications or libraries like gdbserver or gmp
+we need to handle these relocations.
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://github.com/uclinux-dev/elf2flt/pull/35
+---
+ elf2flt.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/elf2flt.c b/elf2flt.c
+index 04b6b43..d5e32ab 100644
+--- a/elf2flt.c
++++ b/elf2flt.c
+@@ -840,6 +840,8 @@ output_relocs (
+ 				case R_RISCV_SET8:
+ 				case R_RISCV_SET16:
+ 				case R_RISCV_SET32:
++				case R_RISCV_SET_ULEB128:
++				case R_RISCV_SUB_ULEB128:
+ 					continue;
+ 				case R_RISCV_32:
+ 				case R_RISCV_64:
+-- 
+2.30.2
+

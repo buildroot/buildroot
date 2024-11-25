@@ -252,9 +252,9 @@ Then, we can trigger the build, and also ask Buildroot to generate a
 SDK. This will conveniently generate for us a tarball which contains
 our toolchain:
 
------
+----
 make sdk
------
+----
 
 This produces the SDK tarball in +$(O)/images+, with a name similar to
 +arm-buildroot-linux-uclibcgnueabi_sdk-buildroot.tar.gz+. Save this
@@ -399,7 +399,7 @@ can be chosen from +System configuration+, +Init system+:
    BusyBox +inittab+ syntax is special: do not use a random +inittab+
    documentation from the Internet to learn about BusyBox
    +inittab+). The default +inittab+ in Buildroot is stored in
-   +system/skeleton/etc/inittab+. Apart from mounting a few important
+   +package/busybox/inittab+. Apart from mounting a few important
    filesystems, the main job the default inittab does is to start the
    +/etc/init.d/rcS+ shell script, and start a +getty+ program (which
    provides a login prompt).

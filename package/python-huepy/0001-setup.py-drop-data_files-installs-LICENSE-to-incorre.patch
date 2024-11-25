@@ -1,0 +1,38 @@
+From ee3010004a005bc852e6b9318807f373bd89e901 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 17 Aug 2024 14:10:16 +0200
+Subject: [PATCH] setup.py: drop data_files, installs LICENSE to incorrect
+ place
+
+The data_files statement in the setup() calls installs the LICENSE
+file in the wrong place: in /usr/LICENSE, or even /LICENSE depending
+on the configuration.
+
+So let's drop this, and let setuptools install the LICENSE file
+automatically: since setuptools v56, the license_files attribute is
+automatically assigned to a default value, which includes "LICENSE",
+so there is in fact nothing to do to the get the LICENSE file
+installed at the correct location. See
+https://setuptools.pypa.io/en/latest/history.html#v56-0-0.
+
+Upstream: https://github.com/s0md3v/huepy/pull/42
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ setup.py | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/setup.py b/setup.py
+index 8b5a726..bd41f1c 100644
+--- a/setup.py
++++ b/setup.py
+@@ -30,7 +30,6 @@ setup(
+     keywords='hue, color, terminal color, colorama',
+     packages=find_packages(),
+     py_modules=['huepy'],
+-    data_files=[('', ['LICENSE'])],
+     include_package_data=True,
+     classifiers=[
+         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+-- 
+2.46.0
+

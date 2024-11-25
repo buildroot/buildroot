@@ -1,4 +1,4 @@
-From 06109c84ab6930265287049c4bf9405e7ebc4986 Mon Sep 17 00:00:00 2001
+From 7a2e270989037663e740487a8248db1227697c92 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Wed, 4 Aug 2021 10:27:16 +0200
 Subject: [PATCH] configure.ac: fix static linking with sndfile
@@ -20,6 +20,8 @@ flac.c:(.text+0xfc): undefined reference to `FLAC__StreamDecoderErrorStatusStrin
 Fixes:
  - http://autobuild.buildroot.org/results/4bc58ed68b29642876bb02710d0cd4f31540de86
 
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+[Julien: rebased patch on package git version 7524160]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 [Upstream status: not sent yet (waiting for feedback on third patch)]
 ---
@@ -27,10 +29,10 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index 8ae3202c..26510769 100644
+index 20454ed5..4330360b 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -117,7 +117,7 @@ SOX_FMT_REQ([mp3], [MAD LAME TWOLAME])
+@@ -122,7 +122,7 @@ SOX_FMT_REQ([mp3], [MAD LAME TWOLAME])
  SOX_FMT_PKG([oggvorbis], [ogg vorbis vorbisenc vorbisfile])
  SOX_FMT_PKG([opus], [opusfile])
  
@@ -40,5 +42,5 @@ index 8ae3202c..26510769 100644
  
  SOX_FMT_LIB([wavpack], [wavpack/wavpack.h], [wavpack], [WavpackGetSampleRate])
 -- 
-2.30.2
+2.45.2
 

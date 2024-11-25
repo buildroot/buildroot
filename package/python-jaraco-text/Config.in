@@ -1,0 +1,10 @@
+config BR2_PACKAGE_PYTHON_JARACO_TEXT
+	bool "python-jaraco-text"
+	select BR2_PACKAGE_PYTHON_AUTOCOMMAND # runtime
+	select BR2_PACKAGE_PYTHON_JARACO_CONTEXT # runtime
+	select BR2_PACKAGE_PYTHON_JARACO_FUNCTOOLS # runtime
+	select BR2_PACKAGE_PYTHON_MORE_ITERTOOLS # runtime
+	help
+	  Module for text manipulation.
+
+	  https://github.com/jaraco/jaraco.text

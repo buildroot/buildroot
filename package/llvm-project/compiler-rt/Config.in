@@ -3,6 +3,7 @@ config BR2_PACKAGE_COMPILER_RT
 	depends on BR2_PACKAGE_LLVM
 	depends on BR2_TOOLCHAIN_USES_GLIBC # asan lib requires
 	depends on BR2_HOST_GCC_AT_LEAST_7 # host-clang
+	select BR2_PACKAGE_LIBXCRYPT
 	help
 	  A collection of runtime libraries primarily used by clang and
 	  llvm to provide builtins, sanitizer runtimes, and profiling

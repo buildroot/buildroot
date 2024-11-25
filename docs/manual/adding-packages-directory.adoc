@@ -24,7 +24,7 @@ file will contain the option descriptions related to our +libfoo+ software
 that will be used and displayed in the configuration tool. It should basically
 contain:
 
----------------------------
+----
 config BR2_PACKAGE_LIBFOO
 	bool "libfoo"
 	help
@@ -32,7 +32,7 @@ config BR2_PACKAGE_LIBFOO
 	  should be wrapped.
 
 	  http://foosoftware.org/libfoo/
----------------------------
+----
 
 The +bool+ line, +help+ line and other metadata information about the
 configuration option must be indented with one tab. The help text
@@ -64,9 +64,9 @@ put your package in one of the existing categories). The files
 included there are 'sorted alphabetically' per category and are 'NOT'
 supposed to contain anything but the 'bare' name of the package.
 
---------------------------
+----
 source "package/libfoo/Config.in"
---------------------------
+----
 
 
 ==== +Config.in.host+ file
@@ -83,14 +83,14 @@ options here:
   the configuration menu. In this case, create a +Config.in.host+ file
   for that host package:
 +
----------------------------
+----
 config BR2_PACKAGE_HOST_FOO
 	bool "host foo"
 	help
 	  This is a comment that explains what foo for the host is.
 
 	  http://foosoftware.org/foo/
----------------------------
+----
 +
 The same coding style and options as for the +Config.in+ file are valid.
 +
@@ -98,9 +98,9 @@ Finally you have to add your new +libfoo/Config.in.host+ to
 +package/Config.in.host+. The files included there are 'sorted alphabetically'
 and are 'NOT' supposed to contain anything but the 'bare' name of the package.
 +
---------------------------
+----
 source "package/foo/Config.in.host"
---------------------------
+----
 +
 The host package will then be available from the +Host utilities+ menu.
 
@@ -136,7 +136,7 @@ is not met.
 
 An example illustrates both the usage of +select+ and +depends on+.
 
---------------------------
+----
 config BR2_PACKAGE_RRDTOOL
 	bool "rrdtool"
 	depends on BR2_USE_WCHAR
@@ -152,7 +152,7 @@ config BR2_PACKAGE_RRDTOOL
 
 comment "rrdtool needs a toolchain w/ wchar"
 	depends on !BR2_USE_WCHAR
---------------------------
+----
 
 
 Note that these two dependency types are only transitive with the
@@ -160,7 +160,7 @@ dependencies of the same kind.
 
 This means, in the following example:
 
---------------------------
+----
 config BR2_PACKAGE_A
         bool "Package A"
 
@@ -179,7 +179,7 @@ config BR2_PACKAGE_D
 config BR2_PACKAGE_E
         bool "Package E"
         select BR2_PACKAGE_D
---------------------------
+----
 
 * Selecting +Package C+ will be visible if +Package B+ has been
   selected, which in turn is only visible if +Package A+ has been
@@ -193,7 +193,7 @@ config BR2_PACKAGE_E
   the dependency of +Package B+ on +Package A+. Therefore, in such a
   situation, the transitive dependency has to be added explicitly:
 
---------------------------
+----
 config BR2_PACKAGE_D
 	bool "Package D"
 	depends on BR2_PACKAGE_A
@@ -203,7 +203,7 @@ config BR2_PACKAGE_E
 	bool "Package E"
 	depends on BR2_PACKAGE_A
 	select BR2_PACKAGE_D
---------------------------
+----
 
 Overall, for package library dependencies, +select+ should be
 preferred.
@@ -247,21 +247,21 @@ comment and other config options.
 
 The general format of a dependency +comment+ for package foo is:
 
---------------------------
+----
 foo needs a toolchain w/ featA, featB, featC
---------------------------
+----
 
 for example:
 
---------------------------
+----
 mpd needs a toolchain w/ C++, threads, wchar
---------------------------
+----
 
 or
 
---------------------------
+----
 crda needs a toolchain w/ threads
---------------------------
+----
 
 Note that this text is kept brief on purpose, so that it will fit on a
 80-character terminal.
@@ -358,32 +358,32 @@ typically kernel modules or firmware. A comment should be added in the
 Config.in file to express this dependency, similar to dependencies on
 toolchain options. The general format is:
 
---------------------------
+----
 foo needs a Linux kernel to be built
---------------------------
+----
 
 If there is a dependency on both toolchain options and the Linux
 kernel, use this format:
 
---------------------------
+----
 foo needs a toolchain w/ featA, featB, featC and a Linux kernel to be built
---------------------------
+----
 
 ==== Dependencies on udev /dev management
 
 If a package needs udev /dev management, it should depend on symbol
 +BR2_PACKAGE_HAS_UDEV+, and the following comment should be added:
 
---------------------------
+----
 foo needs udev /dev management
---------------------------
+----
 
 If there is a dependency on both toolchain options and udev /dev
 management, use this format:
 
---------------------------
+----
 foo needs udev /dev management and a toolchain w/ featA, featB, featC
---------------------------
+----
 
 ==== Dependencies on features provided by virtual packages
 
@@ -429,9 +429,9 @@ different way, using different infrastructures:
    and xref:cmake-package-reference[reference].
 
 * *Makefiles for Python modules*: We have a dedicated infrastructure
-   for Python modules that use the +flit+, +pep517+, +setuptools+,
-   +setuptools-rust+ or +maturin+ mechanisms. We cover them through a
-   xref:python-package-tutorial[tutorial] and a
+   for Python modules that use the +flit+, +hatch+, +pep517+, +poetry+
+   +setuptools+, +setuptools-rust+ or +maturin+ mechanisms. We cover
+   them through a xref:python-package-tutorial[tutorial] and a
    xref:python-package-reference[reference].
 
 * *Makefiles for Lua modules*: We have a dedicated infrastructure for
@@ -576,76 +576,120 @@ name.  The +NN+ is the start order number which needs to be carefully
 chosen.  For example, a program that requires networking to be up should
 not start before +S40network+.  The scripts are started in alphabetical
 order, so +S01syslogd+ starts before +S01watchdogd+, and +S02sysctl+
-start thereafter.
+starts thereafter.
 
-------------------------------
-01: #!/bin/sh
-02:
-03: DAEMON="syslogd"
-04: PIDFILE="/var/run/$DAEMON.pid"
-05:
-06: SYSLOGD_ARGS=""
-07:
-08: # shellcheck source=/dev/null
-09: [ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
-10:
-11: # BusyBox' syslogd does not create a pidfile, so pass "-n" in the command line
-12: # and use "-m" to instruct start-stop-daemon to create one.
-13: start() {
-14: 	printf 'Starting %s: ' "$DAEMON"
-15: 	# shellcheck disable=SC2086 # we need the word splitting
-16: 	start-stop-daemon -b -m -S -q -p "$PIDFILE" -x "/sbin/$DAEMON" \
-17: 		-- -n $SYSLOGD_ARGS
-18: 	status=$?
-19: 	if [ "$status" -eq 0 ]; then
-20: 		echo "OK"
-21: 	else
-22: 		echo "FAIL"
-23: 	fi
-24: 	return "$status"
-25: }
-26:
-27: stop() {
-28: 	printf 'Stopping %s: ' "$DAEMON"
-29: 	start-stop-daemon -K -q -p "$PIDFILE"
-30: 	status=$?
-31: 	if [ "$status" -eq 0 ]; then
-32: 		rm -f "$PIDFILE"
-33: 		echo "OK"
-34: 	else
-35: 		echo "FAIL"
-36: 	fi
-37: 	return "$status"
-38: }
-39:
-40: restart() {
-41: 	stop
-42: 	sleep 1
-43: 	start
-44: }
-45:
-46: case "$1" in
-47: 	start|stop|restart)
-48: 		"$1";;
-49: 	reload)
-50: 		# Restart, since there is no true "reload" feature.
-51: 		restart;;
-52: 	*)
-53: 		echo "Usage: $0 {start|stop|restart|reload}"
-54: 		exit 1
-55: esac
-------------------------------
+[source,sh]
+----
+include::S01syslogd[]
+----
 
-*Note:* programs that support reloading their configuration in some
-fashion (+SIGHUP+) should provide a +reload()+ function similar to
-+stop()+.  The +start-stop-daemon+ supports +-K -s HUP+ for this.
-It is recommended to always append +-x "/sbin/$DAEMON"+ to all the
-+start-stop-daemon+ commands to ensure signals are set to a PID that
-matches +$DAEMON+.
+Scripts should use long form options where possible for clarity.
 
-Both start scripts and unit files can source command line arguments from
-+/etc/default/foo+, in general, if such a file does not exist it should
-not block the start of the daemon, unless there is some site specirfic
-command line argument the daemon requires to start.  For start scripts a
-+FOO_ARGS="-s -o -m -e -args"+ can be defined to a default value in and
-the user can override this from +/etc/default/foo+.
+==== Start script configuration
+
+Both start scripts and unit files can source command line arguments
+from +/etc/default/foo+, where +foo+ is the daemon name as set in the
++DAEMON+ variable. In general, if such a file does not exist it should
+not block the start of the daemon, unless there is some site specific
+command line argument the daemon requires to start. For start scripts
++FOO_ARGS="-s -o -m -e -args"+ can be defined to a default value in
+the script, and the user can override this from +/etc/default/foo+.
+
+==== Handling the PID file
+
+A PID file is needed to keep track of what the main process of a
+service is. How to handle it depends on whether the service creates
+its own PID file, and if it deletes it on shutdown.
+
+* If your service doesn't create its own PID file, invoke the daemon
+  in foreground mode, and use +start-stop-daemon --make-pidfile
+  --background+ to let +start-stop-daemon+ create the PID file. See
+  +S01syslogd+ for example:
++
+[source,sh]
+----
+start-stop-daemon --start --background --make-pidfile \
+	--pidfile "$PIDFILE" --exec "/sbin/$DAEMON" \
+	-- -n $SYSLOGD_ARGS
+----
+
+* If your service creates its own PID file, pass the +--pidfile+
+  option to both +start-stop-daemon+ *and the daemon itself* (or set
+  it appropriately in a configuration file, depending on what the
+  daemon supports) so they agree on where the PID file is. See
+  +S45NetworkManager+ for example:
++
+[source,sh]
+----
+start-stop-daemon --start --pidfile "$PIDFILE" \
+	--exec "/usr/sbin/$DAEMON" \
+	-- --pid-file="$PIDFILE" $NETWORKMANAGER_ARGS
+----
+
+* If your service removes its PID file on shutdown, use a loop testing
+  that the PID file has disappeared on stop, see +S45NetworkManager+
+  for example:
++
+[source,sh]
+----
+while [ -f "$PIDFILE" ]; do
+	sleep 0.1
+done
+----
+
+* If your service doesn't remove its PID file on shutdown, use a loop
+  with +start-stop-daemon+ checking if the service is still running,
+  and delete the PID file after the process is gone. See +S01syslogd+
+  for example:
++
+[source,sh]
+----
+while start-stop-daemon --stop --test --quiet --pidfile "$PIDFILE" \
+	--exec "/sbin/$DAEMON"; do
+	sleep 0.1
+done
+rm -f "$PIDFILE"
+----
++
+Note the +--test+ flag, which tells +start-stop-daemon+ to not
+actually stop the service, but test if it would be possible to, which
+fails if the service is not running.
+
+==== Stopping the service
+
+The stop function should check that the daemon process is actually
+gone before returning, otherwise restart might fail because the new
+instance is started before the old one has actually stopped. How to do
+that depends on how the PID file for the service is handled (see
+above). It is recommended to always append +--exec "/sbin/$DAEMON"+ to
+all +start-stop-daemon+ commands to ensure signals are sent to a PID
+that matches +$DAEMON+.
+
+==== Reloading service configuration
+
+Programs that support reloading their configuration in some fashion
+(e.g. +SIGHUP+) should provide a +reload()+ function similar to
++stop()+. The +start-stop-daemon+ command supports +--stop --signal
+HUP+ for this. When sending signals this way, whether SIGHUP or
+others, make sure to use the symbolic names and not signal
+numbers. Signal numbers can vary between CPU architectures, and names
+are also easier to read.
+
+==== Return codes
+
+The action functions of the start script should return a success (or
+failure) code, usually the return code of the relevant
+start-stop-daemon action. The last one of those should be the return
+code of the start script as a whole, to allow automatically checking
+for success, e.g. when calling the start script from other
+scripts. Note that without an explicit +return+ the return code of the
+last command in a script or function becomes its return code, so an
+explicit return is not always necessary.
+
+==== Logging
+
+When a service forks to the background, or +start-stop-daemon
+--background+ does that, stdout and stderr are generally closed, and
+anything log messages the service may write there get lost. If
+possible, configure your service to log to syslog (preferably), or a
+dedicated log file.

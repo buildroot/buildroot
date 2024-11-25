@@ -9,6 +9,8 @@ menuconfig BR2_PACKAGE_GPSD
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	# Always tries to build a shared library
 	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_GPSD_CLIENTS if !BR2_PACKAGE_GPSD_DAEMON \
+				       && !BR2_PACKAGE_GPSD_PYTHON
 	help
 	  gpsd is a service daemon that monitors one or more GPSes or
 	  AIS receivers attached to a host computer through serial or
@@ -21,6 +23,15 @@ menuconfig BR2_PACKAGE_GPSD
 	  https://gpsd.gitlab.io/gpsd
 
 if BR2_PACKAGE_GPSD
+
+config BR2_PACKAGE_GPSD_DAEMON
+	bool "gpsd daemon"
+	default y # legacy
+	select BR2_PACKAGE_GPSD_CLIENTS
+	help
+	  Build and install the gpsd daemon itself
+
+if BR2_PACKAGE_GPSD_DAEMON
 
 config BR2_PACKAGE_GPSD_DEVICES
 	string "Where to look for GPSes"
@@ -75,17 +86,6 @@ config BR2_PACKAGE_GPSD_MAX_DEV_VALUE
 
 config BR2_PACKAGE_GPSD_SQUELCH
 	bool "squelch gpsd_report and gpsd_hexdump to save cpu"
-
-config BR2_PACKAGE_GPSD_PYTHON
-	bool "build Python support and modules"
-	depends on BR2_USE_WCHAR # python3
-	select BR2_PACKAGE_PYTHON3
-	help
-	  Python libraries and tools for the gpsd service daemon
-	  including gpsfake test harness.
-
-comment "GPSD python support not available with toolchain w/o wide characters support"
-	depends on !BR2_USE_WCHAR
 
 comment "Protocols"
 
@@ -220,5 +220,29 @@ config BR2_PACKAGE_GPSD_UBX
 	bool "UBX"
 	help
 	  uBlox UBX binary support
+
+endif  # GPSD_DAEMON
+
+config BR2_PACKAGE_GPSD_CLIENTS
+	bool "gpsd clients"
+	default y # legacy
+	help
+	  Build and install gspd client programs, like:
+	    - gpsctl
+	    - gpsdctl
+	    - gpsdecode
+	    - gpspipe
+	    - ...
+
+config BR2_PACKAGE_GPSD_PYTHON
+	bool "build Python support and modules"
+	depends on BR2_USE_WCHAR # python3
+	select BR2_PACKAGE_PYTHON3
+	help
+	  Python libraries and tools for the gpsd service daemon
+	  including gpsfake test harness.
+
+comment "python support needs a toolchain w/ wchar"
+	depends on !BR2_USE_WCHAR
 
 endif

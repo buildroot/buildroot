@@ -1,0 +1,13 @@
+config BR2_PACKAGE_LUA_LIGHTNINGMDB
+	bool "lua-lightningmdb"
+	depends on !BR2_PACKAGE_LUAJIT
+	depends on BR2_TOOLCHAIN_HAS_THREADS # lmdb
+	select BR2_PACKAGE_LMDB
+	help
+	  A thin wrapper around OpenLDAP Lightning Memory-Mapped
+	  Database (LMDB).
+
+	  https://github.com/shmul/lightningmdb
+
+comment "lua-lightningmdb needs a toolchain w/ threads"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS

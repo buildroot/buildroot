@@ -1,0 +1,30 @@
+From c34fba6fe5c3ecd2028461a4317bd2916e2a09d7 Mon Sep 17 00:00:00 2001
+From: Christian Hergert <chergert@redhat.com>
+Date: Mon, 16 Sep 2024 09:48:15 -0700
+Subject: [PATCH] build: reduce GLib requirement
+
+This is kept lower so that you can build without GTK on older systems.
+
+Related: https://gitlab.gnome.org/GNOME/sysprof/-/commit/530b4a9d121c8659148c36ce67f2ce415443baa5#note_2223853
+Signed-off-by: Adrian Perez de Castro <aperez@igalia.com>
+Upstream: https://gitlab.gnome.org/GNOME/sysprof/-/commit/e5382d1b8cae4d829751938ce39c2e5fbc419064
+---
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 63a31894..696b87be 100644
+--- a/meson.build
++++ b/meson.build
+@@ -45,7 +45,7 @@ need_libsysprof = (need_gtk or
+                    get_option('tests'))
+ 
+ dex_req = '0.6'
+-glib_req = '2.80.0'
++glib_req = '2.76.0'
+ gtk_req = '4.15'
+ polkit_req = '0.105'
+ 
+-- 
+2.46.2
+

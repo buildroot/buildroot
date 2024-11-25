@@ -4,13 +4,16 @@
 #
 ################################################################################
 
-OPKG_VERSION = 0.6.2
+OPKG_VERSION = 0.7.0
 OPKG_SITE = https://downloads.yoctoproject.org/releases/opkg
 OPKG_DEPENDENCIES = host-pkgconf libarchive
 OPKG_LICENSE = GPL-2.0+
 OPKG_LICENSE_FILES = COPYING
 OPKG_INSTALL_STAGING = YES
-OPKG_CONF_OPTS = --enable-sha256
+OPKG_CONF_OPTS = \
+	--enable-sha256 \
+	--without-acl \
+	--without-xattrs
 
 ifeq ($(BR2_PACKAGE_OPKG_GPG_SIGN),y)
 OPKG_CONF_OPTS += --enable-gpg

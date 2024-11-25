@@ -1,4 +1,4 @@
-From 7c74ad9c349e381decc84c218112ea8e7bcc0b9c Mon Sep 17 00:00:00 2001
+From 1c35333cd7836c3cc9b39cf6c5599d2221268e94 Mon Sep 17 00:00:00 2001
 From: Simon Rowe <simon.rowe@nutanix.com>
 Date: Thu, 23 Mar 2023 09:57:59 +0000
 Subject: [PATCH] cmdline: use freopen() to reopen standard streams
@@ -19,15 +19,17 @@ with
 
 Taken from: https://github.com/gentoo/gentoo/blob/master/sys-fs/lvm2/files/lvm2-2.03.14-r1-fopen-to-freopen.patch
 Signed-off-by: Simon Rowe <simon.rowe@nutanix.com>
+[Julien: rebased patch on v2.03.27]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
 ---
  tools/lvmcmdline.c | 12 ++++++++++++
  1 file changed, 12 insertions(+)
 
 diff --git a/tools/lvmcmdline.c b/tools/lvmcmdline.c
-index 1e12bedca..534368575 100644
+index 7209ebd9b..3c0c957b1 100644
 --- a/tools/lvmcmdline.c
 +++ b/tools/lvmcmdline.c
-@@ -3384,7 +3384,11 @@ static int _check_standard_fds(void)
+@@ -3378,7 +3378,11 @@ static int _check_standard_fds(void)
  	int err = is_valid_fd(STDERR_FILENO);
  
  	if (!is_valid_fd(STDIN_FILENO) &&
@@ -39,7 +41,7 @@ index 1e12bedca..534368575 100644
  		if (err)
  			perror("stdin stream open");
  		else
-@@ -3394,7 +3398,11 @@ static int _check_standard_fds(void)
+@@ -3388,7 +3392,11 @@ static int _check_standard_fds(void)
  	}
  
  	if (!is_valid_fd(STDOUT_FILENO) &&
@@ -51,7 +53,7 @@ index 1e12bedca..534368575 100644
  		if (err)
  			perror("stdout stream open");
  		/* else no stdout */
-@@ -3402,7 +3410,11 @@ static int _check_standard_fds(void)
+@@ -3396,7 +3404,11 @@ static int _check_standard_fds(void)
  	}
  
  	if (!is_valid_fd(STDERR_FILENO) &&
@@ -64,5 +66,5 @@ index 1e12bedca..534368575 100644
  		       strerror(errno));
  		return 0;
 -- 
-2.22.3
+2.46.2
 

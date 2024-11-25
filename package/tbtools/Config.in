@@ -1,0 +1,15 @@
+config BR2_PACKAGE_TBTOOLS
+	bool "tbtools"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_USES_GLIBC
+	depends on BR2_PACKAGE_HAS_UDEV
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  tbtools is a collection of tools for Linux Thunderbolt/USB4
+	  development, debugging and validation.
+
+	  https://github.com/intel/tbtools
+
+comment "tbtools needs udev /dev management w/ glibc toolchain"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	depends on !BR2_PACKAGE_HAS_UDEV || !BR2_TOOLCHAIN_USES_GLIBC

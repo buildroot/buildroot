@@ -1,6 +1,7 @@
 config BR2_PACKAGE_PYTHON_SPAKE2
 	bool "python-spake2"
-	select BR2_PACKAGE_PYTHON_HKDF # runtime
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-cryptography
+	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime
 	help
 	  SPAKE2 password-authenticated key exchange (in pure python).
 

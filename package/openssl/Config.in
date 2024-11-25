@@ -1,3 +1,14 @@
+config BR2_PACKAGE_LIBRESSL_ARCH_SUPPORTS
+	bool
+	# see include/CMakeLists.txt
+	default y if BR2_aarch64 || BR2_aarch64_be
+	default y if BR2_arm || BR2_armeb
+	default y if BR2_i386 || BR2_x86_64
+	default y if BR2_mips || BR2_mipsel || BR2_mips64 || BR2_mips64el
+	default y if BR2_powerpc || BR2_powerpc64 || BR2_powerpc64le
+	default y if BR2_RISCV_64
+	default y if BR2_sparc64
+
 config BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL
 	bool
 
@@ -24,7 +35,7 @@ config BR2_PACKAGE_LIBOPENSSL
 	  (TLS v1) as well as a full-strength general-purpose
 	  cryptography library.
 
-	  http://www.openssl.org/
+	  https://openssl-library.org/
 
 	  Note: Some helper scripts need perl.
 
@@ -32,6 +43,7 @@ source "package/libopenssl/Config.in"
 
 config BR2_PACKAGE_LIBRESSL
 	bool "libressl"
+	depends on BR2_PACKAGE_LIBRESSL_ARCH_SUPPORTS
 	depends on !BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	# uClibc doesn't provide __register_atfork() without NPTL

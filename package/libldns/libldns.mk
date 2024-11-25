@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-LIBLDNS_VERSION = 1.8.3
+LIBLDNS_VERSION = 1.8.4
 LIBLDNS_SOURCE = ldns-$(LIBLDNS_VERSION).tar.gz
-LIBLDNS_SITE = http://www.nlnetlabs.nl/downloads/ldns
+LIBLDNS_SITE = https://www.nlnetlabs.nl/downloads/ldns
 LIBLDNS_LICENSE = BSD-3-Clause
 LIBLDNS_LICENSE_FILES = LICENSE
 LIBLDNS_CPE_ID_VENDOR = nlnetlabs

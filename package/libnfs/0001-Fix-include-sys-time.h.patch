@@ -16,6 +16,8 @@ Upstream: https://github.com/sahlberg/libnfs/issues/272
 Signed-off-by: Jörg Krause <joerg.krause@embedded.rocks>
 [Fabrice: update for 5.0.2]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  include/nfsc/libnfs.h | 5 -----
  1 file changed, 5 deletions(-)
@@ -24,8 +26,8 @@ diff --git a/include/nfsc/libnfs.h b/include/nfsc/libnfs.h
 index 09dcf1c..b6db58c 100755
 --- a/include/nfsc/libnfs.h
 +++ b/include/nfsc/libnfs.h
-@@ -24,12 +24,7 @@
- #define _LIBNFS_H_
+@@ -28,12 +28,7 @@
+ #endif
  
  #include <stdint.h>
 -#if defined(__ANDROID__) || defined(AROS) || defined(__PPU__) \

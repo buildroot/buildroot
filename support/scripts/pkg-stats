@@ -1043,7 +1043,8 @@ def dump_html_pkg(f, pkg):
     data_field_id = f'cves__{pkg_css_class}'
     div_class = ["centered cves data"]
     div_class.append(f'_{pkg_css_class}')
-    if len(pkg.cves) > 10:
+    cve_total = len(pkg.cves) + len(pkg.unsure_cves)
+    if cve_total > 10:
         div_class.append("collapse")
     if pkg.is_status_ok("cve"):
         div_class.append("cve-ok")
@@ -1054,8 +1055,7 @@ def dump_html_pkg(f, pkg):
     else:
         div_class.append("cve-unknown")
     f.write(f'  <div id="{data_field_id}" class="{" ".join(div_class)}">\n')
-    if len(pkg.cves) > 10:
-        cve_total = len(pkg.cves) + 1
+    if cve_total > 10:
         f.write(f' <div onclick="expandField(\'{data_field_id}\')" \
         class="see-more centered cve_ignored">see all ({cve_total}) &#9662;</div>\n')
     if pkg.is_status_error("cve"):
@@ -1209,7 +1209,7 @@ def dump_html(packages, stats, date, commit, output):
 
 
 def dump_json(packages, defconfigs, stats, date, commit, output):
-    # Format packages as a dictionnary instead of a list
+    # Format packages as a dictionary instead of a list
     # Exclude local field that does not contains real date
     excluded_fields = ['url_worker', 'name', 'tree_path']
     pkgs = {

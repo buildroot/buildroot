@@ -1,4 +1,4 @@
-From 445be05fba32c512fd87a0c98b4e9936629ef95e Mon Sep 17 00:00:00 2001
+From 5b83edaa20f6ecf97d16e323be1ed555d8fa2c01 Mon Sep 17 00:00:00 2001
 From: Bernd Kuhls <bernd.kuhls@t-online.de>
 Date: Sat, 20 Feb 2016 17:59:52 +0100
 Subject: [PATCH] src/Makefile.in: Really install unversioned solibrary
@@ -7,25 +7,27 @@ This commit is a follow-up to
 https://github.com/telmich/gpm/commit/06b00d53d8bd513ad5d262dc94a016c6fbf2d3aa
 which created libgpm.so but failed to include it in the install target.
 
-Patch sent upstream: https://github.com/telmich/gpm/pull/11
+Upstream: https://github.com/telmich/gpm/pull/11
 
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  src/Makefile.in | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/src/Makefile.in b/src/Makefile.in
-index 7e9e2ef..bca226f 100644
+index b63e4f4489bd..a1838c300312 100644
 --- a/src/Makefile.in
 +++ b/src/Makefile.in
 @@ -115,6 +115,7 @@ install:	check
  	if test "x@SHLIB@" != "x" ; then \
- 		$(INSTALL_DATA) -m 755 lib/libgpm.so.@abi_full@ $(libdir)/libgpm.so.@abi_full@	;	\
+ 		$(INSTALL_DATA) -m 644 lib/libgpm.so.@abi_full@ $(libdir)/libgpm.so.@abi_full@	;	\
  		cd $(libdir) && $(LN_S) -f libgpm.so.@abi_full@ libgpm.so.@abi_lev@ 					;	\
 +		cd $(libdir) && $(LN_S) -f libgpm.so.@abi_full@ libgpm.so 					;	\
        echo "WARNING: We installed a lib, you should now call ldconfig" 						; 	\
        echo "f.i.: ldconfig -n -l $(libdir)/libgpm.so.@abi_full@" 								;	\
        echo "Or to update everything just type ldconfig"											;	\
 -- 
-2.7.0
+2.43.0
 

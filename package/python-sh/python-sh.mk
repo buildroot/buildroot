@@ -4,12 +4,11 @@
 #
 ################################################################################
 
-PYTHON_SH_VERSION = 2.0.6
+PYTHON_SH_VERSION = 2.1.0
 PYTHON_SH_SOURCE = sh-$(PYTHON_SH_VERSION).tar.gz
-PYTHON_SH_SITE = https://files.pythonhosted.org/packages/cd/51/7355831d8e1cee8348157d769ccda8a31ca9fa0548e7f93d87837d83866d
-PYTHON_SH_SETUP_TYPE = pep517
+PYTHON_SH_SITE = https://files.pythonhosted.org/packages/52/12/b7965006c5adc57ba5459385358bd27c4983cd490884a75be86eb1d3efeb
+PYTHON_SH_SETUP_TYPE = poetry
 PYTHON_SH_LICENSE = MIT
 PYTHON_SH_LICENSE_FILES = LICENSE.txt
-PYTHON_SH_DEPENDENCIES = host-python-poetry-core
 
 $(eval $(python-package))

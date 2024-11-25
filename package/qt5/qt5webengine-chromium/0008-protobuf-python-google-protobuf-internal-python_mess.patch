@@ -1,0 +1,51 @@
+From f01ebcd09a0b43589671fc8573bd0c00781c618e Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 13 Jul 2024 17:34:13 +0200
+Subject: [PATCH] protobuf/python/google/protobuf/internal/python_message.py:
+ fix Python 3.12 compatibility
+
+This is a part of the larger commit
+29527fb6f77bdf5f2393f2327fec590c6deab27f from Chromium, which updates
+their internal copy of protobuf to 3.20.0.
+
+Upstream: https://github.com/chromium/chromium/commit/29527fb6f77bdf5f2393f2327fec590c6deab27f (part of)
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ .../python/google/protobuf/internal/python_message.py      | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/chromium/third_party/protobuf/python/google/protobuf/internal/python_message.py b/chromium/third_party/protobuf/python/google/protobuf/internal/python_message.py
+index 803ae848493..a1954ce88c9 100755
+--- a/chromium/third_party/protobuf/python/google/protobuf/internal/python_message.py
++++ b/chromium/third_party/protobuf/python/google/protobuf/internal/python_message.py
+@@ -55,9 +55,6 @@ import struct
+ import sys
+ import weakref
+ 
+-import six
+-from six.moves import range
+-
+ # We use "as" to avoid name collisions with variables.
+ from google.protobuf.internal import api_implementation
+ from google.protobuf.internal import containers
+@@ -467,7 +464,7 @@ def _ReraiseTypeErrorWithFieldName(message_name, field_name):
+     exc = TypeError('%s for field %s.%s' % (str(exc), message_name, field_name))
+ 
+   # re-raise possibly-amended exception with original traceback:
+-  six.reraise(type(exc), exc, sys.exc_info()[2])
++  raise exc.with_traceback(sys.exc_info()[2])
+ 
+ 
+ def _AddInitMethod(message_descriptor, cls):
+@@ -480,7 +477,7 @@ def _AddInitMethod(message_descriptor, cls):
+     enum_type with the same name.  If the value is not a string, it's
+     returned as-is.  (No conversion or bounds-checking is done.)
+     """
+-    if isinstance(value, six.string_types):
++    if isinstance(value, str):
+       try:
+         return enum_type.values_by_name[value].number
+       except KeyError:
+-- 
+2.25.1
+

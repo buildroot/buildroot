@@ -1,0 +1,36 @@
+From 96f5ad56b1bb872c2c24f0c83d06d94ae2936838 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 22 Jul 2024 14:08:45 +0200
+Subject: [PATCH] src/parser.y: fix build with gcc >= 14
+
+Fix the following build failure with gcc >= 14:
+
+parser.c: In function 'yyparse':
+parser.c:1196:16: error: implicit declaration of function 'yylex' [-Wimplicit-function-declaration]
+ 1196 |       yychar = yylex ();
+      |                ^~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/33364071de4e5e51a2ac2337b82d145f71e0e64a
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/nroach44/bandwidthd/pull/3
+---
+ src/parser.y | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/parser.y b/src/parser.y
+index d9acc10..15ce61c 100644
+--- a/src/parser.y
++++ b/src/parser.y
+@@ -11,6 +11,7 @@
+ #include <arpa/inet.h>
+ #include "bandwidthd.h"
+ 
++extern int yylex (void);
+ extern unsigned int SubnetCount;
+ extern struct SubnetData SubnetTable[];
+ extern struct config config;
+-- 
+2.43.0
+

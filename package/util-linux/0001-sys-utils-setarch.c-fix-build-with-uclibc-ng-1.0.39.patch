@@ -1,0 +1,39 @@
+From beef18da4de87ca5aaadf2beb14187f35cc4f50f Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 15 May 2024 18:22:11 +0200
+Subject: [PATCH] sys-utils/setarch.c: fix build with uclibc-ng < 1.0.39
+
+Fix the following build failure with uclibc-ng < 1.0.39 (i.e., without
+https://github.com/wbx-github/uclibc-ng/commit/85ac4f04d94e98389a8315e720630d0f95bfdfd6)
+raised since version 2.39 and
+https://github.com/util-linux/util-linux/commit/03a254f010b08da1175f50a8ae7882e59228f1b4:
+
+sys-utils/setarch.c:106:7: error: 'PER_LINUX32_3GB' undeclared here (not in a function); did you mean 'PER_LINUX32'?
+  106 |     X(PER_LINUX32_3GB) \
+      |       ^~~~~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/fb1feb47f2660882fa53f66bacc63e191fd52175
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/util-linux/util-linux/commit/4647fc6afbf7e99c49531600425df60f1243fcd2
+---
+ sys-utils/setarch.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/sys-utils/setarch.c b/sys-utils/setarch.c
+index 227bc6b5de..4bcb5e69e6 100644
+--- a/sys-utils/setarch.c
++++ b/sys-utils/setarch.c
+@@ -89,6 +89,11 @@
+ # define PER_LINUX_FDPIC	(PER_LINUX | FDPIC_FUNCPTRS)
+ #endif
+ 
++/* fallback for old uclibc-headers < 1.0.39 */
++#ifndef PER_LINUX32_3GB
++# define PER_LINUX32_3GB	(PER_LINUX32 | ADDR_LIMIT_3GB)
++#endif
++
+ #define ALL_PERSONALITIES \
+     X(PER_LINUX) \
+     X(PER_LINUX_32BIT) \

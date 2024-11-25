@@ -1,0 +1,17 @@
+Fix detection of XOPEN_SOURCE
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: fixed in latest release, no git/svn/hg
+
+diff -Nur ncurses-snapshots-6_4_20230603.orig/configure ncurses-snapshots-6_4_20230603/configure
+--- ncurses-snapshots-6_4_20230603.orig/configure	2023-06-04 00:07:40.000000000 +0200
++++ ncurses-snapshots-6_4_20230603/configure	2024-08-14 20:38:03.426905460 +0200
+@@ -10411,7 +10411,7 @@
+ 	cf_xopen_source="-D_SGI_SOURCE"
+ 	cf_XOPEN_SOURCE=
+ 	;;
+-(linux*gnu|linux*gnuabi64|linux*gnuabin32|linux*gnueabi|linux*gnueabihf|linux*gnux32|uclinux*|gnu*|mint*|k*bsd*-gnu|cygwin|msys|mingw*)
++(linux*gnu|linux*gnuabi64|linux*gnuabin32|linux*gnueabi|linux*gnueabihf|linux*gnux32|uclinux*|gnu*|mint*|k*bsd*-gnu|cygwin|msys|mingw*|linux*uclibc)
+ 
+ cf_gnu_xopen_source=$cf_XOPEN_SOURCE
+ 

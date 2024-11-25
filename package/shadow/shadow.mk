@@ -4,12 +4,14 @@
 #
 ################################################################################
 
-SHADOW_VERSION = 4.14.5
+SHADOW_VERSION = 4.16.0
 SHADOW_SITE = https://github.com/shadow-maint/shadow/releases/download/$(SHADOW_VERSION)
 SHADOW_SOURCE = shadow-$(SHADOW_VERSION).tar.xz
 SHADOW_LICENSE = BSD-3-Clause
 SHADOW_LICENSE_FILES = COPYING
 SHADOW_CPE_ID_VENDOR = debian
+SHADOW_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES)
+SHADOW_CONF_ENV = LIBS=$(TARGET_NLS_LIBS)
 
 SHADOW_CONF_OPTS = \
 	--disable-man \

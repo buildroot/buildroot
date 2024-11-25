@@ -1,0 +1,12 @@
+config BR2_PACKAGE_LUA_LSDBUS
+	bool "lua-lsdbus"
+	depends on BR2_PACKAGE_SYSTEMD
+	select BR2_PACKAGE_MXML
+	select BR2_PACKAGE_LUA_COMPAT53 if BR2_PACKAGE_LUAINTERPRETER_ABI_VERSION_5_1
+	help
+	  Lua D-Bus bindings based on sd-bus and sd-event
+
+	  https://github.com/kmarkus/lsdbus
+
+comment "lua-lsdbus needs systemd"
+	depends on !BR2_PACKAGE_SYSTEMD

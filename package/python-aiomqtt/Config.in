@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_AIOMQTT
+	bool "python-aiomqtt"
+	select BR2_PACKAGE_PYTHON_PAHO_MQTT # runtime
+	select BR2_PACKAGE_PYTHON3_SSL # runtime
+	help
+	  The idiomatic asyncio MQTT client, wrapped around paho-mqtt.
+
+	  https://github.com/empicano/aiomqtt

@@ -34,19 +34,19 @@ includes these additional +.mk+ files. Therefore, create a file
 +package/<company>/<company>.mk+ with following contents (assuming you
 have only one extra directory level below +package/<company>/+):
 
------
+----
 include $(sort $(wildcard package/<company>/*/*.mk))
------
+----
 
 For the +Config.in+ files, create a file +package/<company>/Config.in+
 that includes the +Config.in+ files of all your packages. An exhaustive
 list has to be provided since wildcards are not supported in the source command of kconfig.
 For example:
 
------
+----
 source "package/<company>/package1/Config.in"
 source "package/<company>/package2/Config.in"
------
+----
 
 Include this new file +package/<company>/Config.in+ from
 +package/Config.in+, preferably in a company-specific menu to make

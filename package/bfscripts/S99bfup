@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# notify to the root PCIe (/dev/rshimN/misc) that Linux is up
+# and that BF3 board is ready
+
+DAEMON="bfup"
+
+case "$1" in
+	start)
+		printf "bfup: "
+		/usr/bin/$DAEMON
+		exit_code=$?
+		[ $exit_code = 0 ] && echo "OK" || echo "FAIL"
+		;;
+	*)
+		echo "Usage: $0 {start}"
+		exit 1
+esac
+
+exit $?

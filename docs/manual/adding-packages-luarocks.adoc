@@ -10,7 +10,7 @@
 First, let's see how to write a +.mk+ file for a LuaRocks-based package,
 with an example :
 
-------------------------
+----
 01: ################################################################################
 02: #
 03: # lua-foo
@@ -27,7 +27,7 @@ with an example :
 14: LUA_FOO_LICENSE_FILES = $(LUA_FOO_SUBDIR)/COPYING
 15:
 16: $(eval $(luarocks-package))
-------------------------
+----
 
 On line 7, we declare the version of the package (the same as in the rockspec,
 which is the concatenation of the upstream version and the rockspec revision,
@@ -73,16 +73,16 @@ infrastructures in Buildroot, respectively.
 
 The main macro of the LuaRocks package infrastructure is +luarocks-package+:
 like +generic-package+ it works by defining a number of variables providing
-metadata information about the package, and then calling +luarocks-package+.
+metadata information about the package, and then calling the +luarocks-package+
+macro.
 
 Just like the generic infrastructure, the LuaRocks infrastructure works
 by defining a number of variables before calling the +luarocks-package+
 macro.
 
-First, all the package metadata information variables that exist in
-the generic infrastructure also exist in the LuaRocks infrastructure:
-+LUA_FOO_VERSION+, +LUA_FOO_SOURCE+, +LUA_FOO_SITE+,
-+LUA_FOO_DEPENDENCIES+, +LUA_FOO_LICENSE+, +LUA_FOO_LICENSE_FILES+.
+All the package metadata information variables that exist in the
+xref:generic-package-reference[generic package infrastructure] also
+exist in the LuaRocks infrastructure.
 
 Two of them are populated by the LuaRocks infrastructure (for the
 +download+ step). If your package is not hosted on the LuaRocks mirror

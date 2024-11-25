@@ -1,5 +1,6 @@
 # See utils/checkpackagelib/readme.txt before editing this file.
 import re
+import os
 
 
 class _CheckFunction(object):
@@ -27,3 +28,11 @@ class _Tool(object):
 
     def hint(self):
         return ""
+
+
+def run_test_suite():
+    import pytest
+    return pytest.main(
+        # Disable writing/loading a cache with: -p no:cacheprovider
+        ["-v", "-p", "no:cacheprovider", os.path.dirname(__file__)]
+    )

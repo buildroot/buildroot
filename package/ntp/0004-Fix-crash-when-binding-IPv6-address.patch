@@ -1,0 +1,38 @@
+Fix crash when binding IPv6 address
+
+Reference:
+  https://bugs.ntp.org/show_bug.cgi?id=3928
+
+Upstream: https://people.nwtime.org/hart/ntp-stable-3928-29.tar.gz
+
+Ported fix from updated tarball provided by upstream:
+https://bugs.ntp.org/show_bug.cgi?id=3928#c14
+
+Signed-off-by: TIAN Yuanhao <tianyuanhao3@163.com>
+---
+ ntpd/ntp_io.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+Index: ntp-4.2.8p18/ntpd/ntp_io.c
+===================================================================
+--- ntp-4.2.8p18.orig/ntpd/ntp_io.c
++++ ntp-4.2.8p18/ntpd/ntp_io.c
+@@ -1917,15 +1917,15 @@ update_interfaces(
+ 			}
+ 			new_interface_found = TRUE;
+ 			DPRINT_INTERFACE(3,
+-				(ep, "updating ", " new - created\n"));
++				(ep2, "updating ", " new - created\n"));
+ 		}
+ 		else {
+ 			DPRINT_INTERFACE(3,
+-				(ep, "updating ", " new - FAILED"));
++				(ep2, "updating ", " new - FAILED"));
+ 
+ 			msyslog(LOG_ERR,
+ 				"cannot bind address %s",
+-				stoa(&ep->sin));
++				stoa(&ep2->sin));
+ 		}
+ 		free(ep2);
+ 	}

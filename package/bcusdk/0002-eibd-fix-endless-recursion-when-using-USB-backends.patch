@@ -6,7 +6,7 @@ Subject: [PATCH] eibd: drop local clock_gettime in USB backends
 clock_gettime is defined locally, and calls pth_int_time, which
 in turn calls clock_gettime.
 The USB backend shouldn't overrule clock_gettime in the first place.
-This patch fixes this endless recursion by removing the local defition.
+This patch fixes this endless recursion by removing the local definition.
 
 Signed-off-by: Kurt Van Dijck <dev.kurt@vandijck-laurijssen.be>
 ---

@@ -1,0 +1,15 @@
+config BR2_PACKAGE_PYTHON_HID
+	bool "python-hid"
+	depends on BR2_PACKAGE_HAS_UDEV # hidapi
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # hidapi
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # hidapi
+	select BR2_PACKAGE_HIDAPI
+	help
+	  ctypes bindings for hidapi.
+
+	  https://github.com/apmorton/pyhidapi
+
+comment "python-hid needs udev /dev management and a toolchain w/ NPTL, gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS_NPTL || \
+		!BR2_PACKAGE_HAS_UDEV || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9

@@ -1,4 +1,4 @@
-From 84fea5d784e010f84c860b34e55ea2c855c17b3b Mon Sep 17 00:00:00 2001
+From 063972eece2fb8157f0feb98a4608c2984c7c5ff Mon Sep 17 00:00:00 2001
 From: Peter Korsgaard <peter@korsgaard.com>
 Date: Wed, 12 May 2021 09:18:33 +0200
 Subject: [PATCH] Makefile: drop explicit undefine PYLIB for compatibility with
@@ -22,18 +22,20 @@ Fixes:
 http://autobuild.buildroot.net/results/cf7c4f360f5464c700788cc8299fd086544c80e8/build-end.log
 
 Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
-[Upstream: https://marc.info/?l=linux-rt-users&m=162080462211139&w=2]
+Upstream: https://marc.info/?l=linux-rt-users&m=162080462211139&w=2
+[Julien: rebased patch on version 2.7]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
 ---
  Makefile | 5 -----
  1 file changed, 5 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index b17ac09..ec85ac8 100644
+index e2f8579..62c906f 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -36,11 +36,6 @@ LDFLAGS ?=
+@@ -37,11 +37,6 @@ LDFLAGS ?=
  
- PYLIB  ?= $(shell python3 -c 'import distutils.sysconfig;  print (distutils.sysconfig.get_python_lib())')
+ PYLIB ?= $(shell python3 -m get_pylib)
  
 -# Check for errors, such as python3 not available
 -ifeq (${PYLIB},)
@@ -44,5 +46,5 @@ index b17ac09..ec85ac8 100644
  	   src/pi_tests/pi_stress.8 \
  	   src/ptsematest/ptsematest.8 \
 -- 
-2.20.1
+2.45.2
 

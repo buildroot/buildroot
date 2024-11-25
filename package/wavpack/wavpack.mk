@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WAVPACK_VERSION = 5.6.0
+WAVPACK_VERSION = 5.7.0
 WAVPACK_SITE = \
 	https://github.com/dbry/WavPack/releases/download/$(WAVPACK_VERSION)
 WAVPACK_SOURCE = wavpack-$(WAVPACK_VERSION).tar.xz
@@ -18,11 +18,10 @@ ifeq ($(BR2_PACKAGE_LIBICONV),y)
 WAVPACK_CONF_OPTS += LIBS=-liconv
 endif
 
-ifeq ($(BR2_PACKAGE_OPENSSL),y)
-WAVPACK_DEPENDENCIES += openssl
-WAVPACK_CONF_OPTS += --enable-libcrypto
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+WAVPACK_CONF_OPTS += --enable-threads
 else
-WAVPACK_CONF_OPTS += --disable-libcrypto
+WAVPACK_CONF_OPTS += --disable-threads
 endif
 
 # WavPack "autodetects" CPU type to enable ASM code. However, the assembly code

@@ -12,7 +12,9 @@ Fixes:
  - http://autobuild.buildroot.org/results/bf041723ed813746c61892262630a3ac2bc43b14
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
-[Upstream status: upstream is dead]
+Upstream: upstream is dead
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  Makefile.linux | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -21,8 +23,7 @@ diff --git a/Makefile.linux b/Makefile.linux
 index 5f1a41f..df887e6 100644
 --- a/Makefile.linux
 +++ b/Makefile.linux
-@@ -14,7 +14,7 @@ MAJOR = 4
- MINOR = 0.31
+@@ -14,6 +14,6 @@ MINOR = 1.0
  
  ficl: main.o $(HEADERS) libficl.a
 -	$(CC) main.o -o ficl -L. -lficl -lm

@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-S6_NETWORKING_VERSION = 2.5.1.1
-S6_NETWORKING_SITE = http://skarnet.org/software/s6-networking
+S6_NETWORKING_VERSION = 2.7.0.3
+S6_NETWORKING_SITE = https://skarnet.org/software/s6-networking
 S6_NETWORKING_LICENSE = ISC
 S6_NETWORKING_LICENSE_FILES = COPYING
 S6_NETWORKING_INSTALL_STAGING = YES

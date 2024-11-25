@@ -1,0 +1,12 @@
+config BR2_PACKAGE_PYTHON_SDBUS_NETWORKMANAGER
+	bool "python-sdbus-networkmanager"
+	depends on BR2_PACKAGE_SYSTEMD
+	depends on BR2_PACKAGE_NETWORK_MANAGER # runtime
+	select BR2_PACKAGE_PYTHON_SDBUS # runtime
+	help
+	  NetworkManager bindings for sdbus.
+
+	  https://github.com/igo95862/python-sdbus
+
+comment "python-sdbus-networkmanager needs systemd and network-manager"
+	depends on !BR2_PACKAGE_SYSTEMD || !BR2_PACKAGE_NETWORK_MANAGER

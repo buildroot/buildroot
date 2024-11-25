@@ -19,6 +19,12 @@ config BR2_PACKAGE_LIBWEBSOCKETS_EXT_POLL
 	  unconditionally compiled in for library versions
 	  prior to 3.2.0.
 
+config BR2_PACKAGE_LIBWEBSOCKETS_ASYNC_DNS
+	bool "enable async dns support"
+	help
+	  Enable asynchronous DNS resolver that directly queries
+	  the configured nameserver over UDP, from the event loop.
+
 endif
 
 comment "libwebsockets needs a toolchain w/ dynamic library"

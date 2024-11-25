@@ -8,14 +8,16 @@ and build the shared objects as *.sho instead of *.o.
 Then, we use these objects to create the shared library.
 
 Signed-off-by: Markos Chandras <markos.chandras@imgtec.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
 Index: bzip2-1.0.6/Makefile-libbz2_so
 ===================================================================
 --- bzip2-1.0.6.orig/Makefile-libbz2_so
 +++ bzip2-1.0.6/Makefile-libbz2_so
-@@ -25,13 +25,13 @@ SHELL=/bin/sh
- CC=gcc
- override CFLAGS += -fpic -fPIC -Wall
+@@ -26,13 +26,13 @@ CC=gcc
+ BIGFILES=-D_FILE_OFFSET_BITS=64
+ CFLAGS=-fpic -fPIC -Wall -Winline -O2 -g $(BIGFILES)
  
 -OBJS= blocksort.o  \
 -      huffman.o    \
@@ -33,10 +35,10 @@ Index: bzip2-1.0.6/Makefile-libbz2_so
 +      bzlib.sho
  
  all: $(OBJS)
- 	$(CC) -shared -Wl,-soname -Wl,libbz2.so.1.0 -o libbz2.so.1.0.6 $(OBJS)
-@@ -45,17 +45,5 @@ install:
+ 	$(CC) -shared -Wl,-soname -Wl,libbz2.so.1.0 -o libbz2.so.1.0.8 $(OBJS)
+@@ -43,17 +43,5 @@ all: $(OBJS)
  clean: 
- 	rm -f $(OBJS) bzip2.o libbz2.so.1.0.6 libbz2.so.1.0 bzip2-shared
+ 	rm -f $(OBJS) bzip2.o libbz2.so.1.0.8 libbz2.so.1.0 bzip2-shared
  
 -blocksort.o: blocksort.c
 -	$(CC) $(CFLAGS) -c blocksort.c

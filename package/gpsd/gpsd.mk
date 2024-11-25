@@ -26,8 +26,7 @@ GPSD_SCONS_OPTS = \
 	prefix=/usr \
 	sysroot=$(STAGING_DIR) \
 	strip=no \
-	qt=no \
-	systemd=$(if $(BR2_INIT_SYSTEMD),yes,no)
+	qt=no
 
 ifeq ($(BR2_PACKAGE_NCURSES),y)
 GPSD_DEPENDENCIES += ncurses
@@ -178,7 +177,47 @@ ifeq ($(BR2_PACKAGE_GPSD_MAX_DEV),y)
 GPSD_SCONS_OPTS += max_devices=$(BR2_PACKAGE_GPSD_MAX_DEV_VALUE)
 endif
 
-ifeq ($(BR2_PACKAGE_PYTHON3),y)
+ifeq ($(BR2_PACKAGE_GPSD_DAEMON),y)
+GPSD_SCONS_OPTS += \
+	gpsd=yes \
+	systemd=$(if $(BR2_INIT_SYSTEMD),yes,no)
+
+GPSD_INSTALL_RULE = $(if $(BR2_PACKAGE_HAS_UDEV),udev-install,install)
+
+# When using chrony, wait for after Buildroot's chrony.service
+ifeq ($(BR2_PACKAGE_CHRONY),y)
+define GPSD_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 0644 $(GPSD_PKGDIR)/br-chrony.conf \
+		$(TARGET_DIR)/usr/lib/systemd/system/gpsd.service.d/br-chrony.conf
+endef
+endif
+
+define GPSD_INSTALL_INIT_SYSV
+	$(INSTALL) -m 0755 -D package/gpsd/S50gpsd $(TARGET_DIR)/etc/init.d/S50gpsd
+	$(SED) 's,^DEVICES=.*,DEVICES=$(BR2_PACKAGE_GPSD_DEVICES),' $(TARGET_DIR)/etc/init.d/S50gpsd
+endef
+
+# After the udev rule is installed, make it writable so that this
+# package can be re-built/re-installed.
+ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
+define GPSD_INSTALL_UDEV_RULES
+	chmod u+w $(TARGET_DIR)/lib/udev/rules.d/25-gpsd.rules
+endef
+GPSD_POST_INSTALL_TARGET_HOOKS += GPSD_INSTALL_UDEV_RULES
+endif
+
+else # GPSD_DAEMON
+GPSD_SCONS_OPTS += gpsd=no systemd=no
+GPSD_INSTALL_RULE = install
+endif
+
+ifeq ($(BR2_PACKAGE_GPSD_CLIENTS),y)
+GPSD_SCONS_OPTS += gpsdclients=yes
+else
+GPSD_SCONS_OPTS += gpsdclients=no
+endif
+
+ifeq ($(BR2_PACKAGE_GPSD_PYTHON),y)
 GPSD_SCONS_OPTS += \
 	python=yes \
 	python_libdir="/usr/lib/python$(PYTHON3_VERSION_MAJOR)/site-packages"
@@ -205,21 +244,8 @@ define GPSD_INSTALL_TARGET_CMDS
 		DESTDIR=$(TARGET_DIR) \
 		$(SCONS) \
 		$(GPSD_SCONS_OPTS) \
-		$(if $(BR2_PACKAGE_HAS_UDEV),udev-install,install))
+		$(GPSD_INSTALL_RULE))
 endef
-
-define GPSD_INSTALL_INIT_SYSV
-	$(INSTALL) -m 0755 -D package/gpsd/S50gpsd $(TARGET_DIR)/etc/init.d/S50gpsd
-	$(SED) 's,^DEVICES=.*,DEVICES=$(BR2_PACKAGE_GPSD_DEVICES),' $(TARGET_DIR)/etc/init.d/S50gpsd
-endef
-
-# When using chrony, wait for after Buildroot's chrony.service
-ifeq ($(BR2_PACKAGE_CHRONY),y)
-define GPSD_INSTALL_INIT_SYSTEMD
-	$(INSTALL) -D -m 0644 $(GPSD_PKGDIR)/br-chrony.conf \
-		$(TARGET_DIR)/usr/lib/systemd/system/gpsd.service.d/br-chrony.conf
-endef
-endif
 
 define GPSD_INSTALL_STAGING_CMDS
 	(cd $(@D); \
@@ -229,15 +255,5 @@ define GPSD_INSTALL_STAGING_CMDS
 		$(GPSD_SCONS_OPTS) \
 		install)
 endef
-
-# After the udev rule is installed, make it writable so that this
-# package can be re-built/re-installed.
-ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
-define GPSD_INSTALL_UDEV_RULES
-	chmod u+w $(TARGET_DIR)/lib/udev/rules.d/25-gpsd.rules
-endef
-
-GPSD_POST_INSTALL_TARGET_HOOKS += GPSD_INSTALL_UDEV_RULES
-endif
 
 $(eval $(generic-package))

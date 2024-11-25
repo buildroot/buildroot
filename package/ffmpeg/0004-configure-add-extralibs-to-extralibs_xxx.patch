@@ -9,6 +9,8 @@ applications such as motion to retrieve ffmpeg dependencies such as
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 [Upstream status: not upstreamable]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[rebased for 6.0]
 ---
  configure | 18 +++++++++---------
  1 file changed, 9 insertions(+), 9 deletions(-)
@@ -17,7 +19,7 @@ diff --git a/configure b/configure
 index 0bb3a7cf2b..3bda99e415 100755
 --- a/configure
 +++ b/configure
-@@ -7715,15 +7715,15 @@ rpath=$(enabled rpath && echo "-Wl,-rpath,\${libdir}")
+@@ -7986,14 +7986,14 @@
  source_path=${source_path}
  LIBPREF=${LIBPREF}
  LIBSUF=${LIBSUF}
@@ -26,7 +28,6 @@ index 0bb3a7cf2b..3bda99e415 100755
 -extralibs_avformat="$avformat_extralibs"
 -extralibs_avdevice="$avdevice_extralibs"
 -extralibs_avfilter="$avfilter_extralibs"
--extralibs_avresample="$avresample_extralibs"
 -extralibs_postproc="$postproc_extralibs"
 -extralibs_swscale="$swscale_extralibs"
 -extralibs_swresample="$swresample_extralibs"
@@ -35,7 +36,6 @@ index 0bb3a7cf2b..3bda99e415 100755
 +extralibs_avformat="$avformat_extralibs $extralibs"
 +extralibs_avdevice="$avdevice_extralibs $extralibs"
 +extralibs_avfilter="$avfilter_extralibs $extralibs"
-+extralibs_avresample="$avresample_extralibs $extralibs"
 +extralibs_postproc="$postproc_extralibs $extralibs"
 +extralibs_swscale="$swscale_extralibs $extralibs"
 +extralibs_swresample="$swresample_extralibs $extralibs"

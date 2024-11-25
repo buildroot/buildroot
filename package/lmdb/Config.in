@@ -1,0 +1,13 @@
+config BR2_PACKAGE_LMDB
+	bool "lmdb"
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	help
+	  OpenLDAP Lightning Memory-Mapped Database
+
+	  LMDB is compact, fast, powerful, and robust and implements
+	  a simplified variant of the BerkeleyDB (BDB) API.
+
+	  https://symas.com/lmdb/
+
+comment "lmdb needs a toolchain w/ threads"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS

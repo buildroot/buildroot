@@ -29,8 +29,4 @@ define TPM2_ABRMD_INSTALL_INIT_SYSV
 		$(TARGET_DIR)/etc/init.d/S80tpm2-abrmd
 endef
 
-define TPM2_ABRMD_USERS
-	tss -1 tss -1 * - - - TPM2 Access Broker & Resource Management daemon
-endef
-
 $(eval $(autotools-package))

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EDK2_VERSION = edk2-stable202308
+EDK2_VERSION = edk2-stable202405
 EDK2_SITE = https://github.com/tianocore/edk2
 EDK2_SITE_METHOD = git
 EDK2_LICENSE = BSD-2-Clause-Patent
@@ -24,7 +24,7 @@ endif
 else
 EDK2_BUILD_TYPE = RELEASE
 # DEBUG_ON_SERIAL_PORT is only valid in debug builds, so useless to set
-# it (enabled or disabled) on a relase build.
+# it (enabled or disabled) on a release build.
 endif
 
 # Build system notes.

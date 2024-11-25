@@ -1,0 +1,83 @@
+From d1701f1c89e9d2319ede200052319183fbb4ae18 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Date: Wed, 22 Feb 2017 17:40:45 -0800
+Subject: [PATCH] Add an option to disable expat
+
+This patch replaces the existing --with-system-expat option with a
+--with-expat={system,builtin,none} option, which allows to tell Python
+whether we want to use the system expat (already installed), the expat
+builtin the Python sources, or no expat at all (which disables the
+installation of XML modules).
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Signed-off-by: Samuel Martin <s.martin49@gmail.com>
+[ Andrey Smirnov: ported to Python 3.6 ]
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+[ Adam Duskett: ported to Python 3.10.0 ]
+Signed-off-by: Adam Duskett <aduskett@gmail.com>
+---
+ Makefile.pre.in |  5 ++++-
+ configure.ac    | 24 +++++++++++++-----------
+ 2 files changed, 17 insertions(+), 12 deletions(-)
+
+diff --git a/Makefile.pre.in b/Makefile.pre.in
+index 283ca1bd60..13f7512f42 100644
+--- a/Makefile.pre.in
++++ b/Makefile.pre.in
+@@ -2113,7 +2113,6 @@ LIBSUBDIRS=	asyncio \
+ 		urllib \
+ 		venv venv/scripts venv/scripts/common venv/scripts/posix \
+ 		wsgiref \
+-		$(XMLLIBSUBDIRS) \
+ 		xmlrpc \
+ 		zipfile zipfile/_path \
+ 		zoneinfo \
+@@ -2280,6 +2279,10 @@ ifeq (@SQLITE3@,yes)
+ LIBSUBDIRS += sqlite3
+ endif
+ 
++ifeq (@EXPAT@,yes)
++LIBSUBDIRS += $(XMLLIBSUBDIRS)
++endif
++
+ TEST_MODULES=@TEST_MODULES@
+ 
+ .PHONY: libinstall
+diff --git a/configure.ac b/configure.ac
+index 92d663ed40..1cb95f41fd 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -3823,17 +3823,19 @@ LIBS="$withval $LIBS"
+ [AC_MSG_RESULT([no])])
+ 
+ # Check for use of the system expat library
+-AC_MSG_CHECKING([for --with-system-expat])
+-AC_ARG_WITH(
+-  [system_expat],
+-  [AS_HELP_STRING(
+-     [--with-system-expat],
+-     [build pyexpat module using an installed expat library, see Doc/library/pyexpat.rst (default is no)]
+-  )], [], [with_system_expat="no"])
+-
+-AC_MSG_RESULT([$with_system_expat])
+-
+-AS_VAR_IF([with_system_expat], [yes], [
++AC_MSG_CHECKING(for --with-expat)
++AC_ARG_WITH(expat,
++            AS_HELP_STRING([--with-expat], [select which expat version to use: system, builtin, none]),
++            [],
++            [with_expat="builtin"])
++AC_MSG_RESULT($with_expat)
++AS_IF([test "$with_expat" != "none"],
++      [EXPAT=yes],
++      [PY_STDLIB_MOD_SET_NA([pyexpat])
++       EXPAT=no])
++AC_SUBST(EXPAT)
++
++AS_VAR_IF([with_expat], [system], [
+   LIBEXPAT_CFLAGS=${LIBEXPAT_CFLAGS-""}
+   LIBEXPAT_LDFLAGS=${LIBEXPAT_LDFLAGS-"-lexpat"}
+   LIBEXPAT_INTERNAL=
+-- 
+2.34.1
+

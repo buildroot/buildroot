@@ -4,20 +4,30 @@
 #
 ################################################################################
 
-TAR_VERSION = 1.34
+TAR_VERSION = 1.35
 TAR_SOURCE = tar-$(TAR_VERSION).tar.xz
 TAR_SITE = $(BR2_GNU_MIRROR)/tar
-# busybox installs in /bin, so we need tar to install as well in /bin
-# so that we don't end up with two different tar
-TAR_CONF_OPTS = --exec-prefix=/
 TAR_LICENSE = GPL-3.0+
 TAR_LICENSE_FILES = COPYING
 TAR_CPE_ID_VENDOR = gnu
 TAR_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES)
 TAR_CONF_ENV = LIBS=$(TARGET_NLS_LIBS)
+# 0002-Fix-savannah-bug-#64441.patch
+# 0003-tests-fix-LDADD.patch
+TAR_AUTORECONF = YES
 
-# 0002-Fix-boundary-checking-in-base-256-decoder.patch
-TAR_IGNORE_CVES += CVE-2022-48303
+# The package is a dependency to ccache so ccache cannot be a dependency
+HOST_TAR_ADD_CCACHE_DEPENDENCY = NO
+
+# busybox installs in /bin, so we need tar to install as well in /bin
+# so that we don't end up with two different tar
+#
+# --disable-year2038: tells the configure script to not abort if the
+# system is not Y2038 compliant. tar will support year2038 if the
+# system is compliant even with this option passed
+TAR_CONF_OPTS = \
+	--exec-prefix=/ \
+	--disable-year2038
 
 ifeq ($(BR2_PACKAGE_ACL),y)
 TAR_DEPENDENCIES += acl
@@ -53,5 +63,20 @@ HOST_TAR_CONF_OPTS = --without-selinux
 HOST_TAR_CONF_ENV = \
 	CC="$(HOSTCC_NOCCACHE)" \
 	CXX="$(HOSTCXX_NOCCACHE)"
+
+# Patches 0002-Fix-savannah-bug-#64441.patch and
+# 0003-tests-fix-LDADD.patch are patching Makefile.am, so they do
+# require TAR_AUTORECONF = YES above. However, for the host-tar
+# package we can't do this: we can't have host-tar depend on
+# host-{autoconf,automake,libtool} as those in turn might depend on
+# host-tar. Since the patches 0002 and 0003 are only related to
+# linking against libiconv, which is only an issue for the target tar,
+# we do not autoreconf, and touch the corresponding Makefile.in to
+# prevent them from being re-generated.
+HOST_TAR_AUTORECONF = NO
+define HOST_TAR_NO_AUTORECONF
+	touch $(@D)/src/Makefile.in $(@D)/tests/Makefile.in
+endef
+HOST_TAR_POST_PATCH_HOOKS += HOST_TAR_NO_AUTORECONF
 
 $(eval $(host-autotools-package))

@@ -30,6 +30,10 @@ endif
 
 OPTEE_OS_DEPENDENCIES = host-openssl host-python3 host-python-pyelftools
 
+ifeq ($(BR2_TARGET_OPTEE_OS_NEEDS_CMAKE),y)
+OPTEE_OS_DEPENDENCIES += $(BR2_CMAKE_HOST_DEPENDENCY)
+endif
+
 ifeq ($(BR2_TARGET_OPTEE_OS_NEEDS_PYTHON_CRYPTOGRAPHY),y)
 OPTEE_OS_DEPENDENCIES += host-python-cryptography
 else
@@ -50,18 +54,28 @@ OPTEE_OS_MAKE_OPTS = \
 	CROSS_COMPILE_core="$(TARGET_CROSS)" \
 	CROSS_COMPILE_ta_arm64="$(TARGET_CROSS)" \
 	CROSS_COMPILE_ta_arm32="$(TARGET_CROSS)" \
+	CROSS_COMPILE_ta_rv64="$(TARGET_CROSS)" \
 	PYTHON3="$(HOST_DIR)/bin/python3"
 
+ifeq ($(BR2_riscv),y)
+OPTEE_OS_MAKE_OPTS += \
+	ARCH=riscv \
+	CFG_RV64_core=y \
+	CFG_USER_TA_TARGETS=ta_rv64
+else
 ifeq ($(BR2_aarch64),y)
 OPTEE_OS_MAKE_OPTS += \
+	ARCH=arm \
 	CFG_ARM64_core=y \
 	CFG_USER_TA_TARGETS=ta_arm64
 else
 OPTEE_OS_MAKE_OPTS += \
+	ARCH=arm \
 	CFG_ARM32_core=y
 endif
+endif
 
-# Get mandatory PLAFORM and optional PLATFORM_FLAVOR and additional
+# Get mandatory PLATFORM and optional PLATFORM_FLAVOR and additional
 # variables
 OPTEE_OS_MAKE_OPTS += PLATFORM=$(call qstrip,$(BR2_TARGET_OPTEE_OS_PLATFORM))
 ifneq ($(call qstrip,$(BR2_TARGET_OPTEE_OS_PLATFORM_FLAVOR)),)
@@ -73,6 +87,10 @@ OPTEE_OS_MAKE_OPTS += $(call qstrip,$(BR2_TARGET_OPTEE_OS_ADDITIONAL_VARIABLES))
 # root path otherwise the output directory path depends on the target
 # platform name.
 OPTEE_OS_BUILDDIR_OUT = out
+ifeq ($(BR2_riscv),y)
+OPTEE_OS_LOCAL_SDK = $(OPTEE_OS_BUILDDIR_OUT)/export-ta_rv64
+OPTEE_OS_SDK = $(STAGING_DIR)/lib/optee/export-ta_rv64
+endif
 ifeq ($(BR2_aarch64),y)
 OPTEE_OS_LOCAL_SDK = $(OPTEE_OS_BUILDDIR_OUT)/export-ta_arm64
 OPTEE_OS_SDK = $(STAGING_DIR)/lib/optee/export-ta_arm64

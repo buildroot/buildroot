@@ -41,6 +41,49 @@ After building, you should obtain the following files:
   |-- u-boot-spl.bin
   `-- u-boot.itb
 
+How to update the bootloader and device-tree
+============================================
+
+To update the bootloader and device tree, make sure you have
+an ICEman (Andes OpenOCD [1]) and AICE [2] connection set up
+as below:
+
+  Local Host                 Local/Remote Host
+ .-----------------.          .--------------.
+ | buildroot images|          |              |
+ |                 |         ICEman host <IP:PORT>
+ | .----------.    |          |  .--------.  |
+ | | SPI_burn |<---+--socket--+->| ICEman |  |
+ | '----------'    |          |  '--.-----'  |
+ '-----------------'          '-----|--------'
+                                    |
+                                    USB
+   .--------------.                 |
+   | target       |           .-----v-----.
+   | board        <----JTAG---| AICE      |
+   |              |           '-----------'
+   '--------------'
+
+[1] https://github.com/andestech/ICEman
+[2] https://www.andestech.com/en/products-solutions/andeshape-platforms/aice-micro/
+
+The Andes SPI_burn tool will be located in output/host/bin. Use
+the following commands to update the bootloader and device tree:
+
+  $ SPI_burn --host $ICE_IP --port $ICE_BURNER_PORT --addr 0x0     -i u-boot-spl.bin
+  $ SPI_burn --host $ICE_IP --port $ICE_BURNER_PORT --addr 0x10000 -i u-boot.itb
+  $ SPI_burn --host $ICE_IP --port $ICE_BURNER_PORT --addr 0xf0000 -i ae350_ax45mp.dtb
+
+Note that the --addr option specifies the offset starting from
+the flash base address 0x80000000 and set by U-Boot configurations.
+e.g.
+u-boot-spl.bin  : CONFIG_SPL_TEXT_BASE=0x80000000
+u-boot.itb      : CONFIG_SPL_LOAD_FIT_ADDRESS=0x80010000
+ae350_ax45mp.dtb: CONFIG_SYS_FDT_BASE=0x800f0000
+
+How to write the SD card
+========================
+
 Copy the sdcard.img to a SD card with "dd":
 
   $ sudo dd if=sdcard.img of=/dev/sdX bs=4096

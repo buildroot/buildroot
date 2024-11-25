@@ -1,27 +1,29 @@
-From ddde652460350b962d32036981ff8ed77ed2f1ed Mon Sep 17 00:00:00 2001
+From 48f25939f4a48b01072f3cd2ece1e36a41c0ad44 Mon Sep 17 00:00:00 2001
 From: Armin Novak <armin.novak@thincast.com>
 Date: Wed, 16 Sep 2020 09:30:37 +0200
 Subject: [PATCH] Fix variable declaration in loop
 
 Upstream: https://github.com/FreeRDP/FreeRDP/commit/ddde652460350b962d32036981ff8ed77ed2f1ed
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  client/X11/xf_graphics.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/client/X11/xf_graphics.c b/client/X11/xf_graphics.c
-index 76fbef5bd6..bf71b563c3 100644
+index 5aa1fd48b5a3..c8f24362aec7 100644
 --- a/client/X11/xf_graphics.c
 +++ b/client/X11/xf_graphics.c
-@@ -386,6 +386,7 @@ static BOOL xf_Pointer_New(rdpContext* context, rdpPointer* pointer)
- static void xf_Pointer_Free(rdpContext* context, rdpPointer* pointer)
- {
+@@ -447,6 +447,7 @@ static void xf_Pointer_Free(rdpContext* context, rdpPointer* pointer)
+ 	WLog_DBG(TAG, "%s: %p", __func__, pointer);
+ 
  #ifdef WITH_XCURSOR
 +	UINT32 i;
  	xfContext* xfc = (xfContext*)context;
  	xfPointer* xpointer = (xfPointer*)pointer;
  
-@@ -395,7 +396,7 @@ static void xf_Pointer_Free(rdpContext* context, rdpPointer* pointer)
+@@ -456,7 +457,7 @@ static void xf_Pointer_Free(rdpContext* context, rdpPointer* pointer)
  	free(xpointer->cursorWidths);
  	free(xpointer->cursorHeights);
  
@@ -30,3 +32,6 @@ index 76fbef5bd6..bf71b563c3 100644
  	{
  		XFreeCursor(xfc->display, xpointer->cursors[i]);
  	}
+-- 
+2.43.0
+

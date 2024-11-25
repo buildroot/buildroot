@@ -5,21 +5,14 @@ config BR2_PACKAGE_IPMITOOL
 	  IPMItool provides a simple command-line interface to
 	  IPMI-enabled devices.
 
+	  ipmitool will look up the IANA PEN (Enterprise Numbers)
+	  registry in /usr/share/misc/iana/. The IANA PEN is optional,
+	  it can be provided by the iana-assignment package or by a
+	  rootfs overlay.
+
 	  https://github.com/ipmitool/ipmitool/
 
 if BR2_PACKAGE_IPMITOOL
-
-config BR2_PACKAGE_IPMITOOL_PEN_REG_URI
-	string "IANA PEN registry URL or path"
-	default "https://www.iana.org/assignments/enterprise-numbers.txt"
-	help
-	  Enter an URL or a file path to the PEN registry to use.
-
-	  Note that the official registry is 4MiB+ and may change any
-	  time and is thus not guaranteed to be reproducible.
-
-	  Leave empty to not use a registry; vendor IDs will be
-	  displayed instead of the corresponding names.
 
 config BR2_PACKAGE_IPMITOOL_LANPLUS
 	bool "enable lanplus interface"

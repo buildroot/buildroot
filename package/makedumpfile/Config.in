@@ -8,11 +8,10 @@ config BR2_PACKAGE_MAKEDUMPFILE_ARCH_SUPPORTS
 	default y if BR2_s390x
 	default y if BR2_sparc64
 
-comment "makedumpfile needs a uClibc or glibc toolchain w/ wchar, dynamic library, threads"
+comment "makedumpfile needs a toolchain w/ wchar, dynamic library, threads"
 	depends on BR2_PACKAGE_MAKEDUMPFILE_ARCH_SUPPORTS
 	depends on !BR2_USE_WCHAR || BR2_STATIC_LIBS \
-		|| !BR2_TOOLCHAIN_HAS_THREADS \
-		|| !(BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC)
+		|| !BR2_TOOLCHAIN_HAS_THREADS
 
 config BR2_PACKAGE_MAKEDUMPFILE
 	bool "makedumpfile"
@@ -20,7 +19,6 @@ config BR2_PACKAGE_MAKEDUMPFILE
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on !BR2_STATIC_LIBS # dlopen
 	depends on BR2_USE_WCHAR
-	depends on BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_GLIBC
 	select BR2_PACKAGE_BZIP2
 	select BR2_PACKAGE_ELFUTILS
 	select BR2_PACKAGE_XZ

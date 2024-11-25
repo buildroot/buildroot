@@ -5,9 +5,10 @@ config BR2_PACKAGE_PYTHON_TWISTED
 	select BR2_PACKAGE_PYTHON_AUTOMAT # runtime
 	select BR2_PACKAGE_PYTHON_CONSTANTLY # runtime
 	select BR2_PACKAGE_PYTHON_HYPERLINK # runtime
-	select BR2_PACKAGE_PYTHON_PYHAMCREST # runtime
 	select BR2_PACKAGE_PYTHON_ZOPE_INTERFACE # runtime
 	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime
+	select BR2_PACKAGE_PYTHON3_PYEXPAT # runtime
+	select BR2_PACKAGE_PYTHON3_ZLIB # runtime
 	help
 	  Twisted is an event-driven networking engine written in
 	  Python.
@@ -35,7 +36,6 @@ config BR2_PACKAGE_PYTHON_TWISTED_CONCH
 	select BR2_PACKAGE_PYTHON_APPDIRS # runtime
 	select BR2_PACKAGE_PYTHON_BCRYPT # runtime
 	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime
-	select BR2_PACKAGE_PYTHON_PYASN1 # runtime
 
 config BR2_PACKAGE_PYTHON_TWISTED_SERIAL
 	bool "Serial support"

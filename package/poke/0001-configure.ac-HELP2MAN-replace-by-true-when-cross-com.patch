@@ -1,4 +1,4 @@
-From 51fb81264323f01a86dd0bdeaf1c7a044a9cb6dc Mon Sep 17 00:00:00 2001
+From a7e29f73dab5f9bd4fc7a2407f1ed2022c4ff109 Mon Sep 17 00:00:00 2001
 From: Romain Naour <romain.naour@gmail.com>
 Date: Fri, 30 Apr 2021 15:43:59 +0200
 Subject: [PATCH] configure.ac: HELP2MAN replace ':' by 'true' when
@@ -12,15 +12,17 @@ Avoid:
 ../run: line 51: exec: :: not found
 
 Signed-off-by: Romain Naour <romain.naour@gmail.com>
+[Julien: refreshed the patch to be applied with fuzz factor 0]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
 ---
  configure.ac | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index a1943b57..c633f719 100644
+index 71b4d86..6487b57 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -90,7 +90,7 @@ gl_LIBTEXTSTYLE_OPTIONAL([0.20.5])
+@@ -88,7 +88,7 @@ gl_LIBTEXTSTYLE_OPTIONAL([0.20.5])
  if test $cross_compiling = no; then
    AM_MISSING_PROG(HELP2MAN, help2man)
  else
@@ -28,7 +30,7 @@ index a1943b57..c633f719 100644
 +  HELP2MAN=true
  fi
  
- dnl recfix is part of the GNU recutils suite, and is used in cfg.mk to
+ dnl The following Automake conditional is used in some Makefile.am files
 -- 
-2.31.1
+2.45.2
 

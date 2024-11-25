@@ -22,17 +22,17 @@ selections are highly application-specific.
 Once you have a known working configuration, run +make
 savedefconfig+. This will generate a minimal +defconfig+ file at the
 root of the Buildroot source tree. Move this file into the +configs/+
-directory, and rename it +<boardname>_defconfig+. If the configuration
-is a bit more complicated, it is nice to manually reformat it and
-separate it into sections, with a comment before each section. Typical
-sections are _Architecture_, _Toolchain options_ (typically just linux
-headers version), _Firmware_, _Bootloader_, _Kernel_, and _Filesystem_.
+directory, and rename it +<boardname>_defconfig+.
 
 Always use fixed versions or commit hashes for the different
 components, not the "latest" version. For example, set
 +BR2_LINUX_KERNEL_CUSTOM_VERSION=y+ and
 +BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE+ to the kernel version you tested
-with.
+with. If you are using the buildroot toolchain +BR2_TOOLCHAIN_BUILDROOT+
+(which is the default), additionally ensure that the same kernel headers
+are used (+BR2_KERNEL_HEADERS_AS_KERNEL+, which is also the default) and
+set the custom kernel headers series to match your kernel version
+(+BR2_PACKAGE_HOST_LINUX_HEADERS_CUSTOM_*+).
 
 It is recommended to use as much as possible upstream versions of the
 Linux kernel and bootloaders, and to use as much as possible default
@@ -51,10 +51,10 @@ Before submitting patches for new boards it is recommended to test it by
 building it using latest gitlab-CI docker container. To do this use
 +utils/docker-run+ script and inside it issue these commands:
 
---------------------
+----
  $ make <boardname>_defconfig
  $ make
---------------------
+----
 
 By default, Buildroot developers use the official image hosted on the
 https://gitlab.com/buildroot.org/buildroot/container_registry/2395076[gitlab.com

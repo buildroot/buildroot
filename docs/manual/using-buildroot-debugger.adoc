@@ -24,9 +24,9 @@ To achieve this:
 Now, to start debugging a program called +foo+, you should run on the
 target:
 
-----------------------------
+----
 gdbserver :2345 foo
-----------------------------
+----
 
 This will cause +gdbserver+ to listen on TCP port 2345 for a connection
 from the cross gdb.
@@ -34,9 +34,9 @@ from the cross gdb.
 Then, on the host, you should start the cross gdb using the following
 command line:
 
-----------------------------
+----
 <buildroot>/output/host/bin/<tuple>-gdb -ix <buildroot>/output/staging/usr/share/buildroot/gdbinit foo
-----------------------------
+----
 
 Of course, +foo+ must be available in the current directory, built
 with debugging symbols. Typically you start this command from the
@@ -48,6 +48,6 @@ cross gdb where to find the libraries of the target.
 
 Finally, to connect to the target from the cross gdb:
 
-----------------------------
+----
 (gdb) target remote <target ip address>:2345
-----------------------------
+----

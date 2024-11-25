@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CRUN_VERSION = 1.12
+CRUN_VERSION = 1.18.2
 CRUN_SITE = https://github.com/containers/crun/releases/download/$(CRUN_VERSION)
 CRUN_DEPENDENCIES = host-pkgconf yajl
 
@@ -24,10 +24,6 @@ CRUN_DEPENDENCIES += libcap
 CRUN_CONF_OPTS += --enable-caps
 else
 CRUN_CONF_OPTS += --disable-caps
-endif
-
-ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)
-CRUN_DEPENDENCIES += libgcrypt
 endif
 
 ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)

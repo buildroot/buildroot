@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_PYSNMPCRYPTO
+	bool "python-pysnmpcrypto"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-cryptography
+	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime
+	help
+	  Strong cryptography support for PySNMP (SNMP library for
+	  Python).
+
+	  https://github.com/lextudio/pysnmpcrypto

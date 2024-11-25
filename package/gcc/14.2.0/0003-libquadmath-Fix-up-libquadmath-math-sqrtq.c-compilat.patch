@@ -1,0 +1,57 @@
+From ba9356565695728ce0c852f7de3de27f8745611d Mon Sep 17 00:00:00 2001
+From: Jakub Jelinek <jakub@redhat.com>
+Date: Sat, 3 Aug 2024 20:37:54 +0200
+Subject: [PATCH] libquadmath: Fix up libquadmath/math/sqrtq.c compilation in
+ some powerpc* configurations [PR116007]
+
+My PR114623 change started using soft-fp.h and quad.h for the sqrtq implementation.
+Unfortunately, that seems to fail building in some powerpc* configurations, where
+TFmode isn't available.
+quad.h has:
+ #ifndef TFtype
+ typedef float TFtype __attribute__ ((mode (TF)));
+ #endif
+and uses TFtype.  quad.h has:
+ /* Define the complex type corresponding to __float128
+    ("_Complex __float128" is not allowed) */
+ #if (!defined(_ARCH_PPC)) || defined(__LONG_DOUBLE_IEEE128__)
+ typedef _Complex float __attribute__((mode(TC))) __complex128;
+ #else
+ typedef _Complex float __attribute__((mode(KC))) __complex128;
+ #endif
+with the conditional and KCmode use added during porting of libquadmath
+to powerpc*, so I've just defined TFtype for powerpc when __LONG_DOUBLE_IEEE128__
+isn't defined; I could define it to float __attribute__ ((mode (KF))) but it
+seemed easier to just define it to __float128 which should do the same thing.
+
+2024-08-03  Jakub Jelinek  <jakub@redhat.com>
+
+	PR target/116007
+	* math/sqrtq.c (TFtype): For PowerPC without __LONG_DOUBLE_IEEE128__
+	define to __float128 before including soft-fp.h and quad.h.
+
+(cherry picked from commit 3ac02e67503ccffa3dfeeffc0a60fce6bdaca43b)
+Upstream: https://gcc.gnu.org/g:3ac02e67503ccffa3dfeeffc0a60fce6bdaca43b
+Upstream: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=116007
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ libquadmath/math/sqrtq.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/libquadmath/math/sqrtq.c b/libquadmath/math/sqrtq.c
+index 8ca2828d42c..a58998a0667 100644
+--- a/libquadmath/math/sqrtq.c
++++ b/libquadmath/math/sqrtq.c
+@@ -9,6 +9,9 @@
+     && defined(FE_TOWARDZERO) \
+     && defined(FE_INEXACT)
+ #define USE_SOFT_FP 1
++#if defined(_ARCH_PPC) && !defined(__LONG_DOUBLE_IEEE128__)
++#define TFtype __float128
++#endif
+ #include "../../libgcc/soft-fp/soft-fp.h"
+ #include "../../libgcc/soft-fp/quad.h"
+ #endif
+-- 
+2.46.0
+

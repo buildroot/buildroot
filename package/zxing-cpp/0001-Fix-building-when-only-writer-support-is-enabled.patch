@@ -1,0 +1,164 @@
+From aef33b66df0ad6f085dc55b50d7847e0b8a2ccd8 Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Wed, 17 Jul 2024 14:53:35 +0200
+Subject: [PATCH] Fix building when only writer support is enabled
+
+The compilation of the following code, which links the zxing-cpp library
+built with only the writer (encoder) support, raises the following
+linking errors:
+
+using namespace ZXing;
+
+int main(void)
+{
+	std::string str = "01";
+	BitHacks::NumberOfLeadingZeros(0);
+	auto writer = MultiFormatWriter(BarcodeFormat::Code128);
+	writer.setEncoding(CharacterSet::UTF8);
+	writer.setMargin(0);
+	auto matrix = writer.encode(str, 0, 0 /*scaledImageWidth, pixelHeight*/);
+
+	return EXIT_SUCCESS;
+}
+
+arm-buildroot-linux-uclibcgnueabihf/bin/ld:host/arm-buildroot-linux-uclibcgnueabihf/sysroot/usr/lib/libZXing.so:
+undefined reference to `ZXing::TextDecoder::GuessEncoding(unsigned char const*, unsigned int, ZXing::CharacterSet)'
+arm-buildroot-linux-uclibcgnueabihf/bin/ld: host/arm-buildroot-linux-uclibcgnueabihf/sysroot/usr/lib/libZXing.so:
+undefined reference to `ZXing::HRIFromGS1[abi:cxx11](std::basic_string_view<char, std::char_traits<char> >)'
+arm-buildroot-linux-uclibcgnueabihf/bin/ld: host/arm-buildroot-linux-uclibcgnueabihf/sysroot/usr/lib/libZXing.so:
+undefined reference to `ZXing::TextDecoder::Append(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, unsigned char const*, unsigned int, ZXing::CharacterSet, bool)'
+arm-buildroot-linux-uclibcgnueabihf/bin/ld: host/arm-buildroot-linux-uclibcgnueabihf/sysroot/usr/lib/libZXing.so:
+undefined reference to `ZXing::HRIFromISO15434[abi:cxx11](std::basic_string_view<char, std::char_traits<char> >)'
+collect2: error: ld returned 1 exit status
+
+The patch fixes these errors.
+
+Co-Developed-by: Francesco Nicoletta Puzzillo <francesco.nicolettap@amarula>
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: backport from upstream https://github.com/zxing-cpp/zxing-cpp/pull/811
+---
+ core/src/Content.cpp     | 4 ++++
+ core/src/Content.h       | 6 ++++++
+ core/src/DecoderResult.h | 2 ++
+ core/src/GTIN.cpp        | 2 ++
+ core/src/GTIN.h          | 2 ++
+ 5 files changed, 16 insertions(+)
+
+diff --git a/core/src/Content.cpp b/core/src/Content.cpp
+index 4d3c44657cf9..569d4e35614a 100644
+--- a/core/src/Content.cpp
++++ b/core/src/Content.cpp
+@@ -93,6 +93,7 @@ bool Content::canProcess() const
+ 	return std::all_of(encodings.begin(), encodings.end(), [](Encoding e) { return CanProcess(e.eci); });
+ }
+ 
++#ifdef ZXING_READERS
+ std::string Content::render(bool withECI) const
+ {
+ 	if (empty() || !canProcess())
+@@ -165,6 +166,7 @@ std::wstring Content::utfW() const
+ {
+ 	return FromUtf8(render(false));
+ }
++#endif // ZXING_READERS
+ 
+ ByteArray Content::bytesECI() const
+ {
+@@ -188,6 +190,7 @@ ByteArray Content::bytesECI() const
+ 	return ByteArray(res);
+ }
+ 
++#ifdef ZXING_READERS
+ CharacterSet Content::guessEncoding() const
+ {
+ 	// assemble all blocks with unknown encoding
+@@ -236,5 +239,6 @@ ContentType Content::type() const
+ 
+ 	return ContentType::Mixed;
+ }
++#endif // ZXING_READERS
+ 
+ } // namespace ZXing
+diff --git a/core/src/Content.h b/core/src/Content.h
+index 99e5a01e7140..aa77bda94d54 100644
+--- a/core/src/Content.h
++++ b/core/src/Content.h
+@@ -38,7 +38,9 @@ class Content
+ 	void ForEachECIBlock(FUNC f) const;
+ 
+ 	void switchEncoding(ECI eci, bool isECI);
++#ifdef ZXING_READERS
+ 	std::string render(bool withECI) const;
++#endif // ZXING_READERS
+ 
+ public:
+ 	struct Encoding
+@@ -75,13 +77,17 @@ public:
+ 	bool empty() const { return bytes.empty(); }
+ 	bool canProcess() const;
+ 
++#ifdef ZXING_READERS
+ 	std::string text(TextMode mode) const;
+ 	std::wstring utfW() const; // utf16 or utf32 depending on the platform, i.e. on size_of(wchar_t)
+ 	std::string utf8() const { return render(false); }
++#endif // ZXING_READERS
+ 
+ 	ByteArray bytesECI() const;
++#ifdef ZXING_READERS
+ 	CharacterSet guessEncoding() const;
+ 	ContentType type() const;
++#endif // ZXING_READERS
+ };
+ 
+ } // ZXing
+diff --git a/core/src/DecoderResult.h b/core/src/DecoderResult.h
+index 02b285084195..3117b03a923a 100644
+--- a/core/src/DecoderResult.h
++++ b/core/src/DecoderResult.h
+@@ -50,7 +50,9 @@ public:
+ 	Content&& content() && { return std::move(_content); }
+ 
+ 	// to keep the unit tests happy for now:
++#ifdef ZXING_READERS
+ 	std::wstring text() const { return _content.utfW(); }
++#endif // ZXING_READERS
+ 	std::string symbologyIdentifier() const { return _content.symbology.toString(false); }
+ 
+ 	// Simple macro to set up getter/setter methods that save lots of boilerplate.
+diff --git a/core/src/GTIN.cpp b/core/src/GTIN.cpp
+index 256855a03070..690901062301 100644
+--- a/core/src/GTIN.cpp
++++ b/core/src/GTIN.cpp
+@@ -199,6 +199,7 @@ std::string LookupCountryIdentifier(const std::string& GTIN, const BarcodeFormat
+ 	return it != std::end(COUNTRIES) && prefix >= it->first && prefix <= it->last ? it->id : std::string();
+ }
+ 
++#ifdef ZXING_READERS
+ std::string EanAddOn(const Result& result)
+ {
+ 	if (!(BarcodeFormat::EAN13 | BarcodeFormat::UPCA | BarcodeFormat::UPCE | BarcodeFormat::EAN8)
+@@ -208,6 +209,7 @@ std::string EanAddOn(const Result& result)
+ 	auto pos = txt.find(' ');
+ 	return pos != std::string::npos ? std::string(txt.substr(pos + 1)) : std::string();
+ }
++#endif // ZXING_READERS
+ 
+ std::string IssueNr(const std::string& ean2AddOn)
+ {
+diff --git a/core/src/GTIN.h b/core/src/GTIN.h
+index d56b604e5f71..9af0b01200ce 100644
+--- a/core/src/GTIN.h
++++ b/core/src/GTIN.h
+@@ -47,7 +47,9 @@ bool IsCheckDigitValid(const std::basic_string<T>& s)
+  */
+ std::string LookupCountryIdentifier(const std::string& GTIN, const BarcodeFormat format = BarcodeFormat::None);
+ 
++#ifdef ZXING_READERS
+ std::string EanAddOn(const Result& result);
++#endif // ZXING_READERS
+ 
+ std::string IssueNr(const std::string& ean2AddOn);
+ std::string Price(const std::string& ean5AddOn);
+-- 
+2.43.0
+

@@ -20,12 +20,14 @@ This patch makes a number of improvements to the bzip2 build system:
    appropriate symbolic links.
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
 Index: b/Makefile
 ===================================================================
 --- a/Makefile
 +++ b/Makefile
-@@ -20,8 +20,7 @@
+@@ -20,8 +20,7 @@ AR=ar
  RANLIB=ranlib
  LDFLAGS=
  
@@ -35,7 +37,7 @@ Index: b/Makefile
  
  # Where you want it installed when you do 'make install'
  PREFIX=/usr/local
-@@ -90,14 +89,14 @@
+@@ -90,14 +89,14 @@ install: bzip2 bzip2recover
  	cp -f libbz2.a $(PREFIX)/lib
  	chmod a+r $(PREFIX)/lib/libbz2.a
  	cp -f bzgrep $(PREFIX)/bin/bzgrep
@@ -66,9 +68,9 @@ Index: b/Makefile-libbz2_so
 -CFLAGS=-fpic -fPIC -Wall -Winline -O2 -g $(BIGFILES)
 +override CFLAGS += -fpic -fPIC -Wall
  
- OBJS= blocksort.o  \
-       huffman.o    \
-@@ -37,8 +36,11 @@
+ OBJS= blocksort.sho  \
+       huffman.sho    \
+@@ -37,8 +36,11 @@ OBJS= blocksort.sho  \
  all: $(OBJS)
  	$(CC) -shared -Wl,-soname -Wl,libbz2.so.1.0 -o libbz2.so.1.0.8 $(OBJS)
  	$(CC) $(CFLAGS) -o bzip2-shared bzip2.c libbz2.so.1.0.8

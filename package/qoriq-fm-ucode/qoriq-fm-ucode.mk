@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-QORIQ_FM_UCODE_VERSION = LSDK-21.08
+QORIQ_FM_UCODE_VERSION = lf-6.6.23-2.0.0
 QORIQ_FM_UCODE_SITE = $(call github,nxp-qoriq,qoriq-fm-ucode,$(QORIQ_FM_UCODE_VERSION))
 QORIQ_FM_UCODE_LICENSE = NXP Binary EULA
-QORIQ_FM_UCODE_LICENSE_FILES = NXP-Binary-EULA.txt
+QORIQ_FM_UCODE_LICENSE_FILES = LICENSE
 QORIQ_FM_UCODE_INSTALL_IMAGES = YES
 QORIQ_FM_UCODE_INSTALL_TARGET = NO
 

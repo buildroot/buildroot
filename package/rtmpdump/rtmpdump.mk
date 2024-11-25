@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RTMPDUMP_VERSION = c5f04a58fc2aeea6296ca7c44ee4734c18401aa3
+RTMPDUMP_VERSION = 6f6bb1353fc84f4cc37138baa99f586750028a01
 RTMPDUMP_SITE = https://git.ffmpeg.org/rtmpdump
 RTMPDUMP_SITE_METHOD = git
 RTMPDUMP_INSTALL_STAGING = YES

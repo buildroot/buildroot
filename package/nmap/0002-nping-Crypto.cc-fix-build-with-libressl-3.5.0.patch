@@ -1,4 +1,4 @@
-From 4ebea5c1d1a10be0d0165da3b9c0e1fa82c3db3c Mon Sep 17 00:00:00 2001
+From 0a79771c302bf398150da78cd18b67cb9b67f47a Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Sat, 21 May 2022 17:51:37 +0200
 Subject: [PATCH] nping/Crypto.cc: fix build with libressl >= 3.5.0
@@ -15,15 +15,17 @@ Fixes:
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Upstream: https://github.com/nmap/nmap/pull/2480
+[Julien: rebased patch on version 7.95]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
 ---
  nping/Crypto.cc | 4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/nping/Crypto.cc b/nping/Crypto.cc
-index 850438352..9f7c88686 100644
+index 6f05db6..1d11d55 100755
 --- a/nping/Crypto.cc
 +++ b/nping/Crypto.cc
-@@ -70,7 +70,9 @@
+@@ -69,7 +69,9 @@
  #include <openssl/evp.h>
  #include <openssl/err.h>
  
@@ -32,8 +34,8 @@ index 850438352..9f7c88686 100644
 +	((!defined LIBRESSL_VERSION_NUMBER) || \
 +	(defined LIBRESSL_VERSION_NUMBER && LIBRESSL_VERSION_NUMBER >= 0x30500000L))
  #define HAVE_OPAQUE_EVP_PKEY 1
- #define FUNC_EVP_MD_CTX_init EVP_MD_CTX_reset
- #define FUNC_EVP_MD_CTX_cleanup EVP_MD_CTX_reset
+ #else
+ #define EVP_MD_CTX_new EVP_MD_CTX_create
 -- 
-2.35.1
+2.45.2
 

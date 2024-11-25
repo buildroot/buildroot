@@ -28,8 +28,8 @@ choice
 	prompt "Kernel version"
 
 config BR2_LINUX_KERNEL_LATEST_VERSION
-	bool "Latest version (6.8)"
-	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_8 if BR2_KERNEL_HEADERS_AS_KERNEL
+	bool "Latest version (6.11)"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_11 if BR2_KERNEL_HEADERS_AS_KERNEL
 
 config BR2_LINUX_KERNEL_LATEST_CIP_VERSION
 	bool "Latest CIP SLTS version (5.10.162-cip24)"
@@ -126,9 +126,15 @@ config BR2_LINUX_KERNEL_CUSTOM_REPO_VERSION
 
 endif
 
+config BR2_LINUX_KERNEL_CUSTOM_REPO_GIT_SUBMODULES
+	bool "Download also git submodules"
+	depends on BR2_LINUX_KERNEL_CUSTOM_GIT
+	help
+	  Include git submodules in the kernel source tree.
+
 config BR2_LINUX_KERNEL_VERSION
 	string
-	default "6.8.1" if BR2_LINUX_KERNEL_LATEST_VERSION
+	default "6.11.10" if BR2_LINUX_KERNEL_LATEST_VERSION
 	default "5.10.162-cip24" if BR2_LINUX_KERNEL_LATEST_CIP_VERSION
 	default "5.10.162-cip24-rt10" if BR2_LINUX_KERNEL_LATEST_CIP_RT_VERSION
 	default BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE \
@@ -485,6 +491,17 @@ config BR2_LINUX_KERNEL_NEEDS_HOST_PAHOLE
 	  Enable this option if you get a Linux kernel build failure
 	  such as "BTF: .tmp_vmlinux.btf: pahole (pahole) is not
 	  available".
+
+config BR2_LINUX_KERNEL_NEEDS_HOST_PYTHON3
+	bool "Needs host python3"
+	help
+	  Some Linux kernel configuration options (such as the
+	  CONFIG_DRM_MSM in v6.10 and greater) require a host python3
+	  interpreter. Enabling this option will ensure host-python3
+	  gets built before the Linux kernel.
+
+	  Enable this option if you get a Linux kernel build failure
+	  such as "python3: not found".
 
 # Linux extensions
 source "linux/Config.ext.in"

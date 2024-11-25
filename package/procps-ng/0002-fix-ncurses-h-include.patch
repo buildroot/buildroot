@@ -1,0 +1,55 @@
+From 263fe04f9ed6f3f40fdb7ce249221e03dc926c9b Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Wed, 24 Jul 2024 09:51:00 +0200
+Subject: [PATCH] fix ncurses.h include
+
+Commit 58559a5b64a3634460536d6397ca382a54b599f0 was not backported from
+3.3.17 to 4.0.0 resulting in the following build failure when ncursesw
+headers are not installed in ../usr/include/ncursesw/..:
+
+src/watch.c:56:11: fatal error: ncursesw/ncurses.h: No such file or directory
+   56 | # include <ncursesw/ncurses.h>
+      |           ^~~~~~~~~~~~~~~~~~~~
+
+Fixes:
+ - http://autobuild.buildroot.org/results/b7573be2e78f3d224f48cb3f52087e3d227d58e3
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+
+Upstream: https://gitlab.com/procps-ng/procps/-/commit/263fe04f9ed6f3f40fdb7ce249221e03dc926c9b
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[Bernd: backported to version 4.0.4]
+---
+ configure.ac | 2 +-
+ src/watch.c  | 5 ++++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index d433901f..38350aaf 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -64,7 +64,7 @@ PROCPS_PROG_PO4A
+ 
+ # Checks for header files.
+ AC_HEADER_MAJOR
+-AC_CHECK_HEADERS([arpa/inet.h fcntl.h float.h langinfo.h libintl.h limits.h locale.h stdint.h stdio_ext.h stdlib.h string.h sys/file.h sys/ioctl.h sys/param.h sys/time.h termios.h unistd.h utmp.h utmpx.h values.h wchar.h wctype.h])
++AC_CHECK_HEADERS([arpa/inet.h fcntl.h float.h langinfo.h libintl.h limits.h locale.h ncursesw/ncurses.h stdint.h stdio_ext.h stdlib.h string.h sys/file.h sys/ioctl.h sys/param.h sys/time.h termios.h unistd.h utmp.h utmpx.h values.h wchar.h wctype.h])
+ 
+ # Checks for typedefs, structures, and compiler characteristics.
+ AC_CHECK_HEADER_STDBOOL
+diff --git a/src/watch.c b/src/watch.c
+index ef638e00..7ec634b6 100644
+--- a/src/watch.c
++++ b/src/watch.c
+@@ -53,6 +53,8 @@
+ # define _XOPEN_SOURCE_EXTENDED 1
+ # include <wchar.h>
+ # include <wctype.h>
++#endif
++#ifdef HAVE_NCURSESW_NCURSES_H
+ # include <ncursesw/ncurses.h>
+ #else
+ # include <ncurses.h>
+-- 
+GitLab

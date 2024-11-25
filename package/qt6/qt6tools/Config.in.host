@@ -1,0 +1,25 @@
+config BR2_PACKAGE_HOST_QT6TOOLS
+	bool "host qt6tools"
+	# The Qt Qt Network module is required
+	select BR2_PACKAGE_HOST_QT6BASE_NETWORK
+	# Requires the Qt Sql module to build the qhelpgenerator
+	# tool, if target support for Sql is present
+	select BR2_PACKAGE_HOST_QT6BASE_SQL if BR2_PACKAGE_QT6BASE_SQL
+	help
+	  Qt is a cross-platform application and UI framework for
+	  developers using C++.
+
+	  Qt Tools provides tools facilitate the development
+	  and design of applications.
+
+	  https://github.com/qt/qttools
+
+if BR2_PACKAGE_HOST_QT6TOOLS
+
+config BR2_PACKAGE_HOST_QT6TOOLS_LINGUIST_TOOLS
+	bool "host linguist tools"
+	help
+	  Translate Qt C++ and Qt Quick applications into local
+	  languages.
+
+endif

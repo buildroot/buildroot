@@ -1,0 +1,37 @@
+From bcc172473a7f24c0598853c8ae555b6efaeb2fd2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Alejandro=20R=2E=20Sede=C3=B1o?= <asedeno@mit.edu>
+Date: Mon, 21 Oct 2024 12:56:35 +0200
+Subject: [PATCH] Makefile: adjust sed command for generating
+ "clar-decls.h"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This moves the end-of-line marker out of the captured group, matching
+the start-of-line marker and for some reason fixing generation of
+"clar-decls.h" on some older, more esoteric platforms.
+
+Signed-off-by: Alejandro R. Sedeño <asedeno@mit.edu>
+Signed-off-by: Patrick Steinhardt <ps@pks.im>
+Upstream: https://lore.kernel.org/r/17d77f36d41fb2928565a4922eab3a67426d2da6.1729506329.git.ps@pks.im
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 2dde1fd2b8..87c1f9e220 100644
+--- a/Makefile
++++ b/Makefile
+@@ -3906,7 +3906,7 @@ GIT-TEST-SUITES: FORCE
+ 
+ $(UNIT_TEST_DIR)/clar-decls.h: $(patsubst %,$(UNIT_TEST_DIR)/%.c,$(CLAR_TEST_SUITES)) GIT-TEST-SUITES
+ 	$(QUIET_GEN)for suite in $(CLAR_TEST_SUITES); do \
+-		sed -ne "s/^\(void test_$${suite}__[a-zA-Z_0-9][a-zA-Z_0-9]*(void)$$\)/extern \1;/p" $(UNIT_TEST_DIR)/$$suite.c; \
++		sed -ne "s/^\(void test_$${suite}__[a-zA-Z_0-9][a-zA-Z_0-9]*(void)\)$$/extern \1;/p" $(UNIT_TEST_DIR)/$$suite.c; \
+ 	done >$@
+ $(UNIT_TEST_DIR)/clar.suite: $(UNIT_TEST_DIR)/clar-decls.h
+ 	$(QUIET_GEN)awk -f $(UNIT_TEST_DIR)/clar-generate.awk $< >$(UNIT_TEST_DIR)/clar.suite
+-- 
+An old man doll... just what I always wanted! - Clara
+

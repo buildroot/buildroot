@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2024, ARM Limited and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include "fvp-base-gicv3-psci-1t.dts"
+
+/* The TF-A Devicetree does not have the OP-TEE node; let's add it. */
+
+/ {
+	firmware {
+		optee {
+			compatible = "linaro,optee-tz";
+			method = "smc";
+		};
+	};
+};

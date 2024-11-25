@@ -1,0 +1,102 @@
+comment "libgtk4 needs a toolchain w/ wchar, threads, C++, gcc >= 4.9"
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_USE_WCHAR || !BR2_INSTALL_LIBSTDCPP || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || \
+		!BR2_TOOLCHAIN_HAS_THREADS
+
+comment "libgtk4 needs an OpenGL(ES) EGL backend"
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_PACKAGE_HAS_LIBEGL
+
+config BR2_PACKAGE_LIBGTK4
+	bool "libgtk4"
+	depends on BR2_USE_WCHAR # glib2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # glib2
+	depends on BR2_USE_MMU # glib2
+	depends on BR2_INSTALL_LIBSTDCPP # pango
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # pango -> harfbuzz
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # pango -> harfbuzz
+	# Even in the case of X11/OpenGL, libgtk4 needs epoxy built
+	# with EGL support, see
+	# https://gitlab.gnome.org/GNOME/gtk/-/issues/6866.
+	depends on BR2_PACKAGE_HAS_LIBEGL
+	select BR2_PACKAGE_CAIRO
+	select BR2_PACKAGE_GDK_PIXBUF
+	select BR2_PACKAGE_GRAPHENE
+	select BR2_PACKAGE_LIBEPOXY
+	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_PANGO
+	select BR2_PACKAGE_TIFF
+	# At least one backend is required
+	select BR2_PACKAGE_LIBGTK4_BROADWAY if \
+		!(BR2_PACKAGE_LIBGTK4_X11 || BR2_PACKAGE_LIBGTK4_WAYLAND)
+	help
+	  The GTK version 4 graphical user interface library
+
+	  https://www.gtk.org/
+
+if BR2_PACKAGE_LIBGTK4
+
+config BR2_PACKAGE_LIBGTK4_BROADWAY
+	bool "Broadway GDK backend"
+	default y
+	  help
+	  This enables the Broadway backend for GDK, which provides
+	  support for displaying GTK+ applications in a web browser,
+	  using HTML5 and web sockets.
+
+	  For example, to run gtk4-demo on a target which IP address is
+	  192.168.0.1 and use it from a web browser, execute the
+	  following commands:
+
+	  $ broadwayd -a 192.168.0.1 -p 8080 :2 &
+	  $ export GDK_BACKEND=broadway
+	  $ export BROADWAY_DISPLAY=:2
+	  $ gtk4-demo
+
+	  Then open a web browser at address http://192.168.0.1:8080.
+	  Javascript and web sockets should be enabled.
+
+config BR2_PACKAGE_LIBGTK4_WAYLAND
+	bool "Wayland GDK backend"
+	default y
+	select BR2_PACKAGE_WAYLAND
+	select BR2_PACKAGE_WAYLAND_PROTOCOLS
+	select BR2_PACKAGE_LIBXKBCOMMON
+	help
+	  This enables the Wayland backend for GDK.
+
+comment "X11 GDK backend needs an OpenGL provider"
+	depends on !BR2_PACKAGE_HAS_LIBGL
+
+config BR2_PACKAGE_LIBGTK4_X11
+	bool "X11 GDK backend"
+	default y
+	depends on BR2_PACKAGE_XORG7
+	depends on BR2_PACKAGE_HAS_LIBGL
+	select BR2_PACKAGE_XLIB_LIBXCURSOR
+	select BR2_PACKAGE_XLIB_LIBXI
+	select BR2_PACKAGE_XLIB_LIBXINERAMA
+	help
+	  This enables the X11 backend for GDK.
+
+config BR2_PACKAGE_LIBGTK4_GSTREAMER
+	bool "gstreamer support"
+	select BR2_PACKAGE_GSTREAMER1
+	select BR2_PACKAGE_GST1_PLUGINS_BASE
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL
+	select BR2_PACKAGE_GST1_PLUGINS_BAD
+	help
+	  Enable gstreamer support.
+
+config BR2_PACKAGE_LIBGTK4_DEMO
+	bool "Install libgtk4 demo/example programs"
+	select BR2_PACKAGE_SHARED_MIME_INFO
+	select BR2_PACKAGE_HICOLOR_ICON_THEME
+	help
+	  The GTK source base contains demo/example programs.
+	  This option allows to install them to the target.
+
+endif

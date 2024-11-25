@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-AUBIO_VERSION = 0.4.9
-AUBIO_SITE = https://aubio.org/pub
-AUBIO_SOURCE = aubio-$(AUBIO_VERSION).tar.bz2
+AUBIO_VERSION = 152d6819b360c2e7b379ee3f373d444ab3df0895
+AUBIO_SITE = $(call github,aubio,aubio,$(AUBIO_VERSION))
 AUBIO_LICENSE = GPL-3.0+
 AUBIO_LICENSE_FILES = COPYING
 AUBIO_CPE_ID_VENDOR = aubio
@@ -59,7 +58,7 @@ else
 AUBIO_CONF_OPTS += --disable-fftw3
 endif
 
-ifeq ($(BR2_PACKAGE_FFMPEG_AVRESAMPLE),y)
+ifeq ($(BR2_PACKAGE_FFMPEG),y)
 AUBIO_DEPENDENCIES += ffmpeg
 AUBIO_CONF_OPTS += --enable-avcodec
 else

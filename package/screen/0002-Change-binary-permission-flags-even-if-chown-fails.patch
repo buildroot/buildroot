@@ -1,0 +1,33 @@
+From c348717c7f13efc2c26723670c4d520985eb41f7 Mon Sep 17 00:00:00 2001
+From: Maarten ter Huurne <maarten@treewalker.org>
+Date: Mon, 15 Sep 2014 00:03:05 +0200
+Subject: [PATCH] Change binary permission flags even if chown fails
+
+Typically when creating a package, the build is not run as root, so
+the chown will fail. But the chmod can still be done.
+
+Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+[Julien: rebase on top of 4.9.1]
+[Julien: rebase on top of 5.0.0]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ Makefile.in | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 860ecd7..5bb5ed8 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -78,7 +78,8 @@ tests/test-%: tests/test-%.c %.o tests/mallocmock.o tests/macros.h tests/signatu
+ 
+ install_bin: screen installdirs
+ 	$(INSTALL_PROGRAM) screen $(DESTDIR)$(bindir)/$(SCREEN)
+-	-chown root $(DESTDIR)$(bindir)/$(SCREEN) && chmod 4755 $(DESTDIR)$(bindir)/$(SCREEN)
++	-chown root $(DESTDIR)$(bindir)/$(SCREEN)
++	-chmod 4755 $(DESTDIR)$(bindir)/$(SCREEN)
+ 	rm -f $(DESTDIR)$(bindir)/screen
+ 	(cd $(DESTDIR)$(bindir) && ln -f -s $(SCREEN) screen)
+ 	cp $(srcdir)/utf8encodings/?? $(DESTDIR)$(SCREENENCODINGS)
+-- 
+2.46.2
+

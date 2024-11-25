@@ -149,8 +149,14 @@
 					#address-cells = <1>;
 					#size-cells = <1>;
 
-					eth0_addr: eth-mac-addr@9A {
-						reg = <0x0 0x06>;
+					nvmem-layout {
+						compatible = "fixed-layout";
+						#address-cells = <1>;
+						#size-cells = <1>;
+
+						eth0_addr: eth-mac-addr@9A {
+							reg = <0x0 0x06>;
+						};
 					};
 				};
 				

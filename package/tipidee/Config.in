@@ -1,0 +1,31 @@
+config BR2_PACKAGE_TIPIDEE
+	bool "tipidee"
+	depends on BR2_USE_MMU # skalibs
+	select BR2_PACKAGE_SKALIBS
+	select BR2_PACKAGE_HOST_TIPIDEE if BR2_PACKAGE_TIPIDEE_CONFIG_FILE != ""
+	help
+	  tipidee is a web server. It supports HTTP 1.0 and 1.1. It aims
+	  to be compliant with RFC 9112: while it only implements a very
+	  limited subset of the optional functionality in HTTP 1.1, it
+	  implements all the mandatory parts. It is usable with both
+	  HTTP and HTTPS.
+
+	  It runs under a super-server, e.g. inetd, s6-tcpserver, or
+	  s6-tlsserver (for HTTPS). Traditionally, inetd-mode web
+	  servers aren't considered performant, but tipidee aims to eke
+	  out every single drop of performance that is attainable with
+	  its programming model.
+
+	  https://skarnet.org/software/tipidee/
+
+if BR2_PACKAGE_TIPIDEE
+
+config BR2_PACKAGE_TIPIDEE_CONFIG_FILE
+	string "configuration source file"
+	default ""
+	help
+	  The configuration file in source (text) format, documented at:
+
+	  https://skarnet.org/software/tipidee/tipidee.conf.html
+
+endif

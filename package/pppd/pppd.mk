@@ -6,7 +6,7 @@
 
 # The tarball provided at https://download.samba.org/pub/ppp/ does not
 # include the license files yet so we use the github tarball.
-PPPD_VERSION = 2.5.0
+PPPD_VERSION = 2.5.1
 PPPD_SITE = $(call github,ppp-project,ppp,ppp-$(PPPD_VERSION))
 PPPD_LICENSE = LGPL-2.0+, LGPL, BSD-4-Clause, BSD-3-Clause, GPL-2.0+
 PPPD_LICENSE_FILES = LICENSE.BSD LICENSE.GPL-2
@@ -16,6 +16,13 @@ PPPD_SELINUX_MODULES = ppp
 PPPD_AUTORECONF = YES
 PPPD_INSTALL_STAGING = YES
 PPPD_CONF_OPTS = --enable-multilink
+
+ifeq ($(BR2_PACKAGE_LINUX_PAM),y)
+PPPD_CONF_OPTS += --with-pam=$(STAGING_DIR)/usr
+PPPD_DEPENDENCIES += linux-pam
+else
+PPPD_CONF_OPTS += --without-pam
+endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 PPPD_CONF_OPTS += \

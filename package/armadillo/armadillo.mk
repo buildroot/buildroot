@@ -5,8 +5,8 @@
 ################################################################################
 
 ARMADILLO_VERSION = 9.900.2
-ARMADILLO_SOURCE = armadillo-$(ARMADILLO_VERSION).tar.xz
-ARMADILLO_SITE = https://downloads.sourceforge.net/project/arma
+ARMADILLO_SOURCE = armadillo-$(ARMADILLO_VERSION).tar.xz.RETIRED
+ARMADILLO_SITE = https://sourceforge.net/projects/arma/files/retired
 ARMADILLO_INSTALL_STAGING = YES
 ARMADILLO_LICENSE = Apache-2.0
 ARMADILLO_LICENSE_FILES = LICENSE.txt
@@ -29,5 +29,9 @@ ifeq ($(BR2_PACKAGE_LAPACK),y)
 ARMADILLO_CONF_OPTS += -DLAPACK_FOUND=ON
 ARMADILLO_DEPENDENCIES += lapack
 endif
+
+define ARMADILLO_EXTRACT_CMDS
+	$(TAR) --strip-components=1 -C $(@D) $(TAR_OPTIONS) $($(PKG)_DL_DIR)/$(ARMADILLO_SOURCE)
+endef
 
 $(eval $(cmake-package))

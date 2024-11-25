@@ -15,4 +15,6 @@ DC3DD_LICENSE_FILES = COPYING
 DC3DD_AUTORECONF = YES
 DC3DD_AUTOPOINT = YES
 
+DC3DD_CONF_ENV = ac_cv_func_working_mktime=yes
+
 $(eval $(autotools-package))

@@ -1,0 +1,48 @@
+From 3cdf8aa3ff45e35a237285c107785bc3d2c6976a Mon Sep 17 00:00:00 2001
+From: Ludwig Kormann <ludwig.kormann@ict42.de>
+Date: Wed, 31 Jan 2024 11:28:19 +0100
+Subject: [PATCH] sunxi: sun4i: Reduce cpu clock at SPL initialization to 144
+ MHz
+
+Up until now cpu clock gets initialized at 384 MHz, which is
+the highest supported cpu clock.
+
+Recent A20 batches show an increased percentage of modules
+reacting very sensitive to operating conditions outside the
+specifications.
+
+The cpu dies very shortly after PLLs, core frequency or cpu
+voltage are missconfigured. E.g.:
+- uboot SPL selects 384 MHz as cpu clock which requires a cpu
+  voltage of at least 1.1 V.
+- Linux CPU Frequency scaling with most sun7i dts will reduce
+  cpu voltage down to 1.0 V.
+- When intiating a reboot or reset from linux the cpu voltage
+  may keep the 1.0 V configuration and the cpu dies during SPL
+  initialization.
+
+Therefore reduce cpu clock at uboot SPL initialization down
+to 144 MHz from 384 MHz.
+
+Signed-off-by: Ludwig Kormann <ludwig.kormann@ict42.de>
+Upstream: Not Applicable
+---
+ arch/arm/include/asm/arch-sunxi/clock_sun4i.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/include/asm/arch-sunxi/clock_sun4i.h b/arch/arm/include/asm/arch-sunxi/clock_sun4i.h
+index 2cec91cb20..252c4c693e 100644
+--- a/arch/arm/include/asm/arch-sunxi/clock_sun4i.h
++++ b/arch/arm/include/asm/arch-sunxi/clock_sun4i.h
+@@ -141,7 +141,7 @@ struct sunxi_ccm_reg {
+ #define CCM_PLL1_CFG_SIG_DELT_PAT_EN_SHIFT	2
+ #define CCM_PLL1_CFG_FACTOR_M_SHIFT		0
+ 
+-#define PLL1_CFG_DEFAULT	0xa1005000
++#define PLL1_CFG_DEFAULT	0xa1004c01
+ 
+ #if defined CONFIG_OLD_SUNXI_KERNEL_COMPAT && defined CONFIG_MACH_SUN5I
+ /*
+-- 
+2.39.2
+

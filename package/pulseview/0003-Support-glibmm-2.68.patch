@@ -1,4 +1,4 @@
-From a97d5a060a534a3c658578e7f14ab43556db93ca Mon Sep 17 00:00:00 2001
+From cbdd970fa4a805cefcad2e692df204bfceb46e16 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Thu, 30 Dec 2021 16:19:46 +0100
 Subject: [PATCH] Support glibmm 2.68
@@ -10,14 +10,16 @@ https://gitlab.gnome.org/GNOME/glibmm/-/blob/2.68.2/NEWS
 C++17 support is mandatory with glibmm 2.68
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
-[Upstream status: not sent yet]
+Upstream: not sent yet
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  CMakeLists.txt | 23 +++++++++++++++++++----
  INSTALL        |  2 +-
  2 files changed, 20 insertions(+), 5 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 7791b1b1..58a9cf92 100644
+index c29fa283bcb6..e739d5fccaa7 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -75,7 +75,14 @@ add_subdirectory(manual)
@@ -44,9 +46,9 @@ index 7791b1b1..58a9cf92 100644
  pkg_check_modules(LIBSRCXX ${LIBSR_CXX_BINDING})
  if(NOT LIBSRCXX_FOUND OR NOT LIBSRCXX_VERSION)
  	message(FATAL_ERROR "libsigrok C++ bindings missing, check libsigrok's 'configure' output (missing dependencies?)")
-@@ -225,7 +231,11 @@ memaccess_check_unaligned_le(HAVE_UNALIGNED_LITTLE_ENDIAN_ACCESS)
+@@ -194,7 +200,11 @@ memaccess_check_unaligned_le(HAVE_UNALIGNED_LITTLE_ENDIAN_ACCESS)
  set(PV_TITLE PulseView)
- set(PV_VERSION_STRING "0.5.0")
+ set(PV_VERSION_STRING "0.4.2")
  
 -set(PV_GLIBMM_VERSION ${PKGDEPS_glibmm-2.4_VERSION})
 +if(LIBSRGLIBMM24_FOUND)
@@ -57,7 +59,7 @@ index 7791b1b1..58a9cf92 100644
  
  include(GetGitRevisionDescription)
  
-@@ -486,7 +496,12 @@ qt5_add_resources(pulseview_RESOURCES_RCC ${CMAKE_BINARY_DIR}/translations.qrc)
+@@ -445,7 +455,12 @@ qt5_add_resources(pulseview_RESOURCES_RCC ${CMAKE_BINARY_DIR}/translations.qrc)
  add_definitions(-DQT_NO_KEYWORDS)
  add_definitions(-D__STDC_LIMIT_MACROS)
  add_definitions(-Wall -Wextra)
@@ -69,10 +71,10 @@ index 7791b1b1..58a9cf92 100644
 +	add_definitions(-std=c++17)
 +endif()
  add_definitions(-DBOOST_MATH_DISABLE_FLOAT128=1)
- if(WIN32)
- 	add_definitions(-Wa,-mbig-obj -O3)
+ 
+ if(ENABLE_FLOW)
 diff --git a/INSTALL b/INSTALL
-index da89be8d..8003fcfb 100644
+index d666f0a7f824..ecf984f3c4b4 100644
 --- a/INSTALL
 +++ b/INSTALL
 @@ -14,7 +14,7 @@ Requirements
@@ -85,5 +87,5 @@ index da89be8d..8003fcfb 100644
      - Qt5Core, Qt5Gui, Qt5Widgets, Qt5Svg, Qt5LinguistTools
      - Qt translation package (optional; needed at runtime, not build time)
 -- 
-2.34.1
+2.43.0
 

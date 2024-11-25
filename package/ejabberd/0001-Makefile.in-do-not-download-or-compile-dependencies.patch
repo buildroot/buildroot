@@ -1,37 +1,36 @@
-From bf3571da4a68a6a857ab7ad8256f8276b3687a38 Mon Sep 17 00:00:00 2001
+From bfcc72e5bb96fc9fc1f3558191a1a3f40c7f159a Mon Sep 17 00:00:00 2001
 From: Johan Oudinet <johan.oudinet@gmail.com>
-Date: Fri, 13 May 2022 14:22:37 +0200
+Date: Fri, 2 Aug 2024 17:32:37 +0200
 Subject: [PATCH] Makefile.in: do not download or compile dependencies
 
 Signed-off-by: Johan Oudinet <johan.oudinet@gmail.com>
-[Bernd: updated for version 23.04]
-Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+Upstream: N/A, not upstreamable
 ---
  Makefile.in | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile.in b/Makefile.in
-index ab0e9d967..6e54168a7 100644
+index 5adf241d5..74aad3156 100644
 --- a/Makefile.in
 +++ b/Makefile.in
-@@ -155,7 +155,7 @@ else
- endif
- endif
+@@ -201,7 +201,7 @@ endif
+ #' main targets
+ #
  
 -all: scripts deps src
 +all: scripts src
  
  deps: $(DEPSDIR)/.got
  
-@@ -169,7 +169,7 @@ $(DEPSDIR)/.built: $(DEPSDIR)/.got
+@@ -215,7 +215,7 @@ $(DEPSDIR)/.got:
  $(DEPSDIR)/.built: $(DEPSDIR)/.got
  	$(REBAR) compile && :> $(DEPSDIR)/.built
  
 -src: $(DEPSDIR)/.built
 +src:
  	$(REBAR) $(SKIPDEPS) compile
+ 	$(EXPLICIT_ELIXIR_COMPILE)
  
- update:
 -- 
 2.34.1
 

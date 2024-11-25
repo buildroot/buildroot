@@ -10,6 +10,7 @@ These instructions apply to all models of the Raspberry Pi:
   - the model B3 (aka Raspberry Pi 3).
   - the model B4 (aka Raspberry Pi 4).
   - the model CM4 (aka Raspberry Pi Compute Module 4 and IO Board).
+  - the model B5 (aka Raspberry Pi 5).
 
 How to build it
 ===============
@@ -64,6 +65,10 @@ or for CM4 (on IO Board - 64 bit):
 
   $ make raspberrypicm4io_64_defconfig
 
+For model 5 B:
+
+  $ make raspberrypi5_defconfig
+
 Build the rootfs
 ----------------
 
@@ -82,6 +87,7 @@ Result of the build
 After building, you should obtain this tree:
 
     output/images/
+    +-- bcm2708-rpi-b-rev1.dtb      [1]
     +-- bcm2708-rpi-b.dtb           [1]
     +-- bcm2708-rpi-b-plus.dtb      [1]
     +-- bcm2708-rpi-cm.dtb          [1]
@@ -89,12 +95,16 @@ After building, you should obtain this tree:
     +-- bcm2708-rpi-zero-w.dtb      [1]
     +-- bcm2710-rpi-zero-2-w.dtb    [1]
     +-- bcm2709-rpi-2-b.dtb         [1]
+    +-- bcm2710-rpi-2-b.dtb         [1]
     +-- bcm2710-rpi-3-b.dtb         [1]
     +-- bcm2710-rpi-3-b-plus.dtb    [1]
     +-- bcm2710-rpi-cm3.dtb         [1]
     +-- bcm2711-rpi-4-b.dtb         [1]
+    +-- bcm2711-rpi-400.dtb         [1]
     +-- bcm2711-rpi-cm4.dtb         [1]
-    +-- bcm2837-rpi-3-b.dtb         [1]
+    +-- bcm2711-rpi-cm4s.dtb        [1]
+    +-- bcm2712-rpi-5-b.dtb         [1]
+    +-- bcm2712d0-rpi-5-b.dtb       [1]
     +-- boot.vfat
     +-- rootfs.ext4
     +-- rpi-firmware/

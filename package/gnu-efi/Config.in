@@ -1,10 +1,11 @@
 config BR2_PACKAGE_GNU_EFI_ARCH_SUPPORTS
 	bool
-	default y if BR2_ARM_CPU_HAS_ARM
+	default y if BR2_arm && BR2_ARM_CPU_HAS_ARM && !BR2_ARM_SOFT_FLOAT
+	default y if BR2_RISCV_64
 	default y if BR2_aarch64
-	default y if BR2_aarch64_be
 	default y if BR2_i386
 	default y if BR2_x86_64
+	depends on BR2_USE_MMU
 
 config BR2_PACKAGE_GNU_EFI
 	bool "gnu-efi"

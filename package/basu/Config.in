@@ -1,0 +1,23 @@
+config BR2_PACKAGE_BASU
+	bool "basu"
+	depends on BR2_USE_MMU # dbus
+	depends on BR2_USE_WCHAR # uchar.h
+	depends on BR2_ENABLE_LOCALE # locale_t
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # __sync_add_and_fetch
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17 # F_ADD_SEALS
+	select BR2_PACKAGE_DBUS if !BR2_PACKAGE_DBUS_BROKER # runtime
+	help
+	  basu is the sd-bus library, extracted from systemd.
+
+	  Some projects rely on the sd-bus library for DBus support.
+	  However not all systems have systemd or elogind installed.
+	  This library provides just sd-bus (and the busctl utility).
+
+	  https://git.sr.ht/~emersion/basu
+
+comment "basu needs a toolchain w/ wchar, locale, threads, headers >= 3.17"
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_USE_WCHAR || !BR2_ENABLE_LOCALE || \
+		!BR2_TOOLCHAIN_HAS_THREADS || !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17

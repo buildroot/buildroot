@@ -1,0 +1,63 @@
+From 32da5f26dee03600a9ca72a99016d95f05c4f1ec Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Sat, 28 Sep 2024 11:03:11 +0200
+Subject: [PATCH] arpd: use designated initializers for msghdr structure
+
+This patch fixes the following error:
+
+arpd.c:442:17: error: initialization of 'int' from 'void *' makes integer from pointer without a cast [-Wint-conversion]
+  442 |                 NULL,   0,
+
+raised by Buildroot autobuilder [1].
+
+In the case in question, the analysis of socket.h [2] containing the
+msghdr structure shows that it has been modified with the addition of
+padding fields, which cause the compilation error. The use of designated
+initializers allows the issue to be fixed.
+
+struct msghdr {
+	void *msg_name;
+	socklen_t msg_namelen;
+	struct iovec *msg_iov;
+	int __pad1;
+	int msg_iovlen;
+	int __pad1;
+	void *msg_control;
+	int __pad2;
+	socklen_t msg_controllen;
+	int __pad2;
+	int msg_flags;
+};
+
+[1] http://autobuild.buildroot.org/results/e4cdfa38ae9578992f1c0ff5c4edae3cc0836e3c/
+[2] iproute2/host/mips64-buildroot-linux-musl/sysroot/usr/include/sys/socket.h
+
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Upstream: https://git.kernel.org/pub/scm/network/iproute2/iproute2-next.git/commit/?id=9c9824bcaf092cb99988d59717674b73b5d0d19c
+---
+ misc/arpd.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/misc/arpd.c b/misc/arpd.c
+index 3185620f..983e546d 100644
+--- a/misc/arpd.c
++++ b/misc/arpd.c
+@@ -437,10 +437,10 @@ static void get_kern_msg(void)
+ 	struct iovec iov;
+ 	char   buf[8192];
+ 	struct msghdr msg = {
+-		(void *)&nladdr, sizeof(nladdr),
+-		&iov,	1,
+-		NULL,	0,
+-		0
++		.msg_name = &nladdr,
++		.msg_namelen = sizeof(nladdr),
++		.msg_iov = &iov,
++		.msg_iovlen = 1,
+ 	};
+ 
+ 	iov.iov_base = buf;
+-- 
+2.46.1
+

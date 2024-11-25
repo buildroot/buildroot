@@ -1,4 +1,4 @@
-From 487407d722714f13e8a06d1a9d89f48a5738191e Mon Sep 17 00:00:00 2001
+From 409af8210f2256eed4d2c73083aa75975f03424b Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Fri, 12 Jul 2019 12:20:38 +0200
 Subject: [PATCH] Makefile: add targets to manage static building
@@ -8,16 +8,18 @@ targets to allow the user to build giflib when dynamic library support
 is not available or enable on the toolchain
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 Upstream: https://sourceforge.net/p/giflib/code/merge-requests/7
 ---
  Makefile | 18 ++++++++++++++----
  1 file changed, 14 insertions(+), 4 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index b2bf6de..111f52f 100644
+index 87966a96cd4f..4a93aace54b8 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -91,13 +91,20 @@ LIBUTILSO	= libutil.$(SOEXTENSION)
+@@ -87,13 +87,20 @@ LIBUTILSO	= libutil.$(SOEXTENSION)
  LIBUTILSOMAJOR	= libutil.$(LIBMAJOR).$(SOEXTENSION)
  endif
  
@@ -40,7 +42,7 @@ index b2bf6de..111f52f 100644
  
  $(LIBGIFSO): $(OBJECTS) $(HEADERS)
  ifeq ($(UNAME), Darwin)
-@@ -120,7 +127,7 @@ libutil.a: $(UOBJECTS) $(UHEADERS)
+@@ -116,7 +123,7 @@ libutil.a: $(UOBJECTS) $(UHEADERS)
  	$(AR) rcs libutil.a $(UOBJECTS)
  
  clean:
@@ -48,8 +50,8 @@ index b2bf6de..111f52f 100644
 +	rm -f $(UTILS) $(TARGET) libgetarg.a $(SHARED_LIBS) $(STATIC_LIBS) *.o
  	rm -f $(LIBGIFSOVER)
  	rm -f $(LIBGIFSOMAJOR)
- 	rm -fr doc/*.[17] *.html doc/staging
-@@ -145,12 +152,15 @@ install-bin: $(INSTALLABLE)
+ 	rm -fr doc/*.1 *.html doc/staging
+@@ -141,12 +148,15 @@ install-bin: $(INSTALLABLE)
  install-include:
  	$(INSTALL) -d "$(DESTDIR)$(INCDIR)"
  	$(INSTALL) -m 644 gif_lib.h "$(DESTDIR)$(INCDIR)"
@@ -64,8 +66,8 @@ index b2bf6de..111f52f 100644
  	ln -sf $(LIBGIFSOMAJOR) "$(DESTDIR)$(LIBDIR)/$(LIBGIFSO)"
 +install-lib: install-static-lib install-shared-lib
  install-man:
- 	$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man1" "$(DESTDIR)$(MANDIR)/man7"
- 	$(INSTALL) -m 644 $(MANUAL_PAGES_1:xml=1) "$(DESTDIR)$(MANDIR)/man1"
+ 	$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man1"
+ 	$(INSTALL) -m 644 $(MANUAL_PAGES) "$(DESTDIR)$(MANDIR)/man1"
 -- 
 2.43.0
 

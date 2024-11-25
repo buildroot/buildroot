@@ -1,0 +1,26 @@
+From 712675fbd2a736df817fecd7bfb39055946ef85b Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Sun, 13 Aug 2023 13:48:03 +0200
+Subject: [PATCH] disable PIE support
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: N/A Not upstreamable
+---
+ wscript | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/wscript b/wscript
+index 292e3a45b..105c7eac2 100644
+--- a/wscript
++++ b/wscript
+@@ -299,7 +299,6 @@ def configure(ctx):
+ 
+     cc_test_flags = [
+         ('PIC', '-fPIC'),
+-        ('PIE', '-pie -fPIE'),
+         # this quiets most of macOS warnings on -fpie
+         ('unused', '-Qunused-arguments'),
+         # This is a useless warning on any architecture with a barrel
+-- 
+2.39.2
+

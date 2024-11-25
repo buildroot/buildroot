@@ -5,17 +5,11 @@
 ################################################################################
 
 EBTABLES_VERSION = 2.0.11
-EBTABLES_SITE = http://ftp.netfilter.org/pub/ebtables
+EBTABLES_SITE = https://netfilter.org/pub/ebtables
 EBTABLES_LICENSE = GPL-2.0+
 EBTABLES_LICENSE_FILES = COPYING
 EBTABLES_CPE_ID_VENDOR = netfilter
 EBTABLES_SELINUX_MODULES = iptables
-
-# for 0003-configure.ac-add-option-enable-kernel-64-userland-32.patch
-EBTABLES_AUTORECONF = YES
-ifeq ($(BR2_KERNEL_64_USERLAND_32),y)
-EBTABLES_CONF_OPTS += --enable-kernel-64-userland-32
-endif
 
 ifeq ($(BR2_PACKAGE_EBTABLES_UTILS_SAVE),y)
 define EBTABLES_INSTALL_TARGET_UTILS_SAVE

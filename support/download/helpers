@@ -59,9 +59,9 @@ mk_tar_gz() {
     LC_ALL=C sort <"${tmp}.list" >"${tmp}.sorted"
 
     # Create POSIX tarballs, since that's the format the most reproducible
-    tar cf - --transform="s#^\./#${base_dir}/#S" \
+    ${TAR} cf - --transform="s#^\./#${base_dir}/#S" \
              --numeric-owner --owner=0 --group=0 --mtime="${date}" \
-             --format=posix --pax-option="${pax_options}" \
+             --format=posix --pax-option="${pax_options}" --mode='go=u,go-w' \
              -T "${tmp}.sorted" >"${tmp}.tar"
 
     # Compress the archive
@@ -78,7 +78,7 @@ post_process_unpack() {
     local one_file
 
     mkdir "${dest}"
-    tar -C "${dest}" --strip-components=1 -xzf "${tarball}"
+    ${TAR} -C "${dest}" --strip-components=1 -xzf "${tarball}"
     one_file="$(find "${dest}" -type f -print0 |LC_ALL=C sort -z |sed 's/\x0.*//')"
     touch -r "${one_file}" "${dest}.timestamp"
 }
@@ -93,6 +93,10 @@ post_process_repack() {
 
     mk_tar_gz "${in_dir}/${base_dir}" "${base_dir}" "${date}" "${out}"
 }
+
+trace() { local msg="${1}"; shift; printf "%s: ${msg}" "${my_name}" "${@}"; }
+warn()  { trace "${@}" >&2; }
+error() { warn "${@}"; exit 1; }
 
 # Keep this line and the following as last lines in this file.
 # vim: ft=bash

@@ -1,6 +1,8 @@
 config BR2_PACKAGE_PYTHON_PYSMI
 	bool "python-pysmi"
+	select BR2_PACKAGE_PYTHON_JINJA2 # runtime
 	select BR2_PACKAGE_PYTHON_PLY # runtime
+	select BR2_PACKAGE_PYTHON_REQUESTS # runtime
 	help
 	  SNMP SMI/MIB Parser.
 

@@ -16,7 +16,7 @@
 # such an specifier to prevent leaking host information.
 #
 # shell expansion is critical to be POSIX compliant,
-# this script wont work with zsh in its default mode for example.
+# this script won't work with zsh in its default mode for example.
 #
 # The script takes several measures to handle more complex stuff
 # like passing this correctly:

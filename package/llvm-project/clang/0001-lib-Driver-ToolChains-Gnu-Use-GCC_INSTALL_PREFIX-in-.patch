@@ -44,7 +44,7 @@ index 2ad45097dc..90d6b5b748 100644
 +++ b/lib/Driver/ToolChains/Gnu.cpp
 @@ -1725,6 +1725,8 @@ void Generic_GCC::GCCInstallationDetector::init(
  
-     Prefixes.push_back(GCCToolchainDir);
+     Prefixes.push_back(std::string(GCCToolchainDir));
    } else {
 +    StringRef GccIinstallPrefix = GCC_INSTALL_PREFIX;
 +

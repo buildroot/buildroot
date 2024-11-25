@@ -1,0 +1,32 @@
+From e8a49b1424d405441fb23c2850274a84e95bd892 Mon Sep 17 00:00:00 2001
+From: Zhao Zhili <zhilizhao@tencent.com>
+Date: Tue, 21 Nov 2023 04:05:08 +0800
+Subject: [PATCH] avcodec/mmaldec: Fix build error
+
+Fix #10670.
+
+Signed-off-by: Zhao Zhili <zhilizhao@tencent.com>
+
+Upstream: http://git.videolan.org/?p=ffmpeg.git;a=commitdiff;h=e8a49b1424d405441fb23c2850274a84e95bd892
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ libavcodec/mmaldec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libavcodec/mmaldec.c b/libavcodec/mmaldec.c
+index 4bb3eb22ef..2dc7bbee04 100644
+--- a/libavcodec/mmaldec.c
++++ b/libavcodec/mmaldec.c
+@@ -843,7 +843,7 @@ static const AVClass ffmmal_dec_class = {
+         .flush          = ffmmal_flush, \
+         .p.priv_class   = &ffmmal_dec_class, \
+         .p.capabilities = AV_CODEC_CAP_DELAY | AV_CODEC_CAP_HARDWARE, \
+-        .caps_internal  = FF_CODEC_CAP_NOT_INIT_THREADSAFE \
++        .caps_internal  = FF_CODEC_CAP_NOT_INIT_THREADSAFE, \
+         .p.pix_fmts     = (const enum AVPixelFormat[]) { AV_PIX_FMT_MMAL, \
+                                                          AV_PIX_FMT_YUV420P, \
+                                                          AV_PIX_FMT_NONE}, \
+-- 
+2.30.2
+

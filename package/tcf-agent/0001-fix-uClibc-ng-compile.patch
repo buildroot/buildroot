@@ -1,0 +1,27 @@
+From a78007cd139e1dea3d893f5fe1d1c3a47503e6a2 Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Sat, 12 Aug 2023 18:27:02 +0200
+Subject: [PATCH] fix uClibc-ng compile
+
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: N/A only mail available
+---
+ agent/machine/arm/tcf/cpudefs-mdep.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/agent/machine/arm/tcf/cpudefs-mdep.c b/agent/machine/arm/tcf/cpudefs-mdep.c
+index 051631a0..7c4fbf3e 100644
+--- a/agent/machine/arm/tcf/cpudefs-mdep.c
++++ b/agent/machine/arm/tcf/cpudefs-mdep.c
+@@ -21,7 +21,7 @@
+ 
+ #ifndef USE_getauxval
+ #  include <features.h>
+-#  define USE_getauxval (defined(__GLIBC__) && (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 16)))
++#  define USE_getauxval (defined(__GLIBC__) && (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 16)) || (defined(__UCLIBC__) && defined(__HAVE_SHARED__)))
+ #endif
+ 
+ #include <stddef.h>
+-- 
+2.39.2
+

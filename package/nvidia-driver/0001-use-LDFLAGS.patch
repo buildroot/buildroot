@@ -5,7 +5,7 @@ the default emulation is correct for the current architecture.
 
 However, that might not be the case when the toolchain default is not
 the same as the current arch. For example, if the toolchain defaults to
-i386 and is capable of x86_64, and we're targetting x86_64 (or the
+i386 and is capable of x86_64, and we're targeting x86_64 (or the
 opposite), the link would fail because the ld emulation is incorrect:
 
     .../i686-pc-linux-gnu-ld: Relocatable linking with relocations from
@@ -17,6 +17,8 @@ Add use of $(LDFLAGS) when doing the link, as the kernel provides the
 proper emulation in those.
 
 Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
 ---
 Issue reported upstream:
@@ -25,8 +27,8 @@ Issue reported upstream:
 diff -durN nvidia-driver-370.23.orig/kernel/nvidia/nvidia.Kbuild nvidia-driver-370.23/kernel/nvidia/nvidia.Kbuild
 --- nvidia-driver-370.23.orig/kernel/nvidia/nvidia.Kbuild	2016-08-09 01:57:50.000000000 +0200
 +++ nvidia-driver-370.23/kernel/nvidia/nvidia.Kbuild	2016-08-20 12:25:02.780233423 +0200
-@@ -87,7 +87,7 @@
- always += $(NVIDIA_INTERFACE)
+@@ -93,7 +93,7 @@
+ always-y += $(NVIDIA_INTERFACE)
  
  $(obj)/$(NVIDIA_INTERFACE): $(addprefix $(obj)/,$(NVIDIA_OBJECTS))
 -	$(LD) -r -o $@ $^
@@ -37,8 +39,8 @@ diff -durN nvidia-driver-370.23.orig/kernel/nvidia/nvidia.Kbuild nvidia-driver-3
 diff -durN nvidia-driver-370.23.orig/kernel/nvidia-modeset/nvidia-modeset.Kbuild nvidia-driver-370.23/kernel/nvidia-modeset/nvidia-modeset.Kbuild
 --- nvidia-driver-370.23.orig/kernel/nvidia-modeset/nvidia-modeset.Kbuild	2016-08-09 01:43:19.000000000 +0200
 +++ nvidia-driver-370.23/kernel/nvidia-modeset/nvidia-modeset.Kbuild	2016-08-20 12:25:39.596772662 +0200
-@@ -70,7 +70,7 @@
- always += $(NVIDIA_MODESET_INTERFACE)
+@@ -75,7 +75,7 @@
+ always-y += $(NVIDIA_MODESET_INTERFACE)
  
  $(obj)/$(NVIDIA_MODESET_INTERFACE): $(addprefix $(obj)/,$(NVIDIA_MODESET_OBJECTS))
 -	$(LD) -r -o $@ $^

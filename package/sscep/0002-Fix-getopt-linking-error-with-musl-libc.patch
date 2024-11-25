@@ -1,0 +1,67 @@
+From db7fab775d03438b4cfce6b49fab2d3176ecb1d3 Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Sat, 11 May 2024 19:38:01 +0200
+Subject: [PATCH] Fix getopt linking error with musl-libc
+
+The buildroot project, to which the sscep application was added, has
+configurations that raise the following linking error:
+buildroot/output/host/opt/ext-toolchain/bin/../lib/gcc/i586-buildroot-linux-musl/9.3.0/../../../../i586-buildroot-linux-musl/bin/ld: buildroot/output/host/i586-buildroot-linux-musl/sysroot/lib/libc.a(getopt.o): in function `getopt':
+getopt.c:(.text.getopt+0x0): multiple definition of `getopt'; src/getopt.o:getopt.c:(.text+0x0): first defined here
+buildroot/output/host/opt/ext-toolchain/bin/../lib/gcc/i586-buildroot-linux-musl/9.3.0/../../../../i586-buildroot-linux-musl/bin/ld: buildroot/output/host/i586-buildroot-linux-musl/sysroot/lib/libc.a(getopt.o):(.data.optind+0x0): multiple definition of `optind'; src/getopt.o:(.data+0x0): first defined here
+collect2: error: ld returned 1 exit status
+
+The commit 65561b53344b8 ("Fix getopt linking error") actually fixed the
+linking error only for uclibc, but not for musl-libc. The patch fixes
+the error for both uclibc and musl-libc.
+
+Link: http://autobuild.buildroot.net/results/d5b1b4e5e9d9c8eca5e75c345db4d1f3f0cd84ed/build-end.log
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://github.com/certnanny/sscep/pull/181
+---
+ configure.ac |  2 +-
+ src/getopt.c | 12 ++----------
+ 2 files changed, 3 insertions(+), 11 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 9f3ee15686a2..7a968d97dcaa 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -34,7 +34,7 @@ AC_TYPE_SIZE_T
+ # Checks for library functions.
+ AC_FUNC_MALLOC
+ AC_FUNC_REALLOC
+-AC_CHECK_FUNCS([alarm gethostbyname memset socket strchr strdup strstr])
++AC_CHECK_FUNCS([alarm gethostbyname getopt memset socket strchr strdup strstr])
+ 
+ AC_CONFIG_FILES([Makefile])
+ AC_SUBST([LIBTOOL_DEPS])
+diff --git a/src/getopt.c b/src/getopt.c
+index 0109406ba4ac..8793052845ed 100644
+--- a/src/getopt.c
++++ b/src/getopt.c
+@@ -31,15 +31,7 @@
+ #include <stddef.h>
+ #include <string.h>
+ 
+-#define GETOPT_INTERFACE_VERSION 2
+-#if !defined _LIBC && defined __GLIBC__ && __GLIBC__ >= 2
+-# include <gnu-versions.h>
+-# if _GNU_GETOPT_INTERFACE_VERSION == GETOPT_INTERFACE_VERSION
+-#  define ELIDE_CODE
+-# endif
+-#endif
+-
+-#ifndef ELIDE_CODE
++#ifndef HAVE_GETOPT
+ 
+ char* optarg;
+ int optopt;
+@@ -237,4 +229,4 @@ int getopt_long(int argc, char* const argv[], const char* optstring,
+   return retval;
+ }
+ 
+-#endif	/* Not ELIDE_CODE.  */
++#endif	/* HAVE_GETOPT  */
+-- 
+2.43.0
+

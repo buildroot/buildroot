@@ -1,0 +1,58 @@
+From 4e5e8a0822db050c31b3cdd5ae00c37f4a8a063e Mon Sep 17 00:00:00 2001
+From: Patrick Steinhardt <ps@pks.im>
+Date: Mon, 21 Oct 2024 12:56:38 +0200
+Subject: [PATCH] Makefile: extract script to generate clar declarations
+
+Extract the script to generate function declarations for the clar unit
+testing framework into a standalone script. This is done such that we
+can reuse it in other build systems.
+
+Signed-off-by: Patrick Steinhardt <ps@pks.im>
+Upstream: https://lore.kernel.org/r/c2e3fbcd8532038158a0ead6f0a2f752f557ab7f.1729506329.git.ps@pks.im
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ Makefile                            |  4 +---
+ t/unit-tests/generate-clar-decls.sh | 16 ++++++++++++++++
+ 2 files changed, 17 insertions(+), 3 deletions(-)
+ create mode 100755 t/unit-tests/generate-clar-decls.sh
+
+diff --git a/Makefile b/Makefile
+index 87c1f9e220..a58dcab954 100644
+--- a/Makefile
++++ b/Makefile
+@@ -3905,9 +3905,7 @@ GIT-TEST-SUITES: FORCE
+             fi
+ 
+ $(UNIT_TEST_DIR)/clar-decls.h: $(patsubst %,$(UNIT_TEST_DIR)/%.c,$(CLAR_TEST_SUITES)) GIT-TEST-SUITES
+-	$(QUIET_GEN)for suite in $(CLAR_TEST_SUITES); do \
+-		sed -ne "s/^\(void test_$${suite}__[a-zA-Z_0-9][a-zA-Z_0-9]*(void)\)$$/extern \1;/p" $(UNIT_TEST_DIR)/$$suite.c; \
+-	done >$@
++	$(QUIET_GEN)$(SHELL_PATH) $(UNIT_TEST_DIR)/generate-clar-decls.sh "$@" $(filter %.c,$^)
+ $(UNIT_TEST_DIR)/clar.suite: $(UNIT_TEST_DIR)/clar-decls.h
+ 	$(QUIET_GEN)awk -f $(UNIT_TEST_DIR)/clar-generate.awk $< >$(UNIT_TEST_DIR)/clar.suite
+ $(CLAR_TEST_OBJS): $(UNIT_TEST_DIR)/clar-decls.h
+diff --git a/t/unit-tests/generate-clar-decls.sh b/t/unit-tests/generate-clar-decls.sh
+new file mode 100755
+index 0000000000..688e0885f4
+--- /dev/null
++++ b/t/unit-tests/generate-clar-decls.sh
+@@ -0,0 +1,16 @@
++#!/bin/sh
++
++if test $# -lt 2
++then
++	echo "USAGE: $0 <OUTPUT> <SUITE>..." 2>&1
++	exit 1
++fi
++
++OUTPUT="$1"
++shift
++
++for suite in "$@"
++do
++	sed -ne "s/^\(void test_$(basename "${suite%.c}")__[a-zA-Z_0-9][a-zA-Z_0-9]*(void)\)$/extern \1;/p" "$suite" ||
++	exit 1
++done >"$OUTPUT"
+-- 
+An old man doll... just what I always wanted! - Clara
+

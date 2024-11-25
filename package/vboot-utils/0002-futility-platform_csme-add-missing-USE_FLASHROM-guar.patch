@@ -1,0 +1,76 @@
+From 3244ea140c1b5b07ebb30f3d17e467d853b0db0f Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Tue, 13 Aug 2024 11:41:28 -0600
+Subject: [PATCH] futility/platform_csme: add missing USE_FLASHROM guards
+
+Fixes:
+build/futility/platform_csme.o: in function `find_fmba':
+futility/platform_csme.c:42: undefined reference to `find_firmware_section'
+build/futility/platform_csme.o: in function `unlock_csme':
+futility/platform_csme.c:200: undefined reference to `get_firmware_image_temp_file'
+futility/platform_csme.c:230: undefined reference to `reload_firmware_image'
+
+Change-Id: I74140d38d119f2a0e6b8cf8eef3f9f05cd43bbd7
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Upstream: https://chromium-review.googlesource.com/c/chromiumos/platform/vboot_reference/+/5785792
+---
+ futility/platform_csme.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/futility/platform_csme.c b/futility/platform_csme.c
+index 2eb3ffcf..3829fe7b 100644
+--- a/futility/platform_csme.c
++++ b/futility/platform_csme.c
+@@ -33,6 +33,7 @@ struct fmba {
+ } __attribute__((packed));
+ 
+ static struct fmba * const find_fmba(const struct firmware_image *image) {
++#ifdef USE_FLASHROM
+ 	struct firmware_section section;
+ 	const uint32_t signature = 0x0FF0A55A;
+ 	const struct fdbar *fd;
+@@ -54,6 +55,9 @@ static struct fmba * const find_fmba(const struct firmware_image *image) {
+ 		return NULL;
+ 
+ 	return (struct fmba * const)(section.data + offset);
++#else
++	return NULL;
++#endif /* USE_FLASHROM */
+ }
+ 
+ static bool is_flmstr1_locked(const struct fmba * const fmba)
+@@ -132,6 +136,7 @@ int unlock_csme_eve(struct firmware_image *image)
+ 	return unlock_flmstrs(image, 0xffffff00, 0xffffff00, 0xffffff00);
+ }
+ 
++#ifdef USE_FLASHROM
+ /*
+  * Determine the platform to pass to ifdtool (e.g. 'adl') by extracting
+  * CONFIG_IFD_CHIPSET from the config file in CBFS. However, old nissa firmware
+@@ -183,6 +188,7 @@ static int run_ifdtool(const char *image_path, char *platform, const char *extra
+ 	free(command);
+ 	return ret;
+ }
++#endif /* USE_FLASHROM */
+ 
+ /*
+  * Unlock the CSME for recent Intel platforms (CML onwards).
+@@ -193,6 +199,7 @@ static int run_ifdtool(const char *image_path, char *platform, const char *extra
+  */
+ int unlock_csme(struct updater_config *cfg)
+ {
++#ifdef USE_FLASHROM
+ 	const char *temp_path;
+ 	char *platform;
+ 	int ret = -1;
+@@ -245,4 +252,7 @@ cleanup:
+ 	free(platform);
+ 
+ 	return ret;
++#else
++	return -1;
++#endif /* USE_FLASHROM */
+ }
+-- 
+2.34.1
+

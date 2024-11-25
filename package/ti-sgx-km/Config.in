@@ -1,10 +1,10 @@
 comment "ti-sgx-km needs a Linux kernel to be built"
-	depends on BR2_arm
+	depends on BR2_ARM_EABIHF
 	depends on !BR2_LINUX_KERNEL
 
 config BR2_PACKAGE_TI_SGX_KM
 	bool "ti-sgx-km"
-	depends on BR2_LINUX_KERNEL && BR2_arm
+	depends on BR2_LINUX_KERNEL && BR2_ARM_EABIHF
 	select BR2_LINUX_NEEDS_MODULES
 	help
 	  Kernel modules for TI CPUs with SGX GPU.

@@ -28,5 +28,5 @@ class TestS6PortableUtils(infra.basetest.BRTest):
 
         _, exit_code = self.emulator.run("s6-mkfifo testpipe")
         self.assertEqual(exit_code, 0)
-        _, exit_code = self.emulator.run("s6-test -p testpipe")
+        _, exit_code = self.emulator.run("test -p testpipe")
         self.assertEqual(exit_code, 0)

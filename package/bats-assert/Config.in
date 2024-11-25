@@ -1,0 +1,15 @@
+config BR2_PACKAGE_BATS_ASSERT
+	bool "bats-assert"
+	select BR2_PACKAGE_BATS_SUPPORT # runtime
+	help
+	  bats-assert is a helper library providing common assertions
+	  for Bats.
+
+	  In the context of this project, an assertion is a function
+	  that perform a test and returns 1 on failure or 0 on success.
+	  To make debugging easier, the assertion also outputs relevant
+	  information on failure. The output is formatted for
+	  readability. To make assertions usable outside of @test
+	  blocks, the output is sent to stderr.
+
+	  https://github.com/bats-core/bats-assert

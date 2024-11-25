@@ -25,7 +25,7 @@ for more information on obtaining a Buildroot git tree.
 === Reproducing, analyzing and fixing bugs
 
 A first way of contributing is to have a look at the open bug reports in
-the https://bugs.buildroot.org/buglist.cgi?product=buildroot[Buildroot bug
+the https://gitlab.com/buildroot.org/buildroot/-/issues[Buildroot bug
 tracker]. As we strive to keep the bug count as small as possible, all
 help in reproducing, analyzing and fixing reported bugs is more than
 welcome. Don't hesitate to add a comment to bug reports reporting your
@@ -72,9 +72,9 @@ basically two things that can be done:
     can be removed.
     In the commit message of a patch fixing an autobuild failure, add a
     reference to the build result directory, as follows:
----------------------
+----
 Fixes: http://autobuild.buildroot.org/results/51000a9d4656afe9e0ea6f07b9f8ed374c2e4069
----------------------
+----
 
 === Reviewing and testing patches
 
@@ -153,10 +153,10 @@ When browsing patches in the patchwork management interface, an +mbox+
 link is provided at the top of the page. Copy this link address and
 run the following commands:
 
----------------------
+----
 $ git checkout -b <test-branch-name>
 $ wget -O - <mbox-url> | git am
----------------------
+----
 
 Another option for applying patches is to create a bundle. A bundle is
 a set of patches that you can group together using the patchwork
@@ -264,6 +264,10 @@ separated from it by a plus `+` sign. E.g.:
 +
 `Your-Name Your-Surname <your-name.your-surname+their-name.their-surname@mail.com>`
 
+Alternatively, especially if your email server does not support
+subaddressing, you can include the sponsor in your author name in
+parentheses, e.g. "Your Name (Sponsor Name)".
+
 When adding new packages, you should submit every package in a
 separate patch. This patch should have the update to
 +package/Config.in+, the package +Config.in+ file, the +.mk+ file, the
@@ -306,24 +310,24 @@ Starting from the changes committed in your local git view, _rebase_
 your development branch on top of the upstream tree before generating
 a patch set. To do so, run:
 
----------------------
+----
 $ git fetch --all --tags
 $ git rebase origin/master
----------------------
+----
 
 Now check the coding style for the changes you committed:
 
----------------------
+----
 $ utils/docker-run make check-package
----------------------
+----
 
 Now, you are ready to generate then submit your patch set.
 
 To generate it, run:
 
----------------------
+----
 $ git format-patch -M -n -s -o outgoing origin/master
----------------------
+----
 
 This will generate patch files in the +outgoing+ subdirectory,
 automatically adding the +Signed-off-by+ line.
@@ -336,37 +340,37 @@ sent, called +get-developers+ (see xref:DEVELOPERS[] for more
 information). This tool reads your patches and outputs the appropriate
 +git send-email+ command to use:
 
----------------------
+----
 $ ./utils/get-developers outgoing/*
----------------------
+----
 
 Use the output of +get-developers+ to send your patches:
 
----------------------
+----
 $ git send-email --to buildroot@buildroot.org --cc bob --cc alice outgoing/*
----------------------
+----
 
 Alternatively, +get-developers -e+ can be used directly with the
 +--cc-cmd+ argument to +git send-email+ to automatically CC the
 affected developers:
 
----------------------
+----
 $ git send-email --to buildroot@buildroot.org \
       --cc-cmd './utils/get-developers -e' origin/master
----------------------
+----
 
 +git+ can be configured to automatically do this out of the box with:
 
----------------------
+----
 $ git config sendemail.to buildroot@buildroot.org
 $ git config sendemail.ccCmd "$(pwd)/utils/get-developers -e"
----------------------
+----
 
 And then just do:
 
----------------------
+----
 $ git send-email origin/master
----------------------
+----
 
 Note that +git+ should be configured to use your mail account.
 To configure +git+, see +man git-send-email+ or https://git-send-email.io/.
@@ -427,10 +431,10 @@ should be based off the maintenance branch, and the patch subject prefix
 must include the maintenance branch name (for example "[PATCH 2020.02.x]").
 This can be done with the +git format-patch+ flag +--subject-prefix+:
 
----------------------
+----
 $ git format-patch --subject-prefix "PATCH 2020.02.x" \
     -M -s -o outgoing origin/2020.02.x
----------------------
+----
 
 Then send the patches with +git send-email+, as described above.
 
@@ -458,7 +462,7 @@ be preserved forever in the +git+ history of the project.
 
 Hereafter the recommended layout:
 
----------------
+----
 Patch title: short explanation, max 72 chars
 
 A paragraph that explains the problem, and how it manifests itself. If
@@ -481,7 +485,7 @@ Changes v2 -> v3:
 Changes v1 -> v2:
   - alpha bravo  (suggested by John)
   - charly delta
----------------
+----
 
 Any patch revision should include the version number. The version number
 is simply composed of the letter +v+ followed by an +integer+ greater or
@@ -490,17 +494,17 @@ equal to two (i.e. "PATCH v2", "PATCH v3" ...).
 This can be easily handled with +git format-patch+ by using the option
 +--subject-prefix+:
 
----------------------
+----
 $ git format-patch --subject-prefix "PATCH v4" \
     -M -s -o outgoing origin/master
----------------------
+----
 
 Since git version 1.8.1, you can also use +-v <n>+ (where <n> is the
 version number):
 
----------------------
+----
 $ git format-patch -v4 -M -s -o outgoing origin/master
----------------------
+----
 
 When you provide a new version of a patch, please mark the old one as
 superseded in
@@ -513,7 +517,7 @@ address you register in
 https://patchwork.ozlabs.org/project/buildroot/list/[patchwork] should
 match the one you use for sending patches to the mailing list.
 
-You can also add the +--in-reply-to <message-id>+ option when
+You can also add the +--in-reply-to=<message-id>+ option when
 submitting a patch to the mailing list. The id of the mail to reply to
 can be found under the "Message Id" tag on
 https://patchwork.ozlabs.org/project/buildroot/list/[patchwork]. The
@@ -579,7 +583,7 @@ cases can be listed by executing +support/testing/run-tests -l+. These tests
 can all be run individually during test development from the console. Both
 one at a time and selectively as a group of a subset of tests.
 
----------------------
+----
 $ support/testing/run-tests -l
 List of tests
 test_run (tests.utils.test_check_package.TestCheckPackage)
@@ -606,11 +610,11 @@ test_run (tests.init.test_busybox.TestInitSystemBusyboxRwNet) ... ok
 Ran 157 tests in 0.021s
 
 OK
----------------------
+----
 
 * Then, to run one test case:
 
----------------------
+----
 $ support/testing/run-tests -d dl -o output_folder -k tests.init.test_busybox.TestInitSystemBusyboxRw
 15:03:26 TestInitSystemBusyboxRw                  Starting
 15:03:28 TestInitSystemBusyboxRw                  Building
@@ -620,7 +624,7 @@ $ support/testing/run-tests -d dl -o output_folder -k tests.init.test_busybox.Te
 Ran 1 test in 301.140s
 
 OK
----------------------
+----
 
 The standard output indicates if the test is successful or not. By
 default, the output folder for the test is deleted automatically
@@ -674,12 +678,12 @@ be the maintainer of that test case.
 
 When a test case runs, the +output_folder+ will contain the following:
 
----------------------
+----
 $ ls output_folder/
 TestInitSystemBusyboxRw/
 TestInitSystemBusyboxRw-build.log
 TestInitSystemBusyboxRw-run.log
----------------------
+----
 
 +TestInitSystemBusyboxRw/+ is the Buildroot output directory, and it
 is preserved only if the +-k+ option is passed.
@@ -721,28 +725,28 @@ arbitrary string you choose.
 * To trigger all run-test test case jobs, push a branch that ends with
   +-runtime-tests+:
 
----------------------
+----
  $ git push gitlab HEAD:<name>-runtime-tests
----------------------
+----
 
 * To trigger one or several test case jobs, push a branch that ends
   with the complete test case name
   (+tests.init.test_busybox.TestInitSystemBusyboxRo+) or with the name
   of a category of tests (+tests.init.test_busybox+):
 
----------------------
+----
  $ git push gitlab HEAD:<name>-<test case name>
----------------------
+----
 
 Example to run one test:
 
----------------------
+----
  $ git push gitlab HEAD:foo-tests.init.test_busybox.TestInitSystemBusyboxRo
----------------------
+----
 
 Examples to run several tests part of the same group:
 
----------------------
+----
  $ git push gitlab HEAD:foo-tests.init.test_busybox
  $ git push gitlab HEAD:foo-tests.init
----------------------
+----

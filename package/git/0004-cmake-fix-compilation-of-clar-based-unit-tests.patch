@@ -1,0 +1,39 @@
+From beb7761f4fbc6b71ec6357d56575f57fd2b4c8a9 Mon Sep 17 00:00:00 2001
+From: Patrick Steinhardt <ps@pks.im>
+Date: Mon, 21 Oct 2024 12:56:41 +0200
+Subject: [PATCH] cmake: fix compilation of clar-based unit tests
+
+The compilation of clar-based unit tests is broken because we do not
+add the binary directory into which we generate the "clar-decls.h" and
+"clar.suite" files as include directories. Instead, we accidentally set
+up the source directory as include directory.
+
+Fix this by including the binary directory instead of the source
+directory. Furthermore, set up the include directories as PUBLIC instead
+of PRIVATE such that they propagate from "unit-tests.lib" to the
+"unit-tests" executable, which needs to include the same directory.
+
+Reported-by: Ed Reel <edreel@gmail.com>
+Signed-off-by: Patrick Steinhardt <ps@pks.im>
+Upstream: https://lore.kernel.org/r/a30017a4d8998e85915d959c16f181a8d4e813f2.1729506329.git.ps@pks.im
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ contrib/buildsystems/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/contrib/buildsystems/CMakeLists.txt b/contrib/buildsystems/CMakeLists.txt
+index 62af7b33d2..093852ad9d 100644
+--- a/contrib/buildsystems/CMakeLists.txt
++++ b/contrib/buildsystems/CMakeLists.txt
+@@ -1042,7 +1042,7 @@ file(WRITE "${CMAKE_BINARY_DIR}/t/unit-tests/clar.suite" "${clar_decls}" "${clar
+ list(TRANSFORM clar_test_SUITES PREPEND "${CMAKE_SOURCE_DIR}/t/unit-tests/")
+ list(TRANSFORM clar_test_SUITES APPEND ".c")
+ add_library(unit-tests-lib ${clar_test_SUITES} "${CMAKE_SOURCE_DIR}/t/unit-tests/clar/clar.c")
+-target_include_directories(unit-tests-lib PRIVATE "${CMAKE_SOURCE_DIR}/t/unit-tests")
++target_include_directories(unit-tests-lib PUBLIC "${CMAKE_BINARY_DIR}/t/unit-tests")
+ add_executable(unit-tests "${CMAKE_SOURCE_DIR}/t/unit-tests/unit-test.c")
+ target_link_libraries(unit-tests unit-tests-lib common-main)
+ set_target_properties(unit-tests
+-- 
+An old man doll... just what I always wanted! - Clara
+

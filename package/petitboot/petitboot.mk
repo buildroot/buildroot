@@ -14,6 +14,7 @@ PETITBOOT_DEPENDENCIES = \
 	host-bison \
 	host-flex \
 	lvm2 \
+	$(if $(BR2_PACKAGE_LIBXCRYPT),libxcrypt) \
 	$(TARGET_NLS_DEPENDENCIES)
 PETITBOOT_LICENSE = GPL-2.0
 PETITBOOT_LICENSE_FILES = COPYING
@@ -29,7 +30,8 @@ PETITBOOT_CONF_OPTS = \
 	--without-twin-x11 \
 	$(if $(BR2_PACKAGE_BUSYBOX),--enable-busybox,--disable-busybox) \
 	HOST_PROG_KEXEC=/usr/sbin/kexec \
-	HOST_PROG_SHUTDOWN=/usr/libexec/petitboot/bb-kexec-reboot
+	HOST_PROG_SH=/usr/libexec/petitboot/pb-shell \
+	HOST_PROG_SHUTDOWN=/usr/libexec/petitboot/kexec-restart
 
 # HPA and Busybox tftp are supported. HPA tftp is part of Buildroot's tftpd
 # package.
@@ -54,11 +56,37 @@ else
 PETITBOOT_CONF_OPTS += --without-fdt
 endif
 
+ifeq ($(BR2_INIT_BUSYBOX),y)
+# inittab "restart" runlevel entry runs kexec
+PETITBOOT_KEXEC_COMMAND = /bin/kill -QUIT 1
+define PETITBOOT_BUSYBOX_INITTAB
+	grep -q kexec $(TARGET_DIR)/etc/inittab || \
+		printf "\nnull::restart:/usr/sbin/kexec -f -e\n" >> $(TARGET_DIR)/etc/inittab
+endef
+PETITBOOT_TARGET_FINALIZE_HOOKS += PETITBOOT_BUSYBOX_INITTAB
+else ifeq ($(BR2_INIT_SYSV),y)
+# inittab runlevel 6 entry runs kexec
+PETITBOOT_KEXEC_COMMAND = /sbin/shutdown -r now
+define PETITBOOT_SYSV_INITTAB
+	grep -q kexec $(TARGET_DIR)/etc/inittab || \
+		$(SED) 's~^reb0:.*~reb0:6:wait:/usr/sbin/kexec -f -e~' $(TARGET_DIR)/etc/inittab
+endef
+PETITBOOT_TARGET_FINALIZE_HOOKS += PETITBOOT_SYSV_INITTAB
+else ifeq ($(BR2_INIT_OPENRC),y)
+PETITBOOT_KEXEC_COMMAND = /sbin/openrc-shutdown --kexec now
+else ifeq ($(BR2_INIT_SYSTEMD),y)
+PETITBOOT_KEXEC_COMMAND = /usr/bin/systemctl kexec
+else # BR2_INIT_NONE
+PETITBOOT_KEXEC_COMMAND = /usr/sbin/kexec -f -e
+endif
+
 PETITBOOT_GETTY_PORT = $(patsubst %,'%',$(call qstrip,$(BR2_PACKAGE_PETITBOOT_GETTY_PORT)))
 
 define PETITBOOT_POST_INSTALL
-	$(INSTALL) -D -m 0755 $(@D)/utils/bb-kexec-reboot \
-		$(TARGET_DIR)/usr/libexec/petitboot/bb-kexec-reboot
+	$(INSTALL) -D -m 0755 $(PETITBOOT_PKGDIR)/kexec-restart.in \
+		$(TARGET_DIR)/usr/libexec/petitboot/kexec-restart
+	$(SED) 's~@KEXEC_COMMAND@~$(PETITBOOT_KEXEC_COMMAND)~' \
+		$(TARGET_DIR)/usr/libexec/petitboot/kexec-restart
 	$(INSTALL) -D -m 0755 $(@D)/utils/hooks/01-create-default-dtb \
 		$(TARGET_DIR)/etc/petitboot/boot.d/01-create-default-dtb
 	$(INSTALL) -D -m 0755 $(@D)/utils/hooks/90-sort-dtb \
@@ -67,6 +95,10 @@ define PETITBOOT_POST_INSTALL
 		$(TARGET_DIR)/etc/init.d/S15pb-discover
 	$(INSTALL) -D -m 0755 $(PETITBOOT_PKGDIR)/pb-console \
 		$(TARGET_DIR)/etc/init.d/pb-console
+	$(INSTALL) -D -m 0755 $(PETITBOOT_PKGDIR)/pb-shell \
+		$(TARGET_DIR)/usr/libexec/petitboot/pb-shell
+	$(INSTALL) -D -m 0755 $(PETITBOOT_PKGDIR)/shell_profile \
+		$(TARGET_DIR)/home/petituser/.profile
 
 	mkdir -p $(TARGET_DIR)/etc/udev/rules.d
 	for port in $(PETITBOOT_GETTY_PORT); do \
@@ -76,8 +108,13 @@ define PETITBOOT_POST_INSTALL
 	mkdir -p $(TARGET_DIR)/usr/share/udhcpc/default.script.d/
 	ln -sf /usr/sbin/pb-udhcpc \
 		$(TARGET_DIR)/usr/share/udhcpc/default.script.d/
+
 endef
 
 PETITBOOT_POST_INSTALL_TARGET_HOOKS += PETITBOOT_POST_INSTALL
+
+define PETITBOOT_USERS
+	petituser -1 petitgroup -1 * /home/petituser /bin/sh - petitboot user
+endef
 
 $(eval $(autotools-package))

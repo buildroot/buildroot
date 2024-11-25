@@ -12,7 +12,7 @@ config BR2_PACKAGE_HOST_UUU
 	    sudo sh -c "uuu -udev >> /etc/udev/rules.d/70-uuu.rules"
 	    sudo udevadm control --reload
 
-	  https://github.com/NXPmicro/mfgtools
+	  https://github.com/nxp-imx/mfgtools
 
 comment "host uuu needs a toolchain w/ host gcc >= 4.9"
 	depends on !BR2_HOST_GCC_AT_LEAST_4_9

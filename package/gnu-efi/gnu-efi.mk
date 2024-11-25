@@ -24,6 +24,8 @@ else ifeq ($(BR2_arm)$(BR2_armeb),y)
 GNU_EFI_PLATFORM = arm
 else ifeq ($(BR2_aarch64)$(BR2_aarch64_be),y)
 GNU_EFI_PLATFORM = aarch64
+else ifeq ($(BR2_RISCV_64),y)
+GNU_EFI_PLATFORM = riscv64
 endif
 
 GNU_EFI_MAKE_OPTS = \

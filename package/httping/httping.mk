@@ -4,34 +4,19 @@
 #
 ################################################################################
 
-HTTPING_VERSION = 2.5
-HTTPING_SOURCE = httping-$(HTTPING_VERSION).tgz
-HTTPING_SITE = http://www.vanheusden.com/httping
-HTTPING_LICENSE = GPL-2.0
-HTTPING_LICENSE_FILES = license.txt
-HTTPING_LDFLAGS = $(TARGET_LDFLAGS) \
-	$(TARGET_NLS_LIBS) \
-	$(if $(BR2_PACKAGE_LIBICONV),-liconv)
-HTTPING_DEPENDENCIES = \
-	$(TARGET_NLS_DEPENDENCIES) \
-	$(if $(BR2_PACKAGE_LIBICONV),libiconv) \
-	$(if $(BR2_PACKAGE_NCURSES_WCHAR),ncurses) \
-	$(if $(BR2_PACKAGE_OPENSSL),openssl) \
-	$(if $(BR2_PACKAGE_FFTW_DOUBLE),fftw-double)
-HTTPING_MAKE_OPTS = $(TARGET_CONFIGURE_OPTS) \
-	FW=$(if $(BR2_PACKAGE_FFTW_DOUBLE),yes,no) \
-	NC=$(if $(BR2_PACKAGE_NCURSES_WCHAR),yes,no) \
-	SSL=$(if $(BR2_PACKAGE_OPENSSL),yes,no) \
-	TFO=$(if $(BR2_PACKAGE_HTTPING_TFO),yes,no) \
-	NO_GETTEXT=$(if $(BR2_SYSTEM_ENABLE_NLS),no,yes)
+HTTPING_VERSION = 0e26c53d5fe504eb7204d64b23513729aa4a5bb0
+HTTPING_SITE = https://github.com/folkertvanheusden/HTTPing
+HTTPING_SITE_METHOD = git
+HTTPING_LICENSE = AGPL-3.0
+HTTPING_LICENSE_FILES = LICENSE
 
-define HTTPING_BUILD_CMDS
-	$(HTTPING_MAKE_OPTS) LDFLAGS="$(HTTPING_LDFLAGS)" \
-		$(MAKE) DEBUG=no -C $(@D)
-endef
+ifeq ($(BR2_PACKAGE_HTTPING_TUI),y)
+HTTPING_DEPENDENCIES += ncurses fftw-double
+HTTPING_CONF_OPTS += -DUSE_TUI=1
+endif
 
-define HTTPING_INSTALL_TARGET_CMDS
-	$(HTTPING_MAKE_OPTS) $(MAKE) DESTDIR=$(TARGET_DIR) -C $(@D) install
-endef
+ifeq ($(BR2_PACKAGE_HTTPING_SSL),y)
+HTTPING_DEPENDENCIES += openssl
+endif
 
-$(eval $(generic-package))
+$(eval $(cmake-package))

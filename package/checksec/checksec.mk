@@ -4,7 +4,8 @@
 #
 ################################################################################
 
-CHECKSEC_VERSION = 2.6.0
+# git hash of 2.7.1 release.
+CHECKSEC_VERSION = 181cdfa84893a5d72695944efabfa5b56687379c
 CHECKSEC_SITE = $(call github,slimm609,checksec.sh,$(CHECKSEC_VERSION))
 CHECKSEC_LICENSE = BSD-3-Clause
 CHECKSEC_LICENSE_FILES = LICENSE.txt

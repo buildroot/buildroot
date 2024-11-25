@@ -42,4 +42,8 @@ else
 TPM2_TSS_CONF_OPTS += --disable-fapi
 endif
 
+define TPM2_TSS_USERS
+	tss -1 tss -1 * - - - tss user for tpm2
+endef
+
 $(eval $(autotools-package))

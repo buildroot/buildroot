@@ -1,0 +1,40 @@
+From ff6f5cd263da4683b3ea07d4ef8afdbf95e2a401 Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Thu, 9 May 2024 10:04:38 +0200
+Subject: [PATCH] ledctl: replace on_exit() by atexit()
+
+Replace on_exit() by atexit() to avoid the following musl build failure
+raised since bcb9042 ("ledctl: Remove enum ledctl_status_code_t")
+which partially reverted f08dd2c ("Fix build with Musl libc (#139)")
+
+/home/buildroot/autobuild/instance-3/output-1/host/lib/gcc/arm-buildroot-linux-musleabi/12.3.0/../../../../arm-buildroot-linux-musleabi/bin/ld: ledctl-ledctl.o: in function `main':
+ledctl.c:(.text.startup+0x140): undefined reference to `on_exit'
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Upstream: https://github.com/intel/ledmon/commit/ff6f5cd263da4683b3ea07d4ef8afdbf95e2a401
+---
+ src/ledctl/ledctl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/ledctl/ledctl.c b/src/ledctl/ledctl.c
+index 231253dc..95db2d86 100644
+--- a/src/ledctl/ledctl.c
++++ b/src/ledctl/ledctl.c
+@@ -230,7 +230,7 @@ static void ibpi_state_fini(struct ibpi_state *p)
+  *
+  * @return The function does not return a value.
+  */
+-static void _ledctl_fini(int _i, void *_arg)
++static void _ledctl_fini(void)
+ {
+ 	led_free(ctx);
+ 	list_erase(&ibpi_list);
+@@ -1101,7 +1101,7 @@ int main(int argc, char *argv[])
+ 	if (status != LED_STATUS_SUCCESS)
+ 		return status;
+ 
+-	if (on_exit(_ledctl_fini, progname))
++	if (atexit(_ledctl_fini))
+ 		exit(LED_STATUS_ONEXIT_ERROR);
+ 
+ 	status = _read_shared_conf();

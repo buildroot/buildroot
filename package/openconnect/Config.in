@@ -1,0 +1,19 @@
+config BR2_PACKAGE_OPENCONNECT
+	bool "openconnect"
+	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_OPENSSL if !BR2_PACKAGE_GNUTLS
+	# configure: error: LibreSSL does not support Cisco DTLS.
+	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL if !BR2_PACKAGE_GNUTLS
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_RC4 if BR2_PACKAGE_LIBOPENSSL
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_DES if BR2_PACKAGE_LIBOPENSSL
+	select BR2_PACKAGE_LIBXML2
+	select BR2_PACKAGE_ZLIB
+	help
+	  OpenConnect is an SSL VPN client initially created to support
+	  Cisco's AnyConnect SSL VPN.
+	  It has since been ported to support the Juniper SSL VPN (which
+	  is now known as Pulse Connect Secure), the Palo Alto Networks
+	  GlobalProtect SSL VPN the F5 Big-IP SSL VPN, and the Fortinet
+	  FortiGate SSL VPN.
+
+	  https://www.infradead.org/openconnect/

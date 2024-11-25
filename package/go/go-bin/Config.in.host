@@ -1,0 +1,14 @@
+# Translate the HOSTARCH into the architecture name used by the Go compiler
+config BR2_PACKAGE_HOST_GO_BIN_HOST_ARCH
+	string
+	default "armv6l" if BR2_HOSTARCH = "arm"
+	default "arm64" if BR2_HOSTARCH = "aarch64"
+	default "ppc64le" if BR2_HOSTARCH = "powerpc64le"
+	default "s390x" if BR2_HOSTARCH = "s390x"
+	default "386" if BR2_HOSTARCH = "x86"
+	default "amd64" if BR2_HOSTARCH = "x86_64"
+
+config BR2_PACKAGE_HOST_GO_BIN_HOST_ARCH_SUPPORTS
+	bool
+	default y
+	depends on BR2_PACKAGE_HOST_GO_BIN_HOST_ARCH != ""

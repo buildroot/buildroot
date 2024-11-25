@@ -4,12 +4,13 @@
 #
 ################################################################################
 
-SURICATA_VERSION = 6.0.15
+SURICATA_VERSION = 6.0.19
 SURICATA_SITE = https://www.openinfosecfoundation.org/download
 SURICATA_LICENSE = GPL-2.0
 SURICATA_LICENSE_FILES = COPYING LICENSE
 SURICATA_CPE_ID_VENDOR = oisf
 # 0001-configure.ac-allow-the-user-to-override-RUST_TARGET.patch
+# 0002-configure.ac-fix-static-build.patch
 SURICATA_AUTORECONF = YES
 
 SURICATA_DEPENDENCIES = \

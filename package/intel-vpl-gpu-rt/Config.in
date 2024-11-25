@@ -1,0 +1,26 @@
+config BR2_PACKAGE_INTEL_VPL_GPU_RT
+	bool "intel-vpl-gpu-rt"
+	depends on BR2_x86_64 # intel-mediadriver
+	depends on BR2_PACKAGE_LIBVPL_ARCH_SUPPORTS # libvpl
+	depends on BR2_INSTALL_LIBSTDCPP # libvpl
+	depends on !BR2_STATIC_LIBS # libvpl
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # libvpl
+	depends on BR2_TOOLCHAIN_HAS_SYNC_1 # intel-mediadriver
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libvpl
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # intel-mediadriver
+	select BR2_PACKAGE_INTEL_MEDIADRIVER # runtime
+	select BR2_PACKAGE_LIBVA
+	select BR2_PACKAGE_LIBVPL
+	help
+	  Intel® Video Processing Library (Intel® VPL) GPU Runtime is a
+	  Runtime implementation of Intel® VPL API for Intel Gen GPUs,
+	  starting with Tiger Lake.
+
+	  https://github.com/intel/vpl-gpu-rt
+
+comment "intel-vpl-gpu-rt needs a toolchain w/ dynamic library, gcc >= 7, C++, NPTL"
+	depends on BR2_x86_64
+	depends on BR2_PACKAGE_LIBVPL_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_SYNC_1
+	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_GCC_AT_LEAST_7 || \
+		!BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS

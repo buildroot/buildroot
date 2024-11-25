@@ -3,7 +3,6 @@ config BR2_PACKAGE_LIBCAMERA_ARCH_SUPPORTS
 	default y
 	# Invalid packing size of ControlValue struct on m68k
 	depends on !BR2_m68k
-	depends on !BR2_TOOLCHAIN_HAS_BINUTILS_BUG_27597
 
 menuconfig BR2_PACKAGE_LIBCAMERA
 	bool "libcamera"
@@ -24,6 +23,13 @@ menuconfig BR2_PACKAGE_LIBCAMERA
 	  http://www.libcamera.org/
 
 if BR2_PACKAGE_LIBCAMERA
+
+config BR2_PACKAGE_LIBCAMERA_PYTHON
+	bool "python bindings"
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_PYBIND
+	help
+	  Enable libcamera python bindings
 
 config BR2_PACKAGE_LIBCAMERA_V4L2
 	bool "libcamera v4l2 compatibility layer"

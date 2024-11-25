@@ -17,15 +17,18 @@
 # We want to catch any unexpected failure, and exit immediately.
 set -e
 
+# shellcheck source=helpers source-path=SCRIPTDIR
+. "${0%/*}/helpers"
+
 export BR_BACKEND_DL_GETOPTS=":hc:d:o:n:N:H:lru:qf:e"
 
 main() {
     local OPT OPTARG
     local backend output large_file recurse quiet rc
-    local -a uris hfiles
+    local -a uris hfiles backend_opts post_process_opts
 
     # Parse our options; anything after '--' is for the backend
-    while getopts ":c:d:D:o:n:N:H:lrf:u:qp:" OPT; do
+    while getopts ":c:d:D:o:n:N:H:lrf:u:qp:P:" OPT; do
         case "${OPT}" in
         c)  cset="${OPTARG}";;
         d)  dl_dir="${OPTARG}";;
@@ -39,6 +42,7 @@ main() {
         f)  filename="${OPTARG}";;
         u)  uris+=( "${OPTARG}" );;
         p)  post_process="${OPTARG}";;
+        P)  post_process_opts+=( "${OPTARG}" );;
         q)  quiet="-q";;
         :)  error "option '%s' expects a mandatory argument\n" "${OPTARG}";;
         \?) error "unknown option '%s'\n" "${OPTARG}";;
@@ -58,6 +62,7 @@ main() {
     # If we can neither link nor copy, fallback to doing a download.
     # NOTE! This is not atomic, is subject to TOCTTOU, but the whole
     # dl-wrapper runs under an flock, so we're safe.
+    # shellcheck disable=SC2166  # -a works in this case
     if [ ! -e "${output}" -a -e "${old_dl_dir}/${filename}" ]; then
         ln "${old_dl_dir}/${filename}" "${output}" || \
         cp "${old_dl_dir}/${filename}" "${output}" || \
@@ -91,6 +96,7 @@ main() {
         backend="${backend_urlencode%|*}"
         case "${backend}" in
             git|svn|cvs|bzr|file|scp|hg|sftp) ;;
+            ftp|ftps) backend="curl" ;;
             *) backend="wget" ;;
         esac
         uri=${uri#*+}
@@ -111,6 +117,12 @@ main() {
         tmpd="$(mktemp -d "${BUILD_DIR}/.${output##*/}.XXXXXX")"
         tmpf="${tmpd}/output"
 
+        # shellcheck disable=SC2206  # all three are dash-options
+        backend_opts=( ${quiet} ${large_file} ${recurse} )
+        if [ "${urlencode}" ]; then
+            backend_opts+=( -e )
+        fi
+
         # Helpers expect to run in a directory that is *really* trashable, so
         # they are free to create whatever files and/or sub-dirs they might need.
         # Doing the 'cd' here rather than in all backends is easier.
@@ -121,7 +133,6 @@ main() {
         # the next URI until it succeeds. Once out of URI to try, we need to
         # cleanup and exit.
         if ! "${OLDPWD}/support/download/${backend}" \
-                $([ -n "${urlencode}" ] && printf %s '-e') \
                 -c "${cset}" \
                 -d "${dl_dir}" \
                 -n "${raw_base_name}" \
@@ -129,7 +140,9 @@ main() {
                 -f "${filename}" \
                 -u "${uri}" \
                 -o "${tmpf}" \
-                ${quiet} ${large_file} ${recurse} -- "${@}"
+                "${backend_opts[@]}" \
+                -- \
+                "${@}"
         then
             # cd back to keep path coherence
             cd "${OLDPWD}"
@@ -140,7 +153,8 @@ main() {
         if [ -n "${post_process}" ] ; then
             if ! "${OLDPWD}/support/download/${post_process}-post-process" \
                     -o "${tmpf}" \
-                    -n "${raw_base_name}"
+                    -n "${raw_base_name}" \
+                    "${post_process_opts[@]}"
             then
                 # cd back to keep path coherence
                 cd "${OLDPWD}"
@@ -193,8 +207,8 @@ main() {
     # Some backends (cp and scp) may create executable files, so we need to
     # carry the executable bit if needed.
     [ -x "${tmpf}" ] && new_mode=755 || new_mode=644
-    new_mode=$(printf "%04o" $((0${new_mode} & ~0$(umask))))
-    chmod ${new_mode} "${tmp_output}"
+    new_mode="$(printf "%04o" $((0${new_mode} & ~0$(umask))))"
+    chmod "${new_mode}" "${tmp_output}"
 
     # We must *not* unlink tmp_output, otherwise there is a small window
     # during which another download process may create the same tmp_output
@@ -223,11 +237,6 @@ main() {
 
     return ${rc}
 }
-
-trace()  { local msg="${1}"; shift; printf "%s: ${msg}" "${my_name}" "${@}"; }
-warn()   { trace "${@}" >&2; }
-errorN() { local ret="${1}"; shift; warn "${@}"; exit ${ret}; }
-error()  { errorN 1 "${@}"; }
 
 my_name="${0##*/}"
 main "${@}"

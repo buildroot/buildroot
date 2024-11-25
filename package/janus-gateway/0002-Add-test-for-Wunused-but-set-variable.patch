@@ -20,8 +20,10 @@ Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 Signed-off-by: Adam Duskett <Aduskett@gmail.com>
 [rebased against v1.0.3)
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
-[Upstream status: rejected
-(https://github.com/meetecho/janus-gateway/pull/1789)]
+Upstream: rejected (https://github.com/meetecho/janus-gateway/pull/1789)
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+
 ---
  Makefile.am                 |  1 +
  configure.ac                |  6 ++-
@@ -30,10 +32,10 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
  create mode 100644 m4/ax_check_compile_flag.m4
 
 diff --git a/src/Makefile.am b/src/Makefile.am
-index f961fdb..3ddbe59 100644
+index 96d361e53be0..a8bfd17c930c 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -151,6 +151,7 @@ janus_CFLAGS = \
+@@ -132,6 +132,7 @@ janus_CFLAGS = \
  	-DEVENTDIR=\"$(eventdir)\" \
  	-DLOGGERDIR=\"$(loggerdir)\" \
  	-DCONFDIR=\"$(confdir)\" \
@@ -42,10 +44,10 @@ index f961fdb..3ddbe59 100644
  	$(NULL)
  
 diff --git a/configure.ac b/configure.ac
-index ca17a29..beef91a 100644
+index c37c85b7ab06..5afe0ef0bbff 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -13,6 +13,9 @@ AM_SILENT_RULES([yes])
+@@ -12,6 +12,9 @@ AM_SILENT_RULES([yes])
  AC_USE_SYSTEM_EXTENSIONS
  
  AC_PROG_CC
@@ -55,7 +57,7 @@ index ca17a29..beef91a 100644
  
  LT_PREREQ([2.2])
  LT_INIT
-@@ -64,8 +67,7 @@ clang*)
+@@ -65,8 +68,7 @@ cc*)
  	CFLAGS="$CFLAGS \
  		-Wcast-align \
  		-Wno-override-init \
@@ -64,7 +66,7 @@ index ca17a29..beef91a 100644
 +		-Wunsafe-loop-optimizations"
  esac
  
- JANUS_VERSION=103
+ JANUS_VERSION=1102
 diff --git a/m4/ax_check_compile_flag.m4 b/m4/ax_check_compile_flag.m4
 new file mode 100644
 index 0000000..51df0c0

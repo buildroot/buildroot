@@ -14,7 +14,7 @@ build operations.
 
 Let's see how to write a +.mk+ file for a Meson-based package, with an example:
 
-------------------------------
+----
 01: ################################################################################
 02: #
 03: # foo
@@ -38,7 +38,7 @@ Let's see how to write a +.mk+ file for a Meson-based package, with an example:
 21: endif
 22:
 23: $(eval $(meson-package))
---------------------------------
+----
 
 The Makefile starts with the definition of the standard variables for package
 declaration (lines 7 to 11).
@@ -61,7 +61,7 @@ added to +FOO_DEPENDENCIES+. Note that the support for +baz+ is explicitly
 disabled at line 20, if the package is not selected.
 
 To sum it up, to add a new meson-based package, the Makefile example can be
-copied verbatim then edited to replace all occurences of +FOO+ with the
+copied verbatim then edited to replace all occurrences of +FOO+ with the
 uppercase name of the new package and update the values of the standard
 variables.
 
@@ -76,10 +76,9 @@ packages is also available, with the +host-meson-package+ macro.
 Just like the generic infrastructure, the Meson infrastructure works by defining
 a number of variables before calling the +meson-package+ macro.
 
-First, all the package metadata information variables that exist in the generic
-infrastructure also exist in the Meson infrastructure: +FOO_VERSION+,
-+FOO_SOURCE+, +FOO_PATCH+, +FOO_SITE+, +FOO_SUBDIR+, +FOO_DEPENDENCIES+,
-+FOO_INSTALL_STAGING+, +FOO_INSTALL_TARGET+.
+All the package metadata information variables that exist in the
+xref:generic-package-reference[generic package infrastructure] also
+exist in the Meson infrastructure.
 
 A few additional variables, specific to the Meson infrastructure, can also be
 defined. Many of them are only useful in very specific cases, typical packages

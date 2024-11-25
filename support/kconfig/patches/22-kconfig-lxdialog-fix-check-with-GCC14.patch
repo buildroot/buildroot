@@ -1,0 +1,43 @@
+From 3ae91337b53fa3ccf0bad7f181fcaf483fab22ee Mon Sep 17 00:00:00 2001
+From: Robert Marko <robimarko@gmail.com>
+Date: Wed, 3 Apr 2024 14:18:07 +0200
+Subject: [PATCH] kconfig/lxdialog: fix check() with GCC14
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+GCC14 now treats implicit int types as error so when check() from
+check-lxdialog.sh is called to check whether we can link against ncurses
+it will fail silently and the help text indicating to install ncurses is
+printed.
+
+However, this is not due to missing ncurses but once the stderr redirect
+to /dev/null is removed we can see the root cause:
+<stdin>:2:1: error: return type defaults to ‘int’ [-Wimplicit-int]
+
+So, in order for menuconfig to work with GCC14 lets just specify the
+return type of main() as int.
+
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+Reviewed-by: Petr Vorel <petr.vorel@gmail.com>
+Tested-by: Petr Vorel <petr.vorel@gmail.com>
+---
+ kconfig/lxdialog/check-lxdialog.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kconfig/lxdialog/check-lxdialog.sh b/kconfig/lxdialog/check-lxdialog.sh
+index 16cd9a3186..27d6c30a57 100755
+--- a/kconfig/lxdialog/check-lxdialog.sh
++++ b/kconfig/lxdialog/check-lxdialog.sh
+@@ -48,7 +48,7 @@ trap "rm -f $tmp" 0 1 2 3 15
+ check() {
+         $cc -x c - -o $tmp 2>/dev/null <<'EOF'
+ #include CURSES_LOC
+-main() {}
++int main() {}
+ EOF
+ 	if [ $? != 0 ]; then
+ 	    echo " *** Unable to find the ncurses libraries or the"       1>&2
+-- 
+2.44.0
+

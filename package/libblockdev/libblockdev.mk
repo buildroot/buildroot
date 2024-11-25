@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBBLOCKDEV_VERSION = 3.1.1
-LIBBLOCKDEV_SITE = https://github.com/storaged-project/libblockdev/releases/download/$(LIBBLOCKDEV_VERSION)-1
+LIBBLOCKDEV_VERSION = 3.2.1
+LIBBLOCKDEV_SITE = https://github.com/storaged-project/libblockdev/releases/download/$(LIBBLOCKDEV_VERSION)
 LIBBLOCKDEV_LICENSE = LGPL-2.1
 LIBBLOCKDEV_LICENSE_FILES = LICENSE
 LIBBLOCKDEV_INSTALL_STAGING = YES
@@ -47,7 +47,7 @@ LIBBLOCKDEV_CONF_OPTS += --without-loop
 endif
 
 ifeq ($(BR2_PACKAGE_LIBBLOCKDEV_LVM2),y)
-LIBBLOCKDEV_DEPENDENCIES += lvm2 parted
+LIBBLOCKDEV_DEPENDENCIES += libyaml lvm2 parted
 LIBBLOCKDEV_CONF_OPTS += --with-lvm
 else
 LIBBLOCKDEV_CONF_OPTS += --without-lvm
@@ -65,6 +65,20 @@ LIBBLOCKDEV_DEPENDENCIES += parted util-linux
 LIBBLOCKDEV_CONF_OPTS += --with-part
 else
 LIBBLOCKDEV_CONF_OPTS += --without-part
+endif
+
+ifeq ($(BR2_PACKAGE_LIBBLOCKDEV_SMART),y)
+LIBBLOCKDEV_DEPENDENCIES += libatasmart
+LIBBLOCKDEV_CONF_OPTS += --with-smart
+else
+LIBBLOCKDEV_CONF_OPTS += --without-smart
+endif
+
+ifeq ($(BR2_PACKAGE_LIBBLOCKDEV_SMARTMONTOOLS),y)
+LIBBLOCKDEV_DEPENDENCIES += json-glib
+LIBBLOCKDEV_CONF_OPTS += --with-smartmontools
+else
+LIBBLOCKDEV_CONF_OPTS += --without-smartmontools
 endif
 
 ifeq ($(BR2_PACKAGE_LIBBLOCKDEV_SWAP),y)

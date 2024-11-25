@@ -15,6 +15,12 @@ config BR2_PACKAGE_EROFS_UTILS_LZ4
 	help
 	  Support LZ4 compression algorithm
 
+config BR2_PACKAGE_EROFS_UTILS_LZMA
+	bool "lzma support"
+	select BR2_PACKAGE_XZ
+	help
+	  Support LZMA compression algorithm
+
 config BR2_PACKAGE_EROFS_UTILS_EROFSFUSE
 	bool "erofsfuse support"
 	depends on BR2_USE_MMU # libfuse

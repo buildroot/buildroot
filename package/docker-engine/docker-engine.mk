@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DOCKER_ENGINE_VERSION = 26.0.0
+DOCKER_ENGINE_VERSION = 27.3.1
 DOCKER_ENGINE_SITE = $(call github,moby,moby,v$(DOCKER_ENGINE_VERSION))
 
 DOCKER_ENGINE_LICENSE = Apache-2.0
@@ -72,6 +72,8 @@ endef
 define DOCKER_ENGINE_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 755 package/docker-engine/S60dockerd \
 		$(TARGET_DIR)/etc/init.d/S60dockerd
+	$(INSTALL) -D -m 755 package/docker-engine/dockerd-syslog-wrapper.sh \
+		$(TARGET_DIR)/usr/libexec/dockerd-syslog-wrapper.sh
 endef
 
 define DOCKER_ENGINE_USERS

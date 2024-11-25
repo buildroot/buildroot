@@ -4,7 +4,7 @@ After=network.target
  
 [Service]
 Type=forking
-ExecStart=/usr/sbin/zabbix_server
+ExecStart=/usr/sbin/zabbix_server -f
 ExecReload=/usr/sbin/zabbix_server -R config_cache_reload
 RuntimeDirectory=zabbix
 PIDFile=/run/zabbix/zabbix_server.pid

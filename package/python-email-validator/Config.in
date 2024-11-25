@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_EMAIL_VALIDATOR
+	bool "python-email-validator"
+	select BR2_PACKAGE_PYTHON_DNSPYTHON # runtime
+	select BR2_PACKAGE_PYTHON_IDNA # runtime
+	help
+	  A robust email address syntax and deliverability validation
+	  library.
+
+	  https://github.com/JoshData/python-email-validator
