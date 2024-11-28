@@ -1,0 +1,41 @@
+From 81ded587d2484b6f470f2d5c837c5591491377ce Mon Sep 17 00:00:00 2001
+From: Craig Small <csmall@dropbear.xyz>
+Date: Thu, 28 Nov 2024 07:20:42 +1100
+Subject: [PATCH] pgrep: Include sys/syscall.h if making pidwait
+
+sys/syscall.h would only be included if pidwait was made
+and we found pidfd_open() The previous commit fixed the
+finding part, but in fact we want sys/syscall.h either
+way because syscall() is defined there too.
+
+Most of the time the header is included by other headers
+but adding it explicitly means if that header is removed or
+changed it still works.
+
+Signed-off-by: Craig Small <csmall@dropbear.xyz>
+
+Upstream: https://gitlab.com/procps-ng/procps/-/commit/5acbb5dc1587d688de646d739a97251eb893bbb0
+
+Signed-off-by: Scott Fan <fancp2007@gmail.com>
+[Scott: backported to version 4.0.4]
+---
+ src/pgrep.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/src/pgrep.c b/src/pgrep.c
+index d8e57dff..a2607532 100644
+--- a/src/pgrep.c
++++ b/src/pgrep.c
+@@ -44,9 +44,7 @@
+ 
+ #ifdef ENABLE_PIDWAIT
+ #include <sys/epoll.h>
+-#ifndef HAVE_PIDFD_OPEN
+ #include <sys/syscall.h>
+-#endif /* !HAVE_PIDFD_OPEN */
+ #endif
+ 
+ /* EXIT_SUCCESS is 0 */
+-- 
+2.43.0
+
