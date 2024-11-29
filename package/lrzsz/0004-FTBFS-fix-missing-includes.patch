@@ -1,0 +1,124 @@
+From a9faaf7f02811e7409074362700e963609885ba6 Mon Sep 17 00:00:00 2001
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Date: Fri, 29 Nov 2024 14:14:25 +0100
+Subject: [PATCH] FTBFS fix missing includes
+
+From: https://sources.debian.org/data/main/l/lrzsz/0.12.21rc-0.1/debian/patches/include.diff
+
+Description: Fixes FTBFS (missing includes)
+Author: Martin A. Godisch <godisch@debian.org>
+Bug-Debian: https://bugs.debian.org/1066514
+Forwarded: no
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Upstream: https://sources.debian.org/data/main/l/lrzsz/0.12.21rc-0.1/debian/patches/include.diff
+---
+ lib/error.c     | 1 +
+ src/canit.c     | 1 +
+ src/lrz.c       | 1 +
+ src/lsyslog.c   | 1 +
+ src/lsz.c       | 1 +
+ src/tcp.c       | 1 +
+ src/zperr.c     | 1 +
+ src/zreadline.c | 1 +
+ 8 files changed, 8 insertions(+)
+
+diff --git a/lib/error.c b/lib/error.c
+index 8b96b91..3861578 100644
+--- a/lib/error.c
++++ b/lib/error.c
+@@ -22,6 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+ #endif
+ 
+ #include <stdio.h>
++#include <string.h>
+ 
+ #if HAVE_VPRINTF || HAVE_DOPRNT || _LIBC || defined(__cplusplus)
+ # if __STDC__ || defined(__cplusplus)
+diff --git a/src/canit.c b/src/canit.c
+index f947a25..ae91807 100644
+--- a/src/canit.c
++++ b/src/canit.c
+@@ -24,6 +24,7 @@
+ #define SS_NORMAL 0
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <string.h>
+ #include <signal.h>
+ #include <setjmp.h>
+ #include <ctype.h>
+diff --git a/src/lrz.c b/src/lrz.c
+index 2f6a5ad..63e1326 100644
+--- a/src/lrz.c
++++ b/src/lrz.c
+@@ -27,6 +27,7 @@
+ #define SS_NORMAL 0
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <string.h>
+ #include <signal.h>
+ #include <ctype.h>
+ #include <errno.h>
+diff --git a/src/lsyslog.c b/src/lsyslog.c
+index d21ab35..24d8cd1 100644
+--- a/src/lsyslog.c
++++ b/src/lsyslog.c
+@@ -18,6 +18,7 @@
+   02111-1307, USA.
+ 
+ */
++#define _GNU_SOURCE
+ #include "config.h"
+ #ifdef ENABLE_SYSLOG
+ #include "zglobal.h"
+diff --git a/src/lsz.c b/src/lsz.c
+index b9d2545..1598150 100644
+--- a/src/lsz.c
++++ b/src/lsz.c
+@@ -28,6 +28,7 @@
+ #define SS_NORMAL 0
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <string.h>
+ #include <signal.h>
+ #include <setjmp.h>
+ #include <ctype.h>
+diff --git a/src/tcp.c b/src/tcp.c
+index 7e1ba3f..cdf9187 100644
+--- a/src/tcp.c
++++ b/src/tcp.c
+@@ -33,6 +33,7 @@
+ #include <ctype.h>
+ #include <stdio.h>
+ #include <signal.h>
++#include <string.h>
+ 
+ #include "zglobal.h"
+ #include <stdlib.h>
+diff --git a/src/zperr.c b/src/zperr.c
+index 31963de..0b9dc29 100644
+--- a/src/zperr.c
++++ b/src/zperr.c
+@@ -22,6 +22,7 @@
+ #include "zglobal.h"
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <string.h>
+ #include <errno.h>
+ 
+ #ifdef __STDC__
+diff --git a/src/zreadline.c b/src/zreadline.c
+index dd9736b..7bc3736 100644
+--- a/src/zreadline.c
++++ b/src/zreadline.c
+@@ -27,6 +27,7 @@
+ 
+ #include <stdlib.h>
+ #include <stdio.h>
++#include <string.h>
+ #include <signal.h>
+ #include <ctype.h>
+ #include <errno.h>
+-- 
+2.45.2
+
