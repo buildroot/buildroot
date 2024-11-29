@@ -1,0 +1,69 @@
+From 7ef4ef027c5064502bba23869aed9d1595a4e301 Mon Sep 17 00:00:00 2001
+Message-ID: <7ef4ef027c5064502bba23869aed9d1595a4e301.1732873390.git.baruch@tkos.co.il>
+From: Baruch Siach <baruch@tkos.co.il>
+Date: Fri, 29 Nov 2024 11:36:16 +0200
+Subject: [PATCH] Unconditionally define _GNU_SOURCE
+
+uClibc also uses _GNU_SOURCE to expose glibc compatible API extensions.
+But toolchain built with uClibc don't define __gnu_linux__. This leads
+to implicit declaration warnings at build time. With GCC 14 these
+warnings become errors by default.
+
+For example:
+
+.../sexpect-2.3.14/server.c: In function 'expect_exact':
+.../sexpect-2.3.14/server.c:630:17: error: implicit declaration of function 'strcasestr'; did you mean 'strcasecmp'?
+  [-Wimplicit-function-declaration]
+  630 |         found = strcasestr(g.expbuf, g.conn.pass.pattern);
+      |                 ^~~~~~~~~~
+      |                 strcasecmp
+
+Define _GNU_SOURCE unconditionally to fix the build.
+
+Upstream: https://github.com/clarkwang/sexpect/pull/40
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+ main.c   | 2 --
+ pty.c    | 2 --
+ server.c | 2 --
+ 3 files changed, 6 deletions(-)
+
+diff --git a/main.c b/main.c
+index 886050a887c1..2bc7c867e297 100644
+--- a/main.c
++++ b/main.c
+@@ -1,7 +1,5 @@
+ 
+-#if defined(__gnu_linux__) || defined(__CYGWIN__)
+ #define _GNU_SOURCE
+-#endif
+ 
+ #include <fcntl.h>
+ #include <limits.h>
+diff --git a/pty.c b/pty.c
+index bf4f6e99805e..f90325d87c77 100644
+--- a/pty.c
++++ b/pty.c
+@@ -1,7 +1,5 @@
+ 
+-#if defined(__gnu_linux__) || defined(__CYGWIN__)
+ #define _GNU_SOURCE
+-#endif
+ 
+ #include <string.h>
+ #include <stdio.h>
+diff --git a/server.c b/server.c
+index c7e41e0a7dc4..308852f08089 100644
+--- a/server.c
++++ b/server.c
+@@ -1,7 +1,5 @@
+ 
+-#if defined(__gnu_linux__) || defined(__CYGWIN__)
+ #define _GNU_SOURCE
+-#endif
+ 
+ #include <assert.h>
+ #include <fcntl.h>
+-- 
+2.45.2
+
