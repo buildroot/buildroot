@@ -1,4 +1,4 @@
-From e5ff9b585d7dc54f50085d518d7d588c250b0690 Mon Sep 17 00:00:00 2001
+From 48c1cd62de0339722fd3b72ef86aaaf1c38ff3dd Mon Sep 17 00:00:00 2001
 From: Chris Packham <chris.packham@alliedtelesis.co.nz>
 Date: Fri, 31 May 2024 09:51:38 +1200
 Subject: [PATCH] basic: Add BCACHEFS magic
@@ -34,7 +34,7 @@ index 1cd66b5a5f..c82fe98227 100644
  binder,          {BINDERFS_SUPER_MAGIC}
  binfmt_misc,     {BINFMTFS_MAGIC}
 diff --git a/src/basic/missing_magic.h b/src/basic/missing_magic.h
-index 82d71c8ad1..b3d2ee9f57 100644
+index 82d71c8ad1..c8ecf44357 100644
 --- a/src/basic/missing_magic.h
 +++ b/src/basic/missing_magic.h
 @@ -197,3 +197,10 @@
@@ -46,8 +46,8 @@ index 82d71c8ad1..b3d2ee9f57 100644
 +#ifndef BCACHEFS_SUPER_MAGIC
 +#  define BCACHEFS_SUPER_MAGIC 0xca451a4e
 +#else
-+assert_cc(BCACHEFS_SUPER_MAGIC == 0xca451a4e)
++assert_cc(BCACHEFS_SUPER_MAGIC == 0xca451a4e);
 +#endif
---
-2.45.1
+-- 
+2.47.0
 
