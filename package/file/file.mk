@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-FILE_VERSION = 5.45
+FILE_VERSION = 5.46
 FILE_SITE = https://astron.com/pub/file
-FILE_LICENSE = BSD-2-Clause, BSD-4-Clause (one file), BSD-3-Clause (one file)
-FILE_LICENSE_FILES = COPYING src/mygetopt.h src/vasprintf.c
+FILE_LICENSE = BSD-2-Clause, BSD-3-Clause (vasprintf.c)
+FILE_LICENSE_FILES = COPYING src/vasprintf.c
 FILE_CPE_ID_VALID = YES
 
 FILE_AUTORECONF = YES
