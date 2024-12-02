@@ -101,12 +101,14 @@ Flashing boot.bin:
 
 KD240 / KR260 Flashing Instructions:
 Flashing u-boot.itb:
+    $ usb start
     $ sf probe
     $ fatload usb 0 0x1000000 u-boot.itb
     $ sf erase 0x280000 +$filesize
     $ sf write 0x1000000 0x280000 $filesize
 
 Flashing boot.bin:
+    $ usb start
     $ sf probe
     $ fatload usb 0 0x1000000 boot.bin
     $ sf erase 0x200000 +$filesize
