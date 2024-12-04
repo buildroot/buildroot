@@ -1,0 +1,96 @@
+From 946dbb00fe4b2a75c688a470fc0c3924aa018a24 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 14 Jul 2024 11:39:49 +0200
+Subject: [PATCH] Adjust base64 function handling
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+In order to support libcs that do not provide b64_pton(), one of the
+Debian patches adds a copy of b64_pton() and b64_ntop(). However, no
+prototype is added for those functions, causing an "implicit
+declaration" warning... or error depending on the compiler version
+used:
+
+core/adbd/adb_auth_client.c:75:15: error: implicit declaration of function ‘b64_pton’ [-Wimplicit-function-declaration]
+
+This patch adds appropriate prototypes, but while at it, also renames
+the internal copy of b64_*() functions to have an adb_ prefix in order
+to clarify things and not clash with definitions potentially coming
+from the C library.
+
+Upstream: N/A, we're too far from upstream
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ core/adb/adb_auth_client.c  | 3 ++-
+ core/adbd/adb_auth_client.c | 3 ++-
+ core/adbd/base64.c          | 4 ++--
+ 3 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/core/adb/adb_auth_client.c b/core/adb/adb_auth_client.c
+index 0b4913e..25b9828 100644
+--- a/core/adb/adb_auth_client.c
++++ b/core/adb/adb_auth_client.c
+@@ -45,6 +45,7 @@ static char *key_paths[] = {
+ static fdevent listener_fde;
+ static int framework_fd = -1;
+ 
++extern int adb_b64_pton(char const *src, u_char *target, size_t targsize);
+ 
+ static void read_keys(const char *file, struct listnode *list)
+ {
+@@ -72,7 +73,7 @@ static void read_keys(const char *file, struct listnode *list)
+         if (sep)
+             *sep = '\0';
+ 
+-        ret = __b64_pton(buf, (u_char *)&key->key, sizeof(key->key) + 4);
++        ret = adb_b64_pton(buf, (u_char *)&key->key, sizeof(key->key) + 4);
+         if (ret != sizeof(key->key)) {
+             D("%s: Invalid base64 data ret=%d\n", file, ret);
+             free(key);
+diff --git a/core/adbd/adb_auth_client.c b/core/adbd/adb_auth_client.c
+index 0b4913e..25b9828 100644
+--- a/core/adbd/adb_auth_client.c
++++ b/core/adbd/adb_auth_client.c
+@@ -45,6 +45,7 @@ static char *key_paths[] = {
+ static fdevent listener_fde;
+ static int framework_fd = -1;
+ 
++extern int adb_b64_pton(char const *src, u_char *target, size_t targsize);
+ 
+ static void read_keys(const char *file, struct listnode *list)
+ {
+@@ -72,7 +73,7 @@ static void read_keys(const char *file, struct listnode *list)
+         if (sep)
+             *sep = '\0';
+ 
+-        ret = __b64_pton(buf, (u_char *)&key->key, sizeof(key->key) + 4);
++        ret = adb_b64_pton(buf, (u_char *)&key->key, sizeof(key->key) + 4);
+         if (ret != sizeof(key->key)) {
+             D("%s: Invalid base64 data ret=%d\n", file, ret);
+             free(key);
+diff --git a/core/adbd/base64.c b/core/adbd/base64.c
+index 7270703..91fc1b2 100644
+--- a/core/adbd/base64.c
++++ b/core/adbd/base64.c
+@@ -134,7 +134,7 @@ static const char Pad64 = '=';
+    */
+ 
+ int
+-b64_ntop(src, srclength, target, targsize)
++adb_b64_ntop(src, srclength, target, targsize)
+ 	u_char const *src;
+ 	size_t srclength;
+ 	char *target;
+@@ -212,7 +212,7 @@ b64_ntop(src, srclength, target, targsize)
+  */
+ 
+ int
+-b64_pton(src, target, targsize)
++adb_b64_pton(src, target, targsize)
+ 	char const *src;
+ 	u_char *target;
+ 	size_t targsize;
+-- 
+2.47.0
+
