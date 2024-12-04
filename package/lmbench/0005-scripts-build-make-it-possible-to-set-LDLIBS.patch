@@ -1,0 +1,30 @@
+From 2c7ff6989bc6161d8a2cc823d3aa7c9cb1deca80 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Wed, 4 Dec 2024 22:59:31 +0100
+Subject: [PATCH] scripts/build: make it possible to set LDLIBS
+
+LDLIBS is currently unconditionnally set to '-lm', but doesn't allow
+the user to provide additional libraries to link with.
+
+Upstream: dead, last release in 2006
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ scripts/build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/build b/scripts/build
+index 60b755c..4820d80 100755
+--- a/scripts/build
++++ b/scripts/build
+@@ -18,7 +18,7 @@ done
+ 
+ trap 'rm -f ${BASE}$$.s ${BASE}$$.c ${BASE}$$.o ${BASE}$$; exit 1' 1 2 15
+ 
+-LDLIBS=-lm
++LDLIBS="${LDLIBS} -lm"
+ 
+ # check for HP-UX's ANSI compiler
+ echo "main(int ac, char *av[]) { int i; }" > ${BASE}$$.c
+-- 
+2.47.0
+
