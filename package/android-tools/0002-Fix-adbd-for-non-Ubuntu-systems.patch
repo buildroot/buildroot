@@ -1,4 +1,7 @@
-[PATCH] Fix adbd for non-Ubuntu systems
+From d433d5c340f3b36de58ea8550fd140dbdaea13b4 Mon Sep 17 00:00:00 2001
+From: Gary Bisson <gary.bisson@boundarydevices.com>
+Date: Sun, 1 Dec 2024 15:43:33 +0100
+Subject: [PATCH] Fix adbd for non-Ubuntu systems
 
 Remove glib/dbus dependencies and partially restore services.c to be
 closer to the original source code in order to run on systems without
@@ -7,7 +10,7 @@ sudo.
 Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
 ---
  core/adbd/adb.c          |   1 -
- core/adbd/services.c     | 160 ++++-------------------------------------------
+ core/adbd/services.c     | 160 +++------------------------------------
  debian/makefiles/adbd.mk |   4 +-
  3 files changed, 14 insertions(+), 151 deletions(-)
 
@@ -260,5 +263,5 @@ index 49dab8c..22c1816 100644
  OBJS= $(patsubst %, %.o, $(basename $(SRCS)))
  
 -- 
-2.5.1
+2.47.0
 

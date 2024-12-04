@@ -1,4 +1,7 @@
-Fix build on big endian systems
+From 8f7e9458dbfca969d3edc9cf409b3439e98f4c5a Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Date: Sun, 1 Dec 2024 15:45:26 +0100
+Subject: [PATCH] Fix build on big endian systems
 
 The usb_linux_client.c file defines cpu_to_le16/32 by using the C
 library htole16/32 function calls. However, cpu_to_le16/32 are used
@@ -14,9 +17,13 @@ To solve this, we simply open-code cpu_to_le16/32 in a way that allows
 them to be used when initializing structures.
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+---
+ core/adb/usb_linux_client.c  | 11 +++++++++--
+ core/adbd/usb_linux_client.c | 11 +++++++++--
+ 2 files changed, 18 insertions(+), 4 deletions(-)
 
-Index: b/core/adb/usb_linux_client.c
-===================================================================
+diff --git a/core/adb/usb_linux_client.c b/core/adb/usb_linux_client.c
+index fb1dad0..a981e96 100644
 --- a/core/adb/usb_linux_client.c
 +++ b/core/adb/usb_linux_client.c
 @@ -34,8 +34,15 @@
@@ -37,8 +44,8 @@ Index: b/core/adb/usb_linux_client.c
  
  struct usb_handle
  {
-Index: b/core/adbd/usb_linux_client.c
-===================================================================
+diff --git a/core/adbd/usb_linux_client.c b/core/adbd/usb_linux_client.c
+index 33875a8..0e4d200 100644
 --- a/core/adbd/usb_linux_client.c
 +++ b/core/adbd/usb_linux_client.c
 @@ -34,8 +34,15 @@
@@ -59,3 +66,6 @@ Index: b/core/adbd/usb_linux_client.c
  
  struct usb_handle
  {
+-- 
+2.47.0
+
