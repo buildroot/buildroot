@@ -1,0 +1,68 @@
+From 5db9529436f13b8c073a0310da3a1107f84645da Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Wed, 4 Dec 2024 20:51:22 +0100
+Subject: [PATCH] extras/ext4_utils/make_ext4fs.c: define
+ __SANE_USERSPACE_TYPES__
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The Debian patch ppc64el-ftbfs.patch is already defining
+__SANE_USERSPACE_TYPES__ in a few files to solve a conflict between
+kernel header definitions and local definition of some types, on
+powerpc64 and mips64.
+
+However, the Debian patch lacks an update to ext4_utils.c, and has the
+definition too late in make_ext4fs.c. This commit therefore fixes
+those two remaining issues, fixing:
+
+error: conflicting types for ‘u64’; have ‘long unsigned int’
+
+Upstream: N/A, we're too far from upstream
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ extras/ext4_utils/ext4_utils.c  | 5 ++++-
+ extras/ext4_utils/make_ext4fs.c | 4 ++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/extras/ext4_utils/ext4_utils.c b/extras/ext4_utils/ext4_utils.c
+index e95f5cc..9f6836f 100644
+--- a/extras/ext4_utils/ext4_utils.c
++++ b/extras/ext4_utils/ext4_utils.c
+@@ -14,6 +14,10 @@
+  * limitations under the License.
+  */
+ 
++#if defined(__linux__)
++#define __SANE_USERSPACE_TYPES__
++#endif
++
+ #include "ext4_utils.h"
+ #include "uuid.h"
+ #include "allocate.h"
+@@ -36,7 +40,6 @@
+ #endif
+ 
+ #if defined(__linux__)
+-#define __SANE_USERSPACE_TYPES__
+ #include <linux/fs.h>
+ #elif defined(__APPLE__) && defined(__MACH__)
+ #include <sys/disk.h>
+diff --git a/extras/ext4_utils/make_ext4fs.c b/extras/ext4_utils/make_ext4fs.c
+index 3124aed..332a213 100644
+--- a/extras/ext4_utils/make_ext4fs.c
++++ b/extras/ext4_utils/make_ext4fs.c
+@@ -14,6 +14,10 @@
+  * limitations under the License.
+  */
+ 
++#if defined(__linux__)
++#define __SANE_USERSPACE_TYPES__
++#endif
++
+ #include "make_ext4fs.h"
+ #include "ext4_utils.h"
+ #include "allocate.h"
+-- 
+2.47.0
+
