@@ -1,4 +1,7 @@
-Include cdefs.h wherever it is needed
+From d3f0157bf2ac1afc9a810ccbe188110df724129d Mon Sep 17 00:00:00 2001
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Date: Sun, 1 Dec 2024 15:46:15 +0100
+Subject: [PATCH] Include cdefs.h wherever it is needed
 
 cdefs.h is included from within a lot of glibc headers, so it almost
 invariably and automagically gets pulled in with glibc.
@@ -11,12 +14,12 @@ So we must include it when we are going to use macros it provides.
 
 Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
 ---
- core/adbd/services.c                  |  1 +
- core/libcutils/android_reboot.c       |  1 +
- 2 files changed, 2 insertions(+), 0 deletion(-)
+ core/adbd/services.c            | 1 +
+ core/libcutils/android_reboot.c | 1 +
+ 2 files changed, 2 insertions(+)
 
 diff --git a/core/adbd/services.c b/core/adbd/services.c
-index 20c08d2..48e0241 100644
+index 5adcefe..6de1951 100644
 --- a/core/adbd/services.c
 +++ b/core/adbd/services.c
 @@ -20,6 +20,7 @@
@@ -28,7 +31,7 @@ index 20c08d2..48e0241 100644
  #include "sysdeps.h"
  
 diff --git a/core/libcutils/android_reboot.c b/core/libcutils/android_reboot.c
-index 20c08d2..48e0241 100644
+index 79c05f8..9386006 100644
 --- a/core/libcutils/android_reboot.c
 +++ b/core/libcutils/android_reboot.c
 @@ -23,6 +23,7 @@
@@ -39,3 +42,6 @@ index 20c08d2..48e0241 100644
  
  #include <cutils/android_reboot.h>
  
+-- 
+2.47.0
+

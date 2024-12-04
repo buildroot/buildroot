@@ -1,4 +1,7 @@
-[PATCH] Fix build issue with musl
+From d14ca3e3362448590adaebacb76d4d8046f9b556 Mon Sep 17 00:00:00 2001
+From: Gary Bisson <gary.bisson@boundarydevices.com>
+Date: Sun, 1 Dec 2024 15:44:16 +0100
+Subject: [PATCH] Fix build issue with musl
 
 arpa/nameser.h doesn't use the same macro name to avoid several
 inclusions.
@@ -8,19 +11,12 @@ TEMP_FAILURE_RETRY macro.
 
 Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
 ---
- core/adbd/arpa_nameser.h              | 12 +++++++++---
- core/adbd/base64.c                    |  1 -
- core/adbd/framebuffer_service.c       |  1 +
- core/adbd/qemu_pipe.h                 |  1 -
- core/include/cutils/android_reboot.h  |  8 ++++++--
- core/include/cutils/bitops.h          | 10 ++++++----
- core/include/cutils/partition_utils.h |  8 ++++++--
- extras/ext4_utils/sha1.c              |  3 ---
- extras/ext4_utils/sha1.h              | 13 ++++++-------
- 9 files changed, 34 insertions(+), 23 deletions(-)
+ core/adbd/arpa_nameser.h        | 3 +++
+ core/adbd/framebuffer_service.c | 1 +
+ 2 files changed, 4 insertions(+)
 
 diff --git a/core/adbd/arpa_nameser.h b/core/adbd/arpa_nameser.h
-index 438dc04..b2a28d6 100644
+index 438dc04..f3d2fee 100644
 --- a/core/adbd/arpa_nameser.h
 +++ b/core/adbd/arpa_nameser.h
 @@ -52,6 +52,8 @@
@@ -32,7 +28,7 @@ index 438dc04..b2a28d6 100644
  
  #define BIND_4_COMPAT
  
-@@ -574,4 +579,5 @@ __END_DECLS
+@@ -574,4 +576,5 @@ __END_DECLS
  #define  XLOG(...)   do {} while (0)
  #endif
  
@@ -51,4 +47,5 @@ index 20c08d2..48e0241 100644
  #include <sys/ioctl.h>
  #include <sys/mman.h>
 -- 
-2.6.1
+2.47.0
+
