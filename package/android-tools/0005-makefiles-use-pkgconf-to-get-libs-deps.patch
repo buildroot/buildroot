@@ -1,0 +1,48 @@
+From 10f3f6fb75da72f155e72794d6647e4fa21a87d0 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Date: Sun, 1 Dec 2024 15:45:01 +0100
+Subject: [PATCH] makefiles: use pkgconf to get libs deps
+
+LIBS lists library dependencies without taking into account static linking
+that need ordered listing and more libraries listed since differently from
+shared linking dependency is not transparent(i.e. -lcrypto could need
+-latomic etc.).
+
+Replace -lcrypto with `pkg-config --libs libcrypto` command to be sure all
+needed libraries are listed during linking.
+
+Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+---
+ debian/makefiles/adb.mk  | 2 +-
+ debian/makefiles/adbd.mk | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/debian/makefiles/adb.mk b/debian/makefiles/adb.mk
+index 654b9f1..a03c93a 100644
+--- a/debian/makefiles/adb.mk
++++ b/debian/makefiles/adb.mk
+@@ -41,7 +41,7 @@ CPPFLAGS+= -DHAVE_TERMIO_H
+ CPPFLAGS+= -I$(SRCDIR)/core/adb
+ CPPFLAGS+= -I$(SRCDIR)/core/include
+ 
+-LIBS+= -lc -lpthread -lz -lcrypto
++LIBS+= -lc -lpthread -lz `pkg-config --libs libcrypto`
+ 
+ OBJS= $(SRCS:.c=.o)
+ 
+diff --git a/debian/makefiles/adbd.mk b/debian/makefiles/adbd.mk
+index 22c1816..a8eee3a 100644
+--- a/debian/makefiles/adbd.mk
++++ b/debian/makefiles/adbd.mk
+@@ -44,7 +44,7 @@ CPPFLAGS+= -DADBD_NON_ANDROID
+ CPPFLAGS+= -I$(SRCDIR)/core/adbd
+ CPPFLAGS+= -I$(SRCDIR)/core/include
+ 
+-LIBS+= -lc -lpthread -lz -lcrypto -lcrypt
++LIBS+= -lc -lpthread -lz `pkg-config --libs libcrypto` -lcrypt
+ 
+ OBJS= $(patsubst %, %.o, $(basename $(SRCS)))
+ 
+-- 
+2.47.0
+
