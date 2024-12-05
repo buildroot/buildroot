@@ -70,7 +70,7 @@ DNSMASQ_COPTS += -DHAVE_DBUS
 
 define DNSMASQ_INSTALL_DBUS
 	$(INSTALL) -m 0644 -D $(@D)/dbus/dnsmasq.conf \
-		$(TARGET_DIR)/etc/dbus-1/system.d/dnsmasq.conf
+		$(TARGET_DIR)/usr/share/dbus-1/system.d/dnsmasq.conf
 endef
 endif
 
