@@ -254,7 +254,7 @@ ifeq ($(BR2_PACKAGE_DBUS),y)
 define WPA_SUPPLICANT_INSTALL_DBUS
 	$(INSTALL) -m 0644 -D \
 		$(@D)/wpa_supplicant/dbus/dbus-wpa_supplicant.conf \
-		$(TARGET_DIR)/etc/dbus-1/system.d/wpa_supplicant.conf
+		$(TARGET_DIR)/usr/share/dbus-1/system.d/wpa_supplicant.conf
 	$(WPA_SUPPLICANT_INSTALL_DBUS_NEW)
 endef
 endif
