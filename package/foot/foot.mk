@@ -5,8 +5,8 @@
 ################################################################################
 
 FOOT_VERSION = 1.16.2
-FOOT_SOURCE = $(FOOT_VERSION).tar.gz
-FOOT_SITE = https://codeberg.org/dnkl/foot/archive
+FOOT_SITE = https://codeberg.org/dnkl/foot.git
+FOOT_SITE_METHOD = git
 FOOT_LICENSE = MIT
 FOOT_LICENSE_FILES = LICENSE
 FOOT_DEPENDENCIES = \
