@@ -1,0 +1,45 @@
+From d59535c8c605f0b23abbefd9b23200b1a5e937fe Mon Sep 17 00:00:00 2001
+From: Peter Korsgaard <peter@korsgaard.com>
+Date: Fri, 6 Dec 2024 20:35:35 +0100
+Subject: [PATCH] src/BnToOsslMath.h: fix build with openssl 3.4.x
+
+Openssl 3.4.x is out:
+https://github.com/openssl/openssl/blob/openssl-3.4.0/NEWS.md#openssl-34
+
+So bump the max supported version number similar to how it was done by
+commit 89a4cb9cf8 "src/BnToOsslMath.h: fix build with openssl 3.3.x" to fix
+build failures with 3.4.x:
+
+    In file included from BnValues.h:327,
+                     from Global.h:80,
+                     from Tpm.h:78,
+                     from AuditCommands.c:62:
+    TpmToOsslMath.h:83:5: error: #error Untested OpenSSL version
+       83 | #   error Untested OpenSSL version
+          |     ^~~~~
+
+Fixes:
+- http://autobuild.buildroot.net/results/be6c679b821183b4385c74471e26d9ad7d3d8967
+
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+Upstream: https://github.com/kgoldman/ibmswtpm2/pull/17
+---
+ src/BnToOsslMath.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/BnToOsslMath.h b/src/BnToOsslMath.h
+index 72939ea..165304d 100644
+--- a/src/BnToOsslMath.h
++++ b/src/BnToOsslMath.h
+@@ -77,7 +77,7 @@
+ #include <openssl/ec.h>
+ #include <openssl/bn.h>
+ 
+-#if OPENSSL_VERSION_NUMBER >= 0x30300ff0L
++#if OPENSSL_VERSION_NUMBER >= 0x30400ff0L
+ // Check the bignum_st definition against the one below and either update the
+ // version check or provide the new definition for this version.
+ #  error Untested OpenSSL version
+-- 
+2.39.5
+
