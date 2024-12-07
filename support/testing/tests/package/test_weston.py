@@ -40,11 +40,11 @@ class TestWeston(infra.basetest.BRTest, GraphicsBase):
     def start_weston(self):
         self.assertRunOk("export XDG_RUNTIME_DIR=/tmp")
 
-        cmd = "weston"
+        cmd = "( weston"
         cmd += " --config=/etc/weston.ini"
         cmd += " --continue-without-input"
         cmd += " --log=/tmp/weston.log"
-        cmd += " &> /dev/null &"
+        cmd += " &> /dev/null & )"
         self.assertRunOk(cmd)
 
         self.assertRunOk("export WAYLAND_DISPLAY=wayland-1")
@@ -57,7 +57,8 @@ class TestWeston(infra.basetest.BRTest, GraphicsBase):
         time.sleep(4)
 
     def stop_weston(self):
-        cmd = "killall weston && sleep 3"
+        cmd = "killall weston"
+        time.sleep(3)
         self.assertRunOk(cmd)
 
     def test_run(self):
@@ -65,13 +66,22 @@ class TestWeston(infra.basetest.BRTest, GraphicsBase):
         kern = os.path.join(self.builddir, "images", "Image")
         self.emulator.boot(arch="aarch64",
                            kernel=kern,
-                           kernel_cmdline=["console=ttyAMA0"],
+                           kernel_cmdline=["console=ttyAMA0", "vt.global_cursor_default=0"],
                            options=["-M", "virt",
                                     "-cpu", "cortex-a57",
                                     "-smp", "4",
-                                    "-m", "256M",
+                                    "-m", "512M",
                                     "-initrd", img])
         self.emulator.login()
+
+        # This test uses the vkms DRM Kernel driver. This driver can
+        # generate kernel warning messages in some cases (e.g. "vblank
+        # timer overrun"). Those messages can happen on slow test
+        # runners. This warning is not an issue in this test: it is
+        # not checking performance here; it just checks the rendering
+        # pipeline is functional. For that reason, this test adds the
+        # file "/etc/default/klogd" to only show emergency messages
+        # (level value 0) on the console.
 
         # Check the weston binary can execute
         self.assertRunOk("weston --version")
@@ -96,14 +106,17 @@ class TestWeston(infra.basetest.BRTest, GraphicsBase):
         # animation is derived from the system time). Since all the
         # rendering (client application and compositor) is in
         # software, we sleep a bit to let those program to settle.
-        self.assertRunOk("weston-simple-egl >/dev/null 2>&1 &")
-        time.sleep(8)
+        self.assertRunOk("( weston-simple-egl >/dev/null 2>&1 & )")
 
         # Since the weston-simple-egl client is supposed to run and
         # display something, we are now supposed to measure a
         # different display CRC than the one we measured when the
         # desktop was empty.
-        crc = self.get_n_fb_crc(count=1)[0]
+        for i in range(600):
+            crc = self.get_n_fb_crc(count=1)[0]
+            if crc != weston_desktop_crc:
+                break
+            time.sleep(1)
         self.assertNotEqual(crc, weston_desktop_crc)
 
         # While weston-simple-egl is running, we check the VKMS DRM
@@ -121,12 +134,15 @@ class TestWeston(infra.basetest.BRTest, GraphicsBase):
         # We stop weston-simple-egl, and sleep a bit to let Weston do
         # its cleanup and desktop repaint refresh...
         self.assertRunOk("killall weston-simple-egl")
-        time.sleep(4)
 
         # After we stopped the application, we should have the initial
         # weston desktop background. The CRC we measure now should be
         # the same as the one we saved earlier.
-        crc = self.get_n_fb_crc(count=1)[0]
+        for i in range(600):
+            crc = self.get_n_fb_crc(count=1)[0]
+            if crc == weston_desktop_crc:
+                break
+            time.sleep(1)
         self.assertEqual(crc, weston_desktop_crc)
 
         self.stop_weston()
