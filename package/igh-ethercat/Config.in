@@ -11,19 +11,86 @@ config BR2_PACKAGE_IGH_ETHERCAT
 
 if BR2_PACKAGE_IGH_ETHERCAT
 
+config BR2_PACKAGE_IGH_ETHERCAT_CLITOOL
+	bool "Enable CLI Tool"
+	depends on BR2_INSTALL_LIBSTDCPP
+	help
+	  Enable the EtherCAT CLI tool for testing and diagnostics.
+
+config BR2_PACKAGE_IGH_ETHERCAT_USERLIB
+	bool "Enable User Space Library"
+	help
+	  Install the EtherCAT user space library.
+
+config BR2_PACKAGE_IGH_ETHERCAT_TTY
+	bool "Enable TTY Driver"
+	help
+	  Enable the EtherCAT TTY driver for serial communication
+	  support.
+
+config BR2_PACKAGE_IGH_ETHERCAT_GENERIC
+	bool "Enable Generic Driver"
+	help
+	  Enable the generic EtherCAT master driver.
+
 config BR2_PACKAGE_IGH_ETHERCAT_8139TOO
-	bool "8139too driver"
+	bool "8139too Driver"
+	help
+	  Enable Realtek 8139too-based EtherCAT driver.
 
 config BR2_PACKAGE_IGH_ETHERCAT_E100
-	bool "e100 driver"
+	bool "e100 Driver"
+	help
+	  Enable Intel e100-based EtherCAT driver.
 
 config BR2_PACKAGE_IGH_ETHERCAT_E1000
-	bool "e1000 driver"
+	bool "e1000 Driver"
+	help
+	  Enable Intel e1000-based EtherCAT driver.
 
 config BR2_PACKAGE_IGH_ETHERCAT_E1000E
-	bool "e1000e driver"
+	bool "e1000e Driver"
+	help
+	  Enable Intel e1000e-based EtherCAT driver.
+
+config BR2_PACKAGE_IGH_ETHERCAT_GENET
+	bool "genet Driver"
+	help
+	  Enable Broadcom GENET-based EtherCAT driver.
+
+config BR2_PACKAGE_IGH_ETHERCAT_IGB
+	bool "igb Driver"
+	help
+	  Enable Intel igb-based EtherCAT driver.
+
+config BR2_PACKAGE_IGH_ETHERCAT_IGC
+	bool "igc Driver"
+	help
+	  Enable Intel igc-based EtherCAT driver.
 
 config BR2_PACKAGE_IGH_ETHERCAT_R8169
-	bool "r8169 driver"
+	bool "r8169 Driver"
+	help
+	  Enable Realtek r8169-based EtherCAT driver.
+
+config BR2_PACKAGE_IGH_ETHERCAT_STMMAC_PCI
+	bool "stmmac-pci Driver"
+	help
+	  Enable Synopsys STMMAC PCI-based EtherCAT driver.
+
+config BR2_PACKAGE_IGH_ETHERCAT_STMMAC
+	bool "stmmac Driver"
+	help
+	  Enable Synopsys STMMAC-based EtherCAT driver.
+
+config BR2_PACKAGE_IGH_ETHERCAT_DWMAC_INTEL
+	bool "dwmac-intel Driver"
+	help
+	  Enable Intel DesignWare MAC-based EtherCAT driver.
+
+config BR2_PACKAGE_IGH_ETHERCAT_CCAT
+	bool "ccat Driver"
+	help
+	  Enable CCAT-based EtherCAT driver.
 
 endif

@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-CHRONY_VERSION = 4.4
-CHRONY_SITE = http://download.tuxfamily.org/chrony
+CHRONY_VERSION = 4.6.1
+CHRONY_SITE = https://chrony-project.org/releases
 CHRONY_LICENSE = GPL-2.0
 CHRONY_LICENSE_FILES = COPYING
 CHRONY_CPE_ID_VENDOR = tuxfamily

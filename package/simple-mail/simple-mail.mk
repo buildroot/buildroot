@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SIMPLE_MAIL_VERSION = 3.0.0
+SIMPLE_MAIL_VERSION = 3.1.0
 SIMPLE_MAIL_SITE = $(call github,cutelyst,simple-mail,v$(SIMPLE_MAIL_VERSION))
 SIMPLE_MAIL_INSTALL_STAGING = YES
 SIMPLE_MAIL_LICENSE = LGPL-2.1+

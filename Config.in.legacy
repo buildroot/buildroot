@@ -144,6 +144,30 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2025.02"
+
+config BR2_PACKAGE_FCONFIG
+	bool "fconfig has been removed"
+	select BR2_LEGACY
+	help
+	  The fconfig package was removed as it is not maintained
+	  anymore and the upstream URL is gone.
+
+config BR2_PACKAGE_LIBHID
+	bool "libhid has been removed"
+	select BR2_LEGACY
+	help
+	  The libhid package was removed as it is not maintained
+	  anymore and the upstream URL is gone. Consider using hidapi
+	  instead.
+
+config BR2_PACKAGE_QUAGGA
+	bool "quagga has been removed"
+	select BR2_LEGACY
+	help
+	  The quagga package was removed as it is not maintained
+	  anymore and the upstream repo is gone.
+
 comment "Legacy options removed in 2024.11"
 
 config BR2_PACKAGE_BSDIFF

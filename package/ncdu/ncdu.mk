@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-NCDU_VERSION = 1.20
-NCDU_SITE = http://dev.yorhel.nl/download
+NCDU_VERSION = 1.21
+NCDU_SITE = https://dev.yorhel.nl/download
 
-NCDU_DEPENDENCIES = ncurses
+NCDU_DEPENDENCIES = host-pkgconf ncurses
 
 NCDU_LICENSE = MIT
 NCDU_LICENSE_FILES = COPYING
