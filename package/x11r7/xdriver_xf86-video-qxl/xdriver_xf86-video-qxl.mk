@@ -19,7 +19,7 @@ XDRIVER_XF86_VIDEO_QXL_DEPENDENCIES = \
 	xorgproto \
 	xserver_xorg-server
 
-# configure doesn't look for drm headers in the appropiate place, so help it
+# configure doesn't look for drm headers in the appropriate place, so help it
 # libdrm is only useful with udev for KMS
 ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
 XDRIVER_XF86_VIDEO_QXL_CONF_ENV += REQUIRED_MODULES=libdrm
