@@ -878,7 +878,7 @@ $$(error "Package $(1) defines host variant before target variant!")
 endif
 endif
 
-# Globaly remove following conflicting and useless files
+# Globally remove following conflicting and useless files
 $(2)_DROP_FILES_OR_DIRS += /share/info/dir
 
 ifeq ($$($(2)_TYPE),host)
