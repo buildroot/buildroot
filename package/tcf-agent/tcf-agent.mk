@@ -15,7 +15,7 @@ TCF_AGENT_DEPENDENCIES = util-linux
 TCF_AGENT_SUBDIR = agent
 
 # there is not much purpose for the shared lib,
-# if wont be used (unmodifed) outside the tcf-agent application
+# it will not be used (unmodified) outside the tcf-agent application
 TCF_AGENT_CONF_OPTS = \
 	-DBUILD_SHARED_LIBS=OFF \
 	-DTCF_MACHINE=$(call qstrip,$(BR2_PACKAGE_TCF_AGENT_ARCH))
