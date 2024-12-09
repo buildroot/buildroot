@@ -17,7 +17,7 @@ TPM2_TSS_DEPENDENCIES = openssl host-pkgconf
 TPM2_TSS_AUTORECONF = YES
 
 # systemd-sysusers and systemd-tmpfiles are only used at install time
-# to trigger the creation of users adn tmpfiles, which we do not care
+# to trigger the creation of users and tmpfiles, which we do not care
 # about at build time. groupadd, useradd, and setfacl are used in the
 # fallback path when systemd-sysusers or systemd-tmpfiles are missing
 # and their failure is ignored anyway.
