@@ -139,7 +139,7 @@ endef
 
 # The file "qt.conf" can be used to override the hard-coded paths that are
 # compiled into the Qt library. We need it to make "qmake" relocatable and
-# tweak the per-package install pathes
+# tweak the per-package install paths
 PYTHON_PYQT5_PRE_CONFIGURE_HOOKS += QT5_QT_CONF_FIXUP
 
 PYTHON_PYQT5_CONF_OPTS = \
