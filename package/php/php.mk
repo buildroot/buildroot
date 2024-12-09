@@ -92,7 +92,7 @@ endif
 
 # php has some assembly function that is not present in Thumb mode:
 # Error: selected processor does not support `umlal r2,r1,r0,r3' in Thumb mode
-# so, we desactivate Thumb mode
+# so, we deactivate Thumb mode
 ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
 PHP_CFLAGS += -marm
 endif
