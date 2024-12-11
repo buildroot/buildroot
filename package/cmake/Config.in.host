@@ -59,10 +59,15 @@ config BR2_HOST_CMAKE_AT_LEAST_3_30
 	bool
 	select BR2_HOST_CMAKE_AT_LEAST_3_29
 
+config BR2_HOST_CMAKE_AT_LEAST_3_31
+	bool
+	select BR2_HOST_CMAKE_AT_LEAST_3_30
+
 # This order guarantees that the highest version is set, as kconfig
 # stops affecting a value on the first matching default.
 config BR2_HOST_CMAKE_AT_LEAST
 	string
+	default "3.31"	if BR2_HOST_CMAKE_AT_LEAST_3_31
 	default "3.30"	if BR2_HOST_CMAKE_AT_LEAST_3_30
 	default "3.29"	if BR2_HOST_CMAKE_AT_LEAST_3_29
 	default "3.28"	if BR2_HOST_CMAKE_AT_LEAST_3_28
