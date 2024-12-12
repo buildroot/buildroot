@@ -30,4 +30,8 @@ ARMADILLO_CONF_OPTS += -DLAPACK_FOUND=ON
 ARMADILLO_DEPENDENCIES += lapack
 endif
 
+ifeq ($(BR2_STATIC_LIBS),y)
+ARMADILLO_CONF_OPTS += -DSTATIC_LIB=ON
+endif
+
 $(eval $(cmake-package))
