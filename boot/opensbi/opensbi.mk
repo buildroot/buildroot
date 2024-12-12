@@ -16,7 +16,7 @@ OPENSBI_SITE = $(call qstrip,$(BR2_TARGET_OPENSBI_CUSTOM_REPO_URL))
 OPENSBI_SITE_METHOD = git
 else
 # Handle official OpenSBI versions
-OPENSBI_SITE = $(call github,riscv,opensbi,v$(OPENSBI_VERSION))
+OPENSBI_SITE = $(call github,riscv-software-src,opensbi,v$(OPENSBI_VERSION))
 endif
 
 OPENSBI_LICENSE = BSD-2-Clause

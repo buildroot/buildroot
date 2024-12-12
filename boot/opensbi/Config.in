@@ -10,7 +10,7 @@ config BR2_TARGET_OPENSBI
 	  System-on-Chip vendors to fit a particular hadware
 	  configuration.
 
-	  https://github.com/riscv/opensbi.git
+	  https://github.com/riscv-software-src/opensbi
 
 if BR2_TARGET_OPENSBI
 choice
@@ -19,7 +19,7 @@ choice
 	  Select the specific OpenSBI version you want to use
 
 config BR2_TARGET_OPENSBI_LATEST_VERSION
-	bool "1.3"
+	bool "1.5"
 
 config BR2_TARGET_OPENSBI_CUSTOM_VERSION
 	bool "Custom version"
@@ -57,7 +57,7 @@ endif
 
 config BR2_TARGET_OPENSBI_VERSION
 	string
-	default "1.3" if BR2_TARGET_OPENSBI_LATEST_VERSION
+	default "1.5" if BR2_TARGET_OPENSBI_LATEST_VERSION
 	default BR2_TARGET_OPENSBI_CUSTOM_VERSION_VALUE \
 		if BR2_TARGET_OPENSBI_CUSTOM_VERSION
 	default "custom" if BR2_TARGET_OPENSBI_CUSTOM_TARBALL
