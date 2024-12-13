@@ -1,0 +1,35 @@
+From: Takashi Iwai <tiwai@suse.de>
+Date: Sun, 24 Nov 2024 08:32:29 +0000 (+0100)
+Subject: configure: Make sequencer dependent on rawmidi
+X-Git-Url: https://git.alsa-project.org/?p=alsa-lib.git;a=commitdiff_plain;h=6880219ad4ba55ae8a94a34b7a987b3369f7c96f
+
+configure: Make sequencer dependent on rawmidi
+
+The sequencer feature requires rawmidi implicitly, and it became more
+obvious with UMP support.  Add the dependency check to configure
+script.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+
+Upstream: https://git.alsa-project.org/?p=alsa-lib.git;a=commitdiff;h=6880219ad4ba55ae8a94a34b7a987b3369f7c96f
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+
+diff --git a/configure.ac b/configure.ac
+index 1cd22a59..69aeb978 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -483,6 +483,12 @@ fi
+ AC_SUBST(PYTHON_LIBS)
+ AC_SUBST(PYTHON_INCLUDES)
+ 
++if test "$build_rawmidi" != "yes"; then
++  if test "$build_seq" = "yes"; then
++    AC_ERROR([Cannot enable sequencer without rawmidi])
++  fi
++fi
++
+ AM_CONDITIONAL([BUILD_MIXER], [test x$build_mixer = xyes])
+ AM_CONDITIONAL([BUILD_PCM], [test x$build_pcm = xyes])
+ AM_CONDITIONAL([BUILD_RAWMIDI], [test x$build_rawmidi = xyes])
