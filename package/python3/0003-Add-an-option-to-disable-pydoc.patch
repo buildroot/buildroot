@@ -1,4 +1,4 @@
-From f910bdee70b07792c136aaced3850a08eaaafdee Mon Sep 17 00:00:00 2001
+From c1c1a844c1819da38c0e03d1f23a97099b571b86 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:07:56 -0800
 Subject: [PATCH] Add an option to disable pydoc
@@ -20,7 +20,7 @@ Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
  2 files changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 9c5f3c031a..2243a658a9 100644
+index 2ff75f51571..401d130b804 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
 @@ -2050,7 +2050,9 @@ bininstall: commoninstall altbininstall
@@ -41,7 +41,7 @@ index 9c5f3c031a..2243a658a9 100644
  		re \
  		site-packages \
  		sqlite3 \
-@@ -2257,6 +2258,10 @@ TESTSUBDIRS=	idlelib/idle_test \
+@@ -2263,6 +2264,10 @@ TESTSUBDIRS=	idlelib/idle_test \
  
  COMPILEALL_OPTS=-j0
  
@@ -52,7 +52,7 @@ index 9c5f3c031a..2243a658a9 100644
  TEST_MODULES=@TEST_MODULES@
  
  .PHONY: libinstall
-@@ -2471,7 +2476,9 @@ libainstall: all scripts
+@@ -2477,7 +2482,9 @@ libainstall: all scripts
  	$(INSTALL_SCRIPT) python-config $(DESTDIR)$(BINDIR)/python$(LDVERSION)-config
  	$(INSTALL_SCRIPT) $(SCRIPT_2TO3) $(DESTDIR)$(BINDIR)/2to3-$(VERSION)
  	$(INSTALL_SCRIPT) $(SCRIPT_IDLE) $(DESTDIR)$(BINDIR)/idle$(VERSION)
@@ -63,10 +63,10 @@ index 9c5f3c031a..2243a658a9 100644
  		"`echo $(MACHDEP) | sed 's/^\(...\).*/\1/'`" = "aix" ]; then \
  		echo; echo "Installing support files for building shared extension modules on AIX:"; \
 diff --git a/configure.ac b/configure.ac
-index 059ac2f883..1a2dd28d1e 100644
+index 7bc049863c3..ca226dcc5b9 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4511,6 +4511,12 @@ AS_VAR_IF([posix_threads], [stub], [
+@@ -4514,6 +4514,12 @@ AS_VAR_IF([posix_threads], [stub], [
    AC_DEFINE([HAVE_PTHREAD_STUBS], [1], [Define if platform requires stubbed pthreads support])
  ])
  
@@ -80,5 +80,5 @@ index 059ac2f883..1a2dd28d1e 100644
  AH_TEMPLATE([ENABLE_IPV6], [Define if --enable-ipv6 is specified])
  AC_MSG_CHECKING([if --enable-ipv6 is specified])
 -- 
-2.34.1
+2.39.5
 

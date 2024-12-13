@@ -1,4 +1,4 @@
-From d1701f1c89e9d2319ede200052319183fbb4ae18 Mon Sep 17 00:00:00 2001
+From 455e500067431c19770d637ee0769b450208550f Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:40:45 -0800
 Subject: [PATCH] Add an option to disable expat
@@ -17,11 +17,11 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 ---
  Makefile.pre.in |  5 ++++-
- configure.ac    | 24 +++++++++++++-----------
- 2 files changed, 17 insertions(+), 12 deletions(-)
+ configure.ac    | 22 ++++++++++++----------
+ 2 files changed, 16 insertions(+), 11 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 283ca1bd60..13f7512f42 100644
+index 2b0307b1282..fcddbf33e9e 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
 @@ -2113,7 +2113,6 @@ LIBSUBDIRS=	asyncio \
@@ -32,7 +32,7 @@ index 283ca1bd60..13f7512f42 100644
  		xmlrpc \
  		zipfile zipfile/_path \
  		zoneinfo \
-@@ -2280,6 +2279,10 @@ ifeq (@SQLITE3@,yes)
+@@ -2286,6 +2285,10 @@ ifeq (@SQLITE3@,yes)
  LIBSUBDIRS += sqlite3
  endif
  
@@ -44,10 +44,10 @@ index 283ca1bd60..13f7512f42 100644
  
  .PHONY: libinstall
 diff --git a/configure.ac b/configure.ac
-index 92d663ed40..1cb95f41fd 100644
+index 94bebbfd48e..a2436c0733b 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3823,17 +3823,19 @@ LIBS="$withval $LIBS"
+@@ -3826,17 +3826,19 @@ LIBS="$withval $LIBS"
  [AC_MSG_RESULT([no])])
  
  # Check for use of the system expat library
@@ -58,10 +58,6 @@ index 92d663ed40..1cb95f41fd 100644
 -     [--with-system-expat],
 -     [build pyexpat module using an installed expat library, see Doc/library/pyexpat.rst (default is no)]
 -  )], [], [with_system_expat="no"])
--
--AC_MSG_RESULT([$with_system_expat])
--
--AS_VAR_IF([with_system_expat], [yes], [
 +AC_MSG_CHECKING(for --with-expat)
 +AC_ARG_WITH(expat,
 +            AS_HELP_STRING([--with-expat], [select which expat version to use: system, builtin, none]),
@@ -73,11 +69,14 @@ index 92d663ed40..1cb95f41fd 100644
 +      [PY_STDLIB_MOD_SET_NA([pyexpat])
 +       EXPAT=no])
 +AC_SUBST(EXPAT)
-+
+ 
+-AC_MSG_RESULT([$with_system_expat])
+-
+-AS_VAR_IF([with_system_expat], [yes], [
 +AS_VAR_IF([with_expat], [system], [
    LIBEXPAT_CFLAGS=${LIBEXPAT_CFLAGS-""}
    LIBEXPAT_LDFLAGS=${LIBEXPAT_LDFLAGS-"-lexpat"}
    LIBEXPAT_INTERNAL=
 -- 
-2.34.1
+2.39.5
 

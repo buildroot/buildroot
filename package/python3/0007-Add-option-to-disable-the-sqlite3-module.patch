@@ -1,4 +1,4 @@
-From a8566f6ee2a2b859ba5562f2d9f06cb4d271f277 Mon Sep 17 00:00:00 2001
+From a24aee2ba81617baf01215b333c26434355bf91a Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Date: Tue, 6 Feb 2024 22:12:20 +0100
 Subject: [PATCH] Add option to disable the sqlite3 module
@@ -16,7 +16,7 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
  2 files changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 5fad7f82fb..7b6c9811a6 100644
+index aceb52e31ce..7c5bcea59ba 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
 @@ -2108,7 +2108,6 @@ LIBSUBDIRS=	asyncio \
@@ -27,7 +27,7 @@ index 5fad7f82fb..7b6c9811a6 100644
  		tkinter \
  		tomllib \
  		turtledemo \
-@@ -2272,6 +2271,10 @@ ifeq (@IDLE@,yes)
+@@ -2278,6 +2277,10 @@ ifeq (@IDLE@,yes)
  LIBSUBDIRS += idlelib idlelib/Icons
  endif
  
@@ -39,10 +39,10 @@ index 5fad7f82fb..7b6c9811a6 100644
  
  .PHONY: libinstall
 diff --git a/configure.ac b/configure.ac
-index 561e33f550..d1c54bd67c 100644
+index ab68cc3dd73..3fbcabe29c8 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4516,6 +4516,13 @@ AS_VAR_IF([posix_threads], [stub], [
+@@ -4519,6 +4519,13 @@ AS_VAR_IF([posix_threads], [stub], [
    AC_DEFINE([HAVE_PTHREAD_STUBS], [1], [Define if platform requires stubbed pthreads support])
  ])
  
@@ -57,5 +57,5 @@ index 561e33f550..d1c54bd67c 100644
  
  AC_ARG_ENABLE(pydoc,
 -- 
-2.34.1
+2.39.5
 

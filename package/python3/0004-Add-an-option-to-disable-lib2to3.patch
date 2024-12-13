@@ -1,4 +1,4 @@
-From 572f3164d1dce13db30e897ab0be7c706fa7b731 Mon Sep 17 00:00:00 2001
+From 2a4b87bb00805156d40782a3197fbbf20937da6f Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:15:31 -0800
 Subject: [PATCH] Add an option to disable lib2to3
@@ -22,7 +22,7 @@ Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
  2 files changed, 20 insertions(+), 5 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 2243a658a9..3f314d1354 100644
+index 401d130b804..b44ad736144 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
 @@ -2054,7 +2054,9 @@ ifeq (@PYDOC@,yes)
@@ -43,7 +43,7 @@ index 2243a658a9..3f314d1354 100644
  		logging \
  		multiprocessing multiprocessing/dummy \
  		re \
-@@ -2207,10 +2208,6 @@ TESTSUBDIRS=	idlelib/idle_test \
+@@ -2208,10 +2209,6 @@ TESTSUBDIRS=	idlelib/idle_test \
  		test/test_importlib/resources/zipdata02 \
  		test/test_importlib/source \
  		test/test_json \
@@ -54,7 +54,7 @@ index 2243a658a9..3f314d1354 100644
  		test/test_module \
  		test/test_peg_generator \
  		test/test_pydoc \
-@@ -2262,6 +2259,14 @@ ifeq (@PYDOC@,yes)
+@@ -2268,6 +2265,14 @@ ifeq (@PYDOC@,yes)
  LIBSUBDIRS += pydoc_data
  endif
  
@@ -69,7 +69,7 @@ index 2243a658a9..3f314d1354 100644
  TEST_MODULES=@TEST_MODULES@
  
  .PHONY: libinstall
-@@ -2345,10 +2350,12 @@ ifeq (@PYC_BUILD@,yes)
+@@ -2351,10 +2356,12 @@ ifeq (@PYC_BUILD@,yes)
  		-o 0 -o 1 -o 2 $(COMPILEALL_OPTS) -d $(LIBDEST)/site-packages -f \
  		-x badsyntax $(DESTDIR)$(LIBDEST)/site-packages
  endif
@@ -82,7 +82,7 @@ index 2243a658a9..3f314d1354 100644
  
  # bpo-21536: Misc/python-config.sh is generated in the build directory
  # from $(srcdir)Misc/python-config.sh.in.
-@@ -2474,7 +2481,9 @@ libainstall: all scripts
+@@ -2480,7 +2487,9 @@ libainstall: all scripts
  	$(INSTALL_SCRIPT) $(srcdir)/install-sh $(DESTDIR)$(LIBPL)/install-sh
  	$(INSTALL_SCRIPT) python-config.py $(DESTDIR)$(LIBPL)/python-config.py
  	$(INSTALL_SCRIPT) python-config $(DESTDIR)$(BINDIR)/python$(LDVERSION)-config
@@ -93,10 +93,10 @@ index 2243a658a9..3f314d1354 100644
  ifeq (@PYDOC@,yes)
  	$(INSTALL_SCRIPT) $(SCRIPT_PYDOC) $(DESTDIR)$(BINDIR)/pydoc$(VERSION)
 diff --git a/configure.ac b/configure.ac
-index 1a2dd28d1e..f0354c580d 100644
+index ca226dcc5b9..9b77582560d 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -7561,6 +7561,12 @@ PY_STDLIB_MOD([xxlimited_35], [test "$with_trace_refs" = "no"], [test "$ac_cv_fu
+@@ -7572,6 +7572,12 @@ PY_STDLIB_MOD([xxlimited_35], [test "$with_trace_refs" = "no"], [test "$ac_cv_fu
  # substitute multiline block, must come after last PY_STDLIB_MOD()
  AC_SUBST([MODULE_BLOCK])
  
@@ -110,5 +110,5 @@ index 1a2dd28d1e..f0354c580d 100644
  AC_CONFIG_FILES(m4_normalize([
    Makefile.pre
 -- 
-2.34.1
+2.39.5
 
