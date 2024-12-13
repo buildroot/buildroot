@@ -1,0 +1,10 @@
+config BR2_PACKAGE_QT6QUICK3D
+	bool "qt6quick3d"
+	select BR2_PACKAGE_HOST_QT6BASE_CONCURRENT # Host Quick3DRuntimeRender
+	select BR2_PACKAGE_HOST_QT6BASE_GUI
+	select BR2_PACKAGE_HOST_QT6BASE_WIDGETS
+	select BR2_PACKAGE_QT6DECLARATIVE_QUICK
+	help
+	  This package corresponds to the Qt Quick 3D module:
+
+	  https://doc.qt.io/qt-6/qtquick3d-index.html
