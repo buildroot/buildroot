@@ -1,4 +1,4 @@
-From ffa7fbceb54918eb518474c8f821fda0a58cf181 Mon Sep 17 00:00:00 2001
+From 5b4755f8d6bbeb68f2966464038c3e1f337868d3 Mon Sep 17 00:00:00 2001
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:45:14 -0800
 Subject: [PATCH] Add an option to disable IDLE
@@ -19,7 +19,7 @@ Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
  2 files changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 3f314d1354..5fad7f82fb 100644
+index b44ad736144..aceb52e31ce 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
 @@ -2048,7 +2048,9 @@ bininstall: commoninstall altbininstall
@@ -40,7 +40,7 @@ index 3f314d1354..5fad7f82fb 100644
  		importlib importlib/resources importlib/metadata \
  		json \
  		logging \
-@@ -2267,6 +2268,10 @@ TESTSUBDIRS += test/test_lib2to3			\
+@@ -2273,6 +2274,10 @@ TESTSUBDIRS += test/test_lib2to3			\
  		test/test_lib2to3/data/fixers/myfixes
  endif
  
@@ -51,7 +51,7 @@ index 3f314d1354..5fad7f82fb 100644
  TEST_MODULES=@TEST_MODULES@
  
  .PHONY: libinstall
-@@ -2484,7 +2489,9 @@ libainstall: all scripts
+@@ -2490,7 +2495,9 @@ libainstall: all scripts
  ifeq (@LIB2TO3@,yes)
  	$(INSTALL_SCRIPT) $(SCRIPT_2TO3) $(DESTDIR)$(BINDIR)/2to3-$(VERSION)
  endif
@@ -62,10 +62,10 @@ index 3f314d1354..5fad7f82fb 100644
  	$(INSTALL_SCRIPT) $(SCRIPT_PYDOC) $(DESTDIR)$(BINDIR)/pydoc$(VERSION)
  endif
 diff --git a/configure.ac b/configure.ac
-index f0354c580d..43086962e9 100644
+index 9b77582560d..becec336dc2 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -7567,6 +7567,12 @@ AC_ARG_ENABLE(lib2to3,
+@@ -7578,6 +7578,12 @@ AC_ARG_ENABLE(lib2to3,
  	AS_HELP_STRING([--disable-lib2to3], [disable lib2to3]),
  	[ LIB2TO3="${enableval}" ], [ LIB2TO3=yes ])
  
@@ -79,5 +79,5 @@ index f0354c580d..43086962e9 100644
  AC_CONFIG_FILES(m4_normalize([
    Makefile.pre
 -- 
-2.34.1
+2.39.5
 

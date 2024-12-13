@@ -1,4 +1,4 @@
-From e7fa6023be567251b409527bd005b93335914501 Mon Sep 17 00:00:00 2001
+From 56149930c412fb35aac124bf91b838a5dd4ae72c Mon Sep 17 00:00:00 2001
 From: Vincent Fazio <5265893+vfazio@users.noreply.github.com>
 Date: Wed, 28 Feb 2024 13:55:04 -0600
 Subject: [PATCH] gh-115382: Fix cross compiles when host and target use same
@@ -48,10 +48,10 @@ Upstream: https://github.com/python/cpython/pull/116294
  6 files changed, 19 insertions(+), 3 deletions(-)
 
 diff --git a/Lib/sysconfig.py b/Lib/sysconfig.py
-index 122d441bd1..260aec3127 100644
+index 517b13acaf6..9b9ba869747 100644
 --- a/Lib/sysconfig.py
 +++ b/Lib/sysconfig.py
-@@ -533,7 +533,20 @@ def _init_posix(vars):
+@@ -531,7 +531,20 @@ def _init_posix(vars):
      """Initialize the module as appropriate for POSIX systems."""
      # _sysconfigdata is generated at build time, see _generate_posix_vars()
      name = _get_sysconfigdata_name()
@@ -74,7 +74,7 @@ index 122d441bd1..260aec3127 100644
      vars.update(build_time_vars)
  
 diff --git a/Lib/test/libregrtest/main.py b/Lib/test/libregrtest/main.py
-index e41646d2d1..f54e570728 100644
+index 04404cbcd52..f97172ad680 100644
 --- a/Lib/test/libregrtest/main.py
 +++ b/Lib/test/libregrtest/main.py
 @@ -576,6 +576,7 @@ def _add_cross_compile_opts(self, regrtest_opts):
@@ -86,7 +86,7 @@ index e41646d2d1..f54e570728 100644
              }
              old_environ = os.environ
 diff --git a/Lib/test/pythoninfo.py b/Lib/test/pythoninfo.py
-index 6efeaad812..d43e52c9e4 100644
+index 6efeaad8126..d43e52c9e4c 100644
 --- a/Lib/test/pythoninfo.py
 +++ b/Lib/test/pythoninfo.py
 @@ -326,6 +326,7 @@ def format_groups(groups):
@@ -98,7 +98,7 @@ index 6efeaad812..d43e52c9e4 100644
  
          # Sanitizer options
 diff --git a/Tools/scripts/run_tests.py b/Tools/scripts/run_tests.py
-index 445a34ae3e..4077a83424 100644
+index 445a34ae3e8..4077a834245 100644
 --- a/Tools/scripts/run_tests.py
 +++ b/Tools/scripts/run_tests.py
 @@ -42,6 +42,7 @@ def main(regrtest_args):
@@ -110,7 +110,7 @@ index 445a34ae3e..4077a83424 100644
          }
          environ = {
 diff --git a/configure b/configure
-index 6dc8a66e48..a69346db8c 100755
+index 241cf8f3d4a..484da8c43ef 100755
 --- a/configure
 +++ b/configure
 @@ -3689,7 +3689,7 @@ fi
@@ -123,7 +123,7 @@ index 6dc8a66e48..a69346db8c 100755
  printf "%s\n" "$with_build_python" >&6; }
  
 diff --git a/configure.ac b/configure.ac
-index 1cb95f41fd..de420dde2c 100644
+index d779009f0a6..a5a52a4e139 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -169,7 +169,7 @@ AC_ARG_WITH([build-python],
@@ -136,5 +136,5 @@ index 1cb95f41fd..de420dde2c 100644
    ], [
      AS_VAR_IF([cross_compiling], [yes],
 -- 
-2.34.1
+2.39.5
 

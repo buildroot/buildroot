@@ -1,4 +1,4 @@
-From c1ec9fa46cd7679fd009f66a3ebed8de95d84f10 Mon Sep 17 00:00:00 2001
+From 4d02905278ef62aaf9e984022033c3390d675948 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:23:42 -0800
 Subject: [PATCH] Add an option to disable the tk module
@@ -19,7 +19,7 @@ Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
  2 files changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 7b6c9811a6..6d9527ddd0 100644
+index 7c5bcea59ba..5de6f63220d 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
 @@ -2108,7 +2108,6 @@ LIBSUBDIRS=	asyncio \
@@ -30,7 +30,7 @@ index 7b6c9811a6..6d9527ddd0 100644
  		tomllib \
  		turtledemo \
  		unittest \
-@@ -2212,7 +2211,6 @@ TESTSUBDIRS=	idlelib/idle_test \
+@@ -2213,7 +2212,6 @@ TESTSUBDIRS=	idlelib/idle_test \
  		test/test_peg_generator \
  		test/test_pydoc \
  		test/test_sqlite3 \
@@ -38,15 +38,15 @@ index 7b6c9811a6..6d9527ddd0 100644
  		test/test_tomllib \
  		test/test_tomllib/data \
  		test/test_tomllib/data/invalid \
-@@ -2232,7 +2230,6 @@ TESTSUBDIRS=	idlelib/idle_test \
- 		test/test_tomllib/data/valid/dates-and-times \
+@@ -2234,7 +2232,6 @@ TESTSUBDIRS=	idlelib/idle_test \
  		test/test_tomllib/data/valid/multiline-basic-str \
  		test/test_tools \
+ 		test/test_tools/i18n_data \
 -		test/test_ttk \
  		test/test_unittest \
  		test/test_unittest/testmock \
  		test/test_warnings \
-@@ -2253,6 +2250,11 @@ TESTSUBDIRS=	idlelib/idle_test \
+@@ -2259,6 +2256,11 @@ TESTSUBDIRS=	idlelib/idle_test \
  		test/test_multiprocessing_forkserver \
  		test/test_multiprocessing_spawn
  
@@ -59,10 +59,10 @@ index 7b6c9811a6..6d9527ddd0 100644
  
  ifeq (@PYDOC@,yes)
 diff --git a/configure.ac b/configure.ac
-index d1c54bd67c..4c5cbe4153 100644
+index 3fbcabe29c8..4331ed4264f 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4529,6 +4529,13 @@ AC_ARG_ENABLE(pydoc,
+@@ -4532,6 +4532,13 @@ AC_ARG_ENABLE(pydoc,
  	AS_HELP_STRING([--disable-pydoc], [disable pydoc]),
  	[ PYDOC="${enableval}" ], [ PYDOC=yes ])
  
@@ -77,5 +77,5 @@ index d1c54bd67c..4c5cbe4153 100644
  AH_TEMPLATE([ENABLE_IPV6], [Define if --enable-ipv6 is specified])
  AC_MSG_CHECKING([if --enable-ipv6 is specified])
 -- 
-2.34.1
+2.39.5
 

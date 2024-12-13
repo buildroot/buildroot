@@ -1,4 +1,4 @@
-From 267516c76208e63b5a3ec7d4dead6c329d8763bb Mon Sep 17 00:00:00 2001
+From 36fbff49ddfe4e91af5683290a68b717aea1b875 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Date: Tue, 6 Feb 2024 22:46:59 +0100
 Subject: [PATCH] configure.ac: move PY_STDLIB_MOD_SET_NA further up
@@ -12,7 +12,7 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
  1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 43086962e9..561e33f550 100644
+index becec336dc2..ab68cc3dd73 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -95,6 +95,11 @@ AC_DEFUN([PY_CHECK_EMSCRIPTEN_PORT], [
@@ -27,7 +27,7 @@ index 43086962e9..561e33f550 100644
  AC_SUBST([BASECPPFLAGS])
  if test "$srcdir" != . -a "$srcdir" != "$(pwd)"; then
      # If we're building out-of-tree, we need to make sure the following
-@@ -7258,11 +7263,6 @@ AC_ARG_ENABLE([test-modules],
+@@ -7261,11 +7266,6 @@ AC_ARG_ENABLE([test-modules],
  AC_MSG_RESULT([$TEST_MODULES])
  AC_SUBST([TEST_MODULES])
  
@@ -40,5 +40,5 @@ index 43086962e9..561e33f550 100644
  dnl Modules that are not available on some platforms
  dnl AIX has shadow passwords, but access is not via getspent()
 -- 
-2.34.1
+2.39.5
 

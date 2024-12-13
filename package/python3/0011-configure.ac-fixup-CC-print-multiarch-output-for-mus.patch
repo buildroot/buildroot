@@ -1,4 +1,4 @@
-From 3eccbd53df3c51c1c6ece217d19f1d01eb9575a7 Mon Sep 17 00:00:00 2001
+From a52c5db8ffa6715b72ae6813a48491b8cf2ce86e Mon Sep 17 00:00:00 2001
 From: Peter Korsgaard <peter@korsgaard.com>
 Date: Fri, 2 Aug 2019 15:53:16 +0200
 Subject: [PATCH] configure.ac: fixup $CC --print-multiarch output for
@@ -32,7 +32,7 @@ Signed-off-by: Vincent Fazio <vfazio@gmail.com>
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/configure.ac b/configure.ac
-index 1cb95f41fd..d142af404a 100644
+index a2436c0733b..d779009f0a6 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -1128,7 +1128,11 @@ AC_MSG_CHECKING([for multiarch])
@@ -49,5 +49,5 @@ index 1cb95f41fd..d142af404a 100644
  AC_SUBST([MULTIARCH])
  AC_MSG_RESULT([$MULTIARCH])
 -- 
-2.34.1
+2.39.5
 
