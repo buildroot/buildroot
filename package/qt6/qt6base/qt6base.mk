@@ -83,8 +83,8 @@ HOST_QT6BASE_DEPENDENCIES = \
 	host-libb2 \
 	host-pcre2 \
 	host-zlib
+
 HOST_QT6BASE_CONF_OPTS = \
-	-DFEATURE_concurrent=OFF \
 	-DFEATURE_xml=ON \
 	-DFEATURE_dbus=OFF \
 	-DFEATURE_icu=OFF \
@@ -93,6 +93,12 @@ HOST_QT6BASE_CONF_OPTS = \
 	-DFEATURE_system_libb2=ON \
 	-DFEATURE_system_pcre2=ON \
 	-DFEATURE_system_zlib=ON
+
+ifeq ($(BR2_PACKAGE_HOST_QT6BASE_CONCURRENT),y)
+HOST_QT6BASE_CONF_OPTS += -DFEATURE_concurrent=ON
+else
+HOST_QT6BASE_CONF_OPTS += -DFEATURE_concurrent=OFF
+endif
 
 # We need host-qt6base with Gui support when building host-qt6shadertools,
 # otherwise the build is skipped and no qsb host tool is generated.
