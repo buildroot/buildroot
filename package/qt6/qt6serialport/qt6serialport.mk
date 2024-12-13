@@ -23,8 +23,7 @@ QT6SERIALPORT_LICENSE_FILES = \
 	LICENSES/GFDL-1.3-no-invariants-only.txt \
 	LICENSES/GPL-2.0-only.txt \
 	LICENSES/GPL-3.0-only.txt \
-	LICENSES/LGPL-3.0-only.txt \
-	LICENSES/Qt-GPL-exception-1.0.txt
+	LICENSES/LGPL-3.0-only.txt
 
 QT6SERIALPORT_CONF_OPTS = \
 	-DQT_HOST_PATH=$(HOST_DIR) \
