@@ -1,0 +1,26 @@
+################################################################################
+#
+# qt6quicktimeline
+#
+################################################################################
+
+QT6QUICKTIMELINE_VERSION = $(QT6_VERSION)
+QT6QUICKTIMELINE_SITE = $(QT6_SITE)
+QT6QUICKTIMELINE_SOURCE = qtquicktimeline-$(QT6_SOURCE_TARBALL_PREFIX)-$(QT6QUICKTIMELINE_VERSION).tar.xz
+QT6QUICKTIMELINE_INSTALL_STAGING = YES
+QT6QUICKTIMELINE_SUPPORTS_IN_SOURCE_BUILD = NO
+QT6QUICKTIMELINE_CMAKE_BACKEND = ninja
+QT6QUICKTIMELINE_LICENSE = GPL-3.0
+QT6QUICKTIMELINE_LICENSE_FILES = LICENSES/GPL-3.0-only.txt
+
+QT6QUICKTIMELINE_CONF_OPTS = \
+	-DQT_HOST_PATH=$(HOST_DIR) \
+	-DBUILD_WITH_PCH=OFF \
+	-DQT_BUILD_EXAMPLES=OFF \
+	-DQT_BUILD_TESTS=OFF
+
+QT6QUICKTIMELINE_DEPENDENCIES = \
+	qt6base \
+	qt6declarative
+
+$(eval $(cmake-package))
