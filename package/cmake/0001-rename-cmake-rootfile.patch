@@ -12,7 +12,7 @@ This buildroot-specific patch makes sure ctest looks also for
 
 [Vincent: tweak patch for 3.6.3]
 [James: tweak patch for 3.15.4]
-[Bernd: tweak patch for 3.27.0]
+[Bernd: tweak patch for 3.27.0 & 3.31.2]
 
 Signed-off-by: Davide Viti <zinosat@tiscali.it>
 Signed-off-by: Vicente Olivert Riera <Vincent.Riera@imgtec.com>
@@ -26,7 +26,7 @@ diff --git a/Source/cmake.cxx b/Source/cmake.cxx
 index 3772f09985..c317e4af38 100644
 --- a/Source/cmake.cxx
 +++ b/Source/cmake.cxx
-@@ -1891,7 +1891,12 @@ int cmake::AddCMakePaths()
+@@ -1896,7 +1896,12 @@ int cmake::AddCMakePaths()
                        cmStateEnums::INTERNAL);
  #endif
    if (!cmSystemTools::FileExists(
