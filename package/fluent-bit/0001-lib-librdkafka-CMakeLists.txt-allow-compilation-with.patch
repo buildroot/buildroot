@@ -1,4 +1,4 @@
-From 29be5275f6f7e15aca768e9b235998abc5a604e2 Mon Sep 17 00:00:00 2001
+From c44256c95f5703dd627413f17c6ad250073898d9 Mon Sep 17 00:00:00 2001
 From: Thomas Devoogdt <thomas.devoogdt@barco.com>
 Date: Tue, 25 Jul 2023 09:10:41 +0200
 Subject: [PATCH] lib: librdkafka: CMakeLists.txt: allow compilation without
@@ -7,13 +7,11 @@ Subject: [PATCH] lib: librdkafka: CMakeLists.txt: allow compilation without
 e.g. fluent-bit is a c-only library, so allow compilation without cxx
 
 Upstream: https://github.com/confluentinc/librdkafka/pull/4366
-Upstream: https://github.com/fluent/fluent-bit/pull/7765
+Upstream: https://github.com/fluent/fluent-bit/pull/9277
 Signed-off-by: Thomas Devoogdt <thomas.devoogdt@barco.com>
-[Fabrice: update for 3.1.3]
-Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
- lib/librdkafka-2.3.0/CMakeLists.txt          | 18 ++++++++++--
- lib/librdkafka-2.3.0/examples/CMakeLists.txt | 31 +++++++++++++-------
+ lib/librdkafka-2.4.0/CMakeLists.txt          | 18 ++++++++++--
+ lib/librdkafka-2.4.0/examples/CMakeLists.txt | 31 +++++++++++++-------
  2 files changed, 35 insertions(+), 14 deletions(-)
 
 diff --git a/lib/librdkafka-2.4.0/CMakeLists.txt b/lib/librdkafka-2.4.0/CMakeLists.txt
@@ -116,5 +114,5 @@ index 8c0079abe..c9336b729 100644
 +    endif()
  endif(NOT WIN32)
 -- 
-2.34.1
+2.43.0
 

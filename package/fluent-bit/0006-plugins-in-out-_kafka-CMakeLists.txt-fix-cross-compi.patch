@@ -1,0 +1,48 @@
+From 7e8bb790cba0619af9e8d80e947f7cda0910caaa Mon Sep 17 00:00:00 2001
+From: Thomas Devoogdt <thomas@devoogdt.com>
+Date: Sat, 16 Nov 2024 19:46:28 +0100
+Subject: [PATCH] plugins/{in,out}_kafka/CMakeLists.txt: fix cross compile
+ error
+
+KAFKA_INCLUDEDIR is not set if FLB_PREFER_SYSTEM_LIB_KAFKA is not used,
+when cross-compiling, it just translates to -I/librdkafka, which is not allowed.
+Fix this by only including KAFKA_INCLUDEDIR if really set.
+
+x86_64-linux-gcc: ERROR: unsafe header/library path used in cross-compilation: '-I/librdkafka'
+
+Upstream: https://github.com/fluent/fluent-bit/pull/9600
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+---
+ plugins/in_kafka/CMakeLists.txt  | 4 +++-
+ plugins/out_kafka/CMakeLists.txt | 4 +++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/plugins/in_kafka/CMakeLists.txt b/plugins/in_kafka/CMakeLists.txt
+index ede0831f9..02e2dc786 100644
+--- a/plugins/in_kafka/CMakeLists.txt
++++ b/plugins/in_kafka/CMakeLists.txt
+@@ -3,5 +3,7 @@ set(src
+   )
+ 
+ FLB_PLUGIN(in_kafka "${src}" ${KAFKA_LIBRARIES})
+-target_include_directories(flb-plugin-in_kafka PUBLIC ${KAFKA_INCLUDEDIR}/librdkafka)
++if(DEFINED KAFKA_INCLUDEDIR)
++  target_include_directories(flb-plugin-in_kafka PUBLIC ${KAFKA_INCLUDEDIR}/librdkafka)
++endif()
+ target_link_libraries(flb-plugin-in_kafka -lpthread)
+diff --git a/plugins/out_kafka/CMakeLists.txt b/plugins/out_kafka/CMakeLists.txt
+index 01c96529b..54b14fc2a 100644
+--- a/plugins/out_kafka/CMakeLists.txt
++++ b/plugins/out_kafka/CMakeLists.txt
+@@ -5,5 +5,7 @@ set(src
+   kafka.c)
+ 
+ FLB_PLUGIN(out_kafka "${src}" ${KAFKA_LIBRARIES})
+-target_include_directories(flb-plugin-out_kafka PUBLIC ${KAFKA_INCLUDEDIR}/librdkafka)
++if(DEFINED KAFKA_INCLUDEDIR)
++  target_include_directories(flb-plugin-out_kafka PUBLIC ${KAFKA_INCLUDEDIR}/librdkafka)
++endif()
+ target_link_libraries(flb-plugin-out_kafka -lpthread)
+-- 
+2.43.0
+
