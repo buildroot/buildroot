@@ -419,7 +419,7 @@ config BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_TWOLAME
 
 config BR2_PACKAGE_GST1_PLUGINS_GOOD_PLUGIN_VPX
 	bool "vpx (webm)"
-	depends on BR2_TOOLCHAIN_HAS_THREADS # libvpx
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # libvpx
 	select BR2_PACKAGE_LIBVPX
 	help
 	  VP8 plugin
