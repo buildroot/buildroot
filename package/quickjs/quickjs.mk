@@ -29,7 +29,7 @@ define QUICKJS_INSTALL_STAGING_CMDS
 		EXTRA_LIBS="$(QUICKJS_EXTRA_LIBS)" \
 		DESTDIR=$(STAGING_DIR) \
 		STRIP=/bin/true \
-		prefix=/usr \
+		PREFIX=/usr \
 		install
 endef
 
@@ -39,7 +39,7 @@ define QUICKJS_INSTALL_TARGET_CMDS
 		EXTRA_LIBS="$(QUICKJS_EXTRA_LIBS)" \
 		DESTDIR=$(TARGET_DIR) \
 		STRIP=/bin/true \
-		prefix=/usr \
+		PREFIX=/usr \
 		install
 endef
 
