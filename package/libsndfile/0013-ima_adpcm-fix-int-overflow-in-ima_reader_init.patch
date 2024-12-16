@@ -1,0 +1,55 @@
+From 9a829113c88a51e57c1e46473e90609e4b7df151 Mon Sep 17 00:00:00 2001
+From: Alex Stewart <alex.stewart@ni.com>
+Date: Tue, 17 Oct 2023 12:19:12 -0400
+Subject: [PATCH] ima_adpcm: fix int overflow in ima_reader_init()
+
+When calculating sf.frames, pre-cast samplesperblock to sf_count_t, to
+provide the calculation with enough numeric space to avoid overflows.
+
+Other changes in this commit are syntactic, and only to satisfy the git
+pre-commit syntax checker.
+
+CVE: CVE-2022-33065
+Fixes: https://github.com/libsndfile/libsndfile/issues/833
+
+Signed-off-by: Alex Stewart <alex.stewart@ni.com>
+Upstream: https://github.com/libsndfile/libsndfile/commit/9a829113c88a51e57c1e46473e90609e4b7df151
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ src/ima_adpcm.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/ima_adpcm.c b/src/ima_adpcm.c
+index bc61f4e5..7464d1b3 100644
+--- a/src/ima_adpcm.c
++++ b/src/ima_adpcm.c
+@@ -187,7 +187,7 @@ ima_reader_init (SF_PRIVATE *psf, int blockalign, int samplesperblock)
+ 	**	to avoid having to branch when pulling apart the nibbles.
+ 	*/
+ 	count = ((samplesperblock - 2) | 7) + 2 ;
+-	pimasize = sizeof (IMA_ADPCM_PRIVATE) + psf->sf.channels * (blockalign + samplesperblock + sizeof(short) * count) ;
++	pimasize = sizeof (IMA_ADPCM_PRIVATE) + psf->sf.channels * (blockalign + samplesperblock + sizeof (short) * count) ;
+ 
+ 	if (! (pima = calloc (1, pimasize)))
+ 		return SFE_MALLOC_FAILED ;
+@@ -238,7 +238,7 @@ ima_reader_init (SF_PRIVATE *psf, int blockalign, int samplesperblock)
+ 		case SF_FORMAT_AIFF :
+ 				psf_log_printf (psf, "still need to check block count\n") ;
+ 				pima->decode_block = aiff_ima_decode_block ;
+-				psf->sf.frames = pima->samplesperblock * pima->blocks / pima->channels ;
++				psf->sf.frames = (sf_count_t) pima->samplesperblock * pima->blocks / pima->channels ;
+ 				break ;
+ 
+ 		default :
+@@ -391,7 +391,7 @@ aiff_ima_encode_block (SF_PRIVATE *psf, IMA_ADPCM_PRIVATE *pima)
+ static int
+ wavlike_ima_decode_block (SF_PRIVATE *psf, IMA_ADPCM_PRIVATE *pima)
+ {	int		chan, k, predictor, blockindx, indx, indxstart, diff ;
+-	short	step, bytecode, stepindx [2] = { 0 };
++	short	step, bytecode, stepindx [2] = { 0 } ;
+ 
+ 	pima->blockcount ++ ;
+ 	pima->samplecount = 0 ;
+-- 
+2.39.5
+

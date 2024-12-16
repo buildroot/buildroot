@@ -1,0 +1,58 @@
+From a5afea2e24080ddf5c7b8e26c29cdbd94ae8226b Mon Sep 17 00:00:00 2001
+From: Alex Stewart <alex.stewart@ni.com>
+Date: Wed, 11 Oct 2023 16:36:02 -0400
+Subject: [PATCH] au: avoid int overflow while calculating data_end
+
+At several points in au_read_header(), we calculate the functional end
+of the data segment by adding the (int)au_fmt.dataoffset and the
+(int)au_fmt.datasize. This can overflow the implicit int_32 return value
+and cause undefined behavior.
+
+Instead, precalculate the value and assign it to a 64-bit
+(sf_count_t)data_end variable.
+
+CVE: CVE-2022-33065
+Fixes: https://github.com/libsndfile/libsndfile/issues/833
+
+Signed-off-by: Alex Stewart <alex.stewart@ni.com>
+Upstream: https://github.com/libsndfile/libsndfile/commit/a5afea2e24080ddf5c7b8e26c29cdbd94ae8226b
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ src/au.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/src/au.c b/src/au.c
+index 62bd691d..f68f2587 100644
+--- a/src/au.c
++++ b/src/au.c
+@@ -291,6 +291,7 @@ static int
+ au_read_header (SF_PRIVATE *psf)
+ {	AU_FMT	au_fmt ;
+ 	int		marker, dword ;
++	sf_count_t data_end ;
+ 
+ 	memset (&au_fmt, 0, sizeof (au_fmt)) ;
+ 	psf_binheader_readf (psf, "pm", 0, &marker) ;
+@@ -317,14 +318,15 @@ au_read_header (SF_PRIVATE *psf)
+ 		return SFE_AU_EMBED_BAD_LEN ;
+ 		} ;
+ 
++	data_end = (sf_count_t) au_fmt.dataoffset + (sf_count_t) au_fmt.datasize ;
+ 	if (psf->fileoffset > 0)
+-	{	psf->filelength = au_fmt.dataoffset + au_fmt.datasize ;
++	{	psf->filelength = data_end ;
+ 		psf_log_printf (psf, "  Data Size   : %d\n", au_fmt.datasize) ;
+ 		}
+-	else if (au_fmt.datasize == -1 || au_fmt.dataoffset + au_fmt.datasize == psf->filelength)
++	else if (au_fmt.datasize == -1 || data_end == psf->filelength)
+ 		psf_log_printf (psf, "  Data Size   : %d\n", au_fmt.datasize) ;
+-	else if (au_fmt.dataoffset + au_fmt.datasize < psf->filelength)
+-	{	psf->filelength = au_fmt.dataoffset + au_fmt.datasize ;
++	else if (data_end < psf->filelength)
++	{	psf->filelength = data_end ;
+ 		psf_log_printf (psf, "  Data Size   : %d\n", au_fmt.datasize) ;
+ 		}
+ 	else
+-- 
+2.39.5
+

@@ -1,0 +1,34 @@
+From 2f8eece78cc8b4dce6c95b3045867f0936714db8 Mon Sep 17 00:00:00 2001
+From: Alex Stewart <alex.stewart@ni.com>
+Date: Wed, 11 Oct 2023 16:46:29 -0400
+Subject: [PATCH] avr: fix int overflow in avr_read_header()
+
+Pre-cast hdr.frames to sf_count_t, to provide the calculation with
+enough numeric space to avoid an int-overflow.
+
+CVE: CVE-2022-33065
+Fixes: https://github.com/libsndfile/libsndfile/issues/833
+
+Signed-off-by: Alex Stewart <alex.stewart@ni.com>
+Upstream: https://github.com/libsndfile/libsndfile/commit/2f8eece78cc8b4dce6c95b3045867f0936714db8
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ src/avr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/avr.c b/src/avr.c
+index 6c78ff69..1bc1ffc9 100644
+--- a/src/avr.c
++++ b/src/avr.c
+@@ -162,7 +162,7 @@ avr_read_header (SF_PRIVATE *psf)
+ 	psf->endian = SF_ENDIAN_BIG ;
+ 
+  	psf->dataoffset = AVR_HDR_SIZE ;
+-	psf->datalength = hdr.frames * (hdr.rez / 8) ;
++	psf->datalength = (sf_count_t) hdr.frames * (hdr.rez / 8) ;
+ 
+ 	if (psf->fileoffset > 0)
+ 		psf->filelength = AVR_HDR_SIZE + psf->datalength ;
+-- 
+2.39.5
+
