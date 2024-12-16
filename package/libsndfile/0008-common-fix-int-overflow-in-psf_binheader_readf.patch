@@ -1,0 +1,181 @@
+From 6be8906740cdca067f12920bb4a63f728485aff0 Mon Sep 17 00:00:00 2001
+From: Alex Stewart <alex.stewart@ni.com>
+Date: Mon, 16 Oct 2023 12:37:47 -0400
+Subject: [PATCH] common: fix int overflow in psf_binheader_readf()
+
+The psf_binheader_readf() function attempts to count and return the
+number of bytes traversed in the header. During this accumulation, it is
+possible to overflow the int-sized byte_count variable.
+
+Avoid this overflow by checking that the accumulated bytes do not exceed
+INT_MAX and throwing an error if they do. This implies that files with
+multi-gigabyte headers threaten to produce this error, but I imagine
+those files don't really exist - and this error is better than the
+undefined behavior which would have resulted previously.
+
+CVE: CVE-2022-33065
+Fixes: https://github.com/libsndfile/libsndfile/issues/833
+
+Signed-off-by: Alex Stewart <alex.stewart@ni.com>
+Upstream: https://github.com/libsndfile/libsndfile/commit/6be8906740cdca067f12920bb4a63f728485aff0
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ src/common.c | 36 ++++++++++++++++++++++++------------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
+
+diff --git a/src/common.c b/src/common.c
+index b877aa86..8982379a 100644
+--- a/src/common.c
++++ b/src/common.c
+@@ -18,6 +18,7 @@
+ 
+ #include <config.h>
+ 
++#include <limits.h>
+ #include <stdarg.h>
+ #include <string.h>
+ #if HAVE_UNISTD_H
+@@ -990,6 +991,7 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
+ 	double			*doubleptr ;
+ 	char			c ;
+ 	int				byte_count = 0, count = 0 ;
++	int				read_bytes = 0 ;
+ 
+ 	if (! format)
+ 		return psf_ftell (psf) ;
+@@ -998,6 +1000,7 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
+ 
+ 	while ((c = *format++))
+ 	{
++		read_bytes = 0 ;
+ 		if (psf->header.indx + 16 >= psf->header.len && psf_bump_header_allocation (psf, 16))
+ 			break ;
+ 
+@@ -1014,7 +1017,7 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
+ 					intptr = va_arg (argptr, unsigned int*) ;
+ 					*intptr = 0 ;
+ 					ucptr = (unsigned char*) intptr ;
+-					byte_count += header_read (psf, ucptr, sizeof (int)) ;
++					read_bytes = header_read (psf, ucptr, sizeof (int)) ;
+ 					*intptr = GET_MARKER (ucptr) ;
+ 					break ;
+ 
+@@ -1022,7 +1025,7 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
+ 					intptr = va_arg (argptr, unsigned int*) ;
+ 					*intptr = 0 ;
+ 					ucptr = (unsigned char*) intptr ;
+-					byte_count += header_read (psf, sixteen_bytes, sizeof (sixteen_bytes)) ;
++					read_bytes = header_read (psf, sixteen_bytes, sizeof (sixteen_bytes)) ;
+ 					{	int k ;
+ 						intdata = 0 ;
+ 						for (k = 0 ; k < 16 ; k++)
+@@ -1034,14 +1037,14 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
+ 			case '1' :
+ 					charptr = va_arg (argptr, char*) ;
+ 					*charptr = 0 ;
+-					byte_count += header_read (psf, charptr, sizeof (char)) ;
++					read_bytes = header_read (psf, charptr, sizeof (char)) ;
+ 					break ;
+ 
+ 			case '2' : /* 2 byte value with the current endian-ness */
+ 					shortptr = va_arg (argptr, unsigned short*) ;
+ 					*shortptr = 0 ;
+ 					ucptr = (unsigned char*) shortptr ;
+-					byte_count += header_read (psf, ucptr, sizeof (short)) ;
++					read_bytes = header_read (psf, ucptr, sizeof (short)) ;
+ 					if (psf->rwf_endian == SF_ENDIAN_BIG)
+ 						*shortptr = GET_BE_SHORT (ucptr) ;
+ 					else
+@@ -1051,7 +1054,7 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
+ 			case '3' : /* 3 byte value with the current endian-ness */
+ 					intptr = va_arg (argptr, unsigned int*) ;
+ 					*intptr = 0 ;
+-					byte_count += header_read (psf, sixteen_bytes, 3) ;
++					read_bytes = header_read (psf, sixteen_bytes, 3) ;
+ 					if (psf->rwf_endian == SF_ENDIAN_BIG)
+ 						*intptr = GET_BE_3BYTE (sixteen_bytes) ;
+ 					else
+@@ -1062,7 +1065,7 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
+ 					intptr = va_arg (argptr, unsigned int*) ;
+ 					*intptr = 0 ;
+ 					ucptr = (unsigned char*) intptr ;
+-					byte_count += header_read (psf, ucptr, sizeof (int)) ;
++					read_bytes = header_read (psf, ucptr, sizeof (int)) ;
+ 					if (psf->rwf_endian == SF_ENDIAN_BIG)
+ 						*intptr = psf_get_be32 (ucptr, 0) ;
+ 					else
+@@ -1072,7 +1075,7 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
+ 			case '8' : /* 8 byte value with the current endian-ness */
+ 					countptr = va_arg (argptr, sf_count_t *) ;
+ 					*countptr = 0 ;
+-					byte_count += header_read (psf, sixteen_bytes, 8) ;
++					read_bytes = header_read (psf, sixteen_bytes, 8) ;
+ 					if (psf->rwf_endian == SF_ENDIAN_BIG)
+ 						countdata = psf_get_be64 (sixteen_bytes, 0) ;
+ 					else
+@@ -1083,7 +1086,7 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
+ 			case 'f' : /* Float conversion */
+ 					floatptr = va_arg (argptr, float *) ;
+ 					*floatptr = 0.0 ;
+-					byte_count += header_read (psf, floatptr, sizeof (float)) ;
++					read_bytes = header_read (psf, floatptr, sizeof (float)) ;
+ 					if (psf->rwf_endian == SF_ENDIAN_BIG)
+ 						*floatptr = float32_be_read ((unsigned char*) floatptr) ;
+ 					else
+@@ -1093,7 +1096,7 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
+ 			case 'd' : /* double conversion */
+ 					doubleptr = va_arg (argptr, double *) ;
+ 					*doubleptr = 0.0 ;
+-					byte_count += header_read (psf, doubleptr, sizeof (double)) ;
++					read_bytes = header_read (psf, doubleptr, sizeof (double)) ;
+ 					if (psf->rwf_endian == SF_ENDIAN_BIG)
+ 						*doubleptr = double64_be_read ((unsigned char*) doubleptr) ;
+ 					else
+@@ -1117,7 +1120,7 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
+ 					charptr = va_arg (argptr, char*) ;
+ 					count = va_arg (argptr, size_t) ;
+ 					memset (charptr, 0, count) ;
+-					byte_count += header_read (psf, charptr, count) ;
++					read_bytes = header_read (psf, charptr, count) ;
+ 					break ;
+ 
+ 			case 'G' :
+@@ -1128,7 +1131,7 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
+ 					if (psf->header.indx + count >= psf->header.len && psf_bump_header_allocation (psf, count))
+ 						break ;
+ 
+-					byte_count += header_gets (psf, charptr, count) ;
++					read_bytes = header_gets (psf, charptr, count) ;
+ 					break ;
+ 
+ 			case 'z' :
+@@ -1152,7 +1155,7 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
+ 			case 'j' :	/* Seek to position from current position. */
+ 					count = va_arg (argptr, size_t) ;
+ 					header_seek (psf, count, SEEK_CUR) ;
+-					byte_count += count ;
++					read_bytes = count ;
+ 					break ;
+ 
+ 			case '!' : /* Clear buffer, forcing re-read. */
+@@ -1164,8 +1167,17 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
+ 				psf->error = SFE_INTERNAL ;
+ 				break ;
+ 			} ;
++
++		if (read_bytes > 0 && byte_count > (INT_MAX - read_bytes))
++		{	psf_log_printf (psf, "Header size exceeds INT_MAX. Aborting.", c) ;
++			psf->error = SFE_INTERNAL ;
++			break ;
++		} else
++		{	byte_count += read_bytes ;
+ 		} ;
+ 
++		} ;	/*end while*/
++
+ 	va_end (argptr) ;
+ 
+ 	return byte_count ;
+-- 
+2.39.5
+

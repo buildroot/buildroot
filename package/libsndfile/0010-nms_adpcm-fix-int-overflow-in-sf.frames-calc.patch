@@ -1,0 +1,39 @@
+From 3fb27a2c93a11dd3321b0b13140d89ebb39060cb Mon Sep 17 00:00:00 2001
+From: Alex Stewart <alex.stewart@ni.com>
+Date: Tue, 17 Oct 2023 11:50:53 -0400
+Subject: [PATCH] nms_adpcm: fix int overflow in sf.frames calc
+
+When calculating sf.frames from the blocks_total PNMS variable, it is
+theoretically possible to overflow the blocks_total int boundaries,
+leading to undefined behavior.
+
+Cast blocks_total to a long-sized sf_count_t before the calculation, to
+provide it with enough numeric space and because that is the final
+typing regardless.
+
+CVE: CVE-2022-33065
+Fixes: https://github.com/libsndfile/libsndfile/issues/833
+
+Signed-off-by: Alex Stewart <alex.stewart@ni.com>
+Upstream: https://github.com/libsndfile/libsndfile/commit/3fb27a2c93a11dd3321b0b13140d89ebb39060cb
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ src/nms_adpcm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/nms_adpcm.c b/src/nms_adpcm.c
+index dca85f0b..61d171c7 100644
+--- a/src/nms_adpcm.c
++++ b/src/nms_adpcm.c
+@@ -1090,7 +1090,7 @@ nms_adpcm_init (SF_PRIVATE *psf)
+ 	else
+ 		pnms->blocks_total = psf->datalength / (pnms->shortsperblock * sizeof (short)) ;
+ 
+-	psf->sf.frames		= pnms->blocks_total * NMS_SAMPLES_PER_BLOCK ;
++	psf->sf.frames		= (sf_count_t) pnms->blocks_total * NMS_SAMPLES_PER_BLOCK ;
+ 	psf->codec_close	= nms_adpcm_close ;
+ 	psf->seek			= nms_adpcm_seek ;
+ 
+-- 
+2.39.5
+

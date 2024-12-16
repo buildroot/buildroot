@@ -1,0 +1,61 @@
+From 2e9f71dd5d5c85b5bd4a0573d1fa05b5b89b33a7 Mon Sep 17 00:00:00 2001
+From: Alex Stewart <alex.stewart@ni.com>
+Date: Wed, 11 Oct 2023 16:54:21 -0400
+Subject: [PATCH] sds: fix int overflow warning in sample calculations
+
+The sds_*byte_read() functions compose their uint_32 sample buffers by
+shifting 7bit samples into a 32bit wide buffer, and adding them
+together. Because the 7bit samples are stored in 32bit ints, code
+fuzzers become concerned that the addition operation can overflow and
+cause undefined behavior.
+
+Instead, bitwise-OR the bytes together - which should accomplish the
+same arithmetic operation, without risking an int-overflow.
+
+CVE: CVE-2022-33065
+Fixes: https://github.com/libsndfile/libsndfile/issues/833
+
+Signed-off-by: Alex Stewart <alex.stewart@ni.com>
+
+Do the same for the 3byte and 4byte read functions.
+
+Upstream: https://github.com/libsndfile/libsndfile/commit/2e9f71dd5d5c85b5bd4a0573d1fa05b5b89b33a7
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ src/sds.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/sds.c b/src/sds.c
+index 6bc76171..2a0f164c 100644
+--- a/src/sds.c
++++ b/src/sds.c
+@@ -454,7 +454,7 @@ sds_2byte_read (SF_PRIVATE *psf, SDS_PRIVATE *psds)
+ 
+ 	ucptr = psds->read_data + 5 ;
+ 	for (k = 0 ; k < 120 ; k += 2)
+-	{	sample = arith_shift_left (ucptr [k], 25) + arith_shift_left (ucptr [k + 1], 18) ;
++	{	sample = arith_shift_left (ucptr [k], 25) | arith_shift_left (ucptr [k + 1], 18) ;
+ 		psds->read_samples [k / 2] = (int) (sample - 0x80000000) ;
+ 		} ;
+ 
+@@ -498,7 +498,7 @@ sds_3byte_read (SF_PRIVATE *psf, SDS_PRIVATE *psds)
+ 
+ 	ucptr = psds->read_data + 5 ;
+ 	for (k = 0 ; k < 120 ; k += 3)
+-	{	sample = (((uint32_t) ucptr [k]) << 25) + (ucptr [k + 1] << 18) + (ucptr [k + 2] << 11) ;
++	{	sample = (((uint32_t) ucptr [k]) << 25) | (ucptr [k + 1] << 18) | (ucptr [k + 2] << 11) ;
+ 		psds->read_samples [k / 3] = (int) (sample - 0x80000000) ;
+ 		} ;
+ 
+@@ -542,7 +542,7 @@ sds_4byte_read (SF_PRIVATE *psf, SDS_PRIVATE *psds)
+ 
+ 	ucptr = psds->read_data + 5 ;
+ 	for (k = 0 ; k < 120 ; k += 4)
+-	{	sample = (((uint32_t) ucptr [k]) << 25) + (ucptr [k + 1] << 18) + (ucptr [k + 2] << 11) + (ucptr [k + 3] << 4) ;
++	{	sample = (((uint32_t) ucptr [k]) << 25) | (ucptr [k + 1] << 18) | (ucptr [k + 2] << 11) | (ucptr [k + 3] << 4) ;
+ 		psds->read_samples [k / 4] = (int) (sample - 0x80000000) ;
+ 		} ;
+ 
+-- 
+2.39.5
+

@@ -1,0 +1,39 @@
+From 187451dbd3c044f9a76b6c1d950d458de0103180 Mon Sep 17 00:00:00 2001
+From: Alex Stewart <alex.stewart@ni.com>
+Date: Wed, 11 Oct 2023 17:26:51 -0400
+Subject: [PATCH] aiff: fix int overflow when counting header elements
+
+aiff_read_basc_chunk() tries to count the AIFF header size by keeping
+track of the bytes returned by psf_binheader_readf(). Though improbable,
+it is technically possible for these added bytes to exceed the int-sized
+`count` accumulator.
+
+Use a 64-bit sf_count_t type for `count`, to ensure that it always has
+enough numeric space.
+
+CVE: CVE-2022-33065
+Fixes: https://github.com/libsndfile/libsndfile/issues/833
+
+Signed-off-by: Alex Stewart <alex.stewart@ni.com>
+Upstream: https://github.com/libsndfile/libsndfile/commit/187451dbd3c044f9a76b6c1d950d458de0103180
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ src/aiff.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/aiff.c b/src/aiff.c
+index ac3655e9..6d8f1bc8 100644
+--- a/src/aiff.c
++++ b/src/aiff.c
+@@ -1702,7 +1702,7 @@ static int
+ aiff_read_basc_chunk (SF_PRIVATE * psf, int datasize)
+ {	const char * type_str ;
+ 	basc_CHUNK bc ;
+-	int count ;
++	sf_count_t count ;
+ 
+ 	count = psf_binheader_readf (psf, "E442", &bc.version, &bc.numBeats, &bc.rootNote) ;
+ 	count += psf_binheader_readf (psf, "E222", &bc.scaleType, &bc.sigNumerator, &bc.sigDenominator) ;
+-- 
+2.39.5
+
