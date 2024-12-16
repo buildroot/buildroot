@@ -1,0 +1,48 @@
+From 39f2a4ffe5ab77d1cadc2057c2db046a9a3d5d65 Mon Sep 17 00:00:00 2001
+From: Alex Stewart <alex.stewart@ni.com>
+Date: Wed, 11 Oct 2023 16:12:22 -0400
+Subject: [PATCH] mat4/mat5: fix int overflow when calculating blockwidth
+
+Pre-cast the components of the blockwidth calculation to sf_count_t to
+avoid overflowing integers during calculation.
+
+CVE: CVE-2022-33065
+Fixes: https://github.com/libsndfile/libsndfile/issues/833
+
+Signed-off-by: Alex Stewart <alex.stewart@ni.com>
+Upstream: https://github.com/libsndfile/libsndfile/commit/39f2a4ffe5ab77d1cadc2057c2db046a9a3d5d65
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ src/mat4.c | 2 +-
+ src/mat5.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/mat4.c b/src/mat4.c
+index 575683ba..9f046f0c 100644
+--- a/src/mat4.c
++++ b/src/mat4.c
+@@ -104,7 +104,7 @@ mat4_open	(SF_PRIVATE *psf)
+ 
+ 	psf->container_close = mat4_close ;
+ 
+-	psf->blockwidth = psf->bytewidth * psf->sf.channels ;
++	psf->blockwidth = (sf_count_t) psf->bytewidth * psf->sf.channels ;
+ 
+ 	switch (subformat)
+ 	{	case SF_FORMAT_PCM_16 :
+diff --git a/src/mat5.c b/src/mat5.c
+index da5a6eca..20f0ea64 100644
+--- a/src/mat5.c
++++ b/src/mat5.c
+@@ -114,7 +114,7 @@ mat5_open	(SF_PRIVATE *psf)
+ 
+ 	psf->container_close = mat5_close ;
+ 
+-	psf->blockwidth = psf->bytewidth * psf->sf.channels ;
++	psf->blockwidth = (sf_count_t) psf->bytewidth * psf->sf.channels ;
+ 
+ 	switch (subformat)
+ 	{	case SF_FORMAT_PCM_U8 :
+-- 
+2.39.5
+

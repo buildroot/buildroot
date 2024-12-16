@@ -1,0 +1,40 @@
+From 49704025956f03751d3436a0bb42287cd7f434b6 Mon Sep 17 00:00:00 2001
+From: Alex Stewart <alex.stewart@ni.com>
+Date: Tue, 17 Oct 2023 12:01:00 -0400
+Subject: [PATCH] rf64: fix int overflow in rf64_read_header()
+
+When checking for mismatches between the filelength and riff_size, it is
+possible to overflow the temporary riff_size value used in the
+comparison by adding a static offset; which is probably fine, but it is
+offensive to overflow fuzzers.
+
+Since filelength is always a positive value, simply move the offset to
+the other side of the comparison operator as a negative value, avoid the
+possibility of an overflow.
+
+CVE: CVE-2022-33065
+Fixes: https://github.com/libsndfile/libsndfile/issues/833
+
+Signed-off-by: Alex Stewart <alex.stewart@ni.com>
+Upstream: https://github.com/libsndfile/libsndfile/commit/49704025956f03751d3436a0bb42287cd7f434b6
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ src/rf64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/rf64.c b/src/rf64.c
+index 123db445..c60399fb 100644
+--- a/src/rf64.c
++++ b/src/rf64.c
+@@ -242,7 +242,7 @@ rf64_read_header (SF_PRIVATE *psf, int *blockalign, int *framesperblock)
+ 							} ;
+ 						} ;
+ 
+-					if (psf->filelength != riff_size + 8)
++					if (psf->filelength - 8 != riff_size)
+ 						psf_log_printf (psf, "  Riff size : %D (should be %D)\n", riff_size, psf->filelength - 8) ;
+ 					else
+ 						psf_log_printf (psf, "  Riff size : %D\n", riff_size) ;
+-- 
+2.39.5
+

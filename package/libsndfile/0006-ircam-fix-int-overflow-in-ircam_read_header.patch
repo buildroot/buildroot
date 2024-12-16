@@ -1,0 +1,82 @@
+From 5d5319300587e3d4a146332a2f48674ceb8a0257 Mon Sep 17 00:00:00 2001
+From: Alex Stewart <alex.stewart@ni.com>
+Date: Wed, 11 Oct 2023 17:43:02 -0400
+Subject: [PATCH] ircam: fix int overflow in ircam_read_header()
+
+When reading the IRCAM header, it is possible for the calculated
+blockwidth to exceed the bounds of a signed int32.
+
+Use a 64bit sf_count_t to store the blockwidth.
+
+CVE: CVE-2022-33065
+Fixes: https://github.com/libsndfile/libsndfile/issues/833
+
+Signed-off-by: Alex Stewart <alex.stewart@ni.com>
+Upstream: https://github.com/libsndfile/libsndfile/commit/5d5319300587e3d4a146332a2f48674ceb8a0257
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ src/common.h |  2 +-
+ src/ircam.c  | 10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/src/common.h b/src/common.h
+index cd9ac8b0..01f6ae09 100644
+--- a/src/common.h
++++ b/src/common.h
+@@ -439,7 +439,7 @@ typedef struct sf_private_tag
+ 	sf_count_t		datalength ;	/* Length in bytes of the audio data. */
+ 	sf_count_t		dataend ;		/* Offset to file tailer. */
+ 
+-	int				blockwidth ;	/* Size in bytes of one set of interleaved samples. */
++	sf_count_t		blockwidth ;	/* Size in bytes of one set of interleaved samples. */
+ 	int				bytewidth ;		/* Size in bytes of one sample (one channel). */
+ 
+ 	void			*dither ;
+diff --git a/src/ircam.c b/src/ircam.c
+index 8e7cdba8..3d73ba44 100644
+--- a/src/ircam.c
++++ b/src/ircam.c
+@@ -171,35 +171,35 @@ ircam_read_header	(SF_PRIVATE *psf)
+ 	switch (encoding)
+ 	{	case IRCAM_PCM_16 :
+ 				psf->bytewidth = 2 ;
+-				psf->blockwidth = psf->sf.channels * psf->bytewidth ;
++				psf->blockwidth = (sf_count_t) psf->sf.channels * psf->bytewidth ;
+ 
+ 				psf->sf.format = SF_FORMAT_IRCAM | SF_FORMAT_PCM_16 ;
+ 				break ;
+ 
+ 		case IRCAM_PCM_32 :
+ 				psf->bytewidth = 4 ;
+-				psf->blockwidth = psf->sf.channels * psf->bytewidth ;
++				psf->blockwidth = (sf_count_t) psf->sf.channels * psf->bytewidth ;
+ 
+ 				psf->sf.format = SF_FORMAT_IRCAM | SF_FORMAT_PCM_32 ;
+ 				break ;
+ 
+ 		case IRCAM_FLOAT :
+ 				psf->bytewidth = 4 ;
+-				psf->blockwidth = psf->sf.channels * psf->bytewidth ;
++				psf->blockwidth = (sf_count_t) psf->sf.channels * psf->bytewidth ;
+ 
+ 				psf->sf.format = SF_FORMAT_IRCAM | SF_FORMAT_FLOAT ;
+ 				break ;
+ 
+ 		case IRCAM_ALAW :
+ 				psf->bytewidth = 1 ;
+-				psf->blockwidth = psf->sf.channels * psf->bytewidth ;
++				psf->blockwidth = (sf_count_t) psf->sf.channels * psf->bytewidth ;
+ 
+ 				psf->sf.format = SF_FORMAT_IRCAM | SF_FORMAT_ALAW ;
+ 				break ;
+ 
+ 		case IRCAM_ULAW :
+ 				psf->bytewidth = 1 ;
+-				psf->blockwidth = psf->sf.channels * psf->bytewidth ;
++				psf->blockwidth = (sf_count_t) psf->sf.channels * psf->bytewidth ;
+ 
+ 				psf->sf.format = SF_FORMAT_IRCAM | SF_FORMAT_ULAW ;
+ 				break ;
+-- 
+2.39.5
+

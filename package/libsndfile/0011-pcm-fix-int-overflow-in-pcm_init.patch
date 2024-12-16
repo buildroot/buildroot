@@ -1,0 +1,35 @@
+From 09f8f8d5544d98a5a2d28504c02314a2a816ac37 Mon Sep 17 00:00:00 2001
+From: Alex Stewart <alex.stewart@ni.com>
+Date: Tue, 17 Oct 2023 11:57:23 -0400
+Subject: [PATCH] pcm: fix int overflow in pcm_init()
+
+Cast the int-sized bytewidth variable to a long-sized sf_count_t type
+prior to calculating the blockwidth, to provide the calculation with
+enough numeric space and sf_count_t is the final typing regardless.
+
+CVE: CVE-2022-33065
+Fixes: https://github.com/libsndfile/libsndfile/issues/833
+
+Signed-off-by: Alex Stewart <alex.stewart@ni.com>
+Upstream: https://github.com/libsndfile/libsndfile/commit/09f8f8d5544d98a5a2d28504c02314a2a816ac37
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ src/pcm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/pcm.c b/src/pcm.c
+index bdf46183..a42e4868 100644
+--- a/src/pcm.c
++++ b/src/pcm.c
+@@ -127,7 +127,7 @@ pcm_init (SF_PRIVATE *psf)
+ 		return SFE_INTERNAL ;
+ 		} ;
+ 
+-	psf->blockwidth = psf->bytewidth * psf->sf.channels ;
++	psf->blockwidth = (sf_count_t) psf->bytewidth * psf->sf.channels ;
+ 
+ 	if ((SF_CODEC (psf->sf.format)) == SF_FORMAT_PCM_S8)
+ 		chars = SF_CHARS_SIGNED ;
+-- 
+2.39.5
+
