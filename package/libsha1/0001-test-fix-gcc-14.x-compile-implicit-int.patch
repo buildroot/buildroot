@@ -1,0 +1,39 @@
+From d449f26f782be91b3847f88ed2bd937582a575b6 Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Sun, 25 Aug 2024 11:33:59 +0200
+Subject: [PATCH] test: fix gcc-14.x compile (implicit int)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes:
+
+  test.c:14:8: error: type defaults to ‘int’ in declaration of ‘num_test’ [-Wimplicit-int]
+     14 | static num_test;
+        |        ^~~~~~~~
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+
+Upstream: https://github.com/dottedmag/libsha1/pull/1
+
+Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+---
+ test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/test.c b/test.c
+index 21a6525..1ec89d3 100644
+--- a/test.c
++++ b/test.c
+@@ -11,7 +11,7 @@ static void print_hex(const char* data, size_t size)
+         printf("%x%x", ((unsigned char)data[i])/16, ((unsigned char)data[i])%16);
+ }
+ 
+-static num_test;
++static int num_test;
+ 
+ static int do_test(const char* data, size_t size, const char* expected_dgst)
+ {
+-- 
+2.47.1
+
