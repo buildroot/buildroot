@@ -504,7 +504,8 @@ async def fixup_config(sysinfo, configfile):
 
     # Don't build igh-ethercat driver as they are highly
     # kernel-version specific
-    for opt in ['8139TOO', 'E100', 'E1000', 'E1000E', 'R8169']:
+    for opt in ['8139TOO', 'E100', 'E1000', 'E1000E', 'R8169', 'GENET',
+                'IGB', 'IGC', 'STMMAC_PCI', 'STMMAC', 'DWMAC_INTEL', 'CCAT']:
         optstr = 'BR2_PACKAGE_IGH_ETHERCAT_%s=y\n' % opt
         if optstr in configlines:
             configlines.remove(optstr)
