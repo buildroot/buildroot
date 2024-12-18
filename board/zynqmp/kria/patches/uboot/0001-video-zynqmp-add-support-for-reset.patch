@@ -1,0 +1,42 @@
+From: Michal Simek <michal.simek@amd.com>
+Date: Mon, 9 Dec 2024 12:11:50 +0100
+Subject: [PATCH] video: zynqmp: Add support for reset
+
+In Kria SOM configuration DP is under reset and access to DP is causing
+hang that's why call reset at probe to avoid this situation.
+
+Signed-off-by: Michal Simek <michal.simek@amd.com>
+Link: https://lore.kernel.org/r/0504474a91a9839828aecd37f8855fd154cdf2e1.1733742708.git.michal.simek@amd.com
+Upstream: https://github.com/u-boot/u-boot/commit/8b81010a2fe385524b58bea9116f1b6954c3d2bd
+---
+ drivers/video/zynqmp/zynqmp_dpsub.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/video/zynqmp/zynqmp_dpsub.c b/drivers/video/zynqmp/zynqmp_dpsub.c
+index 76abfeac4433..52af23c3c835 100644
+--- a/drivers/video/zynqmp/zynqmp_dpsub.c
++++ b/drivers/video/zynqmp/zynqmp_dpsub.c
+@@ -11,6 +11,7 @@
+ #include <dm.h>
+ #include <errno.h>
+ #include <generic-phy.h>
++#include <reset.h>
+ #include <stdlib.h>
+ #include <video.h>
+ #include <wait_bit.h>
+@@ -2093,10 +2094,15 @@ static int zynqmp_dpsub_probe(struct udevice *dev)
+ {
+ 	struct video_priv *uc_priv = dev_get_uclass_priv(dev);
+ 	struct zynqmp_dpsub_priv *priv = dev_get_priv(dev);
++	struct reset_ctl_bulk resets;
+ 	struct clk clk;
+ 	int ret;
+ 	int mode = RGBA8888;
+ 
++	ret = reset_get_bulk(dev, &resets);
++	if (!ret)
++		reset_deassert_bulk(&resets);
++
+ 	ret = clk_get_by_name(dev, "dp_apb_clk", &clk);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to get clock\n");
