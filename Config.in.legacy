@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2025.02"
 
+config BR2_PACKAGE_MONGODB
+	bool "mongodb has been removed"
+	select BR2_LEGACY
+	help
+	  The mongodb package has been removed as it was unmaintained.
+
 config BR2_PACKAGE_PYTHON_M2CRYPTO
 	bool "python-m2crypto has been removed"
 	select BR2_LEGACY
