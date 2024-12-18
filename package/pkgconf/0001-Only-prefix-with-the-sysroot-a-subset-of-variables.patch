@@ -1,4 +1,4 @@
-From c1f9e60f46f2207f9dd07dd290ad5a2da05ad41d Mon Sep 17 00:00:00 2001
+From c912e9bb8d5be414fda74b2019deb2a6d2d041a0 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Date: Sun, 16 Dec 2018 11:52:18 +0100
 Subject: [PATCH] Only prefix with the sysroot a subset of variables
@@ -22,15 +22,17 @@ Buildroot development. All other paths are not prefixed by the sysroot.
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 [Updated to include gobject-introspection paths]
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
+[Dropped the pkgdatadir path]
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
 ---
- libpkgconf/tuple.c | 65 ++++++++++++++++++++++++++++++++--------------
- 1 file changed, 46 insertions(+), 19 deletions(-)
+ libpkgconf/tuple.c | 64 ++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 45 insertions(+), 19 deletions(-)
 
 diff --git a/libpkgconf/tuple.c b/libpkgconf/tuple.c
-index 83f6a47..a2aa427 100644
+index 83f6a47..d56fcec 100644
 --- a/libpkgconf/tuple.c
 +++ b/libpkgconf/tuple.c
-@@ -178,6 +178,21 @@ dequote(const char *value)
+@@ -178,6 +178,20 @@ dequote(const char *value)
  	return buf;
  }
  
@@ -44,7 +46,6 @@ index 83f6a47..a2aa427 100644
 +	"includedir",
 +	"libdir",
 +	"mapdir",
-+	"pkgdatadir",
 +	"sdkdir",
 +	NULL,
 +};
@@ -52,7 +53,7 @@ index 83f6a47..a2aa427 100644
  static const char *
  find_sysroot(const pkgconf_client_t *client, pkgconf_list_t *vars)
  {
-@@ -237,14 +252,20 @@ pkgconf_tuple_add(const pkgconf_client_t *client, pkgconf_list_t *list, const ch
+@@ -237,14 +251,20 @@ pkgconf_tuple_add(const pkgconf_client_t *client, pkgconf_list_t *list, const ch
  {
  	char *dequote_value;
  	pkgconf_tuple_t *tuple = calloc(1, sizeof(pkgconf_tuple_t));
@@ -74,7 +75,7 @@ index 83f6a47..a2aa427 100644
  	else
  		tuple->value = strdup(dequote_value);
  
-@@ -294,22 +315,8 @@ pkgconf_tuple_find(const pkgconf_client_t *client, pkgconf_list_t *list, const c
+@@ -294,22 +314,8 @@ pkgconf_tuple_find(const pkgconf_client_t *client, pkgconf_list_t *list, const c
  	return NULL;
  }
  
@@ -99,7 +100,7 @@ index 83f6a47..a2aa427 100644
  {
  	char buf[PKGCONF_BUFSIZE];
  	const char *ptr;
-@@ -318,7 +325,7 @@ pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const
+@@ -318,7 +324,7 @@ pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const
  	if (!(client->flags & PKGCONF_PKG_PKGF_FDO_SYSROOT_RULES) &&
  		(!(flags & PKGCONF_PKG_PROPF_UNINSTALLED) || (client->flags & PKGCONF_PKG_PKGF_PKGCONF1_SYSROOT_RULES)))
  	{
@@ -108,7 +109,7 @@ index 83f6a47..a2aa427 100644
  			bptr += pkgconf_strlcpy(buf, client->sysroot_dir, sizeof buf);
  	}
  
-@@ -381,7 +388,7 @@ pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const
+@@ -381,7 +387,7 @@ pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const
  				{
  					size_t nlen;
  
@@ -117,7 +118,7 @@ index 83f6a47..a2aa427 100644
  					nlen = pkgconf_strlcpy(bptr, parsekv, remain);
  					free(parsekv);
  
-@@ -432,6 +439,26 @@ pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const
+@@ -432,6 +438,26 @@ pkgconf_tuple_parse(const pkgconf_client_t *client, pkgconf_list_t *vars, const
  	return strdup(buf);
  }
  
@@ -145,5 +146,5 @@ index 83f6a47..a2aa427 100644
   * !doc
   *
 -- 
-2.34.1
+2.43.0
 
