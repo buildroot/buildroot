@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DPDK_VERSION = 24.07
+DPDK_VERSION = 24.11.1
 DPDK_SOURCE = dpdk-$(DPDK_VERSION).tar.xz
 DPDK_SITE = https://fast.dpdk.org/rel
 DPDK_LICENSE = \
