@@ -1,0 +1,18 @@
+config BR2_PACKAGE_USBIP
+	bool "usbip"
+	depends on BR2_PACKAGE_HAS_UDEV
+	help
+	  The USB-over-IP suite of tools.
+
+	  Note: you'll have to enable either (or both) of "VHCI hcd"
+	  (CONFIG_USBIP_VHCI_HCD) if you want to access a remote USB
+	  device, or "Host driver" (CONFIG_USBIP_HOST) if you want
+	  to share a USB device, in your kernel configuration. The
+	  Buildroot package "hwdata" with the "usb.ids" file is also
+	  useful (but not mandatory) to list and identify USB device
+	  by name.
+
+	  https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/usb/usbip
+
+comment "usbip needs udev /dev management"
+	depends on !BR2_PACKAGE_HAS_UDEV
