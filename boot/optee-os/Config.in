@@ -25,6 +25,11 @@ config BR2_TARGET_OPTEE_OS_LATEST
 	  Use the latest release tag from the OP-TEE OS official Git
 	  repository.
 
+config BR2_TARGET_OPTEE_OS_CUSTOM_VERSION
+	bool "Custom version"
+	help
+	  This option allows to use a specific official version
+
 config BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL
 	bool "Custom tarball"
 	help
@@ -42,6 +47,10 @@ config BR2_TARGET_OPTEE_OS_CUSTOM_GIT
 	  Use a custom version fetched from a Git repository.
 
 endchoice
+
+config BR2_TARGET_OPTEE_OS_CUSTOM_VERSION_VALUE
+	string "OP-TEE version"
+	depends on BR2_TARGET_OPTEE_OS_CUSTOM_VERSION
 
 if BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL
 
@@ -71,6 +80,8 @@ endif
 config BR2_TARGET_OPTEE_OS_VERSION
 	string
 	default "4.3.0"		if BR2_TARGET_OPTEE_OS_LATEST
+	default BR2_TARGET_OPTEE_OS_CUSTOM_VERSION_VALUE \
+		if BR2_TARGET_OPTEE_OS_CUSTOM_VERSION
 	default "custom"	if BR2_TARGET_OPTEE_OS_CUSTOM_TARBALL
 	default BR2_TARGET_OPTEE_OS_CUSTOM_REPO_VERSION \
 				if BR2_TARGET_OPTEE_OS_CUSTOM_GIT
