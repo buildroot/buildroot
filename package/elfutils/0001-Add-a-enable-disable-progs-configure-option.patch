@@ -1,4 +1,4 @@
-From 73e4da5ca780196d23db8029dcd28f87a0402711 Mon Sep 17 00:00:00 2001
+From 571445ec4643865566d2c5a9e27d9b78b8b00107 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Mon, 29 May 2017 23:03:48 +0300
 Subject: [PATCH] Add a --{enable,disable}-progs configure option
@@ -22,13 +22,15 @@ Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 [Fabrice: don't error out if obstack is not found]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Rebased on 0.192]
+Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
 ---
  Makefile.am  | 6 +++++-
- configure.ac | 6 ++++++
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ configure.ac | 8 +++++++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile.am b/Makefile.am
-index 9c47afa..edf8dfc 100644
+index 92130b57..00f5176b 100644
 --- a/Makefile.am
 +++ b/Makefile.am
 @@ -26,8 +26,12 @@ AM_MAKEFLAGS = --no-print-directory
@@ -43,13 +45,13 @@ index 9c47afa..edf8dfc 100644
 -	  libasm debuginfod src po doc tests
 +	  libasm debuginfod $(PROGS_SUBDIR) po doc tests
  
- EXTRA_DIST = elfutils.spec GPG-KEY NOTES CONTRIBUTING \
- 	     COPYING COPYING-GPLV2 COPYING-LGPLV3
+ EXTRA_DIST = elfutils.spec GPG-KEY NOTES CONTRIBUTING SECURITY \
+ 	     COPYING COPYING-GPLV2 COPYING-LGPLV3 CONDUCT
 diff --git a/configure.ac b/configure.ac
-index d345495..0dd4b1e 100644
+index f191488f..87d91f8f 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -393,6 +393,12 @@ AS_HELP_STRING([--enable-tests-rpath],[build $ORIGIN-using rpath into tests]),
+@@ -426,6 +426,12 @@ AS_HELP_STRING([--enable-tests-rpath],[build $ORIGIN-using rpath into tests]),
  	       [tests_use_rpath=$enableval], [tests_use_rpath=no])
  AM_CONDITIONAL(TESTS_RPATH, test "$tests_use_rpath" = yes)
  
@@ -62,7 +64,7 @@ index d345495..0dd4b1e 100644
  dnl zlib is mandatory.
  save_LIBS="$LIBS"
  LIBS=
-@@ -579,7 +585,7 @@ saved_LIBS="$LIBS"
+@@ -670,7 +676,7 @@ saved_LIBS="$LIBS"
  AC_SEARCH_LIBS([_obstack_free], [obstack])
  LIBS="$saved_LIBS"
  case "$ac_cv_search__obstack_free" in
@@ -72,5 +74,5 @@ index d345495..0dd4b1e 100644
          *) obstack_LIBS= ;;
  esac
 -- 
-2.30.1
+2.47.1
 
