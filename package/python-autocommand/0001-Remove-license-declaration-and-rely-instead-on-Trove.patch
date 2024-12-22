@@ -1,0 +1,29 @@
+From 4e54dc74f2d6f735cb187343f01c44693ea86f59 Mon Sep 17 00:00:00 2001
+From: "Jason R. Coombs" <jaraco@jaraco.com>
+Date: Thu, 4 Apr 2024 17:23:20 -0400
+Subject: [PATCH] Remove license declaration and rely instead on Trove
+ classifiers and LICENSE being included.
+
+Closes #32.
+
+Upstream: https://github.com/Lucretiel/autocommand/pull/33
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ setup.py | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/setup.py b/setup.py
+index 41f86a1..d154562 100644
+--- a/setup.py
++++ b/setup.py
+@@ -13,7 +13,6 @@ setup(
+     ],
+     package_dir={'': 'src'},
+     platforms='any',
+-    license='LGPLv3',
+     author='Nathan West',
+     url='https://github.com/Lucretiel/autocommand',
+     description='A library to create a command-line program from a function',
+-- 
+2.47.0
+
