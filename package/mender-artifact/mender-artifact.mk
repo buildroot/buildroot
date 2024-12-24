@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HOST_MENDER_ARTIFACT_VERSION = 3.11.2
+HOST_MENDER_ARTIFACT_VERSION = 4.0.0
 HOST_MENDER_ARTIFACT_SITE = $(call github,mendersoftware,mender-artifact,$(HOST_MENDER_ARTIFACT_VERSION))
 HOST_MENDER_ARTIFACT_LICENSE = Apache2.0, BSD-2-Clause, BSD-3-Clause, ISC, MIT, MPL-2.0
 HOST_MENDER_ARTIFACT_LICENSE_FILES = \
@@ -28,10 +28,10 @@ HOST_MENDER_ARTIFACT_LICENSE_FILES = \
 	vendor/github.com/go-jose/go-jose/v3/json/LICENSE \
 	vendor/github.com/go-jose/go-jose/v3/LICENSE \
 	vendor/github.com/google/s2a-go/LICENSE.md \
+	vendor/github.com/Keyfactor/signserver-go-client-sdk/LICENSE \
 	vendor/github.com/pkg/errors/LICENSE \
 	vendor/github.com/pmezard/go-difflib/LICENSE \
 	vendor/golang.org/x/sys/LICENSE \
-	vendor/github.com/remyoudompheng/go-liblzma/LICENSE \
 	vendor/github.com/klauspost/compress/LICENSE \
 	vendor/github.com/russross/blackfriday/v2/LICENSE.txt \
 	vendor/github.com/google/go-cmp/LICENSE \
@@ -48,6 +48,7 @@ HOST_MENDER_ARTIFACT_LICENSE_FILES = \
 	vendor/golang.org/x/crypto/LICENSE \
 	vendor/golang.org/x/time/LICENSE \
 	vendor/github.com/klauspost/compress/internal/snapref/LICENSE \
+	vendor/github.com/ulikunitz/xz/LICENSE \
 	vendor/github.com/davecgh/go-spew/LICENSE \
 	vendor/github.com/stretchr/testify/LICENSE \
 	vendor/github.com/urfave/cli/LICENSE \
