@@ -64,7 +64,7 @@ class TestLibCamera(infra.basetest.BRTest):
         cmd = f"cam --camera {cam_idx} --list-controls"
         out, ret = self.emulator.run(cmd)
         self.assertEqual(ret, 0)
-        self.assertIn("Control: Brightness:", "\n".join(out))
+        self.assertIn("Control: [inout] libcamera::Brightness:", "\n".join(out))
 
         # List the camera properties and check we have a camera
         # "Model" property.
