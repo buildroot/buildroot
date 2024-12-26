@@ -4,14 +4,13 @@
 #
 ################################################################################
 
-FLASHROM_VERSION = 1.4.0
+FLASHROM_VERSION = 1.5.1
 FLASHROM_SITE = $(call github,flashrom,flashrom,v$(FLASHROM_VERSION))
 FLASHROM_LICENSE = GPL-2.0+
 FLASHROM_LICENSE_FILES = COPYING
 FLASHROM_INSTALL_STAGING = YES
 FLASHROM_CONF_OPTS = \
 	-Dclassic_cli=enabled \
-	-Dclassic_cli_print_wiki=disabled \
 	-Dich_descriptors_tool=enabled \
 	-Dtests=disabled \
 	-Duse_internal_dmi=true \
