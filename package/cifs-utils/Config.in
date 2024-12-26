@@ -1,7 +1,13 @@
+comment "cifs-utils needs a toolchain w/ dynamic library"
+	depends on BR2_USE_MMU
+	depends on BR2_STATIC_LIBS
+
 config BR2_PACKAGE_CIFS_UTILS
 	bool "cifs-utils"
-	# uses fork()
+	# uses fork(), libtalloc
 	depends on BR2_USE_MMU
+	depends on !BR2_STATIC_LIBS # libtalloc
+	select BR2_PACKAGE_LIBTALLOC
 	help
 	  The in-kernel CIFS filesystem is generally the preferred
 	  method for mounting SMB/CIFS shares on Linux. The in-kernel
