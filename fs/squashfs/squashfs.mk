@@ -26,6 +26,8 @@ else ifeq ($(BR2_TARGET_ROOTFS_SQUASHFS4_XZ),y)
 ROOTFS_SQUASHFS_ARGS += -comp xz
 else ifeq ($(BR2_TARGET_ROOTFS_SQUASHFS4_ZSTD),y)
 ROOTFS_SQUASHFS_ARGS += -comp zstd
+else ifeq ($(BR2_TARGET_ROOTFS_SQUASHFS4_NONE),y)
+ROOTFS_SQUASHFS_ARGS += -no-compression
 else
 ROOTFS_SQUASHFS_ARGS += -comp gzip
 endif

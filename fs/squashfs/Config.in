@@ -69,6 +69,8 @@ choice
 	  Select the squashfs compression algorithm to use when
 	  generating the filesystem.
 
+	  Select "none" to disable compression.
+
 config BR2_TARGET_ROOTFS_SQUASHFS4_GZIP
 	bool "gzip"
 
@@ -87,11 +89,15 @@ config BR2_TARGET_ROOTFS_SQUASHFS4_XZ
 config BR2_TARGET_ROOTFS_SQUASHFS4_ZSTD
 	bool "zstd"
 
+config BR2_TARGET_ROOTFS_SQUASHFS4_NONE
+	bool "none"
+
 endchoice
 
 config BR2_TARGET_ROOTFS_SQUASHFS_EXTREME_COMP
 	bool "extreme compression when available"
 	default y if BR2_TARGET_ROOTFS_SQUASHFS4_LZ4  # legacy
+	depends on !BR2_TARGET_ROOTFS_SQUASHFS4_NONE
 	help
 	  Use options to increase compression ration as much as
 	  possible, like using architecture-specific options, at
