@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2025.02"
 
+config BR2_PACKAGE_HIAWATHA
+	bool "hiwatha has been removed"
+	select BR2_LEGACY
+	help
+	  This package is no longer maintained upstream, has no bug
+	  tracker, and the latest versions cause build
+	  failures. Therefore, it has been removed.
+
 config BR2_PACKAGE_MONGODB
 	bool "mongodb has been removed"
 	select BR2_LEGACY
