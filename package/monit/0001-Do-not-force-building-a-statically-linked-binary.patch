@@ -1,0 +1,35 @@
+From 5beb7918daa46bcc5106e6302f0d8434fc5a23e6 Mon Sep 17 00:00:00 2001
+From: "Yann E. MORIN" <yann.morin.1998@free.fr>
+Date: Fri, 27 Dec 2024 22:12:02 +0100
+Subject: [PATCH] Do not force building a statically-linked binary
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Statically-linked binary do not work well with glibc, because it
+still dlopen()s the NSS libraries.
+
+Reported-by: Peter Kümmel <syntheticpp@gmx.net>
+Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
+[Dario: make the patch to be applied with fuzz factor 0]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+---
+ Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 6907706a..d2d123ba 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -98,7 +98,7 @@ monit_SOURCES	= src/y.tab.c \
+                   src/statistics/Statistics.c
+ 
+ monit_LDADD 	= libmonit/libmonit.la
+-monit_LDFLAGS 	= -static $(EXTLDFLAGS)
++monit_LDFLAGS 	= $(EXTLDFLAGS)
+ 
+ man_MANS 	= monit.1
+ 
+-- 
+2.47.0
+
