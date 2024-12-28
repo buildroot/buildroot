@@ -1,4 +1,4 @@
-From 063972eece2fb8157f0feb98a4608c2984c7c5ff Mon Sep 17 00:00:00 2001
+From 17ec1bce74419f8193c0246dbde2d2fdd6b1b4e3 Mon Sep 17 00:00:00 2001
 From: Peter Korsgaard <peter@korsgaard.com>
 Date: Wed, 12 May 2021 09:18:33 +0200
 Subject: [PATCH] Makefile: drop explicit undefine PYLIB for compatibility with
@@ -30,12 +30,12 @@ Signed-off-by: Julien Olivain <ju.o@free.fr>
  1 file changed, 5 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index e2f8579..62c906f 100644
+index f656e34..1206f40 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -37,11 +37,6 @@ LDFLAGS ?=
- 
- PYLIB ?= $(shell python3 -m get_pylib)
+@@ -52,11 +52,6 @@ else
+ $(warning libcpupower disabled, building without --deepest-idle-state support.)
+ endif
  
 -# Check for errors, such as python3 not available
 -ifeq (${PYLIB},)
@@ -46,5 +46,5 @@ index e2f8579..62c906f 100644
  	   src/pi_tests/pi_stress.8 \
  	   src/ptsematest/ptsematest.8 \
 -- 
-2.45.2
+2.47.0
 
