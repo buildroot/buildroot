@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-SCONS_VERSION = 4.7.0
-SCONS_SOURCE = SCons-$(SCONS_VERSION).tar.gz
-SCONS_SITE = https://files.pythonhosted.org/packages/7b/68/6895065c86c65a9388eb760a43ea695ec5b9b1c98a9675a3bcd682dbe9c0
+SCONS_VERSION = 4.8.1
+SCONS_SITE = https://files.pythonhosted.org/packages/b9/76/a2c1293642f9a448f2d012cabf525be69ca5abf4af289bc0935ac1554ee8
 SCONS_LICENSE = MIT
 SCONS_LICENSE_FILES = LICENSE
 SCONS_SETUP_TYPE = setuptools
