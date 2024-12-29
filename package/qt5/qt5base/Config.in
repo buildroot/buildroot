@@ -128,7 +128,6 @@ config BR2_PACKAGE_QT5BASE_GUI
 	# At least one graphic backend must be enabled, so enable
 	# linuxfb if nothing is enabled.
 	select BR2_PACKAGE_QT5BASE_LINUXFB if \
-	       !BR2_PACKAGE_QT5BASE_DIRECTFB && \
 	       !BR2_PACKAGE_QT5BASE_XCB && \
 	       !BR2_PACKAGE_QT5BASE_EGLFS
 	help
@@ -194,13 +193,6 @@ config BR2_PACKAGE_QT5BASE_VULKAN
 
 config BR2_PACKAGE_QT5BASE_LINUXFB
 	bool "linuxfb support"
-
-config BR2_PACKAGE_QT5BASE_DIRECTFB
-	bool "directfb support"
-	depends on BR2_PACKAGE_DIRECTFB
-
-comment "directfb backend available if directfb is enabled"
-	depends on !BR2_PACKAGE_DIRECTFB
 
 config BR2_PACKAGE_QT5BASE_XCB
 	bool "X.org XCB support"
