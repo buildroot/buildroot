@@ -13,10 +13,6 @@ config BR2_PACKAGE_SDL_FBCON
 	bool "SDL framebuffer console video driver"
 	default y
 
-config BR2_PACKAGE_SDL_DIRECTFB
-	bool "SDL DirectFB video driver"
-	depends on BR2_PACKAGE_DIRECTFB
-
 config BR2_PACKAGE_SDL_X11
 	bool "SDL X11 video driver"
 	depends on BR2_PACKAGE_XORG7
