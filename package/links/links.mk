@@ -11,6 +11,7 @@ LINKS_DEPENDENCIES = host-pkgconf
 LINKS_LICENSE = GPL-2.0+
 LINKS_LICENSE_FILES = COPYING
 LINKS_CPE_ID_VENDOR = twibright
+LINKS_CONF_OPTS = --without-directfb
 
 ifeq ($(BR2_PACKAGE_LINKS_GRAPHICS),y)
 LINKS_CONF_OPTS += --enable-graphics
@@ -23,16 +24,6 @@ LINKS_CONF_OPTS += \
 LINKS_DEPENDENCIES += xlib_libXt
 else
 LINKS_CONF_OPTS += --without-x
-endif
-ifeq ($(BR2_PACKAGE_DIRECTFB),y)
-LINKS_CONF_ENV = ac_cv_path_DIRECTFB_CONFIG=$(STAGING_DIR)/usr/bin/directfb-config
-ifeq ($(BR2_STATIC_LIBS),y)
-LINKS_CONF_ENV += LIBS=-lstdc++
-endif
-LINKS_CONF_OPTS += --with-directfb
-LINKS_DEPENDENCIES += directfb
-else
-LINKS_CONF_OPTS += --without-directfb
 endif
 ifeq ($(BR2_PACKAGE_JPEG),y)
 LINKS_CONF_OPTS += --with-libjpeg
