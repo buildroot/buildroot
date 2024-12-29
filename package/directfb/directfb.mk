@@ -23,7 +23,9 @@ DIRECTFB_CONF_OPTS = \
 	--disable-video4linux \
 	--disable-video4linux2 \
 	--without-tools \
-	--disable-x11
+	--disable-x11 \
+	--disable-multi \
+	--disable-multi-kernel
 
 ifeq ($(BR2_STATIC_LIBS),y)
 DIRECTFB_CONF_OPTS += --disable-dynload
@@ -32,13 +34,6 @@ endif
 DIRECTFB_CONFIG_SCRIPTS = directfb-config
 
 DIRECTFB_DEPENDENCIES = freetype zlib
-
-ifeq ($(BR2_PACKAGE_DIRECTFB_MULTI),y)
-DIRECTFB_CONF_OPTS += --enable-multi --enable-multi-kernel
-DIRECTFB_DEPENDENCIES += linux-fusion
-else
-DIRECTFB_CONF_OPTS += --disable-multi --disable-multi-kernel
-endif
 
 ifeq ($(BR2_PACKAGE_DIRECTFB_DEBUG_SUPPORT),y)
 DIRECTFB_CONF_OPTS += --enable-debug-support
