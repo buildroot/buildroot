@@ -396,11 +396,6 @@ config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DECKLINK
 comment "decklink needs a toolchain w/ C++, dynamic library"
 	depends on !BR2_INSTALL_LIBSTDCPP  || BR2_STATIC_LIBS
 
-config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DIRECTFB
-	bool "directfb"
-	default y
-	depends on BR2_PACKAGE_DIRECTFB
-
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DVB
 	bool "dvb"
 	# FEC_2_5 / QAM_4_NR definitions
