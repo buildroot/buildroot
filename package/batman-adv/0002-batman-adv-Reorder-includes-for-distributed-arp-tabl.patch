@@ -1,0 +1,39 @@
+From dc072c88ef0eaa80215dbc25923678c6a3d46e25 Mon Sep 17 00:00:00 2001
+From: Sven Eckelmann <sven@narfation.org>
+Date: Wed, 16 Oct 2024 09:23:06 +0200
+Subject: [PATCH] batman-adv: Reorder includes for distributed-arp-table.c
+
+The commit ee60832ebec4 ("batman-adv: move asm/unaligned.h to
+linux/unaligned.h") changed the include without adjusting the order (to
+match the rest of the file).
+
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Upstream: https://git.open-mesh.org/batman-adv.git/commit/fd3a0eff09429719e61e60b7dc3d2a373183a5ad
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ net/batman-adv/distributed-arp-table.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/batman-adv/distributed-arp-table.c b/net/batman-adv/distributed-arp-table.c
+index 801eff8a..48b72c2b 100644
+--- a/net/batman-adv/distributed-arp-table.c
++++ b/net/batman-adv/distributed-arp-table.c
+@@ -7,7 +7,6 @@
+ #include "distributed-arp-table.h"
+ #include "main.h"
+ 
+-#include <linux/unaligned.h>
+ #include <linux/atomic.h>
+ #include <linux/bitops.h>
+ #include <linux/byteorder/generic.h>
+@@ -32,6 +31,7 @@
+ #include <linux/stddef.h>
+ #include <linux/string.h>
+ #include <linux/udp.h>
++#include <linux/unaligned.h>
+ #include <linux/workqueue.h>
+ #include <net/arp.h>
+ #include <net/genetlink.h>
+-- 
+2.47.1
+

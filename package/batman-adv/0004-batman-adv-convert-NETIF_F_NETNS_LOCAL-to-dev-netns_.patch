@@ -1,0 +1,43 @@
+From 5315fd6f4db07dfb5c25949a3c7ac607feff863e Mon Sep 17 00:00:00 2001
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+Date: Thu, 29 Aug 2024 14:33:38 +0200
+Subject: [PATCH] batman-adv: convert NETIF_F_NETNS_LOCAL to dev->netns_local
+
+"Interface can't change network namespaces" is rather an attribute,
+not a feature, and it can't be changed via Ethtool.
+Make it a "cold" private flag instead of a netdev_feature and free
+one more bit.
+
+Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+[sven@narfation.org: add compat code]
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Upstream: https://git.open-mesh.org/batman-adv.git/commit/b0405a97957978a0aa46dde55d590e1cf0f4309e
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ net/batman-adv/soft-interface.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/net/batman-adv/soft-interface.c b/net/batman-adv/soft-interface.c
+index 48cf3bd9..610bbaaa 100644
+--- a/net/batman-adv/soft-interface.c
++++ b/net/batman-adv/soft-interface.c
+@@ -1020,12 +1020,13 @@ static void batadv_softif_init_early(struct net_device *dev)
+ 	dev->netdev_ops = &batadv_netdev_ops;
+ 	dev->needs_free_netdev = true;
+ 	dev->priv_destructor = batadv_softif_free;
+-	dev->features |= NETIF_F_HW_VLAN_CTAG_FILTER | NETIF_F_NETNS_LOCAL;
++	dev->features |= NETIF_F_HW_VLAN_CTAG_FILTER;
+ 	dev->priv_flags |= IFF_NO_QUEUE;
+ #if LINUX_VERSION_IS_GEQ(6, 12, 0) // UGLY_HACK_NEW
+ 	dev->lltx = true;
++	dev->netns_local = true;
+ #else // UGLY_HACK_OLD
+-	dev->features |= NETIF_F_LLTX;
++	dev->features |= NETIF_F_LLTX | NETIF_F_NETNS_LOCAL;
+ #endif // UGLY_HACK_STOP
+ 
+ 	/* can't call min_mtu, because the needed variables
+-- 
+2.47.1
+
