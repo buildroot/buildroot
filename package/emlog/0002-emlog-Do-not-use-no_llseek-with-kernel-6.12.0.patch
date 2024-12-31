@@ -1,0 +1,35 @@
+From 35a0e8d33c5a520df458483237966fa1b1024a3f Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Sat, 14 Dec 2024 09:55:10 -0800
+Subject: [PATCH] emlog: Do not use no_llseek with kernel 6.12.0+
+
+no_llseek is finally gone with 6.12-rc1 [1]
+
+[1] https://github.com/torvalds/linux/commit/cb787f4ac0c2e439ea8d7e6387b925f74576bdf8
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Upstream: https://github.com/nicupavel/emlog/commit/dca01ea62833249d78ac3bdf277b73424bf93e89
+---
+ emlog.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/emlog.c b/emlog.c
+index 2ead738..b45c72d 100644
+--- a/emlog.c
++++ b/emlog.c
+@@ -464,7 +464,12 @@ static const struct file_operations emlog_fops = {
+     .open = emlog_open,
+     .release = emlog_release,
+     .poll = emlog_poll,
+-    .llseek = no_llseek,        /* no_llseek by default introduced at v2.6.37-rc1 */
++#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 12, 0)
++    /* no_llseek by default introduced at v2.6.37-rc1 and
++     * removed in 6.12.0
++     */
++    .llseek = no_llseek,
++#endif
+     .owner = THIS_MODULE,
+ };
+ 
+-- 
+2.47.1
+
