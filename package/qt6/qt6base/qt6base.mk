@@ -18,7 +18,7 @@ QT6BASE_IGNORE_CVES += CVE-2023-32763
 # 0009-QXmlStreamReader-Raise-error-on-unexpected-tokens.patch
 QT6BASE_IGNORE_CVES += CVE-2023-38197
 # 0011-HPack-fix-incorrect-integer-overflow-check.patch
-QT6BASE_IGNORE_CVES += CVE-2023-38197
+QT6BASE_IGNORE_CVES += CVE-2023-51714
 # 0013-QXmlStreamReader-make-fastScanName-indicate-parsing-.patch
 QT6BASE_IGNORE_CVES += CVE-2023-37369
 # 0014-Schannel-Reject-certificate-not-signed-by-a-configur.patch
