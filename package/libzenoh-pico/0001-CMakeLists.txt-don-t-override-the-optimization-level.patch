@@ -1,0 +1,64 @@
+From 32d087860abaf5b2374043db7034174aec06b885 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Tue, 31 Dec 2024 15:52:57 +0100
+Subject: [PATCH] CMakeLists.txt: don't override the optimization level
+
+zenoh-pico's CMakeLists.txt has some logic to provide its own compiler
+optimization level: -O3 for release builds, -O0 for debug builds.
+
+Unfortunately, using add_compile_options() means that those settings
+take precedence over what the user can pass as custom compiler
+flags. And this causes issues for example when doing a debug build
+with _FORTIFY_SOURCE enabled, as _FORTIFY_SOURCE support in glibc is
+incompatible with unoptimized builds causing this build failure:
+
+/home/thomas/projets/buildroot/output/host/arm-buildroot-linux-gnueabihf/sysroot/usr/include/features.h:414:4: error: #warning _FORTIFY_SOURCE requires compiling with optimization (-O) [-Werror=cpp]
+  414 | #  warning _FORTIFY_SOURCE requires compiling with optimization (-O)
+      |    ^~~~~~~
+
+which is a warning, but as zenoh-pico builds with -Werror, it turns
+into a build failure.
+
+As it is unclear how CMakeLists.txt can pass a default -O level, while
+allowing it to be overridden by the user, we simply remove those
+optimization level options.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Upstream: https://github.com/eclipse-zenoh/zenoh-pico/pull/847
+---
+ CMakeLists.txt | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 7a9fb6d1..97fba56a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -85,13 +85,13 @@ string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
+ # Compile options
+ if(CMAKE_BUILD_TYPE MATCHES "RELEASE" OR "Release")
+   if(UNIX)
+-    add_compile_options(-pipe -O3)
++    add_compile_options(-pipe)
+   elseif(CMAKE_SYSTEM_NAME MATCHES "Generic")
+-    add_compile_options(-pipe -O3)
++    add_compile_options(-pipe)
+   endif()
+ else()
+   if(UNIX)
+-    add_compile_options(-c -Wall -Wextra -Werror -Wshadow -Wunused -Wstrict-prototypes -pipe -g -O0)
++    add_compile_options(-c -Wall -Wextra -Werror -Wshadow -Wunused -Wstrict-prototypes -pipe -g)
+     # C99 pedantic doesn't like struct anonymous in unix header
+     if (NOT CMAKE_C_STANDARD STREQUAL "99")
+       add_compile_options(-Wpedantic)
+@@ -100,7 +100,7 @@ else()
+   elseif(MSVC)
+     add_compile_options(/W4 /WX /Od /wd4127)
+   elseif(CMAKE_SYSTEM_NAME MATCHES "Generic")
+-    add_compile_options(-Wall -Wextra -Wno-unused-parameter -Wmissing-prototypes -pipe -g -O0)
++    add_compile_options(-Wall -Wextra -Wno-unused-parameter -Wmissing-prototypes -pipe -g)
+   endif()
+ endif()
+ 
+-- 
+2.47.1
+
