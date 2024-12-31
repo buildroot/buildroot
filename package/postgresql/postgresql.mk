@@ -14,7 +14,15 @@ POSTGRESQL_SELINUX_MODULES = postgresql
 POSTGRESQL_INSTALL_STAGING = YES
 POSTGRESQL_CONFIG_SCRIPTS = pg_config
 POSTGRESQL_CONF_ENV = LIBS=$(TARGET_NLS_LIBS)
-POSTGRESQL_CONF_OPTS = -Drpath=false
+# We have to force invalid paths for xmllint and xsltproc, otherwise
+# if detected they get used, even with -Ddocs=disabled and
+# -Ddocs_pdf=disabled, and it causes build failures
+POSTGRESQL_CONF_OPTS = \
+	-Drpath=false \
+	-Ddocs=disabled \
+	-Ddocs_pdf=disabled \
+	-DXMLLINT=/nowhere \
+	-DXSLTPROC=/nowhere
 POSTGRESQL_DEPENDENCIES = \
 	$(TARGET_NLS_DEPENDENCIES) \
 	host-bison \
