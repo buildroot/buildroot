@@ -98,7 +98,9 @@ endef
 HOST_PERL_CONF_OPTS = \
 	-des \
 	-Dprefix="$(HOST_DIR)" \
-	-Dcc="$(HOSTCC)"
+	-Dcc="$(HOSTCC)" \
+	-Dccflags="$(HOST_CFLAGS)" \
+	-Dldflags="$(HOST_LDFLAGS)"
 
 define HOST_PERL_CONFIGURE_CMDS
 	(cd $(@D); $(HOST_MAKE_ENV) HOSTCC='$(HOSTCC_NOCCACHE)' \
