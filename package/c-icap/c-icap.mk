@@ -43,7 +43,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_LIBMEMCACHED),y)
 C_ICAP_CONF_OPTS += --with-memcached
-C_ICAP_DEPENDENCIES += libmemcached
+C_ICAP_DEPENDENCIES += libmemcached $(if $(BR2_PACKAGE_LIBXCRYPT),libxcrypt)
 else
 C_ICAP_CONF_OPTS += --without-memcached
 endif

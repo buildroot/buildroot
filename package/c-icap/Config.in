@@ -3,6 +3,9 @@ config BR2_PACKAGE_C_ICAP
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_USE_MMU # fork()
+	# the libmemcached code uses <crypt.h>
+	select BR2_PACKAGE_LIBXCRYPT if \
+	       BR2_PACKAGE_LIBMEMCACHED && BR2_TOOLCHAIN_USES_GLIBC
 	help
 	  c-icap is an implementation of an ICAP server. It can be
 	  used with HTTP proxies that support the ICAP protocol to
