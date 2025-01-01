@@ -1,0 +1,25 @@
+From ae8a1bc4979c797bb1f152fc92cfe6bc05a44594 Mon Sep 17 00:00:00 2001
+From: Christos Tsantilas <christos@chtsanti.net>
+Date: Tue, 20 Nov 2018 17:10:16 +0200
+Subject: [PATCH] Fix compile warning about missing stdio.h include file
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Upstream: https://github.com/c-icap/c-icap-server/commit/ae8a1bc4979c797bb1f152fc92cfe6bc05a44594
+---
+ tests/test_base64.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tests/test_base64.c b/tests/test_base64.c
+index 8a4a76c..7692197 100644
+--- a/tests/test_base64.c
++++ b/tests/test_base64.c
+@@ -1,5 +1,6 @@
+ #include "common.h"
+ #include "simple_api.h"
++#include <stdio.h>
+ 
+ 
+ int main(int argc, char *argv[])
+-- 
+2.47.1
+
