@@ -19,9 +19,10 @@
 #  - Create a source tarball.
 #  - Copy the source tarball to the $(FLUTTER_ENGINE_DL_DIR) directory.
 #
-# There is no hash provided, as the gn binary (used for configuration) relies
-# on the .git directories. As such, a reproducible tarball is not possible.
-FLUTTER_ENGINE_VERSION = 3.24.4
+# There is no hash provided for the source tarball, as the gn binary
+# (used for configuration) relies on the .git directories. As such, a
+# reproducible tarball is not possible.
+FLUTTER_ENGINE_VERSION = 3.27.1
 
 # There is nothing for Buildroot to download. This is handled by gclient.
 FLUTTER_ENGINE_SITE =
@@ -145,7 +146,7 @@ endif
 
 # There is no --disable-vulkan option
 ifeq ($(BR2_PACKAGE_MESA3D_VULKAN_DRIVER),y)
-FLUTTER_ENGINE_CONF_OPTS += --enable-vulkan --enable-impeller-vulkan
+FLUTTER_ENGINE_CONF_OPTS += --enable-vulkan
 endif
 
 ifeq ($(BR2_PACKAGE_XORG7)$(BR2_PACKAGE_LIBXCB),yy)
