@@ -6,7 +6,7 @@
 
 # When updating the version, check whether the list of supported targets
 # needs to be updated.
-QEMU_VERSION = 9.1.0
+QEMU_VERSION = 9.2.0
 QEMU_SOURCE = qemu-$(QEMU_VERSION).tar.xz
 QEMU_SITE = https://download.qemu.org
 QEMU_SELINUX_MODULES = qemu virt
@@ -288,6 +288,7 @@ define QEMU_CONFIGURE_CMDS
 			--python=$(HOST_DIR)/bin/python3 \
 			--ninja=$(HOST_DIR)/bin/ninja \
 			--disable-alsa \
+			--disable-asan \
 			--disable-bpf \
 			--disable-brlapi \
 			--disable-bsd-user \
@@ -314,10 +315,10 @@ define QEMU_CONFIGURE_CMDS
 			--disable-pa \
 			--disable-plugins \
 			--disable-rbd \
-			--disable-sanitizers \
 			--disable-selinux \
 			--disable-sparse \
 			--disable-strip \
+			--disable-ubsan \
 			--disable-vde \
 			--disable-vhost-crypto \
 			--disable-vhost-user-blk-server \
