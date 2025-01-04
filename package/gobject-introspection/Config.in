@@ -2,6 +2,11 @@ config BR2_PACKAGE_GOBJECT_INTROSPECTION_ARCH_SUPPORTS
 	bool
 	default y
 	depends on BR2_PACKAGE_HOST_QEMU_ARCH_SUPPORTS
+	# gobject-introspection programs cause a hang of Qemu on
+	# Microblaze, and supporting GOI on Microblaze is not very
+	# relevant.
+	depends on !BR2_microblazeel
+	depends on !BR2_microblazebe
 
 config BR2_PACKAGE_GOBJECT_INTROSPECTION
 	bool "gobject-introspection"
