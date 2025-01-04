@@ -379,5 +379,12 @@ HOST_PHP_DEPENDENCIES = \
 	host-pcre2 \
 	host-pkgconf
 
+# PHP can't be AUTORECONFed the standard way unfortunately
+HOST_PHP_DEPENDENCIES += host-autoconf host-automake host-libtool
+define HOST_PHP_BUILDCONF
+	cd $(@D) ; $(HOST_MAKE_ENV) ./buildconf --force
+endef
+HOST_PHP_PRE_CONFIGURE_HOOKS += HOST_PHP_BUILDCONF
+
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
