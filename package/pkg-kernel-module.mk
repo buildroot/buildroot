@@ -62,6 +62,9 @@ $(2)_MAKE ?= $$(BR2_MAKE)
 # the root of the package.
 $(2)_MODULE_SUBDIRS ?= .
 
+$(2)_LINUX_CONFIG_FIXUPS += \
+	$$(sep)$$(call KCONFIG_DISABLE_OPT,CONFIG_TRIM_UNUSED_KSYMS)
+
 # Build the kernel module(s)
 # Force PWD for those packages that want to use it to find their
 # includes and other support files (Booo!)
