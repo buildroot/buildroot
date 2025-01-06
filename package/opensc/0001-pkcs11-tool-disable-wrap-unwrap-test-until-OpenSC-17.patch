@@ -1,0 +1,41 @@
+From 768c9bfcd91206f0d85cd4757fde48e00850a014 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Mon, 6 Jan 2025 22:36:10 +0100
+Subject: [PATCH] pkcs11-tool: disable wrap/unwrap test until OpenSC#1796 is
+ resolved
+
+Similar to ab74fae4d71d1705b77b9459141987a95dcfc91e ("pkcs11-tool:
+disable wrap/unwrap test until OpenSC#1796 is resolved"), but for
+0.26, since OpenSC#1796 is still open.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Upstream: https://github.com/OpenSC/OpenSC/pull/3303
+---
+ src/tools/pkcs11-tool.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/tools/pkcs11-tool.c b/src/tools/pkcs11-tool.c
+index d701d76d6..871a39977 100644
+--- a/src/tools/pkcs11-tool.c
++++ b/src/tools/pkcs11-tool.c
+@@ -7681,7 +7681,7 @@ static int test_verify(CK_SESSION_HANDLE sess)
+ 	return errors;
+ }
+ 
+-#if OPENSC_VERSION_MAJOR == 0 && OPENSC_VERSION_MINOR <= 25
++#if OPENSC_VERSION_MAJOR == 0 && OPENSC_VERSION_MINOR <= 26
+ #else
+ #ifdef ENABLE_OPENSSL
+ static int wrap_unwrap(CK_SESSION_HANDLE session,
+@@ -7805,7 +7805,7 @@ static int wrap_unwrap(CK_SESSION_HANDLE session,
+  */
+ static int test_unwrap(CK_SESSION_HANDLE sess)
+ {
+-#if OPENSC_VERSION_MAJOR == 0 && OPENSC_VERSION_MINOR <= 25
++#if OPENSC_VERSION_MAJOR == 0 && OPENSC_VERSION_MINOR <= 26
+ 	/* temporarily disable test, see https://github.com/OpenSC/OpenSC/issues/1796 */
+ 	return 0;
+ #else
+-- 
+2.47.1
+
