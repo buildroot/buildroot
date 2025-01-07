@@ -1,0 +1,45 @@
+From ffd5e7cbc0cf2d1c0984bb453cc9e125c7259436 Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@smile.fr>
+Date: Tue, 7 Jan 2025 21:52:51 +0100
+Subject: [PATCH] stubs: only build stubs for QAPI events when needed
+
+Since commit "stubs: avoid duplicate symbols in libqemuutil.a" [1],
+Qemu doesn't build with:
+
+  ./configure --enable-user --disable-system --enable-tools
+
+  /usr/bin/ld: libhwcore.a.p/hw_core_qdev.c.o: in function 'device_finalize':
+  [...]output/build/host-qemu-9.2.0/build/../hw/core/qdev.c:689:(.text+0x75c): undefined reference to 'qapi_event_send_device_deleted'
+  collect2: error: ld returned 1 exit status
+
+Indeed, with have_system = false and have_tools = true, Qemu needs the
+stubs for QAPI events added by stub_ss.add(files('qdev.c')) to provide
+qapi_event_send_device_deleted().
+
+Fixes: 388b849fb6c33882b481123568995a749a54f648.
+
+[1] https://gitlab.com/qemu-project/qemu/-/commit/388b849fb6c33882b481123568995a749a54f648
+
+Upstream: https://gitlab.com/qemu-project/qemu/-/issues/2766
+
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ stubs/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/stubs/meson.build b/stubs/meson.build
+index e91614a874..838a8ca3e3 100644
+--- a/stubs/meson.build
++++ b/stubs/meson.build
+@@ -58,7 +58,7 @@ if have_user
+ 
+   # Stubs for QAPI events.  Those can always be included in the build, but
+   # they are not built at all for --disable-system --disable-tools builds.
+-  if not (have_system or have_tools)
++  if not have_system and have_tools
+     stub_ss.add(files('qdev.c'))
+   endif
+ endif
+-- 
+2.47.1
+
