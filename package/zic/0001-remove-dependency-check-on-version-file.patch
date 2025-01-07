@@ -15,18 +15,18 @@ Signed-off-by: Martin Bark <martin@barkynet.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile b/Makefile
-index 1b714a8..00d2c09 100644
+index 0087b459..4773a977 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -615,7 +615,7 @@ INSTALL:	ALL install date.1
+@@ -673,7 +673,7 @@ INSTALL:	ALL install date.1
  # Otherwise, use $(VERSION) unless it is "unknown" and there is already
  # a 'version' file, in which case reuse the existing 'version' contents
  # and append "-dirty" if the contents do not already end in "-dirty".
 -version:	$(VERSION_DEPS)
 +version:
  		{ (type git) >/dev/null 2>&1 && \
- 		  V=`git describe --match '[0-9][0-9][0-9][0-9][a-z]*' \
- 				--abbrev=7 --dirty` || \
+ 		  V=$$(git describe --match '[0-9][0-9][0-9][0-9][a-z]*' \
+ 				--abbrev=7 --dirty) || \
 -- 
 2.7.4
 
