@@ -1,0 +1,14 @@
+config BR2_PACKAGE_LOWDOWN
+	bool "lowdown"
+	depends on BR2_USE_WCHAR
+	depends on !BR2_STATIC_LIBS
+	help
+	  Simple markdown translator to HTML5, terminal, and more.
+	  Useful for providing the same help texts both for a CLI
+	  and web.
+
+	  https://kristaps.bsd.lv/lowdown/
+
+comment "lowdown needs a toolchain w/ wchar and shared library support"
+	depends on BR2_USE_WCHAR
+	depends on !BR2_STATIC_LIBS
