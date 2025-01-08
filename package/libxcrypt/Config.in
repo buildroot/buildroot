@@ -1,5 +1,6 @@
 config BR2_PACKAGE_LIBXCRYPT
 	bool "libxcrypt"
+	depends on BR2_TOOLCHAIN_USES_GLIBC
 	help
 	  libxcrypt is a modern library for one-way hashing
 	  of passwords. It supports a wide variety of both
