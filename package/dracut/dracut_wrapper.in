@@ -34,7 +34,7 @@ topdir="$(dirname "$(realpath "$(dirname "${0}")")")"
 DRACUT_LDD="$(mktemp /tmp/dracut-ldd.XXXXXX)"
 cat >"${DRACUT_LDD}" <<EOL
 #!/bin/bash
-${topdir}/sbin/prelink-rtld --root='${sysroot}' \${1}
+@@TARGET_CROSS@@xldd --root='${sysroot}' \${1}
 EOL
 chmod +x "${DRACUT_LDD}"
 export DRACUT_LDD
