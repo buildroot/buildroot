@@ -63,10 +63,6 @@ else
 E2FSPROGS_CONF_OPTS += --disable-fuse2fs
 endif
 
-ifeq ($(BR2_nios2),y)
-E2FSPROGS_CONF_ENV += ac_cv_func_fallocate=no
-endif
-
 # workaround gcc bug 111001
 ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_111001),y)
 E2FSPROGS_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -Os"

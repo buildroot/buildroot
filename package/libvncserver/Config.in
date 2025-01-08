@@ -1,8 +1,6 @@
 config BR2_PACKAGE_LIBVNCSERVER
 	bool "libvncserver"
 	depends on BR2_USE_MMU # VNCommand.c uses fork()
-	# binutils issue (bad expression)
-	depends on !BR2_nios2
 	depends on !BR2_STATIC_LIBS
 	select BR2_PACKAGE_LZO
 	select BR2_PACKAGE_LIBOPENSSL_ENABLE_DES if BR2_PACKAGE_LIBOPENSSL
@@ -27,5 +25,4 @@ endif
 
 comment "libvncserver needs a toolchain w/ dynamic library"
 	depends on BR2_USE_MMU
-	depends on !BR2_nios2
 	depends on BR2_STATIC_LIBS

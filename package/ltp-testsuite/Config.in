@@ -5,8 +5,6 @@ config BR2_PACKAGE_LTP_TESTSUITE_ARCH_SUPPORTS
 	# provided in ltp-testsuite
 	default y if BR2_TOOLCHAIN_HAS_SYNC_4
 	default y if BR2_arc
-	# does not build on nios2, cachectl.h issue
-	depends on !BR2_nios2
 
 config BR2_PACKAGE_LTP_TESTSUITE
 	bool "ltp-testsuite"

@@ -372,7 +372,6 @@ HOST_QEMU_DEPENDENCIES = \
 #       mipsel          mipsel
 #       mips64          mips64
 #       mips64el        mips64el
-#       nios2           nios2
 #       or1k            or1k
 #       powerpc         ppc
 #       powerpc64       ppc64

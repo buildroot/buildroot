@@ -48,7 +48,7 @@ POCO_CONF_OPTS += --no-fpenvironment --no-wstring
 endif
 
 # architectures missing some FE_* in their fenv.h
-ifeq ($(BR2_sh4a)$(BR2_nios2),y)
+ifeq ($(BR2_sh4a),y)
 POCO_CONF_OPTS += --no-fpenvironment
 endif
 

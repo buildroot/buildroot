@@ -21,7 +21,6 @@ if BR2_PACKAGE_LIGHTNING
 
 config BR2_PACKAGE_LIGHTNING_DISASSEMBLER
 	bool "enable disassembler"
-	depends on !BR2_nios2 # binutils
 	depends on BR2_USE_WCHAR # binutils
 	select BR2_PACKAGE_BINUTILS
 	select BR2_PACKAGE_ZLIB
@@ -29,7 +28,6 @@ config BR2_PACKAGE_LIGHTNING_DISASSEMBLER
 	  Enable the GNU lightning disassembler.
 
 comment "lightning disassembler needs a toolchain w/ wchar"
-	depends on !BR2_nios2
 	depends on !BR2_USE_WCHAR
 
 endif

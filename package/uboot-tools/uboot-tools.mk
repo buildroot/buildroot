@@ -232,8 +232,8 @@ $(eval $(host-generic-package))
 
 MKIMAGE = $(HOST_DIR)/bin/mkimage
 
-# mkimage supports alpha arc arm arm64 blackfin ia64 invalid m68k microblaze mips mips64 nds32 nios2 or1k powerpc riscv s390 sandbox sh sparc sparc64 x86 x86_64 xtensa
-# NORMALIZED_ARCH can be arm64 arc arm blackfin m68k microblaze mips nios2 powerpc sh sparc i386 x86_64 xtensa
+# mkimage supports alpha arc arm arm64 blackfin ia64 invalid m68k microblaze mips mips64 nds32 or1k powerpc riscv s390 sandbox sh sparc sparc64 x86 x86_64 xtensa
+# NORMALIZED_ARCH can be arm64 arc arm blackfin m68k microblaze mips powerpc sh sparc i386 x86_64 xtensa
 # For i386, we need to convert
 # For openrisc, we need to convert
 # For others, we'll just keep NORMALIZED_ARCH

@@ -5,9 +5,6 @@ config BR2_PACKAGE_FIO
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C11/stdatomic.h
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_TOOLCHAIN_HAS_THREADS
-	# fio uses fallocate() which becomes fallocate64() while compiling with
-	# largefile support, but fallocate64() is not available on nios2
-	depends on !BR2_nios2
 	help
 	  fio is an I/O tool meant to be used both for benchmark
 	  and stress/hardware verification.
@@ -18,5 +15,4 @@ comment "fio needs a toolchain w/ dynamic library, threads, gcc >= 4.9"
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS || \
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
-	depends on !BR2_nios2
 	depends on BR2_USE_MMU

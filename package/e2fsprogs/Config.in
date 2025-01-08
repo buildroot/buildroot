@@ -46,7 +46,6 @@ comment "e2scrub needs bash, coreutils, lvm2, and util-linux"
 
 config BR2_PACKAGE_E2FSPROGS_E4DEFRAG
 	bool "e4defrag"
-	depends on !BR2_nios2 # fallocate not implemented
 	help
 	  Online defragmenter for ext4 filesystem
 
