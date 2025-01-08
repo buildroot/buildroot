@@ -128,10 +128,9 @@ therefore only use a few of them, or none.
   and +HOST_PKG_PYTHON_PEP517_ENV+ (for flit/pep517 host packages).
 
 * +PYTHON_FOO_BUILD_OPTS+, to specify additional options to pass to
-  the Python +setup.py+ script during the build step, this generally
-  only makes sense to use for setuptools based packages as flit/pep517
-  based packages do not pass these options to a +setup.py+ script but
-  instead pass them to +support/scripts/pyinstaller.py+.
+  the Python +python -m build+ call. To pass additional options to the
+  build backend use the +--config-setting=+ (+-C+) flag of the +build+
+  module.
 
 * +PYTHON_FOO_INSTALL_TARGET_OPTS+, +PYTHON_FOO_INSTALL_STAGING_OPTS+,
   +HOST_PYTHON_FOO_INSTALL_OPTS+ to specify additional options to pass
