@@ -143,16 +143,6 @@ config BR2_mips64el
 	  http://www.mips.com/
 	  http://en.wikipedia.org/wiki/MIPS_Technologies
 
-config BR2_nios2
-	bool "Nios II"
-	depends on BR2_BROKEN
-	select BR2_ARCH_HAS_NO_TOOLCHAIN_BUILDROOT
-	select BR2_USE_MMU
-	help
-	  Nios II is a soft core processor from Altera Corporation.
-	  http://www.altera.com/
-	  http://en.wikipedia.org/wiki/Nios_II
-
 config BR2_or1k
 	bool "OpenRISC"
 	select BR2_USE_MMU
@@ -393,10 +383,6 @@ endif
 
 if BR2_mips || BR2_mips64 || BR2_mipsel || BR2_mips64el
 source "arch/Config.in.mips"
-endif
-
-if BR2_nios2
-source "arch/Config.in.nios2"
 endif
 
 if BR2_or1k
