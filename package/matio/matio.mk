@@ -19,10 +19,6 @@ MATIO_CONF_ENV = ac_cv_va_copy=yes
 
 MATIO_CFLAGS = $(TARGET_CFLAGS)
 
-ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_99410),y)
-MATIO_CFLAGS += -O0
-endif
-
 MATIO_CONF_ENV += CFLAGS="$(MATIO_CFLAGS)"
 
 # mat73 require hdf5 (not available), extented-sparse take 2KB
