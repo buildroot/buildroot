@@ -1,3 +1,32 @@
+2024.02.10, released January 9th, 2025
+
+	Important / security related fixes.
+
+        Infrastructure:
+
+        - Ensure CONFIG_TRIM_UNUSED_KSYMS is disabled when building
+          external Linux kernel modules
+
+	Updated/fixed packages: apr, bc, cdrkit, cryptodev-linux,
+	freeipmi, gdb, gnupg2, gnutls, go, gobject-introspection,
+	grub2, gst-omx, gst1-devtools, gst1-libav, gst1-plugins-bad,
+	gst1-plugins-base, gst1-plugins-good, gst1-plugins-ugly,
+	gst1-python, gst1-rtsp-server, gst1-vaapi, gstreamer1,
+	gstreamer1-editing-services, iperf3, libcurl, libsha1,
+	libsndfile, libsoup3, libvirt, libxcrypt, linux, linux-pam,
+	mosquitto, netatalk, nettle, octave, opensc, perl, pixman,
+	procps-ng, python-django, python3, qt6base, samba4, skeleton,
+	subversion, tzdata, v4l2loopback, webkitgtk, wget, wireshark,
+	wpewebkit, zic
+
+	Issues resolved:
+        - gdb package doesn't have a licence hash in the gdb.hash file
+          https://gitlab.com/buildroot.org/buildroot/-/issues/66
+	- package/libsha1: Build failure with GCC 14 [-Wimplicit-int]
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/69
+	- [2024.02.9] Mosquitto doesn't build
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/78
+
 2024.02.9, released December 8th, 2024
 
 	Important / security related fixes.
