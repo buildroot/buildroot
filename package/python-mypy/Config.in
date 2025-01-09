@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_MYPY
+	bool "python-mypy"
+	select BR2_PACKAGE_PYTHON_MYPY_EXTENSIONS # runtime
+	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime
+	help
+	  Optional static typing for Python.
+
+	  https://www.mypy-lang.org/
