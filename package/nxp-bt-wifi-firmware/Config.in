@@ -1,0 +1,75 @@
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE
+	bool "nxp-bt-wifi-firmware"
+	help
+	  Firmwares for NXP Bluetooth / WiFi chipsets based modules
+
+	  https://github.com/nxp-imx/imx-firmware
+
+if BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE
+
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8801
+	bool "8801 (SD)"
+	help
+	  NXP 8801 module firmware files.
+
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8987
+	bool "8987 (SD)"
+	help
+	  NXP 8987 module firmware files.
+
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8997
+	bool "8997"
+	help
+	  NXP 8997 module firmware files.
+
+if BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8997
+
+choice
+	prompt "8997 WiFi interface"
+
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8997_SD
+	bool "SD"
+
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8997_PCIE
+	bool "PCIe"
+
+endchoice
+
+endif
+
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_9098
+	bool "9098"
+	help
+	  NXP 9098 module firmware files.
+
+if BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_9098
+
+choice
+	prompt "9098 WiFi interface"
+
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_9098_SD
+	bool "SD"
+
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_9098_PCIE
+	bool "PCIe"
+
+endchoice
+
+endif
+
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_IW416
+	bool "IW416 (SD)"
+	help
+	  NXP IW416 module firmware files.
+
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_IW610
+	bool "IW610 (SD)"
+	help
+	  NXP IW610 module firmware files.
+
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_IW612
+	bool "IW612 (SD)"
+	help
+	  NXP IW612 module firmware files.
+
+endif

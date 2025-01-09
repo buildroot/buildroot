@@ -1,0 +1,33 @@
+################################################################################
+#
+# nxp-bt-wifi-firmware
+#
+################################################################################
+
+NXP_BT_WIFI_FIRMWARE_VERSION = lf-6.6.52_2.2.0
+NXP_BT_WIFI_FIRMWARE_SITE = $(call github,nxp-imx,imx-firmware,$(NXP_BT_WIFI_FIRMWARE_VERSION))
+NXP_BT_WIFI_FIRMWARE_LICENSE = NXP Software License Agreement
+NXP_BT_WIFI_FIRMWARE_LICENSE_FILES = LICENSE.txt
+NXP_BT_WIFI_FIRMWARE_REDISTRIBUTE = NO
+
+NXP_BT_WIFI_FIRMWARE_FILES_$(BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8801) += FwImage_8801_SD
+NXP_BT_WIFI_FIRMWARE_FILES_$(BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8987) += FwImage_8987
+NXP_BT_WIFI_FIRMWARE_FILES_$(BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8997_SD) += FwImage_8997_SD
+NXP_BT_WIFI_FIRMWARE_FILES_$(BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8997_PCIE) += FwImage_8997
+NXP_BT_WIFI_FIRMWARE_FILES_$(BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_9098_SD) += FwImage_9098_SD
+NXP_BT_WIFI_FIRMWARE_FILES_$(BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_9098_PCIE) += FwImage_9098_PCIE
+NXP_BT_WIFI_FIRMWARE_FILES_$(BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_IW416) += FwImage_IW416_SD
+NXP_BT_WIFI_FIRMWARE_FILES_$(BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_IW610) += FwImage_IW610_SD
+NXP_BT_WIFI_FIRMWARE_FILES_$(BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_IW612) += FwImage_IW612_SD
+
+define NXP_BT_WIFI_FIRMWARE_INSTALL_TARGET_CMDS
+	$(INSTALL) -m 0644 -D $(@D)/nxp/wifi_mod_para.conf \
+		$(TARGET_DIR)/lib/firmware/nxp/wifi_mod_para.conf
+	$(INSTALL) -m 0644 -D $(@D)/nxp/mfguart/helper_uart_3000000.bin \
+		$(TARGET_DIR)/lib/firmware/nxp/helper_uart_3000000.bin
+	$(foreach f,$(NXP_BT_WIFI_FIRMWARE_FILES_y), \
+		$(INSTALL) -m 0644 -D $(@D)/nxp/$(f)/* $(TARGET_DIR)/lib/firmware/nxp/
+	)
+endef
+
+$(eval $(generic-package))
