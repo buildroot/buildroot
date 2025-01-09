@@ -1,6 +1,11 @@
 config BR2_PACKAGE_RADVD
 	bool "radvd"
 	depends on BR2_USE_MMU # fork()
+	depends on BR2_PACKAGE_LIBBSD_ARCH_SUPPORTS # libbsd
+	depends on !BR2_STATIC_LIBS  # libbsd
+	depends on BR2_TOOLCHAIN_HAS_THREADS  # libbsd
+	depends on BR2_USE_WCHAR # libbsd
+	select BR2_PACKAGE_LIBBSD
 	help
 	  IPv6 Router Advertisement Daemon.
 
