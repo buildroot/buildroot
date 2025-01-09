@@ -1,0 +1,11 @@
+config BR2_PACKAGE_NXP_MWIFIEX
+	bool "nxp-mwifiex"
+	depends on BR2_LINUX_KERNEL
+	help
+	  Linux kernel driver from NXP for WiFi chipsets
+	  IW416 / IW610 / IW612 / W8801 / W8987 / W8997 / W9098.
+
+	  https://github.com/nxp-imx/mwifiex
+
+comment "nxp-mwifiex needs a Linux kernel to be built"
+	depends on !BR2_LINUX_KERNEL
