@@ -238,6 +238,7 @@ config BR2_PACKAGE_GPSD_PYTHON
 	bool "build Python support and modules"
 	depends on BR2_USE_WCHAR # python3
 	select BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_SERIAL # runtime
 	help
 	  Python libraries and tools for the gpsd service daemon
 	  including gpsfake test harness.
