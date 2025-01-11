@@ -13,11 +13,11 @@ for the software NXP LSDK (Layerscape Software Development Kit), see
   - https://www.nxp.com/docs/en/user-guide/LSDKUG_Rev21.08.pdf
 
 the components from NXP are:
-  - rcw, lf-6.6.23-2.0.0
-  - atf (fork), lf-6.6.23-2.0.0
-  - uboot (fork), lf-6.6.23-2.0.0
-  - qoriq-fm-ucode (blob), lf-6.6.23-2.0.0
-  - linux (fork), lf-6.6.23-2.0.0
+  - rcw, lf-6.6.52-2.2.0
+  - atf (fork), lf-6.6.52-2.2.0
+  - uboot (fork), lf-6.6.52-2.2.0
+  - qoriq-fm-ucode (blob), lf-6.6.52-2.2.0
+  - linux (fork), lf-6.6.52-2.2.0
 
 Build
 =====
