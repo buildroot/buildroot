@@ -5,14 +5,16 @@ config BR2_PACKAGE_FIO
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # C11/stdatomic.h
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_5 # nvme_ioctl.h
 	help
 	  fio is an I/O tool meant to be used both for benchmark
 	  and stress/hardware verification.
 
-	  http://git.kernel.dk/?p=fio.git;a=summary
+	  https://git.kernel.dk/cgit/fio/
 
-comment "fio needs a toolchain w/ dynamic library, threads, gcc >= 4.9"
+comment "fio needs a toolchain w/ dynamic library, threads, gcc >= 4.9, headers >= 4.5"
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS || \
-		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_5
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_USE_MMU
