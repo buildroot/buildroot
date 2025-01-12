@@ -1,0 +1,47 @@
+Fixed incompatible pointer types
+
+This is due to GCC14 that no longer allows implicitly casting all pointer types
+to all other pointer types. Resulting in error such as :
+
+output/build/musepack-475/libmpcpsy/ans.c:291:120: error: passing argument 10 of ‘FindOptimalANS’ from incompatible pointer type [-Wincompatible-pointer-types]
+  291 | L, ANSspec_M, m->NS_Order_L, m->SNR_comp_L, m->FIR_L, smr.L, smr.M, m->SCF_Index_L, Transient );
+      |                                                                     ~^~~~~~~~~~~~~
+      |                                                                      |
+      |                                                                      int *
+
+Patch downloaded from Gentoo:
+https://gitweb.gentoo.org/repo/gentoo.git/tree/media-sound/musepack-tools/files/musepack-tools-495-incompatible-pointers.patch
+
+Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Upstream: N/A no SCM, not active anymore
+
+--- musepack-tools-495/libmpcpsy/ans.c
++++ musepack-tools-495-fixed/libmpcpsy/ans.c
+@@ -287,12 +287,12 @@
+     // for L or M, respectively
+     memset ( m->FIR_L,      0, sizeof m->FIR_L      );         // reset FIR
+     memset ( m->NS_Order_L, 0, sizeof m->NS_Order_L );         // reset Flags
+-	FindOptimalANS ( MaxBand, MSflag, ANSspec_L, ANSspec_M, m->NS_Order_L, m->SNR_comp_L, m->FIR_L, smr.L, smr.M, m->SCF_Index_L, Transient );
++	FindOptimalANS ( MaxBand, MSflag, ANSspec_L, ANSspec_M, m->NS_Order_L, m->SNR_comp_L, m->FIR_L, smr.L, smr.M, (const void*)m->SCF_Index_L, Transient );
+ 
+     // for R or S, respectively
+ 	memset ( m->FIR_R,      0, sizeof m->FIR_R      );         // reset FIR
+ 	memset ( m->NS_Order_R, 0, sizeof m->NS_Order_R );         // reset Flags
+-	FindOptimalANS ( MaxBand, MSflag, ANSspec_R, ANSspec_S, m->NS_Order_R, m->SNR_comp_R, m->FIR_R, smr.R, smr.S, m->SCF_Index_R, Transient );
++	FindOptimalANS ( MaxBand, MSflag, ANSspec_R, ANSspec_S, m->NS_Order_R, m->SNR_comp_R, m->FIR_R, smr.R, smr.S, (const void*)m->SCF_Index_R, Transient );
+ 
+     return;
+ }
+--- musepack-tools-495/mpcenc/mpcenc.h
++++ musepack-tools-495-fixed/mpcenc/mpcenc.h
+@@ -241,8 +241,8 @@
+ 
+ float  ISNR_Schaetzer                  ( const float* samples, const float comp, const int res);
+ float  ISNR_Schaetzer_Trans            ( const float* samples, const float comp, const int res);
+-void   QuantizeSubband                 ( unsigned int* qu_output, const float* input, const int res, float* errors, const int maxNsOrder );
+-void   QuantizeSubbandWithNoiseShaping ( unsigned int* qu_output, const float* input, const int res, float* errors, const float* FIR );
++void   QuantizeSubband                 ( mpc_int16_t* qu_output, const float* input, const int res, float* errors, const int maxNsOrder );
++void   QuantizeSubbandWithNoiseShaping ( mpc_int16_t* qu_output, const float* input, const int res, float* errors, const float* FIR );
+ 
+ void   NoiseInjectionComp ( void );
+ 
