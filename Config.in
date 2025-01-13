@@ -6,6 +6,15 @@ config BR2_HAVE_DOT_CONFIG
 	bool
 	default y
 
+# Hidden symbol kept to false, to temporarily mark a configuration
+# known to be broken (by depending on it). Ideally, we don't want to
+# keep broken parts for too long. The intended use of this symbol is
+# to give some time to a developer to fix the feature. Features marked
+# as broken will be removed if they are not fixed in a reasonable
+# amount of time.
+config BR2_BROKEN
+	bool
+
 config BR2_VERSION
 	string
 	option env="BR2_VERSION_FULL"
