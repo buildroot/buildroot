@@ -10,5 +10,6 @@ PYTHON_BETTERPROTO_SITE = https://files.pythonhosted.org/packages/4e/94/930a1368
 PYTHON_BETTERPROTO_SETUP_TYPE = poetry
 PYTHON_BETTERPROTO_LICENSE = MIT
 PYTHON_BETTERPROTO_LICENSE_FILES = LICENSE.md
+PYTHON_BETTERPROTO_BUILD_OPTS = --skip-dependency-check
 
 $(eval $(python-package))
