@@ -1,4 +1,4 @@
-From d6fea3c321c7eb18e6dd151f5d4b0cc46b77bcc0 Mon Sep 17 00:00:00 2001
+From 67d9845d3583053baaae73883be73ca257bfcf20 Mon Sep 17 00:00:00 2001
 From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 Date: Tue, 30 Apr 2024 09:40:55 +0200
 Subject: [PATCH] tests/fp/meson: don't build fp-bench test if fenv.h is
@@ -16,17 +16,19 @@ Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 [Dario: make the patch to be applied with fuzz factor 0]
 Upstream: https://patchwork.ozlabs.org/project/qemu-devel/patch/20240430164752.645521-1-dario.binacchi@amarulasolutions.com/
+[Romain: rebase on Qemu 9.2.0]
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
 ---
  tests/fp/meson.build | 14 ++++++++------
  1 file changed, 8 insertions(+), 6 deletions(-)
 
 diff --git a/tests/fp/meson.build b/tests/fp/meson.build
-index 114b4b483ea7..0e1237be54ed 100644
+index 9059a24752..2b290f83e7 100644
 --- a/tests/fp/meson.build
 +++ b/tests/fp/meson.build
-@@ -126,12 +126,14 @@ test('fp-test-mulAdd', fptest,
-            ['f16_mulAdd', 'f32_mulAdd', 'f64_mulAdd', 'f128_mulAdd'],
-      suite: ['softfloat-slow', 'softfloat-ops-slow', 'slow'], timeout: 180)
+@@ -139,12 +139,14 @@ test('fp-test-mulAdd', fptest,
+      timeout: slow_fp_tests.get('mulAdd', 30),
+      suite: ['softfloat-slow', 'softfloat-ops-slow', 'slow'])
  
 -executable(
 -  'fp-bench',
@@ -46,5 +48,5 @@ index 114b4b483ea7..0e1237be54ed 100644
  fptestlog2 = executable(
    'fp-test-log2',
 -- 
-2.34.1
+2.47.1
 

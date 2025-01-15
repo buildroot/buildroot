@@ -4,21 +4,27 @@
 #
 ################################################################################
 
-OPENRC_VERSION = 0.52.1
+OPENRC_VERSION = 0.56
 OPENRC_SITE = $(call github,OpenRC,openrc,$(OPENRC_VERSION))
 OPENRC_LICENSE = BSD-2-Clause
 OPENRC_LICENSE_FILES = LICENSE
 OPENRC_CPE_ID_VALID = YES
 
-OPENRC_DEPENDENCIES = ncurses
+OPENRC_DEPENDENCIES = libcap ncurses
 
 OPENRC_CONF_OPTS = \
 	-Dos=Linux \
 	-Dlibrcdir=/usr/libexec/rc \
 	-Dpkgconfig=false \
 	-Dsysvinit=true \
-	-Drootprefix=/ \
 	-Dbranding="\"Buildroot $(BR2_VERSION_FULL)\""
+
+ifeq ($(BR2_PACKAGE_AUDIT),y)
+OPENRC_CONF_OPTS += -Daudit=enabled
+OPENRC_DEPENDENCIES += audit
+else
+OPENRC_CONF_OPTS += -Daudit=disabled
+endif
 
 ifeq ($(BR2_PACKAGE_BASH_COMPLETION),y)
 OPENRC_CONF_OPTS += -Dbash-completions=true
@@ -42,12 +48,6 @@ OPENRC_CONF_OPTS += -Dpam=true
 OPENRC_DEPENDENCIES += linux-pam
 else
 OPENRC_CONF_OPTS += -Dpam=false
-endif
-
-ifeq ($(BR2_ROOTFS_MERGED_USR),y)
-OPENRC_CONF_OPTS += -Dsplit-usr=false
-else
-OPENRC_CONF_OPTS += -Dsplit-usr=true
 endif
 
 define OPENRC_INSTALL_SYSV_RCS_SCRIPT

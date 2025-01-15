@@ -27,7 +27,7 @@ class TestFwts(infra.basetest.BRTest):
         BR2_TARGET_GRUB2_ARM64_EFI=y
         BR2_TARGET_ARM_TRUSTED_FIRMWARE=y
         BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_VERSION=y
-        BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_VERSION_VALUE="v2.11"
+        BR2_TARGET_ARM_TRUSTED_FIRMWARE_CUSTOM_VERSION_VALUE="v2.12"
         BR2_TARGET_ARM_TRUSTED_FIRMWARE_PLATFORM="qemu_sbsa"
         BR2_TARGET_ARM_TRUSTED_FIRMWARE_FIP=y
         BR2_PACKAGE_FWTS=y
@@ -38,28 +38,6 @@ class TestFwts(infra.basetest.BRTest):
         BR2_PACKAGE_HOST_QEMU=y
         BR2_PACKAGE_HOST_QEMU_SYSTEM_MODE=y
         """
-
-    def __init__(self, names):
-        """Setup common test variables."""
-        super(TestFwts, self).__init__(names)
-        """All EDK2 releases <= edk2-stable202408 can't be fetched from git
-           anymore due to a missing git submodule as reported by [1].
-
-           Usually Buildroot fall-back using https://sources.buildroot.net
-           thanks to BR2_BACKUP_SITE where a backup of the generated archive
-           is available. But the BRConfigTest remove BR2_BACKUP_SITE default
-           value while generating the .config used by TestFwts.
-
-           Replace the BR2_BACKUP_SITE override from BRConfigTest in order
-           to continue testing EDK2 package using the usual backup site.
-
-           To be removed with the next EDK2 version bump using this commit
-           [2].
-
-           [1] https://github.com/tianocore/edk2/issues/6398
-           [2] https://github.com/tianocore/edk2/commit/95d8a1c255cfb8e063d679930d08ca6426eb5701
-        """
-        self.config = self.config.replace('BR2_BACKUP_SITE=""\n', '')
 
     def test_run(self):
         hda = os.path.join(self.builddir, "images", "disk.img")

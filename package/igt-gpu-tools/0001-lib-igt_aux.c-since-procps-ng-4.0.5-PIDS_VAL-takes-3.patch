@@ -1,0 +1,66 @@
+From 17a30d4dbd60c644244d5bc7355eeaa221aaa820 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Thu, 2 Jan 2025 14:16:47 +0100
+Subject: [PATCH] lib/igt_aux.c: since procps-ng 4.0.5, PIDS_VAL() takes 3
+ arguments, not 4
+
+Unfortunately, the API of procps-ng has changed between procps-ng
+4.0.4 and procps-ng 4.0.5, with the PIDS_VAL() macro changing in
+upstream commit
+https://gitlab.com/procps-ng/procps/-/commit/967fdcfb06e20aad0f31073474cb94545c9bdea5.
+
+This API breakage has been reported upstream as of
+https://gitlab.com/procps-ng/procps/-/issues/366, but in the mean
+time, the build of igt-gpu-tools breaks with:
+
+../lib/igt_aux.c:1358:78: error: macro "PIDS_VAL" passed 4 arguments, but takes just 3
+
+We fix this by detecting the version of the libproc2 library, and
+adjusting accordingly how PIDS_VAL() gets used.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Upstream: https://lists.freedesktop.org/archives/igt-dev/2025-January/083809.html
+---
+ lib/igt_aux.c | 7 +++++++
+ meson.build   | 3 +++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/lib/igt_aux.c b/lib/igt_aux.c
+index 3407cc4f2..f5bf48da6 100644
+--- a/lib/igt_aux.c
++++ b/lib/igt_aux.c
+@@ -1358,10 +1358,17 @@ static bool get_process_ids(struct igt_process *prcs)
+ 	prcs->comm = NULL;
+ 	prcs->stack = procps_pids_get(prcs->info, PIDS_FETCH_TASKS_ONLY);
+ 	if (prcs->stack) {
++#if defined(HAVE_LIBPROC2_POST_4_0_5_API)
++		prcs->tid = PIDS_VAL(EU_PID, s_int, prcs->stack);
++		prcs->euid = PIDS_VAL(EU_EUID, s_int, prcs->stack);
++		prcs->egid = PIDS_VAL(EU_EGID, s_int, prcs->stack);
++		prcs->comm = PIDS_VAL(EU_CMD, str, prcs->stack);
++#else
+ 		prcs->tid = PIDS_VAL(EU_PID, s_int, prcs->stack, prcs->info);
+ 		prcs->euid = PIDS_VAL(EU_EUID, s_int, prcs->stack, prcs->info);
+ 		prcs->egid = PIDS_VAL(EU_EGID, s_int, prcs->stack, prcs->info);
+ 		prcs->comm = PIDS_VAL(EU_CMD, str, prcs->stack, prcs->info);
++#endif
+ 	}
+ #endif
+ 	return prcs->tid != 0;
+diff --git a/meson.build b/meson.build
+index 8b2a2a64a..f3e645c4d 100644
+--- a/meson.build
++++ b/meson.build
+@@ -139,6 +139,9 @@ if libprocps.found()
+   config.set('HAVE_LIBPROCPS', 1)
+ elif libproc2.found()
+   config.set('HAVE_LIBPROC2', 1)
++  if libproc2.version().version_compare('>= 4.0.5')
++    config.set('HAVE_LIBPROC2_POST_4_0_5_API', 1)
++  endif
+ else
+   error('Either libprocps or libproc2 is required')
+ endif
+-- 
+2.47.1
+

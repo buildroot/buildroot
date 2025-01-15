@@ -4,12 +4,12 @@ Date: Wed, 8 Sep 2021 22:41:58 +0200
 Subject: [PATCH] allow setting rc_libexecdir path
 
   - Allow to change the rc dir name of the rc_libexecdir path
-  - Introduce a librcdir option for override with value 'rc'
+  - Introduce a librcdir option for override with value 'rc'6
 
 Upstream: https://github.com/OpenRC/openrc/pull/443
 
 Signed-off-by: artoo <artoo@artixlinux.org>
-[Adam: update for 0.50]
+[Adam: update for 0.56]
 Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
 ---
  meson.build       | 2 +-
@@ -20,10 +20,10 @@ diff --git a/meson.build b/meson.build
 index 5b3f8fa..40d4be1 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -102,7 +102,7 @@ if os == 'Linux' and libexecdir == 'libexec'
-   libexecdir = 'lib'
- endif
- libexecdir = rootprefix / libexecdir
+@@ -85,7 +85,7 @@ bindir = get_option('prefix') / get_option('bindir')
+ libdir = get_option('prefix') / get_option('libdir')
+ pluginsdir = libdir / 'rc/plugins'
+ libexecdir = get_option('prefix') / get_option('libexecdir')
 -rc_libexecdir = libexecdir / 'rc'
 +rc_libexecdir = libexecdir / get_option('librcdir')
  rc_bindir = rc_libexecdir / 'bin'
@@ -33,8 +33,8 @@ diff --git a/meson_options.txt b/meson_options.txt
 index 2c74152..d2f67e4 100644
 --- a/meson_options.txt
 +++ b/meson_options.txt
-@@ -37,3 +37,5 @@ option('termcap', type : 'combo',
-   description : 'the termcap library to use')
+@@ -26,3 +26,5 @@ option('sysvinit', type : 'boolean', value : false,
+   description : 'enable SysVinit compatibility (linux only)')
  option('zsh-completions', type : 'boolean',
    description : 'install zsh completions')
 +option('librcdir', type : 'string', value : 'rc',

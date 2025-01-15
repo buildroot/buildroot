@@ -196,7 +196,11 @@ endif
 
 ifeq ($(BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE),y)
 UBOOT_DEPENDENCIES += optee-os
+ifeq ($(BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE_ELF),y)
 UBOOT_MAKE_OPTS += TEE=$(BINARIES_DIR)/tee.elf
+else ifeq ($(BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE_BIN),y)
+UBOOT_MAKE_OPTS += TEE=$(BINARIES_DIR)/tee.bin
+endif
 endif
 
 # TI K3 devices needs at least ti-sysfw (System Firmware) provided

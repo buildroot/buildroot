@@ -1,4 +1,4 @@
-From aa232855cf717835a5d16954f1fd8ead315a5fa6 Mon Sep 17 00:00:00 2001
+From 995cf87c0dfc420908847a06661cbae21d16a8f6 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?J=C3=B6rg=20Krause?= <joerg.krause@embedded.rocks>
 Date: Mon, 7 Dec 2015 01:14:33 +0100
 Subject: [PATCH] add executable
@@ -22,10 +22,10 @@ Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
  2 files changed, 11 insertions(+)
 
 diff --git a/setuptools/command/install.py b/setuptools/command/install.py
-index e2ec1abdd..e78ace3d4 100644
+index 741b140c7..5a281237a 100644
 --- a/setuptools/command/install.py
 +++ b/setuptools/command/install.py
-@@ -26,6 +26,7 @@ class install(orig.install):
+@@ -39,6 +39,7 @@ class install(orig.install):
      distribution: Distribution  # override distutils.dist.Distribution with setuptools.dist.Distribution
  
      user_options = orig.install.user_options + [
@@ -33,7 +33,7 @@ index e2ec1abdd..e78ace3d4 100644
          ('old-and-unmanageable', None, "Try not to use this!"),
          (
              'single-version-externally-managed',
-@@ -60,6 +61,7 @@ class install(orig.install):
+@@ -73,6 +74,7 @@ class install(orig.install):
          )
  
          super().initialize_options()
@@ -42,11 +42,11 @@ index e2ec1abdd..e78ace3d4 100644
          self.single_version_externally_managed = None
  
 diff --git a/setuptools/command/install_scripts.py b/setuptools/command/install_scripts.py
-index 7b90611d1..216cadf80 100644
+index 4401cf693..38f5d5092 100644
 --- a/setuptools/command/install_scripts.py
 +++ b/setuptools/command/install_scripts.py
 @@ -18,6 +18,13 @@ class install_scripts(orig.install_scripts):
-     def initialize_options(self):
+     def initialize_options(self) -> None:
          orig.install_scripts.initialize_options(self)
          self.no_ep = False
 +        self.executable = None

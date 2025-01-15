@@ -274,7 +274,31 @@ config BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE
 	  Some platforms (such as Rockchip) encapsulate the TEE inside
 	  U-Boot. This option makes sure optee-os gets built prior to
 	  U-Boot, and that the TEE variable pointing to OPTEE's
-	  tee.elf, is passed during the Buildroot build.
+	  core file, is passed during the Buildroot build.
+
+choice
+	prompt "U-Boot OPTEE TEE format"
+	default BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE_ELF
+	depends on BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE
+	help
+	  Select the TEE format.
+	  You may select the TEE in ELF format only for OP-TEE
+	  versions before 3.8.0.
+	  Since this version, the TEE in binary format must be used as
+	  it contains important meta-data.
+
+config BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE_ELF
+	bool "tee.elf"
+	help
+	  ELF format may be used only for OP-TEE versions before
+	  3.8.0.
+
+config BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE_BIN
+	bool "tee.bin"
+	help
+	  Binary format must be used for OP-TEE versions since 3.8.0.
+
+endchoice
 
 config BR2_TARGET_UBOOT_NEEDS_OPENSBI
 	bool "U-Boot needs OpenSBI"

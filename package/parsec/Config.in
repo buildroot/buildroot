@@ -1,0 +1,15 @@
+config BR2_PACKAGE_PARSEC
+	bool "parsec"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  Hardware/platform abstraction service for TPMs, HSMs, and
+	  Root of Trust
+	  PARSEC is the Platform AbstRaction for SECurity, an
+	  open-source initiative to provide a common API to hardware
+	  security and cryptographic services in a platform-agnostic
+	  way. This abstraction layer keeps workloads decoupled from
+	  physical platform details, enabling cloud-native delivery
+	  flows within the data center and at the edge.
+
+	  https://github.com/parallaxsecond/parsec.git
