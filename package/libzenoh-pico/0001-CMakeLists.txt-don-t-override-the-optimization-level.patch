@@ -30,10 +30,10 @@ Upstream: https://github.com/eclipse-zenoh/zenoh-pico/pull/847
  1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 7a9fb6d1..97fba56a 100644
+index 25b62fb5..623d13f8 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -85,13 +85,13 @@ string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
+@@ -86,15 +86,15 @@ string(TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
  # Compile options
  if(CMAKE_BUILD_TYPE MATCHES "RELEASE" OR "Release")
    if(UNIX)
@@ -44,13 +44,16 @@ index 7a9fb6d1..97fba56a 100644
 +    add_compile_options(-pipe)
    endif()
  else()
-   if(UNIX)
+   if(CMAKE_SYSTEM_NAME MATCHES "PICO")
+-    add_compile_options(-c -Wall -Wextra -Wno-unused -Wno-strict-prototypes -pipe -g -O0)
++    add_compile_options(-c -Wall -Wextra -Wno-unused -Wno-strict-prototypes -pipe -g)
+   elseif(UNIX)
 -    add_compile_options(-c -Wall -Wextra -Werror -Wshadow -Wunused -Wstrict-prototypes -pipe -g -O0)
 +    add_compile_options(-c -Wall -Wextra -Werror -Wshadow -Wunused -Wstrict-prototypes -pipe -g)
      # C99 pedantic doesn't like struct anonymous in unix header
      if (NOT CMAKE_C_STANDARD STREQUAL "99")
        add_compile_options(-Wpedantic)
-@@ -100,7 +100,7 @@ else()
+@@ -103,7 +103,7 @@ else()
    elseif(MSVC)
      add_compile_options(/W4 /WX /Od /wd4127)
    elseif(CMAKE_SYSTEM_NAME MATCHES "Generic")
@@ -58,7 +61,7 @@ index 7a9fb6d1..97fba56a 100644
 +    add_compile_options(-Wall -Wextra -Wno-unused-parameter -Wmissing-prototypes -pipe -g)
    endif()
  endif()
- 
--- 
+
+--
 2.47.1
 
