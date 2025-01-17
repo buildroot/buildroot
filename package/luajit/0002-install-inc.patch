@@ -6,12 +6,12 @@ Index: b/Makefile
 ===================================================================
 --- a/Makefile
 +++ b/Makefile
-@@ -38,7 +38,7 @@
- INSTALL_BIN=   $(DPREFIX)/bin
+@@ -39,7 +39,7 @@
  INSTALL_LIB=   $(DPREFIX)/$(MULTILIB)
- INSTALL_SHARE= $(DPREFIX)/share
+ INSTALL_SHARE_= $(PREFIX)/share
+ INSTALL_SHARE= $(DESTDIR)$(INSTALL_SHARE_)
 -INSTALL_DEFINC= $(DPREFIX)/include/luajit-$(MMVERSION)
 +INSTALL_DEFINC= $(DPREFIX)/include
  INSTALL_INC=   $(INSTALL_DEFINC)
  
- export INSTALL_LJLIBD= $(INSTALL_SHARE)/luajit-$(MMVERSION)
+ export INSTALL_LJLIBD= $(INSTALL_SHARE_)/luajit-$(MMVERSION)
