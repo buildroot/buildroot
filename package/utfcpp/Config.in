@@ -1,0 +1,10 @@
+config BR2_PACKAGE_UTFCPP
+	bool "utfcpp"
+	depends on BR2_INSTALL_LIBSTDCPP
+	help
+	  UTF-8 with C++ in a Portable Way
+
+	  https://github.com/nemtrif/utfcpp
+
+comment "taglib needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP
