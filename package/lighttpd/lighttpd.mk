@@ -13,17 +13,10 @@ LIGHTTPD_LICENSE_FILES = COPYING
 LIGHTTPD_CPE_ID_VENDOR = lighttpd
 LIGHTTPD_DEPENDENCIES = host-pkgconf xxhash
 LIGHTTPD_CONF_OPTS = \
-	-Dwith_dbi=disabled \
 	-Dwith_fam=disabled \
-	-Dwith_gnutls=false \
-	-Dwith_libev=disabled \
-	-Dwith_libunwind=disabled \
-	-Dwith_mbedtls=false \
-	-Dwith_nettle=false \
 	-Dwith_nss=false \
 	-Dwith_pcre=disabled \
 	-Dwith_sasl=disabled \
-	-Dwith_wolfssl=false \
 	-Dwith_xattr=false \
 	-Dwith_xxhash=enabled \
 	-Dbuild_extra_warnings=false \
@@ -32,6 +25,13 @@ LIGHTTPD_CONF_OPTS = \
 
 ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
 LIGHTTPD_DEPENDENCIES += libxcrypt
+endif
+
+ifeq ($(BR2_PACKAGE_LIBUNWIND),y)
+LIGHTTPD_DEPENDENCIES += libunwind
+LIGHTTPD_CONF_OPTS += -Dwith_libunwind=enabled
+else
+LIGHTTPD_CONF_OPTS += -Dwith_libunwind=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIGHTTPD_BROTLI),y)
@@ -48,6 +48,20 @@ else
 LIGHTTPD_CONF_OPTS += -Dwith_bzip=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_LIGHTTPD_DBI),y)
+LIGHTTPD_DEPENDENCIES += libdbi
+LIGHTTPD_CONF_OPTS += -Dwith_dbi=enabled
+else
+LIGHTTPD_CONF_OPTS += -Dwith_dbi=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_LIGHTTPD_GNUTLS),y)
+LIGHTTPD_DEPENDENCIES += gnutls
+LIGHTTPD_CONF_OPTS += -Dwith_gnutls=true
+else
+LIGHTTPD_CONF_OPTS += -Dwith_gnutls=false
+endif
+
 ifeq ($(BR2_PACKAGE_LIGHTTPD_KRB5),y)
 LIGHTTPD_DEPENDENCIES += libkrb5
 LIGHTTPD_CONF_OPTS += -Dwith_krb5=enabled
@@ -60,6 +74,13 @@ LIGHTTPD_DEPENDENCIES += openldap
 LIGHTTPD_CONF_OPTS += -Dwith_ldap=enabled
 else
 LIGHTTPD_CONF_OPTS += -Dwith_ldap=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_LIGHTTPD_LIBEV),y)
+LIGHTTPD_DEPENDENCIES += libev
+LIGHTTPD_CONF_OPTS += -Dwith_libev=enabled
+else
+LIGHTTPD_CONF_OPTS += -Dwith_libev=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIGHTTPD_LUA),y)
@@ -76,11 +97,25 @@ else
 LIGHTTPD_CONF_OPTS += -Dwith_maxminddb=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_LIGHTTPD_MBEDTLS),y)
+LIGHTTPD_DEPENDENCIES += mbedtls
+LIGHTTPD_CONF_OPTS += -Dwith_mbedtls=true
+else
+LIGHTTPD_CONF_OPTS += -Dwith_mbedtls=false
+endif
+
 ifeq ($(BR2_PACKAGE_LIGHTTPD_MYSQL),y)
 LIGHTTPD_DEPENDENCIES += mariadb
 LIGHTTPD_CONF_OPTS += -Dwith_mysql=enabled
 else
 LIGHTTPD_CONF_OPTS += -Dwith_mysql=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_LIGHTTPD_NETTLE),y)
+LIGHTTPD_DEPENDENCIES += nettle
+LIGHTTPD_CONF_OPTS += -Dwith_nettle=true
+else
+LIGHTTPD_CONF_OPTS += -Dwith_nettle=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIGHTTPD_OPENSSL),y)
@@ -122,6 +157,13 @@ LIGHTTPD_CONF_OPTS += -Dwith_webdav_locks=disabled
 endif
 else
 LIGHTTPD_CONF_OPTS += -Dwith_webdav_props=disabled -Dwith_webdav_locks=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_LIGHTTPD_WOLFSSL),y)
+LIGHTTPD_DEPENDENCIES += wolfssl
+LIGHTTPD_CONF_OPTS += -Dwith_wolfssl=true
+else
+LIGHTTPD_CONF_OPTS += -Dwith_wolfssl=false
 endif
 
 ifeq ($(BR2_PACKAGE_LIGHTTPD_ZLIB),y)
