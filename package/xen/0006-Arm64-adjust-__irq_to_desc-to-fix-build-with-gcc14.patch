@@ -1,0 +1,62 @@
+From a17dda1d2bf9c25b91f9e72625696cf26b32673a Mon Sep 17 00:00:00 2001
+From: Jan Beulich <jbeulich@suse.com>
+Date: Thu, 29 Aug 2024 10:03:53 +0200
+Subject: [PATCH] Arm64: adjust __irq_to_desc() to fix build with gcc14
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+With the original code I observe
+
+In function ‘__irq_to_desc’,
+    inlined from ‘route_irq_to_guest’ at arch/arm/irq.c:465:12:
+arch/arm/irq.c:54:16: error: array subscript -2 is below array bounds of ‘irq_desc_t[32]’ {aka ‘struct irq_desc[32]’} [-Werror=array-bounds=]
+   54 |         return &this_cpu(local_irq_desc)[irq];
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+which looks pretty bogus: How in the world does the compiler arrive at
+-2 when compiling route_irq_to_guest()? Yet independent of that the
+function's parameter wants to be of unsigned type anyway, as shown by
+a vast majority of callers (others use plain int when they really mean
+non-negative quantities). With that adjustment the code compiles fine
+again.
+
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
+Acked-by: Michal Orzel <michal.orzel@amd.com>
+[Vincent: backported to 4.14.6]
+Signed-off-by: Vincent Stehlé <vincent.stehle@laposte.net>
+Upstream: https://xenbits.xen.org/gitweb/?p=xen.git;a=commitdiff;h=99f942f3d410059dc223ee0a908827e928ef3592
+---
+ xen/arch/arm/irq.c        | 2 +-
+ xen/include/asm-arm/irq.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/xen/arch/arm/irq.c b/xen/arch/arm/irq.c
+index 3877657a52..2862de00d9 100644
+--- a/xen/arch/arm/irq.c
++++ b/xen/arch/arm/irq.c
+@@ -66,7 +66,7 @@ hw_irq_controller no_irq_type = {
+ static irq_desc_t irq_desc[NR_IRQS];
+ static DEFINE_PER_CPU(irq_desc_t[NR_LOCAL_IRQS], local_irq_desc);
+ 
+-irq_desc_t *__irq_to_desc(int irq)
++irq_desc_t *__irq_to_desc(unsigned int irq)
+ {
+     if ( irq < NR_LOCAL_IRQS )
+         return &this_cpu(local_irq_desc)[irq];
+diff --git a/xen/include/asm-arm/irq.h b/xen/include/asm-arm/irq.h
+index e45d574598..33fbbadb34 100644
+--- a/xen/include/asm-arm/irq.h
++++ b/xen/include/asm-arm/irq.h
+@@ -57,7 +57,7 @@ extern const unsigned int nr_irqs;
+ struct irq_desc;
+ struct irqaction;
+ 
+-struct irq_desc *__irq_to_desc(int irq);
++struct irq_desc *__irq_to_desc(unsigned int irq);
+ 
+ #define irq_to_desc(irq)    __irq_to_desc(irq)
+ 
+-- 
+2.45.2
+
