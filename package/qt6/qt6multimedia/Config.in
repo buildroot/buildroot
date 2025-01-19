@@ -1,0 +1,111 @@
+config BR2_PACKAGE_QT6MULTIMEDIA
+	bool "qt6multimedia"
+	select BR2_PACKAGE_QT6BASE_GUI
+	select BR2_PACKAGE_QT6BASE_NETWORK
+	select BR2_PACKAGE_QT6SHADERTOOLS
+	help
+	  This package provides Qt6 Multimedia:
+
+	  https://doc.qt.io/qt-6/qtmultimedia-index.html
+	  https://code.qt.io/cgit/qt/qtmultimedia.git
+
+if BR2_PACKAGE_QT6MULTIMEDIA
+
+comment "alsa support requires disabling pulseaudio"
+	depends on BR2_PACKAGE_QT6MULTIMEDIA_PULSEAUDIO
+
+config BR2_PACKAGE_QT6MULTIMEDIA_ALSA
+	bool "alsa support"
+	# qt6-multimedia audio backend requires selection
+	# of either PulseAudio or ALSA.
+	depends on !BR2_PACKAGE_QT6MULTIMEDIA_PULSEAUDIO
+	select BR2_PACKAGE_ALSA_LIB
+	help
+	  This option selects Alsa as audio backend.
+
+config BR2_PACKAGE_QT6MULTIMEDIA_EXAMPLES
+	bool "examples"
+	help
+	  This option enables the Qt6 Multimedia examples.
+
+config BR2_PACKAGE_QT6MULTIMEDIA_FFMPEG
+	bool "ffmpeg plugin"
+	depends on BR2_PACKAGE_FFMPEG_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_PULSEAUDIO_HAS_ATOMIC
+	# qt6-multimedia ffmpeg plugin needs
+	# qt6base-concurrent, PulseAudio and ffmpeg-swcale.
+	select BR2_PACKAGE_FFMPEG
+	select BR2_PACKAGE_FFMPEG_SWSCALE
+	select BR2_PACKAGE_QT6BASE_CONCURRENT
+	select BR2_PACKAGE_QT6MULTIMEDIA_PULSEAUDIO
+	help
+	  This option enables ffmpeg media backend.
+
+if BR2_PACKAGE_QT6MULTIMEDIA_FFMPEG
+
+comment "VAAPI support needs OpenGL, EGL, libgbm with dma-buf"
+	depends on !BR2_PACKAGE_QT6_GL_SUPPORTS || \
+		!BR2_PACKAGE_HAS_LIBEGL || \
+		!BR2_PACKAGE_LIBGBM_HAS_FEATURE_DMA_BUF
+
+config BR2_PACKAGE_QT6MULTIMEDIA_VAAPI
+	bool "vaapi support"
+	depends on BR2_PACKAGE_QT6_GL_SUPPORTS
+	depends on BR2_PACKAGE_HAS_LIBEGL
+	depends on BR2_PACKAGE_LIBGBM_HAS_FEATURE_DMA_BUF
+	select BR2_PACKAGE_LIBVA
+	# ffmpeg-vaapi support needs qt6base-opengl
+	select BR2_PACKAGE_QT6BASE_OPENGL
+	select BR2_PACKAGE_QT6MULTIMEDIA_LINUX_DMA_BUF
+	help
+	  This option enables the vaapi support.
+endif
+
+config BR2_PACKAGE_QT6MULTIMEDIA_GSTREAMER
+	bool "gstreamer plugin"
+	# gstreamer 1.x and gst-plugins-base-app are required
+	# for gstreamer support in qt6-multimedia
+	select BR2_PACKAGE_GST1_PLUGINS_BASE
+	select BR2_PACKAGE_GST1_PLUGINS_BASE_PLUGIN_APP
+	select BR2_PACKAGE_GSTREAMER1
+	help
+	  This option enables gstreamer media backend.
+
+if BR2_PACKAGE_QT6MULTIMEDIA_GSTREAMER
+
+config BR2_PACKAGE_QT6MULTIMEDIA_GST1_PLUGINS_PHOTOGRAPHY
+	bool "photography support"
+	select BR2_PACKAGE_GST1_PLUGINS_BAD
+	help
+	  This option enables gstreamer-photography support.
+
+endif
+
+comment "dma-buf support needs EGM, libgbm with dma-buf"
+	depends on !BR2_PACKAGE_HAS_LIBEGL || \
+		!BR2_PACKAGE_LIBGBM_HAS_FEATURE_DMA_BUF
+
+config BR2_PACKAGE_QT6MULTIMEDIA_LINUX_DMA_BUF
+	bool "linux dma buffer support"
+	# qt6 configure script needs EGL to check for linux dma buffer
+	# support
+	depends on BR2_PACKAGE_HAS_LIBEGL
+	depends on BR2_PACKAGE_LIBGBM_HAS_FEATURE_DMA_BUF
+	help
+	  This option enables the linux dma buffer support.
+
+config BR2_PACKAGE_QT6MULTIMEDIA_PULSEAUDIO
+	bool "pulseaudio support"
+	depends on BR2_PACKAGE_PULSEAUDIO_HAS_ATOMIC
+	select BR2_PACKAGE_PULSEAUDIO
+	help
+	  This option selects PulseAudio as audio backend.
+
+config BR2_PACKAGE_QT6MULTIMEDIA_SPATIALAUDIO
+	bool "spatial audio module"
+	help
+	  This option enables the Qt6 Spatial Audio module.
+
+	  https://doc.qt.io/qt-6/qtspatialaudio-index.html
+
+endif
