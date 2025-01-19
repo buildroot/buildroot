@@ -1,0 +1,46 @@
+From b9514337ecfc0efaa04a926713188d87a88bb59e Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 18 Jan 2025 16:03:34 +0100
+Subject: [PATCH] com32/modules/pxechn.c: use proper type in struct data_area
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Use a size_t for the size field, so that we meet the expectations of
+the loadfile() function.
+
+Fixes a build issue with GCC >= 14:
+
+com32/modules/pxechn.c:985:38: error: passing argument 3 of ‘loadfile’ from incompatible pointer type [-Wincompatible-pointer-types]
+  985 |     if (loadfile(pxe.fn, &file.data, &file.size)) {
+      |                                      ^~~~~~~~~~
+      |                                      |
+      |                                      addr_t * {aka unsigned int *}
+
+In file included from com32/modules/pxechn.c:33:
+com32/include/syslinux/loadfile.h:11:37: note: expected ‘size_t *’ {aka ‘long unsigned int *’} but argument is of type ‘addr_t *’ {aka ‘unsigned int *’}
+   11 | int loadfile(const char *, void **, size_t *);
+      |                                     ^~~~~~~~
+
+Upstream: N/A, dead
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ com32/modules/pxechn.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/com32/modules/pxechn.c b/com32/modules/pxechn.c
+index e4e21e88..15f008a3 100644
+--- a/com32/modules/pxechn.c
++++ b/com32/modules/pxechn.c
+@@ -130,7 +130,7 @@ struct pxelinux_opt {
+ struct data_area {
+     void *data;
+     addr_t base;
+-    addr_t size;
++    size_t size;
+ };
+ 
+ /* From chain.c */
+-- 
+2.47.1
+

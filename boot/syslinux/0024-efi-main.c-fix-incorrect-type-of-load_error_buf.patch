@@ -1,0 +1,48 @@
+From cbc8a8e25c3548771de5294f5a1eaef6bfe9b5da Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 18 Jan 2025 17:03:16 +0100
+Subject: [PATCH] efi/main.c: fix incorrect type of load_error_buf
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+load_error_buf is used as argument of setjmp()/longjmp(), so it should
+be a "jmp_buf", not a "jmp_buf *". According to the setjmp/longjmp man
+page:
+
+       int setjmp(jmp_buf env);
+       int sigsetjmp(sigjmp_buf env, int savesigs);
+
+Fixes build issue with GCC >= 14:
+
+efi/main.c:1329:21: error: passing argument 1 of ‘setjmp’ from incompatible pointer type [-Wincompatible-pointer-types]
+ 1329 |         if (!setjmp(load_error_buf))
+      |                     ^~~~~~~~~~~~~~
+      |                     |
+      |                     struct <anonymous> (*)[1]
+x86_64-buildroot-linux-gnu/sysroot/usr/include/efi/efisetjmp.h:7:29: note: expected ‘struct <anonymous> *’ but argument is of type ‘struct <anonymous> (*)[1]’
+    7 | extern UINTN setjmp(jmp_buf env) __attribute__((returns_twice));
+      |                     ~~~~~~~~^~~
+
+Upstream: N/A dead
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ efi/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/efi/main.c b/efi/main.c
+index 7dc7bca7..045dae56 100644
+--- a/efi/main.c
++++ b/efi/main.c
+@@ -30,7 +30,7 @@ uint32_t timer_irq;
+ __export uint8_t KbdMap[256];
+ char aux_seg[256];
+ 
+-static jmp_buf *load_error_buf;
++static jmp_buf load_error_buf;
+ 
+ static inline EFI_STATUS
+ efi_close_protocol(EFI_HANDLE handle, EFI_GUID *guid, EFI_HANDLE agent,
+-- 
+2.47.1
+

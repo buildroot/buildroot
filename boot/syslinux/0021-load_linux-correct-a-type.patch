@@ -1,0 +1,34 @@
+From 7f1b68d561dfe615d5cd73d2f4561ac032832802 Mon Sep 17 00:00:00 2001
+From: Scot Doyle <lkml14@scotdoyle.com>
+Date: Sat, 7 Feb 2015 13:52:05 -0500
+Subject: [PATCH] load_linux: correct a type
+
+Correct base's type to match its initialization from prot_mode_base and
+passage to syslinux_memmap_find(). Tested with extlinux.
+
+Signed-off-by: Scot Doyle <lkml14@scotdoyle.com>
+Signed-off-by: Gene Cumm <gene.cumm@gmail.com>
+Upstream: https://github.com/geneC/syslinux/commit/83aad4f69065509ba5b1c080edccfed316a4cff0
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ com32/lib/syslinux/load_linux.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/com32/lib/syslinux/load_linux.c b/com32/lib/syslinux/load_linux.c
+index 06ae2a97..ac737293 100644
+--- a/com32/lib/syslinux/load_linux.c
++++ b/com32/lib/syslinux/load_linux.c
+@@ -155,8 +155,8 @@ int bios_boot_linux(void *kernel_buf, size_t kernel_size,
+ 		    char *cmdline)
+ {
+     struct linux_header hdr, *whdr;
+-    size_t real_mode_size, prot_mode_size, base;
+-    addr_t real_mode_base, prot_mode_base, prot_mode_max;
++    size_t real_mode_size, prot_mode_size;
++    addr_t real_mode_base, prot_mode_base, prot_mode_max, base;
+     addr_t irf_size;
+     size_t cmdline_size, cmdline_offset;
+     struct setup_data *sdp;
+-- 
+2.47.1
+

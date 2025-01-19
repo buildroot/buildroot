@@ -1,0 +1,42 @@
+From 57dddf8d6d1c48aa78b9cdfb2b474aa89c3ae7c7 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 18 Jan 2025 16:11:36 +0100
+Subject: [PATCH] com32/chain/chain.h: use proper type in struct data_area
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes build issue with GCC >= 14:
+
+com32/chain/chain.c:517:44: error: passing argument 3 of ‘loadfile’ from incompatible pointer type [-Wincompatible-pointer-types]
+  517 |         if (loadfile(opt.file, &fdat.data, &fdat.size)) {
+      |                                            ^~~~~~~~~~
+      |                                            |
+      |                                            addr_t * {aka unsigned int *}
+In file included from com32/chain/chain.c:32:
+com32/include/syslinux/loadfile.h:11:37: note: expected ‘size_t *’ {aka ‘long unsigned int *’} but argument is of type ‘addr_t *’ {aka ‘unsigned int *’}
+   11 | int loadfile(const char *, void **, size_t *);
+      |                                     ^~~~~~~~
+
+Upstream: N/A, dead
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ com32/chain/chain.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/com32/chain/chain.h b/com32/chain/chain.h
+index fb5914b1..dcf43844 100644
+--- a/com32/chain/chain.h
++++ b/com32/chain/chain.h
+@@ -21,7 +21,7 @@
+ struct data_area {
+     void *data;
+     addr_t base;
+-    addr_t size;
++    size_t size;
+ };
+ 
+ #endif
+-- 
+2.47.1
+
