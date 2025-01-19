@@ -185,6 +185,8 @@ define LIGHTTPD_INSTALL_CONFIG
 	$(INSTALL) -d -m 0755 $(TARGET_DIR)/var/www
 	$(INSTALL) -D -m 0644 $(@D)/doc/config/lighttpd.conf \
 		$(TARGET_DIR)/etc/lighttpd/lighttpd.conf
+	$(INSTALL) -D -m 0644 $(@D)/doc/config/lighttpd.annotated.conf \
+		$(TARGET_DIR)/etc/lighttpd/lighttpd.annotated.conf
 	$(INSTALL) -D -m 0644 $(@D)/doc/config/modules.conf \
 		$(TARGET_DIR)/etc/lighttpd/modules.conf
 	$(INSTALL) -D -m 0644 $(@D)/doc/config/conf.d/access_log.conf \
