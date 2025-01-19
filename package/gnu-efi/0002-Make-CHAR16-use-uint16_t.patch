@@ -1,0 +1,164 @@
+From f65e5db5666529abb18fe24f5c45331404a1ce99 Mon Sep 17 00:00:00 2001
+From: Callum Farmer <gmbr3@opensuse.org>
+Date: Wed, 29 May 2024 16:22:50 +0100
+Subject: [PATCH] Make CHAR16 use uint16_t
+
+musl-libc doesn't like fshort-wchar so remove wchar_t usage
+Use uint16_t as char16_t can be up to 32bits
+Fixes ncroxon/gnu-efi#16
+
+Signed-off-by: Callum Farmer <gmbr3@opensuse.org>
+Upstream: https://github.com/ncroxon/gnu-efi/commit/edfda7c396134c7109444b230ce4b0da1e61d524
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ Make.defaults             | 4 ++--
+ inc/aarch64/efibind.h     | 2 +-
+ inc/arm/efibind.h         | 2 +-
+ inc/ia32/efibind.h        | 2 +-
+ inc/ia64/efibind.h        | 2 +-
+ inc/loongarch64/efibind.h | 2 +-
+ inc/mips64el/efibind.h    | 2 +-
+ inc/riscv64/efibind.h     | 5 ++---
+ inc/x86_64/efibind.h      | 2 +-
+ 9 files changed, 11 insertions(+), 12 deletions(-)
+
+diff --git a/Make.defaults b/Make.defaults
+index c9f9b4f..83204a6 100755
+--- a/Make.defaults
++++ b/Make.defaults
+@@ -187,11 +187,11 @@ endif
+ 
+ ifeq (FreeBSD, $(findstring FreeBSD, $(OS)))
+ CFLAGS  += $(ARCH3264) -g -O2 -Wall -Wextra -Werror \
+-           -funsigned-char -fshort-wchar -fno-strict-aliasing \
++           -funsigned-char -fno-strict-aliasing \
+            -ffreestanding -fno-stack-protector
+ else
+ CFLAGS  += $(ARCH3264) -g -O2 -Wall -Wextra -Wno-pointer-sign -Werror \
+-           -funsigned-char -fshort-wchar -fno-strict-aliasing \
++           -funsigned-char -fno-strict-aliasing \
+ 	   -ffreestanding -fno-stack-protector -fno-stack-check \
+            $(if $(findstring gcc,$(CC)),-fno-merge-all-constants,)
+ endif
+diff --git a/inc/aarch64/efibind.h b/inc/aarch64/efibind.h
+index d6b5d0f..1a1fb79 100644
+--- a/inc/aarch64/efibind.h
++++ b/inc/aarch64/efibind.h
+@@ -40,7 +40,7 @@ typedef int64_t             intptr_t;
+ 
+ #include <stddef.h>
+ 
+-typedef wchar_t CHAR16;
++typedef uint16_t CHAR16;
+ #define WCHAR CHAR16
+ 
+ typedef uint64_t   UINT64;
+diff --git a/inc/arm/efibind.h b/inc/arm/efibind.h
+index 8c578df..bc43931 100644
+--- a/inc/arm/efibind.h
++++ b/inc/arm/efibind.h
+@@ -48,7 +48,7 @@ typedef int32_t             intptr_t;
+ 
+ #include <stddef.h>
+ 
+-typedef wchar_t CHAR16;
++typedef uint16_t CHAR16;
+ #define WCHAR CHAR16
+ 
+ typedef uint64_t   UINT64;
+diff --git a/inc/ia32/efibind.h b/inc/ia32/efibind.h
+index 718e8d1..1b33f2f 100644
+--- a/inc/ia32/efibind.h
++++ b/inc/ia32/efibind.h
+@@ -87,7 +87,7 @@ Revision History
+ 
+ #include <stddef.h>
+ 
+-typedef wchar_t CHAR16;
++typedef uint16_t CHAR16;
+ #define WCHAR CHAR16
+ 
+ 
+diff --git a/inc/ia64/efibind.h b/inc/ia64/efibind.h
+index 1d2745b..1ad41f8 100644
+--- a/inc/ia64/efibind.h
++++ b/inc/ia64/efibind.h
+@@ -74,7 +74,7 @@ Revision History
+ 
+ #include <stddef.h>
+ 
+-typedef wchar_t CHAR16;
++typedef uint16_t CHAR16;
+ #define WCHAR CHAR16
+ 
+ typedef uint64_t   UINT64;
+diff --git a/inc/loongarch64/efibind.h b/inc/loongarch64/efibind.h
+index 8ed83a5..806209d 100644
+--- a/inc/loongarch64/efibind.h
++++ b/inc/loongarch64/efibind.h
+@@ -44,7 +44,7 @@ typedef int64_t             intptr_t;
+ 
+ #include <stddef.h>
+ 
+-typedef wchar_t CHAR16;
++typedef uint16_t CHAR16;
+ #define WCHAR CHAR16
+ 
+ typedef uint64_t   UINT64;
+diff --git a/inc/mips64el/efibind.h b/inc/mips64el/efibind.h
+index cf77ddc..9b396cc 100644
+--- a/inc/mips64el/efibind.h
++++ b/inc/mips64el/efibind.h
+@@ -42,7 +42,7 @@ typedef int64_t             intptr_t;
+ 
+ #include <stddef.h>
+ 
+-typedef wchar_t CHAR16;
++typedef uint16_t CHAR16;
+ #define WCHAR CHAR16
+ 
+ typedef uint64_t   UINT64;
+diff --git a/inc/riscv64/efibind.h b/inc/riscv64/efibind.h
+index d8b4f39..b6d418c 100644
+--- a/inc/riscv64/efibind.h
++++ b/inc/riscv64/efibind.h
+@@ -17,13 +17,12 @@
+  */
+ 
+ #include <stdint.h>
++#include <stddef.h>
+ 
+ //
+ // Basic EFI types of various widths
+ //
+ 
+-#include <stddef.h>
+-
+ typedef uint64_t                UINT64;
+ typedef int64_t                 INT64;
+ typedef uint32_t                UINT32;
+@@ -33,7 +32,7 @@ typedef int16_t                 INT16;
+ typedef uint8_t                 UINT8;
+ typedef int8_t                  INT8;
+ typedef char                    CHAR8;
+-typedef wchar_t                 CHAR16;
++typedef uint16_t                 CHAR16;
+ #define WCHAR                   CHAR16
+ #undef VOID
+ typedef void                    VOID;
+diff --git a/inc/x86_64/efibind.h b/inc/x86_64/efibind.h
+index e454ed2..8f431cb 100644
+--- a/inc/x86_64/efibind.h
++++ b/inc/x86_64/efibind.h
+@@ -98,7 +98,7 @@ Revision History
+ 
+ #include <stddef.h>
+ 
+-typedef wchar_t CHAR16;
++typedef uint16_t CHAR16;
+ #define WCHAR CHAR16
+ 
+ typedef uint64_t   UINT64;
+-- 
+2.47.1
+
