@@ -28,10 +28,11 @@ config BR2_PACKAGE_GOBJECT_INTROSPECTION
 	# unconditionally to the target when building
 	# gobject-introspection.
 	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_HOST_GOBJECT_INTROSPECTION
 	select BR2_PACKAGE_HOST_QEMU
 	select BR2_PACKAGE_HOST_QEMU_LINUX_USER_MODE
 	select BR2_PACKAGE_LIBFFI
-	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_LIBGLIB2_BOOTSTRAP
 	select BR2_PACKAGE_ZLIB
 	help
 	  GObject introspection is a middleware layer between C

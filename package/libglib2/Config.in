@@ -3,6 +3,8 @@ config BR2_PACKAGE_LIBGLIB2
 	depends on BR2_USE_WCHAR # gettext
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_HOST_QEMU if BR2_PACKAGE_GOBJECT_INTROSPECTION
+	select BR2_PACKAGE_HOST_QEMU_LINUX_USER_MODE if BR2_PACKAGE_GOBJECT_INTROSPECTION
 	select BR2_PACKAGE_LIBICONV if !BR2_ENABLE_LOCALE
 	select BR2_PACKAGE_LIBFFI
 	select BR2_PACKAGE_PCRE2
@@ -15,3 +17,5 @@ config BR2_PACKAGE_LIBGLIB2
 comment "libglib2 needs a toolchain w/ wchar, threads"
 	depends on BR2_USE_MMU
 	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS
+
+source "package/libglib2/libglib2-bootstrap/Config.in"
