@@ -15,10 +15,16 @@ import infra
 
 def call_script(args, env, cwd):
     """Call a script and return stdout and stderr as lists and the exit code."""
-    proc = subprocess.Popen(args, cwd=cwd, stdout=subprocess.PIPE,
+    # We need stdin to be a tty, not just a pipe or whatever
+    m_tty, s_tty = os.openpty()
+    proc = subprocess.Popen(args, cwd=cwd,
+                            stdin=s_tty,
+                            stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, env=env,
                             universal_newlines=True)
     out, err = proc.communicate()
+    os.close(s_tty)
+    os.close(m_tty)
     return out.splitlines(), err.splitlines(), proc.returncode
 
 
