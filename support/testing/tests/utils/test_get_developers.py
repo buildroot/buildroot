@@ -13,26 +13,32 @@ import unittest
 import infra
 
 
-def call_script(args, env, cwd):
+def call_script(args, env, cwd, stdin_data=None):
     """Call a script and return stdout and stderr as lists and the exit code."""
-    # We need stdin to be a tty, not just a pipe or whatever
-    m_tty, s_tty = os.openpty()
+    if stdin_data is None:
+        # We need stdin to be a tty, not just a pipe or whatever
+        m_tty, s_tty = os.openpty()
+        com_opts = dict()
+    else:
+        s_tty = subprocess.PIPE
+        com_opts = dict([("input", stdin_data)])
     proc = subprocess.Popen(args, cwd=cwd,
                             stdin=s_tty,
                             stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, env=env,
                             universal_newlines=True)
-    out, err = proc.communicate()
-    os.close(s_tty)
-    os.close(m_tty)
+    out, err = proc.communicate(**com_opts)
+    if stdin_data is None:
+        os.close(s_tty)
+        os.close(m_tty)
     return out.splitlines(), err.splitlines(), proc.returncode
 
 
-def call_get_developers(cmd, args, env, cwd, developers_content):
+def call_get_developers(cmd, args, env, cwd, developers_content, stdin_data=None):
     """Call get-developers overrinding the default DEVELOPERS file."""
     with tempfile.NamedTemporaryFile(buffering=0) as developers_file:
         developers_file.write(developers_content)
-        return call_script([cmd, "-d", developers_file.name] + args, env, cwd)
+        return call_script([cmd, "-d", developers_file.name] + args, env, cwd, stdin_data)
 
 
 class TestGetDevelopers(unittest.TestCase):
@@ -171,6 +177,12 @@ class TestGetDevelopers(unittest.TestCase):
         self.assertEqual(rc, 0)
         self.assertEqual(len(err), 0)
         out, err, rc = call_get_developers("get-developers", [rel_file], self.WITH_UTILS_IN_PATH, abs_path, developers)
+        self.assertIn('git send-email --to buildroot@buildroot.org --cc "dev1"', out)
+        self.assertEqual(rc, 0)
+        self.assertEqual(len(err), 0)
+        with open(abs_file, "r") as fd:
+            patch_data = fd.read()
+        out, err, rc = call_get_developers("./utils/get-developers", [], self.WITH_EMPTY_PATH, topdir, developers, patch_data)
         self.assertIn('git send-email --to buildroot@buildroot.org --cc "dev1"', out)
         self.assertEqual(rc, 0)
         self.assertEqual(len(err), 0)
