@@ -1,0 +1,68 @@
+config BR2_TARGET_XILINX_EMBEDDEDSW
+	bool "xilinx-embeddedsw"
+	depends on BR2_aarch64
+	depends on BR2_TOOLCHAIN_BARE_METAL_BUILDROOT_ARCH = "microblazeel-xilinx-elf"
+	help
+	  Build boot firmware applications from source for Xilinx
+	  boards. Users can mix and match applications to be built
+	  by xilinx-embeddedsw and applications to be copied by
+	  xilinx-prebuilt. If a xilinx-embeddedsw application is
+	  selected, it will be built and installed from the Xilinx
+	  embeddedsw repo, and it will not be copied from the
+	  xilinx-prebuilt repo.
+
+	  Applications can be found on the Xilinx embeddedsw repo:
+	  https://github.com/Xilinx/embeddedsw/tree/master/lib/sw_apps
+
+comment "xilinx-embeddedsw needs a bare metal toolchain for tuple microblazeel-xilinx-elf"
+	depends on BR2_TOOLCHAIN_BARE_METAL_BUILDROOT_ARCH != "microblazeel-xilinx-elf"
+
+if BR2_TARGET_XILINX_EMBEDDEDSW
+
+config BR2_TARGET_XILINX_EMBEDDEDSW_VERSION
+	string "xilinx-embeddedsw version"
+	default "xilinx_v2024.2"
+	help
+	  Release version of Xilinx/embeddedsw.
+	  Must be xilinx_v2023.1 or newer.
+
+config BR2_TARGET_XILINX_EMBEDDEDSW_VERSAL_PLM
+	bool "versal plm"
+	help
+	  Build versal plm application from Xilinx/embeddedsw repo.
+	  If selected, the xilinx-prebuilt package will not install
+	  the plm.elf since it will come from the xilinx-embeddedsw
+	  package.
+
+	  https://github.com/Xilinx/embeddedsw/tree/master/lib/sw_apps/versal_plm
+
+config BR2_TARGET_XILINX_EMBEDDEDSW_VERSAL_PSMFW
+	bool "versal psmfw"
+	help
+	  Build versal psmfw application from Xilinx/embeddedsw repo.
+	  If selected, the xilinx-prebuilt package will not install
+	  the psmfw.elf since it will come from the xilinx-embeddedsw
+	  package.
+
+	  https://github.com/Xilinx/embeddedsw/tree/master/lib/sw_apps/versal_psmfw
+
+config BR2_TARGET_XILINX_EMBEDDEDSW_ZYNQMP_PMUFW
+	bool "zynqmp pmufw"
+	help
+	  Build zynqmp pmufw application from Xilinx/embeddedsw repo.
+	  If selected, the xilinx-prebuilt package will not install
+	  the pmufw.elf since it will come from the xilinx-embeddedsw
+	  package.
+
+	  https://github.com/Xilinx/embeddedsw/tree/master/lib/sw_apps/zynqmp_pmufw
+
+config BR2_TARGET_XILINX_EMBEDDEDSW_ZYNQMP_PMUFW_USER_CFLAGS
+	string "xilinx-embeddedsw optional zynqmp_pmufw user cflags"
+	depends on BR2_TARGET_XILINX_EMBEDDEDSW_ZYNQMP_PMUFW
+	help
+	  Add optional cflags when building xilinx zynqmp_pmufw.
+
+	  Example cflag options can be found here:
+	  https://github.com/Xilinx/embeddedsw/blob/master/lib/sw_apps/zynqmp_pmufw/src/xpfw_config.h
+
+endif # BR2_TARGET_XILINX_EMBEDDEDSW

@@ -4,6 +4,14 @@ config BR2_TARGET_XILINX_PREBUILT
 	help
 	  Pre-built firmware files for Xilinx boards.
 
+	  The pre-built firmware applications will only be installed
+	  if they are not being built by the xilinx-embeddedsw
+	  package.
+
+	  Users can mix and match applications to build with
+	  xilinx-embeddedsw and applications to simply install with
+	  xilinx-prebuilt.
+
 	  https://github.com/Xilinx/soc-prebuilt-firmware
 
 if BR2_TARGET_XILINX_PREBUILT
