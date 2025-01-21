@@ -24,8 +24,13 @@ IGT_GPU_TOOLS_DEPENDENCIES = \
 	zlib
 
 IGT_GPU_TOOLS_CONF_OPTS = \
-	-Dchamelium=disabled \
-	-Dtests=disabled
+	-Dchamelium=disabled
+
+ifeq ($(BR2_PACKAGE_IGT_GPU_TOOLS_TESTS),y)
+IGT_GPU_TOOLS_CONF_OPTS += -Dtests=enabled
+else
+IGT_GPU_TOOLS_CONF_OPTS += -Dtests=disabled
+endif
 
 # On x86 systems, libigt resolves igt_half_to_float and igt_float_to_half as
 # indirect functions at runtime by checking CPU features with igt_x86_features.

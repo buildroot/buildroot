@@ -24,6 +24,16 @@ config BR2_PACKAGE_IGT_GPU_TOOLS
 
 	  https://gitlab.freedesktop.org/drm/igt-gpu-tools
 
+if BR2_PACKAGE_IGT_GPU_TOOLS
+
+config BR2_PACKAGE_IGT_GPU_TOOLS_TESTS
+	bool "enable tests"
+	help
+	  Enable IGT tests, resulting in individual executables
+	  for GPU testing under /usr/libexec/igt-gpu-tools.
+
+endif
+
 comment "igt-gpu-tools needs udev /dev management and toolchain w/ NPTL, wchar, dynamic library, locale, headers >= 4.11"
 	depends on BR2_USE_MMU
 	depends on !BR2_PACKAGE_HAS_UDEV || BR2_STATIC_LIBS || \
