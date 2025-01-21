@@ -572,23 +572,55 @@ config BR2_TARGET_UBOOT_ZYNQMP
 
 if BR2_TARGET_UBOOT_ZYNQMP
 
-config BR2_TARGET_UBOOT_ZYNQMP_PMUFW_PREBUILT
-	bool "xilinx-prebuilt pmufw.elf"
+choice
+	prompt "PMUFW origin"
+	default BR2_TARGET_UBOOT_ZYNQMP_PMUFW_CUSTOM
 	depends on BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG
+	help
+	  Choose between the following options:
+	  1) Build from source via xilinx-embeddedsw
+	  2) Official prebuilt via xilinx-prebuilt
+	  3) Prebuilt from custom location
+
+	  U-Boot build process will generate a boot.bin (to be loaded
+	  by the ZynqMP boot ROM) containing both the U-Boot SPL and
+	  the PMU firmware in the Xilinx-specific boot format.
+
+config BR2_TARGET_UBOOT_ZYNQMP_PMUFW_EMBEDDEDSW
+	bool "Build from source via xilinx-embeddedsw"
+	depends on BR2_TARGET_XILINX_EMBEDDEDSW_ZYNQMP_PMUFW
+	help
+	  Use xilinx-embeddedsw boot package for building
+	  zynqmp pmufw.elf from
+	    https://github.com/Xilinx/embeddedsw repo.
+
+comment "To build from source, xilinx-embeddedsw needs to be enabled with zynqmp_pmufw option."
+	depends on !BR2_TARGET_XILINX_EMBEDDEDSW_ZYNQMP_PMUFW
+
+config BR2_TARGET_UBOOT_ZYNQMP_PMUFW_PREBUILT
+	bool "Prebuilt via xilinx-prebuilt"
 	depends on BR2_TARGET_XILINX_PREBUILT_ZYNQMP || BR2_TARGET_XILINX_PREBUILT_KRIA
 	help
 	  Use xilinx-prebuilt boot package for downloading prebuilt
 	  zynqmp pmufw.elf from
 	    https://github.com/Xilinx/soc-prebuilt-firmware repo.
 
-	  U-Boot build process will generate a boot.bin (to be loaded by
-	  by the ZynqMP boot ROM) containing both the U-Boot SPL and the
-	  PMU firmware in the Xilinx-specific boot format.
+comment "To use official prebuilt, xilinx-prebuilt needs to be enabled with zynqmp or kria option."
+	depends on !BR2_TARGET_XILINX_PREBUILT_KRIA
+	depends on !BR2_TARGET_XILINX_PREBUILT_ZYNQMP
+
+config BR2_TARGET_UBOOT_ZYNQMP_PMUFW_CUSTOM
+	bool "Prebuilt from custom location"
+	help
+	  Location of a PMU firmware binary defined by:
+	  BR2_TARGET_UBOOT_ZYNQMP_PMUFW
+
+endchoice # PMUFW origin
 
 config BR2_TARGET_UBOOT_ZYNQMP_PMUFW
 	string "Custom PMU firmware location"
 	depends on BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG
-	depends on !BR2_TARGET_UBOOT_ZYNQMP_PMUFW_PREBUILT
+	depends on BR2_TARGET_UBOOT_ZYNQMP_PMUFW_CUSTOM
 	help
 	  Location of a PMU firmware binary.
 
