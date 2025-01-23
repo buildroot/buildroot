@@ -1,0 +1,29 @@
+config BR2_PACKAGE_PANEL_MIPI_DBI_FIRMWARE
+	bool "panel-mipi-dbi firmware"
+	help
+	  Build and install firmware files for the panel-mipi-dbi DRM
+	  driver. The driver requires firmware file(s) to provide
+	  initialization commands for the specific display(s) in
+	  use. The initialization commands are written in text form
+	  and converted to the binary format during the build.
+
+	  If you select this package you will be prompted for the
+	  initialization command file(s) to build firmware from.
+
+	  https://github.com/notro/panel-mipi-dbi
+
+if BR2_PACKAGE_PANEL_MIPI_DBI_FIRMWARE
+
+config BR2_PACKAGE_PANEL_MIPI_DBI_FIRMWARE_SOURCE
+	string "Source files for panel-mipi-dbi firmware"
+	default ""
+	help
+	  Space separated list of initialization command files for
+	  displays used with the panel-mipi-dbi driver. The files will
+	  be converted to binary format and installed to /lib/firmware
+	  in the rootfs. The binary files will use the basenames of
+	  the input files, plus a .bin ending. The basename of each
+	  file must match the first element of the "compatible" device
+	  tree property of the display the file is for.
+
+endif # BR2_PACKAGE_PANEL_MIPI_DBI_FIRMWARE
