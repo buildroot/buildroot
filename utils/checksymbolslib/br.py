@@ -45,6 +45,10 @@ symbols_not_defined_for_fake_virtual_packages = [
     'BR2_PACKAGE_PROVIDES_TOOLCHAIN_BUILDROOT',
     'BR2_PACKAGE_PROVIDES_TOOLCHAIN_BARE_METAL_BUILDROOT',
 ]
+# Config.in
+symbols_possibly_unused = [
+    'BR2_BROKEN',
+]
 # fs/common.mk
 suffixes_not_defined_for_all_rootfs_types = [
     '_BZIP2',
