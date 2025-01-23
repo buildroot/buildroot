@@ -155,6 +155,8 @@ class DB:
                 continue
             if legacy_usage in entries:
                 continue
+            if symbol in br.symbols_possibly_unused:
+                continue
             if symbol in br.symbols_used_only_in_source_code:
                 continue
             if symbol in br.symbols_used_only_for_host_variant:
