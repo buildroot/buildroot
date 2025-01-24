@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FWUPD_VERSION = 1.9.20
+FWUPD_VERSION = 2.0.4
 FWUPD_SITE = https://github.com/fwupd/fwupd/releases/download/$(FWUPD_VERSION)
 FWUPD_SOURCE = fwupd-$(FWUPD_VERSION).tar.xz
 FWUPD_LICENSE = LGPL-2.1+
@@ -14,6 +14,7 @@ FWUPD_DEPENDENCIES = \
 	host-python-jinja2 \
 	libglib2 \
 	libjcat \
+	libusb \
 	libxmlb \
 	zlib
 
@@ -24,34 +25,46 @@ FWUPD_CONF_OPTS = \
 	-Ddocs=disabled \
 	-Dlvfs=true \
 	-Dman=false \
-	-Dgusb=disabled \
 	-Dpassim=disabled \
 	-Dp2p_policy=none \
 	-Dcbor=disabled \
 	-Dplugin_acpi_phat=enabled \
+	-Dplugin_android_boot=enabled \
+	-Dplugin_bcm57xx=enabled \
 	-Dplugin_cfu=disabled \
+	-Dplugin_emmc=enabled \
 	-Dplugin_ep963x=enabled \
 	-Dplugin_fastboot=disabled \
+	-Dplugin_igsc=enabled \
+	-Dplugin_intel_me=enabled \
+	-Dplugin_kinetic_dp=enabled \
 	-Dplugin_logitech_bulkcontroller=disabled \
 	-Dplugin_logitech_scribe=disabled \
 	-Dplugin_logitech_tap=disabled \
+	-Dplugin_mediatek_scaler=enabled \
+	-Dplugin_mtd=enabled \
+	-Dplugin_nitrokey=enabled \
+	-Dplugin_parade_lspcon=enabled \
 	-Dplugin_pixart_rf=enabled \
+	-Dplugin_powerd=enabled \
+	-Dplugin_realtek_mst=enabled \
+	-Dplugin_scsi=enabled \
+	-Dplugin_synaptics_mst=enabled \
 	-Dplugin_tpm=disabled \
 	-Dplugin_uefi_capsule=enabled \
 	-Dplugin_uefi_capsule_splash=false \
-	-Dplugin_nitrokey=enabled \
-	-Dplugin_mtd=enabled \
-	-Dplugin_intel_me=enabled \
+	-Dplugin_uf2=enabled \
 	-Dplugin_upower=enabled \
-	-Dplugin_powerd=enabled \
 	-Dqubes=false \
 	-Dsupported_build=enabled \
 	-Dlaunchd=disabled \
 	-Dtests=false \
+	-Dumockdev_tests=disabled \
 	-Dmetainfo=true \
 	-Dfish_completion=false \
-	-Dcompat_cli=false \
-	-Dthinklmi_compat=false \
+	-Dudev=enabled \
+	-Dvendor_ids_dir=/usr/share/hwdata \
+	-Dvendor_metadata=false \
 	-Dpython="$(HOST_DIR)/bin/python3"
 
 ifeq ($(BR2_PACKAGE_GOBJECT_INTROSPECTION),y)
@@ -66,41 +79,6 @@ FWUPD_DEPENDENCIES += libarchive
 FWUPD_CONF_OPTS += -Dlibarchive=enabled
 else
 FWUPD_CONF_OPTS += -Dlibarchive=disabled
-endif
-
-ifeq ($(BR2_PACKAGE_LIBGUDEV),y)
-FWUPD_DEPENDENCIES += libgudev
-FWUPD_CONF_OPTS += \
-	-Dgudev=enabled \
-	-Dplugin_android_boot=enabled \
-	-Dplugin_bcm57xx=enabled \
-	-Dplugin_emmc=enabled \
-	-Dplugin_gpio=enabled \
-	-Dplugin_igsc=enabled \
-	-Dplugin_kinetic_dp=enabled \
-	-Dplugin_parade_lspcon=enabled \
-	-Dplugin_realtek_mst=enabled \
-	-Dplugin_synaptics_mst=enabled \
-	-Dplugin_mediatek_scaler=enabled \
-	-Dplugin_scsi=enabled \
-	-Dplugin_nvme=enabled \
-	-Dplugin_uf2=enabled
-else
-FWUPD_CONF_OPTS += \
-	-Dgudev=disabled \
-	-Dplugin_android_boot=disabled \
-	-Dplugin_bcm57xx=disabled \
-	-Dplugin_emmc=disabled \
-	-Dplugin_gpio=disabled \
-	-Dplugin_igsc=disabled \
-	-Dplugin_kinetic_dp=disabled \
-	-Dplugin_parade_lspcon=disabled \
-	-Dplugin_realtek_mst=disabled \
-	-Dplugin_synaptics_mst=disabled \
-	-Dplugin_mediatek_scaler=disabled \
-	-Dplugin_scsi=disabled \
-	-Dplugin_nvme=disabled \
-	-Dplugin_uf2=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS),y)
@@ -134,20 +112,29 @@ endif
 ifeq ($(BR2_PACKAGE_XZ),y)
 FWUPD_DEPENDENCIES += xz
 FWUPD_CONF_OPTS += -Dlzma=enabled
-ifeq ($(BR2_i386)$(BR2_x86_64),y)
-FWUPD_CONF_OPTS += -Dplugin_intel_spi=true
 else
-FWUPD_CONF_OPTS += -Dplugin_intel_spi=false
-endif
-else
-FWUPD_CONF_OPTS += -Dlzma=disabled -Dplugin_intel_spi=false
+FWUPD_CONF_OPTS += -Dlzma=disabled
 endif
 
-ifeq ($(BR2_PACKAGE_LIBDRM_AMDGPU)$(BR2_PACKAGE_LIBGUDEV),yy)
-FWUPD_DEPENDENCIES += libdrm libgudev
-FWUPD_CONF_OPTS += -Dplugin_amdgpu=enabled
+ifeq ($(BR2_PACKAGE_LIBDRM_AMDGPU),y)
+FWUPD_DEPENDENCIES += libdrm
+FWUPD_CONF_OPTS += -Dlibdrm=enabled -Dplugin_amdgpu=enabled
 else
-FWUPD_CONF_OPTS += -Dplugin_amdgpu=disabled
+FWUPD_CONF_OPTS += -Dlibdrm=disabled -Dplugin_amdgpu=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_UTIL_LINUX_LIBBLKID),y)
+FWUPD_DEPENDENCIES += util-linux
+FWUPD_CONF_OPTS += -Dblkid=enabled
+else
+FWUPD_CONF_OPTS += -Dblkid=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_VALGRIND),y)
+FWUPD_DEPENDENCIES += valgrind
+FWUPD_CONF_OPTS += -Dvalgrind=enabled
+else
+FWUPD_CONF_OPTS += -Dvalgrind=disabled
 endif
 
 ifeq ($(BR2_i386)$(BR2_x86_64),y)
@@ -156,8 +143,8 @@ else
 FWUPD_CONF_OPTS += -Dplugin_cpu=disabled -Dplugin_msr=disabled -Dhsi=disabled
 endif
 
-ifeq ($(BR2_PACKAGE_GNUTLS)$(BR2_PACKAGE_LIBGUDEV),yy)
-FWUPD_DEPENDENCIES += gnutls libgudev
+ifeq ($(BR2_PACKAGE_GNUTLS),y)
+FWUPD_DEPENDENCIES += gnutls
 FWUPD_CONF_OPTS += -Dplugin_synaptics_rmi=enabled
 else
 FWUPD_CONF_OPTS += -Dplugin_synaptics_rmi=disabled
@@ -170,8 +157,8 @@ else
 FWUPD_CONF_OPTS += -Dplugin_redfish=disabled -Dcurl=disabled
 endif
 
-ifeq ($(BR2_PACKAGE_LIBGUDEV)$(BR2_PACKAGE_LIBMBIM)$(BR2_PACKAGE_LIBQMI)$(BR2_PACKAGE_MODEM_MANAGER),yyyy)
-FWUPD_DEPENDENCIES += libgudev libmbim libqmi modem-manager
+ifeq ($(BR2_PACKAGE_LIBMBIM)$(BR2_PACKAGE_LIBQMI)$(BR2_PACKAGE_MODEM_MANAGER),yyyy)
+FWUPD_DEPENDENCIES += libmbim libqmi modem-manager
 FWUPD_CONF_OPTS += -Dplugin_modem_manager=enabled
 else
 FWUPD_CONF_OPTS += -Dplugin_modem_manager=disabled
@@ -184,11 +171,26 @@ else
 FWUPD_CONF_OPTS += -Dplugin_flashrom=disabled
 endif
 
+# plugin_nvme needs <linux/nvme_ioctl.h> (introduced in Kernel v4.5)
+ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_5),y)
+FWUPD_CONF_OPTS += -Dplugin_nvme=enabled
+else
+FWUPD_CONF_OPTS += -Dplugin_nvme=disabled
+endif
+
+# plugin_gpio needs <linux/gpio.h> and GPIOv2 interface (introduced in
+# Kernel v5.10)
+ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10),y)
+FWUPD_CONF_OPTS += -Dplugin_gpio=enabled
+else
+FWUPD_CONF_OPTS += -Dplugin_gpio=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 FWUPD_DEPENDENCIES += systemd
-FWUPD_CONF_OPTS += -Dsystemd=enabled -Delogind=enabled -Doffline=enabled
+FWUPD_CONF_OPTS += -Dsystemd=enabled -Dsystemd_syscall_filter=true -Delogind=enabled
 else
-FWUPD_CONF_OPTS += -Dsystemd=disabled -Delogind=disabled -Doffline=disabled
+FWUPD_CONF_OPTS += -Dsystemd=disabled -Dsystemd_syscall_filter=false -Delogind=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_FWUPD_EFI),y)

@@ -2,11 +2,13 @@ config BR2_PACKAGE_FWUPD
 	bool "fwupd"
 	depends on !BR2_STATIC_LIBS # libxmlb
 	depends on BR2_USE_WCHAR # libglib2
-	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2, libusb
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
 	depends on BR2_USE_MMU # libglib2
 	select BR2_PACKAGE_LIBGLIB2
 	select BR2_PACKAGE_LIBJCAT
 	select BR2_PACKAGE_LIBXMLB
+	select BR2_PACKAGE_LIBUSB
 	select BR2_PACKAGE_ZLIB
 	help
 	  Fwupd is a simple daemon to allow session software
@@ -14,6 +16,7 @@ config BR2_PACKAGE_FWUPD
 
 	  https://fwupd.org/
 
-comment "fwupd needs a toolchain w/ wchar, threads, dynamic library"
+comment "fwupd needs a toolchain w/ wchar, threads, dynamic library, gcc >= 4.9"
 	depends on BR2_USE_MMU
-	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
+		BR2_STATIC_LIBS || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
