@@ -140,6 +140,18 @@ config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_LIMA
 	help
 	  Mesa driver for ARM Mali Utgard GPUs.
 
+config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_KMSRO
+	bool "Gallium kmsro drivers"
+	depends on BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_ETNAVIV \
+		|| BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_FREEDRENO \
+		|| BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_LIMA \
+		|| BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_PANFROST \
+		|| BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_V3D \
+		|| BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_VC4
+	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER
+	help
+	  Mesa drivers for kernel mode-setting render-only devices
+
 config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_NOUVEAU
 	bool "Gallium nouveau driver"
 	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER
@@ -261,6 +273,16 @@ config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_VIRGL
 	help
 	  virgl is the 3D acceleration backend for the virtio-gpu
 	  shipping with qemu.
+
+config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_ZINK
+	bool "Gallium zink driver"
+	select BR2_PACKAGE_MESA3D_GALLIUM_DRIVER
+	select BR2_PACKAGE_MESA3D_VULKAN_DRIVER
+	select BR2_PACKAGE_VULKAN_LOADER
+	help
+	  Zink is a Gallium driver that emits Vulkan API calls,
+	  providing OpenGL support on devices that only support
+	  Vulkan.
 
 config BR2_PACKAGE_MESA3D_VDPAU
 	bool "Gallium VDPAU state tracker"
