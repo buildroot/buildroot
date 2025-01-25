@@ -103,7 +103,9 @@ endif
 
 ifeq ($(BR2_TARGET_UBOOT_FORMAT_ITB),y)
 UBOOT_BINS += u-boot.itb
+ifneq ($(BR2_TARGET_UBOOT_USE_BINMAN),y)
 UBOOT_MAKE_TARGET += u-boot.itb
+endif
 endif
 
 ifeq ($(BR2_TARGET_UBOOT_FORMAT_IMX),y)
