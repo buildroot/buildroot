@@ -11,13 +11,13 @@ PANEL_MIPI_DBI_FIRMWARE_LICENSE = CC0-1.0
 # license info is directly in the only source file
 PANEL_MIPI_DBI_FIRMWARE_LICENSE_FILES = mipi-dbi-cmd
 
-PANEL_MIPI_DBI_FIRMWARE_DEPENDENCIES = host-python3
+PANEL_MIPI_DBI_FIRMWARE_DEPENDENCIES = $(BR2_PYTHON3_HOST_DEPENDENCY)
 
 BR2_PACKAGE_PANEL_MIPI_DBI_FIRMWARE_BIN = $(addsuffix .bin,$(basename $(notdir $(shell echo $(BR2_PACKAGE_PANEL_MIPI_DBI_FIRMWARE_SOURCE)))))
 
 define PANEL_MIPI_DBI_FIRMWARE_BUILD_CMDS
 	for source in $(shell echo $(BR2_PACKAGE_PANEL_MIPI_DBI_FIRMWARE_SOURCE)) ; do \
-		$(HOST_DIR)/bin/python $(@D)/mipi-dbi-cmd "$(@D)/$$(basename $${source%.*}).bin" "$${source}" ; \
+		PATH=$(BR_PATH) $(@D)/mipi-dbi-cmd "$(@D)/$$(basename $${source%.*}).bin" "$${source}" ; \
 	done
 endef
 
