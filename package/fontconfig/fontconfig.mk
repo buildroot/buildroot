@@ -4,11 +4,9 @@
 #
 ################################################################################
 
-FONTCONFIG_VERSION = 2.14.2
+FONTCONFIG_VERSION = 2.16.0
 FONTCONFIG_SITE = https://www.freedesktop.org/software/fontconfig/release
 FONTCONFIG_SOURCE = fontconfig-$(FONTCONFIG_VERSION).tar.xz
-# 0001-add-pthread-as-a-dependency-of-a-static-lib.patch
-FONTCONFIG_AUTORECONF = YES
 FONTCONFIG_INSTALL_STAGING = YES
 FONTCONFIG_DEPENDENCIES = freetype expat host-pkgconf host-gperf \
 	$(if $(BR2_PACKAGE_UTIL_LINUX_LIBS),util-linux-libs,util-linux) \
@@ -21,12 +19,8 @@ FONTCONFIG_LICENSE_FILES = COPYING
 FONTCONFIG_CPE_ID_VALID = YES
 
 FONTCONFIG_CONF_OPTS = \
-	--with-arch=$(GNU_TARGET_NAME) \
-	--with-cache-dir=/var/cache/fontconfig \
-	--disable-docs
+	-Dcache-dir=/var/cache/fontconfig \
+	-Ddoc=disabled
 
-HOST_FONTCONFIG_CONF_OPTS = \
-	--disable-static
-
-$(eval $(autotools-package))
-$(eval $(host-autotools-package))
+$(eval $(meson-package))
+$(eval $(host-meson-package))
