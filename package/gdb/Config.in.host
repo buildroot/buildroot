@@ -56,7 +56,11 @@ config BR2_GDB_VERSION_15
 	bool "gdb 15.x"
 	depends on BR2_HOST_GCC_AT_LEAST_9 && BR2_TOOLCHAIN_GCC_AT_LEAST_9
 
-comment "gdb 15.x needs host and target gcc >= 9"
+config BR2_GDB_VERSION_16
+	bool "gdb 16.x"
+	depends on BR2_HOST_GCC_AT_LEAST_9 && BR2_TOOLCHAIN_GCC_AT_LEAST_9
+
+comment "gdb 15.x/16.x need host and target gcc >= 9"
 	depends on !BR2_HOST_GCC_AT_LEAST_9 || \
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_9
 
@@ -71,4 +75,5 @@ config BR2_GDB_VERSION
 	default "13.2"     if BR2_GDB_VERSION_13
 	default "14.2"     if BR2_GDB_VERSION_14 || !BR2_PACKAGE_HOST_GDB
 	default "15.1"	   if BR2_GDB_VERSION_15
+	default "16.1"	   if BR2_GDB_VERSION_16
 	depends on BR2_PACKAGE_GDB || BR2_PACKAGE_HOST_GDB
