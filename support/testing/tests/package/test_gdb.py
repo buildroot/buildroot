@@ -95,7 +95,7 @@ class TestGdbArc(BaseGdb):
     config = \
         """
         BR2_arcle=y
-        BR2_archs4x_rel31=y
+        BR2_archs38=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_PACKAGE_HOST_GDB=y
         BR2_PACKAGE_GDB=y
