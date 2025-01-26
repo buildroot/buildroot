@@ -46,9 +46,6 @@ choice
 	help
 	  Select the version of gdb you wish to use.
 
-config BR2_GDB_VERSION_13
-	bool "gdb 13.x"
-
 config BR2_GDB_VERSION_14
 	bool "gdb 14.x"
 
@@ -72,7 +69,6 @@ endif
 config BR2_GDB_VERSION
 	string
 	default "arc-2023.09-release" if BR2_arc
-	default "13.2"     if BR2_GDB_VERSION_13
 	default "14.2"     if BR2_GDB_VERSION_14 || (!BR2_PACKAGE_HOST_GDB && !BR2_TOOLCHAIN_GCC_AT_LEAST_9)
 	default "15.1"	   if BR2_GDB_VERSION_15 || (!BR2_PACKAGE_HOST_GDB && BR2_TOOLCHAIN_GCC_AT_LEAST_9)
 	default "16.1"	   if BR2_GDB_VERSION_16

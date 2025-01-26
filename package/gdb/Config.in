@@ -59,7 +59,7 @@ config BR2_PACKAGE_GDB_DEBUGGER
 	depends on BR2_USE_WCHAR
 	depends on !BR2_sh
 	select BR2_PACKAGE_GMP
-	select BR2_PACKAGE_MPFR if !(BR2_GDB_VERSION_13)
+	select BR2_PACKAGE_MPFR
 	select BR2_PACKAGE_NCURSES
 	select BR2_PACKAGE_ZLIB
 
