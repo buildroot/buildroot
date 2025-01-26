@@ -60,15 +60,11 @@ HOST_EXCLUDEPATHS="/share/terminfo"
 STAGING_EXCLUDEPATHS="/usr/include /usr/share/terminfo"
 TARGET_EXCLUDEPATHS="/lib/firmware"
 
-patch_file() {
-    local PATCHELF rootdir file
-    local -a sanitize_extra_args
+declare -a sanitize_extra_args
+rootdir=
 
-    PATCHELF="${1}"
-    rootdir="${2}"
-    file="${3}"
-    shift 3
-    sanitize_extra_args=("${@}")
+patch_file() {
+    local file="${1}"
 
     # check if it's an ELF file
     rpath="$("${PATCHELF}" --print-rpath "${file}" 2>&1)"
@@ -97,9 +93,21 @@ patch_file() {
     test "${changed}" != "" && chmod u-w "${file}"
 }
 
+patch_files() {
+    while read -r -d $'\0' file; do
+	# for performance reasons, we want to do as little work as
+	# possible on non-ELF files. therefore, make sure that the
+	# file at least starts with the ELF magic before handing it of
+	# to patchelf, which will then perform the proper validation.
+	read -r -n4 magic <"${file}" && test "${magic}" != $'\x7fELF' && continue
+
+	patch_file "${file}"
+    done
+}
+
 main() {
-    local rootdir tree
-    local -a find_args sanitize_extra_args
+    local tree
+    local -a find_args
 
     tree="${1}"
 
@@ -162,14 +170,18 @@ main() {
             ;;
     esac
 
-    find_args+=( "-type" "f" "-print0" )
+    work=$(mktemp --tmpdir -d fix-rpath.XXXXXXXX)
 
-    export -f patch_file
-    # Limit the number of cores used
-    # shellcheck disable=SC2016  # ${@} has to be expanded in the sub-shell.
+    find_args+=( "-type" "f" "-print0" )
     find "${rootdir}" "${find_args[@]}" \
-    | xargs -0 -r -P "${PARALLEL_JOBS:-1}" -I {} \
-            bash -c 'patch_file "${@}"' _ "${PATCHELF}" "${rootdir}" {} "${sanitize_extra_args[@]}"
+    | split -t '\0' -a4 -d -n "r/${PARALLEL_JOBS:-1}" "-" "${work}/part"
+
+    for part in "${work}/part"*; do
+	patch_files <"${part}" &
+    done
+    wait
+
+    rm -rf "${work}"
 
     # Restore patched patchelf utility
     test "${tree}" = "host" && mv "${PATCHELF}.__to_be_patched" "${PATCHELF}"
