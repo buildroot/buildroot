@@ -1,0 +1,37 @@
+From 3c9de31dda1a1d44fade7a61e66c989178d6c2a4 Mon Sep 17 00:00:00 2001
+From: Thomas Devoogdt <thomas@devoogdt.com>
+Date: Sun, 26 Jan 2025 10:15:39 +0100
+Subject: [PATCH] meson.build: explicitly check for pthread support
+
+Tested using buildroot. The br-arm-full-nothread fails
+because meson assumes thread support when cross-compiling.
+
+Dependency threads found: YES unknown (cached)
+Has header "pthread.h" : NO
+
+Upstream: https://gitlab.freedesktop.org/fontconfig/fontconfig/-/commit/aad470dad519b6fe3459023b82941b4414b71313
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+---
+ meson.build | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 4439758..07e242b 100644
+--- a/meson.build
++++ b/meson.build
+@@ -383,8 +383,10 @@ endif
+ 
+ if host_machine.system() != 'windows'
+   thread_dep = dependency('threads')
+-  conf.set('HAVE_PTHREAD', 1)
+-  deps += [thread_dep]
++  if thread_dep.found() and cc.has_header('pthread.h')
++    conf.set('HAVE_PTHREAD', 1)
++    deps += [thread_dep]
++  endif
+ endif
+ 
+ fc_templatedir = get_option('template-dir')
+-- 
+2.43.0
+
