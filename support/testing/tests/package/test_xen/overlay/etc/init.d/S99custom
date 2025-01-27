@@ -1,0 +1,61 @@
+#!/bin/sh
+#
+# Custom script for test_xen.py
+# This will run both in dom0 and in dom1.
+# When we detect that we are in dom0 we mount the boot partition under /mnt,
+# to see the kernel image and the initramfs.
+#
+
+DAEMON="custom"
+
+start() {
+	printf 'Starting %s: ' "$DAEMON"
+	case $(cat /sys/hypervisor/uuid) in
+		00000000-0000-0000-0000-000000000000)
+			printf "dom0 "
+			mount /dev/vda1 /mnt -o ro
+			;;
+		*) printf "domU " ;;
+	esac
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+stop() {
+	printf 'Stopping %s: ' "$DAEMON"
+	case $(cat /sys/hypervisor/uuid) in
+		00000000-0000-0000-0000-000000000000)
+			printf "dom0 "
+			umount /mnt
+			;;
+		*) printf "domU " ;;
+	esac
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+	start|stop|restart)
+		"$1";;
+	reload)
+		# Restart, since there is no true "reload" feature.
+		restart;;
+	*)
+		echo "Usage: $0 {start|stop|restart|reload}"
+		exit 1
+esac
