@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MINISIGN_VERSION = 0.11
+MINISIGN_VERSION = 0.12
 MINISIGN_SITE = $(call github,jedisct1,minisign,$(MINISIGN_VERSION))
 MINISIGN_LICENSE = ISC
 MINISIGN_LICENSE_FILES = LICENSE
