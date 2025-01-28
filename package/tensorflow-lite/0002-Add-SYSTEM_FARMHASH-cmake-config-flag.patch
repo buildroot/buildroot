@@ -1,0 +1,73 @@
+From d8451a9048d09692994c40a6f9bc928e70ed79b5 Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Mon, 28 Nov 2022 21:36:34 -0700
+Subject: [PATCH] Add SYSTEM_FARMHASH cmake config flag
+
+Since farmhash does not install a cmake package we need to
+search for the library and headers to use the provided
+version.
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Upstream: https://github.com/tensorflow/tensorflow/commit/d8451a9048d09692994c40a6f9bc928e70ed79b5
+---
+ tensorflow/lite/g3doc/guide/build_cmake.md    |  1 +
+ .../tools/cmake/modules/Findfarmhash.cmake    | 30 +++++++++++++++----
+ 2 files changed, 26 insertions(+), 5 deletions(-)
+
+diff --git a/tensorflow/lite/g3doc/guide/build_cmake.md b/tensorflow/lite/g3doc/guide/build_cmake.md
+index 6950a365bb8..6de955e70b0 100644
+--- a/tensorflow/lite/g3doc/guide/build_cmake.md
++++ b/tensorflow/lite/g3doc/guide/build_cmake.md
+@@ -81,6 +81,7 @@ variables to point to your library installations.
+ ```sh
+ cmake ../tensorflow_src/tensorflow/lite -DTFLITE_ENABLE_INSTALL=ON \
+   -DCMAKE_FIND_PACKAGE_PREFER_CONFIG=ON \
++  -DSYSTEM_FARMHASH=ON \
+   -Dabsl_DIR=<install path>/lib/cmake/absl \
+   -DEigen3_DIR=<install path>/share/eigen3/cmake \
+   -DFlatbuffers_DIR=<install path>/lib/cmake/flatbuffers \
+diff --git a/tensorflow/lite/tools/cmake/modules/Findfarmhash.cmake b/tensorflow/lite/tools/cmake/modules/Findfarmhash.cmake
+index 1b0dc28f624..97b43298f13 100644
+--- a/tensorflow/lite/tools/cmake/modules/Findfarmhash.cmake
++++ b/tensorflow/lite/tools/cmake/modules/Findfarmhash.cmake
+@@ -13,12 +13,32 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-# tensorflow-lite uses find_package for this package, so override the system
+-# installation and build from source instead.
+-include(farmhash)
+-if(farmhash_POPULATED)
++# tensorflow-lite uses find_package for this package, so build from
++# source if the system version is not enabled.
++
++if(SYSTEM_FARMHASH)
++  include(FindPackageHandleStandardArgs)
++  find_path(FARMHASH_ROOT_DIR NAMES include/farmhash.h)
++  find_library(FARMHASH_LIB NAMES farmhash PATHS ${FARMHASH_ROOT_DIR}/lib ${FARMHASH_LIB_PATH})
++  find_path(FARMHASH_INCLUDE_DIRS NAMES farmhash.h PATHS ${FARMHASH_ROOT_DIR}/include)
++  find_package_handle_standard_args(farmhash DEFAULT_MSG FARMHASH_LIB FARMHASH_INCLUDE_DIRS)
++endif()
++
++if(farmhash_FOUND)
++  add_library(farmhash SHARED IMPORTED GLOBAL)
++  set_target_properties(farmhash PROPERTIES
++    IMPORTED_LOCATION ${FARMHASH_LIB}
++    INTERFACE_INCLUDE_DIRECTORIES ${FARMHASH_INCLUDE_DIRS}
++  )
++else()
++  include(farmhash)
++  if(farmhash_POPULATED)
++    get_target_property(FARMHASH_INCLUDE_DIRS farmhash INTERFACE_DIRECTORIES)
++  endif()
++endif()
++
++if(farmhash_FOUND OR farmhash_POPULATED)
+   set(FARMHASH_FOUND TRUE)
+-  get_target_property(FARMHASH_INCLUDE_DIRS farmhash INTERFACE_DIRECTORIES)
+   add_library(farmhash::farmhash ALIAS farmhash)
+   set(FARMHASH_LIBRARIES farmhash::farmhash)
+ endif()
+-- 
+2.34.1
+
