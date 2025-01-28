@@ -1,0 +1,27 @@
+From f540cc6fed7224fb9ca162cb2f33c338260ae1d2 Mon Sep 17 00:00:00 2001
+From: Karel Zak <kzak@redhat.com>
+Date: Mon, 27 Jan 2025 14:11:35 +0100
+Subject: [PATCH] meson: add HAVE_LIBPTHREAD
+
+Upstream: https://github.com/util-linux/util-linux/pull/3383
+Signed-off-by: Karel Zak <kzak@redhat.com>
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ meson.build | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/meson.build b/meson.build
+index 6d1f986af..ac5fdd799 100644
+--- a/meson.build
++++ b/meson.build
+@@ -748,6 +748,7 @@ endif
+ conf.set('HAVE_CLOCK_GETTIME', have ? 1 : false)
+ 
+ thread_libs = dependency('threads')
++conf.set('HAVE_LIBPTHREAD', thread_libs.found() ? 1 : false)
+ 
+ have = cc.has_function('timer_create')
+ if not have
+-- 
+2.48.1
+

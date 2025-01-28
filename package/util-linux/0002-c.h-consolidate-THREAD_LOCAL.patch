@@ -1,0 +1,65 @@
+From 7b3db914fa9073c667ea482c8b6b4e07fe6202cc Mon Sep 17 00:00:00 2001
+From: Karel Zak <kzak@redhat.com>
+Date: Mon, 27 Jan 2025 13:40:23 +0100
+Subject: [PATCH] c.h: consolidate THREAD_LOCAL.
+
+Let's define this macro in one place only.
+
+Upstream: https://github.com/util-linux/util-linux/pull/3383
+Signed-off-by: Karel Zak <kzak@redhat.com>
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ include/c.h            | 9 +++++++++
+ lib/randutils.c        | 5 -----
+ libuuid/src/gen_uuid.c | 1 -
+ 3 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/include/c.h b/include/c.h
+index 61b95ab2d..848c48536 100644
+--- a/include/c.h
++++ b/include/c.h
+@@ -595,4 +595,13 @@ static inline void *reallocarray(void *ptr, size_t nmemb, size_t size)
+ }
+ #endif
+ 
++/*
++ * thread-local storage
++ */
++#ifdef HAVE_TLS
++# define THREAD_LOCAL static __thread
++#else
++# define THREAD_LOCAL static
++#endif
++
+ #endif /* UTIL_LINUX_C_H */
+diff --git a/lib/randutils.c b/lib/randutils.c
+index 15c2f7834..4c806e682 100644
+--- a/lib/randutils.c
++++ b/lib/randutils.c
+@@ -20,11 +20,6 @@
+ #include "randutils.h"
+ #include "nls.h"
+ 
+-#ifdef HAVE_TLS
+-#define THREAD_LOCAL static __thread
+-#else
+-#define THREAD_LOCAL static
+-#endif
+ 
+ #ifdef HAVE_GETRANDOM
+ # include <sys/random.h>
+diff --git a/libuuid/src/gen_uuid.c b/libuuid/src/gen_uuid.c
+index 3b76ddc9a..69712267f 100644
+--- a/libuuid/src/gen_uuid.c
++++ b/libuuid/src/gen_uuid.c
+@@ -92,7 +92,6 @@
+ #include "md5.h"
+ #include "sha1.h"
+ 
+-#define THREAD_LOCAL static __thread
+ 
+ #ifdef _WIN32
+ static void gettimeofday (struct timeval *tv, void *dummy)
+-- 
+2.48.1
+

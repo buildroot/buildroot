@@ -1,0 +1,82 @@
+From eecaa2c0dda817eba2d493f6ddb42c39cf789fc2 Mon Sep 17 00:00:00 2001
+From: Karel Zak <kzak@redhat.com>
+Date: Mon, 27 Jan 2025 14:28:36 +0100
+Subject: [PATCH] libuuid: support non-cached scenarios (when -lpthread is
+ unavailable)
+
+This patch makes the dependence on pthread optional for libuuid. In
+certain cases, such as Buildroot Linux, uClibc-ng, and very low
+resource systems, libpthread may be unavailable.
+
+If libuuid is compiled without pthread, it will not use a local cache
+and will instead request a UUID from uuidd for each call. This may
+result in less efficient performance, but the UUIDs generated will
+still be unique and reliable.
+
+On minimalistic systems, it is highly likely that uuidd will not be
+installed, making this change important for portability and robust
+code.
+
+Upstream: https://github.com/util-linux/util-linux/pull/3383
+Addresses: https://github.com/util-linux/util-linux/pull/3375
+Signed-off-by: Karel Zak <kzak@redhat.com>
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ libuuid/src/gen_uuid.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/libuuid/src/gen_uuid.c b/libuuid/src/gen_uuid.c
+index 69712267f..1ed82b46b 100644
+--- a/libuuid/src/gen_uuid.c
++++ b/libuuid/src/gen_uuid.c
+@@ -80,7 +80,10 @@
+ #if defined(__linux__) && defined(HAVE_SYS_SYSCALL_H)
+ #include <sys/syscall.h>
+ #endif
+-#include <pthread.h>
++#ifdef HAVE_LIBPTHREAD
++# include <pthread.h>
++#endif
++
+ #include <signal.h>
+ 
+ #include "all-io.h"
+@@ -580,8 +583,7 @@ int __uuid_generate_time_cont(uuid_t out, int *num, uint32_t cont_offset)
+  * If neither of these is possible (e.g. because of insufficient permissions), it generates
+  * the UUID anyway, but returns -1. Otherwise, returns 0.
+  */
+-
+-/* thread local cache for uuidd based requests */
++#ifdef HAVE_LIBPTHREAD
+ THREAD_LOCAL struct {
+ 	int		num;
+ 	int		cache_size;
+@@ -597,8 +599,10 @@ static void reset_uuidd_cache(void)
+ 	memset(&uuidd_cache, 0, sizeof(uuidd_cache));
+ 	uuidd_cache.cache_size = CS_MIN;
+ }
++#endif /* HAVE_LIBPTHREAD */
+ 
+ static int uuid_generate_time_generic(uuid_t out) {
++#ifdef HAVE_LIBPTHREAD
+ 	static volatile sig_atomic_t atfork_registered;
+ 	time_t	now;
+ 
+@@ -651,6 +655,14 @@ static int uuid_generate_time_generic(uuid_t out) {
+ 		return 0;
+ 	}
+ 
++#else /* !HAVE_LIBPTHREAD */
++	{
++		int num = 1;
++		if (get_uuid_via_daemon(UUIDD_OP_TIME_UUID, out, &num) == 0)
++			return 0;
++	}
++#endif /* HAVE_LIBPTHREAD */
++
+ 	return __uuid_generate_time(out, NULL);
+ }
+ 
+-- 
+2.48.1
+
