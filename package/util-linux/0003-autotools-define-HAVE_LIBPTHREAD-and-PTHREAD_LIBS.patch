@@ -1,0 +1,47 @@
+From 0735eb8bc0ed4bc9820ea7e4e600fed246457b18 Mon Sep 17 00:00:00 2001
+From: Karel Zak <kzak@redhat.com>
+Date: Mon, 27 Jan 2025 14:01:38 +0100
+Subject: [PATCH] autotools: define HAVE_LIBPTHREAD and PTHREAD_LIBS
+
+Upstream: https://github.com/util-linux/util-linux/pull/3383
+Signed-off-by: Karel Zak <kzak@redhat.com>
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ configure.ac              | 7 +++++++
+ libuuid/src/Makemodule.am | 2 +-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 82d0e4bf9..9a7f260c5 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -738,6 +738,13 @@ AS_IF([test x"$have_timer" = xno], [
+ ])
+ 
+ 
++AC_CHECK_LIB([pthread], [pthread_atfork], [
++	PTHREAD_LIBS="-lpthread"
++	AC_DEFINE([HAVE_LIBPTHREAD], [1], [Define if libpthred exist])
++])
++AC_SUBST([PTHREAD_LIBS])
++
++
+ AC_CHECK_LIB([rtas], [rtas_get_sysparm], [
+ 	RTAS_LIBS="-lrtas"
+ 	AC_DEFINE([HAVE_LIBRTAS], [1], [Define if librtas exists])
+diff --git a/libuuid/src/Makemodule.am b/libuuid/src/Makemodule.am
+index 867ad7be5..58b64fe9b 100644
+--- a/libuuid/src/Makemodule.am
++++ b/libuuid/src/Makemodule.am
+@@ -31,7 +31,7 @@ libuuid_la_SOURCES = \
+ EXTRA_libuuid_la_DEPENDENCIES = \
+ 	libuuid/src/libuuid.sym
+ 
+-libuuid_la_LIBADD       = $(LDADD) $(SOCKET_LIBS) -lpthread
++libuuid_la_LIBADD       = $(LDADD) $(SOCKET_LIBS) $(PTHREAD_LIBS)
+ 
+ libuuid_la_CFLAGS = \
+ 	$(AM_CFLAGS) \
+-- 
+2.48.1
+
