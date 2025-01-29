@@ -31,9 +31,15 @@ if BR2_PACKAGE_OPTEE_EXAMPLES
 
 choice
 	prompt "optee-examples version"
+	default BR2_PACKAGE_OPTEE_EXAMPLES_AS_OS \
+				if BR2_TARGET_OPTEE_OS_CUSTOM_VERSION
 	default BR2_PACKAGE_OPTEE_EXAMPLES_LATEST
 	help
 	  Select the version of optee-examples you want to use
+
+config BR2_PACKAGE_OPTEE_EXAMPLES_AS_OS
+	bool "Same as optee-os being built"
+	depends on BR2_TARGET_OPTEE_OS_CUSTOM_VERSION
 
 config BR2_PACKAGE_OPTEE_EXAMPLES_LATEST
 	bool "4.3.0"
@@ -64,6 +70,8 @@ endif
 
 config BR2_PACKAGE_OPTEE_EXAMPLES_VERSION
 	string
+	default BR2_TARGET_OPTEE_OS_CUSTOM_VERSION_VALUE \
+				if BR2_PACKAGE_OPTEE_EXAMPLES_AS_OS
 	default "4.3.0"		if BR2_PACKAGE_OPTEE_EXAMPLES_LATEST
 	default "custom"	if BR2_PACKAGE_OPTEE_EXAMPLES_CUSTOM_TARBALL
 
