@@ -19,6 +19,18 @@ else
 PSPLASH_CONF_OPTS += --without-systemd
 endif
 
+ifeq ($(BR2_PACKAGE_PSPLASH_PROGRESS_BAR),y)
+PSPLASH_CONF_OPTS += --enable-progress-bar
+else
+PSPLASH_CONF_OPTS += --disable-progress-bar
+endif
+
+ifeq ($(BR2_PACKAGE_PSPLASH_STARTUP_MSG),y)
+PSPLASH_CONF_OPTS += --enable-startup-msg
+else
+PSPLASH_CONF_OPTS += --disable-startup-msg
+endif
+
 PSPLASH_IMAGE = $(call qstrip,$(BR2_PACKAGE_PSPLASH_IMAGE))
 
 ifneq ($(PSPLASH_IMAGE),)

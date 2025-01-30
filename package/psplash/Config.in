@@ -35,6 +35,18 @@ config BR2_PACKAGE_PSPLASH_IMAGE
 	  Use a personalized png image as boot splash.
 	  Let it empty if you want to keep the psplash default image.
 
+config BR2_PACKAGE_PSPLASH_PROGRESS_BAR
+	bool "enable progress bar"
+	default y
+	help
+	  Enable progress bar management via the "PROGRESS" command.
+
+config BR2_PACKAGE_PSPLASH_STARTUP_MSG
+	bool "enable startup message"
+	default y
+	help
+	  Enable text banner output on startup.
+
 endif
 
 comment "psplash needs a toolchain w/ wchar"
