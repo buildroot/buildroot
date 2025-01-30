@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BIND_VERSION = 9.18.32
+BIND_VERSION = 9.18.33
 BIND_SOURCE= bind-$(BIND_VERSION).tar.xz
 BIND_SITE = https://ftp.isc.org/isc/bind9/$(BIND_VERSION)
 # bind does not support parallel builds.
