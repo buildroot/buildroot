@@ -4,21 +4,19 @@
 #
 ################################################################################
 
-CONTAINERD_VERSION = 1.7.23
+CONTAINERD_VERSION = 2.0.2
 CONTAINERD_SITE = $(call github,containerd,containerd,v$(CONTAINERD_VERSION))
 CONTAINERD_LICENSE = Apache-2.0
 CONTAINERD_LICENSE_FILES = LICENSE
 CONTAINERD_CPE_ID_VENDOR = linuxfoundation
 
-CONTAINERD_GOMOD = github.com/containerd/containerd
+CONTAINERD_GOMOD = github.com/containerd/containerd/v2
 
 CONTAINERD_LDFLAGS = \
 	-X $(CONTAINERD_GOMOD)/version.Version=$(CONTAINERD_VERSION)
 
 CONTAINERD_BUILD_TARGETS = \
 	cmd/containerd \
-	cmd/containerd-shim \
-	cmd/containerd-shim-runc-v1 \
 	cmd/containerd-shim-runc-v2 \
 	cmd/ctr
 
