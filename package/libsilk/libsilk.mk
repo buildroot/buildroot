@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBSILK_VERSION = 4268a02240c35c6055b0f237c46b09b2dcf79e45
+LIBSILK_VERSION = f97ee24e561610618a5af9abd78e35d565f448d0
 # we use the FreeSwitch fork because it contains pkgconf support
 LIBSILK_SITE = $(call github,freeswitch,libsilk,$(LIBSILK_VERSION))
 LIBSILK_LICENSE = BSD-3-Clause
