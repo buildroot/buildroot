@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBBROADVOICE_VERSION = f65b0f50c8c767229fbf1758370880abc0d78564
+LIBBROADVOICE_VERSION = 03dd05df52f093bbf7820e68707f3a3668e73507
 # we use the FreeSwitch fork because (quoting README):
 # "This library is based on the Broadcom reference code, but has been
 # heavily modified so that it builds into a proper library, with a clean
