@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBG7221_VERSION = dbfc29d4806ecdace50379a2f4d68a992a6fec34
+LIBG7221_VERSION = 97d7ff5cf508fb6584a43b9e0c09220f8765cb3b
 # we use the FreeSwitch fork because it contains pkgconf support
 LIBG7221_SITE = $(call github,freeswitch,libg7221,$(LIBG7221_VERSION))
 LIBG7221_LICENSE = Polycom
