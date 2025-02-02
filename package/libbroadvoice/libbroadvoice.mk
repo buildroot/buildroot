@@ -9,8 +9,7 @@ LIBBROADVOICE_VERSION = f65b0f50c8c767229fbf1758370880abc0d78564
 # "This library is based on the Broadcom reference code, but has been
 # heavily modified so that it builds into a proper library, with a clean
 # usable interface, on a range of platforms."
-LIBBROADVOICE_SITE = https://freeswitch.org/stash/scm/sd/libbroadvoice.git
-LIBBROADVOICE_SITE_METHOD = git
+LIBBROADVOICE_SITE = $(call github,freeswitch,libbroadvoice,$(LIBBROADVOICE_VERSION))
 LIBBROADVOICE_LICENSE = LGPL-2.1
 LIBBROADVOICE_LICENSE_FILES = COPYING
 LIBBROADVOICE_AUTORECONF = YES
