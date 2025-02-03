@@ -1,6 +1,6 @@
-From ctxnop@gmail.com  Sun Jul 21 12:10:52 2024
-From: ctxnop@gmail.com (Nop)
-Date: Sun, 21 Jul 2024 14:10:52 +0200
+From 32949508fe566aee8988cb6d8ee101ecc5e49a65 Mon Sep 17 00:00:00 2001
+From: ctxnop <ctxnop@gmail.com>
+Date: Sun, 26 Jan 2025 20:59:20 +0100
 Subject: [PATCH] menuconfig: GCC failing saying ncurses is not found
 
 Newer GCC increased diagnostics levels resulting in considering the
@@ -17,13 +17,12 @@ Signed-off-by: Fiona Klute (WIWA) <fiona.klute@gmx.de>
  scripts/kconfig/lxdialog/check-lxdialog.sh | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/kconfig/lxdialog/check-lxdialog.sh
-b/scripts/kconfig/lxdialog/check-lxdialog.sh
-index 5075ebf2d..c644d1d48 100755
+diff --git a/scripts/kconfig/lxdialog/check-lxdialog.sh b/scripts/kconfig/lxdialog/check-lxdialog.sh
+index 5075ebf2d..08e4da3de 100755
 --- a/scripts/kconfig/lxdialog/check-lxdialog.sh
 +++ b/scripts/kconfig/lxdialog/check-lxdialog.sh
 @@ -45,9 +45,9 @@ trap "rm -f $tmp" 0 1 2 3 15
-
+ 
  # Check if we can link to ncurses
  check() {
 -        $cc -x c - -o $tmp 2>/dev/null <<'EOF'
@@ -34,5 +33,6 @@ index 5075ebf2d..c644d1d48 100755
  EOF
  	if [ $? != 0 ]; then
  	    echo " *** Unable to find the ncurses libraries or the"       1>&2
---
-2.45.2
+-- 
+2.47.1
+
