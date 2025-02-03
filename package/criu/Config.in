@@ -26,7 +26,6 @@ config BR2_PACKAGE_CRIU
 	depends on BR2_INSTALL_LIBSTDCPP # protobuf
 	depends on BR2_TOOLCHAIN_HAS_THREADS # protobuf, libnl
 	depends on BR2_USE_WCHAR # libbsd
-	select BR2_PACKAGE_HOST_PYTHON3
 	select BR2_PACKAGE_HOST_PYTHON3_SSL
 	select BR2_PACKAGE_PROTOBUF
 	select BR2_PACKAGE_PROTOBUF_C
