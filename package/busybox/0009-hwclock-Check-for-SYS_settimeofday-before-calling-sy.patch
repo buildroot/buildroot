@@ -1,4 +1,4 @@
-From a378cd9c3a022500d7feaefb4e3bb43fdd789131 Mon Sep 17 00:00:00 2001
+From 0583f8eda94f97e15e371e12458877b738439e8c Mon Sep 17 00:00:00 2001
 From: Khem Raj <raj.khem@gmail.com>
 Date: Sun, 7 Mar 2021 17:30:24 -0800
 Subject: [PATCH] hwclock: Check for SYS_settimeofday before calling syscall
@@ -24,10 +24,10 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
  1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/util-linux/hwclock.c b/util-linux/hwclock.c
-index 723b09589..b9faaabbc 100644
+index c3fd0eb57..dea9c9a55 100644
 --- a/util-linux/hwclock.c
 +++ b/util-linux/hwclock.c
-@@ -131,6 +131,7 @@ static void show_clock(const char **pp_rtcname, int utc)
+@@ -132,6 +132,7 @@ static void show_clock(const char **pp_rtcname, int utc)
  
  static void set_kernel_tz(const struct timezone *tz)
  {
@@ -35,7 +35,7 @@ index 723b09589..b9faaabbc 100644
  #if LIBC_IS_MUSL
  	/* musl libc does not pass tz argument to syscall
  	 * because "it's deprecated by POSIX, therefore it's fine
-@@ -139,9 +140,11 @@ static void set_kernel_tz(const struct timezone *tz)
+@@ -140,9 +141,11 @@ static void set_kernel_tz(const struct timezone *tz)
  #if !defined(SYS_settimeofday) && defined(SYS_settimeofday_time32)
  # define SYS_settimeofday SYS_settimeofday_time32
  #endif

@@ -1,4 +1,4 @@
-From bd463a5564a2c0618317448c3f965d389534c3df Mon Sep 17 00:00:00 2001
+From 56b84c6efb9a06ae294eb92cf9634f70af443b0a Mon Sep 17 00:00:00 2001
 From: Ariadne Conill <ariadne@dereferenced.org>
 Date: Mon, 19 Sep 2022 14:15:12 +0200
 Subject: [PATCH] nslookup: sanitize all printed strings with printable_string
@@ -16,10 +16,10 @@ Signed-off-by: Quentin Schulz <quentin.schulz@theobroma-systems.com>
  1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/networking/nslookup.c b/networking/nslookup.c
-index 6da97baf4..4bdcde1b8 100644
+index b67d354f7..79412477c 100644
 --- a/networking/nslookup.c
 +++ b/networking/nslookup.c
-@@ -407,7 +407,7 @@ static NOINLINE int parse_reply(const unsigned char *msg, size_t len)
+@@ -784,7 +784,7 @@ static NOINLINE int parse_reply(const unsigned char *msg, size_t len)
  				//printf("Unable to uncompress domain: %s\n", strerror(errno));
  				return -1;
  			}
@@ -28,7 +28,7 @@ index 6da97baf4..4bdcde1b8 100644
  			break;
  
  		case ns_t_mx:
-@@ -422,7 +422,7 @@ static NOINLINE int parse_reply(const unsigned char *msg, size_t len)
+@@ -799,7 +799,7 @@ static NOINLINE int parse_reply(const unsigned char *msg, size_t len)
  				//printf("Cannot uncompress MX domain: %s\n", strerror(errno));
  				return -1;
  			}
@@ -37,7 +37,7 @@ index 6da97baf4..4bdcde1b8 100644
  			break;
  
  		case ns_t_txt:
-@@ -434,7 +434,7 @@ static NOINLINE int parse_reply(const unsigned char *msg, size_t len)
+@@ -811,7 +811,7 @@ static NOINLINE int parse_reply(const unsigned char *msg, size_t len)
  			if (n > 0) {
  				memset(dname, 0, sizeof(dname));
  				memcpy(dname, ns_rr_rdata(rr) + 1, n);
@@ -46,7 +46,7 @@ index 6da97baf4..4bdcde1b8 100644
  			}
  			break;
  
-@@ -454,7 +454,7 @@ static NOINLINE int parse_reply(const unsigned char *msg, size_t len)
+@@ -831,7 +831,7 @@ static NOINLINE int parse_reply(const unsigned char *msg, size_t len)
  			}
  
  			printf("%s\tservice = %u %u %u %s\n", ns_rr_name(rr),
@@ -55,7 +55,7 @@ index 6da97baf4..4bdcde1b8 100644
  			break;
  
  		case ns_t_soa:
-@@ -483,7 +483,7 @@ static NOINLINE int parse_reply(const unsigned char *msg, size_t len)
+@@ -860,7 +860,7 @@ static NOINLINE int parse_reply(const unsigned char *msg, size_t len)
  				return -1;
  			}
  
@@ -65,5 +65,5 @@ index 6da97baf4..4bdcde1b8 100644
  
  			printf("\tserial = %lu\n", ns_get32(cp));
 -- 
-2.37.3
+2.48.1
 

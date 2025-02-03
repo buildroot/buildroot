@@ -1,8 +1,7 @@
-From 59daea82e7b5abcdb42a4f97a0109f14d5a774ea Mon Sep 17 00:00:00 2001
+From df20ae1280a2601a4c233ec12372d1e17db21e96 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Mon, 25 Nov 2013 22:51:53 +0100
-Subject: [PATCH] Makefile.flags: strip non -l arguments returned by
- pkg-config
+Subject: [PATCH] Makefile.flags: strip non -l arguments returned by pkg-config
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 [yann.morin.1998@free.fr: refresh for 1.29.0]
@@ -14,10 +13,10 @@ Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.flags b/Makefile.flags
-index 667481983..88d76efec 100644
+index 97cb4dca2..92a9063d9 100644
 --- a/Makefile.flags
 +++ b/Makefile.flags
-@@ -180,7 +180,9 @@ ifeq ($(CONFIG_SELINUX),y)
+@@ -181,7 +181,9 @@ ifeq ($(CONFIG_SELINUX),y)
  SELINUX_PC_MODULES = libselinux libsepol
  $(eval $(call pkg_check_modules,SELINUX,$(SELINUX_PC_MODULES)))
  CPPFLAGS += $(SELINUX_CFLAGS)
@@ -26,8 +25,8 @@ index 667481983..88d76efec 100644
 +       $(patsubst -l%,%,$(filter -l%,$(SELINUX_LIBS))),\
 +       $(SELINUX_PC_MODULES:lib%=%))
  endif
-
+ 
  ifeq ($(CONFIG_FEATURE_NSLOOKUP_BIG),y)
---
-2.33.0
+-- 
+2.48.1
 

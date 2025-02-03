@@ -1,0 +1,54 @@
+From bba9e99026a3dafe75f608459533e0b6d8cf3874 Mon Sep 17 00:00:00 2001
+From: Andre Przywara <andre.przywara@arm.com>
+Date: Tue, 10 Sep 2024 14:32:46 +0100
+Subject: [PATCH] libbb/sha: add missing sha-NI guard
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The ENABLE_SHA1_HWACCEL Kconfig symbol is meant to be archicture
+agnostic, so can be enabled regardless of whether your build
+architecture provides hardware acceleration or not. At the moment only
+x86 implements this, so every piece of optimised code should be guarded
+by both ENABLE_SHA1_HWACCEL and (__x86_64__ || __i386__). This is missing
+at one place, so compiling for arm64 breaks when ENABLE_SHA1_HWACCEL is
+enabled:
+================================
+libbb/hash_md5_sha.c: In function ‘sha1_end’:
+libbb/hash_md5_sha.c:1316:28: error: ‘sha1_process_block64_shaNI’ undeclared (first use in this function); did you mean ‘sha1_process_block64’?
+ 1316 |   || ctx->process_block == sha1_process_block64_shaNI
+      |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                            sha1_process_block64
+libbb/hash_md5_sha.c:1316:28: note: each undeclared identifier is reported only once for each function it appears in
+make[1]: *** [scripts/Makefile.build:197: libbb/hash_md5_sha.o] Error 1
+make: *** [Makefile:744: libbb] Error 2
+================================
+
+Add the missing guards around the call to sha1_process_block64_shaNI to
+fix the build on other architectures with ENABLE_SHA1_HWACCEL enabled.
+
+Change-Id: I40bba388422625f4230abf15a5de23e1fdc654fc
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Upstream: https://lists.busybox.net/pipermail/busybox/2024-September/090899.html
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ libbb/hash_md5_sha.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/libbb/hash_md5_sha.c b/libbb/hash_md5_sha.c
+index 57a801459..75a61c32c 100644
+--- a/libbb/hash_md5_sha.c
++++ b/libbb/hash_md5_sha.c
+@@ -1313,7 +1313,9 @@ unsigned FAST_FUNC sha1_end(sha1_ctx_t *ctx, void *resbuf)
+ 	hash_size = 8;
+ 	if (ctx->process_block == sha1_process_block64
+ #if ENABLE_SHA1_HWACCEL
++# if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+ 	 || ctx->process_block == sha1_process_block64_shaNI
++# endif
+ #endif
+ 	) {
+ 		hash_size = 5;
+-- 
+2.48.1
+

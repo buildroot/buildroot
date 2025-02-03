@@ -1,4 +1,4 @@
-From 60da1d0763224698008d847eb8ad8d4d8c6f54ff Mon Sep 17 00:00:00 2001
+From e1690453cd84c798ca88cc4370710f65da86d986 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Sat, 5 Oct 2013 15:55:06 +0200
 Subject: [PATCH] networking/libiproute: use <linux/if_packet.h> instead of
@@ -20,7 +20,7 @@ Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/networking/libiproute/iplink.c b/networking/libiproute/iplink.c
-index 1a1064bdc..a4c3ad307 100644
+index 37ed114bc..bc526d89c 100644
 --- a/networking/libiproute/iplink.c
 +++ b/networking/libiproute/iplink.c
 @@ -7,7 +7,7 @@
@@ -30,8 +30,8 @@ index 1a1064bdc..a4c3ad307 100644
 -#include <netpacket/packet.h>
 +#include <linux/if_packet.h>
  #include <netinet/if_ether.h>
-
+ 
  #include <linux/if_vlan.h>
---
-2.33.0
+-- 
+2.48.1
 
