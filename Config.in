@@ -114,15 +114,15 @@ menu "Commands"
 
 config BR2_CURL
 	string "Curl command"
-	default "curl -q --ftp-pasv --retry 3"
+	default "curl -q --ftp-pasv --retry 3 --connect-timeout 10"
 
 config BR2_WGET
 	string "Wget command"
-	default "wget -nd -t 3"
+	default "wget -nd -t 3 --connect-timeout=10"
 
 config BR2_SVN
 	string "Subversion (svn) command"
-	default "svn --non-interactive"
+	default "svn --non-interactive --config-option servers:global:http-timeout=10"
 
 config BR2_BZR
 	string "Bazaar (bzr) command"
@@ -142,11 +142,11 @@ config BR2_LOCALFILES
 
 config BR2_SCP
 	string "Secure copy (scp) command"
-	default "scp"
+	default "scp -o ConnectTimeout=10"
 
 config BR2_SFTP
 	string "Secure file transfer (sftp) command"
-	default "sftp"
+	default "sftp -o ConnectTimeout=10"
 
 config BR2_HG
 	string "Mercurial (hg) command"
