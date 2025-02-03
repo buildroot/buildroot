@@ -1,0 +1,54 @@
+From a378cd9c3a022500d7feaefb4e3bb43fdd789131 Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Sun, 7 Mar 2021 17:30:24 -0800
+Subject: [PATCH] hwclock: Check for SYS_settimeofday before calling syscall
+
+Some newer architectures e.g. RISCV32 have 64bit time_t from get go and
+thusly do not have gettimeofday_time64/settimeofday_time64 implemented
+therefore check for SYS_settimeofday definition before making the
+syscall. Fixes build for riscv32 and it will bail out at runtime.
+
+Upstream-Status: Submitted [http://lists.busybox.net/pipermail/busybox/2021-March/088583.html]
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+Upstream: http://lists.busybox.net/pipermail/busybox/2021-March/088583.html
+[Thomas: this issue has been discussed on the musl mailing list, and
+the musl developers' opinion is that Busybox is wrong:
+https://www.openwall.com/lists/musl/2024/03/03/2
+https://www.openwall.com/lists/musl/2024/04/07/2. The correct fix
+isn't clear, and in the mean time, the patch from Khem turns the build
+issue into a runtime error only on the problematic architecture, which
+seems like a reasonable trade-off]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ util-linux/hwclock.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/util-linux/hwclock.c b/util-linux/hwclock.c
+index 723b09589..b9faaabbc 100644
+--- a/util-linux/hwclock.c
++++ b/util-linux/hwclock.c
+@@ -131,6 +131,7 @@ static void show_clock(const char **pp_rtcname, int utc)
+ 
+ static void set_kernel_tz(const struct timezone *tz)
+ {
++	int ret = 1;
+ #if LIBC_IS_MUSL
+ 	/* musl libc does not pass tz argument to syscall
+ 	 * because "it's deprecated by POSIX, therefore it's fine
+@@ -139,9 +140,11 @@ static void set_kernel_tz(const struct timezone *tz)
+ #if !defined(SYS_settimeofday) && defined(SYS_settimeofday_time32)
+ # define SYS_settimeofday SYS_settimeofday_time32
+ #endif
+-	int ret = syscall(SYS_settimeofday, NULL, tz);
++#if defined(SYS_settimeofday)
++	ret = syscall(SYS_settimeofday, NULL, tz);
++#endif
+ #else
+-	int ret = settimeofday(NULL, tz);
++	ret = settimeofday(NULL, tz);
+ #endif
+ 	if (ret)
+ 		bb_simple_perror_msg_and_die("settimeofday");
+-- 
+2.48.1
+
