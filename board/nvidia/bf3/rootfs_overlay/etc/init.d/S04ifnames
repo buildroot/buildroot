@@ -1,0 +1,66 @@
+#!/bin/sh
+# Rename the board's interfaces according to Mellanox/NVIDIA's documentation
+
+DESC="bf3 interface renaming"
+DAEMON=ifnames
+
+rename_interface() {
+	bus_info=$1
+	new_name=$2
+	alt_name=$3
+
+	# Find the current interface name based on bus-info
+	iface=$(find /sys/class/net -type l -exec sh -c '
+	for i; do
+		[ "$(basename "$(readlink -f "$i"/device)")" = "$0" ] && basename "$i"
+	done
+	' "$bus_info" {} +)
+
+	# Rename the interface if found
+	if [ -n "$iface" ]; then
+		ip link set "$iface" name "$new_name"
+		printf "%s to %s" "$iface" "$new_name"
+
+		# Set altname if provided
+		if [ -n "$alt_name" ]; then
+			ip link property add dev "$new_name" altname "$alt_name"
+			printf "/%s" "$alt_name"
+		fi
+		printf "; "
+	else
+		echo "$bus_info not found"
+	fi
+}
+
+case "$1" in
+	start)
+		printf "Starting %s [%s]: " "$DESC" "$DAEMON"
+		# Initialize success flag
+		rename_allok=0
+		rename_interface "0000:03:00.0" "p0" "enp3s0f0np0" || rename_allok=1
+		rename_interface "0000:03:00.1" "p1" "enp3s0f1np1" || rename_allok=1
+		rename_interface "MLNXBF17:00" "oob_net0" "enamlnxbf17i0" || rename_allok=1
+		rename_interface "virtio1" "tmfifo_net0" || rename_allok=1
+
+		if [ "$rename_allok" -eq 0 ]; then
+			echo "OK"
+		else
+			echo "FAIL"
+		fi
+		;;
+
+	stop)	;;
+
+	restart)
+		# Optional: Handle restart by calling start after stop
+		$0 stop
+		$0 start
+		;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+		;;
+esac
+
+exit 0
