@@ -37,6 +37,10 @@ For model Zero 2 W (model B3 in smaller form factor):
 
   $ make raspberrypizero2w_defconfig
 
+For model Zero 2 W (model B3 in smaller form factor, 64-bit):
+
+  $ make raspberrypizero2w_64_defconfig
+
 For model 2 B:
 
   $ make raspberrypi2_defconfig
