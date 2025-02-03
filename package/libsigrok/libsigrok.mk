@@ -65,4 +65,20 @@ else
 LIBSIGROK_CONF_OPTS += --disable-cxx
 endif
 
+ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
+LIBSIGROK_UDEV_RULES = \
+	60-libsigrok.rules \
+	$(if $(BR2_PACKAGE_SYSTEMD_LOGIND), \
+		61-libsigrok-uaccess.rules, \
+		61-libsigrok-plugdev.rules \
+	)
+define LIBSIGROK_INSTALL_UDEV_RULES
+	$(foreach rule, $(LIBSIGROK_UDEV_RULES), \
+		$(INSTALL) -D -m 0644 $(@D)/contrib/$(rule) \
+			$(TARGET_DIR)/usr/lib/udev/rules.d/$(rule)$(sep) \
+	)
+endef
+LIBSIGROK_POST_INSTALL_TARGET_HOOKS += LIBSIGROK_INSTALL_UDEV_RULES
+endif
+
 $(eval $(autotools-package))
