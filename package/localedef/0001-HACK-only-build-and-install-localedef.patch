@@ -1,4 +1,4 @@
-From 03b1573ca341f1852ac05a884a68ed375cceccc0 Mon Sep 17 00:00:00 2001
+From b90ae9abee7e5cc3a92b053f00db959c853a745e Mon Sep 17 00:00:00 2001
 From: Michael Olbrich <m.olbrich@pengutronix.de>
 Date: Mon, 21 May 2018 16:45:02 +0200
 Subject: [PATCH] HACK: only build and install localedef
@@ -17,10 +17,10 @@ Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
  2 files changed, 10 insertions(+), 7 deletions(-)
 
 diff --git a/Rules b/Rules
-index 9010c5d5b2..f5e5525061 100644
+index c8adc00008..4acf69790f 100644
 --- a/Rules
 +++ b/Rules
-@@ -223,10 +223,16 @@ binaries-shared-notests = $(filter-out $(binaries-pie) $(binaries-static), \
+@@ -234,10 +234,16 @@ binaries-shared-notests = $(filter-out $(binaries-pie) $(binaries-static), \
  				       $(binaries-all-notests))
  
  ifneq "$(strip $(binaries-shared-notests))" ""
@@ -42,7 +42,7 @@ index 9010c5d5b2..f5e5525061 100644
  
  ifneq "$(strip $(binaries-shared-tests))" ""
 diff --git a/locale/Makefile b/locale/Makefile
-index 2810f28605..6b4cc9e831 100644
+index 9d9c1a7691..4d26032c15 100644
 --- a/locale/Makefile
 +++ b/locale/Makefile
 @@ -76,7 +76,6 @@ aux = \
@@ -70,5 +70,5 @@ index 2810f28605..6b4cc9e831 100644
  
  libBrokenLocale-routines = broken_cur_max
 -- 
-2.45.2
+2.48.1
 

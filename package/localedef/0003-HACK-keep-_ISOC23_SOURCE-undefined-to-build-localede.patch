@@ -1,4 +1,4 @@
-From efc989e7e5dcbc38ccc32634e49cfc2881c5a318 Mon Sep 17 00:00:00 2001
+From 7f52329793c88260260631593c9bc558b7eb01f8 Mon Sep 17 00:00:00 2001
 From: Romain Naour <romain.naour@gmail.com>
 Date: Sat, 9 Sep 2023 23:58:50 +0200
 Subject: [PATCH] HACK: keep _ISOC23_SOURCE undefined to build localedef with
@@ -15,21 +15,23 @@ Signed-off-by: Romain Naour <romain.naour@gmail.com>
 to _ISOC23_SOURCE]
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 ---
- include/features.h | 1 -
- 1 file changed, 1 deletion(-)
+ include/features.h | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/include/features.h b/include/features.h
-index 093de6f44c..8d9ca6e402 100644
+index 44bc4bbc85..c856368a71 100644
 --- a/include/features.h
 +++ b/include/features.h
-@@ -215,7 +215,6 @@
+@@ -217,9 +217,7 @@
  # undef  _ISOC11_SOURCE
  # define _ISOC11_SOURCE	1
  # undef  _ISOC23_SOURCE
 -# define _ISOC23_SOURCE	1
+ # undef  _ISOC2Y_SOURCE
+-# define _ISOC2Y_SOURCE	1
  # undef  _POSIX_SOURCE
  # define _POSIX_SOURCE	1
  # undef  _POSIX_C_SOURCE
 -- 
-2.45.2
+2.48.1
 
