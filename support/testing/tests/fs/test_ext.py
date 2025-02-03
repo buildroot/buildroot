@@ -41,26 +41,6 @@ class TestExt2(infra.basetest.BRTest):
     config = infra.basetest.BASIC_TOOLCHAIN_CONFIG + \
         """
         BR2_TARGET_ROOTFS_EXT2=y
-        BR2_TARGET_ROOTFS_EXT2_2r0=y
-        BR2_TARGET_ROOTFS_EXT2_LABEL="foobaz"
-        BR2_TARGET_ROOTFS_EXT2_SIZE="16384"
-        # BR2_TARGET_ROOTFS_TAR is not set
-        """
-
-    def test_run(self):
-        out = dumpe2fs_run(self.builddir, "rootfs.ext2")
-        self.assertEqual(dumpe2fs_getprop(out, VOLNAME_PROP), "foobaz")
-        self.assertEqual(dumpe2fs_getprop(out, REVISION_PROP), "0 (original)")
-
-        exit_code = boot_img_and_check_fs_type(self.emulator,
-                                               self.builddir, "ext2")
-        self.assertEqual(exit_code, 0)
-
-
-class TestExt2r1(infra.basetest.BRTest):
-    config = infra.basetest.BASIC_TOOLCHAIN_CONFIG + \
-        """
-        BR2_TARGET_ROOTFS_EXT2=y
         BR2_TARGET_ROOTFS_EXT2_2r1=y
         BR2_TARGET_ROOTFS_EXT2_LABEL="foobar"
         BR2_TARGET_ROOTFS_EXT2_SIZE="16384"

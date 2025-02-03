@@ -13,10 +13,6 @@ choice
 	bool "ext2/3/4 variant"
 	default BR2_TARGET_ROOTFS_EXT2_2r1
 
-config BR2_TARGET_ROOTFS_EXT2_2r0
-	bool "ext2 (rev0)"
-	select BR2_TARGET_ROOTFS_EXT2_2
-
 config BR2_TARGET_ROOTFS_EXT2_2r1
 	bool "ext2 (rev1)"
 	select BR2_TARGET_ROOTFS_EXT2_2
@@ -34,12 +30,6 @@ config BR2_TARGET_ROOTFS_EXT2_GEN
 	default 2 if BR2_TARGET_ROOTFS_EXT2_2
 	default 3 if BR2_TARGET_ROOTFS_EXT2_3
 	default 4 if BR2_TARGET_ROOTFS_EXT2_4
-
-# All ext generations are revision 1, except ext2r0, which is revision 0
-config BR2_TARGET_ROOTFS_EXT2_REV
-	int
-	default 0   if BR2_TARGET_ROOTFS_EXT2_2r0
-	default 1   if !BR2_TARGET_ROOTFS_EXT2_2r0
 
 config BR2_TARGET_ROOTFS_EXT2_LABEL
 	string "filesystem label"
@@ -85,8 +75,7 @@ config BR2_TARGET_ROOTFS_EXT2_RESBLKS
 
 config BR2_TARGET_ROOTFS_EXT2_MKFS_OPTIONS
 	string "additional mke2fs options"
-	# Note: ext2 rev0 does not support filesystem options.
-	default "-O ^64bit" if !BR2_TARGET_ROOTFS_EXT2_2r0
+	default "-O ^64bit"
 	help
 	  Specify a space-separated list of mke2fs options, including
 	  any ext2/3/4 filesystem features.
@@ -101,8 +90,7 @@ config BR2_TARGET_ROOTFS_EXT2_MKFS_OPTIONS
 	  support. This default value has been chosen because U-Boot
 	  versions before 2017.02 don't support this filesystem
 	  option: using it may make the filesystem unreadable by
-	  U-Boot. Note: this default does not apply to the old ext2
-	  (rev0) which does not support filesystem options.
+	  U-Boot.
 
 choice
 	prompt "Compression method"
