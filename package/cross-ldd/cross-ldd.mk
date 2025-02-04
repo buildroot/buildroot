@@ -5,7 +5,7 @@
 ################################################################################
 
 CROSS_LDD_VERSION = 1.26.0
-CROSS_LDD_SITE = http://crosstool-ng.org/download/crosstool-ng
+CROSS_LDD_SITE = https://github.com/crosstool-ng/crosstool-ng/releases/download/crosstool-ng-$(CROSS_LDD_VERSION)
 CROSS_LDD_SOURCE = crosstool-ng-$(CROSS_LDD_VERSION).tar.xz
 CROSS_LDD_LICENSE = GPL-2.0
 CROSS_LDD_LICENSE_FILES = COPYING
