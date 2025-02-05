@@ -4,12 +4,13 @@
 #
 ################################################################################
 
-IMX_SECO_VERSION = 5.9.4
+IMX_SECO_VERSION = 5.9.4.1
+IMX_SECO_REVISION = 0333596
 IMX_SECO_SITE = $(FREESCALE_IMX_SITE)
-IMX_SECO_SOURCE = imx-seco-$(IMX_SECO_VERSION).bin
+IMX_SECO_SOURCE = imx-seco-$(IMX_SECO_VERSION)-$(IMX_SECO_REVISION).bin
 
 IMX_SECO_LICENSE = NXP Semiconductor Software License Agreement
-IMX_SECO_LICENSE_FILES = EULA COPYING
+IMX_SECO_LICENSE_FILES = EULA COPYING SCR.txt SCR-imx-seco.txt
 IMX_SECO_REDISTRIBUTE = NO
 
 define IMX_SECO_EXTRACT_CMDS
