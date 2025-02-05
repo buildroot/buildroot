@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2025.02"
 
+config BR2_PACKAGE_OBSIDIAN_CURSORS
+	bool "obsidian-cursors has been removed"
+	select BR2_LEGACY
+	help
+	  The obsidian cursors package is no longer available for
+	  direct download.
+
 config BR2_PACKAGE_W_SCAN
 	bool "w_scan has been removed"
 	select BR2_LEGACY
