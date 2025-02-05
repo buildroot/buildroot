@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2025.02"
 
+config BR2_PACKAGE_LATENCYTOP
+	bool "latencytop has been removed"
+	select BR2_LEGACY
+	help
+	  The latencytop package is no longer available for download.
+
 config BR2_PACKAGE_OBSIDIAN_CURSORS
 	bool "obsidian-cursors has been removed"
 	select BR2_LEGACY
