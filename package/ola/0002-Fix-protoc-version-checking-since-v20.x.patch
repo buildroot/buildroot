@@ -1,0 +1,35 @@
+From d4414feefd95adf9c91d7eaf1e94380296c35f7a Mon Sep 17 00:00:00 2001
+From: Peter Newman <peternewman@users.noreply.github.com>
+Date: Fri, 7 Jul 2023 15:57:35 +0100
+Subject: [PATCH] Fix protoc version checking, since v20.x (cherry picked from
+ commit 2e55aa88756718d8ab4a4c8fde97d620542c2c98)
+
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Upstream: https://github.com/OpenLightingProject/ola/commit/d4414feefd95adf9c91d7eaf1e94380296c35f7a
+---
+ config/ola.m4 | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/config/ola.m4 b/config/ola.m4
+index f838ab70a..51b6c825c 100644
+--- a/config/ola.m4
++++ b/config/ola.m4
+@@ -44,7 +44,14 @@ if test -z "$PROTOC" ; then
+   AC_MSG_ERROR([cannot find 'protoc' program]);
+ elif test -n "$1" ; then
+   AC_MSG_CHECKING([protoc version])
+-  [protoc_version=`$PROTOC --version 2>&1 | grep 'libprotoc' | sed 's/.*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/g'`]
++  # Since v20.x we only get effectively the minor and patch versions out of protoc.
++  # Treat them as major and minor and everything should keep working indefinitely.
++  # See https://protobuf.dev/support/version-support/
++  # So we've got either of these:
++  # libprotoc 2.4.1
++  # libprotoc 23.3
++  # The first sed ensures all versions have major, minor, patch, by adding a .0 on the end of ones missing it
++  [protoc_version=`$PROTOC --version 2>&1 | grep 'libprotoc' | sed 's/\([^\.0-9][0-9][0-9]*\.[0-9][0-9]*\)$/\1\.0/g' | sed 's/.*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/g'`]
+   [required=$1]
+   [required_major=`echo $required | sed 's/[^0-9].*//'`]
+   [required_minor=`echo $required | sed 's/[0-9][0-9]*\.\([0-9][0-9]*\)\.[0-9][0-9]*/\1/'`]
+-- 
+2.34.1
+
