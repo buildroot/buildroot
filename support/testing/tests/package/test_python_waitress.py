@@ -30,5 +30,4 @@ class TestPythonWaitress(TestPythonPackageBase):
             if exit_code == 0:
                 self.assertEqual(output[0], 'Hello, World!')
                 break
-        else:
-            self.assertTrue(False, "Timeout while waiting for waitress server")
+        self.assertEqual(exit_code, 0, "Timeout while waiting for django server")
