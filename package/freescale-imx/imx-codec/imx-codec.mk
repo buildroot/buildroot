@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-IMX_CODEC_VERSION = 4.8.2
+IMX_CODEC_VERSION = 4.9.0
 IMX_CODEC_SITE = $(FREESCALE_IMX_SITE)
 IMX_CODEC_SOURCE = imx-codec-$(IMX_CODEC_VERSION).bin
 IMX_CODEC_INSTALL_STAGING = YES
 
 IMX_CODEC_LICENSE = NXP Semiconductor Software License Agreement, BSD-3-Clause (flac, ogg headers)
-IMX_CODEC_LICENSE_FILES = EULA COPYING
+IMX_CODEC_LICENSE_FILES = EULA COPYING SCR-imx-codec.txt
 IMX_CODEC_REDISTRIBUTE = NO
 
 ifeq ($(BR2_aarch64),y)
