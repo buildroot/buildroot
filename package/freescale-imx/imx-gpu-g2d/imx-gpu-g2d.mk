@@ -22,12 +22,14 @@ define IMX_GPU_G2D_EXTRACT_CMDS
 	$(call NXP_EXTRACT_HELPER,$(IMX_GPU_G2D_DL_DIR)/$(IMX_GPU_G2D_SOURCE))
 endef
 
+IMX_GPU_G2D_SUBDIR = $(if $(BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MM),mx8mm,)
+
 define IMX_GPU_G2D_INSTALL_STAGING_CMDS
-	cp -a $(@D)/g2d/usr/* $(STAGING_DIR)/usr
+	cp -a $(@D)/g2d/usr/lib/$(IMX_GPU_G2D_SUBDIR)/libg2d*  $(STAGING_DIR)/usr/lib/
 endef
 
 define IMX_GPU_G2D_INSTALL_TARGET_CMDS
-	cp -a $(@D)/g2d/usr/lib $(TARGET_DIR)/usr
+	cp -a $(@D)/g2d/usr/lib/$(IMX_GPU_G2D_SUBDIR)/libg2d*  $(TARGET_DIR)/usr/lib/
 endef
 
 $(eval $(generic-package))
