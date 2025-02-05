@@ -204,6 +204,13 @@ config BR2_PACKAGE_DIRECTFB
 	  This package was no longer maintained upstream, so it was
 	  dropped from Buildroot.
 
+config BR2_PACKAGE_GST_OMX
+	bool "gst-omx has been removed"
+	select BR2_LEGACY
+	help
+	  The gst-omx module has been removed from Gstreamer in
+	  release 1.24 in favor of Video4Linux-based video encoders.
+
 config BR2_PACKAGE_SDL2_DIRECTFB
 	bool "sdl2 directfb support removed"
 	select BR2_LEGACY
