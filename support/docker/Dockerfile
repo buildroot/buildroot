@@ -28,6 +28,7 @@ RUN apt-get -o APT::Retries=3 install -y --no-install-recommends \
         ca-certificates \
         cmake \
         cpio \
+        curl \
         cvs \
         file \
         flake8 \
