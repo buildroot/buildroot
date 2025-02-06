@@ -156,6 +156,18 @@ define _json-info-pkg
 	)
 endef
 
+# The RAWNAME variable is the lowercased package name, which allows to
+# find the package directory (typically package/<pkgname>) and the
+# prefix of the patches
+pkg-patch-hash-dirs = \
+	$($(1)_PKGDIR) $(addsuffix /$($(1)_RAWNAME),$(call qstrip,$(BR2_GLOBAL_PATCH_DIR)))
+
+pkg-patches-dirs = \
+	$(foreach dir, $(call pkg-patch-hash-dirs,$(1)),\
+		$(wildcard $(if $($(1)_VERSION),\
+			$(or $(wildcard $(dir)/$($(1)_VERSION)),$(dir)),\
+			$(dir))))
+
 define _json-info-pkg-details
 	"version": $(call mk-json-str,$($(1)_DL_VERSION)),
 	"licenses": $(call mk-json-str,$($(1)_LICENSE)),
