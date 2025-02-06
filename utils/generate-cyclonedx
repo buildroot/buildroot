@@ -1,0 +1,317 @@
+#!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# This script converts the output of the show-info make target
+# to CycloneDX format.
+#
+# Example usage:
+# > make show-info | utils/generate-cyclonedx.py | jq '.'
+
+
+import argparse
+import bz2
+import gzip
+import json
+import os
+from pathlib import Path
+import urllib.request
+import subprocess
+import sys
+
+CYCLONEDX_VERSION = "1.6"
+SPDX_SCHEMA_URL = f"https://raw.githubusercontent.com/CycloneDX/specification/{CYCLONEDX_VERSION}/schema/spdx.schema.json"
+
+brpath = Path(__file__).parent.parent
+
+cyclonedxpath = Path(os.getenv("BR2_DL_DIR", brpath / "dl")) / "cyclonedx"
+SPDX_SCHEMA_PATH = cyclonedxpath / f"spdx-{CYCLONEDX_VERSION}.schema.json"
+
+BR2_VERSION_FULL = (
+    subprocess.check_output(
+        ["make", "--no-print-directory", "-C", brpath, "print-version"]
+    )
+    .decode()
+    .strip()
+)
+
+SPDX_LICENSES = []
+
+if not SPDX_SCHEMA_PATH.exists():
+    # Download the CycloneDX SPDX schema JSON, and cache it locally
+    cyclonedxpath.mkdir(parents=True, exist_ok=True)
+    urllib.request.urlretrieve(SPDX_SCHEMA_URL, SPDX_SCHEMA_PATH)
+
+try:
+    with SPDX_SCHEMA_PATH.open() as f:
+        SPDX_LICENSES = json.load(f).get("enum", [])
+except json.JSONDecodeError:
+    # In case of error the license will just not be matched to the SPDX names
+    # but the SBOM generation still work.
+    print(f"Failed to load the SPDX licenses file: {SPDX_SCHEMA_PATH}", file=sys.stderr)
+
+
+def split_top_level_comma(subj):
+    """Split a string at comma's, but do not split at comma's in between parentheses.
+
+    Args:
+        subj (str): String to be split.
+
+    Returns:
+        list: A list of substrings
+    """
+    counter = 0
+    substring = ""
+
+    for char in subj:
+        if char == "," and counter == 0:
+            yield substring
+            substring = ""
+        else:
+            if char == "(":
+                counter += 1
+            elif char == ")":
+                counter -= 1
+            substring += char
+
+    yield substring
+
+
+def cyclonedx_license(lic):
+    """Given the name of a license, create an individual entry in
+    CycloneDX format. In CycloneDX, the 'id' keyword is used for
+    names that are recognized as SPDX License abbreviations. All other
+    license names are placed under the 'name' keyword.
+
+    Args:
+        lic (str): Name of the license
+
+    Returns:
+        dict: An entry for the license in CycloneDX format.
+    """
+    key = "id" if lic in SPDX_LICENSES else "name"
+    return {
+        key: lic,
+    }
+
+
+def cyclonedx_licenses(lic_list):
+    """Create a licenses list formatted for a CycloneDX component
+
+    Args:
+        lic_list (str): A comma separated list of license names.
+
+    Returns:
+        dict: A dictionary with license information for the component,
+        in CycloneDX format.
+    """
+    return {
+        "licenses": [
+            {"license": cyclonedx_license(lic.strip())} for lic in split_top_level_comma(lic_list)
+        ]
+    }
+
+
+def cyclonedx_patches(patch_list):
+    """Translate a list of patches from the show-info JSON to a list of
+    patches in CycloneDX format.
+
+    Args:
+        patch_list (dict): Information about the patches as a Python dictionary.
+
+    Returns:
+        dict: Patch information in CycloneDX format.
+    """
+    patch_contents = []
+    for patch in patch_list:
+        patch_path = brpath / patch
+        if patch_path.exists():
+            f = None
+            if patch.endswith('.gz'):
+                f = gzip.open(patch_path, mode="rt")
+            elif patch.endswith('.bz'):
+                f = bz2.open(patch_path, mode="rt")
+            else:
+                f = open(patch_path)
+
+            try:
+                patch_contents.append({
+                    "text": {
+                        "content": f.read()
+                    }
+                })
+            except Exception:
+                # If the patch can't be read it won't be added to
+                # the resulting SBOM.
+                print(f"Failed to handle patch: {patch}", file=sys.stderr)
+
+            f.close()
+        else:
+            # If the patch is not a file it's a tarball or diff url passed
+            # through the `<pkg-name>_PATCH` variable.
+            patch_contents.append({
+                "url": patch
+            })
+
+    return {
+        "pedigree": {
+            "patches": [{
+                "type": "unofficial",
+                "diff": content
+            } for content in patch_contents]
+        },
+    }
+
+
+def cyclonedx_component(name, comp):
+    """Translate a component from the show-info output, to a component entry in CycloneDX format.
+
+    Args:
+        name (str): Key used for the package in the show-info output.
+        comp (dict): Data about the package as a Python dictionary.
+
+    Returns:
+        dict: Component information in CycloneDX format.
+    """
+    return {
+        "bom-ref": name,
+        "type": "library",
+        **({
+            "name": comp["name"],
+        } if "name" in comp else {}),
+        **({
+            "version": comp["version"],
+            **(cyclonedx_licenses(comp["licenses"]) if "licenses" in comp else {}),
+        } if not comp["virtual"] else {}),
+        **({
+            "cpe": comp["cpe-id"],
+        } if "cpe-id" in comp else {}),
+        **(cyclonedx_patches(comp["patches"]) if comp.get("patches") else {}),
+        "properties": [{
+            "name": "BR_TYPE",
+            "value": comp["type"],
+        }],
+    }
+
+
+def cyclonedx_dependency(ref, depends):
+    """Create JSON for dependency relationships between components.
+
+    Args:
+        ref (str): reference to a component bom-ref.
+        depends (list): array of component bom-ref identifier to create the dependencies.
+
+    Returns:
+        dict: Dependency information in CycloneDX format.
+    """
+    return {
+        "ref": ref,
+        "dependsOn": depends,
+    }
+
+
+def cyclonedx_vulnerabilities(show_info_dict):
+    """Create a JSON list of vulnerabilities ignored by buildroot and associate
+    the component for which they are solved.
+
+    Args:
+        show_info_dict (dict): The JSON output of the show-info
+            command, parsed into a Python dictionary.
+
+    Returns:
+        list: Solved vulnerabilities list in CycloneDX format.
+    """
+    cves = {}
+
+    for name, comp in show_info_dict.items():
+        for cve in comp.get('ignore_cves', []):
+            cves.setdefault(cve, []).append(name)
+
+    return [{
+        "id": cve,
+        "analysis": {
+            "state": "in_triage",
+            "detail": f"The CVE '{cve}' has been marked as ignored by Buildroot"
+        },
+        "affects": [
+            {"ref": bomref} for bomref in components
+        ]
+    } for cve, components in cves.items()]
+
+
+def br2_parse_deps_recursively(ref, show_info_dict, virtual=False, deps=[]):
+    """Parse dependencies from the show-info output. This function will
+    recursively collect all dependencies, and return a list where each dependency
+    is stated at most once.
+    The dependency on virtual package will collect the final dependency without
+    including the virtual one.
+
+    Args:
+        ref (str): The identifier of the package for which the dependencies have
+            to be looked up.
+        show_info_dict (dict): The JSON output of the show-info
+            command, parsed into a Python dictionary.
+
+    Kwargs:
+        deps (list): A list, to which dependencies will be appended. If set to None,
+            a new empty list will be created. Defaults to None.
+
+    Returns:
+        list: A list of dependencies of the 'ref' package.
+    """
+    for dep in show_info_dict.get(ref, {}).get("dependencies", []):
+        if dep not in deps:
+            if virtual or show_info_dict.get(dep, {}).get("virtual") is False:
+                deps.append(dep)
+            br2_parse_deps_recursively(dep, show_info_dict, virtual, deps)
+
+    return deps
+
+
+def main():
+    parser = argparse.ArgumentParser(
+            description='''Create a CycloneDX SBoM for the Buildroot configuration.
+                Example usage: make show-info | utils/generate-cyclonedx.py | jq > sbom.json
+            '''
+        )
+    parser.add_argument("-i", "--in-file", nargs="?", type=argparse.FileType("r"), default=sys.stdin)
+    parser.add_argument("-o", "--out-file", nargs="?", type=argparse.FileType("w"), default=sys.stdout)
+    parser.add_argument("--virtual", default=False, action='store_true',
+                        help="This option includes virtual packages to the CycloneDX output")
+
+    args = parser.parse_args()
+
+    show_info_dict = json.load(args.in_file)
+
+    # Remove rootfs and virtual packages if not explicitly included
+    # from the cli arguments
+    filtered_show_info_dict = {k: v for k, v in show_info_dict.items()
+                               if ("rootfs" not in v["type"]) and (args.virtual or v["virtual"] is False)}
+
+    cyclonedx_dict = {
+        "bomFormat": "CycloneDX",
+        "$schema": f"http://cyclonedx.org/schema/bom-{CYCLONEDX_VERSION}.schema.json",
+        "specVersion": f"{CYCLONEDX_VERSION}",
+        "components": [
+            cyclonedx_component(name, comp) for name, comp in filtered_show_info_dict.items()
+        ],
+        "dependencies": [
+            cyclonedx_dependency("buildroot", list(filtered_show_info_dict)),
+            *[cyclonedx_dependency(ref, br2_parse_deps_recursively(ref, show_info_dict, args.virtual))
+              for ref in filtered_show_info_dict],
+        ],
+        "vulnerabilities": cyclonedx_vulnerabilities(show_info_dict),
+        "metadata": {
+            "component": {
+                "bom-ref": "buildroot",
+                "name": "buildroot",
+                "type": "firmware",
+                "version": f"{BR2_VERSION_FULL}",
+            },
+        },
+    }
+
+    args.out_file.write(json.dumps(cyclonedx_dict))
+
+
+if __name__ == "__main__":
+    main()
