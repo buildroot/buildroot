@@ -19,6 +19,12 @@ if [ ! -e "${GENIMAGE_CFG}" ]; then
 	KERNEL=$(sed -n 's/^kernel=//p' "${BINARIES_DIR}/rpi-firmware/config.txt")
 	FILES+=( "${KERNEL}" )
 
+	# If config.txt calls for running U-Boot, include the boot
+	# script if any.
+	if [ "${KERNEL}" = "u-boot.bin" ] && [ -e "${BINARIES_DIR}/boot.scr" ]; then
+		FILES+=( "boot.scr" )
+	fi
+
 	BOOT_FILES=$(printf '\\t\\t\\t"%s",\\n' "${FILES[@]}")
 	sed "s|#BOOT_FILES#|${BOOT_FILES}|" "${BOARD_DIR}/genimage.cfg.in" \
 		> "${GENIMAGE_CFG}"
