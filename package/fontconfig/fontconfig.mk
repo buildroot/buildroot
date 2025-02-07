@@ -18,6 +18,7 @@ FONTCONFIG_CPE_ID_VALID = YES
 
 FONTCONFIG_CONF_OPTS = \
 	-Dcache-dir=/var/cache/fontconfig \
+	-Dtests=disabled \
 	-Ddoc=disabled
 
 FONTCONFIG_CFLAGS = $(TARGET_CFLAGS)
