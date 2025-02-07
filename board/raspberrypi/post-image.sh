@@ -13,6 +13,8 @@ if [ ! -e "${GENIMAGE_CFG}" ]; then
 	FILES=()
 
 	for i in "${BINARIES_DIR}"/*.dtb "${BINARIES_DIR}"/rpi-firmware/*; do
+		# ignore literal globs that didn't match anything
+		[ -e "${i}" ] || continue
 		FILES+=( "${i#${BINARIES_DIR}/}" )
 	done
 
