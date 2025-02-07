@@ -83,6 +83,10 @@ or for CM4 (on IO Board - 64 bit):
 
   $ make raspberrypicm4io_64_defconfig
 
+or to boot CM4 (on IO Board - 64 bit) using U-Boot:
+
+  $ make raspberrypicm4io_64_uboot_defconfig
+
 For model 5 B and 500:
 
   $ make raspberrypi5_defconfig

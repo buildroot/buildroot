@@ -1,0 +1,18 @@
+# Please note that this is only a sample, we recommend you to change
+# it to fit your needs. You should override this file using
+# BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT_SOURCE.
+
+# On most Raspberry Pi boards UART0 is ttyAMA0, Raspberry Pi 5 is
+# different.
+if test "$board_name" = "5 Model B"; then
+    env set serial_uart "ttyAMA10,115200"
+else
+    env set serial_uart "ttyAMA0,115200"
+fi
+env set bootargs "root=/dev/mmcblk0p2 rootwait console=tty1 console=${serial_uart}"
+
+# load kernel from the root partition
+load mmc 0:2 ${kernel_addr_r} boot/Image
+
+# boot using the FDT provided by firmware
+booti ${kernel_addr_r} - ${fdt_addr}
