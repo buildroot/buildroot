@@ -5,6 +5,8 @@
 KODI="${1}"
 shift
 
+# shellcheck disable=SC2329 # https://www.shellcheck.net/wiki/SC2329
+# shellcheck disable=SC2317 # shellcheck 0.9.0 "spammy"
 # In case someone asked we terminate, just kill
 # the Kodi process
 trap_kill() {
