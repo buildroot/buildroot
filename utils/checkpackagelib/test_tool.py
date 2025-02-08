@@ -100,7 +100,7 @@ Shellcheck = [
      '',
      ["dir/empty.sh:0: run 'shellcheck' and fix the warnings",
       "In dir/empty.sh line 1:\n"
-      "^-- SC2148: Tips depend on target shell and yours is unknown. Add a shebang or a 'shell' directive.\n"
+      "^-- SC2148 (error): Tips depend on target shell and yours is unknown. Add a shebang or a 'shell' directive.\n"
       "For more information:\n"
       "  https://www.shellcheck.net/wiki/SC2148 -- Tips depend on target shell and y..."]),
     ('sh shebang',
@@ -117,8 +117,8 @@ Shellcheck = [
      ["dir/unused.sh:0: run 'shellcheck' and fix the warnings",
       "In dir/unused.sh line 1:\n"
       'unused=""\n'
-      "^-- SC2148: Tips depend on target shell and yours is unknown. Add a shebang or a 'shell' directive.\n"
-      "^----^ SC2034: unused appears unused. Verify use (or export if used externally).\n"
+      "^-- SC2148 (error): Tips depend on target shell and yours is unknown. Add a shebang or a 'shell' directive.\n"
+      "^----^ SC2034 (warning): unused appears unused. Verify use (or export if used externally).\n"
       "For more information:\n"
       "  https://www.shellcheck.net/wiki/SC2148 -- Tips depend on target shell and y...\n"
       "  https://www.shellcheck.net/wiki/SC2034 -- unused appears unused. Verify use..."]),
@@ -128,7 +128,7 @@ Shellcheck = [
      ["dir/tab.sh:0: run 'shellcheck' and fix the warnings",
       "In dir/tab.sh line 1:\n"
       '\t#!/bin/sh\n'
-      "^-- SC1114: Remove leading spaces before the shebang.\n"
+      "^-- SC1114 (error): Remove leading spaces before the shebang.\n"
       "For more information:\n"
       "  https://www.shellcheck.net/wiki/SC1114 -- Remove leading spaces before the ..."]),
     ]
