@@ -450,7 +450,7 @@ main() {
                 auto_id=${AUTO_USER_ID}
             fi
             for g in ${groups//,/ }; do
-                add_one_group "${g}" ${auto_id}
+                add_one_group "${g}" "${auto_id}"
             done
         fi
     done
