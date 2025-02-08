@@ -30,6 +30,7 @@ RUN apt-get -o APT::Retries=3 install -y --no-install-recommends \
         cpio \
         cvs \
         file \
+        flake8 \
         g++-multilib \
         git \
         libc6:i386 \
