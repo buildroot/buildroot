@@ -1,0 +1,30 @@
+From f50e4676fe9289eec0744efae2216aa8795fa461 Mon Sep 17 00:00:00 2001
+From: Alfred Wingate <parona@protonmail.com>
+Date: Thu, 16 Nov 2023 21:26:42 +0000
+Subject: [PATCH] fix: add missing algorithm header include (#380)
+
+* https://gcc.gnu.org/gcc-14/porting_to.html
+
+Using gcc 14 uncovers a missing include in Message.h
+
+Signed-off-by: Alfred Wingate <parona@protonmail.com>
+Upstream: https://github.com/Kistler-Group/sdbus-cpp/commit/f50e4676fe9289eec0744efae2216aa8795fa461
+---
+ include/sdbus-c++/Message.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/sdbus-c++/Message.h b/include/sdbus-c++/Message.h
+index 915a071..9c85c01 100644
+--- a/include/sdbus-c++/Message.h
++++ b/include/sdbus-c++/Message.h
+@@ -42,6 +42,7 @@
+ #include <cassert>
+ #include <functional>
+ #include <sys/types.h>
++#include <algorithm>
+ 
+ // Forward declarations
+ namespace sdbus {
+-- 
+2.48.1
+
