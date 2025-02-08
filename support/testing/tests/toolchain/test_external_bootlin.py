@@ -795,40 +795,12 @@ class TestExternalToolchainBootlinM68kcoldfireUclibcStable(TestExternalToolchain
         TestExternalToolchain.common_check(self)
 
 
-class TestExternalToolchainBootlinMicroblazebeGlibcBleedingEdge(TestExternalToolchain):
-    config = """
-        BR2_microblazebe=y
-        BR2_TOOLCHAIN_EXTERNAL=y
-        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
-        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_MICROBLAZEBE_GLIBC_BLEEDING_EDGE=y
-        # BR2_TARGET_ROOTFS_TAR is not set
-        """
-    toolchain_prefix = "microblaze-linux"
-
-    def test_run(self):
-        TestExternalToolchain.common_check(self)
-
-
 class TestExternalToolchainBootlinMicroblazebeGlibcStable(TestExternalToolchain):
     config = """
         BR2_microblazebe=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_MICROBLAZEBE_GLIBC_STABLE=y
-        # BR2_TARGET_ROOTFS_TAR is not set
-        """
-    toolchain_prefix = "microblaze-linux"
-
-    def test_run(self):
-        TestExternalToolchain.common_check(self)
-
-
-class TestExternalToolchainBootlinMicroblazebeMuslBleedingEdge(TestExternalToolchain):
-    config = """
-        BR2_microblazebe=y
-        BR2_TOOLCHAIN_EXTERNAL=y
-        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
-        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_MICROBLAZEBE_MUSL_BLEEDING_EDGE=y
         # BR2_TARGET_ROOTFS_TAR is not set
         """
     toolchain_prefix = "microblaze-linux"
@@ -851,20 +823,6 @@ class TestExternalToolchainBootlinMicroblazebeMuslStable(TestExternalToolchain):
         TestExternalToolchain.common_check(self)
 
 
-class TestExternalToolchainBootlinMicroblazebeUclibcBleedingEdge(TestExternalToolchain):
-    config = """
-        BR2_microblazebe=y
-        BR2_TOOLCHAIN_EXTERNAL=y
-        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
-        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_MICROBLAZEBE_UCLIBC_BLEEDING_EDGE=y
-        # BR2_TARGET_ROOTFS_TAR is not set
-        """
-    toolchain_prefix = "microblaze-linux"
-
-    def test_run(self):
-        TestExternalToolchain.common_check(self)
-
-
 class TestExternalToolchainBootlinMicroblazebeUclibcStable(TestExternalToolchain):
     config = """
         BR2_microblazebe=y
@@ -874,20 +832,6 @@ class TestExternalToolchainBootlinMicroblazebeUclibcStable(TestExternalToolchain
         # BR2_TARGET_ROOTFS_TAR is not set
         """
     toolchain_prefix = "microblaze-linux"
-
-    def test_run(self):
-        TestExternalToolchain.common_check(self)
-
-
-class TestExternalToolchainBootlinMicroblazeelGlibcBleedingEdge(TestExternalToolchain):
-    config = """
-        BR2_microblazeel=y
-        BR2_TOOLCHAIN_EXTERNAL=y
-        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
-        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_MICROBLAZEEL_GLIBC_BLEEDING_EDGE=y
-        # BR2_TARGET_ROOTFS_TAR is not set
-        """
-    toolchain_prefix = "microblazeel-linux"
 
     def test_run(self):
         TestExternalToolchain.common_check(self)
@@ -907,40 +851,12 @@ class TestExternalToolchainBootlinMicroblazeelGlibcStable(TestExternalToolchain)
         TestExternalToolchain.common_check(self)
 
 
-class TestExternalToolchainBootlinMicroblazeelMuslBleedingEdge(TestExternalToolchain):
-    config = """
-        BR2_microblazeel=y
-        BR2_TOOLCHAIN_EXTERNAL=y
-        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
-        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_MICROBLAZEEL_MUSL_BLEEDING_EDGE=y
-        # BR2_TARGET_ROOTFS_TAR is not set
-        """
-    toolchain_prefix = "microblazeel-linux"
-
-    def test_run(self):
-        TestExternalToolchain.common_check(self)
-
-
 class TestExternalToolchainBootlinMicroblazeelMuslStable(TestExternalToolchain):
     config = """
         BR2_microblazeel=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_MICROBLAZEEL_MUSL_STABLE=y
-        # BR2_TARGET_ROOTFS_TAR is not set
-        """
-    toolchain_prefix = "microblazeel-linux"
-
-    def test_run(self):
-        TestExternalToolchain.common_check(self)
-
-
-class TestExternalToolchainBootlinMicroblazeelUclibcBleedingEdge(TestExternalToolchain):
-    config = """
-        BR2_microblazeel=y
-        BR2_TOOLCHAIN_EXTERNAL=y
-        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
-        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_MICROBLAZEEL_UCLIBC_BLEEDING_EDGE=y
         # BR2_TARGET_ROOTFS_TAR is not set
         """
     toolchain_prefix = "microblazeel-linux"

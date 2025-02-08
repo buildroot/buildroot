@@ -478,6 +478,12 @@ def get_toolchains():
             elif parts[2].startswith("bleeding-edge-"):
                 variant = "bleeding-edge"
                 version = parts[2][len("bleeding-edge-"):]
+
+            # GCC 14.x on Microblaze is very broken, see
+            # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=118280
+            if arch in ["microblazeel", "microblazebe"] and variant == "bleeding-edge":
+                continue
+
             tmp[(arch, libc, variant)] = version
 
         if len(tmp) == 0:
