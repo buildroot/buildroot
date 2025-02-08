@@ -22,6 +22,7 @@ set -e
 #   GIT      : the git command to call
 
 # shellcheck disable=SC1090 # Only provides mk_tar_gz()
+# shellcheck disable=SC1091
 . "${0%/*}/helpers"
 
 # Save our path and options in case we need to call ourselves again
@@ -91,6 +92,7 @@ _git() {
 # Note: please keep command below aligned with what is printed above
 _plain_git() {
     # shellcheck disable=SC2086 # We want word-splitting for GIT
+    # shellcheck disable=SC2294
     eval GIT_DIR="${git_cache}/.git" ${GIT} "${@}"
 }
 

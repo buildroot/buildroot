@@ -22,6 +22,7 @@ set -e
 #   SVN      : the svn command to call
 
 # shellcheck disable=SC1090 # Only provides mk_tar_gz()
+# shellcheck disable=SC1091
 . "${0%/*}/helpers"
 
 quiet=
@@ -52,6 +53,7 @@ _svn() {
 # Note: please keep command below aligned with what is printed above
 _plain_svn() {
     # shellcheck disable=SC2086 # We want word-splitting for SVN
+    # shellcheck disable=SC2294
     eval ${SVN} "${@}"
 }
 

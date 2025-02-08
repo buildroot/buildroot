@@ -47,6 +47,7 @@ _cvs() {
 # Note: please keep command below aligned with what is printed above
 _plain_cvs() {
     # shellcheck disable=SC2086  # We really want word splitting in CVS
+    # shellcheck disable=SC2294
     eval timeout 10m ${CVS} "${@}"
 }
 

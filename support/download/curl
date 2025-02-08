@@ -39,6 +39,7 @@ _curl() {
 # Note: please keep command below aligned with what is printed above
 _plain_curl() {
     # shellcheck disable=SC2086  # We want splitting
+    # shellcheck disable=SC2294
     eval ${CURL} "${@}"
 }
 
