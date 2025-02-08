@@ -14,6 +14,6 @@ class RESULT(Values):
 
 
 print(list(RESULT.iterconstants()))
-assert(RESULT.OK < RESULT.FAIL)
-assert(RESULT.OK.value > RESULT.FAIL.value)
-assert(RESULT.get(-5) == RESULT.FAIL)
+assert RESULT.OK < RESULT.FAIL
+assert RESULT.OK.value > RESULT.FAIL.value
+assert RESULT.get(-5) == RESULT.FAIL
