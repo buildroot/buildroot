@@ -36,7 +36,9 @@ reload() {
 
 case "$1" in
 	start|stop|restart|reload)
-		if "$1"; then
+		"$1"
+		status=$?
+		if [ "$status" -eq 0 ]; then
 			echo "OK"
 		else
 			echo "FAIL"
@@ -48,4 +50,4 @@ case "$1" in
 		;;
 esac
 
-exit $?
+exit "$status"
