@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SEATD_VERSION = 0.8.0
+SEATD_VERSION = 0.9.1
 SEATD_SOURCE = $(SEATD_VERSION).tar.gz
 SEATD_SITE = https://git.sr.ht/~kennylevinsen/seatd/archive
 SEATD_LICENSE = MIT
