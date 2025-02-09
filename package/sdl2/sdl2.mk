@@ -23,7 +23,6 @@ SDL2_CONF_OPTS += \
 	--disable-video-vivante \
 	--disable-video-cocoa \
 	--disable-video-metal \
-	--disable-video-wayland \
 	--disable-video-dummy \
 	--disable-video-offscreen \
 	--disable-video-vulkan \
@@ -103,6 +102,13 @@ SDL2_DEPENDENCIES += xlib_libXcursor
 SDL2_CONF_OPTS += --enable-video-x11-xcursor
 else
 SDL2_CONF_OPTS += --disable-video-x11-xcursor
+endif
+
+ifeq ($(BR2_PACKAGE_SDL2_WAYLAND),y)
+SDL2_DEPENDENCIES += libegl libxkbcommon wayland wayland-protocols
+SDL2_CONF_OPTS += --enable-video-wayland
+else
+SDL2_CONF_OPTS += --disable-video-wayland
 endif
 
 ifeq ($(BR2_PACKAGE_XLIB_LIBXI),y)
