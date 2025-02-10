@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-SQLITE_VERSION = 3.48.0
-SQLITE_TAR_VERSION = 3480000
+SQLITE_VERSION = 3.49.0
+SQLITE_TAR_VERSION = 3490000
 SQLITE_SOURCE = sqlite-autoconf-$(SQLITE_TAR_VERSION).tar.gz
 SQLITE_SITE = https://www.sqlite.org/2025
 SQLITE_LICENSE = blessing
