@@ -1,7 +1,9 @@
 # This Dockerfile generates the docker image that gets used by Gitlab CI
-# To build it (YYYYMMDD.HHMM is the current date and time in UTC):
-#   docker build -t registry.gitlab.com/buildroot.org/buildroot/base:YYYYMMDD.HHMM support/docker
-#   docker push registry.gitlab.com/buildroot.org/buildroot/base:YYYYMMDD.HHMM
+# To build it for arm64 and amd64 (YYYYMMDD.HHMM is the current date and time in UTC):
+#   docker buildx create --use
+#   docker buildx build --platform linux/amd64,linux/arm64/v8 \
+#       -t registry.gitlab.com/buildroot.org/buildroot/base:YYYYMMDD.HHMM \
+#       --push support/docker
 
 # We use a specific tag for the base image *and* the corresponding date
 # for the repository., so do not forget to update the apt-sources.list
@@ -21,9 +23,20 @@ ENV DEBIAN_FRONTEND noninteractive
 # This repository can be a bit slow at times. Don't panic...
 COPY apt-sources.list /etc/apt/sources.list
 
+# Install 32bit variant on x86_64 image.
+RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
+    dpkg --add-architecture i386; \
+fi
+
 # The container has no package lists, so need to update first
-RUN dpkg --add-architecture i386 && \
-    apt-get -o APT::Retries=3 update -y
+RUN apt-get -o APT::Retries=3 update -y
+
+RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
+    apt-get -o APT::Retries=3 install -y --no-install-recommends \
+        g++-multilib \
+        libc6:i386; \
+fi
+
 RUN apt-get -o APT::Retries=3 install -y --no-install-recommends \
         bc \
         build-essential \
@@ -35,9 +48,8 @@ RUN apt-get -o APT::Retries=3 install -y --no-install-recommends \
         cvs \
         file \
         flake8 \
-        g++-multilib \
+        g++ \
         git \
-        libc6:i386 \
         libncurses5-dev \
         locales \
         mercurial \
