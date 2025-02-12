@@ -12,4 +12,5 @@ bootm loados ${scriptaddr};
 bootm ramdisk;
 bootm prep;
 fdt set /soc/ethernet@20110000 mac-address ${beaglevfire_mac_addr0};
+run design_overlays;
 bootm go;

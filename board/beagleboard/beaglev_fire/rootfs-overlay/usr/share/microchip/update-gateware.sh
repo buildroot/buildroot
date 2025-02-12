@@ -13,20 +13,47 @@ fi
 cp "$1"/mpfs_dtbo.spi /lib/firmware/mpfs_dtbo.spi
 cp "$1"/mpfs_bitstream.spi /lib/firmware/mpfs_bitstream.spi
 
-mount -t debugfs none /sys/kernel/debug
-
 # Trash existing device tree overlay in case the rest of the process fails:
-flash_erase /dev/mtd0 0 1024
+flash_erase /dev/mtd0 0 16
 
-# # Write device tree overlay
-dd if=/lib/firmware/mpfs_dtbo.spi of=/dev/mtd0 seek=1024
+# Initiate FPGA update for dtbo
+echo 1 > /sys/class/firmware/mpfs-auto-update/loading
+
+# Write device tree overlay
+cat /lib/firmware/mpfs_dtbo.spi > /sys/class/firmware/mpfs-auto-update/data
+
+# Signal completion for dtbo load
+echo 0 > /sys/class/firmware/mpfs-auto-update/loading
+
+while [ "$(cat /sys/class/firmware/mpfs-auto-update/status)" != "idle" ]; do
+    # Do nothing, just keep checking
+    sleep 1
+done
 
 # Fake the presence of a golden image for now.
-dd if=/dev/zero of=/dev/mtd0 count=4 bs=1
+dd if=/dev/zero of=/dev/mtd0 count=1 bs=4
 
-# Initiate FPGA update.
-echo 1 > /sys/kernel/debug/fpga/microchip_exec_update
+# Initiate FPGA update for bitstream
+echo 1 > /sys/class/firmware/mpfs-auto-update/loading
 
-# Reboot Linux for the gateware update to take effect.
-# FPGA reprogramming takes places between Linux shut-down and HSS restarting the board.
-reboot
+# Write the firmware image to the data sysfs file
+cat /lib/firmware/mpfs_bitstream.spi > /sys/class/firmware/mpfs-auto-update/data
+
+# Signal completion for bitstream load
+echo 0 > /sys/class/firmware/mpfs-auto-update/loading
+
+while [ "$(cat /sys/class/firmware/mpfs-auto-update/status)" != "idle" ]; do
+    # Do nothing, just keep checking
+    sleep 1
+done
+
+# When the status is 'idle' and no error has occured, reboot the system for
+# the gateware update to take effect. FPGA reprogramming takes places between
+# Linux shut-down and HSS restarting the board.
+if [ "$(cat /sys/class/firmware/mpfs-auto-update/error)" = "" ]; then
+    echo "FPGA update ready. Rebooting."
+    reboot
+else
+    echo "FPGA update failed with status: $(cat /sys/class/firmware/mpfs-auto-update/error)"
+    exit 1
+fi
