@@ -18,7 +18,7 @@ description="Container with everything needed to run Buildroot"
 ARG TAR_VERSION="1.35"
 
 # Setup environment
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 # This repository can be a bit slow at times. Don't panic...
 COPY apt-sources.list /etc/apt/sources.list
@@ -91,5 +91,5 @@ RUN useradd -ms /bin/bash br-user && \
 
 USER br-user
 WORKDIR /home/br-user
-ENV HOME /home/br-user
-ENV LC_ALL en_US.UTF-8
+ENV HOME=/home/br-user
+ENV LC_ALL=en_US.UTF-8
