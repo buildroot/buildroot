@@ -108,12 +108,12 @@ https://docs.beagleboard.org/latest/boards/beaglev/fire/demos-and-tutorials/gate
   Unzip the downloaded artifacts.zip file.
 
   Go to the custom FPGA design directory:
-    'cd artifacts/bitstreams/my_custom_fpga_design'
+    'cd artifacts/bitstreams/my_custom_fpga_design/LinuxProgramming/'
 
   On your Linux host development computer, copy the bitstream to BeagleV-Fire
   board, replacing </path/to/your/> with the path to your BeagleV-Fire root file
   system.
-    'cp -r ./LinuxProgramming /path/to/your/buildroot/board/beagleboard/beaglev_fire/rootfs-overlay/etc/'
+    'cp ./* /path/to/your/buildroot/board/beagleboard/beaglev_fire/rootfs-overlay/lib/firmware/'
 
   To apply these changes to your image, make sure to re-build it with:
     `make`
@@ -121,14 +121,7 @@ https://docs.beagleboard.org/latest/boards/beaglev/fire/demos-and-tutorials/gate
   Then, re-flash your image - to ensure you have the necessary firmware files - by
   following the above section "Flashing the image to your eMMC".
 
-  On BeagleV-Fire,
-    1. Make your update gateware script executable
-      'chmod +x /usr/share/microchip/update-gateware.sh'
-    2. Create a firmware directory
-      'mkdir /lib/firmware'
-    3. Change to the directory of your gateware script
-      `cd /usr/share/microchip/`
-    3. initiate the reprogramming of the FPGA with your gateware bitstream:
-      './update-gateware.sh /etc/LinuxProgramming/'
+  On BeagleV-Fire initiate the reprogramming of the FPGA with your gateware bitstream:
+    `/usr/share/microchip/update-gateware.sh`
 
   Wait for a couple of minutes for the BeagleV-Fire to reprogram itself.

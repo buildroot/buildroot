@@ -1,17 +1,24 @@
 #!/bin/sh
 
-if [ ! -e "$1"/mpfs_bitstream.spi ]; then
+if [ $# -eq 0 ]; then
+    echo "No gateware location provided. Checking default location."
+    if [ ! -e /lib/firmware/mpfs_bitstream.spi ]; then
         echo "No gateware file found."
         exit 1
+    fi
+else
+    echo "Gateware location provided: $1"
+    if [ ! -e "$1"/mpfs_bitstream.spi ]; then
+        echo "No gateware file found."
+        exit 1
+    else
+        if [ ! -d /lib/firmware ]; then
+            mkdir /lib/firmware
+        fi
+        cp "$1"/mpfs_dtbo.spi /lib/firmware/mpfs_dtbo.spi
+        cp "$1"/mpfs_bitstream.spi /lib/firmware/mpfs_bitstream.spi
+    fi
 fi
-
-if [ ! -d /lib/firmware ]
-then
-    mkdir /lib/firmware
-fi
-
-cp "$1"/mpfs_dtbo.spi /lib/firmware/mpfs_dtbo.spi
-cp "$1"/mpfs_bitstream.spi /lib/firmware/mpfs_bitstream.spi
 
 # Trash existing device tree overlay in case the rest of the process fails:
 flash_erase /dev/mtd0 0 16
