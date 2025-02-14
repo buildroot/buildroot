@@ -6,10 +6,57 @@ config BR2_TARGET_ROOTFS_EROFS
 
 if BR2_TARGET_ROOTFS_EROFS
 
-config BR2_TARGET_ROOTFS_EROFS_LZ4HC
-	bool "lz4hc compression"
+choice
+	prompt "Compression algorithm"
+	default BR2_TARGET_ROOTFS_EROFS_LZ4HC
 	help
-	  Use lz4 high-compression to compress data in the filesystem.
+	  Select the EROFS compression algorithm to use.
+
+	  LZ4HC (LZ4 High Compression) is the default algorithm and
+	  provides a good balance between compression ratio and speed,
+	  with increasing levels the compression ratio increases at the
+	  penalty of higher compression times, without significant
+	  decompression penalty.
+
+	  LZMA provides the best compression ratio but is significantly
+	  slower both in compression and decompression, and higher
+	  compression levels can have noticeable memory requirements.
+
+config BR2_TARGET_ROOTFS_EROFS_NONE
+	bool "no compression"
+
+config BR2_TARGET_ROOTFS_EROFS_LZ4HC
+	bool "lz4hc"
+
+config BR2_TARGET_ROOTFS_EROFS_LZMA
+	bool "lzma"
+
+endchoice
+
+if BR2_TARGET_ROOTFS_EROFS_LZ4HC
+
+config BR2_TARGET_ROOTFS_EROFS_LZ4HC_LEVEL
+	int "lz4hc compression level"
+	default 9
+	range 1 12
+	help
+	  Specify the compression level for LZ4HC compression.
+
+endif # BR2_TARGET_ROOTFS_EROFS_LZ4HC
+
+if BR2_TARGET_ROOTFS_EROFS_LZMA
+
+config BR2_TARGET_ROOTFS_EROFS_LZMA_LEVEL
+	int "lzma compression level"
+	default 6
+	range 0 109
+	help
+	  Specify the compression level for LZMA compression.
+
+	  Values from 0 to 9 are used for the standard compression,
+	  values from 100 to 109 are used for the extreme compression.
+
+endif # BR2_TARGET_ROOTFS_EROFS_LZMA
 
 config BR2_TARGET_ROOTFS_EROFS_PCLUSTERSIZE
 	int "pcluster size"
