@@ -58,6 +58,33 @@ config BR2_TARGET_ROOTFS_EROFS_LZMA_LEVEL
 
 endif # BR2_TARGET_ROOTFS_EROFS_LZMA
 
+config BR2_TARGET_ROOTFS_EROFS_DEDUPE
+	bool "enable data deduplication"
+	depends on !BR2_TARGET_ROOTFS_EROFS_NONE
+	help
+	  Enable global compressed data deduplication to reduce FS image
+	  size. Introduced in Linux 6.1.
+
+config BR2_TARGET_ROOTFS_EROFS_FRAGMENTS
+	bool "enable fragments packing"
+	help
+	  Pack the tail part (pcluster) of compressed files, or entire
+	  files, into a special inode for smaller image size.
+	  Introduced in Linux 6.1.
+
+config BR2_TARGET_ROOTFS_EROFS_ALL_FRAGMENTS
+	bool "enable fragments packing"
+	help
+	  Forcely record the whole files into a special inode for better
+	  compression. Introduced in Linux 6.1.
+
+config BR2_TARGET_ROOTFS_EROFS_ZTAILPACKING
+	bool "enable ztailpacking"
+	help
+	  Pack the tail part (pcluster) of compressed files into its
+	  metadata to save more space and the tail part I/O. Introduced
+	  in Linux 5.17.
+
 config BR2_TARGET_ROOTFS_EROFS_PCLUSTERSIZE
 	int "pcluster size"
 	default 0
