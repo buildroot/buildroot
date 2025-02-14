@@ -9,3 +9,4 @@ class TestPythonPy3Spake2(TestPythonPackageBase):
         BR2_PACKAGE_PYTHON_SPAKE2=y
         """
     sample_scripts = ["tests/package/sample_python_spake2.py"]
+    timeout = 10  # /dev/urandom can take a while to become initialized
