@@ -1,0 +1,97 @@
+From 29e9322e6a8238205780107e731a51b48845f9c7 Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Mon, 10 Feb 2025 22:59:04 +0100
+Subject: [PATCH] Makefile.am: fix parallel build
+
+When building fakeroot on host with large number of CPUs, compilation
+can randomly fail. Failures were observed on hosts with 24 CPUs.
+
+Build logs show errors such as:
+
+    make -j$(nproc)
+    ...
+    awk -f ./wrapawk < ./wrapfunc.inp
+    awk -f ./wrapawk < ./wrapfunc.inp
+    ...
+    In file included from libfakeroot.c:265:
+    wraptmpf.h:607: error: unterminated #ifdef
+      607 | #ifdef __APPLE__
+          |
+    wraptmpf.h:601: error: unterminated #ifdef
+      601 | #ifdef HAVE_FTS_CHILDREN
+          |
+    wraptmpf.h:2: error: unterminated #ifndef
+        2 | #ifndef WRAPTMPF_H
+          |
+    ...
+
+The issue was observed in the builders of Buildroot Linux [1], which
+is using fakeroot. Examples of build failures are [2], [3], [4].
+
+It is important to note that in all failing cases, there is
+more that one parallel invocation of the "wrapawk" script [5].
+
+This script is meant to generate many output files (wrapped.h,
+wrapdef.h, wrapstruct.h, wraptmpf.h) from a single invocation.
+
+The Makefile.am file is using multiple targets in an attempt to
+reflect that generation of multiple outputs at once. See [6].
+
+This use of multiple targets in this rule is incorrect here. See
+the Make manual [7]. This construct, used in Makefile.am, incorrectly
+assumes all those targets are independant (so they can be executed in
+parallel). They are not. In the current failing case, parallel
+invocations will generates all their respective output files,
+overwriting each other. This could lead to incomplete generated
+files, resulting to the observed compilation failures.
+
+Note that GNU Make 4.3 introduced "Grouped Targets" for that purpose.
+See "Rules with Grouped Targets" section in [7]. But this would add a
+requirement on Make >= 4.3.
+
+For that reason, this commit fixes the issue by using a simpler
+construct, working with all Make versions: the first output file
+"wrapped.h" is kept as a target, and it is devlared as a
+dependency of the three other generated files. This change makes sure
+that only one invocation of "wrapawk" will happen at a time,
+disregarding the number of parallel jobs requiring those generated
+files. This has the effect of completely solving the parallel build
+for all GNU Make versions.
+
+[1] https://buildroot.org/
+[2] https://gitlab.com/buildroot.org/buildroot/-/jobs/9085451831
+[3] https://gitlab.com/buildroot.org/buildroot/-/jobs/9085451244
+[4] https://gitlab.com/buildroot.org/buildroot/-/jobs/9085451198
+[5] https://salsa.debian.org/clint/fakeroot/-/blob/master/wrapawk
+[6] https://salsa.debian.org/clint/fakeroot/-/blob/upstream/1.37/Makefile.am#L54
+[7] https://www.gnu.org/software/make/manual/html_node/Multiple-Targets.html
+
+Upstream: Proposed: https://salsa.debian.org/clint/fakeroot/-/merge_requests/33
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ Makefile.am | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 46f01eb..ff71a8d 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -48,12 +48,13 @@ EXTRA_DIST=wrapawk wrapawk_macosx wrapfunc.inp           \
+ CLEAN_FILES=fakerootconfig.h
+ 
+ if MACOSX
+-wrapped.h wrapdef.h wrapstruct.h wraptmpf.h:wrapawk_macosx wrapfunc.inp
++wrapped.h: wrapawk_macosx wrapfunc.inp
+ 	awk -f $(srcdir)/wrapawk_macosx < $(srcdir)/wrapfunc.inp
+ else !MACOSX
+-wrapped.h wrapdef.h wrapstruct.h wraptmpf.h:wrapawk wrapfunc.inp
++wrapped.h: wrapawk wrapfunc.inp
+ 	awk -f $(srcdir)/wrapawk < $(srcdir)/wrapfunc.inp
+ endif !MACOSX
++wrapdef.h wrapstruct.h wraptmpf.h: wrapped.h
+ 
+ libfakeroot.lo:libfakeroot.c wrapdef.h wrapstruct.h wraptmpf.h
+ 
+-- 
+2.48.1
+
