@@ -48,16 +48,38 @@ config BR2_PACKAGE_DOCKER_ENGINE_DRIVER_VFS
 	help
 	  Build the vfs filesystem driver for Docker.
 
-config BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT
+choice
 	bool "support docker-init"
+	default BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT_TINI if BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT  # legacy
+	help
+	  Support providing a minimal init process for containers.
+	  Required to use "docker run --init".
+
+config BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT_NONE
+	bool "none"
+	help
+	  Do not support docker-init.
+
+config BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT_CATATONIT
+	bool "catatonit"
+	select BR2_PACKAGE_CATATONIT # runtime
+	help
+	  Support providing a minimal init process for containers,
+	  using catatonit.
+
+config BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT_TINI
+	bool "tini"
 	select BR2_PACKAGE_TINI # runtime
 	help
 	  Support providing a minimal init process for containers,
-	  using tini. Required to use "docker run --init".
+	  using tini.
 
-	  This does not change the Docker engine build, the
-	  docker-init symlink is provided by the tini package
-	  itself. This option only adds the dependency.
+endchoice
+
+config BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT_NAME
+	string
+	default "tini" if BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT_TINI
+	default "catatonit" if BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT_CATATONIT
 
 endif
 

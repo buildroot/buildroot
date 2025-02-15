@@ -35,10 +35,12 @@ DOCKER_ENGINE_DEPENDENCIES += systemd
 DOCKER_ENGINE_TAGS += systemd journald
 endif
 
-ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT),y)
+DOCKER_ENGINE_INIT_NAME = $(call qstrip,$(BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT_NAME))
+ifneq ($(DOCKER_ENGINE_INIT_NAME),)
 define DOCKER_ENGINE_INIT
 	mkdir -p $(TARGET_DIR)/usr/libexec/docker
-	ln -sf ../../bin/tini $(TARGET_DIR)/usr/libexec/docker/docker-init
+	ln -sf ../../bin/$(DOCKER_ENGINE_INIT_NAME) \
+		$(TARGET_DIR)/usr/libexec/docker/docker-init
 endef
 DOCKER_ENGINE_POST_INSTALL_TARGET_HOOKS += DOCKER_ENGINE_INIT
 endif
