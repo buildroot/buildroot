@@ -26,6 +26,10 @@ MUSL_ADD_TOOLCHAIN_DEPENDENCY = NO
 
 MUSL_INSTALL_STAGING = YES
 
+# 0004-iconv-fix-erroneous-input-validation-in-EUC-KR-decod.patch
+# 0005-iconv-harden-UTF-8-output-code-path-against-input-de.patch
+MUSL_IGNORE_CVES += CVE-2025-26519
+
 # musl does not build with LTO, so explicitly disable it
 # when using a compiler that may have support for LTO
 ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_4_7),y)
