@@ -35,6 +35,14 @@ DOCKER_ENGINE_DEPENDENCIES += systemd
 DOCKER_ENGINE_TAGS += systemd journald
 endif
 
+ifeq ($(BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT),y)
+define DOCKER_ENGINE_INIT
+	mkdir -p $(TARGET_DIR)/usr/libexec/docker
+	ln -sf ../../bin/tini $(TARGET_DIR)/usr/libexec/docker/docker-init
+endef
+DOCKER_ENGINE_POST_INSTALL_TARGET_HOOKS += DOCKER_ENGINE_INIT
+endif
+
 ifneq ($(BR2_PACKAGE_DOCKER_ENGINE_DRIVER_BTRFS),y)
 DOCKER_ENGINE_TAGS += exclude_graphdriver_btrfs
 endif
