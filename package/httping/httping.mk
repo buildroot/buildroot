@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HTTPING_VERSION = 0e26c53d5fe504eb7204d64b23513729aa4a5bb0
+HTTPING_VERSION = ffb9201042813c58d020df41697f6445df96f438
 HTTPING_SITE = https://github.com/folkertvanheusden/HTTPing
 HTTPING_SITE_METHOD = git
 HTTPING_LICENSE = AGPL-3.0
