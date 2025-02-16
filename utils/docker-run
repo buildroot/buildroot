@@ -35,7 +35,14 @@ declare -a mountpoints=(
 # compatibility command.
 export PODMAN_USERNS="keep-id"
 
-if command -v docker >/dev/null; then
+if [ "${BR2_DOCKER}" ]; then
+    if command -v "${BR2_DOCKER}" >/dev/null; then
+        DOCKER="${BR2_DOCKER}"
+    else
+        printf 'ERROR: Command "%s" (from env BR2_DOCKER) not found.\n' "${BR2_DOCKER}" >&2
+        exit 1
+    fi
+elif command -v docker >/dev/null; then
     DOCKER="docker"
 elif command -v podman >/dev/null; then
     DOCKER="podman"
