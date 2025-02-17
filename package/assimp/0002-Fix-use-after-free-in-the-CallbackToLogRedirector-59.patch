@@ -1,0 +1,39 @@
+From f12e52198669239af525e525ebb68407977f8e34 Mon Sep 17 00:00:00 2001
+From: tyler92 <tyler92@inbox.ru>
+Date: Wed, 11 Dec 2024 12:17:14 +0200
+Subject: [PATCH] Fix use after free in the CallbackToLogRedirector (#5918)
+
+The heap-use-after-free vulnerability occurs in the
+CallbackToLogRedirector function. During the process of logging,
+a previously freed memory region is accessed, leading to a
+use-after-free condition. This vulnerability stems from incorrect
+memory management, specifically, freeing a log stream and then
+attempting to access it later on.
+
+This patch sets NULL value for The DefaultStream global pointer.
+
+Co-authored-by: Kim Kulling <kimkulling@users.noreply.github.com>
+Upstream: https://github.com/assimp/assimp/commit/f12e52198669239af525e525ebb68407977f8e34
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ code/Common/Assimp.cpp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/code/Common/Assimp.cpp b/code/Common/Assimp.cpp
+index 91896e405..22e16bd36 100644
+--- a/code/Common/Assimp.cpp
++++ b/code/Common/Assimp.cpp
+@@ -416,6 +416,10 @@ ASSIMP_API aiReturn aiDetachLogStream(const aiLogStream *stream) {
+     DefaultLogger::get()->detachStream(it->second);
+     delete it->second;
+ 
++    if ((Assimp::LogStream *)stream->user == DefaultStream) {
++        DefaultStream = nullptr;
++    }
++
+     gActiveLogStreams.erase(it);
+ 
+     if (gActiveLogStreams.empty()) {
+-- 
+2.39.5
+
