@@ -1,0 +1,85 @@
+From f6d56c374723923e276ccfd442fdd0cabf23d095 Mon Sep 17 00:00:00 2001
+From: Fiona Klute <fiona.klute@gmx.de>
+Date: Fri, 14 Feb 2025 19:26:24 +0100
+Subject: [PATCH] Fix use of uninitialized exit status
+
+Depending on the timing between the SIGCHLD callback run and the first
+generic_cb() timer callback run, script_exit_status() sometimes
+returned uninitialized memory as the exit status of a script. This
+could lead to incorrect "critical error" reports if that uninitialized
+memory happened to contain a value that interpreted as an int was
+above the critical threshold.
+
+Additionally, script_exit_status() unconditionally removed the process
+information from the queue, meaning that if a process had not
+completed by the time its status was first probed, its status could
+never be updated or successfully probed again, leading to timeout. Fix
+this by removing the process only if the status indicates it has
+terminated (successful or not).
+
+The problems affected primarily scripts running approximately one
+second or longer, because very short running scripts will very likely
+have their exit status collected by the SIGCHLD callback before the
+first timer callback run.
+
+Signed-off-by: Fiona Klute <fiona.klute@gmx.de>
+Upstream: https://github.com/troglobit/watchdogd/pull/52
+---
+ src/script.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/src/script.c b/src/script.c
+index 1220fb9..f6e0763 100644
+--- a/src/script.c
++++ b/src/script.c
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include <errno.h>
++#include <stdbool.h>		/* bool type (before C23) */
+ #include <stdlib.h>		/* setenv() */
+ #include <sys/wait.h>		/* waitpid() */
+ #include <unistd.h>		/* execv(), _exit() */
+@@ -28,6 +29,7 @@
+ struct exec_info {
+ 	pid_t   pid;
+ 	int     exit_status;
++	bool    exited;
+ 	void  (*cb)(void *arg);
+ 	void   *arg;
+ 	LIST_ENTRY(exec_info) entry;
+@@ -64,6 +66,8 @@ static void add(pid_t pid, void (*cb)(void *), void *arg)
+ 	}
+ 
+ 	info->pid = pid;
++	info->exit_status = 0;
++	info->exited = false;
+ 	info->cb  = cb;
+ 	info->arg = arg;
+ 	LIST_INSERT_HEAD(&exec_info_head, info, entry);
+@@ -78,6 +82,7 @@ static int exec(pid_t pid, int status)
+ 			continue;
+ 
+ 		info->exit_status = status;
++		info->exited = true;
+ 		if (info->cb)
+ 			info->cb(info->arg);
+ 
+@@ -96,9 +101,11 @@ int script_exit_status(pid_t pid)
+ 		if (info->pid != pid)
+ 			continue;
+ 
+-		status = info->exit_status;
+-		LIST_REMOVE(info, entry);
+-		free(info);
++		if (info->exited) {
++			status = info->exit_status;
++			LIST_REMOVE(info, entry);
++			free(info);
++		}
+ 		break;
+ 	}
+ 
+-- 
+2.47.2
+
