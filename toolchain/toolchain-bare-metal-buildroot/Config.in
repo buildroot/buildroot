@@ -1,10 +1,16 @@
 if BR2_TOOLCHAIN_BARE_METAL_BUILDROOT
 
 config BR2_TOOLCHAIN_BARE_METAL_BUILDROOT_ARCH
-	string "architecture tuple"
+	string "list of architecture tuples"
 	help
-	  This option allows to define the architecture tuple for the
-	  bare-metal toolchain.
+	  This option allows to define the list of architecture
+	  tuples for which bare-metal toolchains will be created.
+	  One toolchain will be built for each of the architecture
+	  tuples specified in this option.
+
+	  For example, to build both a Microblaze and a RISC-V bare
+	  metal toolchain, use the following definition:
+	  "microblazeel-xilinx-elf riscv32-buldroot-elf"
 
 source "package/newlib-bare-metal/Config.in"
 
