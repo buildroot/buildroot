@@ -5,11 +5,6 @@
 main() {
     local ret start d h m mf
 
-    if ! which unbuffer >/dev/null 2>&1; then
-        printf "you need to install 'unbuffer' (from package expect or expect-dev)\n" >&2
-        exit 1
-    fi
-
     start=${SECONDS}
 
     if [ -n "$BR2_DOCKER" ]; then
@@ -18,7 +13,7 @@ main() {
         docker=()
     fi
 
-    ( exec 2>&1; unbuffer "${docker[@]}" make "${@}"; ) \
+    ( exec 2>&1; "${docker[@]}" make "${@}"; ) \
     > >( while read -r line; do
              printf "%(%Y-%m-%dT%H:%M:%S)T %s\n" -1 "${line}"
          done \
