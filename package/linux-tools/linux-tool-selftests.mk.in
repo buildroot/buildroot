@@ -26,6 +26,9 @@ SELFTESTS_MAKE_FLAGS = \
 	ARCH=$(SELFTESTS_ARCH) \
 	KHDR_DIR=$(LINUX_DIR)/usr/include
 
+LINUX_TOOLS_BIN_ARCH_EXCLUDE += \
+	/usr/lib/kselftests/tc-testing/
+
 # O must be redefined here to overwrite the one used by Buildroot for
 # out of tree build. We build the selftests in $(LINUX_DIR)/tools/selftests and
 # not just $(LINUX_DIR) so that it isn't built in the root directory of the kernel
