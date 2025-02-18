@@ -7,9 +7,6 @@ brmake
     front of each line, redirects all of the build output to a file
     ("'br.log' in the current directory), and just outputs the Buildroot
     messages (those lines starting with >>>) on stdout.
-    To run this within a container using docker-run (see below), set
-    BR2_DOCKER=y in the environment, i.e. call it as
-    `BR2_DOCKER=y utils/brmake`.
     Do not run this script for interactive configuration (e.g. menuconfig)
     or on an unconfigured directory. The output is redirected so you will see
     nothing.
