@@ -80,7 +80,7 @@ RUN curl -sfL https://ftpmirror.gnu.org/tar/tar-${TAR_VERSION}.tar.xz | \
     tar -Jx -C /tmp && \
     cd /tmp/tar-${TAR_VERSION} && \
     FORCE_UNSAFE_CONFIGURE=1 ./configure \
-        --disable-year2028 && \
+        --disable-year2038 && \
     make && \
     make install && \
     rm -rf /tmp/tar-${TAR_VERSION}
