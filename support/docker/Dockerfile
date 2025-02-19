@@ -14,6 +14,9 @@ LABEL maintainer="Buildroot mailing list <buildroot@buildroot.org>" \
       vendor="Buildroot" \
 description="Container with everything needed to run Buildroot"
 
+# Architecture to build for
+ARG TARGETPLATFORM
+
 # We need tar >= 1.35
 ARG TAR_VERSION="1.35"
 
