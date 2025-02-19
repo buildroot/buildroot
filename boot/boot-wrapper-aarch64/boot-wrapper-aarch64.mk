@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BOOT_WRAPPER_AARCH64_VERSION = 9f26a1c1f27bd6b5b66c265114848007fc22e4aa
+BOOT_WRAPPER_AARCH64_VERSION = ac6742520ded1da30d500f74e8affe86e27cabd5
 BOOT_WRAPPER_AARCH64_SITE = https://git.kernel.org/pub/scm/linux/kernel/git/mark/boot-wrapper-aarch64.git
 BOOT_WRAPPER_AARCH64_SITE_METHOD = git
 BOOT_WRAPPER_AARCH64_LICENSE = BSD-3-Clause
