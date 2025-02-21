@@ -6,11 +6,11 @@
 
 # When bumping, make sure *all* --without-libfoo-prefix options are in GNUTLS_CONF_OPTS
 GNUTLS_VERSION_MAJOR = 3.8
-GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).8
+GNUTLS_VERSION = $(GNUTLS_VERSION_MAJOR).9
 GNUTLS_SOURCE = gnutls-$(GNUTLS_VERSION).tar.xz
 GNUTLS_SITE = https://www.gnupg.org/ftp/gcrypt/gnutls/v$(GNUTLS_VERSION_MAJOR)
 GNUTLS_LICENSE = LGPL-2.1+ (core library)
-GNUTLS_LICENSE_FILES = doc/COPYING.LESSER
+GNUTLS_LICENSE_FILES = COPYING.LESSERv2 README.md
 
 GNUTLS_DEPENDENCIES = host-pkgconf libtasn1 libunistring nettle
 GNUTLS_CPE_ID_VENDOR = gnu
@@ -70,7 +70,7 @@ HOST_GNUTLS_CONF_OPTS = \
 
 ifeq ($(BR2_PACKAGE_GNUTLS_OPENSSL),y)
 GNUTLS_LICENSE += , GPL-3.0+ (gnutls-openssl library)
-GNUTLS_LICENSE_FILES += doc/COPYING
+GNUTLS_LICENSE_FILES += COPYING
 GNUTLS_CONF_OPTS += --enable-openssl-compatibility
 else
 GNUTLS_CONF_OPTS += --disable-openssl-compatibility
