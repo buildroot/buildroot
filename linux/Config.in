@@ -435,12 +435,41 @@ config BR2_LINUX_KERNEL_INTREE_DTSO_NAMES
 
 config BR2_LINUX_KERNEL_CUSTOM_DTS_PATH
 	string "Out-of-tree Device Tree Source file paths"
+	depends on BR2_LINUX_KERNEL_CUSTOM_DTS_DIR = ""
 	help
 	  Paths to out-of-tree Device Tree Source (.dts), Device Tree
 	  Source Include (.dtsi) and Device Tree Overlay Source (.dtso)
 	  files, separated by spaces. These files will be copied to the
 	  kernel sources and the .dts files will
 	  be compiled from there.
+
+	  Due to a kernel build system changes in 6.12,
+	  BR2_LINUX_KERNEL_CUSTOM_DTS_PATH is now deprecated and
+	  replaced by BR2_LINUX_KERNEL_CUSTOM_DTS_DIR
+
+config BR2_LINUX_KERNEL_CUSTOM_DTS_DIR
+	string "Out-of-tree Device Tree Source overlay directories"
+	help
+	  Specify a list of directories that are copied as-is over the
+	  arch/<arch>/boot/dts/ directory before building the device
+	  tree blob.
+
+	  This overlay can contain dts, dtso and dtsi files.
+
+	  BR2_LINUX_KERNEL_CUSTOM_DTS_DIR should point to one or more
+	  directories containing a vendor subdirectory (e.g. rockchip)
+	  which contains the dts files. This vendor subdirectory should
+	  match the vendor subdirectory used by the board in the kernel
+	  (e.g. arch/arm64/boot/dts/rockchip/).
+
+	  While most architechtures make use of vendor subdirectories,
+	  like arm, arm64 and riscv, some architectures like powerpc
+	  and xtensa do not.
+	  In this case, BR2_LINUX_KERNEL_CUSTOM_DTS_DIR should point to
+	  a directory containing the dts files directly.
+
+	  Since the 6.12 release, each out-of-tree Device Tree Source
+	  file must be copied into their corresponding sub-directory.
 
 config BR2_LINUX_KERNEL_DTB_KEEP_DIRNAME
 	bool "Keep the directory name of the Device Tree"

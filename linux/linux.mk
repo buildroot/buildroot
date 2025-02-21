@@ -213,6 +213,22 @@ LINUX_CUSTOM_DTS_PATH = $(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_DTS_PATH))
 LINUX_DTS_NAME += $(basename $(filter %.dts,$(notdir $(LINUX_CUSTOM_DTS_PATH))))
 LINUX_DTSO_NAMES += $(basename $(filter %.dtso,$(notdir $(LINUX_CUSTOM_DTS_PATH))))
 
+LINUX_KERNEL_CUSTOM_DTS_DIR = $(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_DTS_DIR))
+ifneq ($(LINUX_KERNEL_CUSTOM_DTS_DIR),)
+# Use evaluation-during-assignment using := to avoid any re-evaluation
+# of LINUX_DTS_LIST when LINUX_DTS_NAME is used.
+LINUX_DTS_LIST := $(shell find $(LINUX_KERNEL_CUSTOM_DTS_DIR) -name '*.dts' -printf '%P\n' 2>/dev/null)
+LINUX_DTSO_LIST := $(shell find $(LINUX_KERNEL_CUSTOM_DTS_DIR) -name '*.dtso' -printf '%P\n' 2>/dev/null)
+LINUX_DTS_NAME += $(basename $(LINUX_DTS_LIST))
+LINUX_DTSO_NAMES += $(basename $(LINUX_DTSO_LIST))
+
+define LINUX_COPY_CUSTOM_DTS_FILES
+	$(foreach d, $(LINUX_KERNEL_CUSTOM_DTS_DIR), \
+		@$(call MESSAGE,"Copying devicetree overlay $(d)")$(sep) \
+		$(Q)$(call SYSTEM_RSYNC,$(d),$(LINUX_ARCH_PATH)/boot/dts/)$(sep))
+endef
+endif
+
 LINUX_DTBS = $(addsuffix .dtb,$(LINUX_DTS_NAME)) $(addsuffix .dtbo,$(LINUX_DTSO_NAMES))
 
 ifeq ($(BR2_LINUX_KERNEL_IMAGE_TARGET_CUSTOM),y)
@@ -527,6 +543,7 @@ define LINUX_BUILD_CMDS
 	$(foreach dts,$(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_DTS_PATH)), \
 		cp -f $(dts) $(LINUX_ARCH_PATH)/boot/dts/
 	)
+	$(LINUX_COPY_CUSTOM_DTS_FILES)
 	$(LINUX_MAKE_ENV) $(BR2_MAKE) $(LINUX_MAKE_FLAGS) -C $(@D) all
 	$(LINUX_MAKE_ENV) $(BR2_MAKE) $(LINUX_MAKE_FLAGS) -C $(@D) $(LINUX_TARGET_NAME)
 	$(LINUX_BUILD_DTB)
