@@ -12,4 +12,9 @@ RNNOISE_INSTALL_STAGING = YES
 
 RNNOISE_CONF_OPTS = --disable-examples
 
+# rnnoise refuses to build with -Ofast unless FLOAT_APPROX is defined
+ifeq ($(BR2_OPTIMIZE_FAST),y)
+RNNOISE_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -DFLOAT_APPROX"
+endif
+
 $(eval $(autotools-package))
