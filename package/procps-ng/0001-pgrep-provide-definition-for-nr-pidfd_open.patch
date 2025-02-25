@@ -1,0 +1,57 @@
+From 90a0ddcd64c2d43dc2c2c856b1b42b5cae6b8a44 Mon Sep 17 00:00:00 2001
+From: Markus Mayer <mmayer@broadcom.com>
+Date: Wed, 11 Dec 2024 14:53:33 -0800
+Subject: [PATCH] pgrep: provide definition for __NR_pidfd_open if needed
+
+We already implement pidfd_open() ourselves if libc doesn't provide it.
+Let's also provide our own definition of __NR_pidfd_open in case the
+kernel headers don't contain it.
+
+This way, pgrep can provide its full capabilities after being built
+against older kernel headers (for increased compatibility) but being run
+on systems with newer kernels.
+
+Signed-off-by: Markus Mayer <mmayer@broadcom.com>
+Upstream: https://gitlab.com/procps-ng/procps/-/commit/90a0ddcd64c2d43dc2c2c856b1b42b5cae6b8a44
+Signed-off: Michael Nosthoff <buildroot@heine.tech>
+---
+ configure.ac | 2 +-
+ src/pgrep.c  | 9 +++++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 1e984b12..14ba3ad7 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -325,7 +325,7 @@ AS_IF([[test "x$enable_pidwait" = xyes -a "x$have_pidfd_open" = xno]],
+    AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+ #include <sys/syscall.h>
+ #ifndef __NR_pidfd_open
+-#error __NR_pidfd_open not defined
++#warning __NR_pidfd_open not defined; using our definition
+ #endif
+       ])],
+       AC_MSG_RESULT([yes]),
+diff --git a/src/pgrep.c b/src/pgrep.c
+index 2c6b06b8..6fc25dd4 100644
+--- a/src/pgrep.c
++++ b/src/pgrep.c
+@@ -874,6 +874,15 @@ static int signal_option(int *argc, char **argv)
+ }
+
+ #if defined(ENABLE_PIDWAIT) && !defined(HAVE_PIDFD_OPEN)
++
++#ifndef __NR_pidfd_open
++#ifdef __alpha__
++#define __NR_pidfd_open 544
++#else
++#define __NR_pidfd_open 434
++#endif
++#endif
++
+ static int pidfd_open (pid_t pid, unsigned int flags)
+ {
+ 	return syscall(__NR_pidfd_open, pid, flags);
+--
+GitLab
+
