@@ -3,6 +3,7 @@ config BR2_PACKAGE_PYTHON_REFERENCING
 	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-rpds-py
 	select BR2_PACKAGE_PYTHON_ATTRS # runtime
 	select BR2_PACKAGE_PYTHON_RPDS_PY # runtime
+	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime, with Python < 3.13
 	help
 	  JSON Referencing + Python.
 
