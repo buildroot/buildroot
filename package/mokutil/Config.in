@@ -30,6 +30,6 @@ comment "mokutil needs a toolchain w/ dynamic library, threads, gcc >= 4.9, head
 	depends on BR2_PACKAGE_SHIM_ARCH_SUPPORTS
 	depends on BR2_USE_MMU
 	depends on BR2_STATIC_LIBS || \
-		BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || \
 		!BR2_TOOLCHAIN_HAS_THREADS || \
-		BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12
