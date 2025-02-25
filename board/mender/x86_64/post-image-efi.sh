@@ -53,7 +53,7 @@ generate_mender_bootstrap_artifact() {
 
   "${HOST_DIR}"/bin/mender-artifact \
     write bootstrap-artifact \
-    --compression lzma \
+    --compression none \
     --artifact-name "${ARTIFACT_NAME}" \
     --device-type "${DEVICE_TYPE}" \
     --provides "rootfs-image.version:${ARTIFACT_NAME}" \
@@ -68,7 +68,7 @@ generate_mender_image() {
     echo "Creating ${BINARIES_DIR}/${DEVICE_TYPE}-${ARTIFACT_NAME}.mender"
     "${HOST_DIR}/bin/mender-artifact" \
         write rootfs-image \
-        --compression lzma \
+        --compression none \
         -t "${DEVICE_TYPE}" \
         -n "${BR2_VERSION}" \
         -f "${BINARIES_DIR}/rootfs.ext2" \
