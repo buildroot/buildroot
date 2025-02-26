@@ -1,10 +1,12 @@
-From c1c1a844c1819da38c0e03d1f23a97099b571b86 Mon Sep 17 00:00:00 2001
+From 7db6ccbed6dd0b47011d1dfecb040d447ccf4595 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:07:56 -0800
 Subject: [PATCH] Add an option to disable pydoc
 
 It removes 0.5 MB of data from the target plus the pydoc script
 itself.
+
+Upstream: N/A
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Signed-off-by: Samuel Martin <s.martin49@gmail.com>
@@ -14,34 +16,36 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 [ Adam Duskett: ported to Python 3.12.1 ]
 Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
+[ Vincent Fazio: ported to Python 3.13.2 ]
+Signed-off-by: Vincent Fazio <vfazio@gmail.com>
 ---
  Makefile.pre.in | 9 ++++++++-
  configure.ac    | 6 ++++++
  2 files changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 2ff75f51571..401d130b804 100644
+index b9a2ab2b02b..4360b60165a 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2050,7 +2050,9 @@ bininstall: commoninstall altbininstall
+@@ -2275,7 +2275,9 @@ bininstall: commoninstall altbininstall
  	-rm -f $(DESTDIR)$(BINDIR)/idle3
  	(cd $(DESTDIR)$(BINDIR); $(LN) -s idle$(VERSION) idle3)
  	-rm -f $(DESTDIR)$(BINDIR)/pydoc3
 +ifeq (@PYDOC@,yes)
  	(cd $(DESTDIR)$(BINDIR); $(LN) -s pydoc$(VERSION) pydoc3)
 +endif
- 	-rm -f $(DESTDIR)$(BINDIR)/2to3
- 	(cd $(DESTDIR)$(BINDIR); $(LN) -s 2to3-$(VERSION) 2to3)
  	if test "x$(LIPO_32BIT_FLAGS)" != "x" ; then \
-@@ -2102,7 +2104,6 @@ LIBSUBDIRS=	asyncio \
- 		lib2to3 lib2to3/fixes lib2to3/pgen2 \
+ 		rm -f $(DESTDIR)$(BINDIR)/python3-32$(EXE); \
+ 		(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)-32$(EXE) python3-32$(EXE)) \
+@@ -2325,7 +2327,6 @@ LIBSUBDIRS=	asyncio \
  		logging \
  		multiprocessing multiprocessing/dummy \
+ 		pathlib \
 -		pydoc_data \
  		re \
  		site-packages \
  		sqlite3 \
-@@ -2263,6 +2264,10 @@ TESTSUBDIRS=	idlelib/idle_test \
+@@ -2483,6 +2484,10 @@ TESTSUBDIRS=	idlelib/idle_test \
  
  COMPILEALL_OPTS=-j0
  
@@ -52,9 +56,9 @@ index 2ff75f51571..401d130b804 100644
  TEST_MODULES=@TEST_MODULES@
  
  .PHONY: libinstall
-@@ -2477,7 +2482,9 @@ libainstall: all scripts
+@@ -2710,7 +2715,9 @@ libainstall: all scripts
+ 	$(INSTALL_SCRIPT) python-config.py $(DESTDIR)$(LIBPL)/python-config.py
  	$(INSTALL_SCRIPT) python-config $(DESTDIR)$(BINDIR)/python$(LDVERSION)-config
- 	$(INSTALL_SCRIPT) $(SCRIPT_2TO3) $(DESTDIR)$(BINDIR)/2to3-$(VERSION)
  	$(INSTALL_SCRIPT) $(SCRIPT_IDLE) $(DESTDIR)$(BINDIR)/idle$(VERSION)
 +ifeq (@PYDOC@,yes)
  	$(INSTALL_SCRIPT) $(SCRIPT_PYDOC) $(DESTDIR)$(BINDIR)/pydoc$(VERSION)
@@ -63,10 +67,10 @@ index 2ff75f51571..401d130b804 100644
  		"`echo $(MACHDEP) | sed 's/^\(...\).*/\1/'`" = "aix" ]; then \
  		echo; echo "Installing support files for building shared extension modules on AIX:"; \
 diff --git a/configure.ac b/configure.ac
-index 7bc049863c3..ca226dcc5b9 100644
+index c60381f9605..583adc7e16a 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4514,6 +4514,12 @@ AS_VAR_IF([posix_threads], [stub], [
+@@ -4661,6 +4661,12 @@ AS_VAR_IF([posix_threads], [stub], [
    AC_DEFINE([HAVE_PTHREAD_STUBS], [1], [Define if platform requires stubbed pthreads support])
  ])
  
@@ -80,5 +84,5 @@ index 7bc049863c3..ca226dcc5b9 100644
  AH_TEMPLATE([ENABLE_IPV6], [Define if --enable-ipv6 is specified])
  AC_MSG_CHECKING([if --enable-ipv6 is specified])
 -- 
-2.39.5
+2.34.1
 

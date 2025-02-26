@@ -1,7 +1,9 @@
-From a24aee2ba81617baf01215b333c26434355bf91a Mon Sep 17 00:00:00 2001
+From bd588150572c48da6dbb2f65eb21587f0f20dfaf Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Date: Tue, 6 Feb 2024 22:12:20 +0100
 Subject: [PATCH] Add option to disable the sqlite3 module
+
+Upstream: N/A
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Signed-off-by: Samuel Martin <s.martin49@gmail.com>
@@ -10,24 +12,26 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 [ Adam Duskett: ported to Python 3.10.0 ]
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+[ Vincent Fazio: ported to Python 3.13.2 ]
+Signed-off-by: Vincent Fazio <vfazio@gmail.com>
 ---
  Makefile.pre.in | 5 ++++-
  configure.ac    | 7 +++++++
  2 files changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index aceb52e31ce..7c5bcea59ba 100644
+index e88f89b91b1..88a48eb5333 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2108,7 +2108,6 @@ LIBSUBDIRS=	asyncio \
- 		multiprocessing multiprocessing/dummy \
+@@ -2330,7 +2330,6 @@ LIBSUBDIRS=	asyncio \
+ 		pathlib \
  		re \
  		site-packages \
 -		sqlite3 \
+ 		sysconfig \
  		tkinter \
  		tomllib \
- 		turtledemo \
-@@ -2278,6 +2277,10 @@ ifeq (@IDLE@,yes)
+@@ -2493,6 +2492,10 @@ ifeq (@IDLE@,yes)
  LIBSUBDIRS += idlelib idlelib/Icons
  endif
  
@@ -39,10 +43,10 @@ index aceb52e31ce..7c5bcea59ba 100644
  
  .PHONY: libinstall
 diff --git a/configure.ac b/configure.ac
-index ab68cc3dd73..3fbcabe29c8 100644
+index 8d56a24ffcb..b6d5bb3d9c5 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4519,6 +4519,13 @@ AS_VAR_IF([posix_threads], [stub], [
+@@ -4667,6 +4667,13 @@ AS_VAR_IF([posix_threads], [stub], [
    AC_DEFINE([HAVE_PTHREAD_STUBS], [1], [Define if platform requires stubbed pthreads support])
  ])
  
@@ -57,5 +61,5 @@ index ab68cc3dd73..3fbcabe29c8 100644
  
  AC_ARG_ENABLE(pydoc,
 -- 
-2.39.5
+2.34.1
 
