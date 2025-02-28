@@ -273,12 +273,18 @@ def main():
                 Example usage: make show-info | utils/generate-cyclonedx.py | jq > sbom.json
             '''
         )
-    parser.add_argument("-i", "--in-file", nargs="?", type=argparse.FileType("r"), default=sys.stdin)
-    parser.add_argument("-o", "--out-file", nargs="?", type=argparse.FileType("w"), default=sys.stdout)
+    parser.add_argument("-i", "--in-file", nargs="?", type=argparse.FileType("r"),
+                        default=(None if sys.stdin.isatty() else sys.stdin))
+    parser.add_argument("-o", "--out-file", nargs="?", type=argparse.FileType("w"),
+                        default=sys.stdout)
     parser.add_argument("--virtual", default=False, action='store_true',
                         help="This option includes virtual packages to the CycloneDX output")
 
     args = parser.parse_args()
+
+    if args.in_file is None:
+        parser.print_help()
+        sys.exit(1)
 
     show_info_dict = json.load(args.in_file)
 
