@@ -1,3 +1,58 @@
+2025.02-rc1, released February 28th, 2025
+
+	Fixes all over the tree and new features.
+
+        Nios2 architecture support removed.
+
+	Toolchain:
+
+        - binutils 2.44 added, binutils 2.43.1 becomes the default.
+
+        - gdb 16.1 added, gdb 15.1 becomes the default.
+
+        - Synopsys external ARC toolchains marked as broken as they
+          are not "bare" toolchains, causing various build issues
+
+        - ARM external toolchains bumped to 12.4.rel1 and are now also
+          available for Aarch64 build machines
+
+        Infrastructure:
+
+        - utils/generate-cyclonedx script added to generate SBOM in
+          CycloneDX format. To use it, run
+
+            make show-info | utils/generate-cyclonedx > sbom.json
+
+        new defconfigs: FriendlyARM NanoPi R3S, NXP imx8mm-evk /
+        imx8mm-ddr4 /imx8mp-evk / imx93-evk / ls1043a-rdb /
+        ls1046a-rdb, Orangepi 5 plus, Polyhex Debix model A,
+        Raspberrypi zero 2w 64bit, Raxda rock 4SE, STM STM32MP135F-DK
+
+	New packages: bmap-writer, cpuinfo, cross-ldd, farmhash,
+	fft2d, fp16, gemmlowp, libecoli, libglib2-bootstrap, lynis,
+	nxp-bt-wifi-firmware, nxp-mwifiex, panel-mipi-dbi-firmware,
+	parsec, psimd, pthreadpool, python-aiohttp-sse-client,
+	python-asyncclick, python-changelog-chug, python-telnetlib3,
+	python-waitress, qt6graphs, qt6multimedia, qt6quick3d,
+	rnnoise, ruy, snooze, tensorflow-lite, usbip, utfcpp,
+	wlr-randr, xilinx-embeddedsw, xnnpack
+
+        Removed packages: angularjs, angular-websocket, directfb,
+        directfb-examples, fconfig, genromfs, giblib, gst-omx,
+        hiwatha, latencytop, libhid, linux-fusion, lite, mimic,
+        mongodb, obsidian-cursors, python-m2crypto, quagga, ramsmp,
+        w_scan
+
+	Issues resolved:
+	- bluetooth.service cannot connect to D-BUS
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/65
+        - gdb package doesn't have a licence hash in the gdb.hash file
+          https://gitlab.com/buildroot.org/buildroot/-/issues/66
+	- package/libsha1: Build failure with GCC 14 [-Wimplicit-int]
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/69
+	- samba4 build failed in master
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/86
+
 2024.11.2, released February 21st, 2025
 
 	Important / security related fixes.
