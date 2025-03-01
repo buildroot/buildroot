@@ -77,6 +77,7 @@ config BR2_PACKAGE_FIRMWARE_IMX_LPDDR4
 	help
 	  Use LPDDR4 binaries (i.e.: lpddr4_pmu_train_*.bin)
 
+if !BR2_PACKAGE_FIRMWARE_IMX_NEEDS_DDR_FW_IMX9
 config BR2_PACKAGE_FIRMWARE_IMX_DDR4
 	bool "DDR4"
 	help
@@ -87,6 +88,7 @@ config BR2_PACKAGE_FIRMWARE_IMX_DDR3
 	help
 	  Use DDR3 binaries (i.e.: ddr3_*_201810.bin).
 
+endif
 endchoice # DDR training FW
 
 config BR2_PACKAGE_FIRMWARE_IMX_DDR_VERSION
