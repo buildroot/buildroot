@@ -48,8 +48,6 @@ class TestFlutter(infra.basetest.BRTest, GraphicsBase):
                      "-cpu", "cortex-a57",
                      "-m", "512M",
                      "-smp", "4",
-                     "-vga", "std",
-                     "-vnc", "none",
                      "-drive", f"file={img},if=virtio,format=raw"])
         self.emulator.login()
 
