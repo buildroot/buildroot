@@ -5,7 +5,7 @@
 # to CycloneDX format.
 #
 # Example usage:
-# > make show-info | utils/generate-cyclonedx | jq '.'
+# $ make show-info | utils/generate-cyclonedx > sbom.json
 
 
 import argparse
@@ -270,7 +270,7 @@ def br2_parse_deps_recursively(ref, show_info_dict, virtual=False, deps=[]):
 def main():
     parser = argparse.ArgumentParser(
             description='''Create a CycloneDX SBoM for the Buildroot configuration.
-                Example usage: make show-info | utils/generate-cyclonedx | jq > sbom.json
+                Example usage: make show-info | utils/generate-cyclonedx > sbom.json
             '''
         )
     parser.add_argument("-i", "--in-file", nargs="?", type=argparse.FileType("r"),
@@ -316,7 +316,8 @@ def main():
         },
     }
 
-    args.out_file.write(json.dumps(cyclonedx_dict))
+    args.out_file.write(json.dumps(cyclonedx_dict, indent=2))
+    args.out_file.write('\n')
 
 
 if __name__ == "__main__":
