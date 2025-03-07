@@ -13,7 +13,7 @@ POSTGRESQL_CPE_ID_VENDOR = postgresql
 POSTGRESQL_SELINUX_MODULES = postgresql
 POSTGRESQL_INSTALL_STAGING = YES
 POSTGRESQL_CONFIG_SCRIPTS = pg_config
-POSTGRESQL_CONF_ENV = LIBS=$(TARGET_NLS_LIBS)
+POSTGRESQL_LDFLAGS = $(TARGET_LDFLAGS) $(TARGET_NLS_LIBS)
 # We have to force invalid paths for xmllint and xsltproc, otherwise
 # if detected they get used, even with -Ddocs=disabled and
 # -Ddocs_pdf=disabled, and it causes build failures
