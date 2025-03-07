@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2025.02"
 
+config BR2_PACKAGE_SQLITE_ENABLE_JSON1
+	bool "Enable the JSON extensions for SQLite has been removed"
+	select BR2_LEGACY
+	help
+	  Since SQLite 3.38 the JSON Extension is enabled by default.
+
 config BR2_PACKAGE_ANGULARJS
 	bool "angularjs has been removed"
 	select BR2_LEGACY
