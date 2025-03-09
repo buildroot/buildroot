@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NCDU_VERSION = 1.21
+NCDU_VERSION = 1.22
 NCDU_SITE = https://dev.yorhel.nl/download
 
 NCDU_DEPENDENCIES = host-pkgconf ncurses
