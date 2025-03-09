@@ -27,12 +27,11 @@ Copy the bootable "sdcard.img" onto an microSD card with "dd":
 Boot the board
 ==============
 
- (1) Insert the microSD card in connector CN15
+ (1) Insert the microSD card in connector CN3
 
- (2) Plug a micro-USB cable in connector CN11 and run your serial
+ (2) Plug a micro-USB cable in connector CN10 and run your serial
      communication program on /dev/ttyACM0.
 
- (3) Plug a USB-C cable in CN6 to power-up the board.
+ (3) Plug a USB-C cable in CN12 to power-up the board.
 
- (4) The system will start, with the console on UART, but also visible
-     on the screen.
+ (4) The system will start, with the console on UART.
