@@ -14,4 +14,7 @@ JBIG2DEC_INSTALL_STAGING = YES
 # tarball is missing install-sh, install.sh, or shtool
 JBIG2DEC_AUTORECONF = YES
 
+# 0001-Bug-705041-jbig2dec-Avoid-uninitialized-allocator-in.patch
+JBIG2DEC_IGNORE_CVES += CVE-2023-46361
+
 $(eval $(autotools-package))
