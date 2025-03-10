@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RASPBERRYPI_USBBOOT_VERSION = 20240926-102326
+RASPBERRYPI_USBBOOT_VERSION = 20250227-132106
 RASPBERRYPI_USBBOOT_SITE = https://github.com/raspberrypi/usbboot.git
 RASPBERRYPI_USBBOOT_SITE_METHOD = git
 RASPBERRYPI_USBBOOT_LICENSE = Apache-2.0
