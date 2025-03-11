@@ -1,0 +1,26 @@
+From b09e3174a695d1db60b2abc442d29ed3f87f0358 Mon Sep 17 00:00:00 2001
+From: Baruch Siach <baruch@tkos.co.il>
+Date: Wed, 7 Aug 2024 08:51:03 +0300
+Subject: m68k: fix POLLWRNORM and POLLWRBAND
+
+As noted in commit f5011c62c3 ("fix POLLWRNORM and POLLWRBAND on mips")
+m68k uses a different definition.
+
+Signed-off-by: Daniel Palmer <daniel@0x0f.com>
+Upstream: https://git.musl-libc.org/cgit/musl/commit/?id=b09e3174a695d1db60b2abc442d29ed3f87f0358
+---
+ arch/m68k/bits/poll.h | 2 ++
+ 1 file changed, 2 insertions(+)
+ create mode 100644 arch/m68k/bits/poll.h
+
+diff --git a/arch/m68k/bits/poll.h b/arch/m68k/bits/poll.h
+new file mode 100644
+index 00000000..00063f41
+--- /dev/null
++++ b/arch/m68k/bits/poll.h
+@@ -0,0 +1,2 @@
++#define POLLWRNORM POLLOUT
++#define POLLWRBAND 256
+-- 
+cgit v1.2.1
+
