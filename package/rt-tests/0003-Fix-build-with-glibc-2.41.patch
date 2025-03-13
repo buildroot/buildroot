@@ -1,0 +1,57 @@
+From 280e198c39d1b17d0491d7c4e7afda97ae6c8e6f Mon Sep 17 00:00:00 2001
+From: Yaakov Selkowitz <yselkowi@redhat.com>
+Date: Wed, 29 Jan 2025 16:46:11 -0500
+Subject: [PATCH] Fix rt-tests build with glibc-2.41
+
+The sched_*attr APIs were added to glibc
+https://sourceware.org/git/?p=glibc.git;a=commit;h=21571ca0d70302909cf72707b2a7736cf12190a0
+
+This fixes the build conflict in rt-tests with glibc-2.4
+
+Signed-off-by: Yaakov Selkowitz <yselkowi@redhat.com>
+Signed-off-by: John Kacur <jkacur@redhat.com>
+Upstream: https://web.git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git/commit/?id=d3a23a0cc76789c3083df3bad78982cd49bc4c5e
+Signed-off-by: Brandon Lumbra <brandon.lumbra@sense.com>
+---
+ src/include/rt-sched.h | 2 ++
+ src/lib/rt-sched.c     | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/src/include/rt-sched.h b/src/include/rt-sched.h
+index 80171c76e0ee..dfd7f45f51cc 100644
+--- a/src/include/rt-sched.h
++++ b/src/include/rt-sched.h
+@@ -42,6 +42,7 @@
+ #define __NR_sched_getattr		275
+ #endif
+ 
++#if ! __GLIBC_PREREQ(2, 41)
+ struct sched_attr {
+ 	uint32_t size;
+ 	uint32_t sched_policy;
+@@ -67,5 +68,6 @@ int sched_getattr(pid_t pid,
+ 		  struct sched_attr *attr,
+ 		  unsigned int size,
+ 		  unsigned int flags);
++#endif
+ 
+ #endif /* __RT_SCHED_H__ */
+diff --git a/src/lib/rt-sched.c b/src/lib/rt-sched.c
+index 8023bc70c473..2500abde26e4 100644
+--- a/src/lib/rt-sched.c
++++ b/src/lib/rt-sched.c
+@@ -14,6 +14,7 @@
+ 
+ #include "rt-sched.h"
+ 
++#if ! __GLIBC_PREREQ(2, 41)
+ int sched_setattr(pid_t pid,
+ 		  const struct sched_attr *attr,
+ 		  unsigned int flags)
+@@ -28,3 +29,4 @@ int sched_getattr(pid_t pid,
+ {
+ 	return syscall(__NR_sched_getattr, pid, attr, size, flags);
+ }
++#endif
+-- 
+2.47.1
