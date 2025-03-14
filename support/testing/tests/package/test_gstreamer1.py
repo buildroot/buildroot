@@ -15,6 +15,7 @@ class TestGstreamer1(infra.basetest.BRTest):
         BR2_cortex_a9=y
         BR2_ARM_ENABLE_VFP=y
         BR2_TOOLCHAIN_EXTERNAL=y
+        BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
         BR2_PACKAGE_DEJAVU=y
         BR2_PACKAGE_GSTREAMER1=y
         BR2_PACKAGE_GST1_PLUGINS_BASE=y
@@ -60,7 +61,7 @@ class TestGstreamer1(infra.basetest.BRTest):
             f"timeoverlay text=\"{msg_prefix}\" font-desc=\"Sans, 24\" ! " \
             f"theoraenc ! oggmux ! filesink location={video_file}"
         cmd = f"gst-launch-1.0 -v {enc_pipeline}"
-        self.assertRunOk(cmd)
+        self.assertRunOk(cmd, timeout=15)
 
         # We decode our previous video file and store each frame in a
         # PNG image file.
