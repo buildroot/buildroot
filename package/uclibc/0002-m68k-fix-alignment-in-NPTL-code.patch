@@ -1,0 +1,92 @@
+From 278ac6b3098315cddec8f71f27bd8de22e53ca6c Mon Sep 17 00:00:00 2001
+From: Thorsten Glaser <tg@debian.org>
+Date: Wed, 12 Mar 2025 22:11:51 +0100
+Subject: [PATCH] m68k: fix alignment in NPTL code
+
+Upstream: https://gogs.waldemar-brodkorb.de/oss/uclibc-ng/commit/278ac6b3098315cddec8f71f27bd8de22e53ca6c
+Signed-off-by: Thorsten Glaser <tg@debian.org>
+Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+---
+ .../unix/sysv/linux/m68k/bits/pthreadtypes.h   | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/libpthread/nptl/sysdeps/unix/sysv/linux/m68k/bits/pthreadtypes.h b/libpthread/nptl/sysdeps/unix/sysv/linux/m68k/bits/pthreadtypes.h
+index 2a90a0b90..d2f22caee 100644
+--- a/libpthread/nptl/sysdeps/unix/sysv/linux/m68k/bits/pthreadtypes.h
++++ b/libpthread/nptl/sysdeps/unix/sysv/linux/m68k/bits/pthreadtypes.h
+@@ -39,7 +39,7 @@ typedef unsigned long int pthread_t;
+ typedef union
+ {
+   char __size[__SIZEOF_PTHREAD_ATTR_T];
+-  long int __align;
++  long int __align __attribute__((__aligned__(4)));
+ } pthread_attr_t;
+ 
+ 
+@@ -69,13 +69,13 @@ typedef union
+     };
+   } __data;
+   char __size[__SIZEOF_PTHREAD_MUTEX_T];
+-  long int __align;
++  long int __align __attribute__((__aligned__(4)));
+ } pthread_mutex_t;
+ 
+ typedef union
+ {
+   char __size[__SIZEOF_PTHREAD_MUTEXATTR_T];
+-  long int __align;
++  long int __align __attribute__((__aligned__(4)));
+ } pthread_mutexattr_t;
+ 
+ 
+@@ -95,13 +95,13 @@ typedef union
+     unsigned int __broadcast_seq;
+   } __data;
+   char __size[__SIZEOF_PTHREAD_COND_T];
+-  __extension__ long long int __align;
++  __extension__ long long int __align __attribute__((__aligned__(8)));
+ } pthread_cond_t;
+ 
+ typedef union
+ {
+   char __size[__SIZEOF_PTHREAD_CONDATTR_T];
+-  long int __align;
++  long int __align __attribute__((__aligned__(4)));
+ } pthread_condattr_t;
+ 
+ 
+@@ -144,13 +144,13 @@ typedef union
+     int __writer;
+   } __data;
+   char __size[__SIZEOF_PTHREAD_RWLOCK_T];
+-  long int __align;
++  long int __align __attribute__((__aligned__(4)));
+ } pthread_rwlock_t;
+ 
+ typedef union
+ {
+   char __size[__SIZEOF_PTHREAD_RWLOCKATTR_T];
+-  long int __align;
++  long int __align __attribute__((__aligned__(4)));
+ } pthread_rwlockattr_t;
+ #endif
+ 
+@@ -165,13 +165,13 @@ typedef volatile int pthread_spinlock_t;
+ typedef union
+ {
+   char __size[__SIZEOF_PTHREAD_BARRIER_T];
+-  long int __align;
++  long int __align __attribute__((__aligned__(4)));
+ } pthread_barrier_t;
+ 
+ typedef union
+ {
+   char __size[__SIZEOF_PTHREAD_BARRIERATTR_T];
+-  int __align;
++  int __align __attribute__((__aligned__(4)));
+ } pthread_barrierattr_t;
+ #endif
+ 
+-- 
+2.39.5
+
