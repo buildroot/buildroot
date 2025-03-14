@@ -16,7 +16,10 @@ FIO_DEPENDENCIES += libaio
 endif
 
 ifeq ($(BR2_PACKAGE_LIBNFS),y)
-FIO_DEPENDENCIES += libnfs
+FIO_OPTS += --enable-libnfs
+FIO_DEPENDENCIES += host-pkgconf libnfs
+else
+FIO_OPTS += --disable-libnfs
 endif
 
 ifeq ($(BR2_PACKAGE_LIBISCSI),y)
