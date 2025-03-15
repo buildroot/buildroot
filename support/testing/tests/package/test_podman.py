@@ -166,6 +166,44 @@ class PodmanBase(infra.basetest.BRTest):
         output, _ = self.emulator.run('echo ${br_container}')
         self.assertEqual(output[0], "", "Still in a container")
 
+        # Test networking between two containers
+        self.assertRunOk("podman network create buz")
+        self.assertRunOk(
+            "podman container run --rm -ti --name pod007 --network buz --detach busybox:1.37.0",
+        )
+        self.assertRunOk(
+            "podman container run --rm -ti --name pod006 --network buz --detach busybox:1.37.0",
+        )
+        # Ensure each pod can resolv itself and the other
+        # (not using itertools.matrix() just for those trivial combinations)
+        for pod1, pod2 in [
+            ("pod006", "pod006"),
+            ("pod006", "pod007"),
+            ("pod007", "pod007"),
+            ("pod007", "pod006"),
+        ]:
+            output, exit_code = self.emulator.run(
+                f"podman container exec {pod1} nslookup {pod2}",
+            )
+            self.assertEqual(exit_code, 0)
+            self.assertTrue(output[0].startswith("Server:"))
+            self.assertTrue(output[1].startswith("Address:"))
+            # Busybox' nslookup emits one "Non-authoritative answer" per
+            # supported address familly: IPv4 and IPv6.
+            self.assertEqual(
+                len([line for line in output[2:] if line == "Non-authoritative answer:"]),
+                2,
+            )
+            # But only IPv4 is available on this network
+            self.assertEqual(
+                len([line for line in output[2:] if line.startswith("Address:")]),
+                1,
+            )
+        self.assertRunOk("podman container kill --all")
+        output, _ = self.emulator.run("podman container ls --format '{{ json }}'")
+        pod_info = json.loads("".join(output))
+        self.assertEqual(len(pod_info), 0, f"{len(pod_info)} container(s) still present, expecting 0")
+
         # Remove the offical image
         self.assertRunOk('podman image rm busybox:1.37.0')
         output, _ = self.emulator.run("podman image ls --format '{{ json }}'")
