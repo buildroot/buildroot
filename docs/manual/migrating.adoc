@@ -195,3 +195,17 @@ host-mender-artifact. See +board/mender/x86_64/post-image-efi.sh+ for an
 example of how to generate the bootstrap.mender file. See 
 https://docs.mender.io/release-information/release-notes-changelog/mender-client#mender-3-5-0-1[the
 release notes], under features, for more information.
+
+[[migrating-resolv.conf]]
+=== Migrating to 2025.05
+
+In 2025.05, for SYS-V-like systems (busybox, sysvinit, openrc), the
+`/etc/resolv.conf` symlink was changed to point to `/run/resolv.conf`,
+rather than the legacy location in `/tmp`. Users of a custom `fstab`
+will need to ensure that `/run` is writable before resolv.conf is
+created (usually by a DHCP client), either with an entry for `/run`,
+or with a startup script.
+
+Note that systems using systemd are not impacted: systemd always ensures
+that `/run` is writable. Systems further using systemd-resolved already
+had a `/etc/resolv.conf` that pointed into `/run` anyway.

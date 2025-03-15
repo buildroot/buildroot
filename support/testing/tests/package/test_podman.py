@@ -71,13 +71,6 @@ class PodmanBase(infra.basetest.BRTest):
         self.assertRunOk("touch /etc/subuid /etc/subgid")
         self.assertRunOk("usermod --add-subuids 10000-75535 foo")
         self.assertRunOk("usermod --add-subgids 10000-75535 foo")
-        # If /etc/resolv.conf is a symlink, it has to point either into /etc
-        # (or deep in there), or into /run (or deep in there), as only those
-        # would eventually get used by podman/netavark for # rootless containers.
-        # This is considered a workaround to the current situation; resolv,conf
-        # should ultimately be in /run rather than /tmp.
-        self.assertRunOk("mv /tmp/resolv.conf /run/resolv.conf")
-        self.assertRunOk("ln -sf /run/resolv.conf /etc/resolv.conf")
 
         # First, test podman as root (the current user)
         self.do_podman()
