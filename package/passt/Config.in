@@ -1,0 +1,19 @@
+config BR2_PACKAGE_PASST
+	bool "passt"
+	help
+	  passt: Plug A Simple Socket Transport
+	  pasta: Pack A Subtle Tap Abstraction
+
+	  passt implements a translation layer between a Layer-2
+	  network interface and native Layer-4 sockets (TCP, UDP,
+	  ICMP/ICMPv6 echo) on a host. It doesn't require any
+	  capabilities or privileges, and it can be used as a simple
+	  replacement for Slirp.
+
+	  pasta (same binary as passt, different command) offers
+	  equivalent functionality, for network namespaces: traffic
+	  is forwarded using a tap interface inside the namespace,
+	  without the need to create further interfaces on the host,
+	  hence not requiring any capabilities or privileges.
+
+	  https://passt.top/passt/about/
