@@ -4,10 +4,10 @@ config BR2_PACKAGE_PODMAN
 	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS  # host-go
 	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS  # netavark
 	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS  # libgpgme
-	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS  # libseccomp, slirp4netns
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17  # libseccomp, slirp4netns
-	depends on BR2_TOOLCHAIN_HAS_THREADS  # conmon, slirp4netns
-	depends on BR2_USE_WCHAR  # conmon, slirp4netns
+	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS  # libseccomp
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17  # libseccomp
+	depends on BR2_TOOLCHAIN_HAS_THREADS  # conmon
+	depends on BR2_USE_WCHAR  # conmon
 	select BR2_PACKAGE_HOST_GO
 	select BR2_PACKAGE_CA_CERTIFICATES  # runtime
 	select BR2_PACKAGE_CGROUPFS_V2_MOUNT if !BR2_PACKAGE_CGROUPFS_MOUNT && !BR2_INIT_SYSTEMD  # runtime
@@ -22,7 +22,6 @@ config BR2_PACKAGE_PODMAN
 	select BR2_PACKAGE_RUNC if !BR2_PACKAGE_CRUN  # runtime
 	select BR2_PACKAGE_SHADOW
 	select BR2_PACKAGE_SHADOW_SUBORDINATE_IDS
-	select BR2_PACKAGE_SLIRP4NETNS  # runtime
 	help
 	  The best free & open source container tools
 
@@ -66,6 +65,19 @@ config BR2_PACKAGE_PODMAN_INIT_NAME
 	string
 	default "tini" if BR2_PACKAGE_PODMAN_INIT_TINI
 	default "catatonit" if BR2_PACKAGE_PODMAN_INIT_CATATONIT
+
+choice
+	bool "Network backend"
+
+config BR2_PACKAGE_PODMAN_NET_PASST
+	bool "passt/pasta"
+	select BR2_PACKAGE_PASST  # runtime
+
+config BR2_PACKAGE_PODMAN_NET_SLIRP4NETNS
+	bool "slirp4netns"
+	select BR2_PACKAGE_SLIRP4NETNS  # runtime
+
+endchoice
 
 endif
 

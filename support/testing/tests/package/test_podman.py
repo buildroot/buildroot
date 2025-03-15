@@ -239,3 +239,22 @@ class TestPodmanTini(PodmanBase):
 
     def test_run(self):
         self.do_test()
+
+
+class TestPodmanSlirpIptables(PodmanBase):
+    config = PodmanBase.config + """
+    BR2_PACKAGE_PODMAN_NET_SLIRP4NETNS=y
+    """
+
+    def test_run(self):
+        self.do_test()
+
+
+class TestPodmanSlirpNftables(PodmanBase):
+    config = PodmanBase.config + """
+    BR2_PACKAGE_NFTABLES=y
+    BR2_PACKAGE_PODMAN_NET_SLIRP4NETNS=y
+    """
+
+    def test_run(self):
+        self.do_test()

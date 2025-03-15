@@ -62,6 +62,19 @@ define PODMAN_HELPER_INIT
 endef
 endif
 
+ifeq ($(BR2_PACKAGE_PODMAN_NET_PASST),y)
+define PODMAN_HELPER_PASST
+	$(Q)ln -sf ../../bin/pasta $(TARGET_DIR)/usr/libexec/podman/pasta
+endef
+else
+define PODMAN_HELPER_SLIRP4NETNS
+	$(Q)ln -sf ../../bin/slirp4netns $(TARGET_DIR)/usr/libexec/podman/slirp4netns
+	$(Q)mkdir -p $(TARGET_DIR)/etc/containers/containers.conf.d
+	$(Q)printf '[network]\ndefault_rootless_network_cmd = "slirp4netns"\n' \
+		>$(TARGET_DIR)/etc/containers/containers.conf.d/50-buildroot-net-backend.conf
+endef
+endif
+
 define PODMAN_LINUX_CONFIG_FIXUPS
 	$(call KCONFIG_ENABLE_OPT,CONFIG_CPUSETS)
 	$(call KCONFIG_ENABLE_OPT,CONFIG_BPF_SYSCALL)
@@ -88,9 +101,6 @@ endef
 
 define PODMAN_CONFIG
 	$(Q)$(INSTALL) -D -m 0644 \
-		$(PODMAN_PKGDIR)/containers.conf \
-		$(TARGET_DIR)/usr/share/containers/containers.conf
-	$(Q)$(INSTALL) -D -m 0644 \
 		$(PODMAN_PKGDIR)/policy.json \
 		$(TARGET_DIR)/etc/containers/policy.json
 	$(Q)$(INSTALL) -D -m 0644 \
@@ -103,8 +113,9 @@ define PODMAN_HELPERS
 	$(Q)mkdir -p $(TARGET_DIR)/usr/libexec/podman
 	$(Q)ln -sf ../../bin/aardvark-dns $(TARGET_DIR)/usr/libexec/podman/aardvark-dns
 	$(Q)ln -sf ../../bin/netavark $(TARGET_DIR)/usr/libexec/podman/netavark
-	$(Q)ln -sf ../../bin/slirp4netns $(TARGET_DIR)/usr/libexec/podman/slirp4netns
 	$(PODMAN_HELPER_INIT)
+	$(PODMAN_HELPER_PASST)
+	$(PODMAN_HELPER_SLIRP4NETNS)
 endef
 PODMAN_POST_INSTALL_TARGET_HOOKS += PODMAN_HELPERS
 
