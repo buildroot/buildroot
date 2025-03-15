@@ -13,9 +13,14 @@ config BR2_PACKAGE_NFTABLES
 
 	  http://www.netfilter.org/projects/nftables/index.html
 
-# Legacy: this used to be handled in nftables.mk
 if BR2_PACKAGE_NFTABLES
+# Legacy: this used to be handled in nftables.mk
 source "package/nftables/nftables-python/Config.in"
+
+config BR2_PACKAGE_NFTABLES_JSON
+	bool "json support"
+	select BR2_PACKAGE_JANSSON
+
 endif
 
 comment "nftables needs a toolchain w/ wchar, headers >= 3.12"
