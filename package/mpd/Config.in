@@ -1,13 +1,13 @@
 menuconfig BR2_PACKAGE_MPD
 	bool "mpd"
 	depends on BR2_INSTALL_LIBSTDCPP
-	depends on BR2_USE_WCHAR # boost
+	depends on BR2_USE_WCHAR # libfmt
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_USE_MMU # fork
 	depends on BR2_TOOLCHAIN_HAS_ATOMIC
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_8 # C++17
-	depends on BR2_HOST_GCC_AT_LEAST_8 # C++17
-	select BR2_PACKAGE_BOOST
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_12 # C++20 recommended
+	depends on BR2_HOST_GCC_AT_LEAST_10 # C++20 constinit P4311R2
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_6 # openat2.h
 	select BR2_PACKAGE_FMT
 	select BR2_PACKAGE_LIBICONV if !BR2_ENABLE_LOCALE
 	help
@@ -433,10 +433,11 @@ config BR2_PACKAGE_MPD_ID3TAG
 
 endif
 
-comment "mpd needs a toolchain w/ C++, threads, wchar, gcc >= 8, host gcc >= 8"
+comment "mpd needs a toolchain w/ C++, threads, wchar, host-gcc 10, gcc 12, headers 5.6"
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_ATOMIC
 	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_USE_WCHAR || \
 		!BR2_TOOLCHAIN_HAS_THREADS || \
-		!BR2_TOOLCHAIN_GCC_AT_LEAST_8 || \
-		!BR2_HOST_GCC_AT_LEAST_8
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_12 || \
+		!BR2_THOST_GCC_AT_LEAST_10 || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_6
