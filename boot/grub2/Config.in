@@ -7,7 +7,7 @@ config BR2_TARGET_GRUB2_ARCH_SUPPORTS
 	default y if BR2_RISCV_64
 	depends on BR2_USE_MMU
 
-config BR2_TARGET_GRUB2
+menuconfig BR2_TARGET_GRUB2
 	bool "grub2"
 	depends on BR2_TARGET_GRUB2_ARCH_SUPPORTS
 	depends on BR2_USE_WCHAR
