@@ -1,0 +1,9 @@
+config BR2_PACKAGE_AARDVARK_DNS
+	bool "aardvark-dns"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  Authoritative dns server for A/AAAA container records.
+	  Forwards other request to host's /etc/resolv.conf
+
+	  https://github.com/containers/aardvark-dns/

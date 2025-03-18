@@ -85,7 +85,7 @@ class TestNftables(infra.basetest.BRTest):
         # supposed to fail earlier is now supposed to succeed.
         self.assertRunOk(ping_test_cmd)
 
-    def test_run(self):
+    def boot_vm(self):
         img = os.path.join(self.builddir, "images", "rootfs.cpio.gz")
         kern = os.path.join(self.builddir, "images", "Image")
         self.emulator.boot(arch="aarch64",
@@ -97,6 +97,9 @@ class TestNftables(infra.basetest.BRTest):
                                     "-initrd", img])
         self.emulator.login()
 
+    def test_run(self):
+        self.boot_vm()
+
         # We check the program can execute.
         self.assertRunOk("nft --version")
 
@@ -107,3 +110,35 @@ class TestNftables(infra.basetest.BRTest):
         # We run again the same test sequence using our simple nft
         # python implementation, to check the language bindings.
         self.nftables_test(prog="/root/nft.py")
+
+
+class TestNftablesInit(TestNftables):
+    config = TestNftables.config + \
+        """
+        BR2_INIT_BUSYBOX=y
+        """
+
+    def test_run(self):
+        self.boot_vm()
+
+        # start with known state (rules from /etc/nftables.conf)
+        self.assertRunOk("/etc/init.d/S35nftables reload")
+
+        # Same concept as in TestNftables.nftables_test: The rules
+        # should allow ping to 127.0.0.1, but not 127.0.0.2.
+        ping_cmd_prefix = "ping -c 3 -i 0.5 -W 2 "
+        self.assertRunOk(ping_cmd_prefix + "127.0.0.1")
+        _, exit_code = self.emulator.run(ping_cmd_prefix + "127.0.0.2")
+        self.assertNotEqual(exit_code, 0)
+
+        # Stop should flush the rules, ping to both addresses should
+        # work now.
+        self.assertRunOk("/etc/init.d/S35nftables stop")
+        self.assertRunOk(ping_cmd_prefix + "127.0.0.1")
+        self.assertRunOk(ping_cmd_prefix + "127.0.0.2")
+
+        # Start is essentially the same as reload, check that
+        # 127.0.0.2 gets blocked again.
+        self.assertRunOk("/etc/init.d/S35nftables start")
+        _, exit_code = self.emulator.run(ping_cmd_prefix + "127.0.0.2")
+        self.assertNotEqual(exit_code, 0)

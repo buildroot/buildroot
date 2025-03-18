@@ -5,6 +5,7 @@ import os
 
 import pexpect
 import pexpect.replwrap
+import time
 
 import infra
 
@@ -151,6 +152,10 @@ class Emulator(object):
             self.qemu.sendline(password)
 
         self.connect_shell()
+
+        output, exit_code = self.run(f"date @{int(time.time())}")
+        if exit_code:
+            raise SystemError("Cannot set date in virtual machine")
 
     def connect_shell(self):
         extra_init_cmd = " && ".join([

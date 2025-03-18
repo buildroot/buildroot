@@ -1,0 +1,37 @@
+From 59716ea66203b4d5f70dd0e41fe6f9661f8ad686 Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Wed, 12 Mar 2025 10:27:48 +0100
+Subject: [PATCH] CMakeLists.txt: add an option to control shared library
+ creation
+
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+Signed-off-by: Marcus Hoffmann <marcus.hoffmann@othermo.de>
+Upstream: Backported from https://github.com/linux-can/can-utils/commit/a904183b4e65a6d982db3d12ad9d0a9a883edc1d
+---
+ CMakeLists.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 01f90f9..318a236 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -14,6 +14,7 @@ endif()
+ 
+ # Add an option to enable treating warnings as errors
+ option(ENABLE_WERROR "Treat all compiler warnings as errors" OFF)
++option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+ 
+ if(ENABLE_WERROR)
+   add_compile_options(-Werror)
+@@ -114,7 +115,7 @@ if(NOT ANDROID)
+     PRIVATE can
+   )
+ 
+-  add_library(isobusfs SHARED
++  add_library(isobusfs
+     isobusfs/isobusfs_cmn.c
+     isobusfs/isobusfs_cmn_dh.c
+   )
+-- 
+2.43.0
+

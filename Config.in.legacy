@@ -144,6 +144,17 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2025.05"
+
+# BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT is still referenced in docker-engine
+config BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT
+	bool "docker-engine init support is now a choice"
+	select BR2_LEGACY
+	help
+	  docker-engine init support is now a choice. The original
+	  setting has been adapted; be sure to review it in the
+	  docker-engine package.
+
 comment "Legacy options removed in 2025.02"
 
 config BR2_PACKAGE_SQLITE_ENABLE_JSON1

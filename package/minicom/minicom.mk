@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MINICOM_VERSION = 2.9
+MINICOM_VERSION = 2.10
 MINICOM_SOURCE = minicom-$(MINICOM_VERSION).tar.bz2
 MINICOM_SITE = \
 	https://salsa.debian.org/minicom-team/minicom/-/archive/$(MINICOM_VERSION)

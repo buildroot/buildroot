@@ -1,0 +1,92 @@
+config BR2_PACKAGE_PODMAN
+	bool "podman"
+	depends on BR2_USE_MMU  # fork()
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS  # host-go
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS  # netavark
+	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS  # libgpgme
+	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS  # libseccomp
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17  # libseccomp
+	depends on BR2_TOOLCHAIN_HAS_THREADS  # conmon
+	depends on BR2_USE_WCHAR  # conmon
+	select BR2_PACKAGE_HOST_GO
+	select BR2_PACKAGE_CA_CERTIFICATES  # runtime
+	select BR2_PACKAGE_CGROUPFS_V2_MOUNT if !BR2_PACKAGE_CGROUPFS_MOUNT && !BR2_INIT_SYSTEMD  # runtime
+	select BR2_PACKAGE_CONMON  # runtime
+	select BR2_PACKAGE_LIBGPGME
+	select BR2_PACKAGE_LIBSECCOMP
+	select BR2_PACKAGE_NETAVARK  # runtime
+	# podman officially only supports crun, but compatible runtimes are
+	# also accepted. So we do the select the other way around, to match
+	# docker-engine's own select and thus avoid circular dependency
+	# issues.
+	select BR2_PACKAGE_RUNC if !BR2_PACKAGE_CRUN  # runtime
+	select BR2_PACKAGE_SHADOW
+	select BR2_PACKAGE_SHADOW_SUBORDINATE_IDS
+	help
+	  The best free & open source container tools
+
+	  Manage containers, pods, and images with Podman. Seamlessly
+	  work with containers and Kubernetes from your local
+	  environment.
+
+	  https://podman.io/
+
+if BR2_PACKAGE_PODMAN
+
+choice
+	bool "support podman-init"
+	default BR2_PACKAGE_PODMAN_INIT_CATATONIT
+	help
+	  Support providing a minimal init process for containers.
+	  Required to use "podman container run --init".
+
+config BR2_PACKAGE_PODMAN_INIT_NONE
+	bool "none"
+	help
+	  Do not support docker-init.
+
+config BR2_PACKAGE_PODMAN_INIT_CATATONIT
+	bool "catatonit"
+	select BR2_PACKAGE_CATATONIT # runtime
+	help
+	  Support providing a minimal init process for containers,
+	  using catatonit.
+
+config BR2_PACKAGE_PODMAN_INIT_TINI
+	bool "tini"
+	select BR2_PACKAGE_TINI # runtime
+	help
+	  Support providing a minimal init process for containers,
+	  using tini.
+
+endchoice
+
+config BR2_PACKAGE_PODMAN_INIT_NAME
+	string
+	default "tini" if BR2_PACKAGE_PODMAN_INIT_TINI
+	default "catatonit" if BR2_PACKAGE_PODMAN_INIT_CATATONIT
+
+choice
+	bool "Network backend"
+
+config BR2_PACKAGE_PODMAN_NET_PASST
+	bool "passt/pasta"
+	select BR2_PACKAGE_PASST  # runtime
+
+config BR2_PACKAGE_PODMAN_NET_SLIRP4NETNS
+	bool "slirp4netns"
+	select BR2_PACKAGE_SLIRP4NETNS  # runtime
+
+endchoice
+
+endif
+
+comment "podman needs a toolchain w/ headers >= 3.17, threads, wchar"
+	depends on BR2_USE_MMU
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17 \
+		|| !BR2_TOOLCHAIN_HAS_THREADS \
+		|| !BR2_USE_WCHAR

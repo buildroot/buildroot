@@ -149,6 +149,16 @@ comment "systemd highly recommends Linux >= 4.15"
 
 comment "Special purpose (read help)"
 
+config BR2_INIT_CATATONIT
+	bool "catatonit"
+	select BR2_PACKAGE_CATATONIT
+	select BR2_PACKAGE_SKELETON_INIT_NONE if BR2_ROOTFS_SKELETON_DEFAULT
+	help
+	  A container init that is so simple it's effectively
+	  brain-dead.
+
+	  https://github.com/openSUSE/catatonit
+
 config BR2_INIT_TINI
 	bool "tini"
 	depends on BR2_USE_MMU  # tini
