@@ -2,8 +2,11 @@ config BR2_PACKAGE_LIBMANETTE
 	bool "libmanette"
 	depends on BR2_USE_MMU # libglib2
 	depends on BR2_USE_WCHAR # libglib2 -> gettext
-	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
+	depends on BR2_PACKAGE_HAS_UDEV # hidapi
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # hidapi
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_16
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # hidapi -> libusb
+	select BR2_PACKAGE_HIDAPI
 	select BR2_PACKAGE_LIBEVDEV
 	select BR2_PACKAGE_LIBGLIB2
 	help
@@ -11,7 +14,9 @@ config BR2_PACKAGE_LIBMANETTE
 
 	  https://gitlab.gnome.org/GNOME/libmanette
 
-comment "libmanette needs a toolchain w/ wchar, threads, headers >= 4.16"
+comment "libmanette needs a toolchain w/ wchar, NPTL threads, gcc >= 4.9, headers >= 4.16, udev"
 	depends on BR2_USE_MMU
-	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
-		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_16
+	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS_NPTL || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_16 || \
+		!BR2_PACKAGE_HAS_UDEV
