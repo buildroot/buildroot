@@ -1,0 +1,12 @@
+config BR2_PACKAGE_DOCKER_CREDENTIAL_ACR_ENV
+	bool "docker-credential-acr-env"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	help
+	  The ACR docker credential helper is an alternative to the
+	  existing file store based ACR helper [...] which relies
+	  on az command line and is not optimised for use in CI
+	  environments. Primary use case for this helper is for use
+	  with kaniko and other tools running in CI scenarios wishing
+	  to push to Azure Container Registry.
+
+	  https://github.com/chrismellard/docker-credential-acr-env/
