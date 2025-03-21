@@ -1,0 +1,11 @@
+config BR2_PACKAGE_DOCKER_CREDENTIAL_GCR
+	bool "docker-credential-gcr"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	help
+	  docker-credential-gcr is Google Container Registry's
+	  standalone, gcloud SDK-independent Docker credential
+	  helper. It allows for v18.03+ Docker clients to easily make
+	  authenticated requests to GCR's repositories (gcr.io,
+	  eu.gcr.io, etc.).
+
+	  https://github.com/GoogleCloudPlatform/docker-credential-gcr/
