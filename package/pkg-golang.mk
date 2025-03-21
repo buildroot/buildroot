@@ -79,8 +79,8 @@ $(2)_GOMOD ?= $$($(2)_SRC_DOMAIN)/$$($(2)_SRC_VENDOR)/$$($(2)_SRC_SOFTWARE)
 # Generate a go.mod file if it doesn't exist. Note: Go is configured
 # to use the "vendor" dir and not make network calls.
 define $(2)_GEN_GOMOD
-	if [ ! -f $$(@D)/go.mod ]; then \
-		printf "module $$($(2)_GOMOD)\n" > $$(@D)/go.mod; \
+	if [ ! -f $$(@D)/$$($(2)_SUBDIR)/go.mod ]; then \
+		printf "module $$($(2)_GOMOD)\n" > $$(@D)/$$($(2)_SUBDIR)/go.mod; \
 	fi
 endef
 $(2)_POST_PATCH_HOOKS += $(2)_GEN_GOMOD
@@ -90,6 +90,11 @@ $(2)_DL_ENV += \
 	$$(HOST_GO_COMMON_ENV) \
 	GOPROXY=direct \
 	$$($(2)_GO_ENV)
+
+# If building in a sub directory, do the vendoring in there
+ifneq ($$($(2)_SUBDIR),)
+$(2)_DOWNLOAD_POST_PROCESS_OPTS += -s$$($(2)_SUBDIR)
+endif
 
 # Because we append vendored info, we can't rely on the values being empty
 # once we eventually get into the generic-package infra. So, we duplicate
@@ -135,7 +140,7 @@ endif
 # Build package for target
 define $(2)_BUILD_CMDS
 	$$(foreach d,$$($(2)_BUILD_TARGETS),\
-		cd $$(@D); \
+		cd $$(@D)/$$($(2)_SUBDIR); \
 		$$(HOST_GO_TARGET_ENV) \
 			$$($(2)_GO_ENV) \
 			$$(GO_BIN) build -v $$($(2)_BUILD_OPTS) \
@@ -147,7 +152,7 @@ else
 # Build package for host
 define $(2)_BUILD_CMDS
 	$$(foreach d,$$($(2)_BUILD_TARGETS),\
-		cd $$(@D); \
+		cd $$(@D)/$$($(2)_SUBDIR); \
 		$$(HOST_GO_HOST_ENV) \
 			$$($(2)_GO_ENV) \
 			$$(GO_BIN) build -v $$($(2)_BUILD_OPTS) \
