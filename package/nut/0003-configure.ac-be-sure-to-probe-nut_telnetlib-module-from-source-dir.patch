@@ -1,0 +1,39 @@
+From 2898a45a83d7f9af62fe0844fcb5358337d905d3 Mon Sep 17 00:00:00 2001
+From: Jim Klimov <jimklimov+nut@gmail.com>
+Date: Wed, 3 Jul 2024 10:22:24 +0200
+Subject: [PATCH] configure.ac: be sure to probe nut_telnetlib module from
+ source dir [#2183]
+
+Avoid confusion for out-of-tree builds
+
+Signed-off-by: Jim Klimov <jimklimov+nut@gmail.com>
+
+Upstream: https://github.com/networkupstools/nut/commit/2898a45a83d7f9af62fe0844fcb5358337d905d3
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 5865ad5fe3..9d622c34fc 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -2474,7 +2474,7 @@ if test x"${nut_with_pynut}" != xno \
+             dnl this line essentially checks for presence of
+             dnl a usable interpreter implementation compatible
+             dnl with Python 3.x syntax.
+-            if (cd scripts/python/module && ${PYTHON3} -c "import nut_telnetlib as telnetlib") \
++            if (cd "${srcdir}"/scripts/python/module && ${PYTHON3} -c "import nut_telnetlib as telnetlib") \
+             ; then
+                 nut_with_pynut_py3="yes"
+             fi
+@@ -2491,7 +2491,7 @@ if test x"${nut_with_pynut}" != xno \
+             nut_with_pynut_py="yes"
+         else
+             dnl See comments above
+-            if (cd scripts/python/module && ${PYTHON} -c "import nut_telnetlib as telnetlib") \
++            if (cd "${srcdir}"/scripts/python/module && ${PYTHON} -c "import nut_telnetlib as telnetlib") \
+             ; then
+                 nut_with_pynut_py="yes"
+             fi
