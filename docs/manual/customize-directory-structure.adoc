@@ -49,6 +49,7 @@ to you.
 |           +-- package2.mk
 |
 +-- Config.in (if using a br2-external tree)
++-- Makefile (if using a custom top makefile)
 +-- external.mk (if using a br2-external tree)
 +-- external.desc (if using a br2-external tree)
 ----
@@ -109,3 +110,44 @@ BR2_GLOBAL_PATCH_DIR="board/<company>/common/patches board/<company>/fooboard/pa
 
 then first the patches from the 'common' layer would be applied,
 followed by the patches from the 'fooboard' layer.
+
+==== Custom top Makefile
+
+You normally launch Buildroot from the buildroot source directory, pointing
++BR2_EXTERNAL+ and +O+ to the right places for the build you want to make.
+You can simplify this by adding a Makefile to your br2-external that sets
+these variables and calls into buildroot.
+
+You can add additional, custom rules to this Makefile for various tasks you
+need to perform, e.g. integrate multiple configurations into a single image,
+upload to a release server or to a test device, include multiple
+br2-external configurations, etc.
+
+A basic Makefile looks like this. It assumes the buildroot source is available
+(e.g. as a git submodule) in the +buildroot+ subdirectory. It makes sure that
+the download directory is shared between different builds, and it organizes
+the output directories in a structure under +outputs/+.
+
+----
+# SPDX-License-Identifier: GPL-2.0
+
+# Avoid surprises by disabling default rules
+MAKEFLAGS += --no-builtin-rules
+.SUFFIXES:
+
+THIS_EXTERNAL_PATH := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+
+# Put downloads in this directory instead of in the Buildroot directory
+ifeq ($(BR2_DL_DIR),)
+BR2_DL_DIR = $(THIS_EXTERNAL_PATH)/dl
+endif
+
+OUTPUT_BASEDIR = $(THIS_EXTERNAL_PATH)/output
+OUTPUT_DIR = $(OUTPUT_BASEDIR)/$(patsubst %_defconfig,%,$@)
+
+MAKE_BUILDROOT = $(MAKE) -C $(THIS_EXTERNAL_PATH)/buildroot BR2_EXTERNAL=$(THIS_EXTERNAL_PATH)
+
+%: $(THIS_EXTERNAL_PATH)/configs/%
+	$(MAKE_BUILDROOT) O=$(OUTPUT_DIR) $@
+	sed -i /^BR2_DL_DIR=.*/s%%BR2_DL_DIR=$(BR2_DL_DIR)% $(OUTPUT_DIR)/.config
+----
