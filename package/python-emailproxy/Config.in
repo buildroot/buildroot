@@ -1,0 +1,12 @@
+config BR2_PACKAGE_PYTHON_EMAILPROXY
+	bool "python-emailproxy"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-cryptography
+	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime
+	select BR2_PACKAGE_PYTHON_PROMPT_TOOLKIT # runtime
+	select BR2_PACKAGE_PYTHON_PYASYNCORE # runtime
+	help
+	  An IMAP/POP/SMTP proxy that transparently adds OAuth 2.0
+	  authentication for email clients that don't support this
+	  method.
+
+	  https://github.com/simonrob/email-oauth2-proxy
