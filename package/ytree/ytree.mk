@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-YTREE_VERSION = 2.09
+YTREE_VERSION = 2.10
 YTREE_SITE = https://www.han.de/~werner
 YTREE_LICENSE = GPL-2.0+
 YTREE_LICENSE_FILES = COPYING
