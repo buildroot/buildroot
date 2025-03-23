@@ -1,0 +1,35 @@
+From 475b64d1c5707e1302cf9f7cfe3c385b7339c6c4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=D0=94=D0=B8=D0=BB=D1=8F=D0=BD=20=D0=9F=D0=B0=D0=BB=D0=B0?=
+ =?UTF-8?q?=D1=83=D0=B7=D0=BE=D0=B2?= <git-dpa@aegee.org>
+Date: Sat, 22 Jun 2024 14:58:52 +0200
+Subject: [PATCH] xml_int/mod_xml_rpc: const compiler errors
+
+Upstream: https://github.com/signalwire/freeswitch/pull/2496
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/mod/xml_int/mod_xml_rpc/mod_xml_rpc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/mod/xml_int/mod_xml_rpc/mod_xml_rpc.c b/src/mod/xml_int/mod_xml_rpc/mod_xml_rpc.c
+index 8e49462d2c2..0a4e5e1e449 100644
+--- a/src/mod/xml_int/mod_xml_rpc/mod_xml_rpc.c
++++ b/src/mod/xml_int/mod_xml_rpc/mod_xml_rpc.c
+@@ -321,7 +321,7 @@ static abyss_bool user_attributes(const char *user, const char *domain_name,
+ static abyss_bool is_authorized(const TSession * r, const char *command)
+ {
+ 	char *user = NULL, *domain_name = NULL;
+-	char *allowed_commands = NULL;
++	const char *allowed_commands = NULL;
+ 	char *dp;
+ 	char *dup = NULL;
+ 	char *argv[256] = { 0 };
+@@ -922,7 +922,7 @@ abyss_bool handler_hook(TSession * r)
+ 				if (len > 0) {
+ 					int succeeded = TRUE;
+ 					char *qp = qbuf;
+-					char *readError;
++					const char *readError;
+ 
+ 					do {
+ 						int blen = r->connP->buffersize - r->connP->bufferpos;
