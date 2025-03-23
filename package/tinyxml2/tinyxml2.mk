@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TINYXML2_VERSION = 10.0.0
+TINYXML2_VERSION = 11.0.0
 TINYXML2_SITE = $(call github,leethomason,tinyxml2,$(TINYXML2_VERSION))
 TINYXML2_LICENSE = Zlib
 TINYXML2_LICENSE_FILES = LICENSE.txt
