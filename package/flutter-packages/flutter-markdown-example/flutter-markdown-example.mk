@@ -26,7 +26,7 @@ endef
 define FLUTTER_MARKDOWN_EXAMPLE_BUILD_CMDS
 	cd $(FLUTTER_MARKDOWN_EXAMPLE_BUILDDIR) && \
 		$(HOST_FLUTTER_SDK_BIN_DART_BIN) \
-			--native-assets $(FLUTTER_MARKDOWN_EXAMPLE_BUILDDIR)/.dart_tool/flutter_build/*/native_assets.yaml \
+			--native-assets $(FLUTTER_MARKDOWN_EXAMPLE_BUILDDIR)/.dart_tool/flutter_build/*/native_assets.json \
 			package:$(FLUTTER_MARKDOWN_EXAMPLE_PKG_NAME)/main.dart && \
 		$(HOST_FLUTTER_SDK_BIN_ENV) $(FLUTTER_ENGINE_GEN_SNAPSHOT) \
 			--deterministic \
