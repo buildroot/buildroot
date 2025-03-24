@@ -153,7 +153,7 @@ class Emulator(object):
 
         self.connect_shell()
 
-        output, exit_code = self.run(f"date @{int(time.time())}")
+        output, exit_code = self.run(f"date -s @{int(time.time())}")
         if exit_code:
             raise SystemError("Cannot set date in virtual machine")
 
