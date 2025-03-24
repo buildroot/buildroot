@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IVI_HOMESCREEN_VERSION = 5ab78a19e95c88cc5d6b173ab1260a211e78cf0a
+IVI_HOMESCREEN_VERSION = a038ce00031ed5a9a89b4d8dd7dbde5e3d7ade6e
 IVI_HOMESCREEN_SITE = https://github.com/toyota-connected/ivi-homescreen.git
 IVI_HOMESCREEN_SITE_METHOD = git
 IVI_HOMESCREEN_LICENSE = Apache-2.0, BSD-3-Clause, BSD-Style, BSL-1.0, MIT
