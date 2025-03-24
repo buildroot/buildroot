@@ -4,7 +4,7 @@ Date: Sun, 5 Mar 2023 10:43:02 -0800
 Subject: [PATCH] fix toolchain paths
 
 Flutter includes a copy of clang which is required to build. However, by
-default, build/toolchain/custom/BUILD.gn attempts to use several gcc utilities
+default, engine/src/build/toolchain/custom/BUILD.gn attempts to use several gcc utilities
 such as ar, readelf, nm, and strip. Change these to the proper llvm provided
 utility.
 
@@ -13,13 +13,13 @@ Upstream: https://github.com/flutter/flutter/issues/123073
 Signed-off-by: Joel Winarske <joel.winarsk@gmail.com>
 Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
 ---
- build/toolchain/custom/BUILD.gn | 4 +++++------
+ engine/src/build/toolchain/custom/BUILD.gn | 4 +++++------
  1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/build/toolchain/custom/BUILD.gn b/build/toolchain/custom/BUILD.gn
+diff --git a/engine/src/build/toolchain/custom/BUILD.gn b/engine/src/build/toolchain/custom/BUILD.gn
 index 65b1623..8b3f6f8 100644
---- a/build/toolchain/custom/BUILD.gn
-+++ b/build/toolchain/custom/BUILD.gn
+--- a/engine/src/build/toolchain/custom/BUILD.gn
++++ b/engine/src/build/toolchain/custom/BUILD.gn
 @@ -12,11 +12,11 @@ toolchain("custom") {
    # these values in our scope.
    cc = "${toolchain_bin}/clang"

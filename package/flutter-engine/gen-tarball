@@ -41,8 +41,8 @@ parse_opts() {
 
 prepare() {
     rm -rf "${SCRATCH_DIR}"
-    mkdir -p "${SCRATCH_DIR}"
-    pushd "${SCRATCH_DIR}" >/dev/null
+    mkdir -p "${SCRATCH_DIR}"/src
+    pushd "${SCRATCH_DIR}"/src >/dev/null
 }
 
 copy_dot_gclient() {
@@ -63,6 +63,7 @@ run_gclient() {
 gen_tarball() {
     message "Generating tarball"
     mkdir -p "${DL_DIR}"
+    pushd "${SCRATCH_DIR}" >/dev/null
     # There are two issues with the flutter-engine buildsystem:
     # - it expects empty directories created by gclient.py to be present; that
     #   means we can't use the mk_tar_gz helper method from support/download/helpers,
@@ -72,6 +73,7 @@ gen_tarball() {
     # So we just create a plain tarball.
     ${TAR} -C "${SCRATCH_DIR}"/src -czf "${TARBALL_NAME}" .
     mv "${TARBALL_NAME}" "${TARBALL_DL_PATH}"
+    popd >/dev/null
 }
 
 cleanup() {
