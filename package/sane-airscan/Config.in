@@ -1,0 +1,20 @@
+config BR2_PACKAGE_SANE_AIRSCAN
+	bool "sane-airscan"
+	select BR2_PACKAGE_AVAHI
+	select BR2_PACKAGE_AVAHI_DAEMON # needed to get avahi-client
+	select BR2_PACKAGE_DBUS # needed by avahi to get avahi-client
+	select BR2_PACKAGE_GNUTLS
+	select BR2_PACKAGE_JPEG
+	select BR2_PACKAGE_LIBPNG
+	select BR2_PACKAGE_LIBXML2
+	select BR2_PACKAGE_SANE_BACKENDS
+	select BR2_PACKAGE_TIFF
+	help
+	  SANE backend for AirScan (eSCL) and WSD document scanners
+
+	  Similar to how most modern network printers support
+	  "driverless" printing, using the universal vendor-neutral
+	  printing protocol, many modern network scanners and MFPs
+	  support "driverless" scanning.
+
+	  https://github.com/alexpevzner/sane-airscan
