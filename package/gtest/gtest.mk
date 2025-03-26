@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GTEST_VERSION = 1.15.2
+GTEST_VERSION = 1.16.0
 GTEST_SITE = $(call github,google,googletest,v$(GTEST_VERSION))
 GTEST_INSTALL_STAGING = YES
 GTEST_INSTALL_TARGET = NO
