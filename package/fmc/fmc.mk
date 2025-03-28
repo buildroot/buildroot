@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FMC_VERSION = lf-6.6.52-2.2.0
+FMC_VERSION = lf-6.12.3-1.0.0
 FMC_SITE = $(call github,nxp-qoriq,fmc,$(FMC_VERSION))
 FMC_LICENSE = MIT
 FMC_LICENSE_FILES = LICENSE
