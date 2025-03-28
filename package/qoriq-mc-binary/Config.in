@@ -1,0 +1,55 @@
+config BR2_PACKAGE_QORIQ_MC_BINARY
+	bool "qoriq-mc-binary"
+	help
+	  The Management Complex (MC) is a key component of the
+	  networking subsystem named DPAA2 (Data Path Acceleration
+	  Architecture, second version) in some NXP Layerscape SoCs.
+
+	  The MC coprocessor runs a closed-source, NXP-supplied
+	  firmware image that simplifies and abstracts the allocation
+	  and configuration of the networking hardware primitives into
+	  DPAA2 "objects".
+
+	  https://github.com/nxp-qoriq/qoriq-mc-binary
+
+if BR2_PACKAGE_QORIQ_MC_BINARY
+choice
+	prompt "QorIQ MC firmware target"
+	help
+	  Select the target SoC for the QorIQ MC firmware.
+
+config BR2_PACKAGE_QORIQ_MC_BINARY_TARGET_LS1088A
+	bool "ls1088a"
+
+config BR2_PACKAGE_QORIQ_MC_BINARY_TARGET_LS2080A
+	bool "ls2080a"
+
+config BR2_PACKAGE_QORIQ_MC_BINARY_TARGET_LS2088A
+	bool "ls2088a"
+
+config BR2_PACKAGE_QORIQ_MC_BINARY_TARGET_LX2160A
+	bool "lx2160a"
+
+endchoice
+
+config BR2_QORIQ_MC_BINARY_PLATFORM
+	string
+	default "ls1088a" if BR2_PACKAGE_QORIQ_MC_BINARY_TARGET_LS1088A
+	default "ls2080a" if BR2_PACKAGE_QORIQ_MC_BINARY_TARGET_LS2080A
+	default "ls2088a" if BR2_PACKAGE_QORIQ_MC_BINARY_TARGET_LS2088A
+	default "lx2160a" if BR2_PACKAGE_QORIQ_MC_BINARY_TARGET_LX2160A
+
+config BR2_QORIQ_MC_BINARY_SUBDIR
+	string
+	default "lx216xa" if BR2_PACKAGE_QORIQ_MC_BINARY_TARGET_LX2160A
+	default BR2_QORIQ_MC_BINARY_PLATFORM
+
+config BR2_PACKAGE_QORIQ_MC_BINARY_TARGET_INSTALL_PATH
+	string "Path on target to install MC firmware"
+	help
+	  The MC firmware can optionally be deployed to the target
+	  filesystem at the path specified here. This is useful if
+	  the mcinitcmd U-Boot environment variable is configured
+	  to load the MC firmware from the filesystem.
+
+endif

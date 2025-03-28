@@ -1,0 +1,30 @@
+################################################################################
+#
+# qoriq-mc-binary
+#
+################################################################################
+
+QORIQ_MC_BINARY_VERSION = 10.39.0
+QORIQ_MC_BINARY_SITE = $(call github,nxp-qoriq,qoriq-mc-binary,mc_release_$(QORIQ_MC_BINARY_VERSION))
+QORIQ_MC_BINARY_LICENSE = NXP Binary EULA
+QORIQ_MC_BINARY_LICENSE_FILES = LICENSE
+QORIQ_MC_BINARY_INSTALL_IMAGES = YES
+
+QORIQ_MC_BINARY_PLATFORM = $(call qstrip,$(BR2_QORIQ_MC_BINARY_PLATFORM))
+QORIQ_MC_BINARY_SUBDIR = $(call qstrip,$(BR2_QORIQ_MC_BINARY_SUBDIR))
+QORIQ_MC_BINARY_BIN = mc_$(QORIQ_MC_BINARY_PLATFORM)_$(QORIQ_MC_BINARY_VERSION).itb
+QORIQ_MC_BINARY_INSTALL_PATH = $(call qstrip,$(BR2_PACKAGE_QORIQ_MC_BINARY_TARGET_INSTALL_PATH))
+
+ifeq ($(QORIQ_MC_BINARY_TARGET_INSTALL_PATH),)
+QORIQ_MC_BINARY_INSTALL_TARGET = NO
+endif
+
+define QORIQ_MC_BINARY_INSTALL_IMAGES_CMDS
+	$(INSTALL) -D $(@D)/$(QORIQ_MC_BINARY_SUBDIR)/$(QORIQ_MC_BINARY_BIN) $(BINARIES_DIR)/mc.itb
+endef
+
+define QORIQ_MC_BINARY_INSTALL_TARGET_CMDS
+	$(INSTALL) -D $(@D)/$(QORIQ_MC_BINARY_SUBDIR)/$(QORIQ_MC_BINARY_BIN) $(TARGET_DIR)/$(QORIQ_MC_BINARY_INSTALL_PATH)/mc.itb
+endef
+
+$(eval $(generic-package))
