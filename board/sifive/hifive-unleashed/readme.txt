@@ -97,7 +97,7 @@ Adjust Buildroot configuration by:
   $ make menuconfig
 
 Change "System configuration" -> "Extra arguments passed to custom scripts"
-value to "-c board/sifive/hifive-unleashed/genimage_spi-nor.cfg", save the
+value to "-c board/sifive/common/genimage_spi-nor.cfg", save the
 configuration and build. This creates a output/images/spi-nor.img that can
 be programmed to the on-board SPI flash.
 
