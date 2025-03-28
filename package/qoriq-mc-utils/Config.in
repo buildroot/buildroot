@@ -1,0 +1,76 @@
+config BR2_PACKAGE_QORIQ_MC_UTILS
+	bool "qoriq-mc-utils"
+	select BR2_PACKAGE_HOST_DTC
+	help
+	  The Management Complex (MC) is a key component of the
+	  networking subsystem named DPAA2 (Data Path Acceleration
+	  Architecture, second version) in some NXP Layerscape SoCs.
+
+	  The MC firmware is configured through two distinct files
+	  named DPL and DPC, which are customizable by the end user.
+	  Example configuration files for NXP reference boards are
+	  distributed through this package, and are frequently patched
+	  to produce the configuration required in other scenarios.
+
+	  https://github.com/nxp-qoriq/mc-utils
+	  # sign in required
+	  https://www.nxp.com/webapp/Download?colCode=DPAA2UM
+
+if BR2_PACKAGE_QORIQ_MC_UTILS
+
+config BR2_PACKAGE_QORIQ_MC_UTILS_DPC_CUSTOM_PATH
+	string "Data Path Configuration (DPC) custom file paths"
+	help
+	  The DPC file contains the settings defining the behavior
+	  of the MC firmware. Its structure follows the device
+	  tree syntax and is compiled to a device tree blob.
+
+	  This option defines a space-separated list of device
+	  tree source (DTS) file names, specified without
+	  the trailing .dts. It should be used when the NXP
+	  qoriq-mc-utils repository does not contain an adequate
+	  DPC for the platform, and is preferable to patching
+	  the package.
+
+config BR2_PACKAGE_QORIQ_MC_UTILS_DPC_INTREE
+	string "Data Path Configuration (DPC) in-tree files"
+	help
+	  This option defines a space-separated list of device
+	  tree source (DTS) files relative to the "config/"
+	  folder of the qoriq-mc-utils repository, specified
+	  without the trailing .dts. It should be used when NXP
+	  provides an adequate DPC for the platform.
+
+config BR2_PACKAGE_QORIQ_MC_UTILS_DPL_CUSTOM_PATH
+	string "Data Path Layout (DPL) custom file paths"
+	help
+	  The DPL file contains a description of the initial
+	  networking objects created by the MC firmware when it
+	  boots. Its structure follows the device tree syntax
+	  and is compiled to a device tree blob.
+
+	  This option defines a space-separated list of device
+	  tree source (DTS) files, specified without the
+	  trailing .dts. It should be used when the NXP
+	  qoriq-mc-utils repository does not contain an
+	  adequate DPL for the platform, and is preferable to
+	  patching the package.
+
+config BR2_PACKAGE_QORIQ_MC_UTILS_DPL_INTREE
+	string "Data Path Layout (DPL) in-tree files"
+	help
+	  This option defines a space-separated list of device
+	  tree source (DTS) files relative to the "config/"
+	  folder of the qoriq-mc-utils repository, specified
+	  without the trailing .dts. It should be used when NXP
+	  provides an adequate DPL for the platform.
+
+config BR2_PACKAGE_QORIQ_MC_UTILS_TARGET_INSTALL_PATH
+	string "Path on target to install DPL and DPC files"
+	help
+	  The DPL and DPC files can optionally be deployed to
+	  the target at the path specified here. This is useful
+	  if the mcinitcmd U-Boot environment variable is
+	  configured to apply the DPL and DPC from the filesystem.
+
+endif
