@@ -26,6 +26,7 @@ endef
 IMX_GPU_G2D_SUBDIR = $(if $(BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8MM),mx8mm,)
 
 define IMX_GPU_G2D_INSTALL_STAGING_CMDS
+	cp -a $(@D)/g2d/usr/include/* $(STAGING_DIR)/usr/include/
 	cp -a $(@D)/g2d/usr/lib/$(IMX_GPU_G2D_SUBDIR)/libg2d*  $(STAGING_DIR)/usr/lib/
 endef
 
