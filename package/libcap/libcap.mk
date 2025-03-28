@@ -64,8 +64,11 @@ define HOST_LIBCAP_BUILD_CMDS
 		$(HOST_LIBCAP_MAKE_FLAGS)
 endef
 
+# Set DESTDIR to a non-empty path, so that libcap's Makefile
+# does not trigger calls to ldconfig
 define HOST_LIBCAP_INSTALL_CMDS
-	$(HOST_MAKE_ENV) $(MAKE) -C $(@D) $(HOST_LIBCAP_MAKE_FLAGS) install
+	$(HOST_MAKE_ENV) $(MAKE) -C $(@D) $(HOST_LIBCAP_MAKE_FLAGS) \
+		DESTDIR=/ install
 endef
 
 $(eval $(generic-package))
