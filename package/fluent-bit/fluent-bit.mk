@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FLUENT_BIT_VERSION = 3.2.2
+FLUENT_BIT_VERSION = 3.2.10
 FLUENT_BIT_SITE = $(call github,fluent,fluent-bit,v$(FLUENT_BIT_VERSION))
 FLUENT_BIT_LICENSE = Apache-2.0
 FLUENT_BIT_LICENSE_FILES = LICENSE
@@ -62,11 +62,6 @@ FLUENT_BIT_DEPENDENCIES += luajit
 else
 FLUENT_BIT_CONF_OPTS += -DFLB_LUAJIT=No
 endif
-
-# Force bundled miniz to be linked statically.
-# https://github.com/fluent/fluent-bit/issues/6711
-FLUENT_BIT_CONF_OPTS += \
-	-DBUILD_SHARED_LIBS=OFF
 
 # Move the config files from /usr/etc/ to /etc/.
 # https://github.com/fluent/fluent-bit/issues/6619
