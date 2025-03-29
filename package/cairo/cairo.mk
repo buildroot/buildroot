@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CAIRO_VERSION = 1.18.2
+CAIRO_VERSION = 1.18.4
 CAIRO_SOURCE = cairo-$(CAIRO_VERSION).tar.xz
 CAIRO_LICENSE = LGPL-2.1 or MPL-1.1 (library)
 CAIRO_LICENSE_FILES = COPYING COPYING-LGPL-2.1 COPYING-MPL-1.1
@@ -37,8 +37,7 @@ CAIRO_CONF_OPTS = \
 	-Dtests=disabled \
 	-Dspectre=disabled \
 	-Dsymbol-lookup=disabled \
-	-Dgtk_doc=false \
-	-Dc_std=gnu11
+	-Dgtk_doc=false
 CAIRO_DEPENDENCIES = \
 	host-pkgconf \
 	fontconfig \
@@ -59,8 +58,7 @@ HOST_CAIRO_CONF_OPTS = \
 	-Dglib=enabled \
 	-Dspectre=disabled \
 	-Dsymbol-lookup=disabled \
-	-Dgtk_doc=false \
-	-Dc_std=gnu11
+	-Dgtk_doc=false
 HOST_CAIRO_DEPENDENCIES = \
 	host-freetype \
 	host-fontconfig \
@@ -71,7 +69,10 @@ HOST_CAIRO_DEPENDENCIES = \
 	host-zlib
 
 ifeq ($(BR2_PACKAGE_LZO),y)
+CAIRO_CONF_OPTS += -Dlzo=enabled
 CAIRO_DEPENDENCIES += lzo
+else
+CAIRO_CONF_OPTS += -Dlzo=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_FREETYPE),y)
