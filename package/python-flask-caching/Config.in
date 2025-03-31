@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_FLASK_CACHING
+	bool "python-flask-caching"
+	select BR2_PACKAGE_PYTHON_CACHELIB # runtime
+	select BR2_PACKAGE_PYTHON_FLASK # runtime
+	help
+	  Adds caching support to Flask applications.
+
+	  https://github.com/pallets-eco/flask-caching
