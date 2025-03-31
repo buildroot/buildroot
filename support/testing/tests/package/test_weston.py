@@ -58,8 +58,8 @@ class TestWeston(infra.basetest.BRTest, GraphicsBase):
 
     def stop_weston(self):
         cmd = "killall weston"
-        time.sleep(3)
         self.assertRunOk(cmd)
+        time.sleep(3)
 
     def test_run(self):
         img = os.path.join(self.builddir, "images", "rootfs.cpio.gz")
