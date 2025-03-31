@@ -1,35 +1,74 @@
 #!/bin/sh
 
+DAEMON="mosquitto"
+PIDFILE="/var/run/$DAEMON.pid"
+MOSQUITTO_CONF="/etc/mosquitto/mosquitto.conf"
+
+[ -f "$MOSQUITTO_CONF" ] || exit 0
+
 start() {
-	printf "Starting mosquitto: "
-	start-stop-daemon -S -q -m -b -p /var/run/mosquitto.pid \
-		--exec /usr/sbin/mosquitto \
-		-- -c /etc/mosquitto/mosquitto.conf
-	[ $? = 0 ] && echo "OK" || echo "FAIL"
+	printf "Starting %s: " "$DAEMON"
+	start-stop-daemon --start --background --make-pidfile \
+		--pidfile "$PIDFILE" --exec "/usr/sbin/$DAEMON" \
+		-- -c "$MOSQUITTO_CONF"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
 }
+
 stop() {
-	printf "Stopping mosquitto: "
-	start-stop-daemon -K -q -p /var/run/mosquitto.pid
-	[ $? = 0 ] && echo "OK" || echo "FAIL"
+	printf "Stopping %s: " "$DAEMON"
+	start-stop-daemon --stop --pidfile "$PIDFILE" \
+		--exec "/usr/sbin/$DAEMON"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+		return "$status"
+	fi
+	while start-stop-daemon --stop --test --quiet --pidfile "$PIDFILE" \
+		--exec "/usr/sbin/$DAEMON"; do
+		sleep 0.1
+	done
+	rm -f "$PIDFILE"
+	return "$status"
 }
+
 restart() {
 	stop
 	start
 }
 
+reload() {
+	printf "Reloading %s config: " "$DAEMON"
+	start-stop-daemon --stop --signal HUP -q --pidfile "$PIDFILE" \
+		--exec "/usr/sbin/$DAEMON"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
 case "$1" in
-  start)
-	start
-	;;
-  stop)
-	stop
-	;;
-  restart|reload)
-	restart
-	;;
-  *)
-	echo "Usage: $0 {start|stop|restart}"
-	exit 1
+	start)
+		start;;
+	stop)
+		stop;;
+	restart)
+		restart;;
+	reload)
+		reload;;
+	*)
+		echo "Usage: $0 {start|stop|restart|reload}"
+		exit 1
 esac
 
 exit $?
