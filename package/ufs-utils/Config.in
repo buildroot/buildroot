@@ -1,0 +1,11 @@
+config BR2_PACKAGE_UFS_UTILS
+	bool "ufs-utils"
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_1
+	help
+	  UFS utils is a set of utilities for managing Universal
+	  Flash Storage (UFS) devices.
+
+	  https://github.com/SanDisk-Open-Source/ufs-utils.git
+
+comment "ufs-utils needs a toolchain w/ headers >= 5.1"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_1
