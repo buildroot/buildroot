@@ -732,4 +732,17 @@ config BR2_PACKAGE_LINUX_FIRMWARE_RP2
 
 endmenu
 
+menu "NPU Firmware"
+
+config BR2_PACKAGE_LINUX_FIRMWARE_INTEL_NPU
+	bool "Intel NPU firmware"
+	help
+	  Firmware files for Intel NPU device. Intel NPU device is an
+	  AI inference accelerator integrated with Intel client CPUs.
+	  The full device name is Neural Processing Unit, but the
+	  Linux kernel driver uses the older name Versatile Processing
+	  Unit (VPU).
+
+endmenu
+
 endif
