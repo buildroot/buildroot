@@ -1,0 +1,31 @@
+config BR2_PACKAGE_GROUT
+	bool "grout"
+	depends on BR2_PACKAGE_DPDK_ARCH_SUPPORTS # dpdk
+	depends on BR2_TOOLCHAIN_HAS_THREADS # dpdk
+	depends on BR2_USE_MMU # dpdk, numactl, libecoli, util-linux-smartcols, libcap
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # dpdk
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_19 # dpdk
+	depends on BR2_TOOLCHAIN_USES_GLIBC # dpdk
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC # numactl
+	depends on !BR2_STATIC_LIBS # libecoli
+	depends on BR2_USE_WCHAR # libecoli
+	select BR2_PACKAGE_DPDK
+	select BR2_PACKAGE_LIBCAP
+	select BR2_PACKAGE_LIBEVENT
+	select BR2_PACKAGE_NUMACTL
+	select BR2_PACKAGE_LIBECOLI
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBSMARTCOLS
+	help
+	  Graph router based on DPDK
+
+	  NOTE: grout needs a working UTF-8 locale (BR2_GENERATE_LOCALE)
+
+comment "grout needs a glibc toolchain w/ dynamic library, threads, wchar, gcc >= 4.9, headers >= 4.19"
+	depends on BR2_USE_MMU
+	depends on BR2_PACKAGE_DPDK_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_USES_GLIBC || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_19
