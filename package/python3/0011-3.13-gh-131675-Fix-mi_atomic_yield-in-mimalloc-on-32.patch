@@ -1,0 +1,80 @@
+From a9aae012b4ee83f1aba7c122943c63b69c5b9f97 Mon Sep 17 00:00:00 2001
+From: "Miss Islington (bot)"
+ <31488909+miss-islington@users.noreply.github.com>
+Date: Mon, 31 Mar 2025 20:58:29 +0200
+Subject: [PATCH] [3.13] gh-131675: Fix `mi_atomic_yield` in mimalloc on 32-bit
+ ARM (gh-131784) (gh-131954)
+
+Use the standard `__ARM_ARCH` macro, which is supported by GCC and Clang.
+
+The branching logic for of `__ARMEL__` has been removed so if the target
+architecture supports v7+ instructions, a yield is emitted, otherwise a nop
+is emitted. This covers both big and little endian scenarios.
+(cherry picked from commit 03f6c8e239723637811fd8d278661f5292351197)
+
+Upstream: https://github.com/python/cpython/pull/131954
+
+Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+Co-authored-by: Vincent Fazio <vfazio@gmail.com>
+Signed-off-by: Vincent Fazio <vfazio@xes-inc.com>
+---
+ Include/internal/mimalloc/mimalloc/atomic.h     | 17 ++++++++++-------
+ ...25-03-27-01-21-50.gh-issue-131675.l2zfOO.rst |  1 +
+ 2 files changed, 11 insertions(+), 7 deletions(-)
+ create mode 100644 Misc/NEWS.d/next/Build/2025-03-27-01-21-50.gh-issue-131675.l2zfOO.rst
+
+diff --git a/Include/internal/mimalloc/mimalloc/atomic.h b/Include/internal/mimalloc/mimalloc/atomic.h
+index 1093c540864..a46a7676ad2 100644
+--- a/Include/internal/mimalloc/mimalloc/atomic.h
++++ b/Include/internal/mimalloc/mimalloc/atomic.h
+@@ -338,8 +338,9 @@ static inline void mi_atomic_yield(void) {
+   _mm_pause();
+ }
+ #elif (defined(__GNUC__) || defined(__clang__)) && \
+-      (defined(__x86_64__) || defined(__i386__) || defined(__arm__) || defined(__armel__) || defined(__ARMEL__) || \
+-       defined(__aarch64__) || defined(__powerpc__) || defined(__ppc__) || defined(__PPC__)) || defined(__POWERPC__)
++      (defined(__x86_64__) || defined(__i386__) || \
++       defined(__aarch64__) || defined(__arm__) || \
++       defined(__powerpc__) || defined(__ppc__) || defined(__PPC__) || defined(__POWERPC__))
+ #if defined(__x86_64__) || defined(__i386__)
+ static inline void mi_atomic_yield(void) {
+   __asm__ volatile ("pause" ::: "memory");
+@@ -348,10 +349,16 @@ static inline void mi_atomic_yield(void) {
+ static inline void mi_atomic_yield(void) {
+   __asm__ volatile("wfe");
+ }
+-#elif (defined(__arm__) && __ARM_ARCH__ >= 7)
++#elif defined(__arm__)
++#if __ARM_ARCH >= 7
+ static inline void mi_atomic_yield(void) {
+   __asm__ volatile("yield" ::: "memory");
+ }
++#else
++static inline void mi_atomic_yield(void) {
++  __asm__ volatile ("nop" ::: "memory");
++}
++#endif
+ #elif defined(__powerpc__) || defined(__ppc__) || defined(__PPC__) || defined(__POWERPC__)
+ #ifdef __APPLE__
+ static inline void mi_atomic_yield(void) {
+@@ -362,10 +369,6 @@ static inline void mi_atomic_yield(void) {
+   __asm__ __volatile__ ("or 27,27,27" ::: "memory");
+ }
+ #endif
+-#elif defined(__armel__) || defined(__ARMEL__)
+-static inline void mi_atomic_yield(void) {
+-  __asm__ volatile ("nop" ::: "memory");
+-}
+ #endif
+ #elif defined(__sun)
+ // Fallback for other archs
+diff --git a/Misc/NEWS.d/next/Build/2025-03-27-01-21-50.gh-issue-131675.l2zfOO.rst b/Misc/NEWS.d/next/Build/2025-03-27-01-21-50.gh-issue-131675.l2zfOO.rst
+new file mode 100644
+index 00000000000..be870a81df1
+--- /dev/null
++++ b/Misc/NEWS.d/next/Build/2025-03-27-01-21-50.gh-issue-131675.l2zfOO.rst
+@@ -0,0 +1 @@
++Fix mimalloc library builds for 32-bit ARM targets.
+-- 
+2.34.1
+
