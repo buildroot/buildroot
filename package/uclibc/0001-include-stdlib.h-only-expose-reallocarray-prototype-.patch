@@ -1,0 +1,64 @@
+From bbb1a4f197624b0040e3228505eb2a725a8846f8 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Thu, 3 Apr 2025 22:56:49 +0200
+Subject: [PATCH] include/stdlib.h: only expose reallocarray() prototype when
+ implementation is available
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The reallocarray() primitive is only provided by the malloc-standard
+implementation: neither malloc nor malloc-simple provide it. This
+causes issues when building for example util-linux on noMMU platforms
+as:
+
+- noMMU platforms can't use malloc-standard, so either malloc or
+  malloc-simple are used, which means reallocarray() is not
+  implemented
+
+- util-linux detects the absence of reallocarray(), and provides its
+  own implementation, but the prototype clashes with the prototype in
+  uClibc's <stdlib.h>
+
+The combination of which causes the following build failure:
+
+In file included from lib/color-names.c:7:
+./include/c.h:586:21: error: static declaration of ‘reallocarray’ follows non-static declaration
+  586 | static inline void *reallocarray(void *ptr, size_t nmemb, size_t size)
+      |                     ^~~~~~~~~~~~
+In file included from ./include/c.h:16:
+/home/thomas/projets/buildroot/output/host/arm-buildroot-uclinux-uclibcgnueabi/sysroot/usr/include/stdlib.h:898:14: note: previous declaration of ‘reallocarray’ with type ‘void *(void *, size_t,  size_t)’ {aka ‘void *(void *, unsigned int,  unsigned int)’}
+  898 | extern void *reallocarray (void *__ptr, size_t __m, size_t __n);
+      |              ^~~~~~~~~~~~
+make[3]: *** [Makefile:12354: lib/libtcolors_la-color-names.lo] Error 1
+
+To fix this, let's not expose the prototype of reallocarray() if we
+don't provide the implementation for it.
+
+Upstream: https://mailman.openadk.org/mailman3/hyperkitty/list/devel@uclibc-ng.org/thread/BX4ENNZYO23YQJQF5XITW7TETSJHEFK5/
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ include/stdlib.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/include/stdlib.h b/include/stdlib.h
+index d4e0b75e7..448c5e336 100644
+--- a/include/stdlib.h
++++ b/include/stdlib.h
+@@ -986,9 +986,13 @@ extern int getpt (void);
+ extern int getloadavg (double __loadavg[], int __nelem)
+      __THROW __nonnull ((1));
+ 
++/* reallocarray() only provided by the malloc-standard implementation */
++#if defined(__MALLOC_STANDARD__)
+ extern void *reallocarray (void *__ptr, size_t __m, size_t __n);
+ #endif
+ 
++#endif
++
+ #ifdef _LIBC
+ extern int __drand48_iterate (unsigned short int xsubi[3], struct drand48_data *buffer) attribute_hidden;
+ 
+-- 
+2.48.1
+
