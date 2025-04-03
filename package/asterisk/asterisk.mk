@@ -4,15 +4,20 @@
 #
 ################################################################################
 
-ASTERISK_VERSION = 20.11.1
+ASTERISK_VERSION = 22.3.0
 # Use the github mirror: it's an official mirror maintained by Digium, and
 # provides tarballs, which the main Asterisk git tree (behind Gerrit) does not.
 ASTERISK_SITE = $(call github,asterisk,asterisk,$(ASTERISK_VERSION))
 
+# compilation with the external pjsip produces a non-working asterisk, which
+# segfaults. The reason behind this is unclear.
+# https://github.com/asterisk/asterisk/issues/671
+ASTERISK_PJSIP_URL = https://raw.githubusercontent.com/asterisk/third-party/master/pjproject/2.15.1/
 ASTERISK_SOUNDS_BASE_URL = http://downloads.asterisk.org/pub/telephony/sounds/releases
 ASTERISK_EXTRA_DOWNLOADS = \
 	$(ASTERISK_SOUNDS_BASE_URL)/asterisk-core-sounds-en-gsm-1.6.1.tar.gz \
-	$(ASTERISK_SOUNDS_BASE_URL)/asterisk-moh-opsound-wav-2.03.tar.gz
+	$(ASTERISK_SOUNDS_BASE_URL)/asterisk-moh-opsound-wav-2.03.tar.gz \
+	$(ASTERISK_PJSIP_URL)/pjproject-2.15.1.tar.bz2
 
 ASTERISK_LICENSE = GPL-2.0, BSD-3-Clause (SHA1, resample), BSD-4-Clause (db1-ast)
 ASTERISK_LICENSE_FILES = \
@@ -76,7 +81,6 @@ ASTERISK_CONF_OPTS = \
 	--without-neon29 \
 	--without-newt \
 	--without-openr2 \
-	--without-osptk \
 	--without-postgres \
 	--without-popt \
 	--without-resample \
@@ -94,10 +98,9 @@ ASTERISK_CONF_OPTS = \
 	--with-libjwt="$(STAGING_DIR)/usr" \
 	--with-libxml2 \
 	--with-libedit="$(STAGING_DIR)/usr" \
-	--without-pjproject-bundled \
-	--with-pjproject="$(STAGING_DIR)/usr" \
+	--with-pjproject-bundled \
 	--with-sqlite3="$(STAGING_DIR)/usr" \
-	--with-sounds-cache=$(ASTERISK_DL_DIR)
+	--with-download-cache=$(ASTERISK_DL_DIR)
 
 # avcodec are from ffmpeg. There is virtually zero chance this could
 # even work; asterisk is looking for ffmpeg/avcodec.h which has not
@@ -133,13 +136,6 @@ ASTERISK_DEPENDENCIES += libgsm
 ASTERISK_CONF_OPTS += --with-gsm
 else
 ASTERISK_CONF_OPTS += --without-gsm
-endif
-
-ifeq ($(BR2_PACKAGE_ALSA_LIB),y)
-ASTERISK_DEPENDENCIES += alsa-lib
-ASTERISK_CONF_OPTS += --with-asound
-else
-ASTERISK_CONF_OPTS += --without-asound
 endif
 
 ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS),y)
@@ -298,6 +294,15 @@ ASTERISK_INSTALL_TARGET_OPTS = \
 	DESTDIR=$(TARGET_DIR) \
 	LDCONFIG=true \
 	install samples
+
+define ASTERISK_USERS
+	asterisk -1 asterisk -1 * /usr/lib/asterisk - - asterisk user
+endef
+
+define ASTERISK_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 644 package/asterisk/asterisk.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/asterisk.service
+endef
 
 $(eval $(autotools-package))
 

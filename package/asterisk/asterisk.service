@@ -1,0 +1,23 @@
+# based on included asterisk.service, but changed
+# Type to simple, comments removed
+[Unit]
+Description=Asterisk PBX and telephony daemon.
+After=network.target
+
+[Service]
+Type=simple
+Environment=HOME=/usr/lib/asterisk
+WorkingDirectory=/usr/lib/asterisk
+User=asterisk
+Group=asterisk
+ExecStart=/usr/sbin/asterisk -mqf -C /etc/asterisk/asterisk.conf
+ExecReload=/usr/sbin/asterisk -rx 'core reload'
+RuntimeDirectory=asterisk
+LimitCORE=infinity
+Restart=always
+RestartSec=4
+StandardOutput=null
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
