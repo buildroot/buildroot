@@ -60,6 +60,13 @@ config BR2_PACKAGE_LIBCAMERA_PIPELINE_RKISP1
 	help
 	  Pipeline for Rockchip ISP1.
 
+config BR2_PACKAGE_LIBCAMERA_PIPELINE_MALI_C55
+	bool "mali-c55 pipeline"
+	depends on BR2_arm || BR2_aarch64
+	select BR2_PACKAGE_LIBCAMERA_HAS_PIPELINE
+	help
+	  Pipeline for Arm Mali-C55 ISP.
+
 config BR2_PACKAGE_LIBCAMERA_PIPELINE_RPI_VC4
 	bool "rpi/vc4 pipeline"
 	depends on BR2_arm || BR2_aarch64
