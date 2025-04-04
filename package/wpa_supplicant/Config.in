@@ -183,4 +183,11 @@ config BR2_PACKAGE_WPA_SUPPLICANT_SMARTCARD
 	  Enable the smart card support. Required for OpenSSL engines
 	  to work using PKCS11 and 802.1x
 
+config BR2_PACKAGE_WPA_SUPPLICANT_WEP
+	bool "Enable WEP support (deprecated)"
+	help
+	  Enable support for WEP. WEP support is deprecated due to
+	  security concerns, but some systems may want to support WEP
+	  networks.
+
 endif
