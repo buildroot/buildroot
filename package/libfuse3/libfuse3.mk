@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBFUSE3_VERSION = 3.16.2
+LIBFUSE3_VERSION = 3.17.1
 LIBFUSE3_SITE = $(call github,libfuse,libfuse,fuse-$(LIBFUSE3_VERSION))
 LIBFUSE3_LICENSE = LGPL-2.1
 LIBFUSE3_LICENSE_FILES = LICENSE
@@ -17,6 +17,11 @@ LIBFUSE3_CONF_OPTS = \
 	-Dudevrulesdir=/lib/udev/rules.d \
 	-Duseroot=false \
 	-Dtests=false
+
+# Uses __atomic_fetch_sub_4
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+LIBFUSE3_LDFLAGS += -latomic
+endif
 
 define LIBFUSE3_DEVICES
 	/dev/fuse c 666 0 0 10 229 0 0 -

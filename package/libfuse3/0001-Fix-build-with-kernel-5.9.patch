@@ -1,0 +1,72 @@
+From 714fcf4123ae5512893019d2c205aad94b6afea6 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Tue, 1 Apr 2025 00:53:07 +0200
+Subject: [PATCH] Fix build with kernel < 5.9
+
+linux/close_range.h is only available since kernel 5.9 and
+https://github.com/torvalds/linux/commit/60997c3d45d9a67daf01c56d805ae4fec37e0bd8
+resulting in the following build failure:
+
+../util/fusermount.c:40:10: fatal error: linux/close_range.h: No such file or directory
+
+So let's check for header presence and emit HAVE_LINUX_CLOSE_RANGE_H
+accordingly and check for it when including <linux/close_range.h> and
+calling close_range() instead of checking for close_range() function in
+meson and check against HAVE_CLOSE_RANGE.
+
+Upstream: https://github.com/libfuse/libfuse/pull/1185
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ meson.build       | 6 +++++-
+ util/fusermount.c | 4 ++--
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index cbcd70d..96c655c 100644
+--- a/meson.build
++++ b/meson.build
+@@ -72,7 +72,7 @@ private_cfg.set_quoted('PACKAGE_VERSION', meson.project_version())
+ # Test for presence of some functions
+ test_funcs = [ 'fork', 'fstatat', 'openat', 'readlinkat', 'pipe2',
+                'splice', 'vmsplice', 'posix_fallocate', 'fdatasync',
+-               'utimensat', 'copy_file_range', 'fallocate', 'close_range' ]
++               'utimensat', 'copy_file_range', 'fallocate' ]
+ foreach func : test_funcs
+     private_cfg.set('HAVE_' + func.to_upper(),
+         cc.has_function(func, prefix: include_default, args: args_default))
+@@ -84,6 +84,10 @@ private_cfg.set('HAVE_ICONV',
+ private_cfg.set('HAVE_BACKTRACE',
+         cc.has_function('backtrace', prefix: '#include <execinfo.h>'))
+ 
++# Test if headers exist
++private_cfg.set('HAVE_LINUX_CLOSE_RANGE_H',
++        cc.check_header('#include <linux/close_range.h>'))
++
+ # Test if structs have specific member
+ private_cfg.set('HAVE_STRUCT_STAT_ST_ATIM',
+          cc.has_member('struct stat', 'st_atim',
+diff --git a/util/fusermount.c b/util/fusermount.c
+index dbd947c..da6d5f2 100644
+--- a/util/fusermount.c
++++ b/util/fusermount.c
+@@ -36,7 +36,7 @@
+ #include <stdbool.h>
+ #include <sys/vfs.h>
+ 
+-#ifdef HAVE_CLOSE_RANGE
++#ifdef HAVE_LINUX_CLOSE_RANGE_H
+ #include <linux/close_range.h>
+ #endif
+ 
+@@ -1477,7 +1477,7 @@ static int close_inherited_fds(int cfd)
+ 	if (cfd <= STDERR_FILENO)
+ 		return -EINVAL;
+ 
+-#ifdef HAVE_CLOSE_RANGE
++#ifdef HAVE_LINUX_CLOSE_RANGE_H
+ 	if (cfd < STDERR_FILENO + 2) {
+ 		close_range_loop(STDERR_FILENO + 1, cfd - 1, cfd);
+ 	} else {
+-- 
+2.39.5
+

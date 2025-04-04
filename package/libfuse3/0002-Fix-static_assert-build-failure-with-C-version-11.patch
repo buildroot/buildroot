@@ -1,0 +1,49 @@
+From 5fafd1a33e9442811074604eeaa060578e589730 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Fri, 4 Apr 2025 22:17:49 +0200
+Subject: [PATCH] Fix static_assert build failure with C++ version < 11
+
+At the moment build fails due to lack of static_assert:
+https://gitlab.com/jolivain/buildroot/-/jobs/9606292537
+this means that the check per date is not enough, so let's use meson to
+check if static_assert() is present or not and simplify
+fuse_static_assert() definition by only checking HAVE_STATIC_ASSERT.
+
+Upstream: https://github.com/libfuse/libfuse/pull/1189
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ include/fuse_common.h | 4 +---
+ meson.build           | 2 +-
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/include/fuse_common.h b/include/fuse_common.h
+index 77efc5d..582505f 100644
+--- a/include/fuse_common.h
++++ b/include/fuse_common.h
+@@ -30,9 +30,7 @@
+ #define FUSE_MAKE_VERSION(maj, min)  ((maj) * 100 + (min))
+ #define FUSE_VERSION FUSE_MAKE_VERSION(FUSE_MAJOR_VERSION, FUSE_MINOR_VERSION)
+ 
+-#if (defined(__cplusplus) && __cplusplus >= 201103L) ||        \
+-	(!defined(__cplusplus) && defined(__STDC_VERSION__) && \
+-	 __STDC_VERSION__ >= 201112L)
++#ifdef HAVE_STATIC_ASSERT
+ #define fuse_static_assert(condition, message) static_assert(condition, message)
+ #else
+ #define fuse_static_assert(condition, message)
+diff --git a/meson.build b/meson.build
+index 96c655c..bab98da 100644
+--- a/meson.build
++++ b/meson.build
+@@ -72,7 +72,7 @@ private_cfg.set_quoted('PACKAGE_VERSION', meson.project_version())
+ # Test for presence of some functions
+ test_funcs = [ 'fork', 'fstatat', 'openat', 'readlinkat', 'pipe2',
+                'splice', 'vmsplice', 'posix_fallocate', 'fdatasync',
+-               'utimensat', 'copy_file_range', 'fallocate' ]
++               'utimensat', 'copy_file_range', 'fallocate', 'static_assert' ]
+ foreach func : test_funcs
+     private_cfg.set('HAVE_' + func.to_upper(),
+         cc.has_function(func, prefix: include_default, args: args_default))
+-- 
+2.39.5
+
