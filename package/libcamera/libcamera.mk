@@ -5,7 +5,7 @@
 ################################################################################
 
 LIBCAMERA_SITE = https://git.linuxtv.org/libcamera.git
-LIBCAMERA_VERSION = v0.4.0
+LIBCAMERA_VERSION = v0.5.0
 LIBCAMERA_SITE_METHOD = git
 LIBCAMERA_DEPENDENCIES = \
 	host-openssl \
@@ -51,9 +51,7 @@ LIBCAMERA_CONF_OPTS += -Dpycamera=enabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBCAMERA_V4L2),y)
-LIBCAMERA_CONF_OPTS += -Dv4l2=true
-else
-LIBCAMERA_CONF_OPTS += -Dv4l2=false
+LIBCAMERA_CONF_OPTS += -Dv4l2=enabled
 endif
 
 LIBCAMERA_PIPELINES-$(BR2_PACKAGE_LIBCAMERA_PIPELINE_IMX8_ISI) += imx8-isi
