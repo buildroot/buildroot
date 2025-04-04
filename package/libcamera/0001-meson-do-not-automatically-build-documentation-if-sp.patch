@@ -1,0 +1,42 @@
+From 1e4db1f9792e4343231a1cf36aa553404a534828 Mon Sep 17 00:00:00 2001
+From: Quentin Schulz <quentin.schulz@cherry.de>
+Date: Fri, 4 Apr 2025 18:01:33 +0200
+Subject: [PATCH] meson: do not automatically build documentation if
+ sphinx-build-3 is found
+
+Commit aba567338b25 ("Documentation: Move all dependencies into
+features") did an incomplete migration of the documentation boolean
+option into a documentation feature.
+
+If sphinx-build-3 binary is found on the host system, the documentation
+is built, regardless of the value of the feature option.
+
+This makes sure that sphinx-build-3 presence is only checked if the
+documentation feature is not disabled (which is the default, as it's
+"auto" by default).
+
+This is essential for reproducibility for build systems where
+sphinx-build-3 may or may not be present when libcamera is built, and
+also to declutter the generated package if documentation isn't desired.
+
+Fixes: aba567338b25 ("Documentation: Move all dependencies into features")
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+Upstream: https://lists.libcamera.org/pipermail/libcamera-devel/2025-April/049705.html
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+ Documentation/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/meson.build b/Documentation/meson.build
+index 6158320e..c59849f6 100644
+--- a/Documentation/meson.build
++++ b/Documentation/meson.build
+@@ -116,7 +116,7 @@ endif
+ # Sphinx
+ #
+ 
+-sphinx = find_program('sphinx-build-3', required : false)
++sphinx = find_program('sphinx-build-3', required : get_option('documentation'))
+ if not sphinx.found()
+     sphinx = find_program('sphinx-build', required : get_option('documentation'))
+ endif
