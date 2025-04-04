@@ -1,0 +1,35 @@
+From f41f4a55e7787c9517ca6ac72f83dc244b4011e4 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Sat, 5 Apr 2025 00:35:23 +0200
+Subject: [PATCH] Fix Linux 6.13
+
+With Linux commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0809a9ccac4a2ffdfd1561bb551aec6099775545
+spi_alloc_master() has been renamed to spi_alloc_host() so let's rename it
+accordingly checking for Linux version 6.13.0.
+
+Upstream: https://github.com/espressif/esp-hosted/pull/589
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ esp_hosted_ng/host/spi/esp_spi.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/esp_hosted_ng/host/spi/esp_spi.c b/esp_hosted_ng/host/spi/esp_spi.c
+index 51df26d8d7..fc63487821 100644
+--- a/esp_hosted_ng/host/spi/esp_spi.c
++++ b/esp_hosted_ng/host/spi/esp_spi.c
+@@ -394,7 +394,11 @@ static struct spi_controller *spi_busnum_to_master(u16 bus_num)
+ 	pdev->num_resources = 0;
+ 	platform_device_add(pdev);
+ 
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 13, 0))
++	master = spi_alloc_host(&pdev->dev, sizeof(void *));
++#else
+ 	master = spi_alloc_master(&pdev->dev, sizeof(void *));
++#endif
+ 	if (!master) {
+ 		pr_err("Error: failed to allocate SPI master device\n");
+ 		platform_device_del(pdev);
+-- 
+2.39.5
+
