@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GST1_PLUGINS_BAD_VERSION = 1.22.12
+GST1_PLUGINS_BAD_VERSION = 1.24.11
 GST1_PLUGINS_BAD_SOURCE = gst-plugins-bad-$(GST1_PLUGINS_BAD_VERSION).tar.xz
 GST1_PLUGINS_BAD_SITE = https://gstreamer.freedesktop.org/src/gst-plugins-bad
 GST1_PLUGINS_BAD_INSTALL_STAGING = YES
@@ -34,6 +34,7 @@ GST1_PLUGINS_BAD_CONF_OPTS = \
 
 # Options which require currently unpackaged libraries
 GST1_PLUGINS_BAD_CONF_OPTS += \
+	-Daja=disabled \
 	-Dasio=disabled \
 	-Davtp=disabled \
 	-Dopensles=disabled \
@@ -42,18 +43,22 @@ GST1_PLUGINS_BAD_CONF_OPTS += \
 	-Dbs2b=disabled \
 	-Dchromaprint=disabled \
 	-Dd3d11=disabled \
+	-Dd3d12=disabled \
 	-Ddc1394=disabled \
 	-Ddts=disabled \
+	-Ddwrite=disabled \
 	-Dresindvd=disabled \
 	-Dfaac=disabled \
 	-Dflite=disabled \
 	-Dgs=disabled \
 	-Dgsm=disabled \
-	-Dkate=disabled \
+	-Dinsertbin=disabled \
 	-Dladspa=disabled \
+	-Dlc3=disabled \
 	-Dldac=disabled \
 	-Dlv2=disabled \
 	-Dmediafoundation=disabled \
+	-Dmse=disabled \
 	-Dmicrodns=disabled \
 	-Dlibde265=disabled \
 	-Dmodplug=disabled \
@@ -65,10 +70,16 @@ GST1_PLUGINS_BAD_CONF_OPTS += \
 	-Dwildmidi=disabled \
 	-Dsmoothstreaming=disabled \
 	-Dsoundtouch=disabled \
+	-Dsvtav1=disabled \
 	-Dgme=disabled \
 	-Dspandsp=disabled \
 	-Dsvthevcenc=disabled \
 	-Dtranscode=disabled \
+	-Dunixfd=disabled \
+	-Dudev=disabled \
+	-Duvcgadget=disabled \
+	-Dvulkan=disabled \
+	-Dx11=disabled \
 	-Dwasapi2=disabled \
 	-Dmagicleap=disabled \
 	-Disac=disabled \
@@ -742,10 +753,13 @@ ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_VA),y)
 GST1_PLUGINS_BAD_CONF_OPTS += -Dva=enabled
 GST1_PLUGINS_BAD_DEPENDENCIES += libva
 ifeq ($(BR2_PACKAGE_LIBDRM),y)
+GST1_PLUGINS_BAD_CONF_OPTS += -Ddrm=enabled
 GST1_PLUGINS_BAD_DEPENDENCIES += libdrm
 endif
 else
-GST1_PLUGINS_BAD_CONF_OPTS += -Dva=disabled
+GST1_PLUGINS_BAD_CONF_OPTS += \
+	-Ddrm=disabled \
+	-Dva=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_VOAACENC),y)
