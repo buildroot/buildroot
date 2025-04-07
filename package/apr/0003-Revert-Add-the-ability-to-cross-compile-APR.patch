@@ -1,4 +1,4 @@
-From ed1daed074fba0dabff825e63525d751b6bb7b8d Mon Sep 17 00:00:00 2001
+From a8fd928dfab693278205e73286e3a6b622624aeb Mon Sep 17 00:00:00 2001
 From: Graham Leggett <minfrin@apache.org>
 Date: Tue, 31 Dec 2019 21:26:02 +0000
 Subject: [PATCH] Revert: Add the ability to cross compile APR.
@@ -7,16 +7,18 @@ git-svn-id: https://svn.apache.org/repos/asf/apr/apr/branches/1.7.x@1872147 13f7
 
 [Revert upstream commit https://github.com/apache/apr/commit/b6dbbc77da35a7b46754c99f465827f2a583e23c]
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+[Dario: adapt to 1.7.5]
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 ---
  CHANGES       |  2 --
  apr-config.in | 22 ----------------------
  2 files changed, 24 deletions(-)
 
 diff --git a/CHANGES b/CHANGES
-index 71b2f0e..e751c90 100644
+index 793b0b6a46a4..4705b8476ff3 100644
 --- a/CHANGES
 +++ b/CHANGES
-@@ -56,8 +56,6 @@ Changes for APR 1.7.1
+@@ -119,8 +119,6 @@ Changes for APR 1.7.5
    *) Don't try to use PROC_PTHREAD by default when cross compiling.
       [Yann Ylavic]
  
@@ -26,25 +28,25 @@ index 71b2f0e..e751c90 100644
       be executed at build time, use AX_PROG_CC_FOR_BUILD to
       build native tools/gen_test_char
 diff --git a/apr-config.in b/apr-config.in
-index 4873fc0..84b4073 100644
+index 1203d9a0d38e..bcd4a0c10399 100644
 --- a/apr-config.in
 +++ b/apr-config.in
-@@ -48,14 +48,6 @@ APR_LIBNAME="@APR_LIBNAME@"
- # NOTE: the following line is modified during 'make install': alter with care!
- location=@APR_CONFIG_LOCATION@
+@@ -61,14 +61,6 @@ if test "$cross_compiling" != "no"; then
+     # Remove trailing '/'
+     normalized_bindir=${normalized_bindir%/}
  
--# absolute path, but not installed path - we're cross compiling
--case "$0" in
--  "${bindir}/"*) ;;
--  "/"*)         location=crosscompile;
--                APR_TARGET_DIR=${0%${bindir}/apr-${APR_MAJOR_VERSION}-config} ;;
--  *)            ;;
--esac
--
+-    # absolute path, but not installed path - we're cross compiling
+-    case "$normalized_command" in
+-      "${normalized_bindir}/"*) ;;
+-      "/"*)                     location=crosscompile;
+-                                APR_TARGET_DIR=${normalized_command%${normalized_bindir}/apr-${APR_MAJOR_VERSION}-config};
+-                                ;;
+-      *)                        ;;
+-    esac
+ fi
+ 
  show_usage()
- {
-     cat << EOF
-@@ -101,8 +93,6 @@ fi
+@@ -116,8 +108,6 @@ fi
  
  if test "$location" = "installed"; then
      LA_FILE="$libdir/lib${APR_LIBNAME}.la"
@@ -53,7 +55,7 @@ index 4873fc0..84b4073 100644
  else
      LA_FILE="$APR_BUILD_DIR/lib${APR_LIBNAME}.la"
  fi
-@@ -132,8 +122,6 @@ while test $# -gt 0; do
+@@ -147,8 +137,6 @@ while test $# -gt 0; do
      --includedir)
      if test "$location" = "installed"; then
          flags="$includedir"
@@ -62,7 +64,7 @@ index 4873fc0..84b4073 100644
      elif test "$location" = "source"; then
          flags="$APR_SOURCE_DIR/include"
      else
-@@ -166,8 +154,6 @@ while test $# -gt 0; do
+@@ -181,8 +169,6 @@ while test $# -gt 0; do
      --includes)
      if test "$location" = "installed"; then
          flags="$flags -I$includedir $EXTRA_INCLUDES"
@@ -71,7 +73,7 @@ index 4873fc0..84b4073 100644
      elif test "$location" = "source"; then
          flags="$flags -I$APR_SOURCE_DIR/include $EXTRA_INCLUDES"
      else
-@@ -182,8 +168,6 @@ while test $# -gt 0; do
+@@ -197,8 +183,6 @@ while test $# -gt 0; do
      --installbuilddir)
      if test "$location" = "installed"; then
          echo "${installbuilddir}"
@@ -80,7 +82,7 @@ index 4873fc0..84b4073 100644
      elif test "$location" = "source"; then
          echo "$APR_SOURCE_DIR/build"
      else
-@@ -200,8 +184,6 @@ while test $# -gt 0; do
+@@ -215,8 +199,6 @@ while test $# -gt 0; do
      if test "$location" = "installed"; then
          ### avoid using -L if libdir is a "standard" location like /usr/lib
          flags="$flags -L$libdir -l${APR_LIBNAME}"
@@ -89,7 +91,7 @@ index 4873fc0..84b4073 100644
      else
          ### this surely can't work since the library is in .libs?
          flags="$flags -L$APR_BUILD_DIR -l${APR_LIBNAME}"
-@@ -219,8 +201,6 @@ while test $# -gt 0; do
+@@ -234,8 +216,6 @@ while test $# -gt 0; do
          # Since the user is specifying they are linking with libtool, we
          # *know* that -R will be recognized by libtool.
          flags="$flags -L$libdir -R$libdir -l${APR_LIBNAME}"
@@ -98,7 +100,7 @@ index 4873fc0..84b4073 100644
      else
          flags="$flags $LA_FILE"
      fi
-@@ -245,8 +225,6 @@ while test $# -gt 0; do
+@@ -260,8 +240,6 @@ while test $# -gt 0; do
      --apr-libtool)
      if test "$location" = "installed"; then
          echo "${installbuilddir}/libtool"
@@ -108,5 +110,5 @@ index 4873fc0..84b4073 100644
          echo "$APR_BUILD_DIR/libtool"
      fi
 -- 
-2.39.2
+2.43.0
 
