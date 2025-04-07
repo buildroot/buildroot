@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-APR_VERSION = 1.7.2
+APR_VERSION = 1.7.5
 APR_SOURCE = apr-$(APR_VERSION).tar.bz2
 APR_SITE = https://archive.apache.org/dist/apr
 APR_LICENSE = Apache-2.0
@@ -15,9 +15,6 @@ APR_INSTALL_STAGING = YES
 # We have a patch touching configure.in and Makefile.in,
 # so we need to autoreconf:
 APR_AUTORECONF = YES
-
-# 0004-Merge-r1920082-from-1.8.x.patch
-APR_IGNORE_CVES += CVE-2023-49582
 
 APR_CONF_OPTS = --disable-sctp
 
