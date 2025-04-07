@@ -24,6 +24,13 @@ config BR2_PACKAGE_FRR
 
 if BR2_PACKAGE_FRR
 
+config BR2_PACKAGE_FRR_BFD
+	bool "BFD protocol"
+	default y
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_10
+	help
+	  Build Bidirectional Forwarding Detection daemon.
+
 config BR2_PACKAGE_FRR_BMP
 	bool "BMP protocol"
 	select BR2_PACKAGE_C_ARES
