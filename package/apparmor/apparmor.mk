@@ -7,9 +7,9 @@
 # When updating the version here, please also update the libapparmor package
 APPARMOR_VERSION_MAJOR = 3.1
 APPARMOR_VERSION = $(APPARMOR_VERSION_MAJOR).7
-APPARMOR_SOURCE = apparmor-v$(LIBAPPARMOR_VERSION).tar.gz
-APPARMOR_SITE = https://gitlab.com/apparmor/apparmor/-/archive/v$(LIBAPPARMOR_VERSION)
-APPARMOR_DL_SUBDIR = libapparmor
+APPARMOR_SOURCE = apparmor-v$(APPARMOR_VERSION).tar.gz
+APPARMOR_SITE = https://gitlab.com/apparmor/apparmor/-/archive/v$(APPARMOR_VERSION)
+APPARMOR_DL_SUBDIR = apparmor
 APPARMOR_LICENSE = GPL-2.0
 APPARMOR_LICENSE_FILES = LICENSE parser/COPYING.GPL
 APPARMOR_CPE_ID_VENDOR = canonical
