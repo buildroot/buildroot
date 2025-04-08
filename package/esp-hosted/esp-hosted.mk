@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ESP_HOSTED_VERSION = 927a34f99724bb744efaf865a7c75cc1615f59a2
+ESP_HOSTED_VERSION = 9a2312b0b2630e41bacb3091faaba489cb43b0ab
 ESP_HOSTED_SITE = $(call github,espressif,esp-hosted,$(ESP_HOSTED_VERSION))
 ESP_HOSTED_DEPENDENCIES = linux
 ESP_HOSTED_LICENSE = GPL-2.0
