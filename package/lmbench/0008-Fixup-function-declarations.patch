@@ -1,0 +1,115 @@
+From 6255495abf4ea516aad3b447cc32d1b244229878 Mon Sep 17 00:00:00 2001
+From: Charlie Jenkins <charlie@rivosinc.com>
+Date: Fri, 4 Apr 2025 15:48:07 -0700
+Subject: [PATCH] Fixup function declarations
+
+GCC-15 requires function declarations to be properly typed.
+
+Upstream: dead
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+---
+ src/bench.h   |  4 ++--
+ src/lat_rpc.c | 18 +++++++-----------
+ src/lmdd.c    |  4 ++--
+ 3 files changed, 11 insertions(+), 15 deletions(-)
+
+diff --git a/src/bench.h b/src/bench.h
+index 597d068..b1624c5 100644
+--- a/src/bench.h
++++ b/src/bench.h
+@@ -345,7 +345,7 @@ extern int sched_pin(int cpu);
+ #define XACT_VERS ((u_long)1)
+ #define RPC_XACT ((u_long)1)
+ #define RPC_EXIT ((u_long)2)
+-extern char *rpc_xact_1();
+-extern char *client_rpc_xact_1();
++extern char *rpc_xact_1(char *msg, register SVCXPRT *transp);
++extern char *client_rpc_xact_1(char *argp, CLIENT *clnt);
+ 
+ #endif /* _BENCH_H */
+diff --git a/src/lat_rpc.c b/src/lat_rpc.c
+index ff4380f..dcc24df 100644
+--- a/src/lat_rpc.c
++++ b/src/lat_rpc.c
+@@ -187,16 +187,14 @@ client_rpc_xact_1(char *argp, CLIENT *clnt)
+  */
+ /* ARGSUSED */
+ char	*
+-rpc_xact_1(msg, transp)
+-     	char	*msg;
+-	register SVCXPRT *transp;
++rpc_xact_1(char *msg, register SVCXPRT *transp)
+ {
+ 	static char r = 123;
+ 
+ 	return &r;
+ }
+ 
+-static void xact_prog_1();
++static void xact_prog_1(struct svc_req *rqstp, register SVCXPRT *transp);
+ 
+ void
+ server_main()
+@@ -234,16 +232,14 @@ server_main()
+ }
+ 
+ static void
+-xact_prog_1(rqstp, transp)
+-	struct svc_req *rqstp;
+-	register SVCXPRT *transp;
++xact_prog_1(struct svc_req *rqstp, register SVCXPRT *transp)
+ {
+ 	union {
+ 		char rpc_xact_1_arg;
+ 	} argument;
+ 	char *result;
+-	bool_t (*xdr_argument)(), (*xdr_result)();
+-	char *(*local)();
++	bool_t (*xdr_argument)(XDR *, char *), (*xdr_result)(XDR *, char *);
++	char *(*local)(char *, struct svc_req *);
+ 
+ 	switch (rqstp->rq_proc) {
+ 	case NULLPROC:
+@@ -253,7 +249,7 @@ xact_prog_1(rqstp, transp)
+ 	case RPC_XACT:
+ 		xdr_argument = xdr_char;
+ 		xdr_result = xdr_char;
+-		local = (char *(*)()) rpc_xact_1;
++		local = (char *(*)(char *, struct svc_req *)) rpc_xact_1;
+ 		break;
+ 
+ 	case RPC_EXIT:
+@@ -270,7 +266,7 @@ xact_prog_1(rqstp, transp)
+ 		svcerr_decode(transp);
+ 		return;
+ 	}
+-	result = (*local)(&argument, rqstp);
++	result = (*local)((char *)&argument, rqstp);
+ 	if (result != NULL && !svc_sendreply(transp, (xdrproc_t)xdr_result, result)) {
+ 		svcerr_systemerr(transp);
+ 	}
+diff --git a/src/lmdd.c b/src/lmdd.c
+index 529ae21..197ac46 100644
+--- a/src/lmdd.c
++++ b/src/lmdd.c
+@@ -76,7 +76,7 @@ int	norepeats = -1;
+ 	bds_msg	*m1, *m2;
+ #endif
+ 
+-uint64	getarg();
++uint64	getarg(char *s, int ac, char **av);
+ int	been_there(uint64 off);
+ int	getfile(char *s, int ac, char **av);
+ 
+@@ -162,7 +162,7 @@ main(int ac, char **av)
+ 	int     Fork, misses, mismatch, outpat, inpat, in, timeopen, gotcnt;
+ 	int	slp;
+ 	uint64	skip, size, count;
+-	void	chkarg();
++	void	chkarg(char *arg);
+ 	int     i;
+ 	uint64	off = 0;
+ 	int	touch;
+-- 
+2.43.0
+

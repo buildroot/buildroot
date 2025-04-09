@@ -1,0 +1,130 @@
+From ed4f31bb09bc6355b2b642a89a1f1017de46f26e Mon Sep 17 00:00:00 2001
+From: Charlie Jenkins <charlie@rivosinc.com>
+Date: Fri, 4 Apr 2025 15:35:08 -0700
+Subject: [PATCH] Add signum param to signal handlers
+
+A signal handler is required to have a signum parameter that is an
+integer.
+
+Upstream: dead
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+---
+ src/lat_udp.c |  4 ++--
+ src/lmdd.c    | 14 +++++++-------
+ src/lmhttp.c  |  4 ++--
+ 3 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/src/lat_udp.c b/src/lat_udp.c
+index cdd2e9b..4b4441b 100644
+--- a/src/lat_udp.c
++++ b/src/lat_udp.c
+@@ -19,7 +19,7 @@ char	*id = "$Id$\n";
+ 
+ void	client_main(int ac, char **av);
+ void	server_main();
+-void	timeout();
++void	timeout(int signum);
+ void	init(iter_t iterations, void* cookie);
+ void	cleanup(iter_t iterations, void* cookie);
+ void    doit(iter_t iterations, void* cookie);
+@@ -164,7 +164,7 @@ cleanup(iter_t iterations, void* cookie)
+ }
+ 
+ void
+-timeout()
++timeout(int signum)
+ {
+ 	fprintf(stderr, "Recv timed out\n");
+ 	exit(1);
+diff --git a/src/lmdd.c b/src/lmdd.c
+index dee37b4..529ae21 100644
+--- a/src/lmdd.c
++++ b/src/lmdd.c
+@@ -148,7 +148,7 @@ char   *cmds[] = {
+ 
+ 
+ void error(char *);
+-void    done();
++void    done(int signum);
+ #ifdef	DBG
+ extern int dbg;
+ #endif
+@@ -332,7 +332,7 @@ main(int ac, char **av)
+ 		register int moved;
+ 
+ 		if (gotcnt && count-- <= 0) {
+-			done();
++			done(0);
+ 		}
+ 
+ 		/*
+@@ -445,7 +445,7 @@ main(int ac, char **av)
+ 			perror("read");
+ 		}
+ 		if (moved <= 0) {
+-			done();
++			done(0);
+ 		}
+ 		if (inpat != -1) {
+ 			register int foo, cnt;
+@@ -458,7 +458,7 @@ main(int ac, char **av)
+ 					    (uint)(off + foo*sizeof(int)),
+ 					    buf[foo]);
+ 					if (mismatch != -1 && --misses == 0) {
+-						done();
++						done(0);
+ 					}
+ 				}
+ 			}
+@@ -523,7 +523,7 @@ main(int ac, char **av)
+ 			if (moved2 != moved) {
+ 				fprintf(stderr, "write: wanted=%d got=%d\n",
+ 				    moved, moved2);
+-				done();
++				done(0);
+ 			}
+ 			if ((Wtmax != -1) || (Wtmin != -1)) {
+ 				int mics = stop(&start_tv, &stop_tv);
+@@ -560,7 +560,7 @@ main(int ac, char **av)
+ 				perror("write");
+ 			}
+ 			if (moved2 != moved) {
+-				done();
++				done(0);
+ 			}
+ 
+ 			if (touch) {
+@@ -626,7 +626,7 @@ chkarg(char *arg)
+ }
+ 
+ void 
+-done(void)
++done(int signum)
+ {
+ 	int	i;
+ 	int	step;
+diff --git a/src/lmhttp.c b/src/lmhttp.c
+index 41d9949..9b5d665 100644
+--- a/src/lmhttp.c
++++ b/src/lmhttp.c
+@@ -26,7 +26,7 @@ char	*buf;
+ char	*bufs[3];
+ int	Dflg, dflg, nflg, lflg, fflg, zflg;
+ int	data, logfile;
+-void	die();
++void	die(int signum);
+ void	worker();
+ char	*http_time(void);
+ char	*date(time_t *tt);
+@@ -387,7 +387,7 @@ logit(int sock, char *name, int size)
+ 	nbytes += len;
+ }
+ 
+-void die()
++void die(int signum)
+ {
+ 	if (nbytes) {
+ 		write(logfile, logbuf, nbytes);
+-- 
+2.43.0
+
