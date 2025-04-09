@@ -12,41 +12,6 @@ BOOST_LICENSE = BSL-1.0
 BOOST_LICENSE_FILES = LICENSE_1_0.txt
 BOOST_CPE_ID_VENDOR = boost
 
-# keep host variant as minimal as possible
-# regex & system are needed by host-riscv-isa-sim
-HOST_BOOST_FLAGS = --without-icu --with-toolset=gcc \
-	--without-libraries=$(subst $(space),$(comma),\
-	atomic \
-	chrono container \
-	context \
-	contract \
-	coroutine \
-	date_time \
-	exception \
-	fiber \
-	filesystem \
-	graph \
-	graph_parallel \
-	iostreams \
-	json \
-	locale \
-	log \
-	math \
-	mpi \
-	nowide \
-	program_options \
-	python \
-	random \
-	serialization \
-	stacktrace \
-	test \
-	thread \
-	timer \
-	type_erasure \
-	url \
-	wave\
-	)
-
 BOOST_WITHOUT_FLAGS += $(if $(BR2_PACKAGE_BOOST_ATOMIC),,atomic)
 BOOST_WITHOUT_FLAGS += $(if $(BR2_PACKAGE_BOOST_CHRONO),,chrono)
 BOOST_WITHOUT_FLAGS += $(if $(BR2_PACKAGE_BOOST_CONTAINER),,container)
@@ -102,6 +67,42 @@ BOOST_FLAGS += \
 BOOST_TARGET_CXXFLAGS += -I$(STAGING_DIR)/usr/include/python$(PYTHON3_VERSION_MAJOR)
 BOOST_DEPENDENCIES += python3
 endif
+
+# keep host variant as minimal as possible
+# regex & system are needed by host-riscv-isa-sim
+HOST_BOOST_FLAGS = --without-icu --with-toolset=gcc \
+	--without-libraries=$(subst $(space),$(comma),\
+	atomic \
+	chrono \
+	container \
+	context \
+	contract \
+	coroutine \
+	date_time \
+	exception \
+	fiber \
+	filesystem \
+	graph \
+	graph_parallel \
+	iostreams \
+	json \
+	locale \
+	log \
+	math \
+	mpi \
+	nowide \
+	program_options \
+	python \
+	random \
+	serialization \
+	stacktrace \
+	test \
+	thread \
+	timer \
+	type_erasure \
+	url \
+	wave\
+	)
 
 HOST_BOOST_OPTS += toolset=gcc threading=multi \
 	variant=release link=shared runtime-link=shared -j$(PARALLEL_JOBS) -q \
