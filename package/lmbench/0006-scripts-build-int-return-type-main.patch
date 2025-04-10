@@ -1,0 +1,204 @@
+From 3340c9552cc6e7d77adf39becbc6be52233d80c0 Mon Sep 17 00:00:00 2001
+From: Charlie Jenkins <charlie@rivosinc.com>
+Date: Thu, 10 Apr 2025 13:25:07 -0700
+Subject: [PATCH] scripts/build: int return type main()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Some compilers (such as the bootlin riscv64-lp64d glibc bleeding-edge
+2024.05-1 toolchain) fail to run the dependency checking scripts and
+error at "return type defaults to ‘int’ [-Wimplicit-int]". Add types
+to these main() functions to allow this dependency tracking to work.
+
+Upstream: dead
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+---
+ scripts/build | 42 +++++++++++++++++++++---------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
+
+diff --git a/scripts/build b/scripts/build
+index 4820d80..2c8a50a 100755
+--- a/scripts/build
++++ b/scripts/build
+@@ -51,14 +51,14 @@ fi
+ 
+ # check for bcopy (optionally set the SYS5 flag)
+ echo "#include <string.h>" > ${BASE}$$.c
+-echo "main() { char a[256], b[256]; bcopy(a, b, 256); }" >> ${BASE}$$.c
++echo "int main() { char a[256], b[256]; bcopy(a, b, 256); }" >> ${BASE}$$.c
+ ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL} \
+ 	|| CFLAGS="${CFLAGS} -DSYS5"
+ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+ 
+ # check for valloc
+ echo "#include <stdlib.h>" > ${BASE}$$.c
+-echo "main() { char* buf = valloc(123); }" >> ${BASE}$$.c
++echo "int main() { char* buf = valloc(123); }" >> ${BASE}$$.c
+ ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL} \
+ 	|| CFLAGS="${CFLAGS} -Dvalloc=malloc"
+ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+@@ -67,7 +67,7 @@ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+ echo "#include <stdlib.h>" > ${BASE}$$.c
+ echo "#include <sys/types.h>" >> ${BASE}$$.c
+ echo "#include <unistd.h>" >> ${BASE}$$.c
+-echo "main() { off64_t off; }" >> ${BASE}$$.c
++echo "int main() { off64_t off; }" >> ${BASE}$$.c
+ ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL} \
+ 	&& CFLAGS="${CFLAGS} -DHAVE_off64_t"
+ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+@@ -76,7 +76,7 @@ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+ echo "#include <stdlib.h>" > ${BASE}$$.c
+ echo "#include <sys/types.h>" >> ${BASE}$$.c
+ echo "#include <unistd.h>" >> ${BASE}$$.c
+-echo "main() { int fd = 0; off64_t off = 0; off = lseek64(fd, off, SEEK_SET); }" >> ${BASE}$$.c
++echo "int main() { int fd = 0; off64_t off = 0; off = lseek64(fd, off, SEEK_SET); }" >> ${BASE}$$.c
+ ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL} \
+ 	&& CFLAGS="${CFLAGS} -DHAVE_lseek64"
+ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+@@ -88,7 +88,7 @@ echo "#include <sys/resource.h>" >> ${BASE}$$.c
+ echo "#ifndef RUSAGE_SELF" >> ${BASE}$$.c
+ echo "#define RUSAGE_SELF 0" >> ${BASE}$$.c
+ echo "#endif /* RUSAGE_SELF */" >> ${BASE}$$.c
+-echo "main() { struct rusage ru; getrusage(RUSAGE_SELF, &ru); }" >> ${BASE}$$.c
++echo "int main() { struct rusage ru; getrusage(RUSAGE_SELF, &ru); }" >> ${BASE}$$.c
+ ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL} \
+ 	&& CFLAGS="${CFLAGS} -DRUSAGE"
+ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+@@ -136,13 +136,13 @@ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+ 
+ # check for OSs that have S_IFFIFO instead of S_IFIFO
+ echo "#include <sys/stat.h>" > ${BASE}$$.c
+-echo "main() { return (S_IFIFO); }" >> ${BASE}$$.c
++echo "int main() { return (S_IFIFO); }" >> ${BASE}$$.c
+ if ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL}; then
+ 	true;
+ else
+ 	rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+ 	echo "#include <sys/stat.h>" > ${BASE}$$.c
+-	echo "main() { return (S_IFFIFO); }" >> ${BASE}$$.c
++	echo "int main() { return (S_IFFIFO); }" >> ${BASE}$$.c
+ 	${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL} \
+ 		|| CFLAGS="${CFLAGS} -DS_IFIFO=S_IFFIFO"
+ fi
+@@ -151,7 +151,7 @@ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+ # check that we have uint
+ echo "#include <stdlib.h>" > ${BASE}$$.c
+ echo "#include <sys/types.h>" >> ${BASE}$$.c
+-echo "main() { uint i = 0; return (i); }" >> ${BASE}$$.c
++echo "int main() { uint i = 0; return (i); }" >> ${BASE}$$.c
+ ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL} \
+ 	&& CFLAGS="${CFLAGS} -DHAVE_uint=1";
+ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+@@ -161,7 +161,7 @@ HAVE_uint64=0
+ echo "#include <stdlib.h>" > ${BASE}$$.c
+ echo "#include <sys/types.h>" >> ${BASE}$$.c
+ echo "#include <rpc/types.h>" >> ${BASE}$$.c
+-echo "main() { uint64 i = 0; return (int)(i); }" >> ${BASE}$$.c
++echo "int main() { uint64 i = 0; return (int)(i); }" >> ${BASE}$$.c
+ ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL} \
+ 	&& CFLAGS="${CFLAGS} -DHAVE_uint64=1" && HAVE_uint64=1;
+ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+@@ -170,7 +170,7 @@ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+ if [ ${HAVE_uint64} = 0 ]; then
+     echo "#include <stdlib.h>" > ${BASE}$$.c
+     echo "#include <sys/types.h>" >> ${BASE}$$.c
+-    echo "main() { uint64_t i = 0; return (int)(i); }" >> ${BASE}$$.c
++    echo "int main() { uint64_t i = 0; return (int)(i); }" >> ${BASE}$$.c
+     ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL} \
+ 	&& CFLAGS="${CFLAGS} -DHAVE_uint64_t=1";
+     rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+@@ -181,7 +181,7 @@ HAVE_int64=0
+ echo "#include <stdlib.h>" > ${BASE}$$.c
+ echo "#include <sys/types.h>" >> ${BASE}$$.c
+ echo "#include <rpc/types.h>" >> ${BASE}$$.c
+-echo "main() { int64 i = 0; return (int)(i); }" >> ${BASE}$$.c
++echo "int main() { int64 i = 0; return (int)(i); }" >> ${BASE}$$.c
+ ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL} \
+ 	&& CFLAGS="${CFLAGS} -DHAVE_int64=1" && HAVE_int64=1;
+ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+@@ -190,7 +190,7 @@ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+ if [ ${HAVE_int64} = 0 ]; then
+     echo "#include <stdlib.h>" > ${BASE}$$.c
+     echo "#include <sys/types.h>" >> ${BASE}$$.c
+-    echo "main() { int64_t i = 0; return (int)(i); }" >> ${BASE}$$.c
++    echo "int main() { int64_t i = 0; return (int)(i); }" >> ${BASE}$$.c
+     ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL} \
+ 	&& CFLAGS="${CFLAGS} -DHAVE_int64_t=1";
+     rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+@@ -209,15 +209,15 @@ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+ echo "#include <stdlib.h>" > ${BASE}$$.c
+ echo "#include <sys/types.h>" >> ${BASE}$$.c
+ echo "#include <sys/socket.h>" >> ${BASE}$$.c
+-echo "main() { int s; struct sockaddr dest; socklen_t len; getsockname(s, &dest, &len); }" >> ${BASE}$$.c
+-${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL} \
++echo "int main() { int s; struct sockaddr dest; socklen_t len; getsockname(s, &dest, &len); }" >> ${BASE}$$.c
++${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} \
+ 	&& CFLAGS="${CFLAGS} -DHAVE_socklen_t"
+ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+ 
+ # check that we have drand48 and srand48
+ HAVE_RANDOM=0
+ echo "#include <stdlib.h>" > ${BASE}$$.c
+-echo "main() { srand48(973); return (int)(1.0E9 * drand48()); }" >> ${BASE}$$.c
++echo "int main() { srand48(973); return (int)(1.0E9 * drand48()); }" >> ${BASE}$$.c
+ if ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL}; then
+ 	CFLAGS="${CFLAGS} -DHAVE_DRAND48"
+ 	HAVE_RANDOM=1
+@@ -226,7 +226,7 @@ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+ 
+ if [ ${HAVE_RANDOM} -eq 0 ]; then
+     echo "#include <stdlib.h>" > ${BASE}$$.c
+-    echo "main() { srand(973); return (10 * rand()) / RAND_MAX; }" >> ${BASE}$$.c
++    echo "int main() { srand(973); return (10 * rand()) / RAND_MAX; }" >> ${BASE}$$.c
+     if ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL}; then
+ 	CFLAGS="${CFLAGS} -DHAVE_RAND"
+ 	HAVE_RANDOM=1
+@@ -236,7 +236,7 @@ fi
+ 
+ if [ ${HAVE_RANDOM} -eq 0 ]; then
+     echo "#include <stdlib.h>" > ${BASE}$$.c
+-    echo "main() { srandom(973); return (10 * random()) / RAND_MAX; }" >> ${BASE}$$.c
++    echo "int main() { srandom(973); return (10 * random()) / RAND_MAX; }" >> ${BASE}$$.c
+     if ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL}; then
+ 	CFLAGS="${CFLAGS} -DHAVE_RANDOM"
+ 	HAVE_RANDOM=1
+@@ -247,7 +247,7 @@ fi
+ # check that we have sysmp
+ echo "#include <sys/types.h>" > ${BASE}$$.c
+ echo "#include <sys/sysmp.h>" >> ${BASE}$$.c
+-echo "main() { return (int)sysmp(MP_NPROCS); }" >> ${BASE}$$.c
++echo "int main() { return (int)sysmp(MP_NPROCS); }" >> ${BASE}$$.c
+ ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL} \
+ 	&& CFLAGS="${CFLAGS} -DHAVE_SYSMP=1";
+ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+@@ -257,7 +257,7 @@ echo "#include <stdlib.h>" > ${BASE}$$.c
+ echo "#include <unistd.h>" >> ${BASE}$$.c
+ echo "#include <sys/types.h>" >> ${BASE}$$.c
+ echo "#include <sys/processor.h>" >> ${BASE}$$.c
+-echo "main() { return bindprocessor(BINDPROCESS, getpid(), 0); }" >> ${BASE}$$.c
++echo "int main() { return bindprocessor(BINDPROCESS, getpid(), 0); }" >> ${BASE}$$.c
+ ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL} \
+ 	&& CFLAGS="${CFLAGS} -DHAVE_BINDPROCESSOR=1";
+ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+@@ -267,7 +267,7 @@ echo "#include <stdlib.h>" > ${BASE}$$.c
+ echo "#include <sys/types.h>" >> ${BASE}$$.c
+ echo "#include <sys/processor.h>" >> ${BASE}$$.c
+ echo "#include <sys/procset.h>" >> ${BASE}$$.c
+-echo "main() { return processor(P_PID, P_MYPID, 0, NULL); }" >> ${BASE}$$.c
++echo "int main() { return processor(P_PID, P_MYPID, 0, NULL); }" >> ${BASE}$$.c
+ ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL} \
+ 	&& CFLAGS="${CFLAGS} -DHAVE_BINDPROCESSOR=1";
+ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+@@ -276,7 +276,7 @@ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+ echo "#include <stdlib.h>" > ${BASE}$$.c
+ echo "#include <unistd.h>" >> ${BASE}$$.c
+ echo "#include <sched.h>" >> ${BASE}$$.c
+-echo "main() { unsigned long mask = 1; return sched_setaffinity(0, sizeof(unsigned long), &mask); }" >> ${BASE}$$.c
++echo "int main() { unsigned long mask = 1; return sched_setaffinity(0, sizeof(unsigned long), &mask); }" >> ${BASE}$$.c
+ ${CC} ${CFLAGS} -o ${BASE}$$ ${BASE}$$.c ${LDLIBS} 1>${NULL} 2>${NULL} \
+ 	&& CFLAGS="${CFLAGS} -DHAVE_SCHED_SETAFFINITY=1";
+ rm -f ${BASE}$$ ${BASE}$$.o ${BASE}$$.c
+-- 
+2.43.0
+
