@@ -1,4 +1,4 @@
-From 0b04847e1007f5d34b986eb12ae63f140d14b01e Mon Sep 17 00:00:00 2001
+From bd14e6f232232c11b67477a5d8f0caf174a089d0 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:23:42 -0800
 Subject: [PATCH] Add an option to disable the tk module
@@ -17,13 +17,15 @@ Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
 [ Vincent Fazio: ported to Python 3.13.2 ]
 Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+[ Vincent Fazio: fix Python 3.13.3 conflict ]
+Signed-off-by: Vincent Fazio <vfazio@xes-inc.com>
 ---
  Makefile.pre.in | 8 +++++---
  configure.ac    | 7 +++++++
  2 files changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 88a48eb5333..6d6631cbe31 100644
+index 0f394d6ece4..a44307a0fb1 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
 @@ -2331,7 +2331,6 @@ LIBSUBDIRS=	asyncio \
@@ -42,15 +44,15 @@ index 88a48eb5333..6d6631cbe31 100644
  		test/test_tomllib \
  		test/test_tomllib/data \
  		test/test_tomllib/data/invalid \
-@@ -2460,7 +2458,6 @@ TESTSUBDIRS=	idlelib/idle_test \
- 		test/test_tomllib/data/valid/multiline-basic-str \
+@@ -2461,7 +2459,6 @@ TESTSUBDIRS=	idlelib/idle_test \
  		test/test_tools \
  		test/test_tools/i18n_data \
+ 		test/test_tools/msgfmt_data \
 -		test/test_ttk \
  		test/test_unittest \
  		test/test_unittest/testmock \
  		test/test_warnings \
-@@ -2482,6 +2479,11 @@ TESTSUBDIRS=	idlelib/idle_test \
+@@ -2483,6 +2480,11 @@ TESTSUBDIRS=	idlelib/idle_test \
  		test/xmltestdata/c14n-20 \
  		test/zipimport_data
  
