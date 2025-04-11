@@ -1,0 +1,34 @@
+From ea879d9dcb7f22b9a0921613bf2f530e2787d0db Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@arm.com>
+Date: Tue, 8 Apr 2025 13:27:53 +0200
+Subject: [PATCH] build(plat/marvell): allow building with non-git
+ mv-ddr-marvell
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When the mv-ddr-marvell folder is not a git tree the build fails
+complaining that it "does not contain valid mv-ddr-marvell git
+repository".
+
+Remove this check to allow building in Buildroot.
+
+Upstream: Not applicable. Buildroot specific.
+Signed-off-by: Vincent Stehlé <vincent.stehle@arm.com>
+---
+ plat/marvell/armada/a8k/common/ble/ble.mk | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/plat/marvell/armada/a8k/common/ble/ble.mk b/plat/marvell/armada/a8k/common/ble/ble.mk
+index 752ab419d2..78de01686c 100644
+--- a/plat/marvell/armada/a8k/common/ble/ble.mk
++++ b/plat/marvell/armada/a8k/common/ble/ble.mk
+@@ -31,5 +31,4 @@ $(MV_DDR_LIB): FORCE
+ #	Do not remove! Following checks are required to ensure correct TF-A builds, removing these checks leads to broken TF-A builds
+ 	$(if $(value MV_DDR_PATH),,$(error "Platform '$(PLAT)' for BLE requires MV_DDR_PATH. Please set MV_DDR_PATH to point to the right directory"))
+ 	$(if $(wildcard $(value MV_DDR_PATH)/*),,$(error "'MV_DDR_PATH=$(value MV_DDR_PATH)' was specified, but '$(value MV_DDR_PATH)' directory does not exist"))
+-	$(if $(shell git -C $(value MV_DDR_PATH) rev-parse --show-cdup 2>&1),$(error "'MV_DDR_PATH=$(value MV_DDR_PATH)' was specified, but '$(value MV_DDR_PATH)' does not contain valid mv-ddr-marvell git repository"))
+ 	@+make -C $(MV_DDR_PATH) --no-print-directory PLAT_INCLUDES="$(MV_DDR_INCLUDES)" PLATFORM=$(PLAT) ARCH=AARCH64 OBJ_DIR=$(BUILD_PLAT)/ble
+-- 
+2.48.1
+
