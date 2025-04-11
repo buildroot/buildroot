@@ -48,3 +48,104 @@ class TestEdk2(infra.basetest.BRTest):
                                     "-pflash", flash1,
                                     "-hda", hda])
         self.emulator.login()
+
+
+class TestEdk2BuildBase(infra.basetest.BRTest):
+    """A class to test the build of various edk2 platforms."""
+    base_config = \
+        """
+        # BR2_PACKAGE_BUSYBOX is not set
+        # BR2_PACKAGE_IFUPDOWN_SCRIPTS is not set
+        # BR2_TARGET_ROOTFS_TAR is not set
+        BR2_INIT_NONE=y
+        BR2_SYSTEM_BIN_SH_NONE=y
+        BR2_TARGET_EDK2=y
+        BR2_TOOLCHAIN_EXTERNAL=y
+        """
+
+    def assertBinariesExist(self, *binaries: str) -> None:
+        """Assert that the binaries passed as argument exist
+        under the images folder.
+        We print a message to the emulator logfile for each binary found.
+        """
+        for binary in binaries:
+            binpath = os.path.join(self.builddir, "images", binary)
+            self.assertTrue(os.path.exists(binpath), f"Missing {binpath}!")
+            print(f"{binary} exists: {binpath}", file=self.emulator.logfile,
+                  flush=True)
+
+
+class TestEdk2BuildArmVirtQemu(TestEdk2BuildBase):
+    config = TestEdk2BuildBase.base_config + \
+        """
+        BR2_aarch64=y
+        BR2_TARGET_EDK2_PLATFORM_ARM_VIRT_QEMU=y
+        """
+
+    def test_run(self) -> None:
+        self.assertBinariesExist("QEMU_EFI.fd", "QEMU_VARS.fd")
+
+
+class TestEdk2BuildArmVirtQemuKernel(TestEdk2BuildBase):
+    config = TestEdk2BuildBase.base_config + \
+        """
+        BR2_aarch64=y
+        BR2_TARGET_EDK2_PLATFORM_ARM_VIRT_QEMU_KERNEL=y
+        """
+
+    def test_run(self) -> None:
+        self.assertBinariesExist("QEMU_EFI.fd", "QEMU_VARS.fd")
+
+
+class TestEdk2BuildArmSgi575(TestEdk2BuildBase):
+    config = TestEdk2BuildBase.base_config + \
+        """
+        BR2_aarch64=y
+        BR2_TARGET_EDK2_PLATFORM_ARM_SGI575=y
+        """
+
+    def test_run(self) -> None:
+        self.assertBinariesExist("BL33_AP_UEFI.fd")
+
+
+class TestEdk2BuildArmVexpressFvpAarch64(TestEdk2BuildBase):
+    config = TestEdk2BuildBase.base_config + \
+        """
+        BR2_aarch64=y
+        BR2_TARGET_EDK2_PLATFORM_ARM_VEXPRESS_FVP_AARCH64=y
+        """
+
+    def test_run(self) -> None:
+        self.assertBinariesExist("FVP_AARCH64_EFI.fd")
+
+
+class TestEdk2BuildSocionextDeveloperbox(TestEdk2BuildBase):
+    config = TestEdk2BuildBase.base_config + \
+        """
+        BR2_aarch64=y
+        BR2_TARGET_EDK2_PLATFORM_SOCIONEXT_DEVELOPERBOX=y
+        BR2_TARGET_ARM_TRUSTED_FIRMWARE=y
+        BR2_TARGET_ARM_TRUSTED_FIRMWARE_PLATFORM="synquacer"
+        BR2_TARGET_ARM_TRUSTED_FIRMWARE_BL31=y
+        BR2_TARGET_ARM_TRUSTED_FIRMWARE_ADDITIONAL_TARGETS="PRELOADED_BL33_BASE=0x8200000"
+        """
+
+    def test_run(self) -> None:
+        self.assertBinariesExist("SPI_NOR_IMAGE.fd", "fip.bin")
+
+
+class TestEdk2BuildQemuSbsa(TestEdk2BuildBase):
+    # This configuration is not exactly identical to the configuration built
+    # during TestEdk2, as we use the latest arm-trusted-firmware version, among
+    # other things.
+    config = TestEdk2BuildBase.base_config + \
+        """
+        BR2_aarch64=y
+        BR2_TARGET_EDK2_PLATFORM_QEMU_SBSA=y
+        BR2_TARGET_ARM_TRUSTED_FIRMWARE=y
+        BR2_TARGET_ARM_TRUSTED_FIRMWARE_PLATFORM="qemu_sbsa"
+        BR2_TARGET_ARM_TRUSTED_FIRMWARE_FIP=y
+        """
+
+    def test_run(self) -> None:
+        self.assertBinariesExist("SBSA_FLASH0.fd", "SBSA_FLASH1.fd", "fip.bin")
