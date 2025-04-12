@@ -1,0 +1,57 @@
+From 1a713c6e4861f0672252425a1ccbfa9f45834d5d Mon Sep 17 00:00:00 2001
+From: Mohamed Heikal <mheikal@chromium.org>
+Date: Tue, 4 Apr 2023 17:04:04 +0000
+Subject: [PATCH] Shorted printed cmd when long commands fail
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Some commands (eg: javac) are very long and when they fail most of the
+screen/log is filled with the actual cmd vs the error message output.
+Shorten printed CMDs to 200 chars unless an environment variable is set.
+
+Bug: None
+Change-Id: I92809a7e4a2b1204931a74fd6239803feddd430e
+Reviewed-on: https://chromium-review.googlesource.com/c/chromium/src/+/4395905
+Reviewed-by: Andrew Grieve <agrieve@chromium.org>
+Commit-Queue: Mohamed Heikal <mheikal@chromium.org>
+Cr-Commit-Position: refs/heads/main@{#1126065}
+Upstream: Backport [https://github.com/chromium/chromium/commit/4c6fc1984970af4b2b1765014c9ddcd957ad7dda]
+Signed-off-by: Gaël PORTAY <gael.portay@rtone.fr>
+[gportay: remove import pipes]
+---
+ chromium/build/android/gyp/util/build_utils.py | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/chromium/build/android/gyp/util/build_utils.py b/chromium/build/android/gyp/util/build_utils.py
+index 02298051702..5fa753af459 100644
+--- a/chromium/build/android/gyp/util/build_utils.py
++++ b/chromium/build/android/gyp/util/build_utils.py
+@@ -12,7 +12,6 @@ import fnmatch
+ import json
+ import logging
+ import os
+-import pipes
+ import re
+ import shutil
+ import stat
+@@ -196,9 +195,14 @@ class CalledProcessError(Exception):
+ 
+   def __str__(self):
+     # A user should be able to simply copy and paste the command that failed
+-    # into their shell.
++    # into their shell (unless it is more than 200 chars).
++    # User can set PRINT_FULL_COMMAND=1 to always print the full command.
++    print_full = os.environ.get('PRINT_FULL_COMMAND', '0') != '0'
++    full_cmd = shlex.join(self.args)
++    short_cmd = textwrap.shorten(full_cmd, width=200)
++    printed_cmd = full_cmd if print_full else short_cmd
+     copyable_command = '( cd {}; {} )'.format(os.path.abspath(self.cwd),
+-        ' '.join(map(pipes.quote, self.args)))
++                                              printed_cmd)
+     return 'Command failed: {}\n{}'.format(copyable_command, self.output)
+ 
+ 
+-- 
+2.39.5
+
