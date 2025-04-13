@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2025.05"
 
+config BR2_PACKAGE_MPD_SOUNDCLOUD
+	bool "mpd soundcloud support has been removed"
+	select BR2_LEGACY
+	help
+	  MPD SoundCloud support has been removed.
+
 # BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT is still referenced in docker-engine
 config BR2_PACKAGE_DOCKER_ENGINE_DOCKER_INIT
 	bool "docker-engine init support is now a choice"

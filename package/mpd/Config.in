@@ -48,16 +48,9 @@ config BR2_PACKAGE_MPD_QOBUZ
 	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS
 	select BR2_PACKAGE_MPD_CURL
 	select BR2_PACKAGE_LIBGCRYPT
-	select BR2_PACKAGE_YAJL
+	select BR2_PACKAGE_JSON_FOR_MODERN_CPP
 	help
 	  Play songs from the commercial streaming service Qobuz.
-
-config BR2_PACKAGE_MPD_SOUNDCLOUD
-	bool "soundcloud"
-	select BR2_PACKAGE_MPD_CURL
-	select BR2_PACKAGE_YAJL
-	help
-	  Enable soundcloud.com playlist support.
 
 comment "Converter plugins"
 
