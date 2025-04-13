@@ -17,6 +17,15 @@ config BR2_PACKAGE_LINUX_FIRMWARE_INTEL_SST_DSP
 
 endmenu # Audio
 
+menu "CPU Microcode"
+
+config BR2_PACKAGE_LINUX_FIRMWARE_AMD_UCODE
+	bool "amd-ucode"
+	help
+	  Firmware blobs for AMD CPUs (amd-ucode).
+
+endmenu # CPU Microcode
+
 menu "Video firmware"
 
 config BR2_PACKAGE_LINUX_FIRMWARE_AMDGPU
