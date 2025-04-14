@@ -12,6 +12,9 @@ LIBOPENH264_CPE_ID_VENDOR = cisco
 LIBOPENH264_CPE_ID_PRODUCT = openh264
 LIBOPENH264_INSTALL_STAGING = YES
 
+# The following CVE is fixed in 2.5.1, the NVD CPE is not up to date
+LIBOPENH264_IGNORE_CVES += CVE-2025-27091
+
 ifeq ($(BR2_aarch64),y)
 LIBOPENH264_ARCH = aarch64
 else ifeq ($(BR2_arm)$(BR2_armeb),y)
