@@ -15,6 +15,13 @@ FREERADIUS_SERVER_CPE_ID_PRODUCT = freeradius
 FREERADIUS_SERVER_DEPENDENCIES = libtalloc
 FREERADIUS_SERVER_AUTORECONF = YES
 
+# Mitigated upstream since version 0.5.0, NVD database entry not
+# up-to-date
+FREERADIUS_SERVER_IGNORE_CVES += CVE-2002-0318
+
+# Fixed in 2.2.0, NVD database entry not up-to-date
+FREERADIUS_SERVER_IGNORE_CVES += CVE-2011-4966
+
 # We're patching src/modules/rlm_krb5/configure.ac
 define FREERADIUS_SERVER_RUN_KRB5_AUTORECONF
 	cd $(@D)/src/modules/rlm_krb5; $(AUTORECONF) -I$(@D)/m4
