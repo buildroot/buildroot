@@ -464,7 +464,7 @@ def package_init_make_info():
 check_url_count = 0
 
 
-async def check_url_status(session, pkg, npkgs, retry=True):
+async def check_url_status(session, pkg, npkgs, retry=True, verbose=False):
     global check_url_count
 
     try:
@@ -472,30 +472,33 @@ async def check_url_status(session, pkg, npkgs, retry=True):
             if resp.status >= 400:
                 pkg.status['url'] = ("error", "invalid {}".format(resp.status))
                 check_url_count += 1
-                print("[%04d/%04d] %s" % (check_url_count, npkgs, pkg.name))
+                if verbose:
+                    print("[%04d/%04d] %s" % (check_url_count, npkgs, pkg.name))
                 return
     except (aiohttp.ClientError, asyncio.TimeoutError):
         if retry:
-            return await check_url_status(session, pkg, npkgs, retry=False)
+            return await check_url_status(session, pkg, npkgs, retry=False, verbose=verbose)
         else:
             pkg.status['url'] = ("error", "invalid (err)")
             check_url_count += 1
-            print("[%04d/%04d] %s" % (check_url_count, npkgs, pkg.name))
+            if verbose:
+                print("[%04d/%04d] %s" % (check_url_count, npkgs, pkg.name))
             return
 
     pkg.status['url'] = ("ok", "valid")
     check_url_count += 1
-    print("[%04d/%04d] %s" % (check_url_count, npkgs, pkg.name))
+    if verbose:
+        print("[%04d/%04d] %s" % (check_url_count, npkgs, pkg.name))
 
 
-async def check_package_urls(packages):
+async def check_package_urls(packages, verbose=False):
     tasks = []
     connector = aiohttp.TCPConnector(limit_per_host=5)
     async with aiohttp.ClientSession(connector=connector, trust_env=True,
                                      timeout=aiohttp.ClientTimeout(total=15)) as sess:
         packages = [p for p in packages if p.status['url'][0] == 'ok']
         for pkg in packages:
-            tasks.append(asyncio.ensure_future(check_url_status(sess, pkg, len(packages))))
+            tasks.append(asyncio.ensure_future(check_url_status(sess, pkg, len(packages), verbose=verbose)))
         await asyncio.wait(tasks)
 
 
@@ -580,27 +583,30 @@ async def check_package_get_latest_version_by_guess(session, pkg, retry=True):
 check_latest_count = 0
 
 
-async def check_package_latest_version_get(session, pkg, npkgs):
+async def check_package_latest_version_get(session, pkg, npkgs, verbose=False):
     global check_latest_count
 
     if await check_package_get_latest_version_by_distro(session, pkg):
         check_latest_count += 1
-        print("[%04d/%04d] %s" % (check_latest_count, npkgs, pkg.name))
+        if verbose:
+            print("[%04d/%04d] %s" % (check_latest_count, npkgs, pkg.name))
         return
 
     if await check_package_get_latest_version_by_guess(session, pkg):
         check_latest_count += 1
-        print("[%04d/%04d] %s" % (check_latest_count, npkgs, pkg.name))
+        if verbose:
+            print("[%04d/%04d] %s" % (check_latest_count, npkgs, pkg.name))
         return
 
     check_package_latest_version_set_status(pkg,
                                             RM_API_STATUS_NOT_FOUND,
                                             None, None)
     check_latest_count += 1
-    print("[%04d/%04d] %s" % (check_latest_count, npkgs, pkg.name))
+    if verbose:
+        print("[%04d/%04d] %s" % (check_latest_count, npkgs, pkg.name))
 
 
-async def check_package_latest_version(packages):
+async def check_package_latest_version(packages, verbose=False):
     """
     Fills in the .latest_version field of all Package objects
 
@@ -623,7 +629,7 @@ async def check_package_latest_version(packages):
     async with aiohttp.ClientSession(connector=connector, trust_env=True) as sess:
         packages = [p for p in packages if p.is_actual_package]
         for pkg in packages:
-            tasks.append(asyncio.ensure_future(check_package_latest_version_get(sess, pkg, len(packages))))
+            tasks.append(asyncio.ensure_future(check_package_latest_version_get(sess, pkg, len(packages), verbose=verbose)))
         await asyncio.wait(tasks)
 
 
@@ -1272,6 +1278,8 @@ def parse_args():
     parser.add_argument('--disable', type=list_str,
                         help='Features to disable, comma-separated (cve, upstream, url, warning)',
                         default=[])
+    parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
+                        help='Increase verbosity')
     args = parser.parse_args()
     if not args.html and not args.json:
         parser.error('at least one of --html or --json (or both) is required')
@@ -1325,11 +1333,11 @@ def __main__():
     if "url" not in args.disable:
         print("Checking URL status")
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(check_package_urls(packages))
+        loop.run_until_complete(check_package_urls(packages, verbose=args.verbose))
     if "upstream" not in args.disable:
         print("Getting latest versions ...")
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(check_package_latest_version(packages))
+        loop.run_until_complete(check_package_latest_version(packages, verbose=args.verbose))
     if "cve" not in args.disable and args.nvd_path:
         print("Checking packages CVEs")
         check_package_cves(args.nvd_path, packages)
