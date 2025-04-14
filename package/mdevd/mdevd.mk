@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MDEVD_VERSION = 0.1.6.4
+MDEVD_VERSION = 0.1.6.5
 MDEVD_SITE = https://skarnet.org/software/mdevd
 MDEVD_LICENSE = ISC
 MDEVD_LICENSE_FILES = COPYING
@@ -12,7 +12,7 @@ MDEVD_INSTALL_STAGING = YES
 MDEVD_DEPENDENCIES = skalibs
 
 MDEVD_CONF_OPTS = \
-	--with-sysdeps=$(STAGING_DIR)/lib/skalibs/sysdeps \
+	--with-sysdeps=$(STAGING_DIR)/usr/lib/skalibs/sysdeps \
 	--with-include=$(STAGING_DIR)/include \
 	--with-dynlib=$(STAGING_DIR)/lib \
 	--with-lib=$(STAGING_DIR)/lib/skalibs \

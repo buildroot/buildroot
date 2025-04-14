@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-S6_LINUX_INIT_VERSION = 1.1.2.0
+S6_LINUX_INIT_VERSION = 1.1.2.1
 S6_LINUX_INIT_SITE = https://skarnet.org/software/s6-linux-init
 S6_LINUX_INIT_LICENSE = ISC
 S6_LINUX_INIT_LICENSE_FILES = COPYING
 S6_LINUX_INIT_DEPENDENCIES = s6 s6-linux-utils s6-portable-utils
 
 S6_LINUX_INIT_CONF_OPTS = \
-	--with-sysdeps=$(STAGING_DIR)/lib/skalibs/sysdeps \
+	--with-sysdeps=$(STAGING_DIR)/usr/lib/skalibs/sysdeps \
 	--with-include=$(STAGING_DIR)/include \
 	--with-dynlib=$(STAGING_DIR)/lib \
 	--with-lib=$(STAGING_DIR)/lib/execline \

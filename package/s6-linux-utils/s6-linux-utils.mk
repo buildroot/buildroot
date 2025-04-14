@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-S6_LINUX_UTILS_VERSION = 2.6.2.0
+S6_LINUX_UTILS_VERSION = 2.6.2.1
 S6_LINUX_UTILS_SITE = https://skarnet.org/software/s6-linux-utils
 S6_LINUX_UTILS_LICENSE = ISC
 S6_LINUX_UTILS_LICENSE_FILES = COPYING
 S6_LINUX_UTILS_DEPENDENCIES = skalibs
 
 S6_LINUX_UTILS_CONF_OPTS = \
-	--with-sysdeps=$(STAGING_DIR)/lib/skalibs/sysdeps \
+	--with-sysdeps=$(STAGING_DIR)/usr/lib/skalibs/sysdeps \
 	--with-include=$(STAGING_DIR)/include \
 	--with-dynlib=$(STAGING_DIR)/lib \
 	--with-lib=$(STAGING_DIR)/lib/skalibs \
