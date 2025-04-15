@@ -6,6 +6,9 @@ Intro
 These instructions apply to all models of the Raspberry Pi:
   - the original models A and B,
   - the "enhanced" models A+ and B+,
+  - the model Zero (aka Raspberry Pi Zero)
+  - the model Zero W (aka Raspberry Pi Zero W)
+  - the model Zero 2 W (aka Raspberry Pi Zero 2 W)
   - the model B2 (aka Raspberry Pi 2)
   - the model B3 (aka Raspberry Pi 3).
   - the model B4 (aka Raspberry Pi 4).
