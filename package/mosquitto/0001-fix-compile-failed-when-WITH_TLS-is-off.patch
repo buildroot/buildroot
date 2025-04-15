@@ -1,0 +1,35 @@
+From 47c015e0d3fb5c5c71a68fe21c8e5eb2a5fbfc1d Mon Sep 17 00:00:00 2001
+From: "chunbo.bai" <chunbo.bai@tcl.com>
+Date: Fri, 7 Mar 2025 14:16:45 +0800
+Subject: [PATCH] fix: compile failed when WITH_TLS is off
+
+Upstream: https://github.com/eclipse-mosquitto/mosquitto/pull/3227
+Signed-off-by: "chunbo.bai" <chunbo.bai@tcl.com>
+Signed-off-by: Scott Fan <fancp2007@gmail.com>
+---
+ src/conf.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/conf.c b/src/conf.c
+index 74ca66fcb..bfccf729c 100644
+--- a/src/conf.c
++++ b/src/conf.c
+@@ -2313,6 +2313,7 @@ static int config__check(struct mosquitto__config *config)
+ 		}
+ 	}
+ 
++#ifdef WITH_TLS
+ 	/* Check for missing TLS cafile/capath/certfile/keyfile */
+ 	for(int i=0; i<config->listener_count; i++){
+ 		 bool cafile = !!config->listeners[i].cafile;
+@@ -2333,6 +2334,7 @@ static int config__check(struct mosquitto__config *config)
+ 			 return MOSQ_ERR_INVAL;
+ 		 }
+ 	}
++#endif
+ 	return MOSQ_ERR_SUCCESS;
+ }
+ 
+-- 
+2.43.0
+
