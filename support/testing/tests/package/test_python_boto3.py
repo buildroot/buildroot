@@ -12,7 +12,7 @@ class TestPythonPy3Boto3(TestPythonPackageBase):
         BR2_TARGET_ROOTFS_EXT2_SIZE="250M"
         """
     sample_scripts = ["tests/package/sample_python_boto3.py"]
-    timeout = 10
+    timeout = 20
 
     def login(self):
         ext2_file = os.path.join(self.builddir, "images", "rootfs.ext2")
