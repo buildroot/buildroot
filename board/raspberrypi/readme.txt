@@ -115,11 +115,11 @@ After building, you should obtain this tree:
     |   +-- bootcode.bin            [2]
     |   +-- cmdline.txt
     |   +-- config.txt
-    |   +-- fixup.dat               [1]
-    |   +-- fixup4.dat              [1]
-    |   +-- start.elf               [1]
-    |   +-- start4.elf              [1]
-    |   `-- overlays/               [3]
+    |   +-- fixup.dat               [3]
+    |   +-- fixup4.dat              [4]
+    |   +-- start.elf               [3]
+    |   +-- start4.elf              [4]
+    |   `-- overlays/               [5]
     +-- sdcard.img
     +-- Image                       [1]
     `-- zImage                      [1]
@@ -131,7 +131,11 @@ After building, you should obtain this tree:
     Pi 4, 400, 5 and the Compute Module 4, 4s and 5 load the second stage
     bootloader from a SPI flash EEPROM.
 
-[3] Only for the Raspberry Pi installing device-tree overlays. The Raspberry Pi
+[3] Only for the Raspberry Pi 1, 2, 3, Zero and Zero 2.
+
+[4] Only for the Raspberry Pi 4, 400, Compute Module 4 and 4s.
+
+[5] Only for the Raspberry Pi installing device-tree overlays. The Raspberry Pi
     with Bluetooth connectivity (Zero W, Zero 2 W, 3, 4, 400, Compute Module 4
     and 4s) use the miniuart-bt overlay to enable UART0 for the serial console;
     the Bluetooth uses the mini-UART instead. Alternative would be to disable
