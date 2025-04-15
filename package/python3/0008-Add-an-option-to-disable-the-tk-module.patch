@@ -1,4 +1,4 @@
-From 4d02905278ef62aaf9e984022033c3390d675948 Mon Sep 17 00:00:00 2001
+From 7ce7f1c5bc94e7609fe1a7317f8094892cf3c43e Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:23:42 -0800
 Subject: [PATCH] Add an option to disable the tk module
@@ -13,13 +13,15 @@ Signed-off-by: Adam Duskett <aduskett@gmail.com>
 Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
 [ Adam Duskett: ported to Python 3.12.1 ]
 Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
+[ Marcus Hoffmann: ported to Python 3.12.10 ]
+Signed-off-by: Marcus Hoffmann <buildroot@bubu1.eu>
 ---
  Makefile.pre.in | 8 +++++---
  configure.ac    | 7 +++++++
  2 files changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 7c5bcea59ba..5de6f63220d 100644
+index 42f665e12b3..01e62203cd5 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
 @@ -2108,7 +2108,6 @@ LIBSUBDIRS=	asyncio \
@@ -30,7 +32,7 @@ index 7c5bcea59ba..5de6f63220d 100644
  		tomllib \
  		turtledemo \
  		unittest \
-@@ -2213,7 +2212,6 @@ TESTSUBDIRS=	idlelib/idle_test \
+@@ -2214,7 +2213,6 @@ TESTSUBDIRS=	idlelib/idle_test \
  		test/test_peg_generator \
  		test/test_pydoc \
  		test/test_sqlite3 \
@@ -38,15 +40,15 @@ index 7c5bcea59ba..5de6f63220d 100644
  		test/test_tomllib \
  		test/test_tomllib/data \
  		test/test_tomllib/data/invalid \
-@@ -2234,7 +2232,6 @@ TESTSUBDIRS=	idlelib/idle_test \
- 		test/test_tomllib/data/valid/multiline-basic-str \
+@@ -2236,7 +2234,6 @@ TESTSUBDIRS=	idlelib/idle_test \
  		test/test_tools \
  		test/test_tools/i18n_data \
+ 		test/test_tools/msgfmt_data \
 -		test/test_ttk \
  		test/test_unittest \
  		test/test_unittest/testmock \
  		test/test_warnings \
-@@ -2259,6 +2256,11 @@ TESTSUBDIRS=	idlelib/idle_test \
+@@ -2261,6 +2258,11 @@ TESTSUBDIRS=	idlelib/idle_test \
  		test/test_multiprocessing_forkserver \
  		test/test_multiprocessing_spawn
  
@@ -59,10 +61,10 @@ index 7c5bcea59ba..5de6f63220d 100644
  
  ifeq (@PYDOC@,yes)
 diff --git a/configure.ac b/configure.ac
-index 3fbcabe29c8..4331ed4264f 100644
+index b2a60b7865f..23db7446cdc 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4532,6 +4532,13 @@ AC_ARG_ENABLE(pydoc,
+@@ -4553,6 +4553,13 @@ AC_ARG_ENABLE(pydoc,
  	AS_HELP_STRING([--disable-pydoc], [disable pydoc]),
  	[ PYDOC="${enableval}" ], [ PYDOC=yes ])
  
@@ -77,5 +79,5 @@ index 3fbcabe29c8..4331ed4264f 100644
  AH_TEMPLATE([ENABLE_IPV6], [Define if --enable-ipv6 is specified])
  AC_MSG_CHECKING([if --enable-ipv6 is specified])
 -- 
-2.39.5
+2.43.0
 
