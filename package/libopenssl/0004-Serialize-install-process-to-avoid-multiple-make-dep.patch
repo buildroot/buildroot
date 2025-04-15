@@ -1,0 +1,44 @@
+From 4562b002366535b3d387fae7fa1dbd8e315ae142 Mon Sep 17 00:00:00 2001
+From: Neil Horman <nhorman@openssl.org>
+Date: Mon, 14 Apr 2025 12:23:15 -0400
+Subject: [PATCH] Serialize install process to avoid multiple make depend
+ operations
+
+If make install is run with a large -j value (make install -j N , where
+N > 1)
+
+We can run into a situation in which the install fails because multiple
+make depend operations are running in parallel, which will fail due to
+makefile rewriting.
+
+Serialize the install process to guarantee that those operations don't
+step on one another
+
+Fixes # 27074
+
+Upstream: https://github.com/openssl/openssl/pull/27388
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ Configurations/unix-Makefile.tmpl | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/Configurations/unix-Makefile.tmpl b/Configurations/unix-Makefile.tmpl
+index e85763ccf8..b671723813 100644
+--- a/Configurations/unix-Makefile.tmpl
++++ b/Configurations/unix-Makefile.tmpl
+@@ -650,7 +650,11 @@ depend: Makefile
+ # Install helper targets #############################################
+ ##@ Installation
+ 
+-install: install_sw install_ssldirs {- "install_docs" if !$disabled{docs}; -} {- $disabled{fips} ? "" : "install_fips" -} ## Install software and documentation, create OpenSSL directories
++install: Makefile ## Install software and documentation, create OpenSSL directories
++	$(MAKE) install_sw
++	$(MAKE) install_ssldirs
++	{- "\$(MAKE) install_docs" if !$disabled{docs} -}
++	{- "\$(MAKE) install_fips" if !$disabled{fips} -}
+ 
+ uninstall: {- "uninstall_docs" if !$disabled{docs}; -} uninstall_sw {- $disabled{fips} ? "" : "uninstall_fips" -} ## Uninstall software and documentation
+ 
+-- 
+2.39.5
+
