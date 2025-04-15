@@ -112,14 +112,14 @@ After building, you should obtain this tree:
     +-- boot.vfat
     +-- rootfs.ext4
     +-- rpi-firmware/
-    |   +-- bootcode.bin
+    |   +-- bootcode.bin            [2]
     |   +-- cmdline.txt
     |   +-- config.txt
     |   +-- fixup.dat               [1]
     |   +-- fixup4.dat              [1]
     |   +-- start.elf               [1]
     |   +-- start4.elf              [1]
-    |   `-- overlays/               [2]
+    |   `-- overlays/               [3]
     +-- sdcard.img
     +-- Image                       [1]
     `-- zImage                      [1]
@@ -127,7 +127,11 @@ After building, you should obtain this tree:
 [1] Not all of them will be present, depending on the RaspberryPi
     model you are using.
 
-[2] Only for the Raspberry Pi 3/4 Models (overlay miniuart-bt is needed
+[2] Only for the Raspberry Pi 1, 2, 3, Zero, Zero W and Zero 2 W. The Raspberry
+    Pi 4, 400, 5 and the Compute Module 4, 4s and 5 load the second stage
+    bootloader from a SPI flash EEPROM.
+
+[3] Only for the Raspberry Pi 3/4 Models (overlay miniuart-bt is needed
     to enable the RPi3 serial console otherwise occupied by the bluetooth
     chip). Alternative would be to disable the serial console in cmdline.txt
     and /etc/inittab.
