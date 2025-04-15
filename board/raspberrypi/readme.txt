@@ -6,13 +6,18 @@ Intro
 These instructions apply to all models of the Raspberry Pi:
   - the original models A and B,
   - the "enhanced" models A+ and B+,
+  - the model CM (aka Raspberry Pi Compute Module).
   - the model Zero (aka Raspberry Pi Zero)
   - the model Zero W (aka Raspberry Pi Zero W)
   - the model Zero 2 W (aka Raspberry Pi Zero 2 W)
   - the model B2 (aka Raspberry Pi 2)
   - the model B3 (aka Raspberry Pi 3).
+  - the model CM3 (aka Raspberry Pi Compute Module 3).
+  - the model CM3+ (aka Raspberry Pi Compute Module 3+).
   - the model B4 (aka Raspberry Pi 4).
+  - the model 400 (aka Raspberry Pi 400).
   - the model CM4 (aka Raspberry Pi Compute Module 4 and IO Board).
+  - the model CM4s (aka Raspberry Pi Compute Module 4s).
   - the model B5 (aka Raspberry Pi 5).
 
 How to build it
@@ -24,7 +29,7 @@ Configure Buildroot
 There are several Raspberry Pi defconfig files in Buildroot, one for
 each major variant, which you should base your work on:
 
-For models A, B, A+ or B+:
+For models A, B, A+, B+ and CM:
 
   $ make raspberrypi_defconfig
 
@@ -40,7 +45,7 @@ For model Zero 2 W (model B3 in smaller form factor):
 
   $ make raspberrypizero2w_defconfig
 
-For model Zero 2 W (model B3 in smaller form factor, 64-bit):
+or for model Zero 2 W (model B3 in smaller form factor, 64-bit):
 
   $ make raspberrypizero2w_64_defconfig
 
@@ -48,19 +53,19 @@ For model 2 B:
 
   $ make raspberrypi2_defconfig
 
-For model 3 B and B+:
+For model 3 B, B+, CM3 and CM3+:
 
   $ make raspberrypi3_defconfig
 
-or for model 3 B and B+ (64 bit):
+or for model 3 B, B+, CM3 and CM3+ (64 bit):
 
   $ make raspberrypi3_64_defconfig
 
-For model 4 B:
+For model 4 B, 400, CM4 and CM4s:
 
   $ make raspberrypi4_defconfig
 
-or for model 4 B (64 bit):
+or for model 4 B, 400, CM4 and CM4s (64 bit):
 
   $ make raspberrypi4_64_defconfig
 
