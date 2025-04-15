@@ -131,10 +131,11 @@ After building, you should obtain this tree:
     Pi 4, 400, 5 and the Compute Module 4, 4s and 5 load the second stage
     bootloader from a SPI flash EEPROM.
 
-[3] Only for the Raspberry Pi 3/4 Models (overlay miniuart-bt is needed
-    to enable the RPi3 serial console otherwise occupied by the bluetooth
-    chip). Alternative would be to disable the serial console in cmdline.txt
-    and /etc/inittab.
+[3] Only for the Raspberry Pi installing device-tree overlays. The Raspberry Pi
+    with Bluetooth connectivity (Zero W, Zero 2 W, 3, 4, 400, Compute Module 4
+    and 4s) use the miniuart-bt overlay to enable UART0 for the serial console;
+    the Bluetooth uses the mini-UART instead. Alternative would be to disable
+    the serial console in cmdline.txt and /etc/inittab.
 
 How to write the SD card
 ========================
