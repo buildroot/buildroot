@@ -1,3 +1,47 @@
+2024.02.13, released April 22nd, 2025
+
+	Important / security related fixes:
+
+	- xserver_xorg-server & xwayland: CVE-2024-9632, CVE-2025-26594,
+	    CVE-2025-26595, CVE-2025-26596, CVE-2025-26597,  CVE-2025-26598,
+	    CVE-2025-26599, CVE-2025-26600, CVE-2025-26601.
+	- exim: CVE-2025-30232.
+	- mbedtls: CVE-2025-27809, CVE-2025-27810.
+	- augeas: CVE-2025-2588.
+	- libarchive: CVE-2024-57970, CVE-2025-1632, CVE-2025-25724.
+	- libopenh264: CVE-2025-27091.
+	- libmodsecurity: CVE-2025-27110.
+	- tinyxml2: CVE-2024-50615.
+	- libndp: CVE-2024-5564.
+	- xwayland: CVE-2024-31080, CVE-2024-31081, CVE-2024-31083,
+	    CVE-2024-9632, CVE-2025-26594, CVE-2025-26595,
+	    CVE-2025-26596, CVE-2025-26597, CVE-2025-26598,
+	    CVE-2025-26599, CVE-2025-26600, CVE-2025-26601.
+	- libfreeglut: CVE-2024-24258, CVE-2024-24259.
+
+	Updated/fixed packages:
+
+	libsoup3, linux, apr, mali-driver,
+	libcoap, python-fastapi, python-twisted, tor, linux-header,
+	linux-tools, libmodsecurity
+
+	Test Improvements:
+
+	- linux-tools: selftests: Add path containing BPF binary.
+	- testing: add git runtime test.
+
+	Infrastructure updates/fixes:
+
+	- DEVELOPERS: change arnout's address.
+	- DEVELOPERS: add Dario Binacchi for ti-k3-boot-firmware.
+	- support/download/svn: use 'svn info' whith LC_ALL=C.
+	- dillo: Fix an issue related to _SITE url for make show-info.
+	- kconfig: Handle backspace (^H) key.
+	- pkg-stats: add -v/--verbose option
+
+	Build issues/problems solved for:
+	glibc, mesa3d-demos.
+
 2024.02.12, released March 24st, 2025
 
 	Important / security related fixes.
