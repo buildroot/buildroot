@@ -1,0 +1,34 @@
+From b6d898185d441e00acad867c0c80aadf4d7b0d37 Mon Sep 17 00:00:00 2001
+From: Thomas Devoogdt <thomas@devoogdt.com>
+Date: Tue, 1 Apr 2025 22:43:30 +0200
+Subject: [PATCH] lib: zstd: only enable CXX support if tests are required
+
+Upstream: https://github.com/facebook/zstd/pull/4357/files
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+---
+ lib/zstd-1.5.7/build/cmake/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/zstd-1.5.7/build/cmake/CMakeLists.txt b/lib/zstd-1.5.7/build/cmake/CMakeLists.txt
+index 347d41c0f..70e233df3 100644
+--- a/lib/zstd-1.5.7/build/cmake/CMakeLists.txt
++++ b/lib/zstd-1.5.7/build/cmake/CMakeLists.txt
+@@ -37,7 +37,6 @@ project(zstd
+   VERSION "${ZSTD_FULL_VERSION}"
+   LANGUAGES C   # Main library is in C
+             ASM # And ASM
+-            CXX # Testing contributed code also utilizes CXX
+   )
+ 
+ message(STATUS "ZSTD VERSION: ${zstd_VERSION}")
+@@ -170,6 +169,7 @@ if (ZSTD_BUILD_PROGRAMS)
+ endif ()
+ 
+ if (ZSTD_BUILD_TESTS)
++    enable_language(CXX)
+     enable_testing()
+     if (NOT ZSTD_BUILD_STATIC)
+         message(SEND_ERROR "You need to build static library to build tests")
+-- 
+2.43.0
+

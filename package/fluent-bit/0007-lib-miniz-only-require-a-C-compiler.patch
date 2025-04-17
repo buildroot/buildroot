@@ -1,0 +1,27 @@
+From 3732cea4bb3dd9b79732da7bfbf60258bc418195 Mon Sep 17 00:00:00 2001
+From: Thomas Devoogdt <thomas@devoogdt.com>
+Date: Tue, 1 Apr 2025 23:01:13 +0200
+Subject: [PATCH] lib: miniz: only require a C compiler
+
+Upstream: https://github.com/richgel999/miniz/pull/338
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+---
+ lib/miniz/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/miniz/CMakeLists.txt b/lib/miniz/CMakeLists.txt
+index ce6ade1c0..91012b36a 100644
+--- a/lib/miniz/CMakeLists.txt
++++ b/lib/miniz/CMakeLists.txt
+@@ -7,7 +7,7 @@ if(DEFINED PROJECT_NAME)
+ endif()
+ 
+ if(CMAKE_MINOR_VERSION LESS 12)
+-  project(miniz)
++  project(miniz C)
+   # see issue https://gitlab.kitware.com/cmake/cmake/merge_requests/1799
+ else()
+   project(miniz C)
+-- 
+2.43.0
+
