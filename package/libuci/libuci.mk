@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBUCI_VERSION = 4b3db1179747b6a6779029407984bacef851325c
+LIBUCI_VERSION = f3fc0b76040685829191debc03edf72f486ae8ae
 LIBUCI_SITE = https://git.openwrt.org/project/uci.git
 LIBUCI_SITE_METHOD = git
 LIBUCI_LICENSE = LGPL-2.1, GPL-2.0 (tools)
