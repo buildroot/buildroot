@@ -1,0 +1,46 @@
+From c2024eb93f6d7ec605226d5d8a29ea17fbc71b5d Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Thu, 17 Apr 2025 19:06:48 +0200
+Subject: [PATCH] Fix build with Linux 6.7
+
+During commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=bb55441c57ccc5cc2eab44e1a97698b9d708871d
+struct cfg80211_ap_settings has been split into multiple structs including
+beacon. So is Linux version is 6.7+ let's use &info->beacon in place of
+beacon.
+
+Upstream: https://github.com/embeddedTS/wilc3000-external-module/pull/8
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ cfg80211.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/cfg80211.c b/cfg80211.c
+index 5c92062..25da3a1 100644
+--- a/cfg80211.c
++++ b/cfg80211.c
+@@ -1822,13 +1822,21 @@ static int start_ap(struct wiphy *wiphy, struct net_device *dev,
+ }
+ 
+ static int change_beacon(struct wiphy *wiphy, struct net_device *dev,
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,7,0))
++			 struct cfg80211_ap_update *info)
++#else
+ 			 struct cfg80211_beacon_data *beacon)
++#endif
+ {
+ 	struct wilc_vif *vif = netdev_priv(dev);
+ 
+ 	PRINT_INFO(vif->ndev, HOSTAPD_DBG, "Setting beacon\n");
+ 
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6,7,0))
++	return wilc_add_beacon(vif, 0, 0, &info->beacon);
++#else
+ 	return wilc_add_beacon(vif, 0, 0, beacon);
++#endif
+ }
+ 
+ static int stop_ap(struct wiphy *wiphy, struct net_device *dev
+-- 
+2.39.5
+

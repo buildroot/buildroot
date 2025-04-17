@@ -1,0 +1,34 @@
+From 90e679f1b7caad02e68fa8672be6569eb1b2b76f Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Thu, 17 Apr 2025 18:56:55 +0200
+Subject: [PATCH] Fix build with Linux 6.8
+
+With commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d26270061ae66b915138af7cd73ca6f8b85e6b44
+strlcpy() has been superseded in favor of strscpy() so let's #define
+strlcpy as strscpy if Linux version 6.8+
+
+Upstream: https://github.com/embeddedTS/wilc3000-external-module/pull/8
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ mon.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/mon.c b/mon.c
+index 2c9c2d9..20b7e20 100644
+--- a/mon.c
++++ b/mon.c
+@@ -6,6 +6,10 @@
+ 
+ #include "cfg80211.h"
+ 
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 8, 0))
++#define strlcpy strscpy
++#endif
++
+ struct wilc_wfi_radiotap_hdr {
+ 	struct ieee80211_radiotap_header hdr;
+ 	u8 rate;
+-- 
+2.39.5
+

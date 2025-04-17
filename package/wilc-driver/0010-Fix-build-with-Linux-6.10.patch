@@ -1,0 +1,55 @@
+From 684eb3e40c88ee7a2cd4417a12b9b27a35e86655 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Thu, 17 Apr 2025 18:41:07 +0200
+Subject: [PATCH] Fix build with Linux 6.10
+
+During commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9b163e0d330debbf7dcc14b2c3e2dc19a3b50a1d
+is_dma_mapped member has been dropped since it was not used anymore. The
+DMA mapping is done directly in single spi drivers in case it's supported
+so having is_dma_mapped set to 1 lead to code breakage. So we can consider
+it always as 0 and basically guard it if Linux version is 6.10+
+
+Upstream: https://github.com/embeddedTS/wilc3000-external-module/pull/8
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ spi.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/spi.c b/spi.c
+index f7b43e2..be616f4 100644
+--- a/spi.c
++++ b/spi.c
+@@ -338,7 +338,9 @@ static int wilc_spi_tx(struct wilc *wilc, u8 *b, u32 len)
+ 		memset(&msg, 0, sizeof(msg));
+ 		spi_message_init(&msg);
+ 		msg.spi = spi;
++#if KERNEL_VERSION(6, 10, 0) > LINUX_VERSION_CODE
+ 		msg.is_dma_mapped = USE_SPI_DMA;
++#endif
+ 		spi_message_add_tail(&tr, &msg);
+ 
+ 		ret = spi_sync(spi, &msg);
+@@ -385,7 +387,9 @@ static int wilc_spi_rx(struct wilc *wilc, u8 *rb, u32 rlen)
+ 		memset(&msg, 0, sizeof(msg));
+ 		spi_message_init(&msg);
+ 		msg.spi = spi;
++#if KERNEL_VERSION(6, 10, 0) > LINUX_VERSION_CODE
+ 		msg.is_dma_mapped = USE_SPI_DMA;
++#endif
+ 		spi_message_add_tail(&tr, &msg);
+ 
+ 		ret = spi_sync(spi, &msg);
+@@ -427,7 +431,9 @@ static int wilc_spi_tx_rx(struct wilc *wilc, u8 *wb, u8 *rb, u32 rlen)
+ 		memset(&msg, 0, sizeof(msg));
+ 		spi_message_init(&msg);
+ 		msg.spi = spi;
++#if KERNEL_VERSION(6, 10, 0) > LINUX_VERSION_CODE
+ 		msg.is_dma_mapped = USE_SPI_DMA;
++#endif
+ 
+ 		spi_message_add_tail(&tr, &msg);
+ 		ret = spi_sync(spi, &msg);
+-- 
+2.39.5
+
