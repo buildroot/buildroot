@@ -1,3 +1,74 @@
+2025.02.1, released April 22nd, 2025
+
+	Changes with potentially large impact:
+
+	- gstreamer1 and related packages: updated from 1.22.x to 1.24.x.
+	  1.22.x was already EOL when Buildroot 2025.02 was released, so
+	  GStreamer should really already have been udpated to 1.24.x.
+	  This update was needed to fix a lot of vulnerabilities.
+	- frr: updated from 9.1.3 to 10.3. Version 9 is no longer
+	  maintained upstream, and not in any distro either. This update
+	  was needed to fix a vulernability.
+
+	Important / security related fixes:
+
+	- libmodsecurity: CVE-2025-27110.
+	- tinyxml2: CVE-2024-50615.
+	- xserver_xorg-server & xwayland: CVE-2024-9632, CVE-2025-26594,
+	    CVE-2025-26595, CVE-2025-26596, CVE-2025-26597,  CVE-2025-26598,
+	    CVE-2025-26599, CVE-2025-26600, CVE-2025-26601.
+	- exim: CVE-2025-30232.
+	- mbedtls: CVE-2025-27809, CVE-2025-27810.
+	- libfreeglut: CVE-2024-24258, CVE-2024-24259.
+	- libopenh264: CVE-2025-27091.
+	- gstreamer1: CVE-2024-47834, CVE-2024-47835, CVE-2024-47778,
+	    CVE-2024-47777 CVE-2024-47776, CVE-2024-47775, CVE-2024-47774,
+	    CVE-2024-47615, CVE-2024-47613, CVE-2024-47607, CVE-2024-47606,
+	    CVE-2024-47603, CVE-2024-47602, CVE-2024-47601, CVE-2024-47600,
+	    CVE-2024-47599, CVE-2024-47598, CVE-2024-47597, CVE-2024-47596,
+	    CVE-2024-47546, CVE-2024-47545, CVE-2024-47544, CVE-2024-47543,
+	    CVE-2024-47542, CVE-2024-47541, CVE-2024-47540, CVE-2024-47539,
+	    CVE-2024-47538, CVE-2024-47537.
+	- augeas: CVE-2025-2588.
+	- libndp: CVE-2024-5564.
+	- python-jinja2: CVE-2025-27516.
+	- python-django: CVE-2025-26699.
+	- libarchive: CVE-2024-57970, CVE-2025-1632.
+	- frr: CVE-2024-55553.
+
+	Updated / fixed packages: libmodsecurity, intel-mediadriver,
+	intel-vpl-gpu-rt, python-aerich, python-aiohttp, python-maturin,
+	python-tortoise-orm, python-sqlalchemy, kodi-pvr-waipu, tor, mc,
+	tinyxml2, libgeos, intel-vpl-gpu-rt, intel-mediadriver, ruby,
+	ncftp, xserver_xorg-server, exim, mbedtls, gdb, freerdp, uclibc,
+	libsoup3, cairo, zabbix, armadillo, spdlog, go, linux, linux-tools,
+	gstreamer, linux-header, ethtool, apr, mali-driver, libcoap, libcap
+	python-fastapi, python-twisted.
+
+	Test Improvements:
+
+	- linux-tools: selftests: Add path containing BPF binary.
+	- testing: make time setting portable.
+	- testing: set date in emulated machine.
+	- testing: add git runtime test.
+	- test_gstreamer1: fix test by using bootlin toolchain.
+
+	Infrastructure updates/fixes:
+
+	- kconfig: Handle backspace (^H) key.
+	- xilinx-embeddedsw: fix menuconfig visualization.
+	- DEVELOPERS: change arnout's address.
+	- support/download/svn: use 'svn info' whith LC_ALL=C
+	- glibc: disable on RISC-V ilp32f and lp64f, not supported.
+	- dillo: Fix an issue related to _SITE url for make show-info.
+	- pkg-stats: add -v/--verbose option
+
+	Build issues/problems solved for packages:
+
+	dillo, freerdp, freeswitch, gdb, glibc, linux-tools,
+	mesa3d-demos, ncftp, tesseract-ocr,
+	v4l2loopback, zabbix
+
 2025.02, released March 17th, 2025
 
 	Various fixes.
