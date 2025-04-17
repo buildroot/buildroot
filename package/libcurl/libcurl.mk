@@ -58,7 +58,8 @@ endif
 ifeq ($(BR2_PACKAGE_LIBCURL_OPENSSL),y)
 LIBCURL_DEPENDENCIES += openssl
 LIBCURL_CONF_OPTS += --with-openssl=$(STAGING_DIR)/usr \
-	--with-ca-path=/etc/ssl/certs
+	--with-ca-path=/etc/ssl/certs \
+	--with-ca-bundle=/etc/ssl/certs/ca-certificates.crt
 else
 LIBCURL_CONF_OPTS += --without-openssl
 endif
