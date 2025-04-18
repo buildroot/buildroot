@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CAIROMM1_14_VERSION = 1.14.4
+CAIROMM1_14_VERSION = 1.14.5
 CAIROMM1_14_LICENSE = LGPL-2.0+
 CAIROMM1_14_LICENSE_FILES = COPYING
 CAIROMM1_14_SOURCE = cairomm-$(CAIROMM1_14_VERSION).tar.xz
