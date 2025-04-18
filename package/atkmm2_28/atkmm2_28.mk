@@ -5,7 +5,7 @@
 ################################################################################
 
 ATKMM2_28_VERSION_MAJOR = 2.28
-ATKMM2_28_VERSION = $(ATKMM2_28_VERSION_MAJOR).3
+ATKMM2_28_VERSION = $(ATKMM2_28_VERSION_MAJOR).4
 ATKMM2_28_SOURCE = atkmm-$(ATKMM2_28_VERSION).tar.xz
 ATKMM2_28_SITE = https://download.gnome.org/sources/atkmm/$(ATKMM2_28_VERSION_MAJOR)
 ATKMM2_28_LICENSE = LGPL-2.1+ (library), GPL-2.0+ (tools)
