@@ -5,7 +5,7 @@
 ################################################################################
 
 PANGOMM2_46_VERSION_MAJOR = 2.46
-PANGOMM2_46_VERSION = $(PANGOMM2_46_VERSION_MAJOR).3
+PANGOMM2_46_VERSION = $(PANGOMM2_46_VERSION_MAJOR).4
 PANGOMM2_46_SOURCE = pangomm-$(PANGOMM2_46_VERSION).tar.xz
 PANGOMM2_46_SITE = https://download.gnome.org/sources/pangomm/$(PANGOMM2_46_VERSION_MAJOR)
 PANGOMM2_46_LICENSE = LGPL-2.1+ (library), GPL-2.0+ (tools)
