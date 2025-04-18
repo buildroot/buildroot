@@ -362,6 +362,13 @@ else
 FFMPEG_CONF_OPTS += --disable-libmodplug
 endif
 
+ifeq ($(BR2_PACKAGE_LIBOPENMPT),y)
+FFMPEG_CONF_OPTS += --enable-libopenmpt
+FFMPEG_DEPENDENCIES += libopenmpt
+else
+FFMPEG_CONF_OPTS += --disable-libopenmpt
+endif
+
 ifeq ($(BR2_PACKAGE_SPEEX),y)
 FFMPEG_CONF_OPTS += --enable-libspeex
 FFMPEG_DEPENDENCIES += speex
