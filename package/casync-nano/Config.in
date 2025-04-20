@@ -1,0 +1,21 @@
+config BR2_PACKAGE_CASYNC_NANO
+	bool "casync-nano"
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_ZSTD
+	select BR2_PACKAGE_LIBCURL
+	help
+	  Tiny casync-like tool optimized for embedded systems.
+
+	  https://github.com/florolf/casync-nano
+
+if BR2_PACKAGE_CASYNC_NANO
+
+config BR2_PACKAGE_CASYNC_NANO_CASYNC_SHIM
+	bool "install casync shim"
+	# only one package should provide the "casync" command
+	depends on !BR2_PACKAGE_CASYNC
+	help
+	  Install a shim that provides basic compatibility with the
+	  "extract" sub-command of casync to programs that expect it.
+
+endif
