@@ -1,0 +1,44 @@
+From d0045f1fc32635d9629ea9e361631b07d9ca4140 Mon Sep 17 00:00:00 2001
+From: Charlie Jenkins <charlie@rivosinc.com>
+Date: Mon, 21 Apr 2025 13:08:50 -0700
+Subject: [PATCH] RISC-V: Only enable RVV on linux if hwcap headers are
+ available
+
+Linux 6.4 introduced COMPAT_HWCAP_ISA_V. When trying to compile pixman
+against linux headers older than this, pixman will fail to compile
+because it assumes COMPAT_HWCAP_ISA_V exists.
+
+During meson configuration, do not enable have_rvv if the platform is
+Linux and COMPAT_HWCAP_ISA_V doesn't exist.
+
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+Fixes: 0e424031bda2 ("RISC-V floating point operations")
+Upstream: https://gitlab.freedesktop.org/pixman/pixman/-/merge_requests/149
+---
+ meson.build | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index fdea28f..cb10931 100644
+--- a/meson.build
++++ b/meson.build
+@@ -379,7 +379,15 @@ if not use_rvv.disabled()
+         }
+       ''',
+       args : rvv_flags,
+-      name : 'RISC-V Vector Intrinsic Support')
++      name : 'RISC-V Vector Intrinsic Support') and cc.compiles('''
++      #if defined(__linux__)
++      #include <asm/hwcap.h>
++      #include <sys/auxv.h>
++      COMPAT_HWCAP_ISA_V
++      #endif
++      ''',
++      args : rvv_flags,
++      name: 'RISC-V Vector Linux HWCAP Support')
+       have_rvv = true
+     endif
+   endif
+-- 
+2.43.0
+
