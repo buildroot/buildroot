@@ -74,6 +74,12 @@ else
 PIXMAN_CONF_OPTS += -Da64-neon=disabled
 endif
 
+ifeq ($(BR2_RISCV_ISA_RVV),y)
+PIXMAN_CONF_OPTS += -Drvv=enabled
+else
+PIXMAN_CONF_OPTS += -Drvv=disabled
+endif
+
 PIXMAN_CFLAGS = $(TARGET_CFLAGS)
 
 ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_101737),y)
