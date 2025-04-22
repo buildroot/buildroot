@@ -48,6 +48,7 @@ define HOST_RUST_CONFIGURE_CMDS
 		echo '[target.$(RUSTC_TARGET_NAME)]'; \
 		echo 'cc = "$(TARGET_CROSS)gcc"'; \
 		echo '[llvm]'; \
+		echo 'download-ci-llvm = false'; \
 		echo 'ninja = false'; \
 		echo 'ldflags = "$(HOST_LDFLAGS)"'; \
 	) > $(@D)/config.toml
