@@ -1,0 +1,113 @@
+From 6e24360d3fc91cbeecb4f5cf432cd194bc098618 Mon Sep 17 00:00:00 2001
+From: Quentin Schulz <quentin.schulz@cherry.de>
+Date: Thu, 3 Apr 2025 20:09:00 +0200
+Subject: [PATCH] Revert "libcamera: rkisp1: Eliminate hard-coded resizer
+ limits"
+
+This reverts commit e85c7ddd38ce8456ab01c2a73baf9e788f6a462e.
+
+Linux kernel predating 6.4 (specifically commit 7cfb35d3a800 ("media:
+rkisp1: Implement ENUM_FRAMESIZES") do not have the ioctl in rkisp1
+driver required to dynamically query the resizer limits.
+
+Because of that, maxResolution and minResolution are both {0, 0}
+(default value for Size objects) which means filterSensorResolution()
+will create an entry for the sensor in sensorSizesMap_ but because the
+sensor resolution cannot fit inside the min and max resolution of the
+rkisp1, no size is put into this entry in sensorSizesMap_.
+On the next call to filterSensorResolution(),
+sensorSizesMap_.find(sensor) will return the entry but when attempting
+to call back() on iter->second, it'll trigger an assert because the size
+array is empty.
+
+Linux kernel 6.1 is supported until December 2027, so it seems premature
+to get rid of those hard-coded resizer limits before this happens.
+
+Let's restore the hard-coded resizer limits as fallbacks, actual limits
+are still queried from the driver on recent enough kernels.
+
+Fixes: 761545407c76 ("pipeline: rkisp1: Filter out sensor sizes not supported by the pipeline")
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Upstream: https://git.libcamera.org/libcamera/libcamera.git/commit/?id=6e24360d3fc91cbeecb4f5cf432cd194bc098618
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+ src/libcamera/pipeline/rkisp1/rkisp1_path.cpp | 21 +++++++++++++------
+ src/libcamera/pipeline/rkisp1/rkisp1_path.h   |  3 ++-
+ 2 files changed, 17 insertions(+), 7 deletions(-)
+
+diff --git a/src/libcamera/pipeline/rkisp1/rkisp1_path.cpp b/src/libcamera/pipeline/rkisp1/rkisp1_path.cpp
+index eee5b09e..64018dc5 100644
+--- a/src/libcamera/pipeline/rkisp1/rkisp1_path.cpp
++++ b/src/libcamera/pipeline/rkisp1/rkisp1_path.cpp
+@@ -54,8 +54,11 @@ const std::map<PixelFormat, uint32_t> formatToMediaBus = {
+ 
+ } /* namespace */
+ 
+-RkISP1Path::RkISP1Path(const char *name, const Span<const PixelFormat> &formats)
+-	: name_(name), running_(false), formats_(formats), link_(nullptr)
++RkISP1Path::RkISP1Path(const char *name, const Span<const PixelFormat> &formats,
++		       const Size &minResolution, const Size &maxResolution)
++	: name_(name), running_(false), formats_(formats),
++	  minResolution_(minResolution), maxResolution_(maxResolution),
++	  link_(nullptr)
+ {
+ }
+ 
+@@ -517,10 +520,12 @@ void RkISP1Path::stop()
+ }
+ 
+ /*
+- * \todo Remove the hardcoded formats once all users will have migrated to a
+- * recent enough kernel.
++ * \todo Remove the hardcoded resolutions and formats once kernels older than
++ * v6.4 will stop receiving LTS support (scheduled for December 2027 for v6.1).
+  */
+ namespace {
++constexpr Size RKISP1_RSZ_MP_SRC_MIN{ 32, 16 };
++constexpr Size RKISP1_RSZ_MP_SRC_MAX{ 4416, 3312 };
+ constexpr std::array<PixelFormat, 18> RKISP1_RSZ_MP_FORMATS{
+ 	formats::YUYV,
+ 	formats::NV16,
+@@ -542,6 +547,8 @@ constexpr std::array<PixelFormat, 18> RKISP1_RSZ_MP_FORMATS{
+ 	formats::SRGGB12,
+ };
+ 
++constexpr Size RKISP1_RSZ_SP_SRC_MIN{ 32, 16 };
++constexpr Size RKISP1_RSZ_SP_SRC_MAX{ 1920, 1920 };
+ constexpr std::array<PixelFormat, 8> RKISP1_RSZ_SP_FORMATS{
+ 	formats::YUYV,
+ 	formats::NV16,
+@@ -555,12 +562,14 @@ constexpr std::array<PixelFormat, 8> RKISP1_RSZ_SP_FORMATS{
+ } /* namespace */
+ 
+ RkISP1MainPath::RkISP1MainPath()
+-	: RkISP1Path("main", RKISP1_RSZ_MP_FORMATS)
++	: RkISP1Path("main", RKISP1_RSZ_MP_FORMATS,
++		     RKISP1_RSZ_MP_SRC_MIN, RKISP1_RSZ_MP_SRC_MAX)
+ {
+ }
+ 
+ RkISP1SelfPath::RkISP1SelfPath()
+-	: RkISP1Path("self", RKISP1_RSZ_SP_FORMATS)
++	: RkISP1Path("self", RKISP1_RSZ_SP_FORMATS,
++		     RKISP1_RSZ_SP_SRC_MIN, RKISP1_RSZ_SP_SRC_MAX)
+ {
+ }
+ 
+diff --git a/src/libcamera/pipeline/rkisp1/rkisp1_path.h b/src/libcamera/pipeline/rkisp1/rkisp1_path.h
+index 2a1ef0ab..430181d3 100644
+--- a/src/libcamera/pipeline/rkisp1/rkisp1_path.h
++++ b/src/libcamera/pipeline/rkisp1/rkisp1_path.h
+@@ -34,7 +34,8 @@ struct V4L2SubdeviceFormat;
+ class RkISP1Path
+ {
+ public:
+-	RkISP1Path(const char *name, const Span<const PixelFormat> &formats);
++	RkISP1Path(const char *name, const Span<const PixelFormat> &formats,
++		   const Size &minResolution, const Size &maxResolution);
+ 
+ 	bool init(MediaDevice *media);
+ 
