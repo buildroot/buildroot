@@ -31,4 +31,10 @@ else
 LIBCOAP_CONF_OPTS += --disable-dtls
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+LIBCOAP_CONF_OPTS += --enable-thread-safe
+else
+LIBCOAP_CONF_OPTS += --disable-thread-safe
+endif
+
 $(eval $(autotools-package))
