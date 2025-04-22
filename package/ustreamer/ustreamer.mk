@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-USTREAMER_VERSION = 6.29
+USTREAMER_VERSION = 6.36
 USTREAMER_SITE = $(call github,pikvm,ustreamer,v$(USTREAMER_VERSION))
 USTREAMER_LICENSE = GPL-3.0+
 USTREAMER_LICENSE_FILES = LICENSE
-USTREAMER_DEPENDENCIES = jpeg libevent libbsd
+USTREAMER_DEPENDENCIES = jpeg libevent libbsd host-pkgconf
 
 USTREAMER_MAKE_OPTS = \
 	$(TARGET_CONFIGURE_OPTS) \
