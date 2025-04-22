@@ -12,7 +12,7 @@
 BR_FMT_VERSION_git = -git4
 BR_FMT_VERSION_svn = -svn5
 BR_FMT_VERSION_go = -go2
-BR_FMT_VERSION_cargo = -cargo2
+BR_FMT_VERSION_cargo = -cargo3
 
 DL_WRAPPER = support/download/dl-wrapper
 
