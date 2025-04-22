@@ -107,11 +107,9 @@ To boot your newly created system:
 Using Wifi
 ==========
 
-# modprobe brcmfmac
-# iwconfig wlan0 essid ACCESSPOINTNAME
 # wpa_passphrase ACCESSPOINTNAME > /etc/wpa.conf
 (enter the wifi password and press enter)
-# wpa_supplicant -Dwext -iwlan0 -c /etc/wpa.conf &
+# wpa_supplicant -iwlan0 -c /etc/wpa.conf &
 # udhcpc -i wlan0
 # ping buildroot.org
 
