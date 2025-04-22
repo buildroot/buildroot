@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RIPGREP_VERSION = 14.1.0
+RIPGREP_VERSION = 14.1.1
 RIPGREP_SITE = $(call github,burntsushi,ripgrep,$(RIPGREP_VERSION))
 RIPGREP_LICENSE = MIT
 RIPGREP_LICENSE_FILES = LICENSE-MIT

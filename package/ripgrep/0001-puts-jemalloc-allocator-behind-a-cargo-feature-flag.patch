@@ -1,4 +1,4 @@
-From 77f850969433b14769ade4281899373f3ebabf86 Mon Sep 17 00:00:00 2001
+From 3199b83995a9e3a180664c03db6b301641d8f3ea Mon Sep 17 00:00:00 2001
 From: Jonathan Stites <mail@jonstites.com>
 Date: Wed, 6 May 2020 12:55:35 +0000
 Subject: [PATCH] puts jemalloc allocator behind a cargo feature flag
@@ -11,16 +11,18 @@ supported by the upstream project, so ripgrep will fail to build.
 Signed-off-by: Sam Voss <sam.voss@gmail.com>
 [Antoine: update for 14.1.0]
 Signed-off-by: Antoine Coutant <antoine.coutant@smile.fr>
+[Mehdi: update for 14.1.1]
+Signed-off-by: El Mehdi YOUNES <elmehdi.younes@smile.fr>
 ---
  .github/workflows/ci.yml      | 6 ++++++
  .github/workflows/release.yml | 8 +++++++-
  Cargo.toml                    | 8 +++++++-
- README.md                     | 9 +++++++++
+ README.md                     | 8 ++++++++
  crates/core/main.rs           | 8 ++++++--
- 5 files changed, 35 insertions(+), 4 deletions(-)
+ 5 files changed, 34 insertions(+), 4 deletions(-)
 
 diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
-index d21b85a..0c9ecb9 100644
+index 532e2e9..744e2bc 100644
 --- a/.github/workflows/ci.yml
 +++ b/.github/workflows/ci.yml
 @@ -172,6 +172,12 @@ jobs:
@@ -37,7 +39,7 @@ index d21b85a..0c9ecb9 100644
        # We could test this when using Cross, but we'd have to execute the
        # 'rg' binary (done in test-complete) with qemu, which is a pain and
 diff --git a/.github/workflows/release.yml b/.github/workflows/release.yml
-index f6ea3d9..ac18129 100644
+index f6ea3d9..b9ac802 100644
 --- a/.github/workflows/release.yml
 +++ b/.github/workflows/release.yml
 @@ -171,7 +171,13 @@ jobs:
@@ -45,8 +47,8 @@ index f6ea3d9..ac18129 100644
          echo "target dir is: ${{ env.TARGET_DIR }}"
  
 -    - name: Build release binary
-+    - name: Build release binary (linux)
-+      if: matrix.build == 'linux'
++    - name : Build release binary (linux)
++      if: matrix.build == 'linux
 +      # Use jemalloc allocator for much better performance over the musl default allocator
 +      run: ${{ env.CARGO }} build --verbose --release --features "pcre2 jemalloc" ${{ env.TARGET_FLAGS }}
 +
@@ -56,7 +58,7 @@ index f6ea3d9..ac18129 100644
        run: |
          ${{ env.CARGO }} build --verbose --release --features pcre2 ${{ env.TARGET_FLAGS }}
 diff --git a/Cargo.toml b/Cargo.toml
-index da350bc..1a0a48f 100644
+index 2ec69c9..2785c12 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
 @@ -59,8 +59,9 @@ serde_json = "1.0.23"
@@ -70,9 +72,9 @@ index da350bc..1a0a48f 100644
  
  [dev-dependencies]
  serde = "1.0.77"
-@@ -70,6 +71,11 @@ walkdir = "2"
+@@ -69,6 +70,11 @@ walkdir = "2"
+ 
  [features]
- simd-accel = ["grep/simd-accel"]
  pcre2 = ["grep/pcre2"]
 +# The jemalloc allocator is used for improved
 +# performance on x86 musl builds.
@@ -83,16 +85,15 @@ index da350bc..1a0a48f 100644
  [profile.release]
  debug = 1
 diff --git a/README.md b/README.md
-index 0821fab..fdb9fb5 100644
+index a429087..f017864 100644
 --- a/README.md
 +++ b/README.md
-@@ -478,6 +478,15 @@ build a static executable with MUSL and with PCRE2, then you will need to have
+@@ -486,6 +486,14 @@ build a static executable with MUSL and with PCRE2, then you will need to have
  `musl-gcc` installed, which might be in a separate package from the actual
  MUSL library, depending on your Linux distribution.
  
 +When building with the MUSL target on Linux, it is recommended to use the
 +jemalloc allocator for performance:
-+
 +```
 +$ rustup target add x86_64-unknown-linux-musl
 +$ cargo build --release --target x86_64-unknown-linux-musl --features jemalloc
@@ -129,5 +130,5 @@ index 64f35ce..9aa6663 100644
  static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
  
 -- 
-2.25.1
+2.43.0
 
