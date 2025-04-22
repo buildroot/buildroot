@@ -1,7 +1,7 @@
-From 1e4db1f9792e4343231a1cf36aa553404a534828 Mon Sep 17 00:00:00 2001
+From ae2b6cb3cac6a38a6c96625915cea4b9cf3fc180 Mon Sep 17 00:00:00 2001
 From: Quentin Schulz <quentin.schulz@cherry.de>
-Date: Fri, 4 Apr 2025 18:01:33 +0200
-Subject: [PATCH] meson: do not automatically build documentation if
+Date: Fri, 4 Apr 2025 18:12:35 +0200
+Subject: [PATCH] meson: Do not automatically build documentation if
  sphinx-build-3 is found
 
 Commit aba567338b25 ("Documentation: Move all dependencies into
@@ -21,22 +21,31 @@ also to declutter the generated package if documentation isn't desired.
 
 Fixes: aba567338b25 ("Documentation: Move all dependencies into features")
 Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
-Upstream: https://lists.libcamera.org/pipermail/libcamera-devel/2025-April/049705.html
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+Tested-by: Quentin Schulz <quentin.schulz@cherry.de>
+Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Upstream: https://git.libcamera.org/libcamera/libcamera.git/commit/?id=ae2b6cb3cac6a38a6c96625915cea4b9cf3fc180
 Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 ---
- Documentation/meson.build | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/meson.build | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/Documentation/meson.build b/Documentation/meson.build
-index 6158320e..c59849f6 100644
+index 6158320e..0fc5909d 100644
 --- a/Documentation/meson.build
 +++ b/Documentation/meson.build
-@@ -116,7 +116,7 @@ endif
+@@ -116,10 +116,8 @@ endif
  # Sphinx
  #
  
 -sphinx = find_program('sphinx-build-3', required : false)
-+sphinx = find_program('sphinx-build-3', required : get_option('documentation'))
- if not sphinx.found()
-     sphinx = find_program('sphinx-build', required : get_option('documentation'))
- endif
+-if not sphinx.found()
+-    sphinx = find_program('sphinx-build', required : get_option('documentation'))
+-endif
++sphinx = find_program('sphinx-build-3', 'sphinx-build',
++                      required : get_option('documentation'))
+ 
+ if sphinx.found()
+     docs_sources = [
