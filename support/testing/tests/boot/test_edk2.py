@@ -149,3 +149,21 @@ class TestEdk2BuildQemuSbsa(TestEdk2BuildBase):
 
     def test_run(self) -> None:
         self.assertBinariesExist("SBSA_FLASH0.fd", "SBSA_FLASH1.fd", "fip.bin")
+
+
+class TestEdk2BuildSolidrunArmada80x0mcbin(TestEdk2BuildBase):
+    config = TestEdk2BuildBase.base_config + \
+        """
+        BR2_aarch64=y
+        BR2_cortex_a72=y
+        BR2_TARGET_EDK2_PLATFORM_SOLIDRUN_ARMADA80X0MCBIN=y
+        BR2_TARGET_ARM_TRUSTED_FIRMWARE=y
+        BR2_TARGET_ARM_TRUSTED_FIRMWARE_PLATFORM="a80x0_mcbin"
+        BR2_TARGET_ARM_TRUSTED_FIRMWARE_EDK2_AS_BL33=y
+        BR2_TARGET_BINARIES_MARVELL=y
+        BR2_TARGET_MV_DDR_MARVELL=y
+        """
+
+    def test_run(self) -> None:
+        self.assertBinariesExist("ARMADA_EFI.fd", "fip.bin", "ble.bin",
+                                 "scp-fw.bin")
