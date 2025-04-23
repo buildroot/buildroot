@@ -184,13 +184,11 @@ class CVE:
         """The set of CPE products referred by this CVE definition"""
         return set(cpe_product(p['id']) for p in self.each_cpe())
 
-    def affects(self, name, version, cve_ignore_list, cpeid=None):
+    def affects(self, name, version, cpeid=None):
         """
         True if the Buildroot Package object passed as argument is affected
         by this CVE.
         """
-        if self.identifier in cve_ignore_list:
-            return self.CVE_DOESNT_AFFECT
 
         pkg_version = distutils.version.LooseVersion(version)
         if not hasattr(pkg_version, "version"):

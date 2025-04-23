@@ -122,6 +122,7 @@ class Package:
         self.cves = list()
         self.ignored_cves = list()
         self.unsure_cves = list()
+        self.stale_cve_ignores = list()
         self.latest_version = {'status': RM_API_STATUS_ERROR, 'version': None, 'id': None}
         self.status = {}
 
@@ -638,7 +639,18 @@ def check_package_cve_affects(cve, cpe_product_pkgs):
         if product not in cpe_product_pkgs:
             continue
         for pkg in cpe_product_pkgs[product]:
-            cve_status = cve.affects(pkg.name, pkg.current_version, pkg.ignored_cves, pkg.cpeid)
+            cve_status = cve.affects(pkg.name, pkg.current_version, pkg.cpeid)
+
+            if cve.identifier in pkg.ignored_cves:
+                if cve_status == cve.CVE_DOESNT_AFFECT:
+                    # We have an ignore entry for a CVE which is
+                    # already reported as 'not affected'. This might
+                    # happen for example when the NVD database doesn't
+                    # initially include version numbers for a CPE, and
+                    # later fixes it. Store it so that we can report
+                    # it.
+                    pkg.stale_cve_ignores.append(cve.identifier)
+                cve_status = cve.CVE_DOESNT_AFFECT
             if cve_status == cve.CVE_AFFECTS:
                 pkg.cves.append(cve.identifier)
             elif cve_status == cve.CVE_UNKNOWN:
@@ -670,6 +682,8 @@ def check_package_cves(nvd_path, packages):
         if 'cve' not in pkg.status:
             if pkg.cves or pkg.unsure_cves:
                 pkg.status['cve'] = ("error", "affected by CVEs")
+            elif pkg.stale_cve_ignores:
+                pkg.status['cve'] = ("warning", "has stale CVE ignores")
             else:
                 pkg.status['cve'] = ("ok", "not affected by CVEs")
 
@@ -712,10 +726,13 @@ def calculate_stats(packages):
         stats["patches"] += pkg.patch_count
         stats["total-cves"] += len(pkg.cves)
         stats["total-unsure-cves"] += len(pkg.unsure_cves)
+        stats["total-stale-cve-ignores"] += len(pkg.stale_cve_ignores)
         if len(pkg.cves) != 0:
             stats["pkg-cves"] += 1
         if len(pkg.unsure_cves) != 0:
             stats["pkg-unsure-cves"] += 1
+        if len(pkg.stale_cve_ignores) != 0:
+            stats["pkg-stale-cve-ignores"] += 1
         if pkg.cpeid:
             stats["cpe-id"] += 1
         else:
@@ -867,7 +884,7 @@ function expandField(fieldId){
  .wrong, .lotsofpatches, .invalid_url, .version-needs-update, .cpe-nok, .cve-nok {
    background: #ff9a69;
  }
- .somepatches, .somewarnings, .missing_url, .version-unknown, .cpe-unknown, .cve-unknown {
+ .somepatches, .somewarnings, .missing_url, .version-unknown, .cpe-unknown, .cve-unknown, .cve-stale {
    background: #ffd870;
  }
  .cve_ignored, .version-error {
@@ -1080,10 +1097,17 @@ def dump_html_pkg(f, pkg):
     div_class = ["centered data ignored_cves"]
     div_class.append(f'_{pkg_css_class}')
     if pkg.ignored_cves:
-        div_class.append("cve_ignored")
+        if pkg.stale_cve_ignores:
+            div_class.append("cve-stale")
+        else:
+            div_class.append("cve_ignored")
     f.write(f'  <div id="{data_field_id}" class="{" ".join(div_class)}">\n')
     for ignored_cve in pkg.ignored_cves:
-        f.write(f'    <a href="https://security-tracker.debian.org/tracker/{ignored_cve}">{ignored_cve}</a><br/>\n')
+        if ignored_cve in pkg.stale_cve_ignores:
+            f.write(f"""    <a href="https://security-tracker.debian.org/tracker/{ignored_cve}">{ignored_cve}"""
+                    """ <i>(stale)</i></a><br/>\n""")
+        else:
+            f.write(f'    <a href="https://security-tracker.debian.org/tracker/{ignored_cve}">{ignored_cve}</a><br/>\n')
     f.write("  </div>\n")
 
     # CPE ID
@@ -1193,6 +1217,10 @@ def dump_html_stats(f, stats):
             stats["pkg-unsure-cves"])
     f.write('<div class="data">Total number of unsure CVEs affecting all packages</div><div class="data">%s</div>\n' %
             stats["total-unsure-cves"])
+    f.write('<div class="data">Packages with stale CVE ignores</div><div class="data">%s</div>\n' %
+            stats["pkg-stale-cve-ignores"])
+    f.write('<div class="data">Total number of stale CVE ignores affecting all packages</div><div class="data">%s</div>\n' %
+            stats["total-stale-cve-ignores"])
     f.write('<div class="data">Packages with CPE ID</div><div class="data">%s</div>\n' %
             stats["cpe-id"])
     f.write('<div class="data">Packages without CPE ID</div><div class="data">%s</div>\n' %
