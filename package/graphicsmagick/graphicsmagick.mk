@@ -11,6 +11,12 @@ GRAPHICSMAGICK_LICENSE = MIT
 GRAPHICSMAGICK_LICENSE_FILES = Copyright.txt
 GRAPHICSMAGICK_CPE_ID_VENDOR = graphicsmagick
 
+# 0001-ReadJXLImage-Apply-image-dimension-resource-limits.patch
+GRAPHICSMAGICK_IGNORE_CVES += CVE-2025-27795
+
+# 0002-ReadJXLImage-pixel_format-num_channels-needs-to-be.patch
+GRAPHICSMAGICK_IGNORE_CVES += CVE-2025-32460
+
 GRAPHICSMAGICK_INSTALL_STAGING = YES
 GRAPHICSMAGICK_CONFIG_SCRIPTS = GraphicsMagick-config GraphicsMagickWand-config
 
