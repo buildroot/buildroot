@@ -54,6 +54,10 @@ For model 2 B:
 
   $ make raspberrypi2_defconfig
 
+or for model 2 B (Rev 1.2, model B3 without wireless LAN and Bluetooth, 64 bit):
+
+  $ make raspberrypi2_64_defconfig
+
 For model 3 B, B+, CM3 and CM3+:
 
   $ make raspberrypi3_defconfig
