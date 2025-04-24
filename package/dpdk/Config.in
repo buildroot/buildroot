@@ -45,7 +45,7 @@ config BR2_PACKAGE_DPDK_TESTS
 
 endif
 
-comment "DPDK needs a toolchain w/ dynamic library, threads, wchar, kernel headers >= 4.19"
+comment "dpdk needs a glibc toolchain w/ threads, gcc >= 4.9, headers >= 4.19"
 	depends on BR2_USE_MMU # pthread() memory mappings
 	depends on BR2_PACKAGE_DPDK_ARCH_SUPPORTS
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
