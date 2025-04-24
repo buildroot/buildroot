@@ -6,6 +6,8 @@ config BR2_PACKAGE_CRYPTOPP
 	help
 	  A free C++ class library of cryptographic schemes
 
+	  https://cryptopp.com
+
 comment "cryptopp needs a toolchain w/ C++, dynamic library, wchar"
 	depends on !BR2_INSTALL_LIBSTDCPP || BR2_STATIC_LIBS || \
 		!BR2_USE_WCHAR
