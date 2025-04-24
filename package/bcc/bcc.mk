@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BCC_VERSION = v0.31.0
+BCC_VERSION = v0.34.0
 BCC_SITE = https://github.com/iovisor/bcc
 BCC_SITE_METHOD = git
 BCC_GIT_SUBMODULES = YES
