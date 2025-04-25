@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2025.05"
 
+config BR2_GCC_VERSION_12_X
+	bool "gcc 12.x support removed"
+	select BR2_LEGACY
+	help
+	  Support for building a toolchain based on GCC 12.x has been
+	  removed, chose a newer GCC version instead.
+
 config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_SWRAST
 	bool "mesa Gallium swrast driver was replaced by softpipe"
 	select BR2_LEGACY
