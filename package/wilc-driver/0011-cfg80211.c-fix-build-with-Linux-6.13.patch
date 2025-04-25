@@ -1,0 +1,28 @@
+From 446911a48cd1a2c740b43a32d0ffa6e3f1887e84 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Sat, 26 Apr 2025 00:40:43 +0200
+Subject: [PATCH] cfg80211.c: fix build with Linux 6.13
+
+Upstream: https://github.com/embeddedTS/wilc3000-external-module/pull/8
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ cfg80211.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/cfg80211.c b/cfg80211.c
+index 25da3a1..d0cd826 100644
+--- a/cfg80211.c
++++ b/cfg80211.c
+@@ -291,6 +291,9 @@ struct wilc_vif *wilc_get_wl_to_vif(struct wilc *wl)
+ }
+ 
+ static int set_channel(struct wiphy *wiphy,
++#if KERNEL_VERSION(6, 13, 0) <= LINUX_VERSION_CODE
++		       struct net_device *netdev,
++#endif
+ 		       struct cfg80211_chan_def *chandef)
+ {
+ 	struct wilc *wl = wiphy_priv(wiphy);
+-- 
+2.39.5
+
