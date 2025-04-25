@@ -1,0 +1,41 @@
+From 6f50c950d09ad09339437b81ce22b36e0e2749c9 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Fri, 25 Apr 2025 19:00:14 +0200
+Subject: [PATCH] meson.build: make special_funcs check more reliable
+
+Unfortunately while cross-compiling with build tools like Buildroot it
+happens to have repeated flags or anything that could lead to a warning.
+This way the check fails because of a warning not related to the special
+function. So let's use cc.links() and increase minimum meson_version to
+0.60 since cc.links() has been added during that version.
+
+Upstream: https://github.com/libfuse/libfuse/commit/8e226c6af6f386a88ed53d0a0940ff6b869b372d
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ meson.build | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index d1346d0..d3d236d 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,6 +1,6 @@
+ project('libfuse3', ['c'],
+         version: '3.17.2',
+-        meson_version: '>= 0.51.0',
++        meson_version: '>= 0.60.0',
+         default_options: [
+             'buildtype=debugoptimized',
+             'c_std=gnu11',
+@@ -108,7 +108,7 @@ special_funcs = {
+ 
+ foreach name, code : special_funcs
+     private_cfg.set('HAVE_' + name.to_upper(),
+-        cc.compiles(code, args: ['-Werror'] + args_default,
++        cc.links(code, args: args_default,
+                  name: name + ' check'))
+ endforeach
+ 
+-- 
+2.39.5
+
