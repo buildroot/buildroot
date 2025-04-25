@@ -96,7 +96,7 @@ main() {
         backend="${backend_urlencode%|*}"
         case "${backend}" in
             git|svn|cvs|bzr|file|scp|hg|sftp) ;;
-            ftp|ftps) backend="curl" ;;
+            ftp|ftps|smb) backend="curl" ;;
             *) backend="wget" ;;
         esac
         uri=${uri#*+}
