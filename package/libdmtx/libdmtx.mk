@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBDMTX_VERSION = 0.7.7
+LIBDMTX_VERSION = 0.7.8
 LIBDMTX_SITE = $(call github,dmtx,libdmtx,v$(LIBDMTX_VERSION))
 LIBDMTX_LICENSE = BSD-2-Clause or Special Permission
 LIBDMTX_LICENSE_FILES = LICENSE
