@@ -337,6 +337,13 @@ not and can not work as people would expect it should:
      for +local+ packages, no patches are applied. If you need to
      still patch the source code, use +LIBFOO_POST_RSYNC_HOOKS+, see
      xref:hooks-rsync[].
+  ** +smb+ for retrieving source code from a SMB share. Used by
+     default when +LIBFOO_SITE+ begins with +smb://+. It uses +curl+
+     as download backend. Syntax expected:
+     +LIBFOO_SITE=smb://<server>/<share>/<path>+. This method might
+     require to define -u option in +LIBFOO_DL_OPTS+. For more
+     information, please refer to the
+     https://curl.se/docs/tutorial.html[curl documentation].
 
 * +LIBFOO_GIT_SUBMODULES+ can be set to +YES+ to create an archive
   with the git submodules in the repository.  This is only available
