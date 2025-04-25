@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SHADOW_VERSION = 4.17.3
+SHADOW_VERSION = 4.17.4
 SHADOW_SITE = https://github.com/shadow-maint/shadow/releases/download/$(SHADOW_VERSION)
 SHADOW_SOURCE = shadow-$(SHADOW_VERSION).tar.xz
 SHADOW_LICENSE = BSD-3-Clause
