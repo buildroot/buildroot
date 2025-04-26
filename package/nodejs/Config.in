@@ -87,4 +87,8 @@ config BR2_PACKAGE_NODEJS_MODULES_ADDITIONAL_DEPS
 
 endif
 
+config BR2_PACKAGE_PROVIDES_NODEJS
+	string
+	default "nodejs-src"
+
 source "package/nodejs/nodejs-src/Config.in"
