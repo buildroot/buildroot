@@ -32,8 +32,7 @@ PNPM = $(NODEJS_BIN_ENV) $(HOST_DIR)/bin/pnpm
 YARN = $(NODEJS_BIN_ENV) $(HOST_DIR)/bin/yarn
 endif
 
-NODEJS_DEPENDENCIES = nodejs-src
-$(eval $(generic-package))
+$(eval $(virtual-package))
 $(eval $(host-virtual-package))
 
 include $(sort $(wildcard package/nodejs/*/*.mk))
