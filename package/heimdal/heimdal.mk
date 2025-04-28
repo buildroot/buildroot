@@ -4,14 +4,12 @@
 #
 ################################################################################
 
-HEIMDAL_VERSION = f4faaeaba371fff3f8d1bc14389f5e6d70ca8e17
+HEIMDAL_VERSION = 8c3c97bdf6c06200418f1a85aa22beaa441c6b23
 HEIMDAL_SITE = $(call github,heimdal,heimdal,$(HEIMDAL_VERSION))
-HOST_HEIMDAL_DEPENDENCIES = host-e2fsprogs host-ncurses host-pkgconf host-libxcrypt host-flex host-bison
+HOST_HEIMDAL_DEPENDENCIES = host-ncurses host-pkgconf host-libxcrypt host-flex host-bison
 HOST_HEIMDAL_AUTORECONF = YES
-# static because of -fPIC issues with e2fsprogs on x86_64 host
+
 HOST_HEIMDAL_CONF_OPTS = \
-	--disable-shared \
-	--enable-static \
 	--without-openldap \
 	--without-capng \
 	--with-db-type-preference= \
@@ -33,13 +31,14 @@ HEIMDAL_LICENSE = BSD-3-Clause
 HEIMDAL_LICENSE_FILES = LICENSE
 HEIMDAL_CPE_ID_VALID = YES
 
-# We need compile_et for samba4
-define HOST_HEIMDAL_INSTALL_COMPILE_ET
-	$(INSTALL) -m 0755 $(@D)/lib/com_err/compile_et \
-		$(HOST_DIR)/bin/compile_et
+# We need compile_et for samba4 and slc for target version of heimdal
+# By default compile_et is not installed so we install it to bin
+# By default slc is installed in libexec directory so we just link it
+define HOST_HEIMDAL_INSTALL_BINARIES
+	$(INSTALL) -m 0755 $(@D)/lib/com_err/compile_et $(HOST_DIR)/bin/compile_et
+	ln -sf $(HOST_DIR)/libexec/heimdal/slc $(HOST_DIR)/bin/slc
 endef
 
-HOST_HEIMDAL_POST_INSTALL_HOOKS += \
-	HOST_HEIMDAL_INSTALL_COMPILE_ET
+HOST_HEIMDAL_POST_INSTALL_HOOKS += HOST_HEIMDAL_INSTALL_BINARIES
 
 $(eval $(host-autotools-package))
