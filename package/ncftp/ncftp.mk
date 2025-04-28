@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NCFTP_VERSION = 3.2.9
+NCFTP_VERSION = 3.3.0
 NCFTP_SOURCE = ncftp-$(NCFTP_VERSION)-src.tar.gz
 NCFTP_SITE = https://www.ncftp.com/public_ftp/ncftp
 NCFTP_TARGET_BINS = ncftp
