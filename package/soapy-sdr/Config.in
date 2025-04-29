@@ -1,0 +1,27 @@
+comment "SoapySDR needs a toolchain w/ C++, threads, dynamic library"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS || \
+		BR2_STATIC_LIBS
+
+config BR2_PACKAGE_SOAPY_SDR
+	bool "SoapySDR"
+	depends on !BR2_STATIC_LIBS
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	help
+	  Soapy SDR - vendor and platform neutral SDR support library.
+
+	  https://github.com/pothosware/SoapySDR/wiki
+
+if BR2_PACKAGE_SOAPY_SDR
+
+config BR2_PACKAGE_SOAPY_SDR_APPS
+	bool "apps support"
+	help
+	  Enable apps
+
+config BR2_PACKAGE_SOAPY_SDR_PYTHON
+	bool "python support"
+	depends on BR2_PACKAGE_PYTHON3
+	help
+	  Enable python binding
+endif

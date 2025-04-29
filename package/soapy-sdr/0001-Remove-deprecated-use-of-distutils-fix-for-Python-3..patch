@@ -1,0 +1,79 @@
+From 1ee5670803f89b21d84a6a84acbb578da051c119 Mon Sep 17 00:00:00 2001
+From: Ryan Volz <ryan.volz@gmail.com>
+Date: Tue, 26 Sep 2023 14:56:59 -0400
+Subject: [PATCH] Remove deprecated use of distutils, fix for Python 3.12+
+
+Remove deprecated use of distutils, fix for Python 3.12+
+
+This switches to using sysconfig from distutils, which is necessary for
+Python 3.12+ since distutils is deprecated and has been removed.
+
+It is necessary to specify the install scheme when a prefix other than
+the Python default is used so that changes to the default scheme made by
+distributions (e.g. Debian, Fedora) do not produce an incorrect Python
+installation directory. For example, Debian patches the default scheme
+to prepend the path with '/local', but if a user specifies a prefix of
+'/usr/local', then the path using the default scheme would be
+'/usr/local/local/...' with a duplicated 'local' directory. Specifying
+an unmodified install scheme fixes that.
+
+Signed-off-by: Ryan Volz <ryan.volz@gmail.com>
+
+Upstream: https://github.com/pothosware/SoapySDR/commit/1ee5670803f89b21d84a6a84acbb578da051c119
+Signed-off-by: Gwenhael Goavec-Merou <gwenhael.goavec-merou@trabucayre.com>
+---
+ swig/python/get_python_lib.py | 36 ++++++++++++++++++++++++-----------
+ 1 file changed, 25 insertions(+), 11 deletions(-)
+
+diff --git a/python/get_python_lib.py b/python/get_python_lib.py
+index 0c71652..574f0b6 100644
+--- a/python/get_python_lib.py
++++ b/python/get_python_lib.py
+@@ -1,19 +1,33 @@
+ import os
++import pathlib
+ import sys
+-import site
+-from distutils.sysconfig import get_python_lib
++import sysconfig
+ 
+ if __name__ == '__main__':
+-    prefix = sys.argv[1]
++    prefix = pathlib.Path(sys.argv[1]).resolve()
+ 
+-    #ask distutils where to install the python module
+-    install_dir = get_python_lib(plat_specific=True, prefix=prefix)
++    # default install dir for the running Python interpreter
++    default_install_dir = pathlib.Path(sysconfig.get_path('platlib')).resolve()
+ 
+-    #use sites when the prefix is already recognized
++    # if default falls under the desired prefix, we're done
+     try:
+-        paths = [p for p in site.getsitepackages() if p.startswith(prefix)]
+-        if len(paths) == 1: install_dir = paths[0]
+-    except AttributeError: pass
++        relative_install_dir = default_install_dir.relative_to(prefix)
++    except ValueError:
++        # get install dir for the specified prefix
++        # can't use the default scheme because distributions modify it
++        # newer Python versions have 'venv' scheme, use for all OSs.
++        if 'venv' in sysconfig.get_scheme_names():
++            scheme = 'venv'
++        elif os.name == 'nt':
++            scheme = 'nt'
++        else:
++            scheme = 'posix_prefix'
++        prefix_install_dir = pathlib.Path(sysconfig.get_path(
++            'platlib',
++            scheme=scheme,
++            vars={'base': prefix, 'platbase': prefix},
++        )).resolve()
++        relative_install_dir = prefix_install_dir.relative_to(prefix)
+ 
+-    #strip the prefix to return a relative path
+-    print(os.path.relpath(install_dir, prefix))
++    # want a relative path for use in the build system
++    print(relative_install_dir)
+-- 
+2.49.0
+
