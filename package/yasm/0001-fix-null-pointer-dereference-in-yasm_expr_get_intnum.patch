@@ -1,0 +1,32 @@
+From 48ced849ed621a05cec4c04d4567323af3a76e81 Mon Sep 17 00:00:00 2001
+From: dataisland <dataisland@outlook.com>
+Date: Fri, 15 Sep 2023 18:20:49 +0000
+Subject: [PATCH] Fix null-pointer-dereference in yasm_expr_get_intnum
+
+Fixes the following CVE:
+  - CVE-2021-33454: NULL pointer dereference in yasm_expr_get_intnum() in libyasm/expr.c
+
+For more info see:
+  - https://nvd.nist.gov/vuln/detail/CVE-2021-33454
+  - https://github.com/yasm/yasm/pull/244
+
+Upstream: https://github.com/yasm/yasm/pull/244
+
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ libyasm/expr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libyasm/expr.c b/libyasm/expr.c
+index c2c868ede..6838eca56 100644
+--- a/libyasm/expr.c
++++ b/libyasm/expr.c
+@@ -1260,7 +1260,7 @@ yasm_expr_get_intnum(yasm_expr **ep, int calc_bc_dist)
+ {
+     *ep = yasm_expr_simplify(*ep, calc_bc_dist);
+ 
+-    if ((*ep)->op == YASM_EXPR_IDENT && (*ep)->terms[0].type == YASM_EXPR_INT)
++    if (*ep && (*ep)->op == YASM_EXPR_IDENT && (*ep)->terms[0].type == YASM_EXPR_INT)
+         return (*ep)->terms[0].data.intn;
+     else
+         return (yasm_intnum *)NULL;
