@@ -1,0 +1,31 @@
+From e5b582868c5fa7e185a12023784adc8df7b8c7a2 Mon Sep 17 00:00:00 2001
+From: Ondrej Zajicek <santiago@crfreenet.org>
+Date: Thu, 9 Jan 2025 00:30:37 +0100
+Subject: [PATCH] BFD: Fix missing keyword declarations
+
+Some keywords were missing for BFD-only build.
+
+Upstream: https://gitlab.nic.cz/labs/bird/-/commit/c386369645e584facaad88ec292f2fe0bc70d974
+[tperale: backport v2.15.1]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ proto/bfd/config.Y | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/proto/bfd/config.Y b/proto/bfd/config.Y
+index 1a7474b0..70b09ad8 100644
+--- a/proto/bfd/config.Y
++++ b/proto/bfd/config.Y
+@@ -21,8 +21,8 @@ extern struct bfd_config *bfd_cf;
+ 
+ CF_DECLS
+ 
+-CF_KEYWORDS(BFD, MIN, IDLE, RX, TX, INTERVAL, MULTIPLIER, PASSIVE,
+-	INTERFACE, MULTIHOP, NEIGHBOR, DEV, LOCAL, AUTHENTICATION,
++CF_KEYWORDS(BFD, MIN, IDLE, RX, TX, INTERVAL, MULTIPLIER, PASSIVE, ADDRESS,
++	INTERFACE, MULTIHOP, NEIGHBOR, DEV, ALL, LOCAL, AUTHENTICATION,
+ 	NONE, SIMPLE, METICULOUS, KEYED, MD5, SHA1, IPV4, IPV6, DIRECT,
+ 	STRICT, BIND)
+ 
+-- 
+2.49.0
