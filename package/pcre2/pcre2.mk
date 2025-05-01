@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-PCRE2_VERSION = 10.44
+PCRE2_VERSION = 10.45
 PCRE2_SITE = https://github.com/PCRE2Project/pcre2/releases/download/pcre2-$(PCRE2_VERSION)
 PCRE2_SOURCE = pcre2-$(PCRE2_VERSION).tar.bz2
 PCRE2_LICENSE = BSD-3-Clause
-PCRE2_LICENSE_FILES = LICENCE
+PCRE2_LICENSE_FILES = LICENCE.md
 PCRE2_CPE_ID_VENDOR = pcre
 PCRE2_INSTALL_STAGING = YES
 PCRE2_CONFIG_SCRIPTS = pcre2-config
