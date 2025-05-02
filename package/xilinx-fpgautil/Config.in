@@ -1,0 +1,8 @@
+config BR2_PACKAGE_XILINX_FPGAUTIL
+	bool "xilinx-fpgautil"
+	depends on BR2_arm || BR2_aarch64
+	help
+	  Xilinx FPGA Manager Utility for zynq, zynqmp
+	  and versal products.
+
+	  https://github.com/Xilinx/meta-xilinx/blob/master/meta-xilinx-core/recipes-bsp/fpga-manager-script/files/fpgautil.c
