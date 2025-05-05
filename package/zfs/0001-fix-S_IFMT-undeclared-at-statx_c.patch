@@ -1,0 +1,36 @@
+From 8e9fcdac6f7bbc4ec92e89b8cdce1dcc404f1999 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jos=C3=A9=20Luis=20Salvador=20Rufo?=
+ <salvador.joseluis@gmail.com>
+Date: Fri, 2 May 2025 08:10:08 +0200
+Subject: [PATCH] tests: fix `S_IFMT` undeclared at `statx.c`
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+`S_IFMT` is declared in `sys/stat.h`, but we cannot include this header
+because it redeclares the `statx` function with different argument
+types. Therefore, we define `S_IFMT` ourselves, in the same way as the
+other definitions.
+
+Closes: #17293
+
+Upstream: https://github.com/openzfs/zfs/commit/634c172ee89f5303493a75dc7ff55e0a355b503a
+Signed-off-by: José Luis Salvador Rufo <salvador.joseluis@gmail.com>
+---
+ tests/zfs-tests/cmd/statx.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/tests/zfs-tests/cmd/statx.c b/tests/zfs-tests/cmd/statx.c
+index 89939f6efb40..1acc7e58c5ce 100644
+--- a/tests/zfs-tests/cmd/statx.c
++++ b/tests/zfs-tests/cmd/statx.c
+@@ -109,6 +109,9 @@ _statx(int fd, const char *path, int flags, unsigned int mask, void *stx)
+ #ifndef STATX_DIOALIGN
+ #define	STATX_DIOALIGN	(1<<13)
+ #endif
++#ifndef S_IFMT
++#define	S_IFMT 0170000
++#endif
+ 
+ typedef struct {
+ 	int64_t		tv_sec;
