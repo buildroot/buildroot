@@ -12,7 +12,7 @@ Build
 
 First, configure Buildroot for your i.MX28 EVK board:
 
-  make freescale_imx28evk_defconfig
+  make imx28evk_defconfig
 
 Build all components:
 
