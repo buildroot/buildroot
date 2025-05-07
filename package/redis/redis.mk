@@ -4,10 +4,12 @@
 #
 ################################################################################
 
-REDIS_VERSION = 7.2.7
+REDIS_VERSION = 8.0.0
 REDIS_SITE = http://download.redis.io/releases
-REDIS_LICENSE = BSD-3-Clause (core); MIT and BSD family licenses (Bundled components)
-REDIS_LICENSE_FILES = COPYING
+REDIS_LICENSE = \
+	AGPL-3.0 or SSPL-1.0 or RSAL-2.0 (core); \
+	MIT and BSD family licenses (Bundled components)
+REDIS_LICENSE_FILES = LICENSE.txt
 REDIS_CPE_ID_VENDOR = redislabs
 REDIS_SELINUX_MODULES = redis
 

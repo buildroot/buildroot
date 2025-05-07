@@ -5,6 +5,7 @@ config BR2_PACKAGE_REDIS
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # _Atomic keyword
 	depends on BR2_TOOLCHAIN_HAS_ATOMIC
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # pthread_setname_np()
+	depends on BR2_INSTALL_LIBSTDCPP # fastfloat bundled dep is in C++
 	help
 	  Redis is an open source (BSD licensed), in-memory data
 	  structure store, used as a database, cache and message
@@ -15,8 +16,8 @@ config BR2_PACKAGE_REDIS
 
 	  http://www.redis.io
 
-comment "redis needs a toolchain w/ gcc>=4.9, dynamic library, nptl"
+comment "redis needs a toolchain w/ gcc>=4.9, dynamic library, nptl, C++"
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_ATOMIC
 	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS_NPTL \
-		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || !BR2_INSTALL_LIBSTDCPP
