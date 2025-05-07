@@ -100,4 +100,13 @@ config BR2_PACKAGE_RPI_FIRMWARE_INSTALL_DTB_OVERLAYS
 	  overlays, to support HATs (Hardware Attached on Top, add-on
 	  modules).
 
+config BR2_PACKAGE_RPI_FIRMWARE_EXTRA_FILES
+	string "List of path(s) to additional file(s) in boot partition"
+	help
+	  Space-separated path(s) to file(s) that should be stored
+	  in the boot partition. They will be stored under their own
+	  name in rpi-firmware. They can override any of the other
+	  files. Use cases include autoboot configuration,
+	  alternative cmdline.txt files, additional DTB overlays.
+
 endif # BR2_PACKAGE_RPI_FIRMWARE
