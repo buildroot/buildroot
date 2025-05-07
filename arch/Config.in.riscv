@@ -45,6 +45,13 @@ config BR2_RISCV_ISA_RVV
 	bool "Vector Instructions (V)"
 	select BR2_ARCH_NEEDS_GCC_AT_LEAST_12
 
+config BR2_RISCV_ISA_EXTRA
+	string "Append extra RISC-V ISA extensions"
+	help
+	  Extra ISA extensions to append to the ISA extensions string.
+	  They are underscore-separated.  For example,
+	  "zba_zbb_zvl256b".
+
 choice
 	prompt "Target Architecture Size"
 	default BR2_RISCV_64
