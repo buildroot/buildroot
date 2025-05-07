@@ -31,6 +31,12 @@ else
 PSPLASH_CONF_OPTS += --disable-startup-msg
 endif
 
+ifeq ($(BR2_PACKAGE_PSPLASH_FULL_SCREEN),y)
+PSPLASH_CONF_OPTS += --enable-img-fullscreen
+else
+PSPLASH_CONF_OPTS += --disable-img-fullscreen
+endif
+
 PSPLASH_IMAGE = $(call qstrip,$(BR2_PACKAGE_PSPLASH_IMAGE))
 
 ifneq ($(PSPLASH_IMAGE),)
