@@ -22,8 +22,8 @@ main() {
     local -a toolchains
     local pkg_br_name
 
-    o='hakc:d:n:p:r:t:'
-    O='help,all,keep,prepare-only,config-snippet:,build-dir:,number:,package:,random:,toolchains-csv:'
+    o='hakc:d:n:p:r:t:T:'
+    O='help,all,keep,prepare-only,config-snippet:,build-dir:,number:,package:,random:,toolchains-csv:,toolchain-name:'
     opts="$(getopt -n "${my_name}" -o "${o}" -l "${O}" -- "${@}")"
     eval set -- "${opts}"
 
@@ -65,6 +65,9 @@ main() {
             ;;
         (-t|--toolchains-csv)
             toolchains_csv="${2}"; shift 2
+            ;;
+        (-T|--toolchain-name)
+            toolchain_name="${2}"; shift 2
             ;;
         (--)
             shift; break
@@ -113,7 +116,9 @@ main() {
     # E.g.: http://server/path/to/name.config,arch,libc
     #  -->  http://server/path/to/name.config
     mapfile -t toolchains < <(sed -r -e 's/,.*//; /internal/d; /^#/d; /^$/d;' "${toolchains_csv}" \
-                                | if [ "${random}" -gt 0 ]; then \
+                                | if [ -n "${toolchain_name}" ]; then \
+                                    grep -E "[/^]${toolchain_name}.config"
+                                elif [ "${random}" -gt 0 ]; then \
                                     sort -R | head -n "${random}"
                                 elif [ "${number}" -gt 0 ]; then \
                                     head -n "${number}"
@@ -287,6 +292,12 @@ Options:
         CSV file containing the paths to config fragments of toolchains to
         try. If not specified, the toolchains in ${TOOLCHAINS_CSV} will be
         used.
+
+    -T NAME, --toolchain-name NAME
+        Name of the single toolchain to use. It must be defined in the CSV
+        list of toolchains (see also -t / --toolchains-csv). If this option
+        is specified, then a single build will be performed on that
+        specific toolchain only.
 
     -k, --keep
         Keep the build directories even if the build succeeds.
