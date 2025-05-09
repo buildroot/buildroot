@@ -1,0 +1,56 @@
+From c5c6a429bf3df0558ab88704eee7eb08287406dd Mon Sep 17 00:00:00 2001
+From: Lasse Collin <lasse.collin@tukaani.org>
+Date: Thu, 3 Apr 2025 14:34:42 +0300
+Subject: [PATCH] liblzma: mt dec: Don't modify thr->in_size in the worker
+ thread
+
+Don't set thr->in_size = 0 when returning the thread to the stack of
+available threads. Not only is it useless, but the main thread may
+read the value in SEQ_BLOCK_THR_RUN. With valid inputs, it made
+no difference if the main thread saw the original value or 0. With
+invalid inputs (when worker thread stops early), thr->in_size was
+no longer modified after the previous commit with the security fix
+("Don't free the input buffer too early").
+
+So while the bug appears harmless now, it's important to fix it because
+the variable was being modified without proper locking. It's trivial
+to fix because there is no need to change the value. Only main thread
+needs to set the value in (in SEQ_BLOCK_THR_INIT) when starting a new
+Block before the worker thread is activated.
+
+Fixes: 4cce3e27f529 ("liblzma: Add threaded .xz decompressor.")
+Reviewed-by: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+Thanks-to: Sam James <sam@gentoo.org>
+Upstream: https://github.com/tukaani-project/xz/commit/8188048854e8d11071b8a50d093c74f4c030acc9
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ src/liblzma/common/stream_decoder_mt.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/liblzma/common/stream_decoder_mt.c b/src/liblzma/common/stream_decoder_mt.c
+index ce5e54ac..0cdb47d3 100644
+--- a/src/liblzma/common/stream_decoder_mt.c
++++ b/src/liblzma/common/stream_decoder_mt.c
+@@ -491,8 +491,6 @@ next_loop_unlocked:
+ 		if (ret == LZMA_STREAM_END) {
+ 			// Update memory usage counters.
+ 			thr->coder->mem_in_use -= thr->in_size;
+-			thr->in_size = 0; // thr->in was freed above.
+-
+ 			thr->coder->mem_in_use -= thr->mem_filters;
+ 			thr->coder->mem_cached += thr->mem_filters;
+ 
+@@ -1557,6 +1555,10 @@ stream_decode_mt(void *coder_ptr, const lzma_allocator *allocator,
+ 		}
+ 
+ 		// Return if the input didn't contain the whole Block.
++		//
++		// NOTE: When we updated coder->thr->in_filled a few lines
++		// above, the worker thread might by now have finished its
++		// work and returned itself back to the stack of free threads.
+ 		if (coder->thr->in_filled < coder->thr->in_size) {
+ 			assert(*in_pos == in_size);
+ 			return LZMA_OK;
+-- 
+2.49.0
+

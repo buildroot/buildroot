@@ -1,0 +1,98 @@
+From fb6110f90e28c43261cc8c290f99b19c9f01a15c Mon Sep 17 00:00:00 2001
+From: Lasse Collin <lasse.collin@tukaani.org>
+Date: Thu, 3 Apr 2025 14:34:42 +0300
+Subject: [PATCH] liblzma: mt dec: Don't free the input buffer too early
+ (CVE-2025-31115)
+
+The input buffer must be valid as long as the main thread is writing
+to the worker-specific input buffer. Fix it by making the worker
+thread not free the buffer on errors and not return the worker thread to
+the pool. The input buffer will be freed when threads_end() is called.
+
+With invalid input, the bug could at least result in a crash. The
+effects include heap use after free and writing to an address based
+on the null pointer plus an offset.
+
+The bug has been there since the first committed version of the threaded
+decoder and thus affects versions from 5.3.3alpha to 5.8.0.
+
+As the commit message in 4cce3e27f529 says, I had made significant
+changes on top of Sebastian's patch. This bug was indeed introduced
+by my changes; it wasn't in Sebastian's version.
+
+Thanks to Harri K. Koskinen for discovering and reporting this issue.
+
+Fixes: 4cce3e27f529 ("liblzma: Add threaded .xz decompressor.")
+Reported-by: Harri K. Koskinen <x64nop@nannu.org>
+Reviewed-by: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+Thanks-to: Sam James <sam@gentoo.org>
+Upstream: https://github.com/tukaani-project/xz/commit/d5a2ffe41bb77b918a8c96084885d4dbe4bf6480
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ src/liblzma/common/stream_decoder_mt.c | 31 ++++++++++++++++++--------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
+
+diff --git a/src/liblzma/common/stream_decoder_mt.c b/src/liblzma/common/stream_decoder_mt.c
+index e1d07007..ce5e54ac 100644
+--- a/src/liblzma/common/stream_decoder_mt.c
++++ b/src/liblzma/common/stream_decoder_mt.c
+@@ -435,8 +435,7 @@ next_loop_unlocked:
+ 	}
+ 
+ 	// Either we finished successfully (LZMA_STREAM_END) or an error
+-	// occurred. Both cases are handled almost identically. The error
+-	// case requires updating thr->coder->thread_error.
++	// occurred.
+ 	//
+ 	// The sizes are in the Block Header and the Block decoder
+ 	// checks that they match, thus we know these:
+@@ -444,16 +443,30 @@ next_loop_unlocked:
+ 	assert(ret != LZMA_STREAM_END
+ 		|| thr->out_pos == thr->block_options.uncompressed_size);
+ 
+-	// Free the input buffer. Don't update in_size as we need
+-	// it later to update thr->coder->mem_in_use.
+-	lzma_free(thr->in, thr->allocator);
+-	thr->in = NULL;
+-
+ 	mythread_sync(thr->mutex) {
++		// Block decoder ensures this, but do a sanity check anyway
++		// because thr->in_filled < thr->in_size means that the main
++		// thread is still writing to thr->in.
++		if (ret == LZMA_STREAM_END && thr->in_filled != thr->in_size) {
++			assert(0);
++			ret = LZMA_PROG_ERROR;
++		}
++
+ 		if (thr->state != THR_EXIT)
+ 			thr->state = THR_IDLE;
+ 	}
+ 
++	// Free the input buffer. Don't update in_size as we need
++	// it later to update thr->coder->mem_in_use.
++	//
++	// This step is skipped if an error occurred because the main thread
++	// might still be writing to thr->in. The memory will be freed after
++	// threads_end() sets thr->state = THR_EXIT.
++	if (ret == LZMA_STREAM_END) {
++		lzma_free(thr->in, thr->allocator);
++		thr->in = NULL;
++	}
++
+ 	mythread_sync(thr->coder->mutex) {
+ 		// Move our progress info to the main thread.
+ 		thr->coder->progress_in += thr->in_pos;
+@@ -474,8 +487,8 @@ next_loop_unlocked:
+ 			thr->coder->thread_error = ret;
+ 
+ 		// Return the worker thread to the stack of available
+-		// threads.
+-		{
++		// threads only if no errors occurred.
++		if (ret == LZMA_STREAM_END) {
+ 			// Update memory usage counters.
+ 			thr->coder->mem_in_use -= thr->in_size;
+ 			thr->in_size = 0; // thr->in was freed above.
+-- 
+2.49.0
+
