@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_PYPROJ
+	bool "python-pyproj"
+	select BR2_PACKAGE_PYTHON_CERTIFI # runtime
+	select BR2_PACKAGE_PROJ # runtime
+	help
+	  Python interface to PROJ (cartographic projections and
+	  coordinate transformations library).
+
+	  https://github.com/pyproj4/pyproj
