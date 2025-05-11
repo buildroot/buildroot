@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PHP_VERSION = 8.3.19
+PHP_VERSION = 8.3.21
 PHP_SITE = https://www.php.net/distributions
 PHP_SOURCE = php-$(PHP_VERSION).tar.xz
 PHP_INSTALL_STAGING = YES
