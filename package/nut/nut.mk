@@ -4,17 +4,13 @@
 #
 ################################################################################
 
-NUT_VERSION = 2.8.2
+NUT_VERSION = 2.8.3
 NUT_SITE = https://github.com/networkupstools/nut/releases/download/v$(NUT_VERSION)
 NUT_LICENSE = GPL-2.0+, GPL-3.0+ (python scripts), GPL/Artistic (perl client)
 NUT_LICENSE_FILES = COPYING LICENSE-GPL2 LICENSE-GPL3
 NUT_SELINUX_MODULES = apache nut
 NUT_INSTALL_STAGING = YES
 NUT_DEPENDENCIES = host-pkgconf
-# 0001-Provide-a-private-copy-of-telnetlib-for-PyNUTClient.patch
-# 0002-configure-ac-typo-in-path-to-test-with-nut_telnetlib-Python-module.patch
-# 0003-configure.ac-be-sure-to-probe-nut_telnetlib-module-from-source-dir.patch
-NUT_AUTORECONF = YES
 
 # Put the PID files in a read-write place (/var/run is a tmpfs)
 # since the default location (/var/state/ups) maybe readonly.
@@ -28,6 +24,7 @@ NUT_CONF_OPTS = \
 	--with-group=nut
 
 NUT_CONF_ENV = \
+	PKG_CONFIG_LIBDIR=$(STAGING_DIR)/usr/lib/pkgconfig:$(STAGING_DIR)/usr/share/pkgconfig \
 	ax_cv_check_cflags__Werror__Wno_unknown_warning_option=no \
 	ax_cv_check_cxxflags__Werror__Wno_unknown_warning_option=no \
 	ac_cv_func_strcasecmp=yes \
