@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FLAC_VERSION = 1.4.3
+FLAC_VERSION = 1.5.0
 FLAC_SITE = https://ftp.osuosl.org/pub/xiph/releases/flac
 FLAC_SOURCE = flac-$(FLAC_VERSION).tar.xz
 FLAC_INSTALL_STAGING = YES
