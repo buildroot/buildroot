@@ -13,6 +13,9 @@ CONNMAN_LICENSE = GPL-2.0
 CONNMAN_LICENSE_FILES = COPYING
 CONNMAN_CPE_ID_VENDOR = intel
 
+# 0001-dnsproxy-Fix-NULL-empty-lookup-causing-potential-cra.patch
+CONNMAN_IGNORE_CVES += CVE-2025-32743
+
 CONNMAN_CONF_OPTS = --with-dbusconfdir=/etc
 
 ifeq ($(BR2_INIT_SYSTEMD),y)
