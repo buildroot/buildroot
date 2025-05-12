@@ -1,0 +1,95 @@
+From 2c6ffea6ac8bb1b89e1f778bdad8bf8b0342d32f Mon Sep 17 00:00:00 2001
+From: Marcel Telka <marcel@telka.sk>
+Date: Wed, 20 Sep 2023 14:54:42 +0200
+Subject: [PATCH] ALAC: Include config.h to avoid warnings
+
+Upstream: https://github.com/libsndfile/libsndfile/commit/2c6ffea6ac8bb1b89e1f778bdad8bf8b0342d32f
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/ALAC/ag_dec.c       | 2 ++
+ src/ALAC/ag_enc.c       | 2 ++
+ src/ALAC/alac_decoder.c | 2 ++
+ src/ALAC/alac_encoder.c | 2 ++
+ src/ALAC/matrix_dec.c   | 2 ++
+ src/ALAC/matrix_enc.c   | 2 ++
+ 6 files changed, 12 insertions(+)
+
+diff --git a/src/ALAC/ag_dec.c b/src/ALAC/ag_dec.c
+index 37671d240..68707f825 100644
+--- a/src/ALAC/ag_dec.c
++++ b/src/ALAC/ag_dec.c
+@@ -26,6 +26,8 @@
+ 	Copyright:	(c) 2001-2011 Apple, Inc.
+ */
+ 
++#include "config.h"
++
+ #include <math.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+diff --git a/src/ALAC/ag_enc.c b/src/ALAC/ag_enc.c
+index 4737b96e3..a56db7b18 100644
+--- a/src/ALAC/ag_enc.c
++++ b/src/ALAC/ag_enc.c
+@@ -27,6 +27,8 @@
+ 	Copyright:	(c) 2001-2011 Apple, Inc.
+ */
+ 
++#include "config.h"
++
+ #include "aglib.h"
+ #include "ALACBitUtilities.h"
+ #include "EndianPortable.h"
+diff --git a/src/ALAC/alac_decoder.c b/src/ALAC/alac_decoder.c
+index 46d333060..978919a70 100644
+--- a/src/ALAC/alac_decoder.c
++++ b/src/ALAC/alac_decoder.c
+@@ -23,6 +23,8 @@
+ 	File:		ALACDecoder.cpp
+ */
+ 
++#include "config.h"
++
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <stddef.h>
+diff --git a/src/ALAC/alac_encoder.c b/src/ALAC/alac_encoder.c
+index 599399afe..29012f3f4 100644
+--- a/src/ALAC/alac_encoder.c
++++ b/src/ALAC/alac_encoder.c
+@@ -28,6 +28,8 @@
+ #define DebugMsg			printf
+ 
+ // headers
++#include "config.h"
++
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+diff --git a/src/ALAC/matrix_dec.c b/src/ALAC/matrix_dec.c
+index 6d0b40153..bc1f028a9 100644
+--- a/src/ALAC/matrix_dec.c
++++ b/src/ALAC/matrix_dec.c
+@@ -27,6 +27,8 @@
+ 	Copyright:	(c) 2004-2011 Apple, Inc.
+ */
+ 
++#include "config.h"
++
+ #include "matrixlib.h"
+ #include "ALACAudioTypes.h"
+ #include "shift.h"
+diff --git a/src/ALAC/matrix_enc.c b/src/ALAC/matrix_enc.c
+index b50f83b78..dcd9cab11 100644
+--- a/src/ALAC/matrix_enc.c
++++ b/src/ALAC/matrix_enc.c
+@@ -27,6 +27,8 @@
+ 	Copyright:	(c) 2004-2011 Apple, Inc.
+ */
+ 
++#include "config.h"
++
+ #include "matrixlib.h"
+ #include "ALACAudioTypes.h"
+ 
