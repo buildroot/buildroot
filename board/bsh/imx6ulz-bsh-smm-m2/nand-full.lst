@@ -25,6 +25,8 @@ SDPV: jump
 
 FB: ucmd setenv fastboot_buffer ${loadaddr}
 FB[-t 60000]: ucmd nand erase.chip
+FB: download -f _image
+FB: ucmd nandbcb init ${fastboot_buffer} nandboot ${filesize}
 FB[-t 60000]: ucmd ubi part rootfs
 FB[-t 60000]: ucmd ubi create root -
 FB: download -f _filesystem
