@@ -12,6 +12,12 @@ UNIXODBC_LICENSE = LGPL-2.1+ (library), GPL-2.0+ (programs)
 UNIXODBC_LICENSE_FILES = COPYING exe/COPYING
 UNIXODBC_CPE_ID_VENDOR = unixodbc
 
+# gcc-15 defaults to -std=gnu23 which introduces build failures.
+# We force "-std=gnu17" for gcc version supporting it. Earlier gcc
+# versions will work, since they are using the older standard.
+ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_8),y)
+UNIXODBC_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -std=gnu17"
+endif
 UNIXODBC_CONF_OPTS = --enable-drivers --enable-driver-conf
 
 ifeq ($(BR2_PACKAGE_LIBEDIT),y)
