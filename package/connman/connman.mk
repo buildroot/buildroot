@@ -16,6 +16,9 @@ CONNMAN_CPE_ID_VENDOR = intel
 # 0001-dnsproxy-Fix-NULL-empty-lookup-causing-potential-cra.patch
 CONNMAN_IGNORE_CVES += CVE-2025-32743
 
+# 0002-dnsproxy-Address-CVE-2025-32366-vulnerability.patch
+CONNMAN_IGNORE_CVES += CVE-2025-32366
+
 CONNMAN_CONF_OPTS = --with-dbusconfdir=/etc
 
 ifeq ($(BR2_INIT_SYSTEMD),y)
