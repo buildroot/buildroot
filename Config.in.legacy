@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2025.05"
 
+config BR2_PACKAGE_MBEDTLS_COMPRESSION
+	bool "mbedtls compression support removed"
+	select BR2_LEGACY
+	help
+	  MbedTLS has dropped support for TLS record-level
+	  compression.
+
 config BR2_KERNEL_HEADERS_6_13
 	bool "kernel headers version 6.13.x are no longer supported"
 	select BR2_LEGACY
