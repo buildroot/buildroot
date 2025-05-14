@@ -1,0 +1,120 @@
+From 9c52188d753002a6afd6ae145f921a2ff52c1c81 Mon Sep 17 00:00:00 2001
+From: Thomas Perale <thomas.perale@mind.be>
+Date: Thu, 1 May 2025 18:35:36 +0200
+Subject: input: fix HoG compilation w/o HID
+
+Commit [1] introduced a dependency with the HID plugin in the HoG code
+As a result, building with --disable-hid --enable-hog caused linker
+errors due to undefined references to HID-related functions:
+
+```
+> ./configure --disable-hid --enable-hog
+> make
+/usr/bin/ld: profiles/input/bluetoothd-hog.o: in function `hog_accept':
+/home/../bluez/profiles/input/hog.c:184:(.text.hog_accept+0xbb): undefined reference to `input_get_auto_sec'
+/usr/bin/ld: profiles/input/bluetoothd-hog.o: in function `hog_disconnect':
+/home/../bluez/profiles/input/hog.c:205:(.text.hog_disconnect+0x12): undefined reference to `input_get_userspace_hid'
+collect2: error: ld returned 1 exit status
+make[1]: *** [Makefile:6344: src/bluetoothd] Error 1
+make: *** [Makefile:4695: all] Error 2
+```
+
+This patch duplicate the read of the 'UserspaceHID=persist' config entry
+in the HoG plugin file to remove the dependency on the HID plugin files.
+
+[1] 1782bfd79 input: Add support for UserspaceHID=persist
+
+Fixes: https://github.com/bluez/bluez/issues/1228
+
+Upstream: https://git.kernel.org/pub/scm/bluetooth/bluez.git/commit/?id=9c52188d753002a6afd6ae145f921a2ff52c1c81
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ profiles/input/device.c |  5 -----
+ profiles/input/device.h |  1 -
+ profiles/input/hog.c    | 14 ++++++++++++--
+ 3 files changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/profiles/input/device.c b/profiles/input/device.c
+index a7bc4d44fa..3642cc3267 100644
+--- a/profiles/input/device.c
++++ b/profiles/input/device.c
+@@ -112,11 +112,6 @@ void input_set_userspace_hid(char *state)
+ 		error("Unknown value '%s'", state);
+ }
+ 
+-uint8_t input_get_userspace_hid(void)
+-{
+-	return uhid_state;
+-}
+-
+ void input_set_classic_bonded_only(bool state)
+ {
+ 	classic_bonded_only = state;
+diff --git a/profiles/input/device.h b/profiles/input/device.h
+index 036a88980e..9056695026 100644
+--- a/profiles/input/device.h
++++ b/profiles/input/device.h
+@@ -22,7 +22,6 @@ struct input_conn;
+ 
+ void input_set_idle_timeout(int timeout);
+ void input_set_userspace_hid(char *state);
+-uint8_t input_get_userspace_hid(void);
+ void input_set_classic_bonded_only(bool state);
+ bool input_get_classic_bonded_only(void);
+ 
+diff --git a/profiles/input/hog.c b/profiles/input/hog.c
+index f82648fec8..a3c876cf9f 100644
+--- a/profiles/input/hog.c
++++ b/profiles/input/hog.c
+@@ -40,7 +40,6 @@
+ #include "src/shared/gatt-client.h"
+ #include "src/plugin.h"
+ 
+-#include "device.h"
+ #include "suspend.h"
+ #include "attrib/att.h"
+ #include "attrib/gattrib.h"
+@@ -55,6 +54,7 @@ struct hog_device {
+ 
+ static gboolean suspend_supported = FALSE;
+ static bool auto_sec = true;
++static bool uhid_state_persist = false;
+ static struct queue *devices = NULL;
+ 
+ static void hog_device_accept(struct hog_device *dev, struct gatt_db *db)
+@@ -203,7 +203,7 @@ static int hog_disconnect(struct btd_service *service)
+ {
+ 	struct hog_device *dev = btd_service_get_user_data(service);
+ 
+-	if (input_get_userspace_hid() == UHID_PERSIST)
++	if (uhid_state_persist)
+ 		bt_hog_detach(dev->hog, false);
+ 	else
+ 		bt_hog_detach(dev->hog, true);
+@@ -229,6 +229,7 @@ static void hog_read_config(void)
+ 	GKeyFile *config;
+ 	GError *err = NULL;
+ 	bool config_auto_sec;
++	char *uhid_enabled;
+ 
+ 	config = g_key_file_new();
+ 	if (!config) {
+@@ -253,6 +254,15 @@ static void hog_read_config(void)
+ 	} else
+ 		g_clear_error(&err);
+ 
++	uhid_enabled = g_key_file_get_string(config, "General",
++					"UserspaceHID", &err);
++	if (!err) {
++		DBG("input.conf: UserspaceHID=%s", uhid_enabled);
++		uhid_state_persist = strcasecmp(uhid_enabled, "persist") == 0;
++		free(uhid_enabled);
++	} else
++		g_clear_error(&err);
++
+ 	g_key_file_free(config);
+ }
+ 
+-- 
+cgit 1.2.3-korg
+
