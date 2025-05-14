@@ -1,0 +1,43 @@
+From c9db6e993d4e440a276f2918f48de0868fe98093 Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Fri, 28 Mar 2025 04:45:44 +0000
+Subject: [PATCH] Update cmake_minimum_required to 3.5 consisently across
+ CMakeLists
+
+Source/GmmLib/CMakeLists.txt already is requiring CMake 3.5. Update
+remaining files to 3.5. This supports the compilation with cmake-4.0.0
+
+Signed-off-by: Rudi Heitbaum <rudi@heitbaum.com>
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Upstream: https://github.com/intel/gmmlib/pull/130
+---
+ CMakeLists.txt                      | 2 +-
+ Source/GmmLib/os_release_info.cmake | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1a3ad36..ca42104 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required (VERSION 3.1 FATAL_ERROR)
++cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
+ 
+ if (NOT DEFINED RUN_TEST_SUITE)
+ option (RUN_TEST_SUITE "run test suite after install" ON)
+diff --git a/Source/GmmLib/os_release_info.cmake b/Source/GmmLib/os_release_info.cmake
+index 70c8318..0951a4a 100755
+--- a/Source/GmmLib/os_release_info.cmake
++++ b/Source/GmmLib/os_release_info.cmake
+@@ -28,7 +28,7 @@ if(NOT DEFINED _os_release_info)
+ set(_os_release_info TRUE)
+ 
+ # Set cmake policies for at least this level:
+-cmake_minimum_required(VERSION 2.8.12)
++cmake_minimum_required(VERSION 3.5)
+ 
+ if(POLICY CMP0054)
+     cmake_policy(SET CMP0054 NEW)
+-- 
+2.34.1
+
