@@ -1,0 +1,140 @@
+From b111b5e15eb74e08b74cb3c7e91bcb21f54be4c7 Mon Sep 17 00:00:00 2001
+From: Thomas Perale <thomas.perale@mind.be>
+Date: Thu, 1 May 2025 18:35:35 +0200
+Subject: input: fix HID compilation w/o HoG
+
+Commit [1] introduced a dependency with the HID plugin in the HoG code
+As a result, building with --enable-hid --disable-hog caused linker
+errors due to undefined references to HoG-related functions:
+
+```
+> ./configure --enable-hid --disable-hog
+...
+> make
+...
+  CCLD     src/bluetoothd
+/usr/bin/ld: profiles/input/bluetoothd-manager.o: in function `input_init':
+/home/../bluez/profiles/input/manager.c:122:(.text.input_init+0x1c8): undefined reference to `input_set_auto_sec'
+collect2: error: ld returned 1 exit status
+make[1]: *** [Makefile:6376: src/bluetoothd] Error 1
+```
+
+This patch moves the reading of the HOG specific configuration of the
+'input.conf' file: LEAutoSecurity, to the HoG plugin file.
+
+[1] f2778f587 input: Add LEAutoSecurity setting to input.conf
+
+Upstream: https://git.kernel.org/pub/scm/bluetooth/bluez.git/commit/?id=b111b5e15eb74e08b74cb3c7e91bcb21f54be4c7
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ profiles/input/device.h  |  1 -
+ profiles/input/hog.c     | 40 +++++++++++++++++++++++++++++++++++-----
+ profiles/input/manager.c | 11 +----------
+ 3 files changed, 36 insertions(+), 16 deletions(-)
+
+diff --git a/profiles/input/device.h b/profiles/input/device.h
+index 7b87ce5903..036a88980e 100644
+--- a/profiles/input/device.h
++++ b/profiles/input/device.h
+@@ -25,7 +25,6 @@ void input_set_userspace_hid(char *state);
+ uint8_t input_get_userspace_hid(void);
+ void input_set_classic_bonded_only(bool state);
+ bool input_get_classic_bonded_only(void);
+-void input_set_auto_sec(bool state);
+ 
+ int input_device_register(struct btd_service *service);
+ void input_device_unregister(struct btd_service *service);
+diff --git a/profiles/input/hog.c b/profiles/input/hog.c
+index 017e320f07..f82648fec8 100644
+--- a/profiles/input/hog.c
++++ b/profiles/input/hog.c
+@@ -57,11 +57,6 @@ static gboolean suspend_supported = FALSE;
+ static bool auto_sec = true;
+ static struct queue *devices = NULL;
+ 
+-void input_set_auto_sec(bool state)
+-{
+-	auto_sec = state;
+-}
+-
+ static void hog_device_accept(struct hog_device *dev, struct gatt_db *db)
+ {
+ 	char name[248];
+@@ -228,10 +223,45 @@ static struct btd_profile hog_profile = {
+ 	.auto_connect	= true,
+ };
+ 
++static void hog_read_config(void)
++{
++	const char filename[] = CONFIGDIR "/input.conf";
++	GKeyFile *config;
++	GError *err = NULL;
++	bool config_auto_sec;
++
++	config = g_key_file_new();
++	if (!config) {
++		error("Failed to allocate memory for config");
++		return;
++	}
++
++	if (!g_key_file_load_from_file(config, filename, 0, &err)) {
++		if (!g_error_matches(err, G_FILE_ERROR, G_FILE_ERROR_NOENT))
++			error("Parsing %s failed: %s", filename, err->message);
++		g_error_free(err);
++		g_key_file_free(config);
++		return;
++	}
++
++	config_auto_sec = g_key_file_get_boolean(config, "General",
++					"LEAutoSecurity", &err);
++	if (!err) {
++		DBG("input.conf: LEAutoSecurity=%s",
++				config_auto_sec ? "true" : "false");
++		auto_sec = config_auto_sec;
++	} else
++		g_clear_error(&err);
++
++	g_key_file_free(config);
++}
++
+ static int hog_init(void)
+ {
+ 	int err;
+ 
++	hog_read_config();
++
+ 	err = suspend_init(suspend_callback, resume_callback);
+ 	if (err < 0)
+ 		error("Loading suspend plugin failed: %s (%d)", strerror(-err),
+diff --git a/profiles/input/manager.c b/profiles/input/manager.c
+index 95ca0a7ee5..1c0b6122a1 100644
+--- a/profiles/input/manager.c
++++ b/profiles/input/manager.c
+@@ -85,7 +85,7 @@ static int input_init(void)
+ 	config = load_config_file(CONFIGDIR "/input.conf");
+ 	if (config) {
+ 		int idle_timeout;
+-		gboolean classic_bonded_only, auto_sec;
++		gboolean classic_bonded_only;
+ 		char *uhid_enabled;
+ 
+ 		idle_timeout = g_key_file_get_integer(config, "General",
+@@ -115,15 +115,6 @@ static int input_init(void)
+ 		} else
+ 			g_clear_error(&err);
+ 
+-		auto_sec = g_key_file_get_boolean(config, "General",
+-						"LEAutoSecurity", &err);
+-		if (!err) {
+-			DBG("input.conf: LEAutoSecurity=%s",
+-					auto_sec ? "true" : "false");
+-			input_set_auto_sec(auto_sec);
+-		} else
+-			g_clear_error(&err);
+-
+ 	}
+ 
+ 	btd_profile_register(&input_profile);
+-- 
+cgit 1.2.3-korg
+
