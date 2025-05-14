@@ -146,6 +146,15 @@ endif
 
 comment "Legacy options removed in 2025.11"
 
+config BR2_PACKAGE_DMENU_WAYLAND
+	bool "dmenu-wayland has been removed"
+	select BR2_LEGACY
+	help
+	  The package has been abandoned for several years.
+	  The only package that previously relied on dmenu-wayland
+	  was sway, and that now relies on wmenu. Please select
+	  wmenu instead.
+
 config BR2_PACKAGE_SYLPHEED
 	bool "sylpheed has been removed"
 	select BR2_LEGACY
