@@ -1,0 +1,40 @@
+From eff537f7be038120ca06fc7c39f9817ae120ce00 Mon Sep 17 00:00:00 2001
+From: Dave Sugar <dsugar100@gmail.com>
+Date: Thu, 15 May 2025 10:05:24 -0400
+Subject: [PATCH] fix building when dbus module is not enabled
+
+Signed-off-by: Dave Sugar <dsugar100@gmail.com>
+Upstream: https://github.com/SELinuxProject/refpolicy/pull/908
+Signed-off-by: Arnout Vandecappelle <arnout@rnout.be>
+---
+ policy/modules/system/selinuxutil.te | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/policy/modules/system/selinuxutil.te b/policy/modules/system/selinuxutil.te
+index 86a6e5503..cd0e8762f 100644
+--- a/policy/modules/system/selinuxutil.te
++++ b/policy/modules/system/selinuxutil.te
+@@ -99,7 +99,8 @@ role run_init_roles types run_init_t;
+ 
+ type selinux_dbus_t;
+ type selinux_dbus_exec_t;
+-dbus_system_domain(selinux_dbus_t, selinux_dbus_exec_t)
++domain_type(selinux_dbus_t)
++domain_entry_file(selinux_dbus_t, selinux_dbus_exec_t)
+ 
+ type semanage_t;
+ type semanage_exec_t;
+@@ -504,6 +505,10 @@ miscfiles_read_localization(selinux_dbus_t)
+ 
+ seutil_domtrans_semanage(selinux_dbus_t)
+ 
++optional_policy(`
++	dbus_system_domain(selinux_dbus_t, selinux_dbus_exec_t)
++')
++
+ optional_policy(`
+ 	policykit_dbus_chat(selinux_dbus_t)
+ ')
+-- 
+2.49.0
+
