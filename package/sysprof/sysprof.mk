@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-SYSPROF_VERSION_MAJOR = 47
-SYSPROF_VERSION = $(SYSPROF_VERSION_MAJOR).2
+SYSPROF_VERSION_MAJOR = 48
+SYSPROF_VERSION = $(SYSPROF_VERSION_MAJOR).0
 SYSPROF_SOURCE = sysprof-$(SYSPROF_VERSION).tar.xz
 SYSPROF_SITE = https://download.gnome.org/sources/sysprof/$(SYSPROF_VERSION_MAJOR)
 SYSPROF_LICENSE = GPL-3.0+
@@ -21,6 +21,13 @@ SYSPROF_CONF_OPTS = \
 	-Dtests=false \
 	-Dtools=true \
 	-Dsystemdunitdir=/usr/lib/systemd/system
+
+ifeq ($(BR2_PACKAGE_ELFUTILS),y)
+SYSPROF_DEPENDENCIES += elfutils
+SYSPROF_CONF_OPTS += -Ddebuginfod=enabled
+else
+SYSPROF_CONF_OPTS += -Ddebuginfod=disabled
+endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 SYSPROF_DEPENDENCIES += systemd
