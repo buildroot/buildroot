@@ -10,6 +10,8 @@ SDPS: boot -f _flash.bin
 
 FB: ucmd setenv fastboot_buffer ${loadaddr}
 FB: download -f _image
+FB[-t 10000]: ucmd nand erase.chip
+
 # Burn image to nandfit partition if needed
 FB: ucmd if env exists nandfit_part; then nand erase.part nandfit; nand write ${fastboot_buffer} nandfit ${filesize}; else true; fi;
 FB: ucmd nandbcb init ${fastboot_buffer} nandboot ${filesize}
