@@ -1,6 +1,6 @@
 From 2140db697c7f1da2a0a3f7bbcb14c1a0dade84e5 Mon Sep 17 00:00:00 2001
-From: Adam Duskett <aduskett@gmail.com>
-Date: Mon, 9 Oct 2017 16:28:12 -0400
+From: Adam Duskett <adam.duskett@amarulasolutions.com>
+Date: Wed, 14 May 2025 16:32:53 +0200
 Subject: [PATCH] Add support for static-only build
 
 Instead of unconditionally building shared libraries, this patch
@@ -10,17 +10,19 @@ libraries. It allows to support cases where the target architecture
 does not have support for shared libraries.
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Signed-off-by: Adam Duskett <aduskett@gmail.com>
+[Updated for 3.8.1]
+Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 [Update for 2.8]
 ---
- src/Makefile | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ src/Makefile | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff -durNw libsepol-2.7.orig/src/Makefile libsepol-2.7/src/Makefile
---- libsepol-2.7.orig/src/Makefile	2018-01-15 21:07:51.285183415 +0100
-+++ libsepol-2.7/src/Makefile	2018-01-15 21:08:56.515182717 +0100
-@@ -39,7 +39,12 @@
+diff --git a/src/Makefile b/src/Makefile
+index 71fa3ed..efb81bc 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -45,7 +45,12 @@ LDFLAGS += -undefined dynamic_lookup
  LN=gln
  endif
  
@@ -34,14 +36,17 @@ diff -durNw libsepol-2.7.orig/src/Makefile libsepol-2.7/src/Makefile
  
  
  $(LIBA):  $(OBJS)
-@@ -81,8 +86,10 @@
+@@ -87,8 +92,10 @@ endif
  install: all
-	test -d $(DESTDIR)$(LIBDIR) || install -m 755 -d $(DESTDIR)$(LIBDIR)
-	install -m 644 $(LIBA) $(DESTDIR)$(LIBDIR)
+ 	test -d $(DESTDIR)$(LIBDIR) || install -m 755 -d $(DESTDIR)$(LIBDIR)
+ 	install -m 644 $(LIBA) $(DESTDIR)$(LIBDIR)
 +ifeq ($(STATIC),)
-	test -d $(DESTDIR)$(SHLIBDIR) || install -m 755 -d $(DESTDIR)$(SHLIBDIR)
-	install -m 755 $(LIBSO) $(DESTDIR)$(SHLIBDIR)
+ 	test -d $(DESTDIR)$(SHLIBDIR) || install -m 755 -d $(DESTDIR)$(SHLIBDIR)
+ 	install -m 755 $(LIBSO) $(DESTDIR)$(SHLIBDIR)
 +endif
-	test -d $(DESTDIR)$(LIBDIR)/pkgconfig || install -m 755 -d $(DESTDIR)$(LIBDIR)/pkgconfig
-	install -m 644 $(LIBPC) $(DESTDIR)$(LIBDIR)/pkgconfig
-	$(LN) -sf --relative $(DESTDIR)$(SHLIBDIR)/$(LIBSO) $(DESTDIR)$(LIBDIR)/$(TARGET)
+ 	test -d $(DESTDIR)$(LIBDIR)/pkgconfig || install -m 755 -d $(DESTDIR)$(LIBDIR)/pkgconfig
+ 	install -m 644 $(LIBPC) $(DESTDIR)$(LIBDIR)/pkgconfig
+ 	$(LN) -sf --relative $(DESTDIR)$(SHLIBDIR)/$(LIBSO) $(DESTDIR)$(LIBDIR)/$(TARGET)
+-- 
+2.49.0
+
