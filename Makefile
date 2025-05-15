@@ -1218,7 +1218,7 @@ help:
 # $(2): br2-external name, empty for bundled
 define list-defconfigs
 	@first=true; \
-	for defconfig in $(1)/configs/*_defconfig; do \
+	for defconfig in $$(find $(1)/configs -name '*_defconfig' |sort); do \
 		[ -f "$${defconfig}" ] || continue; \
 		if $${first}; then \
 			if [ "$(2)" ]; then \
@@ -1228,7 +1228,7 @@ define list-defconfigs
 			fi; \
 			first=false; \
 		fi; \
-		defconfig="$${defconfig##*/}"; \
+		defconfig="$${defconfig#$(1)/configs/}"; \
 		printf "  %-35s - Build for %s\n" "$${defconfig}" "$${defconfig%_defconfig}"; \
 	done; \
 	$${first} || printf "\n"
