@@ -1313,10 +1313,20 @@ def parse_args():
                         default=[])
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
                         help='Increase verbosity')
+    parser.add_argument('-N', '--needs-update', dest='needs_update', action='store_true',
+                        help='Only include packages with newer versions available')
     args = parser.parse_args()
     if not args.html and not args.json:
         parser.error('at least one of --html or --json (or both) is required')
     return args
+
+
+def is_newer_version_available(pkg):
+    return not (
+        pkg.latest_version['status'] in (RM_API_STATUS_ERROR, RM_API_STATUS_NOT_FOUND) or
+        pkg.latest_version['version'] is None or
+        pkg.latest_version['version'] == pkg.current_version
+    )
 
 
 def __main__():
@@ -1376,6 +1386,8 @@ def __main__():
     if "cve" not in args.disable and args.nvd_path:
         print("Checking packages CVEs")
         check_package_cves(args.nvd_path, packages)
+    if args.needs_update:
+        packages = [pkg for pkg in packages if is_newer_version_available(pkg)]
     print("Calculate stats")
     stats = calculate_stats(packages)
     if args.html:
