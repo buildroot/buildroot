@@ -8,52 +8,74 @@
 #              will be sent to syslog.
 #
 
-NAME=auditd
-DAEMON=/usr/sbin/${NAME}
-CONFIG=/etc/audit/auditd.conf
-PIDFILE=/var/run/${NAME}.pid
+DAEMON="auditd"
+PIDFILE="/var/run/${DAEMON}.pid"
 
 start(){
-	printf "Starting ${NAME}: "
+	printf "Starting %s: " "${DAEMON}"
 
 	# Create dir to store log files in if one doesn't exist. Create
 	# the directory with SELinux permissions if possible
-	command -v selabel_lookup >/dev/null 2>&1
-	if [ $? = 0 ]; then
-		mkdir -p /var/log/audit -Z `selabel_lookup -b file -k /var/log/audit | cut -d ' ' -f 3`
+	if command -v selabel_lookup >/dev/null 2>&1; then
+		audit_log_selable="$(selabel_lookup -b file -k /var/log/audit | cut -d ' ' -f 3)"
+		mkdir -p /var/log/audit -Z "${audit_log_selable}"
 	else
 		mkdir -p /var/log/audit
 	fi
 
-	# Run audit daemon executable
-	start-stop-daemon -S -q -p ${PIDFILE} --exec ${DAEMON}
-
-	if [ $? = 0 ]; then
+	start-stop-daemon --start --background --make-pidfile \
+		--pidfile "${PIDFILE}" --exec "/usr/sbin/${DAEMON}"
+	status=$?
+	if [ "${status}" -eq 0 ]; then
 		# Load the default rules
 		test -f /etc/audit/rules.d/audit.rules && /usr/sbin/auditctl -R /etc/audit/rules.d/audit.rules >/dev/null
 		echo "OK"
 	else
 		echo "FAIL"
 	fi
+	return "${status}"
 }
 
 stop(){
-	printf "Stopping ${NAME}: "
-
-	start-stop-daemon -K -q -p ${PIDFILE}
-	[ $? = 0 ] && echo "OK" || echo "FAIL"
+	printf "Stopping %s: " "${DAEMON}"
+	start-stop-daemon --stop --pidfile "${PIDFILE}" --exec "/usr/sbin/${DAEMON}"
+	status=$?
+	if [ "${status}" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+		return "${status}"
+	fi
+	while start-stop-daemon --stop --test --quiet --pidfile "${PIDFILE}" \
+		--exec "/sbin/${DAEMON}"; do
+		sleep 0.1
+	done
+	rm -f "${PIDFILE}"
+	return "${status}"
 }
 
 reload(){
-	printf "Reloading ${NAME} configuration: "
-	start-stop-daemon --stop -s 1 -p ${PIDFILE} 1>/dev/null
-	[ $? = 0 ] && echo "OK" || echo "FAIL"
+	printf "Reloading %s configuration: " "${DAEMON}"
+	start-stop-daemon --stop --signal HUP --pidfile "${PIDFILE}" 1>/dev/null
+	status=$?
+	if [ "${status}" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "${status}"
 }
 
 rotate(){
-	printf "Rotating ${NAME} logs: "
-	start-stop-daemon --stop -s 10 -p ${PIDFILE} 1>/dev/null
-	[ $? = 0 ] && echo "OK" || echo "FAIL"
+	printf "Rotating %s logs: " "${DAEMON}"
+	start-stop-daemon --stop --signal SIGUSR1 --pidfile "${PIDFILE}" 1>/dev/null
+	status=$?
+	if [ "${status}" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "${status}"
 }
 
 case "$1" in
