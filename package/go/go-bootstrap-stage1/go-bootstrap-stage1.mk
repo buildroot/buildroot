@@ -17,12 +17,13 @@ HOST_GO_BOOTSTRAP_STAGE1_ROOT = $(HOST_DIR)/lib/go-$(GO_BOOTSTRAP_STAGE1_VERSION
 
 # The go build system is not compatible with ccache, so use
 # HOSTCC_NOCCACHE. See https://github.com/golang/go/issues/11685.
+# CFLAGS and GO_CCFLAGS have no effect, so overwrite CC directly.
 HOST_GO_BOOTSTRAP_STAGE1_MAKE_ENV = \
 	GOOS=linux \
 	GOROOT_FINAL="$(HOST_GO_BOOTSTRAP_STAGE1_ROOT)" \
 	GOROOT="$(@D)" \
 	GOBIN="$(@D)/bin" \
-	CC=$(HOSTCC_NOCCACHE) \
+	CC="$(HOSTCC_NOCCACHE) -std=gnu99" \
 	CGO_ENABLED=0
 
 define HOST_GO_BOOTSTRAP_STAGE1_BUILD_CMDS
