@@ -94,6 +94,21 @@ config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULPA2
 endchoice
 
 choice
+	prompt "i.MX 91 Silicon Revision"
+	default BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX91A0
+	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX91
+	help
+	  Some packages related to the selected i.MX platform need to
+	  know the silicon revision of the platform they will run on.
+
+	  Note - mismatches may result in a failure to boot!
+
+config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX91A0
+	bool "imx91a0"
+
+endchoice
+
+choice
 	prompt "i.MX 93 Silicon Revision"
 	default BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93A1
 	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93
