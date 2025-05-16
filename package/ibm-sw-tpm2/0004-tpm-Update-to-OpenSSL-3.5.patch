@@ -1,0 +1,39 @@
+From 720ed4b8c74c3b517a46b442be9482319ed027dd Mon Sep 17 00:00:00 2001
+From: Ken Goldman <kgold@linux.ibm.com>
+Date: Fri, 18 Apr 2025 13:41:59 -0400
+Subject: [PATCH] tpm: Update to OpenSSL 3.5
+
+Accept 3.5 as a supported version
+
+Signed-off-by: Ken Goldman <kgold@linux.ibm.com>
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+Upstream: https://github.com/kgoldman/ibmswtpm2/commit/720ed4b8c74c3b517a46b442be9482319ed027dd
+---
+ src/BnToOsslMath.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/BnToOsslMath.h b/src/BnToOsslMath.h
+index 165304d..5fd5323 100644
+--- a/src/BnToOsslMath.h
++++ b/src/BnToOsslMath.h
+@@ -54,7 +54,7 @@
+ /*    arising in any way out of use or reliance upon this specification or any 	*/
+ /*    information herein.							*/
+ /*										*/
+-/*  (c) Copyright IBM Corp. and others, 2023				  	*/
++/*  (c) Copyright IBM Corp. and others, 2023 - 2025			  	*/
+ /*										*/
+ /********************************************************************************/
+ 
+@@ -77,7 +77,7 @@
+ #include <openssl/ec.h>
+ #include <openssl/bn.h>
+ 
+-#if OPENSSL_VERSION_NUMBER >= 0x30400ff0L
++#if OPENSSL_VERSION_NUMBER >= 0x30500ff0L
+ // Check the bignum_st definition against the one below and either update the
+ // version check or provide the new definition for this version.
+ #  error Untested OpenSSL version
+-- 
+2.39.5
+
