@@ -253,3 +253,78 @@ FOO_SOURCE = foo-$(FOO_VERSION).tar.bz2
 If there is a specific tarball uploaded by the upstream developers in
 +https://gitlab.com/<project>/releases/+, do not use this macro, but
 rather use directly the link to the tarball.
+
+[[accessing-private-repos]]
+==== Accessing a private repository for a package
+
+If you want to create a package in a br2-external tree and its source
+is in a private repository (e.g. on gitlab, github, bitbucket, ...),
+you have to write it in a way that it is buildable both by developers
+and in CI. This poses a challenge, because you need to authenticate in
+order to access it.
+
+There are several ways you can approach this. The following two are the
+most practical ones.
+
+===== Using SSH and +insteadOf+
+
+Configure your private packages to use SSH.
+
+----
+FOO_SITE = git@githosting.com:/<group>/<package>.git
+----
+
+Developers already have an ssh key installed so they can access it
+this way. The only limitation is that if they build in docker, they
+have to make sure the ssh key is accessible from within the container.
+Either mount the SSH directory into the container by passing the
+options +-v ~/.ssh:<homedir>/.ssh+, or load the private key into
+ssh-agent and pass +--mount type=bind,source=$SSH_AUTH_SOCK,target=/ssh-agent
+--env SSH_AUTH_SOCK=/ssh-agent+
+
+CI builders typically will not have an SSH key that allows
+access to other repositories. For those, you'll need to generate an
+access token. Then you configure git to replace the SSH access with HTTPS
+access. As a preparation step in CI, run the following command.
+
+----
+git config --global url."https://<token>:x-oauth-basic@githosting.com/<group>/".insteadOf "git@githosting.com:/<group>/"
+----
+
+The way to use a token for basic authentication differs between different
+git hosting providers, and sometimes between different types of tokens.
+Consult your provider's documentation to find out how to access git over
+HTTPS with a token.
+
+===== Use HTTPS and +.netrc+
+
+If, for any reason, developers don't have an SSH key already, then it may
+be simpler to use HTTPS authentication. For this, every developer will
+have to generate a token that has (read) access to all relevant repositories.
+Some git hosting providers have a command-line utility that can generate
+such a token, otherwise you'll need to generate it in the web interface. The
+token has a limited lifetime so you'll need to regularly refresh it.
+
+To make sure the token is used in the Buildroot build, add it to +~/.netrc+
+
+----
+machine githosting.com
+    login <username>
+    password <token>
+----
+
+The +<username>+ and +<password>+ to use are again different for different
+git hosting providers.
+
+In CI, generate the +.netrc+ file as a preparation step.
+
+Configure your private packages to use HTTPS.
+
+----
+FOO_SITE = https://githosting.com/<group>/<package>.git
+----
+
+Both wget (https) and git will use +.netrc+ to get login information. This
+approach is potentially somewhat less secure because +.netrc+ cannot be
+password-protected. The advantage is that users and CI use the exact same
+way of providing credentials.
