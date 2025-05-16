@@ -1,0 +1,65 @@
+From 9421f4ff93c341482d3aa4a0cd57aba1978bdd62 Mon Sep 17 00:00:00 2001
+From: "Andrew G. Morgan" <morgan@kernel.org>
+Date: Sat, 19 Apr 2025 08:00:23 -0700
+Subject: [PATCH] Support for __xtensa__ architecture.
+
+It looks like __xtensa__ defines SA_RESTORER, but my read of the
+kernel code suggests that signal handling does not require it be
+set. Specifically, if the SA_RESTORER flag is not set, the kernel
+inserts a sys_rt_sigreturn call into the stack frame.
+
+Signed-off-by: Andrew G. Morgan <morgan@kernel.org>
+Upstream: 6cdd8cd72ebcedd6b1b6c989a7e5722d5d87f35c
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ psx/psx_calls.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/psx/psx_calls.c b/psx/psx_calls.c
+index 8195964..aff105f 100644
+--- a/psx/psx_calls.c
++++ b/psx/psx_calls.c
+@@ -49,7 +49,8 @@
+     || defined(__powerpc__) || defined(__s390__) || defined(__riscv) \
+     || defined(__alpha__) || defined(__hppa__) || defined(__sh__) \
+     || defined(__m68k__) || defined(__sparc__) || defined(__arc__) \
+-    || defined(__microblaze__) || defined(__or1k__)
++    || defined(__microblaze__) || defined(__or1k__) \
++    || defined(__xtensa__)
+ 
+ #undef _NSIG
+ #undef _NSIG_BPW
+@@ -69,8 +70,7 @@
+ #define _NSIG_WORDS  (_NSIG / _NSIG_BPW)
+ 
+ #if defined(__x86_64__) || defined(__i386__) \
+-    || defined(__arm__) \
+-    || defined(__powerpc__) \
++    || defined(__arm__) || defined(__powerpc__) \
+     || defined(__arc__)
+ /* field used */
+ #define SA_RESTORER  0x04000000
+@@ -78,8 +78,9 @@
+ 
+ #if defined(SA_RESTORER) \
+     || defined(__aarch64__) \
+-    || defined(__m68k__) || defined(__sh__) || defined(__sparc__) \
+-    || defined(__s390__) || defined(__sparc__)
++    || defined(__m68k__) || defined(__sh__) \
++    || defined(__s390__) || defined(__sparc__) \
++    || defined(__xtensa__)
+ /* field defined */
+ #define _HAS_SA_RESTORER   void *sa_restorer;
+ #else
+@@ -93,7 +94,7 @@ typedef struct {
+ #define sigset_t psx_sigset_t
+ 
+ struct psx_sigaction {
+-#if defined(__m68k__) || defined(__alpha__)
++#if defined(__m68k__) || defined(__alpha__) || defined(__xtensa__)
+     void *sa_handler;
+     sigset_t sa_mask;
+     unsigned long sa_flags;
+-- 
+2.49.0
+
