@@ -4,10 +4,12 @@
 #
 ################################################################################
 
-FFMPEG_VERSION = 6.1.2
-FFMPEG_SOURCE = ffmpeg-$(FFMPEG_VERSION).tar.xz
-FFMPEG_SITE = https://ffmpeg.org/releases
+# Update FFMPEG_CPE_ID_VERSION if needed
+FFMPEG_VERSION = n6.1.2-27-ge16ff06adb
+FFMPEG_SITE = https://git.ffmpeg.org/ffmpeg.git
+FFMPEG_SITE_METHOD = git
 FFMPEG_INSTALL_STAGING = YES
+FFMPEG_CPE_ID_VERSION = 6.1.2
 
 FFMPEG_LICENSE = LGPL-2.1+, libjpeg license
 FFMPEG_LICENSE_FILES = LICENSE.md COPYING.LGPLv2.1
