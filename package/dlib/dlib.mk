@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DLIB_VERSION = 19.24.6
+DLIB_VERSION = 19.24.9
 DLIB_SITE = $(call github,davisking,dlib,v$(DLIB_VERSION))
 DLIB_CMAKE_BACKEND = ninja
 DLIB_INSTALL_STAGING = YES
