@@ -18,19 +18,19 @@ main ()
 
 	if grep -Eq "^BR2_TARGET_OPTEE_OS=y$" "${BR2_CONFIG}"; then
 		"${HOST_DIR}/bin/mkimage_imx8" -soc IMX9 -c \
-			-ap "${BINARIES_DIR}/bl31.bin" a35 ${ATF_LOAD_ADDR} \
-			-ap "${BINARIES_DIR}/u-boot-hash.bin" a35 0x80200000 \
-			-ap "${BINARIES_DIR}/tee.bin" a35 0x96000000 \
+			-ap "${BINARIES_DIR}/bl31.bin" a55 ${ATF_LOAD_ADDR} \
+			-ap "${BINARIES_DIR}/u-boot-hash.bin" a55 0x80200000 \
+			-ap "${BINARIES_DIR}/tee.bin" a55 0x96000000 \
 			-out "${BINARIES_DIR}/u-boot-atf-container.img"
 	else
 		"${HOST_DIR}/bin/mkimage_imx8" -soc IMX9 -c \
-			-ap "${BINARIES_DIR}/bl31.bin" a35 ${ATF_LOAD_ADDR} \
-			-ap "${BINARIES_DIR}/u-boot-hash.bin" a35 0x80200000 \
+			-ap "${BINARIES_DIR}/bl31.bin" a55 ${ATF_LOAD_ADDR} \
+			-ap "${BINARIES_DIR}/u-boot-hash.bin" a55 0x80200000 \
 			-out "${BINARIES_DIR}/u-boot-atf-container.img"
 	fi
 
 	"${HOST_DIR}/bin/mkimage_imx8" -soc IMX9 -append "${BINARIES_DIR}/ahab-container.img" -c \
-		-ap "${BINARIES_DIR}/u-boot-spl-ddr.bin" a35 ${SPL_LOAD_ADDR} \
+		-ap "${BINARIES_DIR}/u-boot-spl-ddr.bin" a55 ${SPL_LOAD_ADDR} \
 		-out "${BINARIES_DIR}/imx9-boot-sd.bin"
 
 	flashbin_size="$(wc -c "${BINARIES_DIR}/imx9-boot-sd.bin" | awk '{print $1}')"
