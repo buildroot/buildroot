@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-FLUENT_BIT_VERSION = 4.0.0
+FLUENT_BIT_VERSION = 4.0.2
 FLUENT_BIT_SITE = $(call github,fluent,fluent-bit,v$(FLUENT_BIT_VERSION))
 FLUENT_BIT_LICENSE = Apache-2.0
 FLUENT_BIT_LICENSE_FILES = LICENSE
 FLUENT_BIT_CPE_ID_VENDOR = treasuredata
 FLUENT_BIT_CPE_ID_PRODUCT = fluent_bit
-FLUENT_BIT_DEPENDENCIES = c-ares host-bison host-flex libyaml nghttp2 openssl
+FLUENT_BIT_DEPENDENCIES = c-ares host-bison host-flex libyaml nghttp2 openssl \
+	zstd
 
 FLUENT_BIT_CMAKE_BACKEND = ninja
 
@@ -21,12 +22,8 @@ FLUENT_BIT_CONF_OPTS += \
 	-DFLB_EXAMPLES=No \
 	-DFLB_CHUNK_TRACE=No \
 	-DFLB_PREFER_SYSTEM_LIB_CARES=Yes \
-	-DFLB_PREFER_SYSTEM_LIB_NGHTTP2=Yes
-
-ifeq ($(BR2_INSTALL_LIBSTDCPP),)
-FLUENT_BIT_CONF_OPTS += \
-	-DFLB_UNICODE_ENCODER=No
-endif
+	-DFLB_PREFER_SYSTEM_LIB_NGHTTP2=Yes \
+	-DFLB_PREFER_SYSTEM_LIB_ZSTD=Yes
 
 ifeq ($(BR2_PACKAGE_FLUENT_BIT_WASM),y)
 FLUENT_BIT_WAMR_ARCH = $(call qstrip,$(BR2_PACKAGE_FLUENT_BIT_WASM_ARCH))
@@ -66,6 +63,13 @@ FLUENT_BIT_CONF_OPTS += -DFLB_LUAJIT=Yes \
 FLUENT_BIT_DEPENDENCIES += luajit
 else
 FLUENT_BIT_CONF_OPTS += -DFLB_LUAJIT=No
+endif
+
+ifeq ($(BR2_PACKAGE_POSTGRESQL),y)
+FLUENT_BIT_CONF_OPTS += -DFLB_OUT_PGSQL=Yes
+FLUENT_BIT_DEPENDENCIES += postgresql
+else
+FLUENT_BIT_CONF_OPTS += -DFLB_OUT_PGSQL=No
 endif
 
 # Force bundled miniz to be linked statically.

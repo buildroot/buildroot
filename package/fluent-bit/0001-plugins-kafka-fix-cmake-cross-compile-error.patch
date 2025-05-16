@@ -1,8 +1,7 @@
-From 845076d4e8b480da41f80efafd97c199adbb831e Mon Sep 17 00:00:00 2001
+From f32c4e909ec4a4872c2c5fc186f27d1f7e4e8c2a Mon Sep 17 00:00:00 2001
 From: Thomas Devoogdt <thomas@devoogdt.com>
 Date: Sat, 16 Nov 2024 19:46:28 +0100
-Subject: [PATCH] plugins/{in,out}_kafka/CMakeLists.txt: fix cross compile
- error
+Subject: [PATCH] plugins: kafka: fix cmake cross compile error
 
 KAFKA_INCLUDEDIR is not set if FLB_PREFER_SYSTEM_LIB_KAFKA is not used,
 when cross-compiling, it just translates to -I/librdkafka, which is not allowed.
