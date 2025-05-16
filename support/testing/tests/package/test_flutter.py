@@ -22,7 +22,7 @@ class TestFlutter(infra.basetest.BRTest, GraphicsBase):
         BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES="{infra.filepath("tests/package/test_flutter/linux-vkms.fragment")}"
         BR2_PACKAGE_LIBDRM=y
         BR2_PACKAGE_MESA3D=y
-        BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_SWRAST=y
+        BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_SOFTPIPE=y
         BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_VIRGL=y
         BR2_PACKAGE_MESA3D_OPENGL_ES=y
         BR2_PACKAGE_FLUTTER_PI=y

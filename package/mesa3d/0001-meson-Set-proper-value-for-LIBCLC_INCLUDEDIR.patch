@@ -17,8 +17,8 @@ that they are not removed by Buildroot target-finalize logic.
 Based on the patch for autotools provided by Valentin Korenblit.
 
 Signed-off-by: Romain Naour <romain.naour@smile.fr>
-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
-[rebased for 20.2.0 & 20.3.0]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[rebased for 20.2.0, 20.3.0 & 25.0.0]
 ---
  src/gallium/frontends/clover/meson.build | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -27,7 +27,7 @@ diff --git a/src/gallium/frontends/clover/meson.build b/src/gallium/frontends/cl
 index 62ac5f5278d..ecdeb39669c 100644
 --- a/src/gallium/frontends/clover/meson.build
 +++ b/src/gallium/frontends/clover/meson.build
-@@ -27,7 +27,7 @@
+@@ -10,7 +10,7 @@
    '-DCL_USE_DEPRECATED_OPENCL_2_0_APIS',
    '-DCL_USE_DEPRECATED_OPENCL_2_1_APIS',
    '-DCL_USE_DEPRECATED_OPENCL_2_2_APIS',
@@ -35,7 +35,7 @@ index 62ac5f5278d..ecdeb39669c 100644
 +  '-DLIBCLC_INCLUDEDIR="/usr/share"',
    '-DLIBCLC_LIBEXECDIR="@0@/"'.format(dep_clc.get_variable(pkgconfig : 'libexecdir'))
  ]
- clover_spirv_cpp_args = []
+ clover_incs = [inc_include, inc_src, inc_gallium, inc_gallium_aux]
 -- 
 2.20.1
 
