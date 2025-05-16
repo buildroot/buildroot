@@ -1,0 +1,57 @@
+From b822c8e2f380ba6158601e621a12927a4264ff67 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Fri, 16 May 2025 15:32:00 +0200
+Subject: [PATCH] extras/ext4_utils/contents.c: allocate_inode() doesn't take
+ any argument
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes:
+
+/home/thomas/projets/buildroot/output/build/host-android-tools-4.2.2+git20130218/extras/ext4_utils/contents.c: In function ‘make_directory’:
+/home/thomas/projets/buildroot/output/build/host-android-tools-4.2.2+git20130218/extras/ext4_utils/contents.c:102:29: error: too many arguments to function ‘allocate_inode’; expected 0, have 1
+  102 |                 inode_num = allocate_inode(info);
+
+and similar build failures that occur with GCC 15.x.
+
+Upstream: N/A, we're too far from upstream
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ extras/ext4_utils/contents.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/extras/ext4_utils/contents.c b/extras/ext4_utils/contents.c
+index 6300680..b0336a4 100644
+--- a/extras/ext4_utils/contents.c
++++ b/extras/ext4_utils/contents.c
+@@ -99,7 +99,7 @@ u32 make_directory(u32 dir_inode_num, u32 entries, struct dentry *dentries,
+ 	len = blocks * info.block_size;
+ 
+ 	if (dir_inode_num) {
+-		inode_num = allocate_inode(info);
++		inode_num = allocate_inode();
+ 	} else {
+ 		dir_inode_num = EXT4_ROOT_INO;
+ 		inode_num = EXT4_ROOT_INO;
+@@ -167,7 +167,7 @@ u32 make_file(const char *filename, u64 len)
+ 	struct ext4_inode *inode;
+ 	u32 inode_num;
+ 
+-	inode_num = allocate_inode(info);
++	inode_num = allocate_inode();
+ 	if (inode_num == EXT4_ALLOCATE_FAILED) {
+ 		error("failed to allocate inode\n");
+ 		return EXT4_ALLOCATE_FAILED;
+@@ -196,7 +196,7 @@ u32 make_link(const char *filename, const char *link)
+ 	u32 inode_num;
+ 	u32 len = strlen(link);
+ 
+-	inode_num = allocate_inode(info);
++	inode_num = allocate_inode();
+ 	if (inode_num == EXT4_ALLOCATE_FAILED) {
+ 		error("failed to allocate inode\n");
+ 		return EXT4_ALLOCATE_FAILED;
+-- 
+2.49.0
+
