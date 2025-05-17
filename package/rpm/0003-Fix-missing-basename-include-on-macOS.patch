@@ -1,0 +1,26 @@
+From f510770a214bd2e8144a39868c34cd568179599e Mon Sep 17 00:00:00 2001
+From: Calvin Buckley <calvin@cmpct.info>
+Date: Tue, 11 Jul 2023 19:22:41 -0300
+Subject: [PATCH] Fix missing basename include on macOS
+
+Upstream: b2e67642fd8cb64d8cb1cca9e759396c1c10807d
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ tools/rpmuncompress.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/rpmuncompress.c b/tools/rpmuncompress.c
+index bd4146d54..58ddf5683 100644
+--- a/tools/rpmuncompress.c
++++ b/tools/rpmuncompress.c
+@@ -1,6 +1,7 @@
+ #include "system.h"
+ 
+ #include <popt.h>
++#include <libgen.h>
+ #include <errno.h>
+ #include <stdio.h>
+ #include <string.h>
+-- 
+2.49.0
+
