@@ -1,0 +1,31 @@
+From 000f92beb459096534a7bfaa8c5e99d77b7594c1 Mon Sep 17 00:00:00 2001
+From: Sam James <sam@gentoo.org>
+Date: Sat, 3 Aug 2024 06:36:43 +0100
+Subject: [PATCH] [AMDGPU] Include `<cstdint>` in AMDGPUMCTargetDesc
+ (#101766)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Gentoo-Component: llvm
+Signed-off-by: Michał Górny <mgorny@gentoo.org>
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Upstream: https://bugs.gentoo.org/939498
+---
+ lib/Target/AMDGPU/MCTargetDesc/AMDGPUMCTargetDesc.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/Target/AMDGPU/MCTargetDesc/AMDGPUMCTargetDesc.h b/lib/Target/AMDGPU/MCTargetDesc/AMDGPUMCTargetDesc.h
+index c2e2563c3989..53aac8934100 100644
+--- a/lib/Target/AMDGPU/MCTargetDesc/AMDGPUMCTargetDesc.h
++++ b/lib/Target/AMDGPU/MCTargetDesc/AMDGPUMCTargetDesc.h
+@@ -15,6 +15,7 @@
+ #ifndef LLVM_LIB_TARGET_AMDGPU_MCTARGETDESC_AMDGPUMCTARGETDESC_H
+ #define LLVM_LIB_TARGET_AMDGPU_MCTARGETDESC_AMDGPUMCTARGETDESC_H
+ 
++#include <cstdint>
+ #include <memory>
+ 
+ namespace llvm {
+-- 
+2.46.0
