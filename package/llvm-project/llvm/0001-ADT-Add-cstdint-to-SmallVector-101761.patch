@@ -1,0 +1,35 @@
+From 51d88407c1ae86c3b3c7b497d049f8980f2a3510 Mon Sep 17 00:00:00 2001
+From: Sam James <sam@gentoo.org>
+Date: Fri, 2 Aug 2024 23:07:21 +0100
+Subject: [PATCH] [ADT] Add `<cstdint>` to SmallVector (#101761)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+SmallVector uses `uint32_t`, `uint64_t` without including `<cstdint>`
+which fails to build w/ GCC 15 after a change in libstdc++ [0]
+
+[0] https://gcc.gnu.org/git/?p=gcc.git;a=commit;h=3a817a4a5a6d94da9127af3be9f84a74e3076ee2
+
+Gentoo-Component: llvm
+Signed-off-by: Michał Górny <mgorny@gentoo.org>
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Upstream: https://bugs.gentoo.org/939498
+---
+ include/llvm/ADT/SmallVector.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/llvm/ADT/SmallVector.h b/include/llvm/ADT/SmallVector.h
+index e34702bdbb3c..1c0f3465b2a9 100644
+--- a/include/llvm/ADT/SmallVector.h
++++ b/include/llvm/ADT/SmallVector.h
+@@ -19,6 +19,7 @@
+ #include <algorithm>
+ #include <cassert>
+ #include <cstddef>
++#include <cstdint>
+ #include <cstdlib>
+ #include <cstring>
+ #include <functional>
+-- 
+2.46.0

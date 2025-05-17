@@ -1,0 +1,31 @@
+From 67fc0069c285b37f09d408aae43c37b8afdf11f7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20G=C3=B3rny?= <mgorny@gentoo.org>
+Date: Sat, 3 Aug 2024 12:01:20 +0200
+Subject: [PATCH] Another gcc-15 fix from Sam James
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Bug: https://bugs.gentoo.org/937164
+Gentoo-Component: llvm
+Signed-off-by: Michał Górny <mgorny@gentoo.org>
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
+Upstream: https://bugs.gentoo.org/939498
+---
+ lib/Target/X86/MCTargetDesc/X86MCTargetDesc.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/Target/X86/MCTargetDesc/X86MCTargetDesc.h b/lib/Target/X86/MCTargetDesc/X86MCTargetDesc.h
+index d0530bd4d650..10b59462aebe 100644
+--- a/lib/Target/X86/MCTargetDesc/X86MCTargetDesc.h
++++ b/lib/Target/X86/MCTargetDesc/X86MCTargetDesc.h
+@@ -13,6 +13,7 @@
+ #ifndef LLVM_LIB_TARGET_X86_MCTARGETDESC_X86MCTARGETDESC_H
+ #define LLVM_LIB_TARGET_X86_MCTARGETDESC_X86MCTARGETDESC_H
+ 
++#include <cstdint>
+ #include <memory>
+ #include <string>
+ 
+-- 
+2.46.0
