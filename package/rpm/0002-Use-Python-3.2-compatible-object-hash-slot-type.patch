@@ -1,0 +1,58 @@
+From a0a937a454b2f82eae7ed3b4436614e64ef63e2d Mon Sep 17 00:00:00 2001
+From: Panu Matilainen <pmatilai@redhat.com>
+Date: Mon, 13 Mar 2023 12:41:11 +0200
+Subject: [PATCH] Use Python >= 3.2 compatible object hash slot type
+
+Python 3.2 changed the object hash type to make them pointer-width on
+all platforms - an incompatible change but apparently 3.2 was early enough
+in the 3.x days for such changes: https://bugs.python.org/issue9778
+
+The hash vs pointer size mismatch has quietly been there all along but
+clang >= 16 started treating this as an error, causing failed builds.
+The fix is easy and obvious enough, but this requires us to bump the
+minimum Python version from 3.1 to 3.2. Which thankfully is old enough that
+we can do without having to care or introduce build-time compatibility
+workarounds.
+
+Suggested-by: Khem Raj <raj.khem@gmail.com>
+Upstream: 45103f84764b2a293b068eb0f59456f553ec45d8
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ INSTALL            | 4 ++--
+ python/header-py.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/INSTALL b/INSTALL
+index 13d0d8a83..528c1e5c0 100644
+--- a/INSTALL
++++ b/INSTALL
+@@ -66,8 +66,8 @@ These are available from
+     http://www.bzip.org
+     http://tukaani.org/xz/
+ 
+-If you want to build the Python bindings to RPM library, it can be enabled
+-with --enable-python option to configure. You'll need to have Python >= 3.1
++Python bindings to RPM library are built by default, but it can be disabled
++with -DENABLE_PYTHON=OFF. You'll need to have Python >= 3.2
+ runtime and C API development environment installed.
+ Python is available from:
+     http://www.python.org/
+diff --git a/python/header-py.c b/python/header-py.c
+index 0aed0c926..c15503f35 100644
+--- a/python/header-py.c
++++ b/python/header-py.c
+@@ -316,9 +316,9 @@ static PyObject * hdr_dsOfHeader(PyObject * s)
+                                  "(Oi)", s, RPMTAG_NEVR);
+ }
+ 
+-static long hdr_hash(PyObject * h)
++static Py_hash_t hdr_hash(PyObject * h)
+ {
+-    return (long) h;
++    return (Py_hash_t) h;
+ }
+ 
+ static PyObject * hdr_reduce(hdrObject *s)
+-- 
+2.49.0
+
