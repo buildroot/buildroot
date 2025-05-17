@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SIPEED_LPI4ABIN_VERSION = 44ec4e1cc82141963842ec45db0d1617f9f07e75
+SIPEED_LPI4ABIN_VERSION = 725756411ecc20f2c2dbc5ea6b8e5aacc6f83aad
 SIPEED_LPI4ABIN_SITE = https://github.com/revyos/th1520-boot-firmware.git
 SIPEED_LPI4ABIN_SITE_METHOD = git
 SIPEED_LPI4ABIN_LICENSE = PROPRIETARY
