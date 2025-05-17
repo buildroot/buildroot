@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_APSCHEDULER
+	bool "python-apscheduler"
+	select BR2_PACKAGE_PYTHON_TZLOCAL # runtime
+	help
+	  Task scheduling library for Python.
+
+	  https://apscheduler.readthedocs.io
