@@ -1,0 +1,26 @@
+From b8fb7f6cbe9e3e9ea2737dc465a70fb4bb0951eb Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Mon, 9 Dec 2024 00:19:15 +1100
+Subject: [PATCH] Fix build with gcc-15
+
+Backport upstream commit to fix build error with gcc-15.
+
+Upstream: https://github.com/kodi-pvr/pvr.hts/commit/b8fb7f6cbe9e3e9ea2737dc465a70fb4bb0951eb
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/tvheadend/HTSPVFS.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/tvheadend/HTSPVFS.h b/src/tvheadend/HTSPVFS.h
+index 1fbf9d18..80f9fea3 100644
+--- a/src/tvheadend/HTSPVFS.h
++++ b/src/tvheadend/HTSPVFS.h
+@@ -9,6 +9,7 @@
+ 
+ #include <memory>
+ #include <string>
++#include <cstdint>
+ 
+ namespace kodi
+ {
