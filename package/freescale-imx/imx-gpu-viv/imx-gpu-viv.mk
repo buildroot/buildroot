@@ -25,14 +25,14 @@ ifeq ($(BR2_aarch64),y)
 IMX_GPU_VIV_PROVIDES += libgbm
 endif
 
-IMX_GPU_VIV_LIB_TARGET = $(call qstrip,$(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT))
+IMX_GPU_VIV_OUTPUT = $(call qstrip,$(BR2_PACKAGE_IMX_GPU_VIV_OUTPUT))
 
 # Libraries are linked against libdrm, except framebuffer output on ARM
-ifneq ($(IMX_GPU_VIV_LIB_TARGET)$(BR2_arm),fby)
+ifneq ($(IMX_GPU_VIV_OUTPUT)$(BR2_arm),fby)
 IMX_GPU_VIV_DEPENDENCIES += libdrm
 endif
 
-ifeq ($(IMX_GPU_VIV_LIB_TARGET),wayland)
+ifeq ($(IMX_GPU_VIV_OUTPUT),wayland)
 IMX_GPU_VIV_DEPENDENCIES += wayland
 endif
 
@@ -40,11 +40,11 @@ define IMX_GPU_VIV_EXTRACT_CMDS
 	$(call NXP_EXTRACT_HELPER,$(IMX_GPU_VIV_DL_DIR)/$(IMX_GPU_VIV_SOURCE))
 endef
 
-ifeq ($(IMX_GPU_VIV_LIB_TARGET),fb)
+ifeq ($(IMX_GPU_VIV_OUTPUT),fb)
 define IMX_GPU_VIV_FIXUP_PKGCONFIG
 	ln -sf egl_linuxfb.pc $(@D)/gpu-core/usr/lib/pkgconfig/egl.pc
 endef
-else ifeq ($(IMX_GPU_VIV_LIB_TARGET),wayland)
+else ifeq ($(IMX_GPU_VIV_OUTPUT),wayland)
 define IMX_GPU_VIV_FIXUP_PKGCONFIG
 	ln -sf egl_wayland.pc $(@D)/gpu-core/usr/lib/pkgconfig/egl.pc
 endef
@@ -61,7 +61,7 @@ endif
 # in the upstream archive here. We also remove unused backend files.
 # Make sure these commands are idempotent.
 define IMX_GPU_VIV_BUILD_CMDS
-	cp -dpfr $(@D)/gpu-core/usr/lib/$(IMX_GPU_VIV_LIB_TARGET)/* $(@D)/gpu-core/usr/lib/
+	cp -dpfr $(@D)/gpu-core/usr/lib/$(IMX_GPU_VIV_OUTPUT)/* $(@D)/gpu-core/usr/lib/
 	$(foreach backend,fb wayland, \
 		$(RM) -r $(@D)/gpu-core/usr/lib/$(backend)
 	)
