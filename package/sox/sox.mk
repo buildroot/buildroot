@@ -84,6 +84,11 @@ SOX_IGNORE_CVES += CVE-2022-31650 CVE-2023-26590
 # due to the change of CPE ID to sox_project:sox in the NVD database
 SOX_IGNORE_CVES += CVE-2022-31651
 
+# 0011-CVE-2023-32627-Filter-null-sampling-rate-in-VOC-code.patch
+# This entry is NOT stale, those CVEs are not reported by pkg-stats
+# due to the change of CPE ID to sox_project:sox in the NVD database
+SOX_IGNORE_CVES += CVE-2023-32627
+
 SOX_CONF_OPTS = \
 	--with-distro="Buildroot" \
 	--disable-stack-protector
