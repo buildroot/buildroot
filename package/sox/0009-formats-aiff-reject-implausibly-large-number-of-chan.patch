@@ -1,0 +1,63 @@
+From 452bfd55096e24ff5eb4a5eb491c70125ce05be8 Mon Sep 17 00:00:00 2001
+From: Helmut Grohne <helmut@subdivi.de>
+Date: Sat, 17 May 2025 22:55:32 +0200
+Subject: [PATCH] formats+aiff: reject implausibly large number of channels
+
+Bug: https://sourceforge.net/p/sox/bugs/360/
+Bug-Debian: https://bugs.debian.org/1012516
+
+Upstream: https://sourceforge.net/p/sox/bugs/360/
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/aiff.c      |  5 +++++
+ src/formats_i.c | 10 ++++++++--
+ 2 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/src/aiff.c b/src/aiff.c
+index 3a152c58..6de94f32 100644
+--- a/src/aiff.c
++++ b/src/aiff.c
+@@ -619,6 +619,11 @@ int lsx_aiffstartwrite(sox_format_t * ft)
+            At 48 kHz, 16 bits stereo, this gives ~3 hours of audio.
+            Sorry, the AIFF format does not provide for an indefinite
+            number of samples. */
++        if (ft->signal.channels >= (0x7f000000 / (ft->encoding.bits_per_sample >> 3)))
++        {
++                lsx_fail_errno(ft, SOX_EOF, "too many channels for AIFF header");
++                return SOX_EOF;
++        }
+         return(aiffwriteheader(ft, (uint64_t) 0x7f000000 / ((ft->encoding.bits_per_sample>>3)*ft->signal.channels)));
+ }
+ 
+diff --git a/src/formats_i.c b/src/formats_i.c
+index 7048040d..6a7c27e3 100644
+--- a/src/formats_i.c
++++ b/src/formats_i.c
+@@ -19,6 +19,7 @@
+  */
+ 
+ #include "sox_i.h"
++#include <limits.h>
+ #include <string.h>
+ #include <sys/stat.h>
+ #include <stdarg.h>
+@@ -60,9 +61,14 @@ int lsx_check_read_params(sox_format_t * ft, unsigned channels,
+   if (ft->seekable)
+     ft->data_start = lsx_tell(ft);
+ 
+-  if (channels && ft->signal.channels && ft->signal.channels != channels)
++  if (channels && ft->signal.channels && ft->signal.channels != channels) {
+     lsx_warn("`%s': overriding number of channels", ft->filename);
+-  else ft->signal.channels = channels;
++  } else if (channels > SHRT_MAX) {
++    lsx_fail_errno(ft, EINVAL, "implausibly large number of channels");
++    return SOX_EOF;
++  } else {
++    ft->signal.channels = channels;
++  }
+ 
+   if (rate && ft->signal.rate && ft->signal.rate != rate)
+     lsx_warn("`%s': overriding sample rate", ft->filename);
+-- 
+2.49.0
+

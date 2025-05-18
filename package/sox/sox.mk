@@ -74,6 +74,11 @@ SOX_IGNORE_CVES += CVE-2021-23159 CVE-2021-23172 CVE-2023-34318
 # due to the change of CPE ID to libsox_project:libsox in the NVD database
 SOX_IGNORE_CVES += CVE-2021-40426
 
+# 0009-formats-aiff-reject-implausibly-large-number-of-chan.patch
+# This entry is NOT stale, those CVEs are not reported by pkg-stats
+# due to the change of CPE ID to sox_project:sox in the NVD database
+SOX_IGNORE_CVES += CVE-2022-31650 CVE-2023-26590
+
 SOX_CONF_OPTS = \
 	--with-distro="Buildroot" \
 	--disable-stack-protector
