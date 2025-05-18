@@ -1,0 +1,101 @@
+From 80ddc04dd2398611afd8eafd89f5a6cd81b82363 Mon Sep 17 00:00:00 2001
+From: Arnout Vandecappelle <arnout@rnout.be>
+Date: Sun, 18 May 2025 09:59:24 +0200
+Subject: [PATCH] Include <cstdint> for uintptr_t, uint8_t, etc.
+
+GCC 15 adheres more strictly to the standard about which type is defined
+in which header. As such, uintptr_t, uint8_t, etc. are  no longer
+available unless cstdint is included.
+
+Add #include <cstdint> in the files that gave errors with GCC 15
+
+Most (all?) of these fixes are already upstream, but spread out over
+various commits that don't necessarily apply to our version. Fixing it
+ourselves is simpler.
+
+Signed-off-by: Arnout Vandecappelle <arnout@rnout.be>
+Upstream: N/A, already fixed and we're very far behind
+---
+ chromium/base/task/thread_pool.h                                 | 1 +
+ chromium/net/tools/huffman_trie/trie_entry.h                     | 1 +
+ .../transport_security_state_entry.h                             | 1 +
+ .../perfetto/include/perfetto/ext/tracing/core/slice.h           | 1 +
+ .../perfetto/include/perfetto/tracing/tracing_backend.h          | 1 +
+ .../perfetto/src/trace_processor/importers/gzip/gzip_utils.h     | 1 +
+ 6 files changed, 6 insertions(+)
+
+diff --git a/chromium/base/task/thread_pool.h b/chromium/base/task/thread_pool.h
+index 085c249ba58e6..afc674ca7f6fb 100644
+--- a/chromium/base/task/thread_pool.h
++++ b/chromium/base/task/thread_pool.h
+@@ -5,6 +5,7 @@
+ #ifndef BASE_TASK_THREAD_POOL_H_
+ #define BASE_TASK_THREAD_POOL_H_
+ 
++#include <cstdint>
+ #include <memory>
+ #include <utility>
+ 
+diff --git a/chromium/net/tools/huffman_trie/trie_entry.h b/chromium/net/tools/huffman_trie/trie_entry.h
+index fe70260f981f2..eac6a7fc2499d 100644
+--- a/chromium/net/tools/huffman_trie/trie_entry.h
++++ b/chromium/net/tools/huffman_trie/trie_entry.h
+@@ -5,6 +5,7 @@
+ #ifndef NET_TOOLS_HUFFMAN_TRIE_TRIE_ENTRY_H_
+ #define NET_TOOLS_HUFFMAN_TRIE_TRIE_ENTRY_H_
+ 
++#include <cstdint>
+ #include <memory>
+ #include <string>
+ #include <vector>
+diff --git a/chromium/net/tools/transport_security_state_generator/transport_security_state_entry.h b/chromium/net/tools/transport_security_state_generator/transport_security_state_entry.h
+index 59059d88f6df2..fe15bb7429f6d 100644
+--- a/chromium/net/tools/transport_security_state_generator/transport_security_state_entry.h
++++ b/chromium/net/tools/transport_security_state_generator/transport_security_state_entry.h
+@@ -5,6 +5,7 @@
+ #ifndef NET_TOOLS_TRANSPORT_SECURITY_STATE_GENERATOR_TRANSPORT_SECURITY_STATE_ENTRY_H_
+ #define NET_TOOLS_TRANSPORT_SECURITY_STATE_GENERATOR_TRANSPORT_SECURITY_STATE_ENTRY_H_
+ 
++#include <cstdint>
+ #include <map>
+ #include <memory>
+ #include <string>
+diff --git a/chromium/third_party/perfetto/include/perfetto/ext/tracing/core/slice.h b/chromium/third_party/perfetto/include/perfetto/ext/tracing/core/slice.h
+index 4ce66fdeadc3a..3f3932b228737 100644
+--- a/chromium/third_party/perfetto/include/perfetto/ext/tracing/core/slice.h
++++ b/chromium/third_party/perfetto/include/perfetto/ext/tracing/core/slice.h
+@@ -20,6 +20,7 @@
+ #include <stddef.h>
+ #include <string.h>
+ 
++#include <cstdint>
+ #include <memory>
+ #include <string>
+ #include <vector>
+diff --git a/chromium/third_party/perfetto/include/perfetto/tracing/tracing_backend.h b/chromium/third_party/perfetto/include/perfetto/tracing/tracing_backend.h
+index 67b0d2eb51e0d..3c2462de588dd 100644
+--- a/chromium/third_party/perfetto/include/perfetto/tracing/tracing_backend.h
++++ b/chromium/third_party/perfetto/include/perfetto/tracing/tracing_backend.h
+@@ -17,6 +17,7 @@
+ #ifndef INCLUDE_PERFETTO_TRACING_TRACING_BACKEND_H_
+ #define INCLUDE_PERFETTO_TRACING_TRACING_BACKEND_H_
+ 
++#include <cstdint>
+ #include <memory>
+ #include <string>
+ 
+diff --git a/chromium/third_party/perfetto/src/trace_processor/importers/gzip/gzip_utils.h b/chromium/third_party/perfetto/src/trace_processor/importers/gzip/gzip_utils.h
+index 624363ff66f90..68783e879c8e0 100644
+--- a/chromium/third_party/perfetto/src/trace_processor/importers/gzip/gzip_utils.h
++++ b/chromium/third_party/perfetto/src/trace_processor/importers/gzip/gzip_utils.h
+@@ -18,6 +18,7 @@
+ #define SRC_TRACE_PROCESSOR_IMPORTERS_GZIP_GZIP_UTILS_H_
+ 
+ #include <memory>
++#include <cstdint>
+ 
+ struct z_stream_s;
+ 
+-- 
+2.49.0
+
