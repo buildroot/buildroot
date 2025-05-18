@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LSHW_VERSION = d76afbaaf40e953243da921844cddff8185324f3
-LSHW_SITE = $(call github,lyonel,lshw,$(LSHW_VERSION))
+LSHW_VERSION = 02.20
+LSHW_SITE = $(call github,lyonel,lshw,B.$(LSHW_VERSION))
 LSHW_LICENSE = GPL-2.0
 LSHW_LICENSE_FILES = COPYING
 
