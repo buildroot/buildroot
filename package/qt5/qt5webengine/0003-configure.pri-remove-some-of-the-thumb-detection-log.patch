@@ -1,0 +1,69 @@
+From b00f7b41ffdee03f9982287d61c2fa21ebee5e6b Mon Sep 17 00:00:00 2001
+From: Arnout Vandecappelle <arnout@rnout.be>
+Date: Sat, 17 May 2025 22:09:32 +0200
+Subject: [PATCH] configure.pri: remove some of the thumb detection logic
+
+The hasThumbFlag test has a roundabout way of discovering whether thumb
+is available. It looks at the -mthumb and -marm flag (which does make
+some sense), but then it tries to look at -march to determine which ARM
+architecture version is used. That test doesn't work if GCC is
+configured for a default target architecture and no -march is passed on
+the command line.
+
+In Buildroot, we don't pass any -mthumb, -marm or -march in CFLAGS
+because all of that is included in the toolchain wrapper. Therefore, the
+logic has nothing to determine the target ARM ISA version and returns
+false.
+
+As a result, nothing is passed down to gn, and gn adds -marm to the
+build. There is in fact a warning about this:
+
+    WARNING: Thumb instruction set is required to build ffmpeg for QtWebEngine.
+
+but since it's just a warning, it gets ignored.
+
+Indeed, the build does fail (when ffmpeg is built, i.e. when
+BR2_PACKAGE_QT5WEBENGINE_PROPRIETARY_CODECS is enabled) with:
+
+    FAILED: obj/third_party/ffmpeg/ffmpeg_internal/vp8.o
+    [...]
+    {standard input}: Assembler messages:
+    {standard input}:1119: Error: bad instruction `ldrhcs r0,[ip],#2'
+    {standard input}:1156: Error: bad instruction `ldrhcs r9,[ip],#2'
+
+In practice, the architecture version doesn't really matter, because all
+the architectures supported by JSCore have thumb.
+
+Therefore, remove the logic for detecting if the CPU architecture
+supports thumb. Do keep the -marm and -mthumb logic, even though in
+Buildroot it doesn't do anything, and the warning gets ignored.
+
+Signed-off-by: Arnout Vandecappelle <arnout@rnout.be>
+Upstream: It's not clear if the same logic about JSCore applies in
+upstream, so not sent.
+---
+ configure.pri | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/configure.pri b/configure.pri
+index 8da334c83..3ff298e9f 100644
+--- a/configure.pri
++++ b/configure.pri
+@@ -370,14 +370,6 @@ defineTest(qtConfTest_hasThumbFlag) {
+     !isEmpty(FLAG): return(true)
+     FLAG = $$qtwebengine_extractCFlag("-marm")
+     !isEmpty(FLAG): return(false)
+-
+-    MARCH = $$qtwebengine_extractCFlag("-march=.*")
+-    MARMV = $$replace(MARCH, "armv",)
+-    !isEmpty(MARMV) {
+-        MARMV = $$split(MARMV,)
+-        MARMV = $$member(MARMV, 0)
+-    }
+-    if (isEmpty(MARMV) | lessThan(MARMV, 7)): return(false)
+     # no flag assume mthumb
+     return(true)
+ }
+-- 
+2.49.0
+
