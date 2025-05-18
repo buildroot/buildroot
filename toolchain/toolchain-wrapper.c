@@ -36,25 +36,9 @@ static char sysroot[PATH_MAX];
 static char _time_[sizeof("-D__TIME__=\"HH:MM:SS\"")];
 static char _date_[sizeof("-D__DATE__=\"MMM DD YYYY\"")];
 
-/**
- * GCC errors out with certain combinations of arguments (examples are
- * -mfloat-abi={hard|soft} and -m{little|big}-endian), so we have to ensure
- * that we only pass the predefined one to the real compiler if the inverse
- * option isn't in the argument list.
- * This specifies the worst case number of extra arguments we might pass
- * Currently, we may have:
- * 	-mfloat-abi=
- * 	-march=
- * 	-mcpu=
- * 	-D__TIME__=
- * 	-D__DATE__=
- * 	-Wno-builtin-macro-redefined
- * 	-Wl,-z,now
- * 	-Wl,-z,relro
- * 	-fPIE
- * 	-pie
- */
-#define EXCLUSIVE_ARGS	10
+/* Maximum amount of arguments to reserve space for by default.
+   Must be > predef_args */
+#define DEFAULT_MAX_ARGS	1024
 
 static char *predef_args[] = {
 #ifdef BR_CCACHE
@@ -246,6 +230,7 @@ int main(int argc, char **argv)
 	char *basename;
 	char *env_debug;
 	int ret, i, count = 0, debug = 0, found_shared = 0, found_nonoption = 0;
+	size_t n_args;
 
 	/* Debug the wrapper to see arguments it was called with.
 	 * If environment variable BR2_DEBUG_WRAPPER is:
@@ -354,8 +339,7 @@ int main(int argc, char **argv)
 		return 3;
 	}
 
-	cur = args = malloc(sizeof(predef_args) +
-			    (sizeof(char *) * (argc + EXCLUSIVE_ARGS)));
+	cur = args = malloc(DEFAULT_MAX_ARGS * sizeof(char *));
 	if (args == NULL) {
 		perror(__FILE__ ": malloc");
 		return 2;
@@ -497,8 +481,17 @@ int main(int argc, char **argv)
 #endif
 	}
 
+        n_args = (cur - args);
+        if ((n_args + argc) > DEFAULT_MAX_ARGS) {
+		args = realloc(args, (n_args + argc) * sizeof(char *));
+		if (args == NULL) {
+			perror(__FILE__ ": realloc");
+			return 2;
+		}
+        }
+
 	/* append forward args and terminating NULL */
-	memcpy(cur, &argv[1], sizeof(char *) * argc);
+	memcpy(&args[n_args], &argv[1], sizeof(char *) * argc);
 
 	exec_args = args;
 #ifdef BR_CCACHE
