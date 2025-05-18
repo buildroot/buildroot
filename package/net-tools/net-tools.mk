@@ -12,6 +12,9 @@ NET_TOOLS_LICENSE = GPL-2.0+
 NET_TOOLS_LICENSE_FILES = COPYING
 NET_TOOLS_CPE_ID_VALID = YES
 
+# 0001-CVE-2025-46836-interface.c-Stack-based-Buffer-Overfl.patch
+NET_TOOLS_IGNORE_CVES += CVE-2025-46836
+
 define NET_TOOLS_CONFIGURE_CMDS
 	(cd $(@D); yes "" | ./configure.sh config.in )
 endef
