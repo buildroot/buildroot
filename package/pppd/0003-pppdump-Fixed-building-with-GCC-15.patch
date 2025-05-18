@@ -1,0 +1,76 @@
+From 05361692ee7d6260ce5c04c9fa0e5a1aa7565323 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jaroslav=20=C5=A0karvada?= <jskarvad@redhat.com>
+Date: Thu, 27 Feb 2025 23:00:16 +0100
+Subject: [PATCH] pppdump: Fixed building with GCC 15 (#548)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+GCC 15 defaults to C23 which does not allow K&R declarations.
+
+Credit Yaakov Selkowitz in:
+https://src.fedoraproject.org/rpms/ppp/pull-request/12
+
+Signed-off-by: Jaroslav Škarvada <jskarvad@redhat.com>
+
+Upstream: https://github.com/ppp-project/ppp/commit/05361692ee7d6260ce5c04c9fa0e5a1aa7565323
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ pppdump/pppdump.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
+
+diff --git a/pppdump/pppdump.c b/pppdump/pppdump.c
+index c24208af..1534036c 100644
+--- a/pppdump/pppdump.c
++++ b/pppdump/pppdump.c
+@@ -42,14 +42,12 @@ int tot_sent, tot_rcvd;
+ extern int optind;
+ extern char *optarg;
+ 
+-void dumplog();
+-void dumpppp();
+-void show_time();
++void dumplog(FILE *);
++void dumpppp(FILE *);
++void show_time(FILE *, int);
+ 
+ int
+-main(ac, av)
+-    int ac;
+-    char **av;
++main(int ac, char **av)
+ {
+     int i;
+     char *p;
+@@ -97,8 +95,7 @@ main(ac, av)
+ }
+ 
+ void
+-dumplog(f)
+-    FILE *f;
++dumplog(FILE *f)
+ {
+     int c, n, k, col;
+     int nb, c2;
+@@ -241,8 +238,7 @@ struct pkt {
+ unsigned char dbuf[8192];
+ 
+ void
+-dumpppp(f)
+-    FILE *f;
++dumpppp(FILE *f)
+ {
+     int c, n, k;
+     int nb, nl, dn, proto, rv;
+@@ -375,9 +371,7 @@ dumpppp(f)
+ }
+ 
+ void
+-show_time(f, c)
+-    FILE *f;
+-    int c;
++show_time(FILE *f, int c)
+ {
+     time_t t;
+     int n;
