@@ -59,6 +59,11 @@ SOX_IGNORE_CVES += CVE-2019-8357
 # sox-14.4.2-44-g7b6a8892
 SOX_IGNORE_CVES += CVE-2019-13590
 
+# 0006-voc-word-width-should-never-be-0-to-avoid-division-b.patch
+# This entry is NOT stale, those CVEs are not reported by pkg-stats
+# due to the change of CPE ID to sox_project:sox in the NVD database
+SOX_IGNORE_CVES += CVE-2021-3643 CVE-2021-23210
+
 SOX_CONF_OPTS = \
 	--with-distro="Buildroot" \
 	--disable-stack-protector
