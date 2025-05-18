@@ -1,0 +1,50 @@
+From c8c602382ff5261501e7b323d04fee90fa40be58 Mon Sep 17 00:00:00 2001
+From: Arnout Vandecappelle <arnout@rnout.be>
+Date: Sat, 17 May 2025 21:16:32 +0200
+Subject: [PATCH] Include <cstdint> for uintptr_t
+
+GCC 15 adheres more strictly to the standard about which type is defined
+in which header. As such, uintptr_t is no longer available unless
+cstdint is included.
+
+Add #include <cstdint> in the files that use uintptr_t.
+
+Note that in masm, stdint.h is included instead of cstdint, so leave
+those alone.
+
+Signed-off-by: Arnout Vandecappelle <arnout@rnout.be>
+Upstream: https://invent.kde.org/qt/qt/qtdeclarative/-/merge_requests/57
+---
+ src/plugins/scenegraph/openvg/qopenvgoffscreensurface.cpp | 2 ++
+ src/qml/compiler/qv4compiler.cpp                          | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/src/plugins/scenegraph/openvg/qopenvgoffscreensurface.cpp b/src/plugins/scenegraph/openvg/qopenvgoffscreensurface.cpp
+index 1f2709e06c..cc3703de64 100644
+--- a/src/plugins/scenegraph/openvg/qopenvgoffscreensurface.cpp
++++ b/src/plugins/scenegraph/openvg/qopenvgoffscreensurface.cpp
+@@ -37,6 +37,8 @@
+ **
+ ****************************************************************************/
+ 
++#include <cstdint>
++
+ #include <QDebug>
+ #include "qopenvgoffscreensurface.h"
+ 
+diff --git a/src/qml/compiler/qv4compiler.cpp b/src/qml/compiler/qv4compiler.cpp
+index 18e19cf01c..3a8df1cd47 100644
+--- a/src/qml/compiler/qv4compiler.cpp
++++ b/src/qml/compiler/qv4compiler.cpp
+@@ -37,6 +37,8 @@
+ **
+ ****************************************************************************/
+ 
++#include <cstdint>
++
+ #include <qv4compiler_p.h>
+ #include <qv4codegen_p.h>
+ #include <private/qv4compileddata_p.h>
+-- 
+2.49.0
+
