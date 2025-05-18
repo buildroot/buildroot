@@ -1,0 +1,34 @@
+From 742424ddd76e15bd151e40834e8f1fad65900b65 Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Mon, 9 Dec 2024 09:44:12 +0000
+Subject: [PATCH] fix build with gcc-15
+
+Upstream: https://github.com/jpr5/ngrep/commit/742424ddd76e15bd151e40834e8f1fad65900b65
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ ngrep.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/ngrep.c b/ngrep.c
+index 3df9389..57b4ddd 100644
+--- a/ngrep.c
++++ b/ngrep.c
+@@ -146,7 +146,7 @@ struct re_pattern_buffer pattern;
+ 
+ char *match_data = NULL, *bin_data = NULL;
+ uint16_t match_len = 0;
+-int8_t (*match_func)() = &blank_match_func;
++int8_t (*match_func)(unsigned char *, uint32_t, uint16_t *, uint16_t *) = &blank_match_func;
+ 
+ int8_t dump_single = 0;
+ void (*dump_func)(unsigned char *, uint32_t, uint16_t, uint16_t) = &dump_formatted;
+@@ -177,7 +177,7 @@ FD_SET delay_fds;
+ SOCKET delay_socket = 0;
+ #endif
+ 
+-void (*print_time)() = NULL, (*dump_delay)() = dump_delay_proc_init;
++void (*print_time)(struct pcap_pkthdr *) = NULL, (*dump_delay)(struct pcap_pkthdr *) = dump_delay_proc_init;
+ 
+ 
+ /*
