@@ -1,0 +1,51 @@
+From e5c4263c6b2c5b84a6edeb1cf3c95bddd73d4d7c Mon Sep 17 00:00:00 2001
+From: Kadambini Nema <kadambini.nema@gmail.com>
+Date: Sat, 17 May 2025 16:20:07 -0700
+Subject: [PATCH] Fix a compilation issue with uClibc due to a missing include
+ file.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+------
+In file included from t_auth.c:35:
+iperf_api.h:395:77: error: unknown type name ‘va_list’
+  395 | void iperf_exit(struct iperf_test *test, int exit_code, const char *format, va_list argp) __attribute__ ((noreturn));
+	  |                                                                             ^~~~~~~
+iperf_api.h:33:1: note: ‘va_list’ is defined in header ‘<stdarg.h>’; did you forget to ‘#include <stdarg.h>’?
+   32 | #include <setjmp.h>
+  +++ |+#include <stdarg.h>
+   33 | #include <stdio.h>
+-----
+
+Signed-off-by: Kadambini Nema <kadambini.nema@gmail.com>
+Upstream: https://github.com/esnet/iperf/pull/1888
+---
+ src/iperf_api.c | 1 -
+ src/iperf_api.h | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/iperf_api.c b/src/iperf_api.c
+index aeec91dd3..d4a06bec9 100644
+--- a/src/iperf_api.c
++++ b/src/iperf_api.c
+@@ -53,7 +53,6 @@
+ #include <sys/stat.h>
+ #include <sched.h>
+ #include <setjmp.h>
+-#include <stdarg.h>
+ #include <math.h>
+ 
+ #if defined(HAVE_CPUSET_SETAFFINITY)
+diff --git a/src/iperf_api.h b/src/iperf_api.h
+index 03d273e8c..cd82e6f9b 100644
+--- a/src/iperf_api.h
++++ b/src/iperf_api.h
+@@ -30,6 +30,7 @@
+ #include <sys/socket.h>
+ #include <sys/time.h>
+ #include <setjmp.h>
++#include <stdarg.h>
+ #include <stdio.h>
+ #include <stdint.h>
+ #ifdef __cplusplus
