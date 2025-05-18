@@ -1,3 +1,102 @@
+2025.02.2, released May 18th, 2025
+
+	Important / security related fixes:
+
+	- openvpn: CVE-2025-2704
+	- ghostscript: CVE-2025-27830, CVE-2025-27831, CVE-2025-27832,
+		CVE-2025-27833, CVE-2025-27834, CVE-2025-27835,
+		CVE-2025-27836, CVE-2025-27837,
+	- libfcgi: CVE-2025-23016
+	- perl: CVE-2024-56406
+	- mosquitto: CVE-2023-28366
+	- c-ares: CVE-2025-31498
+	- graphicsmagick: CVE-2025-32460, CVE-2025-27795
+	- libxml2: CVE-2025-32414, CVE-2025-32415
+	- wireshark: CVE-2025-1492
+	- yam: CVE-2021-33454
+	- sqlite: CVE-2025-29087
+	- xz: CVE-2025-31115
+	- python-django: CVE-2025-32873
+	- libraw: CVE-2025-43961, CVE-2025-43962, CVE-2025-43963,
+	    CVE-2025-43964
+	- dropbear: CVE-2025-47203
+	- intel-microcode: CVE-2025-24495, CVE-2024-28956, CVE-2024-43420,
+	    CVE-2025-20103
+	- openssh: CVE-2025-32728
+	- screen: CVE-2025-23395, CVE-2025-46802, CVE-2025-46803,
+	    CVE-2025-46804, CVE-2025-46805
+	- python-flask: CVE-2025-47278
+	- python-h11: CVE-2025-43859
+	- postgresql: CVE-2025-4207
+
+	Updated / fixed packages: sysklogd, libfcgi, double-conversion,
+	igh-ethercat, c-periphery, socat, lua-periphery, fluent-bit,
+	samba4, ca-certificates, dbus-cxx, atkmm2_28, pangomm2_46,
+	cairomm1_14, glibmm2_66, gtkmm3, file, opencsd, libopenmpt,
+	fwts, libtracefs, iproute2, ripgrep, bat, dust, trace-cmd,
+	libubootenv, micropython, python-cryptography, dnsmasq,
+	wireless-regdb, python-setuptools, libuci, libubox, ubus, waf,
+	armadillo, ncftp, expat, libxml2, wireshark, hiredis, zfs,
+	sunxi-mali-utgard-driver, ruby, mtools, hwdata, traceroute,
+	zic, tzdata, jo, gdb, tpm2-pkcs11, nss-pam-ldapd, ghostscript,
+	dropbear, intel-microcode, screen, python-flask, python-h11,
+	mariadb, ffmpeg, postgresql
+
+	Test Improvements:
+
+	- test_edk2: add a few build tests
+	- weston: fix the weston shutdown test
+	- lighttpd: runtime test
+	- openocd: runtime test
+	- hyperfine: runtime test
+	- python-urllib3: runtime test
+	- test_edk2: add macchiatobin build test
+	- bat: runtime test
+	- dust: runtime test
+
+	Infrastructure updates / fixes:
+
+	- libopenh264: ignore CVE-2025-27091
+	- edk2: drop dependency on tf-a for macchiatobin
+	- vim: extend comment about vi symlink
+	- board/raspberrypi/readme.txt: various improvements
+	- raspberrypi5: install Raspberry Pi 500 device-tree blob
+	- gen-bootlin-toolchains: allows armv8-a CPU to use armv7-a toolchains
+	- libsigrokdecode: needs python3 w/ zlib support
+	- dejavu: update homepage
+	- pulseview: fix, update, and reorganise dependencies
+	- boost: move host variables closer together
+	- boost: move target library selection variables closer together
+	- support/download/git: use FOO_DL_OPTS
+	- stm32mp135f_dk: fix optee hash
+	- libcamera: various fixes
+	- apparmor don't reference libapparmor variables
+	- rpi-firmware: add note to keep in sync with kernel
+	- python-sdbus: fix upstream url
+	- qt5webengine: drop unused file
+	- warp7: Improve Wifi instructions
+	- cryptopp: add upstream URL in help text
+	- dpdk: fixup Config.in comment about dependencies
+	- ffmpeg: add support for libopenmpt
+	- pkg-stats: fix typo in --disable help text
+	- imx28evk: enable BR2_DOWNLOAD_FORCE_CHECK_HASHES
+	- friendlyarm_nanopi_r3s: fix host linux headers custom version
+	- support/dependencies/dependencies.sh: awk is needed by Buildroot
+	- Config.in: introduce BR2_HOST_GCC_AT_LEAST_{12..15}
+	- dbus: set session-socket-dir to /tmp
+	- fs/erofs: unbreak custom compression handling
+	- nodejs: make target nodejs package virtual
+	- mpd: update CPE/CVE information
+	- Various fix for GCC15 host
+
+	Build issues and other problems solved for packages:
+
+	sqlite, pahole, libv4l, arm-trusted-firmware, libopenmpt, iptables,
+	tailscale, wilc-driver, rtl8188eu, rtl8723ds, lmbench, fluent-bit,
+	mosquitto, iproutes2, pixman, linux-tools, libcoap, libcamera,
+	strongswan, mpv, hiredis, zfs, bird, netsnmp, libcap, musepack,
+	ffmpeg, libqrencode
+
 2025.02.1, released April 22nd, 2025
 
 	Changes with potentially large impact:
