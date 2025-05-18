@@ -1,0 +1,18 @@
+Fix gcc-15.x build
+
+Upstream: https://src.fedoraproject.org/rpms/iftop/c/d098f91f0f590c1cab264bf77851d4018c430d9f?branch=rawhide
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+
+diff -up iftop-1.0pre4/cfgfile.h.fargs iftop-1.0pre4/cfgfile.h
+--- iftop-1.0pre4/cfgfile.h.fargs	2014-01-05 19:47:53.000000000 +0100
++++ iftop-1.0pre4/cfgfile.h	2025-05-15 18:09:05.849754901 +0200
+@@ -13,7 +13,7 @@ typedef struct {
+     int value;
+ } config_enumeration_type;
+ 
+-int read_config();
++int read_config(char *f, int whinge);
+ 
+ char *config_get_string(const char *directive);
+ int config_get_bool(const char *directive);
