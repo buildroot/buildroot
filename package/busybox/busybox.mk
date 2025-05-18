@@ -15,16 +15,6 @@ BUSYBOX_CPE_ID_VENDOR = busybox
 # 0004-nslookup-sanitize-all-printed-strings-with-printable.patch
 BUSYBOX_IGNORE_CVES += CVE-2022-28391
 
-# 0012-awk-fix-use-after-free-CVE-2023-42363.patch
-BUSYBOX_IGNORE_CVES += CVE-2023-42363
-
-# 0013-awk-fix-precedence-of-relative-to.patch
-# 0014-awk-fix-ternary-operator-and-precedence-of.patch
-BUSYBOX_IGNORE_CVES += CVE-2023-42364 CVE-2023-42365
-
-# 0015-awk.c-fix-CVE-2023-42366-bug-15874.patch
-BUSYBOX_IGNORE_CVES += CVE-2023-42366
-
 BUSYBOX_CFLAGS = \
 	$(TARGET_CFLAGS)
 
