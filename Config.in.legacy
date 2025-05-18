@@ -144,6 +144,14 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2025.08"
+
+config BR2_PACKAGE_ALSA_LIB_ALISP
+	bool "alsa-lib alisp support removed"
+	select BR2_LEGACY
+	help
+	  Support for alisp was removed from alsa-lib v1.12.14.
+
 comment "Legacy options removed in 2025.05"
 
 config BR2_GCC_VERSION_12_X
