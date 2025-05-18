@@ -503,12 +503,8 @@ int main(int argc, char **argv)
 #endif
 	}
 
-	/* append forward args */
-	memcpy(cur, &argv[1], sizeof(char *) * (argc - 1));
-	cur += argc - 1;
-
-	/* finish with NULL termination */
-	*cur = NULL;
+	/* append forward args and terminating NULL */
+	memcpy(cur, &argv[1], sizeof(char *) * argc);
 
 	exec_args = args;
 #ifdef BR_CCACHE
