@@ -1,0 +1,39 @@
+From 6af0a8b32df4d7a83fd52a963a20e6e321f10fd6 Mon Sep 17 00:00:00 2001
+From: Helmut Grohne <helmut@subdivi.de>
+Date: Sat, 17 May 2025 23:05:33 +0200
+Subject: [PATCH] formats: reject implausible rate
+
+Bug: https://sourceforge.net/p/sox/bugs/360/
+Bug-Debian: https://bugs.debian.org/1012516
+
+Upstream: https://sourceforge.net/p/sox/bugs/360/
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/formats_i.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/src/formats_i.c b/src/formats_i.c
+index 6a7c27e3..5f5ef979 100644
+--- a/src/formats_i.c
++++ b/src/formats_i.c
+@@ -70,9 +70,15 @@ int lsx_check_read_params(sox_format_t * ft, unsigned channels,
+     ft->signal.channels = channels;
+   }
+ 
+-  if (rate && ft->signal.rate && ft->signal.rate != rate)
++  if (rate && ft->signal.rate && ft->signal.rate != rate) {
+     lsx_warn("`%s': overriding sample rate", ft->filename);
+-  else ft->signal.rate = rate;
++  /* Since NaN comparisons yield false, the negation rejects them. */
++  } else if (!(rate > 0)) {
++    lsx_fail_errno(ft, EINVAL, "invalid rate value");
++    return SOX_EOF;
++  } else {
++    ft->signal.rate = rate;
++  }
+ 
+   if (encoding && ft->encoding.encoding && ft->encoding.encoding != encoding)
+     lsx_warn("`%s': overriding encoding type", ft->filename);
+-- 
+2.49.0
+
