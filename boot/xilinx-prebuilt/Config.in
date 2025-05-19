@@ -63,6 +63,15 @@ config BR2_TARGET_XILINX_PREBUILT_VERSAL_XSA_LOCATION
 
 endif # BR2_TARGET_XILINX_PREBUILT_VERSAL_XSA
 
+config BR2_TARGET_XILINX_PREBUILT_VERSAL_PLD_PDI
+	bool "install versal pld.pdi"
+	depends on BR2_TARGET_XILINX_PREBUILT_VERSAL
+	help
+	  When using the Versal Segmented Configuration, there is a
+	  pld.pdi file containing the FPGA bitstream which can be
+	  loaded at run-time.  By enabling this option, the pld.pdi
+	  will be installed to the target /lib/firmware/xilinx dir.
+
 config BR2_TARGET_XILINX_PREBUILT_FAMILY
 	string
 	default "zynqmp" if BR2_TARGET_XILINX_PREBUILT_ZYNQMP
