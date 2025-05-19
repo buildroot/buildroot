@@ -1,3 +1,67 @@
+2025.05-rc1, released May 19th, 2025
+
+	Fixes all over the tree and package updates.
+
+	Download:
+
+	- Rust updated to version 1.86.0, which has slightly changed
+	  the cargo fetching behaviour, so the generated tarballs now
+	  use a -cargo4 suffix to reflect that.
+
+	- Subversion download logic is now reproducible with non-US
+	  locales
+
+	- Sources can now be fetched from a smb:// location (using
+	  curl).
+
+	Dependencies:
+
+	- AWK is now required on the build host.
+
+	Toolchains:
+
+	- Bootlin ARMv7-A toolchains are now also available for
+	  ARMv8-A CPUs in 32bit mode
+
+	Misc:
+
+	- /etc/resolv.conf symlink now points to /run rather than /tmp
+
+	- support/scripts/pkg-stats can now report stale CVE entries,
+	  E.G. entries in <PKG>_IGNORE_CVES that are no longer needed
+	  after a NVD update.
+
+	New defconfigs: Engicam PX30 SOM, Freescale i.IM 91 EVK and 93
+	Freedom, HiFive Unmatched, Pine64 ROCKPro64 EBBR boot,
+	Raspberrypi 2 in 64bit mode, Sipeed LicheePi 4A
+
+	New packages: aardvark-dns, amazon-ecr-credential-helper,
+	casync-nano, cgroupfs-v2-mount, docker-credential-acr-env,
+	docker-credential-gcr, grout, lowdown, lpac,
+	mender-update-modules, netavark, passt, podman,
+	python-aniso8601, python-cachelib, python-emailproxy,
+	python-flask-caching, python-flask-restx, python-mypy,
+	python-pyproj, python-simple-pid, python-smbus2,
+	python-types-psutil, python-types-setuptools,
+	python-typing-inspection, python-tzlocal,
+	qoriq-ddr-phy-binary, qoriq-firmware-inphi, qoriq-mc-binary,
+	qoriq-mc-utils, sane-airscan, sipeed-lpi4abin, ufs-utils,
+	xilinx-fpgautil
+
+	Issues resolved:
+
+	- openh264's build/ should not be removed
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/64
+
+	- package/dbus: incorrect session bus configuration file..
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/67
+
+	- Update pkcs11-tool to v1.9.1
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/109
+
+	- netsnmp: unexpected header length in /proc/net/snmp...
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/110
+
 2025.02.3, released May 19th, 2025
 	Build issues and other problems solved for packages:
 
