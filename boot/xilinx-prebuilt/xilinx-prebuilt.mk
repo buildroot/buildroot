@@ -37,7 +37,7 @@ XILINX_PREBUILT_PLM = $(@D)/pdi_files/gen_files/plm.elf
 # psm*fw.elf is used.
 XILINX_PREBUILT_PSMFW = $(@D)/pdi_files/static_files/psm*fw.elf
 # We need the *.pdi glob, because the file has different names for the
-# different boards, and it has to be named vpl_gen_fixed.pdi when installed.
+# different boards, and it has to be named boot.pdi when installed.
 # If Segmented Configuration is used, there will be two pdi files and we need
 # the file that has "_boot.pdi" in the filename.
 define XILINX_PREBUILT_INSTALL_VERSAL_XSA_BOOT_PDI
@@ -46,13 +46,13 @@ define XILINX_PREBUILT_INSTALL_VERSAL_XSA_BOOT_PDI
 			$(@D)/*_boot.pdi, \
 			$(@D)/*.pdi \
 		) \
-		$(BINARIES_DIR)/vpl_gen_fixed.pdi
+		$(BINARIES_DIR)/boot.pdi
 endef
 else # BR2_TARGET_XILINX_PREBUILT_VERSAL_XSA
 XILINX_PREBUILT_PLM = $(XILINX_PREBUILT_BOARD_DIR)/plm.elf
 XILINX_PREBUILT_PSMFW = $(XILINX_PREBUILT_BOARD_DIR)/psmfw.elf
 # We need the *.pdi glob, because the file has different names for the
-# different boards, and it has to be named vpl_gen_fixed.pdi when installed.
+# different boards, and it has to be named boot.pdi when installed.
 # If Segmented Configuration is used, there will be two pdi files and we need
 # the file that has "_boot.pdi" in the filename.
 define XILINX_PREBUILT_INSTALL_VERSAL_BOOT_PDI
@@ -61,7 +61,7 @@ define XILINX_PREBUILT_INSTALL_VERSAL_BOOT_PDI
 			$(XILINX_PREBUILT_BOARD_DIR)/*_boot.pdi, \
 			$(XILINX_PREBUILT_BOARD_DIR)/*.pdi \
 		) \
-		$(BINARIES_DIR)/vpl_gen_fixed.pdi
+		$(BINARIES_DIR)/boot.pdi
 endef
 endif # BR2_TARGET_XILINX_PREBUILT_VERSAL_XSA
 
