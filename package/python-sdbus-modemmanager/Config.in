@@ -1,0 +1,12 @@
+config BR2_PACKAGE_PYTHON_SDBUS_MODEMMANAGER
+	bool "python-sdbus-modemmanager"
+	depends on BR2_PACKAGE_SYSTEMD
+	depends on BR2_PACKAGE_MODEM_MANAGER # runtime
+	select BR2_PACKAGE_PYTHON_SDBUS # runtime
+	help
+	  ModemManager bindings for sdbus.
+
+	  https://github.com/zhanglongqi/python-sdbus-modemmanager
+
+comment "python-sdbus-modemmanager needs systemd and modem-manager"
+	depends on !BR2_PACKAGE_SYSTEMD || !BR2_PACKAGE_MODEM_MANAGER
