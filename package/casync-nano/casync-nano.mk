@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CASYNC_NANO_VERSION = 1.1.1
+CASYNC_NANO_VERSION = 1.1.2
 CASYNC_NANO_SITE = $(call github,florolf,casync-nano,v$(CASYNC_NANO_VERSION))
 CASYNC_NANO_LICENSE = LGPL-2.1
 CASYNC_NANO_LICENSE_FILES = COPYING
