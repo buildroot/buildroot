@@ -1,0 +1,46 @@
+From 6c0b9ad7822d9e9c74b787914cb766d27a358258 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Tue, 20 May 2025 22:34:16 +0200
+Subject: [PATCH] Make examples build selectable
+
+Sometimes we don't need to build examples and increase some dependency we
+don't have(i.e. bits/pthreadtypes.h in musl) so let's add examples option
+true by default.
+
+Upstream: https://github.com/linux-nvme/libnvme/pull/1014
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ meson.build       | 4 +++-
+ meson_options.txt | 1 +
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 279245ac..4d819178 100644
+--- a/meson.build
++++ b/meson.build
+@@ -282,7 +282,9 @@ subdir('libnvme')
+ if get_option('tests')
+     subdir('test')
+ endif
+-subdir('examples')
++if get_option('examples')
++    subdir('examples')
++endif
+ subdir('doc')
+ 
+ ################################################################################
+diff --git a/meson_options.txt b/meson_options.txt
+index 051b4ae5..48a93dae 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -6,6 +6,7 @@ option('rstdir', type : 'string', value : '', description : 'directory for ReST
+ 
+ option('docs', type : 'combo', choices : ['false', 'html', 'man', 'rst', 'all'], description : 'install documentation')
+ option('docs-build', type : 'boolean', value : false,  description : 'build documentation')
++option('examples', type : 'boolean', value : true, description : 'build examples')
+ option('tests', type : 'boolean', value : true, description : 'build tests')
+ 
+ option('python', type : 'feature', value: 'auto', description : 'Generate libnvme python bindings')
+-- 
+2.39.5
+
