@@ -73,10 +73,6 @@ class TestXen(infra.basetest.BRTest):
         self.emulator.boot(arch="aarch64", options=qemu_opts)
         self.emulator.login()
 
-        # Avoid double-cooking the terminal, otherwise the test infrastructure
-        # would not be able to retrieve e.g. return codes properly.
-        self.assertRunOk("stty raw")
-
         # Verify that we are indeed running under Xen.
         self.assertRunOk("xl info")
 
@@ -91,9 +87,6 @@ class TestXen(infra.basetest.BRTest):
         # Create dom1 with console attached and login.
         self.emulator.qemu.sendline("xl create -c /etc/xen/dom1.cfg")
         self.emulator.login()
-
-        # Avoid double-cooking the terminal for dom1, too.
-        self.assertRunOk("stty raw")
 
         # Check that we are not talking to dom0 anymore.
         uuid = self.get_dom_uuid()
