@@ -13,4 +13,7 @@ PYTHON_TORNADO_CPE_ID_VENDOR = tornadoweb
 PYTHON_TORNADO_CPE_ID_PRODUCT = tornado
 PYTHON_TORNADO_SETUP_TYPE = setuptools
 
+# 0001-httputil-raise-errors-instead-of-logging-in.patch
+PYTHON_TORNADO_IGNORE_CVES += CVE-2025-47287
+
 $(eval $(python-package))
