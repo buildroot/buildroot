@@ -30,7 +30,7 @@ KMSXX_EXTRA_UTILS += kmstouch
 endif
 define KMSXX_INSTALL_EXTRA_UTILS
 	$(foreach t,$(KMSXX_EXTRA_UTILS),\
-		$(INSTALL) -D -m 0755 $(@D)/build/utils/$(t) \
+		$(INSTALL) -D -m 0755 $(@D)/buildroot-build/utils/$(t) \
 			$(TARGET_DIR)/usr/bin/$(t)
 	)
 endef
