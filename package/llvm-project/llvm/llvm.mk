@@ -20,10 +20,18 @@ LLVM_DEPENDENCIES = host-llvm
 HOST_LLVM_CONF_OPTS += -DCMAKE_MODULE_PATH=$(HOST_DIR)/lib/cmake/llvm
 LLVM_CONF_OPTS += -DCMAKE_MODULE_PATH=$(HOST_DIR)/lib/cmake/llvm
 
+HOST_LLVM_CONF_OPTS += -DLLVM_COMMON_CMAKE_UTILS=$(HOST_DIR)/lib/cmake/llvm
+LLVM_CONF_OPTS += -DLLVM_COMMON_CMAKE_UTILS=$(HOST_DIR)/lib/cmake/llvm
+
 # Don't build clang libcxx libcxxabi lldb compiler-rt lld polly as llvm subprojects
 # This flag assumes that projects are checked out side-by-side and not nested
 HOST_LLVM_CONF_OPTS += -DLLVM_ENABLE_PROJECTS=""
 LLVM_CONF_OPTS += -DLLVM_ENABLE_PROJECTS=""
+
+# LLVM_ENABLE_RUNTIMES for runtime components libcxx etc
+
+HOST_LLVM_CONF_OPTS += -DLLVM_ENABLE_RUNTIMES=""
+LLVM_CONF_OPTS += -DLLVM_ENABLE_RUNTIMES=""
 
 HOST_LLVM_CONF_OPTS += -DLLVM_CCACHE_BUILD=$(if $(BR2_CCACHE),ON,OFF)
 LLVM_CONF_OPTS += -DLLVM_CCACHE_BUILD=$(if $(BR2_CCACHE),ON,OFF)
@@ -151,6 +159,10 @@ LLVM_CONF_OPTS += -DLLVM_ENABLE_Z3_SOLVER=OFF
 HOST_LLVM_CONF_OPTS += -DLLVM_ENABLE_PIC=ON
 LLVM_CONF_OPTS += -DLLVM_ENABLE_PIC=ON
 
+# Disable TFTLite integration
+HOST_LLVM_CONF_OPTS += -DLLVM_HAVE_TFLITE=""
+LLVM_CONF_OPTS += -DLLVM_HAVE_TFLITE=""
+
 # Default is Debug build, which requires considerably more disk space and
 # build time. Release build is selected for host and target because the linker
 # can run out of memory in Debug mode.
@@ -261,7 +273,6 @@ HOST_LLVM_CONF_OPTS += \
 	-DLLVM_ENABLE_SPHINX=OFF \
 	-DLLVM_INCLUDE_EXAMPLES=OFF \
 	-DLLVM_INCLUDE_DOCS=OFF \
-	-DLLVM_INCLUDE_GO_TESTS=OFF \
 	-DLLVM_INCLUDE_TESTS=OFF \
 	-DLLVM_INCLUDE_BENCHMARKS=OFF
 LLVM_CONF_OPTS += \
@@ -273,7 +284,6 @@ LLVM_CONF_OPTS += \
 	-DLLVM_ENABLE_SPHINX=OFF \
 	-DLLVM_INCLUDE_EXAMPLES=OFF \
 	-DLLVM_INCLUDE_DOCS=OFF \
-	-DLLVM_INCLUDE_GO_TESTS=OFF \
 	-DLLVM_INCLUDE_TESTS=OFF \
 	-DLLVM_INCLUDE_BENCHMARKS=OFF
 

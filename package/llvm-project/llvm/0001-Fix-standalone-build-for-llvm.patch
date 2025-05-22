@@ -1,0 +1,49 @@
+From 255068deb7f3d18837ed30e739aa92c111ab450a Mon Sep 17 00:00:00 2001
+From: El Mehdi YOUNES <elmehdi.younes@smile.fr>
+Date: Sat, 10 May 2025 12:55:07 +0200
+Subject: [PATCH] Fix standalone build for llvm
+
+Upstream commit 9dd01a5241dc ("Harmonize cmake_policy() across standalone builds of all projects")
+moved the `cmake_policy()` settings from `llvm/CMakeLists.txt` into a shared
+`cmake/modules/CMakePolicy.cmake`, and included it from all relevant projects
+(Clang, LLD, LLDB, etc.) to harmonize standalone builds.
+
+However, in `llvm/CMakeLists.txt`, unlike other components, the line:
+    set(LLVM_COMMON_CMAKE_UTILS ...)
+was left **without** the usual:
+    if(NOT DEFINED LLVM_COMMON_CMAKE_UTILS)
+
+This prevents external build systems (e.g., when using separate source archives)
+from overriding the `LLVM_COMMON_CMAKE_UTILS` variable, since the value is
+always reset unconditionally.
+
+This patch adds the missing `if(NOT DEFINED LLVM_COMMON_CMAKE_UTILS)` guard,
+in the same way as it is already done in Clang, LLD, etc., to make
+`LLVM_COMMON_CMAKE_UTILS` properly overridable.
+
+Upstream: Not submitted
+
+Signed-off-by: El Mehdi YOUNES <elmehdi.younes@smile.fr>
+---
+ llvm/CMakeLists.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f5293e866324..d861233f299f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -4,7 +4,10 @@ cmake_minimum_required(VERSION 3.20.0)
+ 
+ include(CMakeDependentOption)
+ 
+-set(LLVM_COMMON_CMAKE_UTILS ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
++if(NOT DEFINED LLVM_COMMON_CMAKE_UTILS)
++  set(LLVM_COMMON_CMAKE_UTILS ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
++endif()
++
+ include(${LLVM_COMMON_CMAKE_UTILS}/Modules/CMakePolicy.cmake
+   NO_POLICY_SCOPE)
+ 
+-- 
+2.49.0
+
