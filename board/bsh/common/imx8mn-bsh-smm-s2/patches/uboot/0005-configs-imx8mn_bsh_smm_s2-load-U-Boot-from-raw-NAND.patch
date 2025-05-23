@@ -1,0 +1,32 @@
+From dce71922df352b0eb1b6cc3d40c374ad80a7d6c5 Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Tue, 20 May 2025 10:54:18 +0200
+Subject: [PATCH] configs: imx8mn_bsh_smm_s2: load U-Boot from raw NAND
+
+Commit 2a00d73d081a ("spl: mmc: Try to clean up raw-mode options") breaks
+the boot of the BSH SMM S2 board. Add options to load U-Boot from raw NAND
+sector.
+
+Fixes: 2a00d73d081a ("spl: mmc: Try to clean up raw-mode options")
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://source.denx.de/u-boot/u-boot/-/commit/dce71922df352b0eb1b6cc3d40c374ad80a7d6c5
+---
+ configs/imx8mn_bsh_smm_s2_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/configs/imx8mn_bsh_smm_s2_defconfig b/configs/imx8mn_bsh_smm_s2_defconfig
+index 9ffcd3b221c3..1c11d4705419 100644
+--- a/configs/imx8mn_bsh_smm_s2_defconfig
++++ b/configs/imx8mn_bsh_smm_s2_defconfig
+@@ -47,6 +47,8 @@ CONFIG_SPL_DMA=y
+ CONFIG_SPL_I2C=y
+ CONFIG_SPL_MTD=y
+ CONFIG_SPL_NAND_SUPPORT=y
++CONFIG_SPL_NAND_RAW_U_BOOT_USE_SECTOR=y
++CONFIG_SPL_NAND_RAW_U_BOOT_SECTOR=0x300
+ CONFIG_SPL_NAND_BASE=y
+ CONFIG_SPL_NAND_IDENT=y
+ CONFIG_SPL_POWER=y
+-- 
+2.43.0
+

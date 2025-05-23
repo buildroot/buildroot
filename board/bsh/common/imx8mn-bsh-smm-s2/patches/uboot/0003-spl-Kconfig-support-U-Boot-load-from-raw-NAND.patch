@@ -1,0 +1,49 @@
+From 8acea298bb82c38b20855cd46a46b9e418dc1fb0 Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Tue, 20 May 2025 10:54:16 +0200
+Subject: [PATCH] spl: Kconfig: support U-Boot load from raw NAND
+
+Commit 2a00d73d081a ("spl: mmc: Try to clean up raw-mode options") breaks
+the boot of the BSH SMM S2 board. As stated in the commit itself, "Some
+boards use this value even though MMC is not enabled in SPL, for example
+imx8mn_bsh_smm_s2".
+
+Support load of the U-Boot image from raw NAND sector. This is equivalent
+to load from MMC raw sector.
+
+Fixes: 2a00d73d081a ("spl: mmc: Try to clean up raw-mode options")
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://source.denx.de/u-boot/u-boot/-/commit/8acea298bb82c38b20855cd46a46b9e418dc1fb0
+---
+ common/spl/Kconfig | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/common/spl/Kconfig b/common/spl/Kconfig
+index aa3a85eea54d..77cf04d38ed0 100644
+--- a/common/spl/Kconfig
++++ b/common/spl/Kconfig
+@@ -974,6 +974,21 @@ config SPL_NAND_SUPPORT
+ 	  This enables the drivers in drivers/mtd/nand/raw as part of an SPL
+ 	  build.
+ 
++config SPL_NAND_RAW_U_BOOT_USE_SECTOR
++	bool "NAND raw mode: by sector"
++	depends on SPL_NAND_SUPPORT
++	select SPL_LOAD_BLOCK
++	help
++	  Use sector number for specifying U-Boot location on NAND in
++	  raw mode.
++
++config SPL_NAND_RAW_U_BOOT_SECTOR
++	hex "Address on the NAND to load U-Boot from"
++	depends on SPL_NAND_RAW_U_BOOT_USE_SECTOR
++	help
++	  Address on the NAND to load U-Boot from, when the NAND is being used
++	  in raw mode. Units: NAND disk sectors (1 sector = 512 bytes).
++
+ config SPL_NAND_RAW_ONLY
+ 	bool "Support to boot only raw u-boot.bin images"
+ 	depends on SPL_NAND_SUPPORT
+-- 
+2.43.0
+

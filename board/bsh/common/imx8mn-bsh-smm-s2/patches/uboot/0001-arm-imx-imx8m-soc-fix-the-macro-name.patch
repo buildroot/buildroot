@@ -1,0 +1,45 @@
+From f7cddc4c6f4e4da57c6500cd0d88ea06e937b239 Mon Sep 17 00:00:00 2001
+From: Michael Trimarchi <michael@amarulasolutions.com>
+Date: Thu, 15 May 2025 17:09:51 +0200
+Subject: [PATCH] arm: imx: imx8m: soc: fix the macro name
+
+The function arch_spl_mmc_get_uboot_raw_sector() was never compiled,
+even when the option CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION was
+enabled. So rename the macro SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION to
+CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION.
+
+Fixes: 2a00d73d081a ("spl: mmc: Try to clean up raw-mode options")
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Upstream: https://source.denx.de/u-boot/u-boot/-/commit/f7cddc4c6f4e4da57c6500cd0d88ea06e937b239
+---
+ arch/arm/mach-imx/imx8m/soc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-imx/imx8m/soc.c b/arch/arm/mach-imx/imx8m/soc.c
+index 567e8e9e81a0..806adcf145fa 100644
+--- a/arch/arm/mach-imx/imx8m/soc.c
++++ b/arch/arm/mach-imx/imx8m/soc.c
+@@ -791,7 +791,7 @@ int boot_mode_getprisec(void)
+ #endif
+ 
+ #if defined(CONFIG_IMX8MN) || defined(CONFIG_IMX8MP)
+-#ifdef SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION
++#ifdef CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION
+ #define IMG_CNTN_SET1_OFFSET	GENMASK(22, 19)
+ unsigned long arch_spl_mmc_get_uboot_raw_sector(struct mmc *mmc,
+ 						unsigned long raw_sect)
+@@ -826,7 +826,7 @@ unsigned long arch_spl_mmc_get_uboot_raw_sector(struct mmc *mmc,
+ 
+ 	return raw_sect;
+ }
+-#endif /* SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION */
++#endif /* CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_USE_PARTITION */
+ #endif
+ 
+ bool is_usb_boot(void)
+-- 
+2.43.0
+
