@@ -1,6 +1,11 @@
 from datetime import datetime
 
 from pydantic import BaseModel, PositiveInt
+from pydantic.version import check_pydantic_core_version
+
+# pydantic pins an exact version of pydantic core
+# verify these are in sync in buildroots packaging
+assert check_pydantic_core_version()
 
 
 class User(BaseModel):
