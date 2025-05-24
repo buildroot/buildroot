@@ -1,0 +1,42 @@
+From 7f07ace91faa8b1d578bf5bac2987660f91f31ca Mon Sep 17 00:00:00 2001
+From: Allen Winter <allen.winter@kdab.com>
+Date: Sat, 14 Oct 2017 15:49:54 -0400
+Subject: [PATCH] CMakeLists.txt, src/test/CMakeLists.txt - no longer support
+ old CMake Policy CMP0005 ISSUE#315
+
+Upstream: https://github.com/libical/libical/commit/7f07ace91faa8b1d578bf5bac2987660f91f31ca
+[thomas: backported to v1.0.1]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+
+---
+ CMakeLists.txt          | 1 -
+ src/test/CMakeLists.txt | 2 +-
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d5aad80c..e2d5de72 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -50,7 +50,6 @@ project(libical C CXX)
+ 
+ if(COMMAND cmake_policy)
+   cmake_policy(SET CMP0003 NEW)
+-  cmake_policy(SET CMP0005 OLD)
+ endif()
+ 
+ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
+diff --git a/src/test/CMakeLists.txt b/src/test/CMakeLists.txt
+index 322b5e40..31ab6199 100644
+--- a/src/test/CMakeLists.txt
++++ b/src/test/CMakeLists.txt
+@@ -6,7 +6,7 @@ include_directories(
+ 
+ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})
+ 
+-set(TEST_DATADIR "\\\"${CMAKE_SOURCE_DIR}/test-data\\\"")
++set(TEST_DATADIR "\"${CMAKE_SOURCE_DIR}/test-data\"")
+ add_definitions(-DTEST_DATADIR=${TEST_DATADIR})
+ 
+ macro(setprops _name)
+-- 
+2.49.0
