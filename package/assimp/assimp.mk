@@ -16,6 +16,12 @@ ASSIMP_INSTALL_STAGING = YES
 # 0002-Fix-use-after-free-in-the-CallbackToLogRedirector-59.patch
 ASSIMP_IGNORE_CVES += CVE-2024-48423
 
+# 0003-ASE-fix-possible-out-of-bound-access.patch
+ASSIMP_IGNORE_CVES += CVE-2025-3015
+
+# 0004-MDL-limit-max-texture-sizes.patch
+ASSIMP_IGNORE_CVES += CVE-2025-3016
+
 # relocation truncated to fit: R_68K_GOT16O. We also need to disable
 # optimizations to not run into "Error: value -43420 out of range"
 # assembler issues.

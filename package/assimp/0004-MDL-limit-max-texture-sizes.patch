@@ -1,0 +1,41 @@
+From 5d2a7482312db2e866439a8c05a07ce1e718bed1 Mon Sep 17 00:00:00 2001
+From: Kim Kulling <kimkulling@users.noreply.github.com>
+Date: Wed, 12 Mar 2025 21:29:33 +0100
+Subject: [PATCH] MDL: Limit max texture sizes
+
+- closes https://github.com/assimp/assimp/issues/6022
+
+Upstream: https://github.com/assimp/assimp/pull/6046
+
+CVE: CVE-2025-3016
+
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ code/AssetLib/MDL/MDLMaterialLoader.cpp | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/code/AssetLib/MDL/MDLMaterialLoader.cpp b/code/AssetLib/MDL/MDLMaterialLoader.cpp
+index 2cac8a1e26..2e09992e89 100644
+--- a/code/AssetLib/MDL/MDLMaterialLoader.cpp
++++ b/code/AssetLib/MDL/MDLMaterialLoader.cpp
+@@ -209,6 +209,8 @@ void MDLImporter::CreateTexture_3DGS_MDL4(const unsigned char *szData,
+     return;
+ }
+ 
++static const uint32_t MaxTextureSize = 4096;
++
+ // ------------------------------------------------------------------------------------------------
+ // Load color data of a texture and convert it to our output format
+ void MDLImporter::ParseTextureColorData(const unsigned char *szData,
+@@ -219,6 +221,11 @@ void MDLImporter::ParseTextureColorData(const unsigned char *szData,
+ 
+     // allocate storage for the texture image
+     if (do_read) {
++        // check for max texture sizes
++        if (pcNew->mWidth > MaxTextureSize || pcNew->mHeight > MaxTextureSize) {
++            throw DeadlyImportError("Invalid MDL file. A texture is too big.");
++        }
++      
+         if(pcNew->mWidth != 0 && pcNew->mHeight > UINT_MAX/pcNew->mWidth) {
+             throw DeadlyImportError("Invalid MDL file. A texture is too big.");
+         }
