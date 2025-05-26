@@ -1,0 +1,33 @@
+From 142448e55386b88adf5b1d7e6206df1ca6784708 Mon Sep 17 00:00:00 2001
+From: Bruno Thomsen <bruno.thomsen@gmail.com>
+Date: Sat, 1 Mar 2025 14:32:41 +0100
+Subject: [PATCH] libuuu/sdps: fix gcc15 compile errors
+
+This gcc 15 error happens on Fedora 42.
+
+error: uint32_t does not name a type
+
+error: uint64_t does not name a type
+
+Signed-off-by: Bruno Thomsen <bruno.thomsen@gmail.com>
+Upstream: https://github.com/nxp-imx/mfgtools/commit/142448e55386b88adf5b1d7e6206df1ca6784708
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+---
+ libuuu/sdps.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/libuuu/sdps.h b/libuuu/sdps.h
+index b82f9d71c981..667a477ee48f 100644
+--- a/libuuu/sdps.h
++++ b/libuuu/sdps.h
+@@ -30,6 +30,7 @@
+ */
+ 
+ #include "cmd.h"
++#include <cstdint>
+ 
+ class SDPSCmd : public CmdBase
+ {
+-- 
+2.43.0
+
