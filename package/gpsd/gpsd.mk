@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GPSD_VERSION = 3.25
+GPSD_VERSION = 3.26.1
 GPSD_SITE = http://download-mirror.savannah.gnu.org/releases/gpsd
 GPSD_LICENSE = BSD-2-Clause
 GPSD_LICENSE_FILES = COPYING
@@ -120,17 +120,8 @@ endif
 ifneq ($(BR2_PACKAGE_GPSD_NMEA2000),y)
 GPSD_SCONS_OPTS += nmea2000=no
 endif
-ifneq ($(BR2_PACKAGE_GPSD_OCEANSERVER),y)
-GPSD_SCONS_OPTS += oceanserver=no
-endif
 ifneq ($(BR2_PACKAGE_GPSD_ONCORE),y)
 GPSD_SCONS_OPTS += oncore=no
-endif
-ifneq ($(BR2_PACKAGE_GPSD_RTCM104V2),y)
-GPSD_SCONS_OPTS += rtcm104v2=no
-endif
-ifneq ($(BR2_PACKAGE_GPSD_RTCM104V3),y)
-GPSD_SCONS_OPTS += rtcm104v3=no
 endif
 ifneq ($(BR2_PACKAGE_GPSD_SIRF),y)
 GPSD_SCONS_OPTS += sirf=no
@@ -149,9 +140,6 @@ GPSD_SCONS_OPTS += tripmate=no
 endif
 ifneq ($(BR2_PACKAGE_GPSD_TRUE_NORTH),y)
 GPSD_SCONS_OPTS += tnt=no
-endif
-ifneq ($(BR2_PACKAGE_GPSD_UBX),y)
-GPSD_SCONS_OPTS += ublox=no
 endif
 
 # Features

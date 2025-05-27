@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2025.08"
 
+config BR2_PACKAGE_GPSD_OCEANSERVER
+	bool "gpsd OceanServer removed upstream"
+	select BR2_LEGACY
+	help
+	  Support for OceanServer has been removed upstream in gpsd
+	  v3.26.
+
 config BR2_PACKAGE_MESA3D_OSMESA_GALLIUM
 	bool "mesa3d OSMesa (Gallium) library support removed"
 	select BR2_LEGACY

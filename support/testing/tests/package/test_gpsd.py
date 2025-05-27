@@ -33,7 +33,7 @@ class TestGpsd(infra.basetest.BRTest):
         # We start the "gpsfake" GPS emulator instead.
         cmd = "gpsfake"
         cmd += " --slow --cycle 0.1 --quiet"
-        cmd += " /root/udp-nmea.log &> /dev/null &"
+        cmd += " /root/nmea.log &> /dev/null &"
         self.assertRunOk(cmd)
 
         # Wait a bit, to let the gpsfake and gpsd to settle...
@@ -42,7 +42,7 @@ class TestGpsd(infra.basetest.BRTest):
         # List the GPS devices. We should see our local UDP test GPS.
         out, ret = self.emulator.run("gpsctl")
         self.assertEqual(ret, 0)
-        self.assertTrue(out[0].startswith("udp://127.0.0.1"))
+        self.assertTrue(out[0].startswith("tcp://127.0.0.1"))
         self.assertIn("NMEA0183", out[0])
 
         # Collect some of our fake GPS data, and check we got the
