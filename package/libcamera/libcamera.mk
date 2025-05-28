@@ -130,7 +130,7 @@ endif
 # otherwise the signature won't match the shlib on the rootfs. Since meson
 # install target is signing the shlibs, we need to strip them before.
 LIBCAMERA_STRIP_FIND_CMD = \
-	find $(@D)/build/src/ipa \
+	find $(@D)/buildroot-build/src/ipa \
 	$(if $(call qstrip,$(BR2_STRIP_EXCLUDE_FILES)), \
 		-not \( $(call findfileclauses,$(call qstrip,$(BR2_STRIP_EXCLUDE_FILES))) \) ) \
 	-type f -name 'ipa_*.so' -print0
