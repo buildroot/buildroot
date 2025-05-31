@@ -242,3 +242,8 @@ If you want to provide such libraries either:
 - Serve it by adding the library to your overlay.
 - Install the libraries from your project with NPM and bundle with a JavaScript
   bundler.
+
+In 2026.02, the network-manager package stopped selecting the gnutls package as
+a cryptography backend automatically. Manually enable the gnutls or libnss
+package if you require features that depend on a cryptography backend, such as
+certificate-based authentication.

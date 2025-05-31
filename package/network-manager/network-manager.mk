@@ -80,9 +80,11 @@ endif
 ifeq ($(BR2_PACKAGE_LIBNSS),y)
 NETWORK_MANAGER_DEPENDENCIES += libnss
 NETWORK_MANAGER_CONF_OPTS += -Dcrypto=nss
-else
+else ifeq ($(BR2_PACKAGE_GNUTLS),y)
 NETWORK_MANAGER_DEPENDENCIES += gnutls
 NETWORK_MANAGER_CONF_OPTS += -Dcrypto=gnutls
+else
+NETWORK_MANAGER_CONF_OPTS += -Dcrypto=null
 endif
 
 ifeq ($(BR2_PACKAGE_LIBPSL),y)
