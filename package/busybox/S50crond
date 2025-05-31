@@ -36,7 +36,7 @@ stop() {
 		echo "FAIL"
 	fi
 	while start-stop-daemon --stop --test --quiet --pidfile "$PIDFILE" \
-		--exec "/sbin/$DAEMON"; do
+		--exec "/usr/sbin/$DAEMON"; do
 		sleep 0.1
 	done
 	rm -f "$PIDFILE"
