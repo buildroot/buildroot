@@ -138,7 +138,6 @@ config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_IRIS
 	  Mesa driver for iris-based Intel GPUs.
 
 comment "iris driver needs llvm"
-	depends on BR2_i386 || BR2_x86_64
 	depends on !BR2_PACKAGE_MESA3D_LLVM
 
 config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_LIMA
