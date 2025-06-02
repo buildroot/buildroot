@@ -13,10 +13,6 @@ EXIM_CPE_ID_VENDOR = exim
 EXIM_SELINUX_MODULES = exim mta
 EXIM_DEPENDENCIES = host-berkeleydb host-pcre2 pcre2 berkeleydb host-pkgconf
 
-# Incorrect NVD database, reported at
-# https://lore.kernel.org/buildroot/20250517183423.07951665@windsurf/
-EXIM_IGNORE_CVES += CVE-2022-3559
-
 # Modify a variable value. It must already exist in the file, either
 # commented or not.
 define exim-config-change # variable-name, variable-value
