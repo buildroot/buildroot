@@ -89,6 +89,7 @@ HOST_QT6BASE_CONF_OPTS = \
 	-DFEATURE_dbus=OFF \
 	-DFEATURE_icu=OFF \
 	-DFEATURE_glib=OFF \
+	-DFEATURE_sql=OFF \
 	-DFEATURE_system_doubleconversion=ON \
 	-DFEATURE_system_libb2=ON \
 	-DFEATURE_system_pcre2=ON \
@@ -137,15 +138,6 @@ ifeq ($(BR2_PACKAGE_HOST_QT6BASE_NETWORK),y)
 HOST_QT6BASE_CONF_OPTS += -DFEATURE_network=ON
 else
 HOST_QT6BASE_CONF_OPTS += -DFEATURE_network=OFF
-endif
-
-# We need host qt6base with Sql support for host-qt6tools to generate the
-# qhelpgenerator host tool. qt6tools will fail to build if qhelpgenerator is not
-# available.
-ifeq ($(BR2_PACKAGE_HOST_QT6BASE_SQL),y)
-HOST_QT6BASE_CONF_OPTS += -DFEATURE_sql=ON
-else
-HOST_QT6BASE_CONF_OPTS += -DFEATURE_sql=OFF
 endif
 
 # We need host-qt6base with Testlib support when building host-qt6declarative
