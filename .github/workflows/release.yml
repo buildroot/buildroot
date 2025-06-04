@@ -1,0 +1,15 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'lkss-*'
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v3
