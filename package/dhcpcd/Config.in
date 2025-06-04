@@ -12,7 +12,7 @@ config BR2_PACKAGE_DHCPCD
 if BR2_PACKAGE_DHCPCD
 
 config BR2_PACKAGE_DHCPCD_ENABLE_PRIVSEP
-	bool
+	bool "enable privilege separation"
 	default y
 	depends on BR2_USE_MMU
 	# Audit headers were only added in recent kernels for some arches
