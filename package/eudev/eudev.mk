@@ -52,10 +52,10 @@ EUDEV_CONF_OPTS += --disable-selinux
 endif
 
 define EUDEV_INSTALL_INIT_SYSV
-	$(INSTALL) -D -m 0755 package/eudev/S10udev $(TARGET_DIR)/etc/init.d/S10udev
+	$(INSTALL) -D -m 0755 package/eudev/S10udevd $(TARGET_DIR)/etc/init.d/S10udevd
 endef
 
-# Avoid installing S10udev with openrc, as the service is started by a unit
+# Avoid installing S10udevd with openrc, as the service is started by a unit
 # from the udev-gentoo-scripts package.
 define EUDEV_INSTALL_INIT_OPENRC
 	@:
