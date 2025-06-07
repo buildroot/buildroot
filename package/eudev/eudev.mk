@@ -82,7 +82,7 @@ define HOST_EUDEV_INSTALL_CMDS
 endef
 
 define HOST_EUDEV_BUILD_HWDB
-	$(HOST_DIR)/bin/udevadm hwdb --update --root $(TARGET_DIR)
+	$(HOST_DIR)/bin/udevadm hwdb --update --usr --root $(TARGET_DIR)
 endef
 HOST_EUDEV_TARGET_FINALIZE_HOOKS += HOST_EUDEV_BUILD_HWDB
 
