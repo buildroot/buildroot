@@ -1,0 +1,38 @@
+From 64ef740eb262f329e55eebadf2ce276b146d44e9 Mon Sep 17 00:00:00 2001
+From: Martin Jansa <martin.jansa@gmail.com>
+Date: Tue, 22 Apr 2025 19:06:24 +0200
+Subject: [PATCH] bitvect: fix build with gcc-15
+
+* fixes:
+libyasm/bitvect.h:86:32: error: cannot use keyword 'false' as enumeration constant
+   86 |         typedef enum boolean { false = FALSE, true = TRUE } boolean;
+      |                                ^~~~~
+../git/libyasm/bitvect.h:86:32: note: 'false' is a keyword with '-std=c23' onwards
+
+as suggested in:
+https://github.com/yasm/yasm/issues/283#issuecomment-2661108816
+
+Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
+Upstream: https://github.com/yasm/yasm/pull/287
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ libyasm/bitvect.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/libyasm/bitvect.h b/libyasm/bitvect.h
+index 3aee3a531..a13470ada 100644
+--- a/libyasm/bitvect.h
++++ b/libyasm/bitvect.h
+@@ -83,7 +83,11 @@ typedef  Z_longword         *Z_longwordptr;
+     #ifdef MACOS_TRADITIONAL
+         #define boolean Boolean
+     #else
+-        typedef enum boolean { false = FALSE, true = TRUE } boolean;
++        #if __STDC_VERSION__ < 202311L
++             typedef enum boolean { false = FALSE, true = TRUE } boolean;
++        #else
++             typedef bool boolean;
++        #endif
+     #endif
+ #endif
+ 
