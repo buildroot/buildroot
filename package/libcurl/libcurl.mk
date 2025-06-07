@@ -36,7 +36,9 @@ LIBCURL_CONF_OPTS = \
 # https://nvd.nist.gov/vuln/detail/CVE-2024-32928
 LIBCURL_IGNORE_CVES += CVE-2024-32928
 
-ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+# threaded resolver cannot be used with c-ares
+# https://github.com/curl/curl/commit/d364f1347f05c53eea5d25a15b4ad8a62ecc85b8
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS)x$(BR2_PACKAGE_C_ARES)),yx)
 LIBCURL_CONF_OPTS += --enable-threaded-resolver
 else
 LIBCURL_CONF_OPTS += --disable-threaded-resolver
