@@ -151,6 +151,7 @@ comment "Special purpose (read help)"
 
 config BR2_INIT_CATATONIT
 	bool "catatonit"
+	depends on BR2_USE_MMU # catatonit
 	select BR2_PACKAGE_CATATONIT
 	select BR2_PACKAGE_SKELETON_INIT_NONE if BR2_ROOTFS_SKELETON_DEFAULT
 	help
