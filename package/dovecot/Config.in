@@ -21,12 +21,16 @@ config BR2_PACKAGE_DOVECOT_MYSQL
 	bool "mysql support"
 	depends on BR2_INSTALL_LIBSTDCPP # mariadb
 	depends on BR2_TOOLCHAIN_HAS_THREADS # mariadb
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC || BR2_TOOLCHAIN_HAS_SYNC_8 # mariadb
+	depends on BR2_USE_WCHAR # mariadb
 	select BR2_PACKAGE_MARIADB
 	help
 	  Enable MySQL support.
 
-comment "mysql support needs a toolchain w/ C++, threads"
-	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS
+comment "mysql support needs a toolchain w/ C++, threads, wchar"
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC || BR2_TOOLCHAIN_HAS_SYNC_8
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_USE_WCHAR
 
 config BR2_PACKAGE_DOVECOT_SQLITE
 	bool "sqlite support"
