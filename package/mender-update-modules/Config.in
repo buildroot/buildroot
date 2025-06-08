@@ -108,6 +108,8 @@ comment "docker support needs a glibc or musl toolchain w/ threads, headers >= 3
 
 config BR2_PACKAGE_MENDER_UPDATE_MODULES_IPK
 	bool "ipk"
+	depends on BR2_USE_MMU # opkg
+	depends on BR2_USE_WCHAR # opkg -> libarchive
 	select BR2_PACKAGE_OPKG
 	help
 	  The IPK Update Module allows opkg-based packages to be
@@ -117,6 +119,10 @@ config BR2_PACKAGE_MENDER_UPDATE_MODULES_IPK
 	    - Deploy any ipk package
 
 	  https://github.com/mendersoftware/mender-update-modules/tree/master/ipk
+
+comment "ipk support needs a toolchain w/ wchar"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR
 
 config BR2_PACKAGE_MENDER_UPDATE_MODULES_PODMAN
 	bool "podman"
