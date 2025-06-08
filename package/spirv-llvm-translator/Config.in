@@ -5,6 +5,7 @@ config BR2_PACKAGE_SPIRV_LLVM_TRANSLATOR
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_INSTALL_LIBSTDCPP
 	depends on !BR2_STATIC_LIBS
+	depends on BR2_USE_WCHAR # llvm
 	depends on BR2_HOST_GCC_AT_LEAST_7 # host-llvm
 	select BR2_PACKAGE_LLVM
 	select BR2_PACKAGE_SPIRV_HEADERS
@@ -15,8 +16,9 @@ config BR2_PACKAGE_SPIRV_LLVM_TRANSLATOR
 
 	  https://github.com/khronosGroup/SPIRV-LLVM-Translator
 
-comment "spirv-translator needs a toolchain w/ threads, C++, gcc >= 7, dynamic library, host gcc >= 7"
+comment "spirv-translator needs a toolchain w/ wchar, threads, C++, gcc >= 7, dynamic library, host gcc >= 7"
 	depends on BR2_PACKAGE_LLVM_ARCH_SUPPORTS
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_INSTALL_LIBSTDCPP || \
-		!BR2_TOOLCHAIN_GCC_AT_LEAST_7 \
-		|| BR2_STATIC_LIBS || !BR2_HOST_GCC_AT_LEAST_7
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_7 || \
+		BR2_STATIC_LIBS || !BR2_USE_WCHAR || \
+		!BR2_HOST_GCC_AT_LEAST_7
