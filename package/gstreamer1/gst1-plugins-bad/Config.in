@@ -659,6 +659,7 @@ config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_WEBP
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_WEBRTC
 	bool "webrtc"
 	depends on !BR2_STATIC_LIBS # libnice -> gnutls
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # gst1-plugins-bad sctp
 	select BR2_PACKAGE_GST1_PLUGINS_BASE # libgstsdp
 	select BR2_PACKAGE_LIBNICE
 	select BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_DTLS
@@ -669,6 +670,7 @@ config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_WEBRTC
 
 comment "webrtc needs a toolchain w/ dynamic library"
 	depends on BR2_STATIC_LIBS
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 
 config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_WEBRTCDSP
 	bool "webrtcdsp"
