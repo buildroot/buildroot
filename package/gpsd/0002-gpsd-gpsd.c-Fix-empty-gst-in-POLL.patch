@@ -1,0 +1,78 @@
+From 98e61729d84b3e3698cde4ec7fe446b932d333fc Mon Sep 17 00:00:00 2001
+Message-Id: <98e61729d84b3e3698cde4ec7fe446b932d333fc.1749533625.git.yann.morin@orange.com>
+In-Reply-To: <f18e52dad4eeba2434a988bc899f6c7fe973f4ba.1749533625.git.yann.morin@orange.com>
+References: <f18e52dad4eeba2434a988bc899f6c7fe973f4ba.1749533625.git.yann.morin@orange.com>
+From: "Gary E. Miller" <gem@rellim.com>
+Date: Thu, 5 Jun 2025 17:40:56 -0700
+Subject: [PATCH] gpsd/gpsd.c: Fix empty gst[,] in POLL.
+
+Fix issue 336.
+
+Upstream: https://gitlab.com/gpsd/gpsd/-/commit/3185c5790c3e7e31c6cc80174940f0385cba2617
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+---
+ gpsd/gpsd.c | 30 ++++++++++++++++++++++--------
+ 1 file changed, 22 insertions(+), 8 deletions(-)
+
+diff --git a/gpsd/gpsd.c b/gpsd/gpsd.c
+index 5a98a4470..3797ace13 100644
+--- a/gpsd/gpsd.c
++++ b/gpsd/gpsd.c
+@@ -1555,10 +1555,15 @@ static void handle_request(struct subscriber_t *sub, const char *buf,
+         for (devp = devices; devp < devices + MAX_DEVICES; devp++) {
+             if (allocated_device(devp) && subscribed(sub, devp)) {
+                 if (0 != (devp->observed & GPS_TYPEMASK)) {
++                    size_t rlen = strnlen(reply, replylen);
++
+                     json_tpv_dump(NAVDATA_SET, devp, &sub->policy,
+-                                  reply + strnlen(reply, replylen),
+-                                  replylen - strnlen(reply, replylen));
++                                  reply + rlen, replylen - rlen);
+                     rstrip(reply, replylen);
++                    if (strnlen(reply, replylen) == rlen) {
++                        // no data
++                        continue;
++                    }
+                     (void)strlcat(reply, ",", replylen);
+                 }
+             }
+@@ -1568,10 +1573,15 @@ static void handle_request(struct subscriber_t *sub, const char *buf,
+         for (devp = devices; devp < devices + MAX_DEVICES; devp++) {
+             if (allocated_device(devp) && subscribed(sub, devp)) {
+                 if (0 != (devp->observed & GPS_TYPEMASK)) {
+-                    json_noise_dump(&devp->gpsdata,
+-                                    reply + strnlen(reply, replylen),
+-                                    replylen - strnlen(reply, replylen));
++                    size_t rlen = strnlen(reply, replylen);
++
++                    json_noise_dump(&devp->gpsdata, reply + rlen,
++                                    replylen - rlen);
+                     rstrip(reply, replylen);
++                    if (strnlen(reply, replylen) == rlen) {
++                        // no data
++                        continue;
++                    }
+                     (void)strlcat(reply, ",", replylen);
+                 }
+             }
+@@ -1581,10 +1591,14 @@ static void handle_request(struct subscriber_t *sub, const char *buf,
+         for (devp = devices; devp < devices + MAX_DEVICES; devp++) {
+             if (allocated_device(devp) && subscribed(sub, devp)) {
+                 if (0 != (devp->observed & GPS_TYPEMASK)) {
+-                    json_sky_dump(devp,
+-                                  reply + strnlen(reply, replylen),
+-                                  replylen - strnlen(reply, replylen));
++                    size_t rlen = strnlen(reply, replylen);
++
++                    json_sky_dump(devp, reply + rlen, replylen - rlen);
+                     rstrip(reply, replylen);
++                    if (strnlen(reply, replylen) == rlen) {
++                        // no data
++                        continue;
++                    }
+                     (void)strlcat(reply, ",", replylen);
+                 }
+             }
+-- 
+2.34.1
+

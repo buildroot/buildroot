@@ -1,0 +1,40 @@
+From f18e52dad4eeba2434a988bc899f6c7fe973f4ba Mon Sep 17 00:00:00 2001
+Message-Id: <f18e52dad4eeba2434a988bc899f6c7fe973f4ba.1749533625.git.yann.morin@orange.com>
+From: Richard Lindsley <rich.lindsley@gmail.com>
+Date: Fri, 23 May 2025 18:48:57 -0700
+Subject: [PATCH] Fix the --logfile and --dumpfile options for gpsprof
+
+The open() function requires that the "encoding" argument is a str or
+None.
+
+Upstream: https://gitlab.com/gpsd/gpsd/-/commit/bad9973b8e73e9e2cc0af2555edc9c8a0855d203
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+---
+ clients/gpsprof.py.in | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/clients/gpsprof.py.in b/clients/gpsprof.py.in
+index 8b1a5234b..e5e448a53 100644
+--- a/clients/gpsprof.py.in
++++ b/clients/gpsprof.py.in
+@@ -1208,7 +1208,7 @@ if __name__ == '__main__':
+     options = parser.parse_args()
+ 
+     if options.logfile:
+-        options.logfp = open(options.logfile, "w", encoding=ascii)
++        options.logfp = open(options.logfile, "w", encoding="ascii")
+     else:
+         options.logfp = None
+ 
+@@ -1255,7 +1255,7 @@ if __name__ == '__main__':
+         plot.postprocess()
+         # Save the timing data (only) for post-analysis if required.
+         if options.dumpfile:
+-            with open(options.dumpfile, "w", encoding=ascii) as fp:
++            with open(options.dumpfile, "w", encoding="ascii") as fp:
+                 fp.write(plot.dump())
+         if options.logfp:
+             options.logfp.close()
+-- 
+2.34.1
+

@@ -1,0 +1,32 @@
+From 0b1769a3abe386c139a8b4d4967b57a00f0f286a Mon Sep 17 00:00:00 2001
+Message-Id: <0b1769a3abe386c139a8b4d4967b57a00f0f286a.1749533625.git.yann.morin@orange.com>
+In-Reply-To: <f18e52dad4eeba2434a988bc899f6c7fe973f4ba.1749533625.git.yann.morin@orange.com>
+References: <f18e52dad4eeba2434a988bc899f6c7fe973f4ba.1749533625.git.yann.morin@orange.com>
+From: Miroslav Lichvar <mlichvar@redhat.com>
+Date: Tue, 10 Jun 2025 00:21:52 +0200
+Subject: [PATCH] gpsd/libgpsd_core.c: Make client UDP socket non-blocking.
+
+Resolving issue #337
+
+Upstream: https://gitlab.com/gpsd/gpsd/-/commit/992a90e6a50b4d3dcb091fff4658e7892c985c7f
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+---
+ gpsd/libgpsd_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gpsd/libgpsd_core.c b/gpsd/libgpsd_core.c
+index f328648f7..6b77e2b97 100644
+--- a/gpsd/libgpsd_core.c
++++ b/gpsd/libgpsd_core.c
+@@ -614,7 +614,7 @@ int gpsd_open(struct gps_device_t *session)
+                  "CORE: opening UDP feed at %s, port %s.\n", host,
+                  port);
+         if (0 > (dsock = netlib_connectsock1(AF_UNSPEC, host, port, "udp",
+-                                             0, true, NULL, 0))) {
++                                             1, true, NULL, 0))) {
+             // cast for 32-bit ints.
+             GPSD_LOG(LOG_ERROR, &session->context->errout,
+                      "CORE: UDP device open error %s(%ld).\n",
+-- 
+2.34.1
+
