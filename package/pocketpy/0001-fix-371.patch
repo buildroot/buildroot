@@ -1,0 +1,73 @@
+From e2e3bdca6e79ce7be5607397c5f0152c28c7500b Mon Sep 17 00:00:00 2001
+From: blueloveTH <blueloveth@foxmail.com>
+Date: Sat, 7 Jun 2025 02:19:55 +0800
+Subject: [PATCH] fix #371
+
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: backport from https://github.com/pocketpy/pocketpy/commit/70e824a6b695e963621664589d1d00aeb182c018
+---
+ include/pocketpy/pocketpy.h | 2 +-
+ src/interpreter/vm.c        | 6 ++++--
+ src/public/modules.c        | 2 +-
+ 3 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/include/pocketpy/pocketpy.h b/include/pocketpy/pocketpy.h
+index a44faa41a922..a6cb4f658f73 100644
+--- a/include/pocketpy/pocketpy.h
++++ b/include/pocketpy/pocketpy.h
+@@ -69,7 +69,7 @@ typedef struct py_Callbacks {
+     /// Used by `print` to output a string.
+     void (*print)(const char*);
+     /// Used by `input` to get a character.
+-    int (*getchar)();
++    int (*getchr)();
+ } py_Callbacks;
+ 
+ /// Native function signature.
+diff --git a/src/interpreter/vm.c b/src/interpreter/vm.c
+index 2bae82740ac7..2da28fa80730 100644
+--- a/src/interpreter/vm.c
++++ b/src/interpreter/vm.c
+@@ -29,6 +29,8 @@ static char* pk_default_importfile(const char* path) {
+ 
+ static void pk_default_print(const char* data) { printf("%s", data); }
+ 
++static int pk_default_getchr() { return getchar(); }
++
+ static void py_TypeInfo__ctor(py_TypeInfo* self,
+                               py_Name name,
+                               py_Type index,
+@@ -67,7 +69,7 @@ void VM__ctor(VM* self) {
+ 
+     self->callbacks.importfile = pk_default_importfile;
+     self->callbacks.print = pk_default_print;
+-    self->callbacks.getchar = getchar;
++    self->callbacks.getchr = pk_default_getchr;
+ 
+     self->last_retval = *py_NIL();
+     self->curr_exception = *py_NIL();
+@@ -810,7 +812,7 @@ int py_replinput(char* buf, int max_size) {
+     printf(">>> ");
+ 
+     while(true) {
+-        int c = pk_current_vm->callbacks.getchar();
++        int c = pk_current_vm->callbacks.getchr();
+         if(c == EOF) return -1;
+ 
+         if(c == '\n') {
+diff --git a/src/public/modules.c b/src/public/modules.c
+index 3efb362701e2..cdfd5549461a 100644
+--- a/src/public/modules.c
++++ b/src/public/modules.c
+@@ -205,7 +205,7 @@ static bool builtins_input(int argc, py_Ref argv) {
+     c11_sbuf buf;
+     c11_sbuf__ctor(&buf);
+     while(true) {
+-        int c = pk_current_vm->callbacks.getchar();
++        int c = pk_current_vm->callbacks.getchr();
+         if(c == '\n' || c == '\r') break;
+         if(c == EOF) break;
+         c11_sbuf__write_char(&buf, c);
+-- 
+2.43.0
+

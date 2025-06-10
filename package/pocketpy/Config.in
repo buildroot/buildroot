@@ -1,0 +1,9 @@
+config BR2_PACKAGE_POCKETPY
+	bool "pocketpy"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on !BR2_STATIC_LIBS # dlfcn.h
+	help
+	  pocketpy is a portable Python 3.x interpreter,
+	  written in C11.
+
+	  https://github.com/pocketpy/pocketpy
