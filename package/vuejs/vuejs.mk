@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-VUEJS_VERSION = 3.5.12
+VUEJS_VERSION = 3.5.16
 VUEJS_SOURCE = vue-$(VUEJS_VERSION).tgz
 VUEJS_SITE = https://registry.npmjs.org/vue/-
 VUEJS_LICENSE = MIT
