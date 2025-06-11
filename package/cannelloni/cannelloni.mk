@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CANNELLONI_VERSION = 1.0.0
+CANNELLONI_VERSION = 2.0.0
 CANNELLONI_SITE = $(call github,mguentner,cannelloni,v$(CANNELLONI_VERSION))
 CANNELLONI_LICENSE = GPL-2.0
 CANNELLONI_LICENSE_FILES = gpl-2.0.txt
