@@ -33,7 +33,8 @@ WINE_CONF_OPTS = \
 	--without-mingw \
 	--without-opencl \
 	--without-oss \
-	--without-vulkan
+	--without-vulkan \
+	--without-osmesa  # BR2_PACKAGE_MESA3D_OSMESA_GALLIUM removed in mesa 25.1
 
 # Wine uses a wrapper around gcc, and uses the value of --host to
 # construct the filename of the gcc to call.  But for external
@@ -141,13 +142,6 @@ WINE_CONF_OPTS += --with-v4l2
 WINE_DEPENDENCIES += libv4l
 else
 WINE_CONF_OPTS += --without-v4l2
-endif
-
-ifeq ($(BR2_PACKAGE_MESA3D_OSMESA_GALLIUM),y)
-WINE_CONF_OPTS += --with-osmesa
-WINE_DEPENDENCIES += mesa3d
-else
-WINE_CONF_OPTS += --without-osmesa
 endif
 
 ifeq ($(BR2_PACKAGE_PCSC_LITE),y)

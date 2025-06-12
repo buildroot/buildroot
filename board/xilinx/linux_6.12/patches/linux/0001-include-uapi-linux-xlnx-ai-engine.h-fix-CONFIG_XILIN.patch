@@ -1,0 +1,127 @@
+From 333678d7b9edc29e8148411d48f70950b1b614c1 Mon Sep 17 00:00:00 2001
+From: Neal Frager <neal.frager@amd.com>
+Date: Mon, 2 Jun 2025 11:07:03 +0100
+Subject: [PATCH] include/uapi/linux/xlnx-ai-engine.h: fix
+ CONFIG_XILINX_AIE leak
+
+Linux Kconfig options should not be exposed to user space.  This patch fixes
+a Linux kernel leak of the CONFIG_XILINX_AIE option by moving the changes
+implemented by the CONFIG_XILINX_AIE from the uapi header file to the local
+Linux kernel header file.
+
+Upstream: internal AMD jira process
+Signed-off-by: Neal Frager <neal.frager@amd.com>
+---
+ include/linux/xlnx-ai-engine.h      | 37 +++++++++++++++++++++++++
+ include/uapi/linux/xlnx-ai-engine.h | 42 -----------------------------
+ 2 files changed, 37 insertions(+), 42 deletions(-)
+
+diff --git a/include/linux/xlnx-ai-engine.h b/include/linux/xlnx-ai-engine.h
+index 44a1e40ef9b8..10905dc84ae9 100644
+--- a/include/linux/xlnx-ai-engine.h
++++ b/include/linux/xlnx-ai-engine.h
+@@ -171,6 +171,13 @@ static inline u32 aie_get_error_category(struct aie_error *err)
+ 	return err->category;
+ }
+ 
++int aie_partition_write_privileged_mem(struct device *dev, size_t offset, size_t len, void *data);
++int aie_partition_read_privileged_mem(struct device *dev, size_t offset, size_t len, void *data);
++bool aie_partition_check_noc_aximm(struct device *dev, struct aie_location *loc);
++int aie_partition_check_uc_aximm(struct device *dev, struct aie_location *loc);
++int aie_partition_uc_zeroize_mem(struct device *dev, struct aie_location *loc, u32 regval);
++int aie_load_cert(struct device *dev, unsigned char *elf_addr);
++
+ #else
+ static inline bool aie_partition_is_available(struct aie_partition_req *req)
+ {
+@@ -271,5 +278,35 @@ static inline int aie_part_rscmgr_set_static_range(struct device *dev,
+ 	return -EINVAL;
+ }
+ 
++int aie_partition_write_privileged_mem(struct device *dev, size_t offset, size_t len, void *data)
++{
++	return -EINVAL;
++}
++
++int aie_partition_read_privileged_mem(struct device *dev, size_t offset, size_t len, void *data)
++{
++	return -EINVAL;
++}
++
++bool aie_partition_check_noc_aximm(struct device *dev, struct aie_location *loc)
++{
++	return false;
++}
++
++int aie_partition_check_uc_aximm(struct device *dev, struct aie_location *loc)
++{
++	return 0;
++}
++
++int aie_partition_uc_zeroize_mem(struct device *dev, struct aie_location *loc, u32 regval)
++{
++	return -EINVAL;
++}
++
++int aie_load_cert(struct device *dev, unsigned char *elf_addr)
++{
++	return -EINVAL;
++}
++
+ #endif /* CONFIG_XILINX_AIE */
+ #endif
+diff --git a/include/uapi/linux/xlnx-ai-engine.h b/include/uapi/linux/xlnx-ai-engine.h
+index 424c5f4c4097..1680aed8ad85 100644
+--- a/include/uapi/linux/xlnx-ai-engine.h
++++ b/include/uapi/linux/xlnx-ai-engine.h
+@@ -781,47 +781,5 @@ struct aie_rsc_user_stat_array {
+  */
+ #define AIE_UPDATE_SHIMDMA_DMABUF_BD_ADDR_IOCTL	_IOW(AIE_IOCTL_BASE, 0x1e, \
+ 						struct aie_dmabuf_bd_args)
+-#if IS_ENABLED(CONFIG_XILINX_AIE)
+-
+-int aie_partition_write_privileged_mem(struct device *dev, size_t offset, size_t len, void *data);
+-int aie_partition_read_privileged_mem(struct device *dev, size_t offset, size_t len, void *data);
+-bool aie_partition_check_noc_aximm(struct device *dev, struct aie_location *loc);
+-int aie_partition_check_uc_aximm(struct device *dev, struct aie_location *loc);
+-int aie_partition_uc_zeroize_mem(struct device *dev, struct aie_location *loc, u32 regval);
+-int aie_load_cert(struct device *dev, unsigned char *elf_addr);
+-
+-#else /* IS_ENABLED(CONFIG_XILINX_AIE) */
+-
+-int aie_partition_write_privileged_mem(struct device *dev, size_t offset, size_t len, void *data)
+-{
+-	return -EINVAL;
+-}
+-
+-int aie_partition_read_privileged_mem(struct device *dev, size_t offset, size_t len, void *data)
+-{
+-	return -EINVAL;
+-}
+-
+-bool aie_partition_check_noc_aximm(struct device *dev, struct aie_location *loc)
+-{
+-	return false;
+-}
+-
+-int aie_partition_check_uc_aximm(struct device *dev, struct aie_location *loc)
+-{
+-	return 0;
+-}
+-
+-int aie_partition_uc_zeroize_mem(struct device *dev, struct aie_location *loc, u32 regval)
+-{
+-	return -EINVAL;
+-}
+-
+-int aie_load_cert(struct device *dev, unsigned char *elf_addr)
+-{
+-	return -EINVAL;
+-}
+-
+-#endif /* IS_ENABLED(CONFIG_XILINX_AIE) */
+ 
+ #endif
+-- 
+2.25.1
+

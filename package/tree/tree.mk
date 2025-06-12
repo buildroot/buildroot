@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TREE_VERSION = 2.1.1
+TREE_VERSION = 2.2.1
 TREE_SOURCE = tree-$(TREE_VERSION).tgz
 TREE_SITE = http://oldmanprogrammer.net/tar/tree
 TREE_LICENSE = GPL-2.0+

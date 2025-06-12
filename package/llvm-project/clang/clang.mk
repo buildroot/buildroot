@@ -14,8 +14,11 @@ CLANG_CPE_ID_VENDOR = llvm
 CLANG_SUPPORTS_IN_SOURCE_BUILD = NO
 CLANG_INSTALL_STAGING = YES
 
-HOST_CLANG_DEPENDENCIES = host-llvm host-libxml2
+HOST_CLANG_DEPENDENCIES = host-llvm host-libxml2 host-python3
 CLANG_DEPENDENCIES = llvm host-clang
+
+# since we have LLVM_ENABLE_LIBXML2=OFF, set CLANG_ENABLE_LIBXML2=OFF
+CLANG_CONF_OPTS += -DCLANG_ENABLE_LIBXML2=OFF
 
 # This option is needed, otherwise multiple shared libs
 # (libclangAST.so, libclangBasic.so, libclangFrontend.so, etc.) will
@@ -45,12 +48,14 @@ CLANG_CONF_OPTS += -DCLANG_BUILD_TOOLS=ON
 HOST_CLANG_CONF_OPTS += \
 	-DCLANG_BUILD_EXAMPLES=OFF \
 	-DCLANG_INCLUDE_DOCS=OFF \
-	-DCLANG_INCLUDE_TESTS=OFF
+	-DCLANG_INCLUDE_TESTS=OFF \
+	-DLLVM_INCLUDE_TESTS=OFF
 
 CLANG_CONF_OPTS += \
 	-DCLANG_BUILD_EXAMPLES=OFF \
 	-DCLANG_INCLUDE_DOCS=OFF \
-	-DCLANG_INCLUDE_TESTS=OFF
+	-DCLANG_INCLUDE_TESTS=OFF \
+	-DLLVM_INCLUDE_TESTS=OFF
 
 HOST_CLANG_CONF_OPTS += -DLLVM_DIR=$(HOST_DIR)/lib/cmake/llvm \
 	-DCLANG_DEFAULT_LINKER=$(TARGET_LD)
@@ -58,6 +63,12 @@ CLANG_CONF_OPTS += -DLLVM_DIR=$(STAGING_DIR)/usr/lib/cmake/llvm \
 	-DCMAKE_MODULE_PATH=$(HOST_DIR)/lib/cmake/llvm \
 	-DCLANG_TABLEGEN:FILEPATH=$(HOST_DIR)/bin/clang-tblgen \
 	-DLLVM_TABLEGEN_EXE:FILEPATH=$(HOST_DIR)/bin/llvm-tblgen
+
+HOST_CLANG_CONF_OPTS += -DLLVM_COMMON_CMAKE_UTILS=$(HOST_DIR)/lib/cmake/llvm
+CLANG_CONF_OPTS += -DLLVM_COMMON_CMAKE_UTILS=$(HOST_DIR)/lib/cmake/llvm
+
+HOST_CLANG_CONF_OPTS += -DLLVM_MAIN_SRC_DIR=$(BUILD_DIR)/llvm-$(LLVM_PROJECT_VERSION)
+CLANG_CONF_OPTS += -DLLVM_MAIN_SRC_DIR=$(BUILD_DIR)/llvm-$(LLVM_PROJECT_VERSION)
 
 # Clang can't be used as compiler on the target since there are no
 # development files (headers) and other build tools. So remove clang
@@ -102,7 +113,15 @@ CLANG_CONF_OPTS += -DLLVM_DYLIB_COMPONENTS=all
 # installation directory to the external toolchain installation directory in order to
 # not hardcode the toolchain absolute path.
 ifeq ($(BR2_TOOLCHAIN_EXTERNAL),y)
-HOST_CLANG_CONF_OPTS += -DGCC_INSTALL_PREFIX:PATH=`realpath --relative-to=$(HOST_DIR)/bin/ $(TOOLCHAIN_EXTERNAL_INSTALL_DIR)`
+define HOST_CLANG_INSTALL_CONFIG_FILE
+	mkdir -p $(HOST_DIR)/lib/clang/$(CLANG_VERSION_MAJOR)
+	touch $(HOST_DIR)/lib/clang/$(CLANG_VERSION_MAJOR)/$(GNU_TARGET_NAME).cfg
+	echo "--gcc-install-dir=$(TOOLCHAIN_EXTERNAL_INSTALL_DIR)/lib/gcc/$$(ls $(TOOLCHAIN_EXTERNAL_INSTALL_DIR)/lib/gcc/)/$$(ls $(TOOLCHAIN_EXTERNAL_INSTALL_DIR)/lib/gcc/$$(ls $(TOOLCHAIN_EXTERNAL_INSTALL_DIR)/lib/gcc/)/)" > $(HOST_DIR)/lib/clang/$(CLANG_VERSION_MAJOR)/$(GNU_TARGET_NAME).cfg
+	echo "--target=$(GNU_TARGET_NAME)" >> $(HOST_DIR)/lib/clang/$(CLANG_VERSION_MAJOR)/$(GNU_TARGET_NAME).cfg
+endef
+
+HOST_CLANG_POST_INSTALL_HOOKS += HOST_CLANG_INSTALL_CONFIG_FILE
+HOST_CLANG_TOOLCHAIN_WRAPPER_ARGS += -DBR_CLANG_CONFIG_FILE="\"--config=$(HOST_DIR)/lib/clang/$(CLANG_VERSION_MAJOR)/$(GNU_TARGET_NAME).cfg\""
 endif
 
 define HOST_CLANG_INSTALL_WRAPPER_AND_SIMPLE_SYMLINKS

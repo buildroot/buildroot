@@ -24,6 +24,7 @@ config BR2_PACKAGE_LLVM
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_USE_WCHAR # std::wstring
 	depends on BR2_HOST_GCC_AT_LEAST_7 # host-llvm
+	select BR2_HOST_CMAKE_AT_LEAST_3_20 # cmake required version at least 3.20
 	help
 	  The LLVM Project is a collection of modular and reusable
 	  compiler and toolchain technologies.

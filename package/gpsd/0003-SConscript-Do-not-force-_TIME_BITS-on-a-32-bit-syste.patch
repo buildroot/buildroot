@@ -1,0 +1,49 @@
+From a1f36cf216861ac6499654b4e6e4d54107142cfc Mon Sep 17 00:00:00 2001
+Message-Id: <a1f36cf216861ac6499654b4e6e4d54107142cfc.1749533625.git.yann.morin@orange.com>
+In-Reply-To: <f18e52dad4eeba2434a988bc899f6c7fe973f4ba.1749533625.git.yann.morin@orange.com>
+References: <f18e52dad4eeba2434a988bc899f6c7fe973f4ba.1749533625.git.yann.morin@orange.com>
+From: "Gary E. Miller" <gem@rellim.com>
+Date: Thu, 5 Jun 2025 18:14:55 -0700
+Subject: [PATCH] SConscript: Do not force _TIME_BITS on a 32 bit system.
+
+The build assumed that if _TIME_BITS existed on a system then it was OK
+to set it.  Turns out that is a bad assumption.
+
+Leave it to the builds to decide when _TIME_BITS should be used.
+
+Upstream: https://gitlab.com/gpsd/gpsd/-/commit/95814d22276c34abe72a35b89065b1190d34f9bf
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+---
+ SConscript | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
+
+diff --git a/SConscript b/SConscript
+index 28105fa7b..357c53f2b 100644
+--- a/SConscript
++++ b/SConscript
+@@ -1335,19 +1335,9 @@ if not cleaning and not helping:
+     # check for 64 bit time_t.  Needed for 2038.
+     sizeof_time_t = config.CheckTypeSize("time_t", "#include <time.h>",
+                                          expect=8)
+-    if 0 == sizeof_time_t:
+-        # see if we can force time64_t
+-        # this needs glibc 2.34 or later, and a compatible kernel
+-        sizeof_time_t = config.CheckTypeSize("time_t",
+-                                             "#define _TIME_BITS 64\n"
+-                                             "#define _FILE_OFFSET_BITS 64\n"
+-                                             "#include <time.h>",
+-                                             expect=8)
+-        if 0 != sizeof_time_t:
+-            # force time64_t
+-            confdefs.append("// Forcing 64-bit time_t\n"
+-                            "#define _TIME_BITS 64\n"
+-                            "#define _FILE_OFFSET_BITS 64\n")
++    # do not try to  force time64_t, that is a distro decision.
++    # it needs glibc 2.34 or later, and a compatible kernel
++    # CFLAGS += "-D_TIME_BITS 64 -D_FILE_OFFSET_BITS 64"
+ 
+     if 0 == sizeof_time_t:
+         announce("WARNING: time_t is too small.  It will fail in 2038")
+-- 
+2.34.1
+

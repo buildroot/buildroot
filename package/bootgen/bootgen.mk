@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BOOTGEN_VERSION = xilinx_v2024.2
+BOOTGEN_VERSION = xilinx_v2025.1
 BOOTGEN_SITE = $(call github,Xilinx,bootgen,$(BOOTGEN_VERSION))
 HOST_BOOTGEN_DEPENDENCIES = host-openssl host-pkgconf
 BOOTGEN_LICENSE = Apache-2.0
@@ -19,7 +19,7 @@ define HOST_BOOTGEN_BUILD_CMDS
 endef
 
 define HOST_BOOTGEN_INSTALL_CMDS
-	$(INSTALL) -m 0755 -D $(@D)/bootgen $(HOST_DIR)/bin/bootgen
+	$(INSTALL) -m 0755 -D $(@D)/build/bin/bootgen $(HOST_DIR)/bin/bootgen
 endef
 
 $(eval $(host-generic-package))

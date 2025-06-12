@@ -144,7 +144,35 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2025.08"
+
+config BR2_PACKAGE_GPSD_OCEANSERVER
+	bool "gpsd OceanServer removed upstream"
+	select BR2_LEGACY
+	help
+	  Support for OceanServer has been removed upstream in gpsd
+	  v3.26.
+
+config BR2_PACKAGE_MESA3D_OSMESA_GALLIUM
+	bool "mesa3d OSMesa (Gallium) library support removed"
+	select BR2_LEGACY
+	help
+	  Mesa3d removed the OSMesa (Off-Screen) interface library.
+
+config BR2_PACKAGE_ALSA_LIB_ALISP
+	bool "alsa-lib alisp support removed"
+	select BR2_LEGACY
+	help
+	  Support for alisp was removed from alsa-lib v1.12.14.
+
 comment "Legacy options removed in 2025.05"
+
+config BR2_GCC_VERSION_12_X
+	bool "gcc 12.x support removed"
+	select BR2_LEGACY
+	help
+	  Support for building a toolchain based on GCC 12.x has been
+	  removed, chose a newer GCC version instead.
 
 config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_SWRAST
 	bool "mesa Gallium swrast driver was replaced by softpipe"

@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-LIBNVME_VERSION = 1.13
+LIBNVME_VERSION = 1.14
 LIBNVME_SITE = $(call github,linux-nvme,libnvme,v$(LIBNVME_VERSION))
 LIBNVME_LICENSE = LGPL-2.1
 LIBNVME_LICENSE_FILES = COPYING
 LIBNVME_INSTALL_STAGING = YES
 
 LIBNVME_CONF_OPTS += \
+	-Dexamples=false \
 	-Dtests=false
 
 ifeq ($(BR2_PACKAGE_PYTHON3),y)

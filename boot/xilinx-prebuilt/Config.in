@@ -18,7 +18,7 @@ if BR2_TARGET_XILINX_PREBUILT
 
 config BR2_TARGET_XILINX_PREBUILT_VERSION
 	string "prebuilt version"
-	default "xilinx_v2024.2_update1"
+	default "xilinx_v2025.1"
 	help
 	  Release version of Xilinx firmware.
 	  Must be xilinx_v2023.1 or newer.
@@ -62,6 +62,15 @@ config BR2_TARGET_XILINX_PREBUILT_VERSAL_XSA_LOCATION
 	  the Buildroot tree.
 
 endif # BR2_TARGET_XILINX_PREBUILT_VERSAL_XSA
+
+config BR2_TARGET_XILINX_PREBUILT_VERSAL_PLD_PDI
+	bool "install versal pld.pdi"
+	depends on BR2_TARGET_XILINX_PREBUILT_VERSAL
+	help
+	  When using the Versal Segmented Configuration, there is a
+	  pld.pdi file containing the FPGA bitstream which can be
+	  loaded at run-time.  By enabling this option, the pld.pdi
+	  will be installed to the target /lib/firmware/xilinx dir.
 
 config BR2_TARGET_XILINX_PREBUILT_FAMILY
 	string

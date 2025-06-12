@@ -1,0 +1,33 @@
+From cdb388c8dc6e661d2a23f1e9b79102bc68e89af5 Mon Sep 17 00:00:00 2001
+From: Philippe Troin <phil+github-commits@fifi.org>
+Date: Wed, 23 Apr 2025 16:04:20 -0700
+Subject: [PATCH] C23 compatibility.
+
+bool is a keyword in C23.
+
+Upstream: https://github.com/troglobit/mrouted/pull/65
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/kern.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/kern.c b/src/kern.c
+index 27f8dd4..04f1c36 100644
+--- a/src/kern.c
++++ b/src/kern.c
+@@ -104,11 +104,11 @@ void k_set_rcvbuf(int bufsize, int minsize)
+  * in the kernel and "panic". The kernel patch for netinet/ip_raw.c
+  * coming with this distribution fixes it.
+  */
+-void k_hdr_include(int bool)
++void k_hdr_include(int flag)
+ {
+ #ifdef IP_HDRINCL
+-    if (setsockopt(igmp_socket, IPPROTO_IP, IP_HDRINCL, &bool, sizeof(bool)) < 0)
+-        logit(LOG_ERR, errno, "Failed setting socket IP_HDRINCL %u", bool);
++    if (setsockopt(igmp_socket, IPPROTO_IP, IP_HDRINCL, &flag, sizeof(flag)) < 0)
++        logit(LOG_ERR, errno, "Failed setting socket IP_HDRINCL %u", flag);
+ #endif
+ }
+ 

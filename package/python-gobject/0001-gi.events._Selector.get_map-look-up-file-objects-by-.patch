@@ -1,4 +1,4 @@
-From 3bb03bc5d095cf51c8605521fcc2ce8cad36995f Mon Sep 17 00:00:00 2001
+From 4b97688d527276fc1e835fed71dbb73bbd09ac11 Mon Sep 17 00:00:00 2001
 From: Fiona Klute <fiona.klute@gmx.de>
 Date: Tue, 25 Mar 2025 13:29:04 +0100
 Subject: [PATCH] gi.events._Selector.get_map(): look up file objects by file
@@ -9,15 +9,16 @@ equivalent for lookup, or one may incorrectly be treated as not
 registered when the other was used for the registration, leading to
 bugs.
 
+Fixes: #689
 Signed-off-by: Fiona Klute <fiona.klute@gmx.de>
-Upstream: https://gitlab.gnome.org/GNOME/pygobject/-/commit/3bb03bc5d095cf51c8605521fcc2ce8cad36995f
+Upstream: https://gitlab.gnome.org/GNOME/pygobject/-/commit/4b97688d527276fc1e835fed71dbb73bbd09ac11
 ---
  gi/events.py         | 36 +++++++++++++++++++++-----
  tests/test_events.py | 61 ++++++++++++++++++++++++++++++++++++++++++++
  2 files changed, 90 insertions(+), 7 deletions(-)
 
 diff --git a/gi/events.py b/gi/events.py
-index 9f00059ec..980cae0fe 100644
+index da4775dc..9eba1629 100644
 --- a/gi/events.py
 +++ b/gi/events.py
 @@ -28,6 +28,7 @@ import threading
@@ -28,7 +29,7 @@ index 9f00059ec..980cae0fe 100644
  from contextlib import contextmanager
  from . import _ossighelper
  
-@@ -381,9 +382,33 @@ if sys.platform != 'win32':
+@@ -508,9 +509,33 @@ if sys.platform != 'win32':
          # Subclass to attach _tag
          pass
  
@@ -62,7 +63,7 @@ index 9f00059ec..980cae0fe 100644
          def attach(self):
              self._source.attach(self._loop._context)
  
-@@ -432,15 +457,12 @@ if sys.platform != 'win32':
+@@ -559,15 +584,12 @@ if sys.platform != 'win32':
          # We could override modify, but it is only slightly when the "events" change.
  
          def get_key(self, fileobj):
@@ -83,21 +84,21 @@ index 9f00059ec..980cae0fe 100644
  
  else:
 diff --git a/tests/test_events.py b/tests/test_events.py
-index 81409abae..c075af095 100644
+index a6585468..9dbf3827 100644
 --- a/tests/test_events.py
 +++ b/tests/test_events.py
-@@ -45,6 +45,7 @@ import sys
+@@ -46,6 +46,7 @@ import sys
  import gi
  import gi.events
  import asyncio
 +import socket
  import threading
- from gi.repository import GLib
+ from gi.repository import GLib, Gio
  
-@@ -262,3 +263,63 @@ class GLibEventLoopPolicyTests(unittest.TestCase):
-         GLib.MainLoop().run()
- 
-         loop.close()
+@@ -344,3 +345,63 @@ class GLibEventLoopPolicyTests(unittest.TestCase):
+         self.assertEqual(order, [GLib.PRIORITY_HIGH] * 3 +
+                                 [GLib.PRIORITY_DEFAULT] * 3 +
+                                 [GLib.PRIORITY_DEFAULT_IDLE] * 3)
 +
 +    @unittest.skipIf(sys.platform == 'win32', 'add reader/writer not implemented')
 +    def test_source_fileobj_fd(self):
@@ -159,5 +160,5 @@ index 81409abae..c075af095 100644
 +        loop.run_until_complete(run())
 +        loop.close()
 -- 
-GitLab
+2.49.0
 

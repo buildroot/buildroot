@@ -20,6 +20,7 @@ These instructions apply to all models of the Raspberry Pi:
   - the model CM4s (aka Raspberry Pi Compute Module 4s).
   - the model B5 (aka Raspberry Pi 5).
   - the model 500 (aka Raspberry Pi 500).
+  - the model CM5 (aka Raspberry Pi Compute Module 5 and IO Board).
 
 How to build it
 ===============
@@ -86,6 +87,10 @@ For model 5 B and 500:
 
   $ make raspberrypi5_defconfig
 
+For model CM5 (on IO Board):
+
+  $ make raspberrypicm5io_defconfig
+
 Build the rootfs
 ----------------
 
@@ -123,6 +128,8 @@ After building, you should obtain this tree:
     +-- bcm2712-rpi-5-b.dtb         [1]
     +-- bcm2712d0-rpi-5-b.dtb       [1]
     +-- bcm2712-rpi-500.dtb         [1]
+    +-- bcm2712-rpi-cm5-cm5io       [1]
+    +-- bcm2712-rpi-cm5l-cm5io      [1]
     +-- boot.vfat
     +-- rootfs.ext4
     +-- rpi-firmware/
@@ -197,3 +204,33 @@ for CM4 modules with eMMC memory proceed as following:
 - power down CM4/IO Board
 - remove jumper on IO Board header J2 to re-enable eMMC boot
 - power up CM4/IO Board
+
+CM5 debug UART
+==============
+
+The debug UART header is not assembled on the Compute Module 5.
+
+	2.23. Debug UART
+
+	Space is provided for the user to fit a debug UART connector. This
+	connector provides the same functionality as Raspberry Pi 5. The
+	connector is a three-pin 1mm pitch JST-SH connector, Part number
+	BM03B-SRSS-TB. The signals are replicated on the bottom as test points.
+
+	Appendix B: Test Points
+
+	| Reference | X   | Y    | NAME          |
+	| TP35      | 11  | 37.8 | DEBUG_UART_TX |
+	| TP36      | 8.5 | 37.1 | DEBUG_UART_RX |
+
+	Debug UART
+
+	TP35 and TP36 are a TX and RX of the debug UART. TP46 should be used as
+	the ground. It is very useful to have access to these pins during
+	programming and initial boot.
+
+See https://datasheets.raspberrypi.com/cm5/cm5-datasheet.pdf.
+
+The signals are not wired up to 100-pin headers either. And thus, it is
+impossible to output early boot traces in the EEPROM firmware without
+assembling a JST-SH connector (or using the test points).

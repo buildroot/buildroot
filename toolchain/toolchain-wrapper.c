@@ -62,6 +62,9 @@ static char *predef_args[] = {
 #endif
 	path,
 	"--sysroot", sysroot,
+#ifdef BR_CLANG_CONFIG_FILE
+	BR_CLANG_CONFIG_FILE,
+#endif
 #ifdef BR_ABI
 	"-mabi=" BR_ABI,
 #endif

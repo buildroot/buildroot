@@ -8,6 +8,7 @@ config BR2_PACKAGE_CLANG
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_USE_WCHAR # std::wstring
 	depends on BR2_HOST_GCC_AT_LEAST_7
+	select BR2_HOST_CMAKE_AT_LEAST_3_20 # cmake required version at least 3.20
 	select BR2_PACKAGE_LLVM
 	help
 	  Clang is a C/C++, Objective C/C++ and OpenCL C front-end

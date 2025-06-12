@@ -2,6 +2,7 @@ config BR2_PACKAGE_HOST_LLD
 	bool "host lld"
 	depends on BR2_PACKAGE_LLVM_ARCH_SUPPORTS # llvm
 	depends on BR2_HOST_GCC_AT_LEAST_7 # host-llvm
+	select BR2_HOST_CMAKE_AT_LEAST_3_20 # cmake required version at least 3.20
 	help
 	  LLD is a linker from the LLVM project that is a drop-in
 	  replacement for system linkers, and runs much faster than
