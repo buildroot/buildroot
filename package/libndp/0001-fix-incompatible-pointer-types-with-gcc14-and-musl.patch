@@ -1,0 +1,43 @@
+From e821ddbfdff5e1b14846421d9196978ffebac346 Mon Sep 17 00:00:00 2001
+From: oreo639 <oreo6391@gmail.com>
+Date: Sat, 15 Mar 2025 18:38:50 -0700
+Subject: [PATCH] libndp: fix incompatible pointer types with gcc14 and musl
+
+When compiling with gcc14 and musl, the following error is produced:
+libndp.c: In function 'mysendto6':
+libndp.c:212:50: error: passing argument 5 of 'sendto' from incompatible pointer type [-Wincompatible-pointer-types]
+  212 |         ret = sendto(sockfd, buf, buflen, flags, &sin6, sizeof(sin6));
+      |                                                  ^~~~~
+      |                                                  |
+      |                                                  struct sockaddr_in6 *
+In file included from libndp.c:27:
+/usr/include/sys/socket.h:343:49: note: expected 'const struct sockaddr *' but argument is of type 'struct sockaddr_in6 *'
+  343 | ssize_t sendto (int, const void *, size_t, int, const struct sockaddr *, socklen_t);
+      |                                                 ^~~~~~~~~~~~~~~~~~~~~~~
+
+In POSIX, sendto() takes a sockaddr pointer:
+https://pubs.opengroup.org/onlinepubs/009604499/functions/sendto.html
+
+While glibc uses the gcc __transparent_union__ extension to mark them as
+compatible types, musl does not, as such we need to explicitly cast the pointer
+to tell the compiler that it is fine.
+
+Upstream: https://github.com/jpirko/libndp/pull/29
+Signed-off-by: Fiona Klute (WIWA) <fiona.klute@gmx.de>
+---
+ libndp/libndp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libndp/libndp.c b/libndp/libndp.c
+index fa20a31..315333a 100644
+--- a/libndp/libndp.c
++++ b/libndp/libndp.c
+@@ -209,7 +209,7 @@ static int mysendto6(int sockfd, void *buf, size_t buflen, int flags,
+ 	memcpy(&sin6.sin6_addr, addr, sizeof(sin6.sin6_addr));
+ 	sin6.sin6_scope_id = ifindex;
+ resend:
+-	ret = sendto(sockfd, buf, buflen, flags, &sin6, sizeof(sin6));
++	ret = sendto(sockfd, buf, buflen, flags, (struct sockaddr*)&sin6, sizeof(sin6));
+ 	if (ret == -1) {
+ 		switch(errno) {
+ 		case EINTR:
