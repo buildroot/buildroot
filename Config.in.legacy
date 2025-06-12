@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2025.08"
 
+config BR2_KERNEL_HEADERS_6_14
+	bool "kernel headers version 6.14.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 6.14.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
 config BR2_PACKAGE_GPSD_OCEANSERVER
 	bool "gpsd OceanServer removed upstream"
 	select BR2_LEGACY
