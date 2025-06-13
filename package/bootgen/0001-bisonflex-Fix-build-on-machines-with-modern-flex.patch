@@ -17,7 +17,7 @@ issues like:
 
 Fix it by using normal local #include statements by:
 
-sed -i 's/<FlexLexer.h>/"FlexLexer.h"/g' *
+sed -i 's/<FlexLexer.h>/"../win_include/FlexLexer.h"/g' *
 
 Upstream: submitted to AMD internal jira process
 
@@ -37,7 +37,7 @@ index 8d4d364..35f0aa5 100755
  #define yytext_ptr yytext
  
 -#include <FlexLexer.h>
-+#include "FlexLexer.h"
++#include "../win_include/FlexLexer.h"
  
  int yyFlexLexer::yywrap() { return 1; }
  int yyFlexLexer::yylex()
@@ -50,7 +50,7 @@ index 661d7f3..a76ac81 100755
  #define yytext_ptr yytext
  
 -#include <FlexLexer.h>
-+#include "FlexLexer.h"
++#include "../win_include/FlexLexer.h"
  
  int yyFlexLexer::yywrap() { return 1; }
  int yyFlexLexer::yylex()
@@ -63,7 +63,7 @@ index d830734..dede473 100755
  #define yytext_ptr yytext
  
 -#include <FlexLexer.h>
-+#include "FlexLexer.h"
++#include "../win_include/FlexLexer.h"
  
  int yyFlexLexer::yywrap() { return 1; }
  int yyFlexLexer::yylex()
