@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2025.05"
 
+config BR2_PACKAGE_LIBEBUR128
+	bool "libebur128 has been removed"
+	select BR2_LEGACY
+	help
+	  The libebur128 package has been removed from Buildroot.
+
 config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_SWRAST
 	bool "mesa Gallium swrast driver was replaced by softpipe"
 	select BR2_LEGACY
