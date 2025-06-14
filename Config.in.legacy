@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2025.08"
 
+config BR2_PACKAGE_LIBEBUR128
+	bool "libebur128 has been removed"
+	select BR2_LEGACY
+	help
+	  The libebur128 package has been removed from Buildroot.
+
 config BR2_KERNEL_HEADERS_6_14
 	bool "kernel headers version 6.14.x are no longer supported"
 	select BR2_LEGACY
