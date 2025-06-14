@@ -144,6 +144,14 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2025.02.4"
+
+config BR2_PACKAGE_LIBEBUR128
+	bool "libebur128 has been removed"
+	select BR2_LEGACY
+	help
+	  The libebur128 package has been removed from Buildroot.
+
 comment "Legacy options removed in 2025.02"
 
 config BR2_PACKAGE_SQLITE_ENABLE_JSON1
