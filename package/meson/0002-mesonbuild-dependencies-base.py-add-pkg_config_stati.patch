@@ -30,7 +30,7 @@ diff --git a/mesonbuild/dependencies/pkgconfig.py b/mesonbuild/dependencies/pkgc
 index e86206b88..94888657d 100644
 --- a/mesonbuild/dependencies/pkgconfig.py
 +++ b/mesonbuild/dependencies/pkgconfig.py
-@@ -169,7 +169,8 @@ class PkgConfigCLI(PkgConfigInterface):
+@@ -170,7 +170,8 @@ class PkgConfigCLI(PkgConfigInterface):
              env['PKG_CONFIG_ALLOW_SYSTEM_LIBS'] = '1'
          args: T.List[str] = []
          args += self._define_variable_args(define_variable)
