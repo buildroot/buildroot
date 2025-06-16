@@ -1,0 +1,167 @@
+From cab85fc98dfcddad6ebf0faa2f5f4f4d6c6562a0 Mon Sep 17 00:00:00 2001
+From: Yogesh Mantri <yogesh.mantri@espressif.com>
+Date: Sun, 8 Jun 2025 12:11:09 +0800
+Subject: [PATCH] Fix(ng): build for 6.15 Fixes #607
+
+Upstream: https://github.com/espressif/esp-hosted/commit/cab85fc98dfcddad6ebf0faa2f5f4f4d6c6562a0
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ esp_hosted_ng/host/Makefile                  | 63 +++++++++-----------
+ esp_hosted_ng/host/esp_debugfs.c             |  2 +-
+ esp_hosted_ng/host/esp_stats.c               |  1 +
+ esp_hosted_ng/host/include/esp_kernel_port.h |  5 ++
+ esp_hosted_ng/host/sdio/esp_sdio.c           |  2 +-
+ 5 files changed, 36 insertions(+), 37 deletions(-)
+
+diff --git a/esp_hosted_ng/host/Makefile b/esp_hosted_ng/host/Makefile
+index 029f930f55..6fa68c876f 100644
+--- a/esp_hosted_ng/host/Makefile
++++ b/esp_hosted_ng/host/Makefile
+@@ -1,67 +1,60 @@
+-# Toolchain Path
++# Toolchain and kernel
+ CROSS_COMPILE :=
+-# Linux Kernel header
+ KERNEL := /lib/modules/$(shell uname -r)/build
+-# Architecture
+ ARCH := $(shell uname -m)
+ 
+-# Check and adjust ARCH for specific cases
++# Normalize ARCH
+ ifeq ($(ARCH), x86_64)
+     ARCH := x86
+ endif
+-
+ ifeq ($(ARCH), aarch64)
+     ARCH := arm64
+ endif
+ 
+-#Default interface is sdio
+-MODULE_NAME=esp32_sdio
+-
+-#enable logging by default
+-CONFIG_DEBUG_LOGS := y
++# Module name (default: sdio)
++target ?= sdio
++MODULE_NAME := esp32_$(target)
+ 
++# Debug and AP support
++CONFIG_DEBUG_LOGS ?= y
+ ifeq ($(CONFIG_AP_SUPPORT), y)
+-	EXTRA_CFLAGS += -DCONFIG_AP_MODE
++    EXTRA_CFLAGS += -DCONFIG_AP_MODE
+ endif
+ 
+-#Targets passed overrrides default value
++# Source and include paths
++PWD := $(shell pwd)
++ccflags-y += -I$(src) -I$(src)/include -I$(CURDIR) -I$(CURDIR)/include
++EXTRA_CFLAGS += -I$(M) -I$(M)/include
++
++# Interface-specific sources
+ ifeq ($(target), sdio)
+-	MODULE_NAME=esp32_sdio
++    ccflags-y += -I$(src)/sdio -I$(CURDIR)/sdio
++    EXTRA_CFLAGS += -I$(M)/sdio
++    module_objects += sdio/esp_sdio.o sdio/esp_sdio_api.o
+ endif
+ 
+ ifeq ($(target), spi)
+-	MODULE_NAME=esp32_spi
+-endif
+-
+-#debug_flags := -DDEBUG
+-
+-EXTRA_CFLAGS += -I$(PWD)/include -I$(PWD)
+-
+-ifeq ($(MODULE_NAME), esp32_sdio)
+-	EXTRA_CFLAGS += -I$(PWD)/sdio
+-	module_objects += sdio/esp_sdio.o sdio/esp_sdio_api.o
+-endif
+-
+-ifeq ($(MODULE_NAME), esp32_spi)
+-	EXTRA_CFLAGS += -I$(PWD)/spi
+-	module_objects += spi/esp_spi.o
++    ccflags-y += -I$(src)/spi -I$(CURDIR)/spi
++    EXTRA_CFLAGS += -I$(M)/spi
++    module_objects += spi/esp_spi.o
+ endif
+ 
++# Common source files
+ module_objects += esp_bt.o main.o esp_cmd.o esp_utils.o esp_cfg80211.o esp_stats.o esp_debugfs.o esp_log.o
+-#$(foreach obj,$(module_objects),$(eval CFLAGS_$(obj:.o=).o := $(debug_flags)))
+ CFLAGS_esp_log.o = -DDEBUG
+ 
+-PWD := $(shell pwd)
+-
++# Module build rules
+ obj-m := $(MODULE_NAME).o
+ $(MODULE_NAME)-y := $(module_objects)
+ 
++# Build targets
+ all: clean
+-	make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KERNEL) M=$(PWD) modules
++	$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KERNEL) M=$(PWD) modules
+ 
+ clean:
+-	rm -rf *.o sdio/*.o spi/*.o *.ko
+-	make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KERNEL) M=$(PWD) clean
++	rm -rf *.o */*.o *.ko *.mod.c *.symvers *.order .*.cmd .tmp_versions
++	$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KERNEL) M=$(PWD) clean
+ 
+ check:
+-	make ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KERNEL) M=$(PWD) $(module_objects)
++	$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KERNEL) M=$(PWD) $(module_objects)
++
+diff --git a/esp_hosted_ng/host/esp_debugfs.c b/esp_hosted_ng/host/esp_debugfs.c
+index 74b1813fb4..4399cab825 100644
+--- a/esp_hosted_ng/host/esp_debugfs.c
++++ b/esp_hosted_ng/host/esp_debugfs.c
+@@ -1,4 +1,4 @@
+-#include "include/utils.h"
++#include "utils.h"
+ #include <linux/debugfs.h>
+ #include <linux/module.h>
+ #include <linux/fs.h>
+diff --git a/esp_hosted_ng/host/esp_stats.c b/esp_hosted_ng/host/esp_stats.c
+index 82eff7b0a6..61c37733cb 100644
+--- a/esp_hosted_ng/host/esp_stats.c
++++ b/esp_hosted_ng/host/esp_stats.c
+@@ -8,6 +8,7 @@
+ 
+ #include "utils.h"
+ #include "esp_stats.h"
++#include "esp_kernel_port.h"
+ 
+ #if TEST_RAW_TP
+ 
+diff --git a/esp_hosted_ng/host/include/esp_kernel_port.h b/esp_hosted_ng/host/include/esp_kernel_port.h
+index b633ee346f..35a18da504 100644
+--- a/esp_hosted_ng/host/include/esp_kernel_port.h
++++ b/esp_hosted_ng/host/include/esp_kernel_port.h
+@@ -222,4 +222,9 @@ static inline bool wireless_dev_current_bss_exists(struct wireless_dev *wdev)
+ #define spi_master_put(_ctlr)		spi_controller_put(_ctlr)
+ #endif
+ 
++
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
++  #define del_timer timer_delete_sync
++#endif
++
+ #endif
+diff --git a/esp_hosted_ng/host/sdio/esp_sdio.c b/esp_hosted_ng/host/sdio/esp_sdio.c
+index 52759dee34..6d90fe92f6 100644
+--- a/esp_hosted_ng/host/sdio/esp_sdio.c
++++ b/esp_hosted_ng/host/sdio/esp_sdio.c
+@@ -20,7 +20,7 @@
+ #include <linux/kthread.h>
+ #include "esp_stats.h"
+ #include "esp_utils.h"
+-#include "include/esp_kernel_port.h"
++#include "esp_kernel_port.h"
+ 
+ extern u32 raw_tp_mode;
+ #define MAX_WRITE_RETRIES       2
+-- 
+2.39.5
+
