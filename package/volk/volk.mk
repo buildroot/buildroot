@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-VOLK_VERSION = 3.1.2
+VOLK_VERSION = 3.2.0
 VOLK_SITE = https://github.com/gnuradio/volk/releases/download/v$(VOLK_VERSION)
 VOLK_SOURCE = volk-$(VOLK_VERSION).tar.xz
 VOLK_LICENSE = LGPL-3.0+
