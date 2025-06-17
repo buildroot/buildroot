@@ -2,6 +2,7 @@ config BR2_PACKAGE_PYTHON_REMI
 	bool "python-remi"
 	select BR2_PACKAGE_PYTHON3_SSL # runtime
 	select BR2_PACKAGE_PYTHON_SETUPTOOLS # runtime
+	select BR2_PACKAGE_PYTHON_LEGACY_CGI # runtime
 	help
 	  Remi is a GUI library for Python applications which transpiles
 	  an application's interface into HTML to be rendered in a web
