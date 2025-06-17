@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CCACHE_VERSION = 4.11.2
+CCACHE_VERSION = 4.11.3
 CCACHE_SITE = https://github.com/ccache/ccache/releases/download/v$(CCACHE_VERSION)
 CCACHE_SOURCE = ccache-$(CCACHE_VERSION).tar.xz
 CCACHE_LICENSE = GPL-3.0+, others
