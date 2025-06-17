@@ -1,0 +1,34 @@
+From 0dd9cf8b23fa183a403794e15617237662104d1d Mon Sep 17 00:00:00 2001
+From: Stephen L Arnold <nerdboy@gentoo.org>
+Date: Mon, 29 Nov 2021 18:13:34 -0800
+Subject: [PATCH] fix: update cmake build, fix install, add simple test and
+ versioning
+
+Signed-off-by: Stephen L Arnold <nerdboy@gentoo.org>
+
+Upstream: https://github.com/jacksonliam/mjpg-streamer/pull/333
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[Bernd:
+ ported cmake version bump from upstream PR to fix build with cmake 4.x]
+---
+ mjpg-streamer-experimental/CMakeLists.txt     | 102 +++++++++++++-----
+ mjpg-streamer-experimental/Makefile           |  15 +--
+ .../cmake/FindGphoto2.cmake                   |  20 ++--
+ .../cmake/mjpg_streamer_utils.cmake           |  22 ++--
+ mjpg-streamer-experimental/mjpg_streamer.c    |   4 -
+ mjpg-streamer-experimental/mjpg_streamer.h    |   9 +-
+ .../plugins/input_ptp2/CMakeLists.txt         |   6 +-
+ .../plugins/output_http/CMakeLists.txt        |   2 +-
+ 8 files changed, 117 insertions(+), 63 deletions(-)
+
+diff --git a/mjpg-streamer-experimental/CMakeLists.txt b/mjpg-streamer-experimental/CMakeLists.txt
+index cf26620e..e6e67bc7 100644
+--- a/mjpg-streamer-experimental/CMakeLists.txt
++++ b/mjpg-streamer-experimental/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.8.3)
++cmake_minimum_required(VERSION 3.10.0)
+ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+ 
+ project("mjpg-streamer" C)
