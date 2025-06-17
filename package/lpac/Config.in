@@ -5,6 +5,7 @@ config BR2_PACKAGE_LPAC
 	depends on !BR2_STATIC_LIBS # pcsc-lite
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # pcsc-lite
 	select BR2_PACKAGE_PCSC_LITE
+	select BR2_PACKAGE_LIBQMI if BR2_PACKAGE_LIBQRTR_GLIB
 	help
 	  C-based eUICC LPA.
 
