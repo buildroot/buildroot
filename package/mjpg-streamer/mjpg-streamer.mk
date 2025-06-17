@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MJPG_STREAMER_VERSION = 5a6e0a2db163e6ae9461552b59079870d0959340
+MJPG_STREAMER_VERSION = v1.0.0-1-g310b29f4a94c46652b20c4b7b6e5cf24e532af39
 MJPG_STREAMER_SITE = $(call github,jacksonliam,mjpg-streamer,$(MJPG_STREAMER_VERSION))
 MJPG_STREAMER_SUBDIR = mjpg-streamer-experimental
 MJPG_STREAMER_LICENSE = GPL-2.0+
