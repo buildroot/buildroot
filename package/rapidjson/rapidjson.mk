@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RAPIDJSON_VERSION = ab1842a2dae061284c0a62dca1cc6d5e7e37e346
+RAPIDJSON_VERSION = 24b5e7a8b27f42fa16b96fc70aade9106cf7102f
 RAPIDJSON_SITE = $(call github,Tencent,rapidjson,$(RAPIDJSON_VERSION))
 RAPIDJSON_LICENSE = MIT
 RAPIDJSON_LICENSE_FILES = license.txt
