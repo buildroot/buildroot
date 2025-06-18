@@ -294,6 +294,10 @@ config BR2_LINUX_KERNEL_VMLINUX_BIN
 	bool "vmlinux.bin"
 	depends on BR2_mips || BR2_mipsel || BR2_sh
 
+config BR2_LINUX_KERNEL_VMLINUX_EFI
+	bool "vmlinux.efi"
+	depends on BR2_loongarch64
+
 config BR2_LINUX_KERNEL_VMLINUX
 	bool "vmlinux"
 
@@ -304,6 +308,10 @@ config BR2_LINUX_KERNEL_VMLINUZ
 config BR2_LINUX_KERNEL_VMLINUZ_BIN
 	bool "vmlinuz.bin"
 	depends on BR2_mips || BR2_mipsel
+
+config BR2_LINUX_KERNEL_VMLINUZ_EFI
+	bool "vmlinuz.efi"
+	depends on BR2_loongarch64
 
 config BR2_LINUX_KERNEL_IMAGE_TARGET_CUSTOM
 	bool "custom target"
