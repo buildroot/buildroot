@@ -1,0 +1,128 @@
+# LoongArch CPU
+
+choice
+	prompt "Target Architecture Variant"
+	default BR2_loongarch64_generic if BR2_ARCH_IS_64
+
+config BR2_loongarch64_generic
+	bool "Generic LoongArch 64-bit"
+	depends on BR2_ARCH_IS_64
+	help
+	  Generic LoongArch 64-bit processor.
+
+config BR2_loongarch64_v1_0
+	bool "LoongArch64 ISA version 1.0"
+	depends on BR2_ARCH_IS_64
+	select BR2_ARCH_NEEDS_GCC_AT_LEAST_13
+	help
+	  LoongArch64 ISA version 1.0 processor.
+
+config BR2_loongarch64_v1_1
+	bool "LoongArch64 ISA version 1.1"
+	depends on BR2_ARCH_IS_64
+	select BR2_ARCH_NEEDS_GCC_AT_LEAST_13
+	help
+	  LoongArch64 ISA version 1.1 processor.
+
+endchoice
+
+choice
+	prompt "FPU Type"
+	default BR2_LOONGARCH_FPU_64
+
+config BR2_LOONGARCH_FPU_64
+	bool "64"
+	help
+	  Allow the use of hardware floating-point instructions for
+	  32-bit and 64-bit operations.
+
+config BR2_LOONGARCH_FPU_32
+	bool "32"
+	help
+	  Allow the use of hardware floating-point instructions for
+	  32-bit operations only.
+
+config BR2_LOONGARCH_FPU_NONE
+	bool "none"
+	help
+	  Prevent the use of hardware floating-point instructions.
+endchoice
+
+choice
+	prompt "SIMD Type"
+	default BR2_LOONGARCH_SIMD_NONE
+
+config BR2_LOONGARCH_SIMD_NONE
+	bool "none"
+	help
+	  Prevent the use of hardware SIMD instructions.
+
+config BR2_LOONGARCH_SIMD_LSX
+	bool "LSX"
+	help
+	  Enable generating instructions from the 128-bit LoongArch SIMD
+	  Extension (LSX).
+
+config BR2_LOONGARCH_SIMD_LASX
+	bool "LASX"
+	help
+	  Enable generating instructions from the 256-bit LoongArch
+	  Advanced SIMD Extension (LASX) and the 128-bit LoongArch
+	  SIMD Extension (LSX).
+endchoice
+
+choice
+	prompt "Target ABI"
+	default BR2_LOONGARCH_ABI_LP64D if BR2_ARCH_IS_64 && BR2_LOONGARCH_FPU_64
+	default BR2_LOONGARCH_ABI_LP64F if BR2_ARCH_IS_64 && BR2_LOONGARCH_FPU_32
+	default BR2_LOONGARCH_ABI_LP64S if BR2_ARCH_IS_64 && BR2_LOONGARCH_SIMD_NONE
+
+config BR2_LOONGARCH_ABI_LP64D
+	bool "lp64d"
+	depends on BR2_ARCH_IS_64
+	depends on BR2_LOONGARCH_FPU_64
+
+config BR2_LOONGARCH_ABI_LP64F
+	bool "lp64f"
+	depends on BR2_ARCH_IS_64
+	depends on BR2_LOONGARCH_FPU_64 || BR2_LOONGARCH_FPU_32
+
+config BR2_LOONGARCH_ABI_LP64S
+	bool "lp64s"
+	depends on BR2_ARCH_IS_64
+endchoice
+
+config BR2_ARCH
+	default "loongarch64" if BR2_ARCH_IS_64
+
+config BR2_NORMALIZED_ARCH
+	default "loongarch"
+
+config BR2_ENDIAN
+	default "LITTLE"
+
+config BR2_GCC_TARGET_ARCH
+	default "loongarch64" if BR2_loongarch64_generic
+	default "la64v1.0" if BR2_loongarch64_v1_0
+	default "la64v1.1" if BR2_loongarch64_v1_1
+
+config BR2_GCC_TARGET_FPU
+	default "64" if BR2_LOONGARCH_FPU_64
+	default "32" if BR2_LOONGARCH_FPU_32
+	default "none" if BR2_LOONGARCH_FPU_NONE
+
+config BR2_GCC_TARGET_SIMD
+	default "lasx" if BR2_LOONGARCH_SIMD_LASX
+	default "lsx" if BR2_LOONGARCH_SIMD_LSX
+	default "none" if BR2_LOONGARCH_FPU_NONE
+
+config BR2_GCC_TARGET_ABI
+	default "lp64d" if BR2_LOONGARCH_ABI_LP64D
+	default "lp64f" if BR2_LOONGARCH_ABI_LP64F
+	default "lp64s" if BR2_LOONGARCH_ABI_LP64S
+
+config BR2_READELF_ARCH_NAME
+	default "LoongArch"
+
+# vim: ft=kconfig
+# -*- mode:kconfig; -*-
