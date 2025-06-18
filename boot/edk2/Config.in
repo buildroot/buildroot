@@ -2,6 +2,7 @@ config BR2_TARGET_EDK2_ARCH_SUPPORTS
 	bool
 	default y if BR2_aarch64
 	default y if BR2_i386
+	default y if BR2_loongarch64
 	default y if BR2_RISCV_64
 	default y if BR2_x86_64
 
@@ -21,6 +22,8 @@ if BR2_TARGET_EDK2
 choice
 	prompt "Platform"
 	default BR2_TARGET_EDK2_PLATFORM_OVMF_I386 if BR2_i386
+	default BR2_TARGET_EDK2_PLATFORM_OVMF_LOONGARCH64 if \
+		BR2_loongarch64
 	default BR2_TARGET_EDK2_PLATFORM_OVMF_RISCV if BR2_RISCV_64
 	default BR2_TARGET_EDK2_PLATFORM_OVMF_X64 if BR2_x86_64
 	default BR2_TARGET_EDK2_PLATFORM_ARM_VIRT_QEMU if BR2_aarch64
@@ -31,7 +34,15 @@ config BR2_TARGET_EDK2_PLATFORM_OVMF_I386
 	help
 	  Platform configuration for a generic i386 target.
 	  This platform will boot from flash address 0x0.
-	  It should therefore be used as the first bootloader.
+
+config BR2_TARGET_EDK2_PLATFORM_OVMF_LOONGARCH64
+	bool "LoongArch64"
+	depends on BR2_loongarch64
+	help
+	  Platform configuration for LoongArch QEMU targeting the
+	  Virt machine. This platform will only boot from flash
+	  address 0x1c000000. It should therefore be used as the first
+	  bootloader.
 
 config BR2_TARGET_EDK2_PLATFORM_OVMF_RISCV
 	bool "RISC-V"
@@ -125,6 +136,7 @@ config BR2_TARGET_EDK2_FD_NAME
 	default "OVMF" if BR2_TARGET_EDK2_PLATFORM_OVMF_X64
 	default "QEMU_EFI" if BR2_TARGET_EDK2_PLATFORM_ARM_VIRT_QEMU
 	default "QEMU_EFI" if BR2_TARGET_EDK2_PLATFORM_ARM_VIRT_QEMU_KERNEL
+	default "QEMU_EFI" if BR2_TARGET_EDK2_PLATFORM_OVMF_LOONGARCH64
 	default "BL33_AP_UEFI" if BR2_TARGET_EDK2_PLATFORM_ARM_SGI575
 	default "FVP_AARCH64_EFI" if BR2_TARGET_EDK2_PLATFORM_ARM_VEXPRESS_FVP_AARCH64
 	default "ARMADA_EFI" if BR2_TARGET_EDK2_PLATFORM_SOLIDRUN_ARMADA80X0MCBIN
