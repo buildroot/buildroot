@@ -1,0 +1,12 @@
+config BR2_PACKAGE_VULKAN_SDK
+	bool "vulkan-sdk"
+	depends on !BR2_STATIC_LIBS # dlfcn.h
+	depends on BR2_INSTALL_LIBSTDCPP # C++
+	select BR2_PACKAGE_VULKAN_HEADERS
+	help
+	  The Vulkan meta-loader
+
+	  https://github.com/zeux/volk
+
+comment "Vulkan-SDK needs toolchain w/ C++, dynamic library"
+	depends on !BR2_INSTALL_LIBSTDCPP || BR2_STATIC_LIBS
