@@ -1,3 +1,75 @@
+2025.02.4, released June 23th, 2025
+
+    Important / security related fixes:
+
+    - assimp: CVE-2025-3015, CVE-2025-3016
+    - binutils: CVE-2025-3198
+    - connman: CVE-2025-32366, CVE-2025-32743
+    - go: CVE-2025-0913, CVE-2025-4673, CVE-2025-22874
+    - iputils: CVE-2025-47268, CVE-2025-48964
+    - jq: CVE-2024-23337, CVE-2025-48060, CVE-2024-53427
+    - libcurl: CVE-2025-4947, CVE-2025-5025, CVE-2025-5399
+    - net-tools: CVE-2025-46836
+    - nodejs: CVE-2025-23165, CVE-2025-23166
+    - openvmtools: CVE-2025-22247
+    - python-django: CVE-2025-48432
+    - python-requests: CVE-2024-47081
+    - python-tornado: CVE-2025-47287
+    - redis: CVE-2025-21605, CVE-2025-27151
+    - samba4: CVE-2025-0620
+    - sox: CVE-2021-23159, CVE-2021-23172, CVE-2021-23210, CVE-2021-3643,
+        CVE-2021-40426, CVE-2022-31650, CVE-2022-31651, CVE-2023-26590,
+        CVE-2023-32627, CVE-2023-34318
+    - webkitgtk: CVE-2025-24223, CVE-2025-31204, CVE-2025-31205,
+        CVE-2025-31206, CVE-2025-31215, CVE-2025-31257
+
+    Updated / fixed packages: alsa-utils, atkmm, atmm2_28, audit,
+    bluez5_utils, busybox, catch2, connman, dbus-glib, dlib, dovecot,
+    esp-hosted, execline, firmware-ele-imx, flex, fluent-bit, freescale-imx,
+    ghostscript, gmrender-resurrect, grub2, gst1-plugins-bad, gtkmm3, iputils,
+    kmsxx, libcamera, libcurl, libglade, libical, libuv, llvm-project,
+    lm-sensors, m4, mesa3d, mongoose, openvmtools, php, protobuf-c,
+    python-django, python-fastapi, python-flit-core, python-jc,
+    python-requests, python-uvicorn, qt5 (declarative, webengine,
+    webengine-chromium), qt6 (base, multimedia, tools), rpm, samba4, spdlog,
+    systemd, uacme, uboot-tools, yasm
+
+    Removed package: libebur128
+
+    Infrastructure updates / fixes:
+
+    - pkg-cmake now forces CMake>=3.5
+    - pkg-meson now uses a dedicated buildroot build directory
+      see https://gitlab.com/buildroot.org/buildroot/-/issues/64
+    - include defconfigs in sub-directories in make list-defconfigs
+    - new manual section about private repositories
+    - pkg-autotools: handle libtool 2.5.x
+    - pkg-cmake: force check_language(CXX) to be false when building w/o C++
+    - pkg-stats: add support for reporting stale CVE entries
+    - add basic support for package file download over smb
+    - toolchain/wrapper: check unsafe paths earlier
+    - test_flutter: drop unneeded vga/vnc stanzas from QEMU invocation
+
+    Test improvements
+
+    - new python-pydantic runtime tests
+    - new dieharder runtime test
+    - test_xen: fix runtime test
+    - test_timezone: fix test by setting a fixed time
+    - new tree runtime test
+
+    Boards fixes
+
+    - imx6ulz-bsh-smm-m2: fix missing U-Boot
+    - freescale: fix cpu name in i.MX9 boards
+    - imx8mn-bsh-smm-s2: erase the entire NAND chip
+    - freescale_t1040d4rdb: fix kernel build
+
+    In addition, thanks to the new stale CVE reporting, reported
+    vulnerabilities have been fixed for the following packages:
+    busybox, dnsmasq, dovecot, exim, exim, freeradius-server, grub2,
+    libopenh264, libssh, netsnmp, ninja, qt5base, ripgrep, sox, tinyxml
+
 2025.05, released June 9th, 2025
 
 	Various fixes.
