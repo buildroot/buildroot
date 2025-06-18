@@ -11,7 +11,8 @@ VULKAN_TOOLS_LICENSE_FILES = LICENSE.txt
 
 VULKAN_TOOLS_DEPENDENCIES = \
 	vulkan-headers \
-	vulkan-loader
+	vulkan-loader \
+	vulkan-sdk
 
 VULKAN_TOOLS_CONF_OPTS += \
 	-DBUILD_CUBE=OFF \
