@@ -5,7 +5,8 @@
 ################################################################################
 
 SQUASHFS_VERSION = 4.6.1
-SQUASHFS_SITE = $(call github,plougher,squashfs-tools,$(SQUASHFS_VERSION))
+SQUASHFS_SOURCE = squashfs-tools-$(SQUASHFS_VERSION).tar.gz
+SQUASHFS_SITE = https://github.com/plougher/squashfs-tools/releases/download/$(SQUASHFS_VERSION)
 SQUASHFS_LICENSE = GPL-2.0+
 SQUASHFS_LICENSE_FILES = COPYING
 SQUASHFS_CPE_ID_VALID = YES
