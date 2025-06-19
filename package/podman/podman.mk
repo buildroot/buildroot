@@ -99,16 +99,6 @@ define PODMAN_LINUX_CONFIG_FIXUPS
 	$(PODMAN_LINUX_CONFIG_FIXUPS_BTRFS)
 endef
 
-define PODMAN_CONFIG
-	$(Q)$(INSTALL) -D -m 0644 \
-		$(PODMAN_PKGDIR)/policy.json \
-		$(TARGET_DIR)/etc/containers/policy.json
-	$(Q)$(INSTALL) -D -m 0644 \
-		$(PODMAN_PKGDIR)/registries.conf \
-		$(TARGET_DIR)/etc/containers/registries.conf
-endef
-PODMAN_POST_INSTALL_TARGET_HOOKS += PODMAN_CONFIG
-
 define PODMAN_HELPERS
 	$(Q)mkdir -p $(TARGET_DIR)/usr/libexec/podman
 	$(Q)ln -sf ../../bin/aardvark-dns $(TARGET_DIR)/usr/libexec/podman/aardvark-dns
