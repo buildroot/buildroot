@@ -1,0 +1,39 @@
+From aa371bf201b1d59c595a1ad7b3464ae544ed142f Mon Sep 17 00:00:00 2001
+From: Paul Crawford <psc@sat.dundee.ac.uk>
+Date: Thu, 16 Mar 2023 11:42:34 +0000
+Subject: [PATCH] Do not guard shutdown __GLIBC__
+
+- Patch by Khem Raj <raj.khem@gmail.com>
+
+- These headers are provided by uclibc/musl/glibc and bionic so we can
+  assume they are not needed to be glibc specific includes. This also
+  ensures that we get proper declaration of reboot() API
+
+Upstream: https://sourceforge.net/p/watchdog/code/ci/aa371bf201b1d59c595a1ad7b3464ae544ed142f/
+
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ src/shutdown.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/src/shutdown.c b/src/shutdown.c
+index 1d9a857..6aea0d0 100644
+--- a/src/shutdown.c
++++ b/src/shutdown.c
+@@ -29,13 +29,9 @@
+ #include "extern.h"
+ #include "ext2_mnt.h"
+ 
+-#if defined __GLIBC__
+ #include <sys/quota.h>
+ #include <sys/swap.h>
+ #include <sys/reboot.h>
+-#else				/* __GLIBC__ */
+-#include <linux/quota.h>
+-#endif				/* __GLIBC__ */
+ 
+ #include <unistd.h>
+ 
+-- 
+2.34.1
+
