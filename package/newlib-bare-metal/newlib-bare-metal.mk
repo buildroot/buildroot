@@ -22,6 +22,12 @@ NEWLIB_BARE_METAL_INSTALL_STAGING = YES
 NEWLIB_BARE_METAL_INSTALL_TARGET = NO
 NEWLIB_BARE_METAL_MAKE_OPTS = MAKEINFO=true
 
+ifeq ($(BR2_TOOLCHAIN_BARE_METAL_BUILDROOT_MULTILIB),y)
+NEWLIB_BARE_METAL_MULTILIB = "--enable-multilib"
+else
+NEWLIB_BARE_METAL_MULTILIB = "--disable-multilib"
+endif
+
 NEWLIB_BARE_METAL_CONF_OPTS = \
 	--build=$(GNU_HOST_NAME) \
 	--prefix=/usr \
@@ -35,7 +41,7 @@ NEWLIB_BARE_METAL_CONF_OPTS = \
 	--enable-newlib-io-long-long \
 	--enable-newlib-io-float \
 	--enable-newlib-io-long-double \
-	--disable-multilib \
+	$(NEWLIB_BARE_METAL_MULTILIB) \
 	--with-tooldir=/usr
 
 define NEWLIB_BARE_METAL_CONFIGURE_CMDS

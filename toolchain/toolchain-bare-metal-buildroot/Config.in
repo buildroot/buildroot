@@ -12,6 +12,20 @@ config BR2_TOOLCHAIN_BARE_METAL_BUILDROOT_ARCH
 	  metal toolchain, use the following definition:
 	  "microblazeel-buildroot-elf riscv32-buildroot-elf"
 
+config BR2_TOOLCHAIN_BARE_METAL_BUILDROOT_MULTILIB
+	bool "Enable multilib"
+	help
+	  Sometimes the default GCC and newlib libraries for a given
+	  architecture are not the desired ABI. Since ABI
+	  definitions are different for each architecture, this
+	  option will enable multilib configuration, so that all
+	  available ABI libraries are built which will guarantee
+	  that the desired version will be available for user
+	  applications.
+
+	  When enabled, this option will apply to all architecture
+	  tuples in the list.
+
 source "package/newlib-bare-metal/Config.in"
 
 endif # BR2_TOOLCHAIN_BARE_METAL_BUILDROOT
