@@ -32,6 +32,20 @@ class TestSkopeo(infra.basetest.BRTest):
         bb_info = json.loads("".join(output))
         self.assertEqual(bb_info["Name"], "docker.io/library/busybox")
 
+        # Then check we can retrieve the image from the default registry
+        # Copy all archs in the image to check we can enumerate those (inspect
+        # does not enumerate all archs)
+        self.assertRunOk(
+            "skopeo copy -a docker://busybox:latest oci-archive:busybox-latest.oci",
+            timeout=120,
+        )
+
+        # Check we can inspect a local OCI archive
+        self.assertRunOk(
+            "skopeo inspect oci-archive:busybox-latest.oci",
+            timeout=30,
+        )
+
         # Now, check we can reach an arbitrary registry: quay.io
         output, _ = self.emulator.run(
             "skopeo inspect docker://quay.io/quay/busybox:latest",
@@ -39,3 +53,9 @@ class TestSkopeo(infra.basetest.BRTest):
         )
         skopeo_info = json.loads("".join(output))
         self.assertEqual(skopeo_info["Name"], "quay.io/quay/busybox")
+
+        # Finally check we can retrieve the image from an arbitrary registry
+        self.assertRunOk(
+            "skopeo copy docker://quay.io/quay/busybox:latest oci-archive:busybox-quay.io-latest.oci",
+            timeout=120,
+        )
