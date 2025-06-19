@@ -1,0 +1,13 @@
+version: 0.1
+storage:
+  cache:
+    blobdescriptor: inmemory
+  filesystem:
+    rootdirectory: /var/lib/docker-registry
+  delete:
+    enabled: true
+http:
+  addr: 127.0.0.1:5000
+  net: tcp
+  headers:
+    X-Content-Type-Options: [nosniff]

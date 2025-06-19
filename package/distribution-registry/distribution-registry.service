@@ -1,0 +1,10 @@
+[Unit]
+Description=Distribution registry
+After=network.target
+
+[Service]
+User=distribution-registry
+ExecStart=/usr/bin/distribution-registry serve /etc/docker/registry/config.yml
+
+[Install]
+WantedBy=multi-user.target
