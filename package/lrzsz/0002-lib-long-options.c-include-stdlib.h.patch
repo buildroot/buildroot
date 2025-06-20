@@ -15,6 +15,8 @@ long-options.c:70:11: error: implicit declaration of function ‘exit’
 
 Upstream: https://github.com/UweOhse/lrzsz/pull/4
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+[Fiona: remove conditional on __GNU_LIBRARY__ to fix build with musl]
+Signed-off-by: Fiona Klute <fiona.klute@gmx.de>
 ---
  lib/long-options.c | 9 +++++++++
  1 file changed, 9 insertions(+)
@@ -23,18 +25,12 @@ diff --git a/lib/long-options.c b/lib/long-options.c
 index 76b9796..19c84e0 100644
 --- a/lib/long-options.c
 +++ b/lib/long-options.c
-@@ -22,6 +22,15 @@
+@@ -22,6 +22,9 @@
  #endif
  
  #include <stdio.h>
 +
-+/* This needs to come after some library #include
-+   to get __GNU_LIBRARY__ defined.  */
-+#ifdef	__GNU_LIBRARY__
-+/* Don't include stdlib.h for non-GNU C libraries because some of them
-+   contain conflicting prototypes for getopt.  */
 +#include <stdlib.h>
-+#endif	/* GNU C library.  */
 +
  #include <getopt.h>
  #include "long-options.h"
