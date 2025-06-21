@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SQUEEZELITE_VERSION = 71c012ad9ba102feb95823b7b9dc17e5305689c7
+SQUEEZELITE_VERSION = 72e1fd8abfa9b2f8e9636f033247526920878718
 SQUEEZELITE_SITE = $(call github,ralph-irving,squeezelite,$(SQUEEZELITE_VERSION))
 SQUEEZELITE_LICENSE = GPL-3.0
 SQUEEZELITE_LICENSE_FILES = LICENSE.txt
