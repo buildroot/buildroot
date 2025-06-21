@@ -1,0 +1,52 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sat, 21 Jun 2025 18:12:18 +0200
+Subject: [PATCH] core: Update checks for disable_rpi_features option
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Based on the original commit that added the sync feature there
+were a few more options that needed the disable_rpi_features
+code conditionals to ensure compilation against upstream
+libcamera so add them in to ensure this works.
+
+Fixes:
+../core/rpicam_app.cpp: In member function ‘void RPiCamApp::StartCamera()’:
+../core/rpicam_app.cpp:642:78: error: ‘controls::rpi’ has not been declared
+  642 |         if (!controls_.get(controls::ScalerCrop) && !controls_.get(controls::rpi::ScalerCrops))
+      |                                                                              ^~~
+../core/rpicam_app.cpp:673:49: error: ‘controls::rpi’ has not been declared
+  673 |                         controls_.set(controls::rpi::ScalerCrops, libcamera::Span<const Rectangle>(crops.data(), crops.size()));
+      |                                                 ^~~
+
+Upstream: https://github.com/raspberrypi/rpicam-apps/pull/827
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ core/rpicam_app.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/core/rpicam_app.cpp b/core/rpicam_app.cpp
+index bed69c0..1db784f 100644
+--- a/core/rpicam_app.cpp
++++ b/core/rpicam_app.cpp
+@@ -637,6 +637,7 @@ void RPiCamApp::StartCamera()
+ 	// This makes all the Request objects that we shall need.
+ 	makeRequests();
+ 
++#ifndef DISABLE_RPI_FEATURES
+ 	// Build a list of initial controls that we must set in the camera before starting it.
+ 	// We don't overwrite anything the application may have set before calling us.
+ 	if (!controls_.get(controls::ScalerCrop) && !controls_.get(controls::rpi::ScalerCrops))
+@@ -672,6 +673,7 @@ void RPiCamApp::StartCamera()
+ 		else
+ 			controls_.set(controls::rpi::ScalerCrops, libcamera::Span<const Rectangle>(crops.data(), crops.size()));
+ 	}
++#endif
+ 
+ 	if (!controls_.get(controls::AfWindows) && !controls_.get(controls::AfMetering) &&
+ 		options_->Get().afWindow_width != 0 && options_->Get().afWindow_height != 0)
+-- 
+2.39.5
+
