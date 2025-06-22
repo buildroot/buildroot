@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2025.08"
 
+config BR2_TARGET_EDK2_PLATFORM_SOCIONEXT_DEVELOPERBOX
+	bool "EDK2 Socionext DeveloperBox support has been removed"
+	select BR2_LEGACY
+	help
+	  The Socionext DeveloperBox support has been removed upstream
+	  in EDK2 version edk2-stable202505.
+
 config BR2_PACKAGE_LIBEBUR128
 	bool "libebur128 has been removed"
 	select BR2_LEGACY

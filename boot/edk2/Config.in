@@ -80,20 +80,6 @@ config BR2_TARGET_EDK2_PLATFORM_ARM_VEXPRESS_FVP_AARCH64
 	  Platform configuration for ARM Versatile Express targeting
 	  the Aarch64 Fixed Virtual Platform (FVP).
 
-config BR2_TARGET_EDK2_PLATFORM_SOCIONEXT_DEVELOPERBOX
-	bool "Socionext DeveloperBox"
-	depends on BR2_aarch64
-	depends on BR2_TARGET_ARM_TRUSTED_FIRMWARE
-	depends on !BR2_TARGET_ARM_TRUSTED_FIRMWARE_EDK2_AS_BL33
-	select BR2_PACKAGE_HOST_DTC
-	select BR2_TARGET_ARM_TRUSTED_FIRMWARE_FIP
-	help
-	  Platform configuration for Socionext SynQuacer DeveloperBox
-	  (SC2A11).
-
-comment "Socionext DeveloperBox depends on ATF not using EDK2 as BL33"
-	depends on BR2_TARGET_ARM_TRUSTED_FIRMWARE_EDK2_AS_BL33
-
 config BR2_TARGET_EDK2_PLATFORM_SOLIDRUN_ARMADA80X0MCBIN
 	bool "SolidRun MacchiatoBin"
 	depends on BR2_aarch64
@@ -141,7 +127,6 @@ config BR2_TARGET_EDK2_FD_NAME
 	default "QEMU_EFI" if BR2_TARGET_EDK2_PLATFORM_ARM_VIRT_QEMU_KERNEL
 	default "BL33_AP_UEFI" if BR2_TARGET_EDK2_PLATFORM_ARM_SGI575
 	default "FVP_AARCH64_EFI" if BR2_TARGET_EDK2_PLATFORM_ARM_VEXPRESS_FVP_AARCH64
-	default "FVP_AARCH64_EFI" if BR2_TARGET_EDK2_PLATFORM_SOCIONEXT_DEVELOPERBOX
 	default "ARMADA_EFI" if BR2_TARGET_EDK2_PLATFORM_SOLIDRUN_ARMADA80X0MCBIN
 
 endif

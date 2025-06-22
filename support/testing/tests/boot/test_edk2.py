@@ -119,21 +119,6 @@ class TestEdk2BuildArmVexpressFvpAarch64(TestEdk2BuildBase):
         self.assertBinariesExist("FVP_AARCH64_EFI.fd")
 
 
-class TestEdk2BuildSocionextDeveloperbox(TestEdk2BuildBase):
-    config = TestEdk2BuildBase.base_config + \
-        """
-        BR2_aarch64=y
-        BR2_TARGET_EDK2_PLATFORM_SOCIONEXT_DEVELOPERBOX=y
-        BR2_TARGET_ARM_TRUSTED_FIRMWARE=y
-        BR2_TARGET_ARM_TRUSTED_FIRMWARE_PLATFORM="synquacer"
-        BR2_TARGET_ARM_TRUSTED_FIRMWARE_BL31=y
-        BR2_TARGET_ARM_TRUSTED_FIRMWARE_ADDITIONAL_TARGETS="PRELOADED_BL33_BASE=0x8200000"
-        """
-
-    def test_run(self) -> None:
-        self.assertBinariesExist("SPI_NOR_IMAGE.fd", "fip.bin")
-
-
 class TestEdk2BuildQemuSbsa(TestEdk2BuildBase):
     # This configuration is not exactly identical to the configuration built
     # during TestEdk2, as we use the latest arm-trusted-firmware version, among

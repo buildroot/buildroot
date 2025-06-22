@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EDK2_VERSION = edk2-stable202411
+EDK2_VERSION = edk2-stable202505
 EDK2_SITE = https://github.com/tianocore/edk2
 EDK2_SITE_METHOD = git
 EDK2_LICENSE = BSD-2-Clause-Patent
@@ -13,9 +13,6 @@ EDK2_CPE_ID_VENDOR = tianocore
 EDK2_DEPENDENCIES = edk2-platforms host-python3 host-acpica host-util-linux
 EDK2_INSTALL_TARGET = NO
 EDK2_INSTALL_IMAGES = YES
-
-# 0001-NetworkPkg-IScsiDxe-Fix-for-out-of-bound-memory-acce.patch
-EDK2_IGNORE_CVES += CVE-2024-38805
 
 ifeq ($(BR2_ENABLE_DEBUG),y)
 EDK2_BUILD_TYPE = DEBUG
@@ -47,10 +44,10 @@ endif
 # Third, where applicable, the dependency direction between EDK2 and
 # ARM Trusted Firmware (ATF) will go in different direction for different
 # platforms. Most commonly, ATF will depend on EDK2 via the BL33 payload.
-# But for some platforms (e.g. QEMU SBSA or DeveloperBox) EDK2 will package
-# the ATF images within its own build system. In such cases, intermediary
-# "EDK2 packages" will be built in $(EDK2_BUILD_PACKAGES) in order for EDK2
-# to be able to use them in subsequent build stages.
+# But for some platforms (e.g. QEMU SBSA) EDK2 will package the ATF
+# images within its own build system. In such cases, intermediary
+# "EDK2 packages" will be built in $(EDK2_BUILD_PACKAGES) in order for
+# EDK2 to be able to use them in subsequent build stages.
 #
 # For more information about the build setup:
 # https://edk2-docs.gitbook.io/edk-ii-build-specification/4_edk_ii_build_process_overview
@@ -96,25 +93,6 @@ EDK2_ARCH = AARCH64
 EDK2_PACKAGE_NAME = Platform/ARM/VExpressPkg
 EDK2_PLATFORM_NAME = ArmVExpress-FVP-AArch64
 EDK2_BUILD_DIR = $(EDK2_PLATFORM_NAME)
-
-else ifeq ($(BR2_TARGET_EDK2_PLATFORM_SOCIONEXT_DEVELOPERBOX),y)
-EDK2_ARCH = AARCH64
-EDK2_DEPENDENCIES += host-dtc arm-trusted-firmware
-EDK2_PACKAGE_NAME = Platform/Socionext/DeveloperBox
-EDK2_PLATFORM_NAME = DeveloperBox
-EDK2_BUILD_DIR = $(EDK2_PLATFORM_NAME)
-EDK2_BUILD_ENV += DTC_PREFIX=$(HOST_DIR)/bin/
-EDK2_BUILD_OPTS += -D DO_X86EMU=TRUE
-EDK2_PRE_BUILD_HOOKS += EDK2_PRE_BUILD_SOCIONEXT_DEVELOPERBOX
-
-define EDK2_PRE_BUILD_SOCIONEXT_DEVELOPERBOX
-	mkdir -p $(EDK2_BUILD_PACKAGES)/Platform/Socionext/DeveloperBox
-	$(ARM_TRUSTED_FIRMWARE_DIR)/tools/fiptool/fiptool create \
-		--tb-fw $(BINARIES_DIR)/bl31.bin \
-		--soc-fw $(BINARIES_DIR)/bl31.bin \
-		--scp-fw $(BINARIES_DIR)/bl31.bin \
-		$(EDK2_BUILD_PACKAGES)/Platform/Socionext/DeveloperBox/fip_all_arm_tf.bin
-endef
 
 else ifeq ($(BR2_TARGET_EDK2_PLATFORM_SOLIDRUN_ARMADA80X0MCBIN),y)
 EDK2_ARCH = AARCH64
