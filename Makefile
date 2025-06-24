@@ -407,27 +407,27 @@ ifeq ($(BR2_HAVE_DOT_CONFIG),y)
 # Hide troublesome environment variables from sub processes
 #
 ################################################################################
-unexport CROSS_COMPILE
+unexport AR
 unexport ARCH
 unexport CC
-unexport LD
-unexport AR
-unexport CXX
-unexport CPP
-unexport RANLIB
 unexport CFLAGS
-unexport CXXFLAGS
-unexport GREP_OPTIONS
-unexport TAR_OPTIONS
 unexport CONFIG_SITE
-unexport QMAKESPEC
-unexport TERMINFO
+unexport CPP
+unexport CROSS_COMPILE
+unexport CXX
+unexport CXXFLAGS
+unexport DEVICE_TREE
+unexport GCC_COLORS
+unexport GREP_OPTIONS
+unexport LD
 unexport MACHINE
 unexport O
-unexport GCC_COLORS
-unexport PLATFORM
 unexport OS
-unexport DEVICE_TREE
+unexport PLATFORM
+unexport QMAKESPEC
+unexport RANLIB
+unexport TAR_OPTIONS
+unexport TERMINFO
 
 GNU_HOST_NAME := $(shell support/gnuconfig/config.guess)
 
