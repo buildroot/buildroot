@@ -428,6 +428,7 @@ unexport QMAKESPEC
 unexport RANLIB
 unexport TAR_OPTIONS
 unexport TERMINFO
+unexport TOPDIR
 
 GNU_HOST_NAME := $(shell support/gnuconfig/config.guess)
 
