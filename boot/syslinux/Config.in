@@ -4,6 +4,7 @@ menuconfig BR2_TARGET_SYSLINUX
 	# Make sure at least one of the flavors is installed
 	select BR2_TARGET_SYSLINUX_ISOLINUX \
 		if !BR2_TARGET_SYSLINUX_PXELINUX && \
+		   !BR2_TARGET_SYSLINUX_LPXELINUX && \
 		   !BR2_TARGET_SYSLINUX_MBR && \
 		   !BR2_TARGET_SYSLINUX_EFI
 	select BR2_PACKAGE_UTIL_LINUX
@@ -27,11 +28,22 @@ config BR2_TARGET_SYSLINUX_ISOLINUX
 	  optical media (CDROM, DVD.)
 
 config BR2_TARGET_SYSLINUX_PXELINUX
-	bool "install pxelinux"
+	bool "install pxelinux (TFTP-only)"
 	select BR2_TARGET_SYSLINUX_LEGACY_BIOS
 	help
 	  Install the legacy-BIOS 'pxelinux' image, to boot off
-	  the network using PXE.
+	  the network using PXE and TFTP.
+
+config BR2_TARGET_SYSLINUX_LPXELINUX
+	bool "install lpxelinux (TFTP, HTTP, FTP)"
+	select BR2_TARGET_SYSLINUX_LEGACY_BIOS
+	help
+	  Install the legacy-BIOS 'lpxelinux' image, to boot off
+	  the network using PXE, and TFTP, HTTP, or FTP.
+
+	  Note: a TFTP server is still required to serve the
+	  lpxelinux boot image; HTTP or FTP can only be used
+	  by lpxelinux to retrieve the kernel (and initrd...)
 
 config BR2_TARGET_SYSLINUX_MBR
 	bool "install mbr"
