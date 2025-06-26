@@ -73,6 +73,16 @@ config BR2_PACKAGE_STRONGSWAN_CURL
 config BR2_PACKAGE_STRONGSWAN_MD4
 	bool "Enable MD4 hash algorithm"
 
+config BR2_PACKAGE_STRONGSWAN_DROP_CAPS
+	bool "Drop unneeded capabilities after initialization"
+	select BR2_PACKAGE_LIBCAP
+	help
+	  strongSwan supports capability dropping. The IKE charon daemon
+	  is started as root and most of its privileges are dropped
+	  immediately.
+	  After the daemon has been initialized, further unneeded
+	  capabilities are dropped.
+
 config BR2_PACKAGE_STRONGSWAN_CHARON
 	bool "Enable the IKEv1/IKEv2 keying daemon charon"
 	default y
