@@ -5,7 +5,11 @@
 ################################################################################
 
 LIBMPEG2_VERSION = 0.5.1
-LIBMPEG2_SITE = http://libmpeg2.sourceforge.net/files
+# Gitlab repository does not have a 0.5.1 git tag,
+# use the corresponding commit sha instead
+LIBMPEG2_VERSION_SHA = 41f78cf4d30d0da0a24c8ecbc38b0c9dfd43f871
+LIBMPEG2_SOURCE = libmpeg2-v$(LIBMPEG2_VERSION_SHA).tar.gz
+LIBMPEG2_SITE = https://code.videolan.org/videolan/libmpeg2/-/archive/$(LIBMPEG2_VERSION_SHA)
 LIBMPEG2_LICENSE = GPL-2.0+
 LIBMPEG2_LICENSE_FILES = COPYING
 LIBMPEG2_INSTALL_STAGING = YES
