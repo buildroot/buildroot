@@ -63,6 +63,16 @@ config BR2_PACKAGE_STRONGSWAN_WOLFSSL
 
 endchoice
 
+config BR2_PACKAGE_STRONGSWAN_PIDDIR
+	string "piddir"
+	default "/var/run"
+	help
+	  Path for PID and UNIX socket files used by strongswan.
+
+	  Use the empty string to not pass --with-piddir to strongswan
+	  configure, this then defaults to strongswan's source default
+	  which may not be stable across releases.
+
 config BR2_PACKAGE_STRONGSWAN_AF_ALG
 	bool "Enable AF_ALG crypto interface to Linux Crypto API"
 

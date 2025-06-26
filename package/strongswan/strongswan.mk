@@ -66,6 +66,9 @@ ifeq ($(BR2_PACKAGE_STRONGSWAN_DROP_CAPS),y)
 STRONGSWAN_CONF_OPTS += --with-capabilities=libcap
 endif
 
+# setup piddir if BR2_PACKAGE_STRONGSWAN_PIDDIR is not empty
+STRONGSWAN_CONF_OPTS += $(if $(call qstrip,$(BR2_PACKAGE_STRONGSWAN_PIDDIR)),--with-piddir=$(BR2_PACKAGE_STRONGSWAN_PIDDIR))
+
 ifeq ($(BR2_PACKAGE_STRONGSWAN_NONROOT),y)
 STRONGSWAN_CONF_OPTS += \
 	--with-user=charon \
