@@ -66,6 +66,16 @@ ifeq ($(BR2_PACKAGE_STRONGSWAN_DROP_CAPS),y)
 STRONGSWAN_CONF_OPTS += --with-capabilities=libcap
 endif
 
+ifeq ($(BR2_PACKAGE_STRONGSWAN_NONROOT),y)
+STRONGSWAN_CONF_OPTS += \
+	--with-user=charon \
+	--with-group=charon
+
+define STRONGSWAN_USERS
+	charon -1 charon -1 * - - -
+endef
+endif
+
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 STRONGSWAN_CONF_ENV += LIBS='-latomic'
 endif

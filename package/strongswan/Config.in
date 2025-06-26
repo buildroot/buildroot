@@ -204,6 +204,11 @@ config BR2_PACKAGE_STRONGSWAN_SQL
 config BR2_PACKAGE_STRONGSWAN_BYPASS_LAN
 	bool "Enable BYPASS-LAN plugin"
 
+config BR2_PACKAGE_STRONGSWAN_NONROOT
+	bool "Run as non-root"
+	help
+	  This allows running the IKE charon daemon as the non-root
+	  user/group charon/charon.
 endif
 
 config BR2_PACKAGE_STRONGSWAN_PKI
