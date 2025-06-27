@@ -144,6 +144,15 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2025.05.1"
+
+config BR2_PACKAGE_LIBWEBSOCK
+	bool "libwebsock has been removed"
+	select BR2_LEGACY
+	help
+	  The upstream Github repository payden/libwebsock is no
+	  longer available, and has been removed from Buildroot.
+
 comment "Legacy options removed in 2025.05"
 
 config BR2_PACKAGE_LIBEBUR128
