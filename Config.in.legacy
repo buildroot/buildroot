@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2025.08"
 
+config BR2_PACKAGE_LIBWEBSOCK
+	bool "libwebsock has been removed"
+	select BR2_LEGACY
+	help
+	  The upstream Github repository payden/libwebsock is no
+	  longer available, and has been removed from Buildroot.
+
 config BR2_TARGET_EDK2_PLATFORM_SOCIONEXT_DEVELOPERBOX
 	bool "EDK2 Socionext DeveloperBox support has been removed"
 	select BR2_LEGACY
