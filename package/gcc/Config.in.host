@@ -24,6 +24,7 @@ config BR2_GCC_VERSION_POWERPC_SPE
 
 config BR2_GCC_VERSION_13_X
 	bool "gcc 13.x"
+	depends on !BR2_ARCH_NEEDS_GCC_AT_LEAST_14
 	# powerpc spe support has been deprecated since gcc 8.x.
 	# https://gcc.gnu.org/ml/gcc/2018-04/msg00102.html
 	depends on !BR2_POWERPC_CPU_HAS_SPE
@@ -31,6 +32,7 @@ config BR2_GCC_VERSION_13_X
 
 config BR2_GCC_VERSION_14_X
 	bool "gcc 14.x"
+	depends on !BR2_ARCH_NEEDS_GCC_AT_LEAST_15
 	# powerpc spe support has been deprecated since gcc 8.x.
 	# https://gcc.gnu.org/ml/gcc/2018-04/msg00102.html
 	depends on !BR2_POWERPC_CPU_HAS_SPE
