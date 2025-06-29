@@ -1,0 +1,52 @@
+From 0592f8f829c843ff5cb2d108c309e32f4f6f5379 Mon Sep 17 00:00:00 2001
+From: Andre Przywara <andre.przywara@arm.com>
+Date: Thu, 1 Aug 2024 12:10:54 +0100
+Subject: remove wordsize.h inclusion (for musl compatibility)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The wordsize.h header file and the __WORDSIZE definition do not seem
+to be universal, the musl libc for instance has the definition in a
+different header file. This breaks compilation of kvmtool against musl.
+
+The two leading underscores suggest a compiler-internal symbol anyway, so
+let's just remove that particular macro usage entirely, and replace it
+with the number we really want: the size of a "long" type.
+
+Reported-by: J. Neuschäfer <j.neuschaefer@gmx.net>
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Reviewed-by: Alexandru Elisei <alexandru.elisei@arm.com>
+Link: https://lore.kernel.org/r/20240801111054.818765-1-andre.przywara@arm.com
+Signed-off-by: Will Deacon <will@kernel.org>
+Upstream: https://git.kernel.org/pub/scm/linux/kernel/git/will/kvmtool.git/commit/?id=0592f8f829c843ff5cb2d108c309e32f4f6f5379
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ include/linux/bitops.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+index ae33922f..ee8fd560 100644
+--- a/include/linux/bitops.h
++++ b/include/linux/bitops.h
+@@ -1,15 +1,13 @@
+ #ifndef _KVM_LINUX_BITOPS_H_
+ #define _KVM_LINUX_BITOPS_H_
+ 
+-#include <bits/wordsize.h>
+-
+ #include <linux/kernel.h>
+ #include <linux/compiler.h>
+ #include <asm/hweight.h>
+ 
+-#define BITS_PER_LONG __WORDSIZE
+ #define BITS_PER_BYTE           8
+-#define BITS_TO_LONGS(nr)       DIV_ROUND_UP(nr, BITS_PER_BYTE * sizeof(long))
++#define BITS_PER_LONG           (BITS_PER_BYTE * sizeof(long))
++#define BITS_TO_LONGS(nr)       DIV_ROUND_UP(nr, BITS_PER_LONG)
+ 
+ #define BIT_WORD(nr)		((nr) / BITS_PER_LONG)
+ 
+-- 
+cgit 1.2.3-korg
+
