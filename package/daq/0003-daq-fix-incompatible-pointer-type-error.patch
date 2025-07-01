@@ -1,0 +1,31 @@
+Fix daq incompatible pointer type error when gcc option
+'-Wincompatible-pointer-types is set:
+
+| ../../daq-2.0.7/os-daq-modules/daq_nfq.c: In function 'SetPktHdr':
+| ../../daq-2.0.7/os-daq-modules/daq_nfq.c:394:37: error: passing argument 2
+   of 'nfq_get_payload' from incompatible pointer type [-Wincompatible-pointer-types]
+|   394 |     int len = nfq_get_payload(nfad, (char**)pkt);
+|       |                                     ^~~~~~~~~~~
+|       |                                     |
+|       |                                     char **
+
+Signed-off-by: Kai Kang <kai.kang@windriver.com>
+Upstream: https://git.openembedded.org/meta-openembedded/tree/meta-networking/recipes-connectivity/daq/files/daq-fix-incompatible-pointer-type-error.patch?h=master
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ os-daq-modules/daq_nfq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/os-daq-modules/daq_nfq.c b/os-daq-modules/daq_nfq.c
+index 4de94b6..a6de2f3 100644
+--- a/os-daq-modules/daq_nfq.c
++++ b/os-daq-modules/daq_nfq.c
+@@ -391,7 +391,7 @@ static inline int SetPktHdr (
+     DAQ_PktHdr_t* hdr,
+     uint8_t** pkt
+ ) {
+-    int len = nfq_get_payload(nfad, (char**)pkt);
++    int len = nfq_get_payload(nfad, (unsigned char**)pkt);
+ 
+     if ( len <= 0 )
+         return -1;
