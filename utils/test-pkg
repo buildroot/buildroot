@@ -3,6 +3,11 @@ set -e
 
 TOOLCHAINS_CSV='support/config-fragments/autobuild/toolchain-configs.csv'
 TEMP_CONF=""
+abort=0
+
+do_abort() {
+    abort=1
+}
 
 do_clean() {
     if [ -n "${TEMP_CONF}" ]; then
@@ -67,7 +72,8 @@ main() {
         esac
     done
 
-    trap do_clean INT TERM HUP EXIT
+    trap do_abort INT
+    trap do_clean TERM HUP EXIT
 
     if [ -z "${cfg}" ]; then
         pkg_br_name="${pkg//-/_}"
@@ -139,6 +145,10 @@ main() {
         (3) : $((nb_legal++)); printf "FAILED\n";;
         (4) : $((nb_show++)); printf "FAILED\n";;
         esac
+
+        if [ "${abort}" -eq 1 ]; then
+            return 1
+        fi
     done
 
     printf "%d builds, %d skipped, %d build failed, %d legal-info failed, %d show-info failed\n" \
