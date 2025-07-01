@@ -17,4 +17,7 @@ TINYXML_CPE_ID_VERSION = $(firstword $(subst _,$(space),$(TINYXML_VERSION)))
 # 0001-In-stamp-always-advance-the-pointer-if-p-0xef.patch
 TINYXML_IGNORE_CVES += CVE-2021-42260
 
+# 0002-Avoid-reachable-assertion-via-crafted-XML-document.patch
+TINYXML_IGNORE_CVES += CVE-2023-34194
+
 $(eval $(autotools-package))
