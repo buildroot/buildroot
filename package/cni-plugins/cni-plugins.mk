@@ -28,7 +28,6 @@ CNI_PLUGINS_BUILD_TARGETS = \
 	plugins/meta/sbr \
 	plugins/meta/tuning \
 	plugins/meta/vrf
-CNI_PLUGINS_INSTALL_BINS = $(CNI_PLUGINS_BUILD_TARGETS)
 
 ifeq ($(BR2_PACKAGE_LIBAPPARMOR),y)
 CNI_PLUGINS_DEPENDENCIES += libapparmor
@@ -47,9 +46,9 @@ endif
 
 define CNI_PLUGINS_INSTALL_TARGET_CMDS
 	$(INSTALL) -d -m 0755 $(TARGET_DIR)/opt/cni/bin
-	$(foreach d,$(CNI_PLUGINS_INSTALL_BINS),\
-		$(INSTALL) -D -m 0755 $(@D)/bin/$$(basename $(d)) \
-			$(TARGET_DIR)/opt/cni/bin
+	$(foreach d,$(CNI_PLUGINS_BUILD_TARGETS),\
+		$(INSTALL) -D -m 0755 $(@D)/bin/$(notdir $(d)) \
+			$(TARGET_DIR)/opt/cni/bin/$(notdir $(d))
 	)
 endef
 
