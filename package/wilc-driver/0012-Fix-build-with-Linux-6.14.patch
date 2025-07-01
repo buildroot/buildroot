@@ -1,0 +1,33 @@
+From ea7bdf9c6f37dbed0d7e7a94bd5d6ec20593eb02 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Tue, 1 Jul 2025 19:25:19 +0200
+Subject: [PATCH] Fix build with Linux 6.14
+
+Commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7a53af85d3bbdbe06cd47b81a6d99a04dc0a3963
+adds argument "unsigned int link_id" to get_tx_power(), so let's add it to
+cfg80211_rtw_get_txpower() according to Linux version.
+
+Upstream: https://github.com/embeddedTS/wilc3000-external-module/pull/9
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ cfg80211.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/cfg80211.c b/cfg80211.c
+index 5c92062..0e1375c 100644
+--- a/cfg80211.c
++++ b/cfg80211.c
+@@ -2230,6 +2230,9 @@ static int set_tx_power(struct wiphy *wiphy, struct wireless_dev *wdev,
+ }
+ 
+ static int get_tx_power(struct wiphy *wiphy, struct wireless_dev *wdev,
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 14, 0))
++			unsigned int link_id,
++#endif
+ 			int *dbm)
+ {
+ 	int ret;
+-- 
+2.39.5
+
