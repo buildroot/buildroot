@@ -20,7 +20,6 @@ CONTAINERD_BUILD_TARGETS = \
 	cmd/containerd-shim-runc-v2 \
 	cmd/ctr
 
-CONTAINERD_INSTALL_BINS = $(notdir $(CONTAINERD_BUILD_TARGETS))
 CONTAINERD_TAGS = no_aufs
 
 ifeq ($(BR2_PACKAGE_LIBAPPARMOR),y)

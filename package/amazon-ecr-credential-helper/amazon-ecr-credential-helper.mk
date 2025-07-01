@@ -15,6 +15,5 @@ AMAZON_ECR_CREDENTIAL_HELPER_SUBDIR = ecr-login
 
 AMAZON_ECR_CREDENTIAL_HELPER_GOMOD = ./cli
 AMAZON_ECR_CREDENTIAL_HELPER_BUILD_TARGETS = docker-credential-ecr-login
-AMAZON_ECR_CREDENTIAL_HELPER_INSTALL_BINS = docker-credential-ecr-login
 
 $(eval $(golang-package))

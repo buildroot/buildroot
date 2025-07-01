@@ -18,7 +18,6 @@ DISTRIBUTION_REGISTRY_BUILD_TARGETS = cmd/registry
 # distribution-registry builds and installs the 'registry' executable, but
 # that name is a bit too generic. Rename it to match the package name.
 DISTRIBUTION_REGISTRY_BIN_NAME = distribution-registry
-DISTRIBUTION_REGISTRY_INSTALL_BINS = distribution-registry
 
 # Inject the version as if done by upstream's wrapper Makefile
 define DISTRIBUTION_REGISTRY_SET_VERSION

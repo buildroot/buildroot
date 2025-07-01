@@ -115,7 +115,4 @@ HOST_MENDER_ARTIFACT_GO_ENV += \
 
 HOST_MENDER_ARTIFACT_LDFLAGS = -X github.com/mendersoftware/mender-artifact/cli.Version=$(HOST_MENDER_ARTIFACT_VERSION)
 
-HOST_MENDER_ARTIFACT_BIN_NAME = mender-artifact
-HOST_MENDER_ARTIFACT_INSTALL_BINS = $(HOST_MENDER_ARTIFACT_BIN_NAME)
-
 $(eval $(host-golang-package))
