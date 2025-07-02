@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-GVFS_VERSION_MAJOR = 1.48
-GVFS_VERSION = $(GVFS_VERSION_MAJOR).1
+GVFS_VERSION_MAJOR = 1.57
+GVFS_VERSION = $(GVFS_VERSION_MAJOR).2
 GVFS_SOURCE = gvfs-$(GVFS_VERSION).tar.xz
 GVFS_SITE = https://download.gnome.org/sources/gvfs/$(GVFS_VERSION_MAJOR)
 GVFS_INSTALL_STAGING = YES
@@ -28,6 +28,7 @@ GVFS_CONF_OPTS = \
 	-Dafc=false \
 	-Dgoa=false \
 	-Dgoogle=false \
+	-Donedrive=false \
 	-Dmtp=false \
 	-Dsftp=false \
 	-Dudisks2=false
@@ -125,8 +126,8 @@ else
 GVFS_CONF_OPTS += -Dkeyring=false
 endif
 
-ifeq ($(BR2_PACKAGE_LIBSOUP)$(BR2_PACKAGE_LIBXML2),yy)
-GVFS_DEPENDENCIES += libsoup libxml2
+ifeq ($(BR2_PACKAGE_LIBSOUP3)$(BR2_PACKAGE_LIBXML2),yy)
+GVFS_DEPENDENCIES += libsoup3 libxml2
 GVFS_CONF_OPTS += -Dhttp=true
 else
 GVFS_CONF_OPTS += -Dhttp=false
