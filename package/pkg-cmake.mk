@@ -53,10 +53,6 @@ define inner-cmake-package
 
 $(3)_SUPPORTS_IN_SOURCE_BUILD ?= YES
 
-# Some packages requires CMake 3.0.0 but latest CMake requires >=3.5
-# Set the policy version minimum to force these packages to 3.5 or greater.
-$(2)_CONF_OPTS += -DCMAKE_POLICY_VERSION_MINIMUM=3.5
-
 # The default backend, unless specified by the package
 $(3)_CMAKE_BACKEND ?= make
 
