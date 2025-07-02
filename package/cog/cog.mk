@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-COG_VERSION = 0.18.4
+COG_VERSION = 0.18.5
 COG_SITE = https://wpewebkit.org/releases
 COG_SOURCE = cog-$(COG_VERSION).tar.xz
 COG_INSTALL_STAGING = YES
@@ -45,7 +45,10 @@ COG_CONF_OPTS += -Dcog_dbus_control=user
 endif
 
 ifeq ($(BR2_PACKAGE_LIBMANETTE),y)
+COG_CONF_OPTS += -Dlibmanette=enabled
 COG_DEPENDENCIES += libmanette
+else
+COG_CONF_OPTS += -Dlibmanette=disabled
 endif
 
 $(eval $(meson-package))
