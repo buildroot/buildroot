@@ -25,6 +25,7 @@ CNI_PLUGINS_BUILD_TARGETS = \
 	plugins/meta/bandwidth \
 	plugins/meta/firewall \
 	plugins/meta/portmap \
+	plugins/meta/sbr \
 	plugins/meta/tuning \
 	plugins/meta/vrf
 CNI_PLUGINS_INSTALL_BINS = $(CNI_PLUGINS_BUILD_TARGETS)
