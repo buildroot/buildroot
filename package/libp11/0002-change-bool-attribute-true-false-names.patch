@@ -1,0 +1,67 @@
+From 89ccb1f097f56a0933f881af051422b8d67e457f Mon Sep 17 00:00:00 2001
+From: dlegault <dlegault@blackberry.com>
+Date: Fri, 2 Sep 2022 12:01:23 -0400
+Subject: [PATCH] Change bool attribute true/false names to _true/_false
+
+This prevents conflicts with true/false defined in stdbool.h
+
+fixes #472
+
+Upstream: https://github.com/OpenSC/libp11/commit/89ccb1f097f56a0933f881af051422b8d67e457f
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/p11_attr.c |  6 +++---
+ src/p11_ec.c   | 14 +++++++-------
+ 2 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/src/p11_attr.c b/src/p11_attr.c
+index d425241a..a420efad 100644
+--- a/src/p11_attr.c
++++ b/src/p11_attr.c
+@@ -123,9 +123,9 @@ unsigned int pkcs11_addattr(PKCS11_TEMPLATE *tmpl, int type, void *data, size_t
+ 
+ void pkcs11_addattr_bool(PKCS11_TEMPLATE *tmpl, int type, int value)
+ {
+-	static CK_BBOOL true = CK_TRUE;
+-	static CK_BBOOL false = CK_FALSE;
+-	pkcs11_addattr(tmpl, type, value ? &true : &false, sizeof(CK_BBOOL));
++	static CK_BBOOL _true = CK_TRUE;
++	static CK_BBOOL _false = CK_FALSE;
++	pkcs11_addattr(tmpl, type, value ? &_true : &_false, sizeof(CK_BBOOL));
+ }
+ 
+ void pkcs11_addattr_s(PKCS11_TEMPLATE *tmpl, int type, const char *s)
+diff --git a/src/p11_ec.c b/src/p11_ec.c
+index 4fb4efc3..16e3b3af 100644
+--- a/src/p11_ec.c
++++ b/src/p11_ec.c
+@@ -590,22 +590,22 @@ static int pkcs11_ecdh_derive(unsigned char **out, size_t *outlen,
+ 	CK_MECHANISM mechanism;
+ 	int rv;
+ 
+-	CK_BBOOL true = TRUE;
+-	CK_BBOOL false = FALSE;
++	CK_BBOOL _true = TRUE;
++	CK_BBOOL _false = FALSE;
+ 	CK_OBJECT_HANDLE newkey = CK_INVALID_HANDLE;
+ 	CK_OBJECT_CLASS newkey_class= CKO_SECRET_KEY;
+ 	CK_KEY_TYPE newkey_type = CKK_GENERIC_SECRET;
+ 	CK_ULONG newkey_len = key_len;
+ 	CK_OBJECT_HANDLE *tmpnewkey = (CK_OBJECT_HANDLE *)outnewkey;
+ 	CK_ATTRIBUTE newkey_template[] = {
+-		{CKA_TOKEN, &false, sizeof(false)}, /* session only object */
++		{CKA_TOKEN, &_false, sizeof(_false)}, /* session only object */
+ 		{CKA_CLASS, &newkey_class, sizeof(newkey_class)},
+ 		{CKA_KEY_TYPE, &newkey_type, sizeof(newkey_type)},
+ 		{CKA_VALUE_LEN, &newkey_len, sizeof(newkey_len)},
+-		{CKA_SENSITIVE, &false, sizeof(false) },
+-		{CKA_EXTRACTABLE, &true, sizeof(true) },
+-		{CKA_ENCRYPT, &true, sizeof(true)},
+-		{CKA_DECRYPT, &true, sizeof(true)}
++		{CKA_SENSITIVE, &_false, sizeof(_false) },
++		{CKA_EXTRACTABLE, &_true, sizeof(_true) },
++		{CKA_ENCRYPT, &_true, sizeof(_true)},
++		{CKA_DECRYPT, &_true, sizeof(_true)}
+ 	};
+ 
+ 	memset(&mechanism, 0, sizeof(mechanism));
