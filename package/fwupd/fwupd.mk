@@ -9,6 +9,7 @@ FWUPD_SITE = https://github.com/fwupd/fwupd/releases/download/$(FWUPD_VERSION)
 FWUPD_SOURCE = fwupd-$(FWUPD_VERSION).tar.xz
 FWUPD_LICENSE = LGPL-2.1+
 FWUPD_LICENSE_FILES = COPYING
+FWUPD_CPE_ID_VENDOR = fwupd
 FWUPD_DEPENDENCIES = \
 	host-pkgconf \
 	host-python-jinja2 \
