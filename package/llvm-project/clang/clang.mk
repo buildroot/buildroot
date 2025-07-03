@@ -115,8 +115,7 @@ CLANG_CONF_OPTS += -DLLVM_DYLIB_COMPONENTS=all
 ifeq ($(BR2_TOOLCHAIN_EXTERNAL),y)
 define HOST_CLANG_INSTALL_CONFIG_FILE
 	mkdir -p $(HOST_DIR)/lib/clang/$(CLANG_VERSION_MAJOR)
-	touch $(HOST_DIR)/lib/clang/$(CLANG_VERSION_MAJOR)/$(GNU_TARGET_NAME).cfg
-	echo "--gcc-install-dir=$(TOOLCHAIN_EXTERNAL_INSTALL_DIR)/lib/gcc/$$(ls $(TOOLCHAIN_EXTERNAL_INSTALL_DIR)/lib/gcc/)/$$(ls $(TOOLCHAIN_EXTERNAL_INSTALL_DIR)/lib/gcc/$$(ls $(TOOLCHAIN_EXTERNAL_INSTALL_DIR)/lib/gcc/)/)" > $(HOST_DIR)/lib/clang/$(CLANG_VERSION_MAJOR)/$(GNU_TARGET_NAME).cfg
+	echo "--gcc-install-dir=$$($(TARGET_CC) -print-search-dirs | awk -F ': ' '$$1=="install" {print $$2}')" > $(HOST_DIR)/lib/clang/$(CLANG_VERSION_MAJOR)/$(GNU_TARGET_NAME).cfg
 	echo "--target=$(GNU_TARGET_NAME)" >> $(HOST_DIR)/lib/clang/$(CLANG_VERSION_MAJOR)/$(GNU_TARGET_NAME).cfg
 endef
 
