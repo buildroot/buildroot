@@ -67,7 +67,7 @@ SOX_IGNORE_CVES += CVE-2021-3643 CVE-2021-23210
 # 0007-hcom-validate-dictsize.patch
 # This entry is NOT stale, those CVEs are not reported by pkg-stats
 # due to the change of CPE ID to sox_project:sox in the NVD database
-SOX_IGNORE_CVES += CVE-2021-23159 CVE-2021-23172 CVE-2023-34318
+SOX_IGNORE_CVES += CVE-2021-23159 CVE-2021-23172 CVE-2023-34318 CVE-2023-34432
 
 # 0008-phere-avoid-integer-underflow.patch
 # This entry is NOT stale, those CVEs are not reported by pkg-stats
