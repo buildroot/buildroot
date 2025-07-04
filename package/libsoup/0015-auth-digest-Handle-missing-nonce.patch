@@ -1,0 +1,35 @@
+From 0984dddb11daf14fdf5ca24077cd0ebda796439a Mon Sep 17 00:00:00 2001
+From: Changqing Li <changqing.li@windriver.com>
+Date: Fri, 16 May 2025 13:25:32 +0800
+Subject: [PATCH] auth-digest: Handle missing nonce
+
+CVE: CVE-2025-32912
+Upstream-Status: Backport
+[https://gitlab.gnome.org/GNOME/libsoup/-/commit/cd077513f267e43ce4b659eb18a1734d8a369992?merge_request_iid=434
+https://gitlab.gnome.org/GNOME/libsoup/-/commit/910ebdcd3dd82386717a201c13c834f3a63eed7f]
+
+Upstream: https://git.openembedded.org/meta-openembedded/tree/meta-oe/recipes-support/libsoup/libsoup-2.4/CVE-2025-32912.patch
+
+Signed-off-by: Changqing Li <changqing.li@windriver.com>
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ libsoup/soup-auth-digest.c | 2 +-
+ 1 files changed, 1 insertions(+), 1 deletion(-)
+
+diff --git a/libsoup/soup-auth-digest.c b/libsoup/soup-auth-digest.c
+index 6d965d2..f1621ec 100644
+--- a/libsoup/soup-auth-digest.c
++++ b/libsoup/soup-auth-digest.c
+@@ -156,7 +156,7 @@ soup_auth_digest_update (SoupAuth *auth, SoupMessage *msg,
+ 	guint qop_options;
+ 	gboolean ok = TRUE;
+ 
+-	 if (!soup_auth_get_realm (auth))
++	if (!soup_auth_get_realm (auth) || !g_hash_table_lookup (auth_params, "nonce"))
+ 		return FALSE;
+ 
+ 	g_free (priv->domain);
+
+-- 
+2.34.1
+
