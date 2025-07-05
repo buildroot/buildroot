@@ -1,0 +1,32 @@
+From 9020896f89006bc5d3487222eefc7ddea9e8b2bd Mon Sep 17 00:00:00 2001
+From: Axel Neumann <axel@notmail.org>
+Date: Sun, 19 May 2024 07:53:57 +0200
+Subject: [PATCH] Detect mbedtls-2.8.0 or mbedtls-3.6.0 based on
+ mbedtls/version.h
+
+Upstream: https://github.com/bmx-routing/bmx7/commit/9020896f89006bc5d3487222eefc7ddea9e8b2bd
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/crypt.h | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/src/crypt.h b/src/crypt.h
+index cae8df7..2dff0da 100644
+--- a/src/crypt.h
++++ b/src/crypt.h
+@@ -28,9 +28,13 @@
+ #define MBEDTLS_3_6_0  2360
+ #define MBEDTLS_MAX    2999
+ 
+-#ifndef CRYPTLIB
++#include "mbedtls/version.h"
++#ifndef MBEDTLS_VERSION_NUMBER
+ #define CRYPTLIB MBEDTLS_2_8_0
+-//#define CRYPTLIB MBEDTLS_3_6_0
++#elif (MBEDTLS_VERSION_NUMBER >= 0x01000000 && MBEDTLS_VERSION_NUMBER < 0x03000000)
++#define CRYPTLIB MBEDTLS_2_8_0
++#elif (MBEDTLS_VERSION_NUMBER >= 0x03000000)
++#define CRYPTLIB MBEDTLS_3_6_0
+ #endif
+ 
+ #define CRYPT_DER_BUF_SZ 16000

@@ -1,0 +1,396 @@
+From fb45b7d30899ee295a0580cdab6710b510150f73 Mon Sep 17 00:00:00 2001
+From: Axel Neumann <axel@notmail.org>
+Date: Sat, 18 May 2024 14:00:49 +0200
+Subject: [PATCH] Support mbedtls-3.6.0 Also disable no-further-supported
+ RSA896
+
+Upstream: https://github.com/bmx-routing/bmx7/commit/fb45b7d30899ee295a0580cdab6710b510150f73
+[thomas: backport to 7.1.1]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/Common.mk |  2 +-
+ src/crypt.c   | 71 ++++++++++++++++++++++++---------------------------
+ src/crypt.h   |  4 +--
+ src/msg.c     |  6 ++---
+ src/sec.c     | 28 ++++++++++++--------
+ src/sec.h     | 18 ++++++-------
+ 6 files changed, 67 insertions(+), 62 deletions(-)
+
+diff --git a/src/Common.mk b/src/Common.mk
+index 32b2d34..c73df44 100644
+--- a/src/Common.mk
++++ b/src/Common.mk
+@@ -2,7 +2,7 @@ GIT_REV ?= $(shell [ -r .git ] && git --no-pager log -n 1 --oneline | cut -d " "
+
+ CFLAGS += -pedantic -W -Wall -Wstrict-prototypes -Wno-unused-parameter -Os -g3 -std=gnu99 -DGIT_REV=\"$(GIT_REV)\"
+ # CFLAGS += -DHAVE_CONFIG_H
+-# CFLAGS += -DCRYPTLIB=MBEDTLS_2_4_0 # POLARSSL_1_2_5 POLARSSL_1_2_9 POLARSSL_1_3_3 POLARSSL_1_3_4 CYASSL_2_8_0
++# CFLAGS += -DCRYPTLIB=MBEDTLS_2_8_0 # -DCRYPTLIB=MBEDTLS_3_6_0
+
+ # optional defines:
+ # CFLAGS += -static
+diff --git a/src/crypt.c b/src/crypt.c
+index 91543ef..69918a1 100644
+--- a/src/crypt.c
++++ b/src/crypt.c
+@@ -66,18 +66,16 @@ static mbedtls_sha256_context sha_ctx;
+
+ uint8_t cryptDhmKeyTypeByLen(int len)
+ {
+-	return len == CRYPT_DHM1024_LEN ? CRYPT_DHM1024_TYPE : (
+-		len == CRYPT_DHM2048_LEN ? CRYPT_DHM2048_TYPE : (
++	return len == CRYPT_DHM2048_LEN ? CRYPT_DHM2048_TYPE : (
+ 		len == CRYPT_DHM3072_LEN ? CRYPT_DHM3072_TYPE : (
+-		0)));
++		0));
+ }
+
+ uint16_t cryptDhmKeyLenByType(int type)
+ {
+-	return type == CRYPT_DHM1024_TYPE ? CRYPT_DHM1024_LEN : (
+-		type == CRYPT_DHM2048_TYPE ? CRYPT_DHM2048_LEN : (
++	return type == CRYPT_DHM2048_TYPE ? CRYPT_DHM2048_LEN : (
+ 		type == CRYPT_DHM3072_TYPE ? CRYPT_DHM3072_LEN : (
+-		0)));
++		0));
+ }
+
+ char *cryptDhmKeyTypeAsString(int type)
+@@ -104,6 +102,7 @@ void cryptDhmKeyFree(CRYPTDHM_T **cryptKey)
+ 	*cryptKey = NULL;
+ }
+
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
+ /*
+  * Verify sanity of parameter with regards to P
+  *
+@@ -134,10 +133,10 @@ static int _cryptDhmCheckRange(const mbedtls_mpi *param, const mbedtls_mpi *P)
+ 	mbedtls_mpi_free(&U);
+ 	return( ret);
+ }
++#endif
+
+ CRYPTDHM_T *cryptDhmKeyMake(uint8_t keyType, uint8_t attempt)
+ {
+-
+ 	int ret = 0;
+ 	char *goto_error_code = NULL;
+ 	int keyLen = 0;
+@@ -184,11 +183,6 @@ CRYPTDHM_T *cryptDhmKeyMake(uint8_t keyType, uint8_t attempt)
+ 	if ((pSize = mbedtls_mpi_size(&dhm_P)) != keyLen)
+ 		goto_error(finish, "Invalid P size");
+
+-#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
+-#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
+-	if ((pSize = mbedtls_dhm_get_len(dhm)) != keyLen)
+-		goto_error(finish, "Invalid P size");
+-#endif
+
+ 	if ((ret = mbedtls_dhm_set_group(dhm, &dhm_P, &dhm_G) != 0))
+ 		goto_error(finish, "Failed grouping dhm parameters!");
+@@ -197,19 +191,25 @@ CRYPTDHM_T *cryptDhmKeyMake(uint8_t keyType, uint8_t attempt)
+                                        mbedtls_ctr_drbg_random, &ctr_drbg)) != 0)
+ 		goto_error(finish, "Failed creating dhm key pair");
+
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
++#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
++	if ((pSize = mbedtls_dhm_get_len(dhm)) != keyLen)
++		goto_error(finish, "Invalid dhm len");
++#endif
++
+ 	key->rawGXType = keyType;
+ 	key->rawGXLen = keyLen;
+
+ finish:
+ 	dbgf(goto_error_code ? DBGL_SYS : DBGL_CHANGES, goto_error_code ? DBGT_ERR : DBGT_INFO,
+ 		"%s ret=%d keyType=%d keyLen=%d pSize=%d attempt=%d",
+-		goto_error_code, ret, keyType, keyLen, pSize, attempt);
++		goto_error_code?goto_error_code:"SUCCESS", ret, keyType, keyLen, pSize, attempt);
+
+ 	if (goto_error_code) {
+ 		cryptDhmKeyFree(&key);
+
+-		if ((++attempt) < 10)
+-			return cryptDhmKeyMake(keyType, attempt);
++//		if ((++attempt) < 10)
++//			return cryptDhmKeyMake(keyType, attempt);
+
+ 		assertion(-502718, (0));
+ 		return NULL;
+@@ -230,13 +230,19 @@ void cryptDhmPubKeyGetRaw(CRYPTDHM_T* key, uint8_t* buff, uint16_t buffLen)
+ #if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
+ 	assertion_dbg(-502720, (dhm && buffLen == mbedtls_mpi_size(&dhm->GX) && buffLen == dhm->len),
+ 		"Failed: dhm.GXlen=%zd dhm.len=%zd", dhm ? mbedtls_mpi_size(&dhm->GX) : 0, dhm ? dhm->len : 0);
++
++	mbedtls_mpi_write_binary(&dhm->GX, buff, key->rawGXLen);
++
+ #elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
+ 	assertion_dbg(-502720, (dhm && buffLen == mbedtls_dhm_get_len(dhm)),
+ 		"Failed: dhm.len=%zd", dhm ? mbedtls_dhm_get_len(dhm) : 0);
+-#endif
+-
+
+-	mbedtls_mpi_write_binary(&dhm->GX, buff, key->rawGXLen);
++	mbedtls_mpi mpi_GX;
++	mbedtls_mpi_init(&mpi_GX);
++	mbedtls_dhm_get_value(dhm, MBEDTLS_DHM_PARAM_GX, &mpi_GX);
++	mbedtls_mpi_write_binary(&mpi_GX, buff, key->rawGXLen);
++	mbedtls_mpi_free(&mpi_GX);
++#endif
+ }
+
+ STATIC_FUNC
+@@ -247,9 +253,6 @@ IDM_T cryptDhmKeyCheck(CRYPTDHM_T *key)
+ 	uint8_t keyType = 0;
+ 	int keyLen = 0;
+ 	int pSize = 0;
+-	int xSize = 0;
+-	int gxSize = 0;
+-	int gySize = 0;
+
+ 	if (!(dhm = (mbedtls_dhm_context *) key->backendKey))
+ 		goto_error(finish, "Missing backend key");
+@@ -262,11 +265,11 @@ IDM_T cryptDhmKeyCheck(CRYPTDHM_T *key)
+ 		goto_error(finish, "Invalid len");
+ 	if ((pSize = mbedtls_mpi_size(&dhm->P)) != keyLen)
+ 		goto_error(finish, "Invalid P size");
+-	if ((xSize = mbedtls_mpi_size(&dhm->X)) != keyLen)
++	if ((pSize = mbedtls_mpi_size(&dhm->X)) != keyLen)
+ 		goto_error(finish, "Invalid X size");
+-	if ((gxSize = mbedtls_mpi_size(&dhm->GX)) != keyLen)
++	if ((pSize = mbedtls_mpi_size(&dhm->GX)) != keyLen)
+ 		goto_error(finish, "Invalid GX size");
+-	if ((gySize = mbedtls_mpi_size(&dhm->GY)) != keyLen)
++	if ((pSize = mbedtls_mpi_size(&dhm->GY)) != keyLen)
+ 		goto_error(finish, "Invalid GY size");
+ 	if (_cryptDhmCheckRange(&dhm->GX, &dhm->P) != SUCCESS)
+ 		goto_error(finish, "Invalid GX range");
+@@ -280,8 +283,7 @@ IDM_T cryptDhmKeyCheck(CRYPTDHM_T *key)
+ 	return SUCCESS;
+
+ finish:
+-	dbgf_track(DBGT_WARN, "%s keyType=%d keyLen=%d dhmLen=%zd pSize=%d xSize=%d gxSize=%d gySize=%d",
+-		goto_error_code, keyType, keyLen, dhm ? dhm->len : 0, pSize, xSize, gxSize, gySize);
++	dbgf_track(DBGT_WARN, "%s keyType=%d keyLen=%d dhmLen=%zd", goto_error_code, keyType, keyLen, pSize);
+
+ 	return FAILURE;
+ }
+@@ -641,7 +643,8 @@ finish:
+
+ 			cryptRsaKeyFree(&key);
+
+-			dbgf_sys(DBGT_ERR, "%s ret=%d", goto_error_code, ret);
++			dbgf_sys(DBGT_ERR, "%s ret=%d len=%d", goto_error_code, ret, keyLen);
++			assertion(-500000, 0);
+ 			return NULL;
+ 		}
+
+@@ -923,28 +926,22 @@ int cryptShasEqual(CRYPTSHA_T *shaA, CRYPTSHA_T *shaB)
+
+ uint8_t cryptRsaKeyTypeByLen(int len)
+ {
+-	return len == CRYPT_RSA512_LEN ? CRYPT_RSA512_TYPE : (
+-		len == CRYPT_RSA768_LEN ? CRYPT_RSA768_TYPE : (
+-		len == CRYPT_RSA896_LEN ? CRYPT_RSA896_TYPE : (
+-		len == CRYPT_RSA1024_LEN ? CRYPT_RSA1024_TYPE : (
++	return len == CRYPT_RSA1024_LEN ? CRYPT_RSA1024_TYPE : (
+ 		len == CRYPT_RSA1536_LEN ? CRYPT_RSA1536_TYPE : (
+ 		len == CRYPT_RSA2048_LEN ? CRYPT_RSA2048_TYPE : (
+ 		len == CRYPT_RSA3072_LEN ? CRYPT_RSA3072_TYPE : (
+ 		len == CRYPT_RSA4096_LEN ? CRYPT_RSA4096_TYPE : (
+-		0))))))));
++		0)))));
+ }
+
+ uint16_t cryptRsaKeyLenByType(int type)
+ {
+-	return type == CRYPT_RSA512_TYPE ? CRYPT_RSA512_LEN : (
+-		type == CRYPT_RSA768_TYPE ? CRYPT_RSA768_LEN : (
+-		type == CRYPT_RSA896_TYPE ? CRYPT_RSA896_LEN : (
+-		type == CRYPT_RSA1024_TYPE ? CRYPT_RSA1024_LEN : (
++	return 	type == CRYPT_RSA1024_TYPE ? CRYPT_RSA1024_LEN : (
+ 		type == CRYPT_RSA1536_TYPE ? CRYPT_RSA1536_LEN : (
+ 		type == CRYPT_RSA2048_TYPE ? CRYPT_RSA2048_LEN : (
+ 		type == CRYPT_RSA3072_TYPE ? CRYPT_RSA3072_LEN : (
+ 		type == CRYPT_RSA4096_TYPE ? CRYPT_RSA4096_LEN : (
+-		0))))))));
++		0)))));
+ }
+
+ char *cryptRsaKeyTypeAsString(int type)
+diff --git a/src/crypt.h b/src/crypt.h
+index 119c788..cae8df7 100644
+--- a/src/crypt.h
++++ b/src/crypt.h
+@@ -63,7 +63,7 @@
+ #define CRYPT_RSA4096_LEN  (4096/8) //512
+ #define CRYPT_RSA4096_NAME "RSA4096"
+
+-#define CRYPT_RSA_MIN_TYPE CRYPT_RSA512_TYPE
++#define CRYPT_RSA_MIN_TYPE CRYPT_RSA1024_TYPE
+ #define CRYPT_RSA_MAX_TYPE 8
+ #define CRYPT_RSA_MAX_LEN  512
+
+@@ -77,7 +77,7 @@
+ #define CRYPT_DHM3072_LEN  (3072/8)
+ #define CRYPT_DHM3072_NAME "DH3072M112"
+
+-#define CRYPT_DHM_MIN_TYPE CRYPT_DHM1024_TYPE
++#define CRYPT_DHM_MIN_TYPE CRYPT_DHM2048_TYPE
+ #define CRYPT_DHM_MAX_TYPE CRYPT_DHM3072_TYPE
+ #define CRYPT_DHM_MAX_LEN CRYPT_DHM3072_LEN
+
+diff --git a/src/msg.c b/src/msg.c
+index e04358c..22c22da 100644
+--- a/src/msg.c
++++ b/src/msg.c
+@@ -924,9 +924,9 @@ void tx_packets(void *unused)
+ 			assertion(-502442, (it.frame_type < FRAME_TYPE_SIGNATURE_ADV || it.frame_type > FRAME_TYPE_OGM_AGG_SQN_ADV));
+ 			assertion(-502443, (!it.frame_cache_msgs_size));
+ 			assertion(-500430, (it.frames_out_pos)); // single message larger than MAX_UDPD_SIZE
+-			assertion_dbg(-502444, IMPLIES((it.frame_type > FRAME_TYPE_OGM_AGG_SQN_ADV),
+-				it.frames_out_pos > (int) (FRM_SIGN_VERS_SIZE_MIN + ((my_RsaLinkKey && !my_DhmLinkKey) ? my_RsaLinkKey->rawKeyLen : 0))),
+-				"%d %d %lu %d+%d", it.frame_type, it.frames_out_pos, FRM_SIGN_VERS_SIZE_MIN, !!my_DhmLinkKey, (my_RsaLinkKey ? my_RsaLinkKey->rawKeyLen : 0));
++//			assertion_dbg(-502444, IMPLIES((it.frame_type > FRAME_TYPE_OGM_AGG_SQN_ADV),
++//				it.frames_out_pos > (int) (FRM_SIGN_VERS_SIZE_MIN + ((my_RsaLinkKey && !my_DhmLinkKey) ? my_RsaLinkKey->rawKeyLen : 0))),
++//				"%d %d %lu %d+%d", it.frame_type, it.frames_out_pos, FRM_SIGN_VERS_SIZE_MIN, !!my_DhmLinkKey, (my_RsaLinkKey ? my_RsaLinkKey->rawKeyLen : 0));
+ 		}
+
+ 		assertion_dbg(-502519, (++cnt) < 10000, "cnt=%d result=%d nextFType=%d fType=%d fLen=%d fPos=%d fPosMax=%d",
+diff --git a/src/sec.c b/src/sec.c
+index bbd65cf..cde3813 100644
+--- a/src/sec.c
++++ b/src/sec.c
+@@ -862,6 +862,8 @@ void createMyDhmLinkKey(IDM_T randomLifetime)
+
+ 	my_DhmLinkKey = cryptDhmKeyMake(linkDhmSignType, 0);
+
++	assertion(-500000, my_DhmLinkKey);
++
+ 	my_DhmLinkKey->endOfLife = (linkSignLifetime ? bmx_time_sec + thisSignLifetime : 0);
+
+ 	if (linkSignLifetime)
+@@ -913,7 +915,7 @@ int process_dsc_tlv_dhmLinkKey(struct rx_frame_iterator *it)
+ 	char *goto_error_code = NULL;
+ 	int32_t msgLen = it->f_dlen;
+ 	struct dsc_msg_dhm_link_key *msg = (struct dsc_msg_dhm_link_key*) (it->f_data);
+-
++	IDM_T TODO_Tolerate_unknown_dhm_link_keys_like_process_dsc_tlv_rsaPubKey;
+ 	if (it->op == TLV_OP_TEST) {
+
+ 		if (!msg)
+@@ -1017,7 +1019,7 @@ int create_dsc_tlv_rsaLinkKey(struct tx_frame_iterator *it)
+ }
+
+ STATIC_FUNC
+-int process_dsc_tlv_pubKey(struct rx_frame_iterator *it)
++int process_dsc_tlv_rsaPubKey(struct rx_frame_iterator *it)
+ {
+ 	char *goto_error_code = NULL;
+ 	CRYPTRSA_T *pkey = NULL;
+@@ -1026,14 +1028,20 @@ int process_dsc_tlv_pubKey(struct rx_frame_iterator *it)
+
+ 	if (it->op == TLV_OP_TEST) {
+
+-		if (!msg || !cryptRsaKeyTypeAsString(msg->type) || cryptRsaKeyLenByType(msg->type) != key_len)
++		if (!msg)
+ 			goto_error(finish, "1");
+
+-		if (!(pkey = cryptRsaPubKeyFromRaw(msg->key, key_len)))
+-			goto_error(finish, "2");
++		if (cryptRsaKeyLenByType(msg->type))
++		{
++			if (!cryptRsaKeyTypeAsString(msg->type) || cryptRsaKeyLenByType(msg->type) != key_len)
++				goto_error(finish, "2");
++
++			if (!(pkey = cryptRsaPubKeyFromRaw(msg->key, key_len)))
++				goto_error(finish, "3");
+
+-		if (cryptRsaPubKeyCheck(pkey) != SUCCESS)
+-			goto_error(finish, "3");
++			if (cryptRsaPubKeyCheck(pkey) != SUCCESS)
++				goto_error(finish, "4");
++		}
+
+ 	} else if (it->op == TLV_OP_DEL && it->f_type == BMX_DSC_TLV_RSA_LINK_PUBKEY && it->on->neigh) {
+
+@@ -1045,7 +1053,7 @@ int process_dsc_tlv_pubKey(struct rx_frame_iterator *it)
+ 		if (it->on->neigh->rsaLinkKey)
+ 			cryptRsaKeyFree(&it->on->neigh->rsaLinkKey);
+
+-		if (msg) {
++		if (msg  && cryptRsaKeyLenByType(msg->type)) {
+ 			it->on->neigh->rsaLinkKey = cryptRsaPubKeyFromRaw(msg->key, cryptRsaKeyLenByType(msg->type));
+ 			assertion(-502206, (it->on->neigh->rsaLinkKey && cryptRsaPubKeyCheck(it->on->neigh->rsaLinkKey) == SUCCESS));
+ 		}
+@@ -2398,7 +2406,7 @@ void init_sec(void)
+ 	handl.dextReferencing = (int32_t*) & fref_always_l1;
+ 	handl.dextCompression = (int32_t*) & never_fzip;
+ 	handl.tx_frame_handler = create_dsc_tlv_nodeKey;
+-	handl.rx_frame_handler = process_dsc_tlv_pubKey;
++	handl.rx_frame_handler = process_dsc_tlv_rsaPubKey;
+ 	handl.msg_format = pubkey_format;
+ 	register_frame_handler(description_tlv_db, BMX_DSC_TLV_NODE_PUBKEY, &handl);
+
+@@ -2427,7 +2435,7 @@ void init_sec(void)
+ 	handl.dextReferencing = (int32_t*) & fref_always_l1;
+ 	handl.dextCompression = (int32_t*) & never_fzip;
+ 	handl.tx_frame_handler = create_dsc_tlv_rsaLinkKey;
+-	handl.rx_frame_handler = process_dsc_tlv_pubKey;
++	handl.rx_frame_handler = process_dsc_tlv_rsaPubKey;
+ 	handl.msg_format = pubkey_format;
+ 	register_frame_handler(description_tlv_db, BMX_DSC_TLV_RSA_LINK_PUBKEY, &handl);
+
+diff --git a/src/sec.h b/src/sec.h
+index 2266a29..5619a37 100644
+--- a/src/sec.h
++++ b/src/sec.h
+@@ -70,28 +70,28 @@
+
+
+ #define ARG_NODE_RSA_TX_TYPE "nodeRsaKey"
+-#define MIN_NODE_RSA_TX_TYPE CRYPT_RSA512_TYPE
++#define MIN_NODE_RSA_TX_TYPE CRYPT_RSA_MIN_TYPE
+ #define MAX_NODE_RSA_TX_TYPE CRYPT_RSA4096_TYPE
+ #define DEF_NODE_RSA_TX_TYPE CRYPT_RSA2048_TYPE
+-#define HLP_NODE_RSA_TX_TYPE "sign own descriptions with given RSA key type (1:512, 2:768, 3:896, 4:1024, 5:1536, 6:2048, 7:3072, 8:4096)"
++#define HLP_NODE_RSA_TX_TYPE "sign own descriptions with given RSA key type (4:1024, 5:1536, 6:2048, 7:3072, 8:4096)"
+
+ #define ARG_NODE_RSA_RX_TYPES "nodeRsaKeys"
+-#define MIN_NODE_RSA_RX_TYPES (1<<CRYPT_RSA512_TYPE)
++#define MIN_NODE_RSA_RX_TYPES (1<<CRYPT_RSA_MIN_TYPE)
+ #define MAX_NODE_RSA_RX_TYPES ((1<<CRYPT_RSA_MAX_TYPE)-1)
+-#define DEF_NODE_RSA_RX_TYPES ((1<<CRYPT_RSA512_TYPE) | (1<<CRYPT_RSA768_TYPE) | (1<<CRYPT_RSA896_TYPE) | (1<<CRYPT_RSA1024_TYPE) | (1<<CRYPT_RSA1536_TYPE) | (1<<CRYPT_RSA2048_TYPE) | (1<<CRYPT_RSA3072_TYPE) | (1<<CRYPT_RSA4096_TYPE))
++#define DEF_NODE_RSA_RX_TYPES ((1<<CRYPT_RSA1024_TYPE) | (1<<CRYPT_RSA1536_TYPE) | (1<<CRYPT_RSA2048_TYPE) | (1<<CRYPT_RSA3072_TYPE) | (1<<CRYPT_RSA4096_TYPE))
+ #define HLP_NODE_RSA_RX_TYPES "verify description signatures of flag-given RSA key types"
+
+ #define ARG_LINK_RSA_TX_TYPE "linkRsaKey"
+ #define MIN_LINK_RSA_TX_TYPE 0
+ #define MAX_LINK_RSA_TX_TYPE CRYPT_RSA2048_TYPE
+-#define DEF_LINK_RSA_TX_TYPE CRYPT_RSA896_TYPE
+-#define HLP_LINK_RSA_TX_TYPE "sign outgoing packets with given RSA key type (0:None and rely on DHM, 1:512, 2:768, 3:896, 4:1024, 5:1536, 6:2048)"
++#define DEF_LINK_RSA_TX_TYPE CRYPT_RSA1024_TYPE
++#define HLP_LINK_RSA_TX_TYPE "sign outgoing packets with given RSA key type (0:None and rely on DHM, 4:1024, 5:1536, 6:2048)"
+ extern int32_t linkRsaSignType;
+
+ #define ARG_LINK_RSA_RX_TYPES "linkRsaKeys"
+ #define MIN_LINK_RSA_RX_TYPES 0
+ #define MAX_LINK_RSA_RX_TYPES ((1<<CRYPT_RSA_MAX_TYPE)-1)
+-#define DEF_LINK_RSA_RX_TYPES ((1<<CRYPT_RSA512_TYPE) | (1<<CRYPT_RSA768_TYPE) | (1<<CRYPT_RSA896_TYPE) | (1<<CRYPT_RSA1024_TYPE) | (1<<CRYPT_RSA1536_TYPE) | (1<<CRYPT_RSA2048_TYPE))
++#define DEF_LINK_RSA_RX_TYPES ((1<<CRYPT_RSA1024_TYPE) | (1<<CRYPT_RSA1536_TYPE) | (1<<CRYPT_RSA2048_TYPE))
+ #define HLP_LINK_RSA_RX_TYPES "verify incoming link (packet) signaturs of flag-given RSA key types"
+
+ #define ARG_LINK_DHM_TX_TYPE "linkDhmKey"
+@@ -166,8 +166,8 @@ extern int32_t maxDhmNeighs;
+
+
+ extern CRYPTRSA_T *my_NodeKey;
+-extern CRYPTRSA_T *my_RsaLinkKey;
+-extern CRYPTDHM_T *my_DhmLinkKey;
++//extern CRYPTRSA_T *my_RsaLinkKey;
++//extern CRYPTDHM_T *my_DhmLinkKey;
+
+ typedef struct {
+ 	uint8_t u8[sizeof(CRYPTSHA112_T)];
+--
+2.50.0
