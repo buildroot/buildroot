@@ -1,0 +1,468 @@
+From d4a53a37f82b43abf9509bcb8922ced6c182e59e Mon Sep 17 00:00:00 2001
+From: Axel Neumann <axel@notmail.org>
+Date: Sat, 18 May 2024 07:47:08 +0200
+Subject: [PATCH] Towards mbedtls-3.6.0 support
+
+Upstream: https://github.com/bmx-routing/bmx7/commit/d4a53a37f82b43abf9509bcb8922ced6c182e59e
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/crypt.c | 215 +++++++++++++++++++++++++++++++++++++---------------
+ src/crypt.h |   3 +-
+ 2 files changed, 154 insertions(+), 64 deletions(-)
+
+diff --git a/src/crypt.c b/src/crypt.c
+index 9270b75..91543ef 100644
+--- a/src/crypt.c
++++ b/src/crypt.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2010  Axel Neumann
++ * Copyright (c) 2024  Axel Neumann
+  * This program is free software; you can redistribute it and/or
+  * modify it under the terms of version 2 of the GNU General Public
+  * License as published by the Free Software Foundation.
+@@ -46,6 +46,7 @@ static CRYPTRSA_T *my_PrivKey = NULL;
+ #include "mbedtls/config.h"
+ #elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
+ #include "mbedtls/compat-2.x.h"
++//#include "mbedtls/md.h"
+ #endif
+ 
+ #include "mbedtls/sha256.h"
+@@ -143,9 +144,7 @@ CRYPTDHM_T *cryptDhmKeyMake(uint8_t keyType, uint8_t attempt)
+ 	CRYPTDHM_T *key = debugMallocReset(sizeof(CRYPTDHM_T), -300829);
+ 	mbedtls_dhm_context *dhm = debugMallocReset(sizeof(mbedtls_dhm_context), -300830);
+ 	int pSize = 0;
+-	int xSize = 0;
+-	int gxSize = 0;
+-	int count = 0;
++	unsigned char dummyPubKeyBuff[CRYPT_DHM_MAX_LEN];
+ 
+ 	key->backendKey = dhm;
+ 
+@@ -154,63 +153,57 @@ CRYPTDHM_T *cryptDhmKeyMake(uint8_t keyType, uint8_t attempt)
+ 	if ((keyLen = cryptDhmKeyLenByType(keyType)) <= 0)
+ 		goto_error(finish, "Invalid size");
+ 
++	mbedtls_mpi dhm_P, dhm_G;
++	mbedtls_mpi_init(&dhm_P);
++	mbedtls_mpi_init(&dhm_G);
++    mbedtls_dhm_init(dhm);
+ 
+ 	if (keyType == CRYPT_DHM2048_TYPE) {
+ 		static const unsigned char modp2048P[(2048/8)] = MBEDTLS_DHM_RFC3526_MODP_2048_P_BIN;
+ 		static const unsigned char modp2048G[1] = MBEDTLS_DHM_RFC3526_MODP_2048_G_BIN;
+ 
+-		if ((ret = mbedtls_mpi_read_binary(&dhm->P, modp2048P, sizeof(modp2048P) )) != 0 || (ret = mbedtls_mpi_read_binary(&dhm->G, modp2048G, sizeof(modp2048G))) != 0)
+-			goto_error(finish, "Failed reading dhm2048 parameters!");
++		if (   (ret = mbedtls_mpi_read_binary(&dhm_P, modp2048P, sizeof(modp2048P) )) != 0
++			|| (ret = mbedtls_mpi_read_binary(&dhm_G, modp2048G, sizeof(modp2048G))) != 0)
++			goto_error(finish, "Failed setting dhm2048 parameters!");
+ 
+ 	} else if (keyType == CRYPT_DHM3072_TYPE) {
+ 		static const unsigned char modp3072P[(3072/8)] = MBEDTLS_DHM_RFC3526_MODP_3072_P_BIN;
+ 		static const unsigned char modp3072G[1] = MBEDTLS_DHM_RFC3526_MODP_3072_G_BIN;
+-		if ((ret = mbedtls_mpi_read_binary(&dhm->P, modp3072P, sizeof(modp3072P) )) != 0 || (ret = mbedtls_mpi_read_binary(&dhm->G, modp3072G, sizeof(modp3072G))) != 0)
+-			goto_error(finish, "Failed reading dhm3072 parameters!");
++
++		if (   (ret = mbedtls_mpi_read_binary(&dhm_P, modp3072P, sizeof(modp3072P) )) != 0
++			|| (ret = mbedtls_mpi_read_binary(&dhm_G, modp3072G, sizeof(modp3072G))) != 0)
++			goto_error(finish, "Failed setting dhm3072 parameters!");
++
+ 	} else {
+ 		goto_error(finish, "Unsupported dhm type!");
+ 	}
+ 
+-	if (mbedtls_mpi_cmp_int(&dhm->P, 0) == 0)
++	if (mbedtls_mpi_cmp_int(&dhm_P, 0) == 0)
+ 		goto_error(finish, "Empty dhm->P");
+ 
+-	// Generate X as large as possible ( < P )
+-	if ((pSize = mbedtls_mpi_size(&dhm->P)) != keyLen)
++	if ((pSize = mbedtls_mpi_size(&dhm_P)) != keyLen)
+ 		goto_error(finish, "Invalid P size");
+ 
+-	do {
+-		if ((ret = mbedtls_mpi_fill_random(&dhm->X, pSize, mbedtls_ctr_drbg_random, &ctr_drbg)) != 0)
+-			goto_error(finish, "Failed allocating randomness");
+-
+-		while (mbedtls_mpi_cmp_mpi(&dhm->X, &dhm->P) >= 0) {
+-			if ((ret = mbedtls_mpi_shift_r(&dhm->X, 1)) != 0)
+-				goto_error(finish, "Failed shifting dhm->X param");
+-		}
+-
+-		if ((ret = count++) > 10)
+-			goto_error(finish, "Failed creating dhm->X param");
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
++#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
++	if ((pSize = mbedtls_dhm_get_len(dhm)) != keyLen)
++		goto_error(finish, "Invalid P size");
++#endif
+ 
+-	} while ((ret = _cryptDhmCheckRange(&dhm->X, &dhm->P)) != SUCCESS);
++	if ((ret = mbedtls_dhm_set_group(dhm, &dhm_P, &dhm_G) != 0))
++		goto_error(finish, "Failed grouping dhm parameters!");
+ 
+-	// Calculate GX = G^X mod P
+-	if (mbedtls_mpi_exp_mod(&dhm->GX, &dhm->G, &dhm->X, &dhm->P, &dhm->RP) != 0)
+-		goto_error(finish, "Failed creating GX modulo");
+-	if (((int) (dhm->len = mbedtls_mpi_size(&dhm->P))) != keyLen)
+-		goto_error(finish, "Invalid len");
+-	if ((xSize = mbedtls_mpi_size(&dhm->X)) != keyLen)
+-		goto_error(finish, "Invalid X size");
+-	if ((gxSize = mbedtls_mpi_size(&dhm->GX)) != keyLen)
+-		goto_error(finish, "Invalid GX size");
+-	if ((ret = _cryptDhmCheckRange(&dhm->GX, &dhm->P)) != SUCCESS)
+-		goto_error(finish, "Invalid GX range");
++    if ((ret = mbedtls_dhm_make_public(dhm, (int) keyLen, dummyPubKeyBuff, keyLen,
++                                       mbedtls_ctr_drbg_random, &ctr_drbg)) != 0)
++		goto_error(finish, "Failed creating dhm key pair");
+ 
+ 	key->rawGXType = keyType;
+ 	key->rawGXLen = keyLen;
+ 
+ finish:
+ 	dbgf(goto_error_code ? DBGL_SYS : DBGL_CHANGES, goto_error_code ? DBGT_ERR : DBGT_INFO,
+-		"%s ret=%d keyType=%d keyLen=%d pSize=%d xSize=%d gxSize=%d count=%d attempt=%d",
+-		goto_error_code, ret, keyType, keyLen, pSize, xSize, gxSize, count, attempt);
++		"%s ret=%d keyType=%d keyLen=%d pSize=%d attempt=%d",
++		goto_error_code, ret, keyType, keyLen, pSize, attempt);
+ 
+ 	if (goto_error_code) {
+ 		cryptDhmKeyFree(&key);
+@@ -222,6 +215,9 @@ CRYPTDHM_T *cryptDhmKeyMake(uint8_t keyType, uint8_t attempt)
+ 		return NULL;
+ 	}
+ 
++	mbedtls_mpi_free(&dhm_G);
++	mbedtls_mpi_free(&dhm_P);
++
+ 	return key;
+ }
+ 
+@@ -231,9 +227,14 @@ void cryptDhmPubKeyGetRaw(CRYPTDHM_T* key, uint8_t* buff, uint16_t buffLen)
+ 		"Failed: key=%d buff=%d buffLen=%d key.GXLen=%d", !!key, !!buff, buffLen, key ? key->rawGXLen : 0);
+ 
+ 	mbedtls_dhm_context *dhm = key->backendKey;
+-
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
+ 	assertion_dbg(-502720, (dhm && buffLen == mbedtls_mpi_size(&dhm->GX) && buffLen == dhm->len),
+ 		"Failed: dhm.GXlen=%zd dhm.len=%zd", dhm ? mbedtls_mpi_size(&dhm->GX) : 0, dhm ? dhm->len : 0);
++#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
++	assertion_dbg(-502720, (dhm && buffLen == mbedtls_dhm_get_len(dhm)),
++		"Failed: dhm.len=%zd", dhm ? mbedtls_dhm_get_len(dhm) : 0);
++#endif
++
+ 
+ 	mbedtls_mpi_write_binary(&dhm->GX, buff, key->rawGXLen);
+ }
+@@ -256,6 +257,7 @@ IDM_T cryptDhmKeyCheck(CRYPTDHM_T *key)
+ 		goto_error(finish, "Missing type");
+ 	if ((keyLen = cryptDhmKeyLenByType(keyType)) <= 0)
+ 		goto_error(finish, "Invalid size");
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
+ 	if ((int) dhm->len != keyLen)
+ 		goto_error(finish, "Invalid len");
+ 	if ((pSize = mbedtls_mpi_size(&dhm->P)) != keyLen)
+@@ -270,6 +272,10 @@ IDM_T cryptDhmKeyCheck(CRYPTDHM_T *key)
+ 		goto_error(finish, "Invalid GX range");
+ 	if (_cryptDhmCheckRange(&dhm->GY, &dhm->P) != SUCCESS)
+ 		goto_error(finish, "Invalid GY range");
++#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
++	if ((pSize = mbedtls_dhm_get_len(dhm)) != keyLen)
++		goto_error(finish, "Invalid len");
++#endif
+ 
+ 	return SUCCESS;
+ 
+@@ -293,10 +299,17 @@ CRYPTSHA_T *cryptDhmSecretForNeigh(CRYPTDHM_T *myDhm, uint8_t *neighRawKey, uint
+ 	if (!myDhm || !(dhm = myDhm->backendKey) || !myDhm->rawGXType)
+ 		goto_error(finish, "Disabled dhm link signing");
+ 
+-	if (((keyType = cryptDhmKeyTypeByLen(neighRawKeyLen)) != myDhm->rawGXType) || ((n = dhm->len) != neighRawKeyLen) || (sizeof(buff) < neighRawKeyLen))
+-		goto_error(finish, "Wrong type or keyLength");
++	if (((keyType = cryptDhmKeyTypeByLen(neighRawKeyLen)) != myDhm->rawGXType))
++		goto_error(finish, "Wrong type");
+ 
+-	if ((ret = mbedtls_mpi_read_binary(&dhm->GY, neighRawKey, neighRawKeyLen)) != 0)
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
++	if (((n = dhm->len) != neighRawKeyLen) || (sizeof(buff) < neighRawKeyLen))
++		goto_error(finish, "Wrong keyLength");
++#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
++	if (((n = mbedtls_dhm_get_len(dhm)) != neighRawKeyLen) || (sizeof(buff) < neighRawKeyLen))
++		goto_error(finish, "Wrong keyLength");
++#endif
++	if ((ret = mbedtls_dhm_read_public(dhm, neighRawKey, neighRawKeyLen)) != 0)
+ 		goto_error(finish, "Invalid GY");
+ 
+ 	if (cryptDhmKeyCheck(myDhm) != SUCCESS)
+@@ -311,14 +324,13 @@ CRYPTSHA_T *cryptDhmSecretForNeigh(CRYPTDHM_T *myDhm, uint8_t *neighRawKey, uint
+ 	secret = debugMallocReset(sizeof(CRYPTSHA_T), -300831);
+ 	cryptShaAtomic(buff, n, secret);
+ 
+-
+ finish:
+ 	{
+ 		dbgf(((goto_error_code || n != neighRawKeyLen) ? DBGL_SYS : DBGL_CHANGES), ((goto_error_code || n != neighRawKeyLen) ? DBGT_WARN : DBGT_INFO),
+ 		"%s n=%zd neighKeyLen=%d myKeyLen=%d", goto_error_code, n, neighRawKeyLen, myDhm->rawGXLen);
+ 
+-		mbedtls_mpi_free(&dhm->GY);
+-		mbedtls_mpi_free(&dhm->K);
++//		mbedtls_mpi_free(&dhm->GY);
++//		mbedtls_mpi_free(&dhm->K);
+ 		memset(buff, 0, sizeof(buff));
+ 		return secret; }
+ }
+@@ -345,12 +357,21 @@ int cryptRsaPubKeyGetRaw(CRYPTRSA_T *key, uint8_t *buff, uint16_t buffLen)
+ 	mbedtls_rsa_context *rsa;
+ 	if (!key || !buff || !buffLen ||
+ 		!key->rawKeyType || (buffLen != key->rawKeyLen) ||
+-		!(rsa = (mbedtls_rsa_context*) key->backendKey) || buffLen != mbedtls_mpi_size(&rsa->N) || buffLen != rsa->len) {
++		!(rsa = (mbedtls_rsa_context*) key->backendKey) ||
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
++		buffLen != mbedtls_mpi_size(&rsa->N) || buffLen != rsa->len ||
++#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
++#endif
++		buffLen != mbedtls_rsa_get_len(rsa)
++	   ) {
+ 
+ 		return FAILURE;
+ 	}
+ 
+-	if (mbedtls_mpi_write_binary(&rsa->N, buff, buffLen) != 0)
++	mbedtls_mpi mpi_N;
++	mbedtls_mpi_init(&mpi_N);
++	mbedtls_rsa_export(rsa, &mpi_N, NULL, NULL, NULL, NULL);
++	if (mbedtls_mpi_write_binary(&mpi_N, buff, buffLen) != 0)
+ 		return FAILURE;
+ 
+ 	return SUCCESS;
+@@ -368,10 +389,11 @@ CRYPTRSA_T *cryptRsaPubKeyFromRaw(uint8_t *rawKey, uint16_t rawKeyLen)
+ 	cryptKey->backendKey = debugMalloc(sizeof(mbedtls_rsa_context), -300620);
+ 
+ 	mbedtls_rsa_context *rsa = (mbedtls_rsa_context*) cryptKey->backendKey;
++	mbedtls_mpi rsa_N, rsa_E;
+ 
+-	mbedtls_rsa_init(rsa, MBEDTLS_RSA_PKCS_V15, 0);
+-
+-
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
++	mbedtls_rsa_init(rsa, MBEDTLS_RSA_PKCS_V15, MBEDTLS_MD_NONE);
++	/*
+ 	if (
+ 		(mbedtls_mpi_read_binary(&rsa->N, rawKey, rawKeyLen)) ||
+ 		(mbedtls_mpi_read_binary(&rsa->E, (uint8_t*) & e, sizeof(e)))
+@@ -379,8 +401,23 @@ CRYPTRSA_T *cryptRsaPubKeyFromRaw(uint8_t *rawKey, uint16_t rawKeyLen)
+ 		cryptRsaKeyFree(&cryptKey);
+ 		return NULL;
+ 	}
++	*/
++#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
++	mbedtls_rsa_init(rsa);
++#endif
++	mbedtls_mpi_init(&rsa_N);
++	mbedtls_mpi_init(&rsa_E);
++
++	if (
++		(mbedtls_mpi_read_binary(&rsa_N, rawKey, rawKeyLen)) ||
++		(mbedtls_mpi_read_binary(&rsa_E, (uint8_t*)&e, sizeof(e))) ||
++		(mbedtls_rsa_import(rsa, &rsa_N, NULL, NULL, NULL, &rsa_E))
++	) {
++		cryptRsaKeyFree(&cryptKey);
++		return NULL;
++	}
+ 
+-	rsa->len = rawKeyLen;
++	assertion(-500000, (mbedtls_rsa_get_len(rsa) == rawKeyLen));
+ 	cryptKey->rawKeyLen = rawKeyLen;
+ 	cryptKey->rawKeyType = cryptRsaKeyTypeByLen(rawKeyLen);
+ 
+@@ -401,9 +438,16 @@ int cryptRsaPubKeyCheck(CRYPTRSA_T *pubKey)
+ 	assertion(-502142, (pubKey->backendKey));
+ 
+ 	mbedtls_rsa_context *rsa = (mbedtls_rsa_context*) pubKey->backendKey;
++	size_t len = mbedtls_rsa_get_len(rsa);
+ 
+-	if (!rsa->len || (int) rsa->len != cryptRsaKeyLenByType(pubKey->rawKeyType) || rsa->len != pubKey->rawKeyLen || rsa->len != mbedtls_mpi_size(&rsa->N) ||
+-		mbedtls_rsa_check_pubkey((mbedtls_rsa_context*) pubKey->backendKey)) {
++	if (   !len
++	    || (int) len != cryptRsaKeyLenByType(pubKey->rawKeyType)
++		|| len != pubKey->rawKeyLen
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
++		|| len != mbedtls_mpi_size(&rsa->N)
++#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
++#endif
++		|| mbedtls_rsa_check_pubkey((mbedtls_rsa_context*) pubKey->backendKey)) {
+ 
+ 		return FAILURE;
+ 	}
+@@ -462,10 +506,18 @@ CRYPTRSA_T *cryptRsaKeyFromDer(char *keyPath)
+ 
+ 	mbedtls_pk_context pk;
+ 	mbedtls_pk_init(&pk);
+-	mbedtls_rsa_init(rsa, MBEDTLS_RSA_PKCS_V15, 0);
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
++	mbedtls_rsa_init(rsa, MBEDTLS_RSA_PKCS_V15, MBEDTLS_MD_NONE);
++#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
++	mbedtls_rsa_init(rsa);
++#endif
+ 
+ 	if (
+-		((ret = mbedtls_pk_parse_keyfile(&pk, keyPath, "")) != 0) ||
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
++			((ret = mbedtls_pk_parse_keyfile(&pk, keyPath, "")) != 0) ||
++#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
++			((ret = mbedtls_pk_parse_keyfile(&pk, keyPath, "", mbedtls_ctr_drbg_random, &ctr_drbg)) != 0) ||
++#endif
+ 		((ret = mbedtls_rsa_copy(rsa, mbedtls_pk_rsa(pk))) != 0) ||
+ 		((ret = mbedtls_rsa_check_privkey(rsa)) != 0)
+ 		) {
+@@ -478,9 +530,8 @@ CRYPTRSA_T *cryptRsaKeyFromDer(char *keyPath)
+ 
+ 
+ 	//cryptKeyAddRaw(ckey);
+-
+ 	if (
+-		((keyLen = mbedtls_mpi_size(&rsa->N)) <= 0) ||
++		((keyLen = mbedtls_rsa_get_len(rsa)) <= 0) ||
+ 		!(keyType = cryptRsaKeyTypeByLen(keyLen)) ||
+ 		!(privKey->rawKeyType = keyType) ||
+ 		!(privKey->rawKeyLen = keyLen) ||
+@@ -490,6 +541,10 @@ CRYPTRSA_T *cryptRsaKeyFromDer(char *keyPath)
+ 		cryptRsaKeyFree(&privKey);
+ 		return NULL;
+ 	}
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
++	assertion(-502723, (((int)mbedtls_mpi_size(&rsa->N)) == keyLen));
++#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
++#endif
+ 
+ 	my_PrivKey = privKey;
+ 	return pubKey;
+@@ -565,7 +620,12 @@ CRYPTRSA_T *cryptRsaKeyMake(uint8_t keyType)
+ 	CRYPTRSA_T *key = debugMallocReset(sizeof(CRYPTRSA_T), -300642);
+ 
+ 	mbedtls_rsa_context *rsa = debugMallocReset(sizeof(mbedtls_rsa_context), -300643);
+-	mbedtls_rsa_init(rsa, MBEDTLS_RSA_PKCS_V15, 0);
++
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
++	mbedtls_rsa_init(rsa, MBEDTLS_RSA_PKCS_V15, MBEDTLS_MD_NONE);
++#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
++	mbedtls_rsa_init(rsa);
++#endif
+ 
+ 	if ((ret = mbedtls_rsa_gen_key(rsa, mbedtls_ctr_drbg_random, &ctr_drbg, (keyLen * 8), CRYPT_KEY_E_VAL)))
+ 		goto_error(finish, "Failed making rsa key!");
+@@ -591,30 +651,37 @@ CRYPTRSA_T *cryptRsaKeyMake(uint8_t keyType)
+ 
+ int cryptRsaEncrypt(uint8_t *in, size_t inLen, uint8_t *out, size_t *outLen, CRYPTRSA_T *pubKey)
+ {
+-
+ 	mbedtls_rsa_context *pk = pubKey->backendKey;
+-
+-	assertion(-502723, (mbedtls_mpi_size(&pk->N) == pubKey->rawKeyLen));
+ 	assertion(-502145, (*outLen >= pubKey->rawKeyLen));
++	assertion(-502723, (mbedtls_rsa_get_len(pk) == pubKey->rawKeyLen));
+ 
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
+ 	if (mbedtls_rsa_pkcs1_encrypt(pk, mbedtls_ctr_drbg_random, &ctr_drbg, MBEDTLS_RSA_PUBLIC, inLen, in, out))
+ 		return FAILURE;
++#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
++	if (mbedtls_rsa_pkcs1_encrypt(pk, mbedtls_ctr_drbg_random, &ctr_drbg, inLen, in, out))
++		return FAILURE;
++#endif
+ 
+ 	*outLen = pubKey->rawKeyLen;
+ 
+ 	return SUCCESS;
+-
+ }
+ 
+ int cryptRsaDecrypt(uint8_t *in, size_t inLen, uint8_t *out, size_t *outLen)
+ {
+-
+ 	mbedtls_rsa_context *pk = my_PrivKey->backendKey;
++	assertion(-502146, (inLen >= my_PrivKey->rawKeyLen));
++	assertion(-502724, (mbedtls_rsa_get_len(pk) == my_PrivKey->rawKeyLen));
+ 
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
+ 	assertion(-502724, (mbedtls_mpi_size(&pk->N) == my_PrivKey->rawKeyLen));
+-	assertion(-502146, (inLen >= my_PrivKey->rawKeyLen));
+ 	if (mbedtls_rsa_pkcs1_decrypt(pk, mbedtls_ctr_drbg_random, &ctr_drbg, MBEDTLS_RSA_PRIVATE, &inLen, in, out, *outLen))
+ 		return FAILURE;
++#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
++	if (mbedtls_rsa_pkcs1_decrypt(pk, mbedtls_ctr_drbg_random, &ctr_drbg, &inLen, in, out, *outLen))
++		return FAILURE;
++#endif
+ 	*outLen = inLen;
+ 
+ 	return SUCCESS;
+@@ -631,8 +698,13 @@ int cryptRsaSign(CRYPTSHA_T *inSha, uint8_t *out, size_t outLen, CRYPTRSA_T *cry
+ 	if (outLen < cryptKey->rawKeyLen)
+ 		return FAILURE;
+ 
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
+ 	if (mbedtls_rsa_pkcs1_sign(pk, mbedtls_ctr_drbg_random, &ctr_drbg, MBEDTLS_RSA_PRIVATE, MBEDTLS_MD_SHA224, sizeof(CRYPTSHA_T), (uint8_t*) inSha, out))
+ 		return FAILURE;
++#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
++	if (mbedtls_rsa_pkcs1_sign(pk, mbedtls_ctr_drbg_random, &ctr_drbg, MBEDTLS_MD_SHA224, sizeof(CRYPTSHA_T), (uint8_t*) inSha, out))
++		return FAILURE;
++#endif
+ 
+ 	return SUCCESS;
+ }
+@@ -643,9 +715,26 @@ int cryptRsaVerify(uint8_t *sign, size_t signLen, CRYPTSHA_T *plainSha, CRYPTRSA
+ 	mbedtls_rsa_context *pk = pubKey->backendKey;
+ 
+ 	assertion(-502147, (signLen == pubKey->rawKeyLen));
++/*
++    mbedtls_rsa_context rsa;
++    mbedtls_mpi N, E;
++    mbedtls_rsa_init(&rsa);
++    mbedtls_mpi_init(&N);
++    mbedtls_mpi_init(&E);
++
++    if ((ret = mbedtls_mpi_read_file(&N, 16, f)) != 0 ||
++        (ret = mbedtls_mpi_read_file(&E, 16, f)) != 0 ||
++        (ret = mbedtls_rsa_import(&rsa, &N, NULL, NULL, NULL, &E) != 0))
++    	return FAILURE;
++*/
+ 
++#if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
+ 	if (mbedtls_rsa_pkcs1_verify(pk, mbedtls_ctr_drbg_random, &ctr_drbg, MBEDTLS_RSA_PUBLIC, MBEDTLS_MD_SHA224, sizeof(CRYPTSHA_T), (uint8_t*) plainSha, sign))
+ 		return FAILURE;
++#elif (CRYPTLIB >= MBEDTLS_3_0_0 && CRYPTLIB < MBEDTLS_MAX)
++	if (mbedtls_rsa_pkcs1_verify(pk, MBEDTLS_MD_SHA224, sizeof(CRYPTSHA_T), (uint8_t*) plainSha, sign))
++		return FAILURE;
++#endif
+ 
+ 	return SUCCESS;
+ }
+@@ -776,7 +865,7 @@ void cryptShaFinal(CRYPTSHA_T *sha)
+ #if (CRYPTLIB >= MBEDTLS_2_8_0 && CRYPTLIB < MBEDTLS_3_0_0)
+ 	mbedtls_sha256_finish_ret(&sha_ctx, output);
+ #else
+-	mbedtls_sha256_finish(&sha_ctx, output;)
++	mbedtls_sha256_finish(&sha_ctx, output);
+ #endif
+ 	memcpy(sha, output, sizeof(CRYPTSHA_T));
+ 	memset(output, 0, sizeof(output));
+diff --git a/src/crypt.h b/src/crypt.h
+index da34d4e..119c788 100644
+--- a/src/crypt.h
++++ b/src/crypt.h
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2010  Axel Neumann
++ * Copyright (c) 2024  Axel Neumann
+  * This program is free software; you can redistribute it and/or
+  * modify it under the terms of version 2 of the GNU General Public
+  * License as published by the Free Software Foundation.
+@@ -30,6 +30,7 @@
+ 
+ #ifndef CRYPTLIB
+ #define CRYPTLIB MBEDTLS_2_8_0
++//#define CRYPTLIB MBEDTLS_3_6_0
+ #endif
+ 
+ #define CRYPT_DER_BUF_SZ 16000
