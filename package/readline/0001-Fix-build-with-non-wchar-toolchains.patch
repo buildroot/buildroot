@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sat, 5 Jul 2025 07:48:20 +0200
+Subject: [PATCH] Fix build with non-wchar toolchains
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Commit a7f5650e6549e1b5c4e2e1fa30eee19de6bcbe7a added two functions to
+mbutil.c but forgot to add defines for HANDLE_MULTIBYTE causing build
+errors with toolchains without wchar support:
+
+../mbutil.c: In function ‘_rl_mb_strcaseeqn’:
+../mbutil.c:594:3: error: unknown type name ‘mbstate_t’
+
+Upstream: https://lists.gnu.org/archive/html/bug-readline/2025-07/msg00002.html
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ mbutil.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/mbutil.c b/mbutil.c
+index 5243fd7..c15f3aa 100644
+--- a/mbutil.c
++++ b/mbutil.c
+@@ -584,6 +584,7 @@ _rl_find_prev_mbchar (const char *string, int seed, int flags)
+ #endif
+ }
+ 
++#if defined (HANDLE_MULTIBYTE)
+ /* Compare the first N characters of S1 and S2 without regard to case. If
+    FLAGS&1, apply the mapping specified by completion-map-case and make
+    `-' and `_' equivalent. Returns 1 if the strings are equal. */
+@@ -658,3 +659,4 @@ _rl_mb_charcasecmp (const char *s1, mbstate_t *ps1, const char *s2, mbstate_t *p
+     return 1;
+   return (wc1 == wc2);
+ }
++#endif /* HANDLE_MULTIBYTE */
+-- 
+2.39.5
+
