@@ -59,12 +59,14 @@ config BR2_LOONGARCH_SIMD_NONE
 
 config BR2_LOONGARCH_SIMD_LSX
 	bool "LSX"
+	depends on BR2_LOONGARCH_FPU_64
 	help
 	  Enable generating instructions from the 128-bit LoongArch SIMD
 	  Extension (LSX).
 
 config BR2_LOONGARCH_SIMD_LASX
 	bool "LASX"
+	depends on BR2_LOONGARCH_FPU_64
 	help
 	  Enable generating instructions from the 256-bit LoongArch
 	  Advanced SIMD Extension (LASX) and the 128-bit LoongArch
