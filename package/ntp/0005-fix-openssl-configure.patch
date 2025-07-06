@@ -1,0 +1,18 @@
+Fix OpenSSL detection
+
+Upstream: https://bugs.ntp.org/show_bug.cgi?id=3985
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+
+diff -uNr ntp-4.2.8p18.orig/sntp/m4/ntp_openssl.m4 ntp-4.2.8p18/sntp/m4/ntp_openssl.m4
+--- ntp-4.2.8p18.orig/sntp/m4/ntp_openssl.m4	2024-05-07 13:21:14.000000000 +0200
++++ ntp-4.2.8p18/sntp/m4/ntp_openssl.m4	2025-07-06 08:37:14.140657598 +0200
+@@ -326,7 +326,7 @@
+ 	     not_found) ;;
+ 	     *)
+ 		AC_MSG_NOTICE([Searching for libcrypto in $i])
+-		LIBS="-L$i $NTPSSL_SAVED_LIBS"
++		LIBS="-L$i $ntp_ssl_libs_l $NTPSSL_SAVED_LIBS"
+ 		AC_CHECK_LIB(
+ 		    [crypto],
+ 		    [EVP_MD_CTX_new],
