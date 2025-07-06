@@ -1,0 +1,40 @@
+From c9d0d249ff013d33cf1fd5a586c16ee30095cc90 Mon Sep 17 00:00:00 2001
+From: Nicolas PARLANT <nicolas.parlant@parhuet.fr>
+Date: Fri, 14 Feb 2025 10:08:43 +0100
+Subject: [PATCH] fix build without nls
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+> hddtemp.c: In function ‘main’:
+> hddtemp.c:274:3: error: implicit declaration of function ‘bindtextdomain’ [-Wimplicit-function-declaration]
+>   274 |   bindtextdomain (PACKAGE, LOCALEDIR);
+>       |   ^~~~~~~~~~~~~~
+> hddtemp.c:275:3: error: implicit declaration of function ‘textdomain’ [-Wimplicit-function-declaration]
+>   275 |   textdomain (PACKAGE);
+>       |   ^~~~~~~~~~
+> make[2]: *** [Makefile:496: hddtemp-hddtemp.o] Error 1
+
+Upstream: https://github.com/vitlav/hddtemp/pull/16
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/hddtemp.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/hddtemp.c b/src/hddtemp.c
+index 64d000e..bfea556 100644
+--- a/src/hddtemp.c
++++ b/src/hddtemp.c
+@@ -270,9 +270,11 @@ int main(int argc, char* argv[]) {
+   backtrace_sigill();
+   backtrace_sigbus();
+ 
++#if ENABLE_NLS
+   setlocale (LC_ALL, "");
+   bindtextdomain (PACKAGE, LOCALEDIR);
+   textdomain (PACKAGE);
++#endif
+ 
+   show_db = debug = numeric = quiet = wakeup = af_hint = syslog_interval = foreground = 0;
+   unit = DEFAULT;
