@@ -1,0 +1,34 @@
+From 74b228c74c7821dbe16d7730040030eed2f01a28 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Mon, 7 Jul 2025 22:58:10 +0200
+Subject: [PATCH] server.c: fix build failure as static library
+
+As static library strncpy() can't determine precise maximum characters
+because strlen() is variable, so to fix build failure let's convert 3
+lines into one by using strdup() that does the same as the actual code.
+
+Upstream: https://sourceforge.net/p/liblo/patches/9/
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ src/server.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/src/server.c b/src/server.c
+index 130f6d5..1236279 100644
+--- a/src/server.c
++++ b/src/server.c
+@@ -2062,10 +2062,7 @@ static void dispatch_method(lo_server s, const char *path,
+                     char *tmp;
+                     char *sec;
+ 
+-                    int tmplen = (int) strlen(it->path + len) + 1;
+-                    tmp = (char*) malloc(strlen(it->path + len) + 1);
+-                    strncpy(tmp, it->path + len, tmplen);
+-                    tmp[tmplen-1]=0;
++                    tmp = strdup(it->path + len);
+                     sec = strchr(tmp, '/');
+                     if (sec)
+                         *sec = '\0';
+-- 
+2.39.5
+
