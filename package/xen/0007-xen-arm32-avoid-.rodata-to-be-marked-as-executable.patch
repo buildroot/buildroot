@@ -1,0 +1,58 @@
+From 99314e08c6450a841d4f7155b7ce364e0990df1c Mon Sep 17 00:00:00 2001
+From: Jan Beulich <jbeulich@suse.com>
+Date: Fri, 11 Jun 2021 11:19:15 +0200
+Subject: [PATCH] xen/arm32: avoid .rodata to be marked as executable
+
+The section .proc.info lives in .rodata as it doesn't contain any
+executable code. However, the section is still marked as executable
+as the consequence .rodata will also be marked executable.
+
+Xen doesn't use the ELF permissions to decide the page-table mapping
+permission. However, this will confuse disassemblers.
+
+'#execinstr' is now removed on all the pushsection dealing with
+.proc.info
+
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
+[julieng: Rework the commit message]
+Acked-by: Julien Grall <jgrall@amazon.com>
+Upstream: https://xenbits.xen.org/gitweb/?p=xen.git;a=commitdiff;h=163f47c14737cfa9dfb3240deea356b08caf7614
+Signed-off-by: Vincent Stehlé <vincent.stehle@arm.com>
+---
+ xen/arch/arm/arm32/proc-v7.S | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/xen/arch/arm/arm32/proc-v7.S b/xen/arch/arm/arm32/proc-v7.S
+index 46bfc7a..8b418ed 100644
+--- a/xen/arch/arm/arm32/proc-v7.S
++++ b/xen/arch/arm/arm32/proc-v7.S
+@@ -30,7 +30,7 @@ brahma15mp_init:
+         mcr   CP32(r0, ACTLR)
+         mov   pc, lr
+ 
+-        .section ".proc.info", #alloc, #execinstr
++        .section ".proc.info", #alloc
+         .type __v7_ca15mp_proc_info, #object
+ __v7_ca15mp_proc_info:
+         .long 0x410FC0F0             /* Cortex-A15 */
+@@ -39,7 +39,7 @@ __v7_ca15mp_proc_info:
+         .long caxx_processor
+         .size __v7_ca15mp_proc_info, . - __v7_ca15mp_proc_info
+ 
+-        .section ".proc.info", #alloc, #execinstr
++        .section ".proc.info", #alloc
+         .type __v7_ca7mp_proc_info, #object
+ __v7_ca7mp_proc_info:
+         .long 0x410FC070             /* Cortex-A7 */
+@@ -48,7 +48,7 @@ __v7_ca7mp_proc_info:
+         .long caxx_processor
+         .size __v7_ca7mp_proc_info, . - __v7_ca7mp_proc_info
+ 
+-        .section ".proc.info", #alloc, #execinstr
++        .section ".proc.info", #alloc
+         .type __v7_brahma15mp_proc_info, #object
+ __v7_brahma15mp_proc_info:
+         .long 0x420F00F0             /* Broadcom Brahma-B15 */
+-- 
+2.48.1
+
