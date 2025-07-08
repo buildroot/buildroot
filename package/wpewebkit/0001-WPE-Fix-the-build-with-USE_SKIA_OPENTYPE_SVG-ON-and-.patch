@@ -1,0 +1,44 @@
+From 94acd1ce0ff2860b19f22ab2d386d7711c9699b7 Mon Sep 17 00:00:00 2001
+From: Adrian Perez de Castro <aperez@igalia.com>
+Date: Tue, 8 Jul 2025 21:46:44 +0300
+Subject: [PATCH] [WPE] Fix the build with USE_SKIA_OPENTYPE_SVG=ON and
+ USE_SYSPROF_CAPTURE=OFF
+
+Unreviewed build fix.
+
+When backporting 287859@main the #include for the needed Skia header
+slipped inside an USE(SYSPROF_CAPTURE) guard. This moves the guards
+and #include statements to their correct places.
+
+* Source/WebKit/WebProcess/wpe/WebProcessMainWPE.cpp:
+
+Canonical link: https://commits.webkit.org/290945.273@webkitglib/2.48
+
+Signed-off-by: Adrian Perez de Castro <aperez@igalia.com>
+Upstream: https://github.com/WebKit/WebKit/commit/943d05f0c9b03c053a456c90c2a8817c1f679711
+---
+ Source/WebKit/WebProcess/wpe/WebProcessMainWPE.cpp | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/Source/WebKit/WebProcess/wpe/WebProcessMainWPE.cpp b/Source/WebKit/WebProcess/wpe/WebProcessMainWPE.cpp
+index a06e33fd04f8..5fb245ce0b66 100644
+--- a/Source/WebKit/WebProcess/wpe/WebProcessMainWPE.cpp
++++ b/Source/WebKit/WebProcess/wpe/WebProcessMainWPE.cpp
+@@ -43,11 +43,12 @@
+ #include <skia/core/SkGraphics.h>
+ #endif
+ 
+-#if USE(SYSPROF_CAPTURE)
+-#include <wtf/SystemTracing.h>
+ #if USE(SKIA_OPENTYPE_SVG)
+ #include <skia/modules/svg/SkSVGOpenTypeSVGDecoder.h>
+ #endif
++
++#if USE(SYSPROF_CAPTURE)
++#include <wtf/SystemTracing.h>
+ #endif
+ 
+ namespace WebKit {
+-- 
+2.50.1
+
