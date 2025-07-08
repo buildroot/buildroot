@@ -1,0 +1,71 @@
+From 9c403f787eee69be850ba5f92348ecea65f9badc Mon Sep 17 00:00:00 2001
+From: Philip Withnall <pwithnall@gnome.org>
+Date: Tue, 3 Jun 2025 11:31:04 +0100
+Subject: [PATCH] gstring: Fix overflow check when expanding the string
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+After commit 34b7992fd6e3894bf6d2229b8aa59cac34bcb1b5 the overflow check
+was only done when expanding the string, but we need to do it before
+checking whether to expand the string, otherwise that calculation could
+overflow and falsely decide that the string is big enough already.
+
+As a concrete example, consider a `GString` which has:
+ * `.len = G_MAXSIZE / 2 + 1`
+ * `.allocated_len = G_MAXSIZE / 2 + 1`
+and `g_string_append()` is called on it with an input string of length
+`G_MAXSIZE / 2`.
+
+This results in a call `g_string_maybe_expand (string, G_MAXSIZE / 2)`,
+which calculates `string->len + len` as `(G_MAXSIZE / 2 + 1) +
+(G_MAXSIZE / 2)` which evaluates to `1` as it overflows. This is not
+greater than `string->allocated_len` (which is `G_MAXSIZE / 2 + 1`), so
+`g_string_expand()` is *not* called, and `g_string_maybe_expand()`
+returns successfully. The caller then assumes that there’s enough space
+in the buffer, and happily continues to cause a buffer overflow.
+
+It’s unlikely anyone could hit this in practice because it requires
+ludicrously big strings and `GString` allocations, which likely would
+have been blocked by other code, but if we’re going to have the overflow
+checks in `GString` then they should be effective.
+
+Spotted by code inspection.
+
+Signed-off-by: Philip Withnall <pwithnall@gnome.org>
+Upstream: https://gitlab.gnome.org/GNOME/glib/-/merge_requests/4655/diffs
+CVE: CVE-2025-6052
+Signed-off-by: Tim Soubry <tim.soubry@mind.be>
+---
+ glib/gstring.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/glib/gstring.c b/glib/gstring.c
+index bdd068344..45a6f68b1 100644
+--- a/glib/gstring.c
++++ b/glib/gstring.c
+@@ -68,10 +68,6 @@ static void
+ g_string_expand (GString *string,
+                  gsize    len)
+ {
+-  /* Detect potential overflow */
+-  if G_UNLIKELY ((G_MAXSIZE - string->len - 1) < len)
+-    g_error ("adding %" G_GSIZE_FORMAT " to string would overflow", len);
+-
+   string->allocated_len = g_nearest_pow (string->len + len + 1);
+   /* If the new size is bigger than G_MAXSIZE / 2, only allocate enough
+    * memory for this string and don't over-allocate.
+@@ -86,6 +82,10 @@ static inline void
+ g_string_maybe_expand (GString *string,
+                        gsize    len)
+ {
++  /* Detect potential overflow */
++  if G_UNLIKELY ((G_MAXSIZE - string->len - 1) < len)
++    g_error ("adding %" G_GSIZE_FORMAT " to string would overflow", len);
++
+   if (G_UNLIKELY (string->len + len >= string->allocated_len))
+     g_string_expand (string, len);
+ }
+-- 
+2.39.5
+
