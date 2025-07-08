@@ -5,7 +5,7 @@
 ################################################################################
 
 # The middle number is even for stable releases, odd for development ones.
-WPEWEBKIT_VERSION = 2.44.4
+WPEWEBKIT_VERSION = 2.48.3
 WPEWEBKIT_SITE = https://wpewebkit.org/releases
 WPEWEBKIT_SOURCE = wpewebkit-$(WPEWEBKIT_VERSION).tar.xz
 WPEWEBKIT_INSTALL_STAGING = YES
@@ -16,7 +16,7 @@ WPEWEBKIT_LICENSE_FILES = \
 WPEWEBKIT_CPE_ID_VENDOR = wpewebkit
 WPEWEBKIT_CPE_ID_PRODUCT = wpe_webkit
 WPEWEBKIT_DEPENDENCIES = host-gperf host-python3 host-ruby host-unifdef \
-	harfbuzz cairo icu jpeg libepoxy libgcrypt libgles libsoup3 libtasn1 \
+	harfbuzz icu jpeg libepoxy libgcrypt libgles libsoup3 libtasn1 \
 	libpng libxslt wayland-protocols webp wpebackend-fdo
 
 WPEWEBKIT_CMAKE_BACKEND = ninja
@@ -29,6 +29,15 @@ WPEWEBKIT_CONF_OPTS = \
 	-DENABLE_MINIBROWSER=OFF \
 	-DENABLE_WEB_RTC=OFF \
 	-DUSE_ATK=OFF
+
+# WPE WebKit uses a bundled copy of Skia since 2.46.0 for
+# little-endian targets, and Cairo for big-endian ones.
+ifeq ($(BR2_ENDIAN),"BIG")
+WPEWEBKIT_DEPENDENCIES += cairo
+WPEWEBKIT_CONF_OPTS += -DUSE_SKIA=OFF
+else
+WPEWEBKIT_CONF_OPTS += -DUSE_SKIA=ON
+endif
 
 ifeq ($(BR2_PACKAGE_WPEWEBKIT_SANDBOX),y)
 WPEWEBKIT_CONF_OPTS += \
@@ -79,6 +88,13 @@ else
 WPEWEBKIT_CONF_OPTS += -DENABLE_WEBDRIVER=OFF
 endif
 
+ifeq ($(BR2_PACKAGE_FLITE),y)
+WPEWEBKIT_CONF_OPTS += -DENABLE_SPEECH_SYNTHESIS=ON
+WPEWEBKIT_DEPENDENCIES += flite
+else
+WPEWEBKIT_CONF_OPTS += -DENABLE_SPEECH_SYNTHESIS=OFF
+endif
+
 ifeq ($(BR2_PACKAGE_LCMS2),y)
 WPEWEBKIT_CONF_OPTS += -DUSE_LCMS=ON
 WPEWEBKIT_DEPENDENCIES += lcms2
@@ -112,6 +128,13 @@ WPEWEBKIT_CONF_OPTS += -DUSE_JPEGXL=ON
 WPEWEBKIT_DEPENDENCIES += libjxl
 else
 WPEWEBKIT_CONF_OPTS += -DUSE_JPEGXL=OFF
+endif
+
+ifeq ($(BR2_PACKAGE_SYSPROF),y)
+WPEWEBKIT_CONF_OPTS += -DUSE_SYSPROF_CAPTURE=ON
+WPEWEBKIT_DEPENDENCIES += sysprof
+else
+WPEWEBKIT_CONF_OPTS += -DUSE_SYSPROF_CAPTURE=OFF
 endif
 
 ifeq ($(BR2_INIT_SYSTEMD),y)
