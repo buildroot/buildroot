@@ -1,0 +1,73 @@
+From be0ff8586e38823d6ee08e031c28e5831bbb0991 Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Tue, 1 Aug 2023 10:49:30 -0700
+Subject: [PATCH] arm: Avoid using solaris syntax for .section directive
+
+Assembler from binutils 2.41 will rejects ([1], [2]) the following
+syntax
+
+.section "name", #alloc
+
+for any other any target other than ELF SPARC. This means we can't use
+it in the Arm code.
+
+So switch to the GNU syntax
+
+.section name [, "flags"[, @type]]
+
+[1] https://sourceware.org/bugzilla/show_bug.cgi?id=11601
+[2] https://sourceware.org/binutils/docs-2.41/as.html#Section
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+Reviewed-by: Michal Orzel <michal.orzel@amd.com>
+[jgrall: Reword commit message]
+Acked-by: Julien Grall <jgrall@amazon.com>
+Upstream: https://xenbits.xen.org/gitweb/?p=xen.git;a=commitdiff;h=dfc490a3740bb7d6889939934afadcb58891fbce
+Signed-off-by: Vincent Stehlé <vincent.stehle@arm.com>
+---
+ xen/arch/arm/arm32/proc-v7.S | 6 +++---
+ xen/arch/arm/dtb.S           | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/xen/arch/arm/arm32/proc-v7.S b/xen/arch/arm/arm32/proc-v7.S
+index 8b418ed..9869780 100644
+--- a/xen/arch/arm/arm32/proc-v7.S
++++ b/xen/arch/arm/arm32/proc-v7.S
+@@ -30,7 +30,7 @@ brahma15mp_init:
+         mcr   CP32(r0, ACTLR)
+         mov   pc, lr
+ 
+-        .section ".proc.info", #alloc
++        .section .proc.info, "a"
+         .type __v7_ca15mp_proc_info, #object
+ __v7_ca15mp_proc_info:
+         .long 0x410FC0F0             /* Cortex-A15 */
+@@ -39,7 +39,7 @@ __v7_ca15mp_proc_info:
+         .long caxx_processor
+         .size __v7_ca15mp_proc_info, . - __v7_ca15mp_proc_info
+ 
+-        .section ".proc.info", #alloc
++        .section .proc.info, "a"
+         .type __v7_ca7mp_proc_info, #object
+ __v7_ca7mp_proc_info:
+         .long 0x410FC070             /* Cortex-A7 */
+@@ -48,7 +48,7 @@ __v7_ca7mp_proc_info:
+         .long caxx_processor
+         .size __v7_ca7mp_proc_info, . - __v7_ca7mp_proc_info
+ 
+-        .section ".proc.info", #alloc
++        .section .proc.info, "a"
+         .type __v7_brahma15mp_proc_info, #object
+ __v7_brahma15mp_proc_info:
+         .long 0x420F00F0             /* Broadcom Brahma-B15 */
+diff --git a/xen/arch/arm/dtb.S b/xen/arch/arm/dtb.S
+index c703aef..8771daf 100644
+--- a/xen/arch/arm/dtb.S
++++ b/xen/arch/arm/dtb.S
+@@ -1,2 +1,2 @@
+-        .section .dtb,#alloc
++        .section .dtb, "a"
+         .incbin CONFIG_DTB_FILE
+-- 
+2.48.1
+
