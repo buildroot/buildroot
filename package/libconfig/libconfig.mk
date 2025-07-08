@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBCONFIG_VERSION = 1.7.3
-LIBCONFIG_SITE = https://github.com/hyperrealm/libconfig/releases/download/v$(LIBCONFIG_VERSION)
+LIBCONFIG_VERSION = 1.8.1
+LIBCONFIG_SITE = https://hyperrealm.github.io/libconfig/dist
 LIBCONFIG_LICENSE = LGPL-2.1+
 LIBCONFIG_LICENSE_FILES = COPYING.LIB
 LIBCONFIG_INSTALL_STAGING = YES
