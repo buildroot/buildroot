@@ -15,6 +15,9 @@ LIBXML2_LICENSE_FILES = Copyright
 LIBXML2_CPE_ID_VENDOR = xmlsoft
 LIBXML2_CONFIG_SCRIPTS = xml2-config
 
+#0001-tree-Fix-integer-overflow-in-xmlBuildQName.patch
+LIBXML2_IGNORE_CVES += CVE-2025-6021
+
 # relocation truncated to fit: R_68K_GOT16O
 ifeq ($(BR2_m68k_cf),y)
 LIBXML2_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -mxgot"
