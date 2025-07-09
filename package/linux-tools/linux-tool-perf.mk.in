@@ -28,7 +28,6 @@ PERF_MAKE_FLAGS = \
 	NO_LIBPERL=1 \
 	NO_LIBPYTHON=1 \
 	NO_LIBBIONIC=1 \
-	NO_LIBTRACEEVENT=1 \
 	NO_SHELLCHECK=1
 
 # We need to pass an argument to ld for setting the emulation when
@@ -126,6 +125,12 @@ PERF_DEPENDENCIES += opencsd
 PERF_MAKE_FLAGS += CORESIGHT=1
 # There is no "else CORESIGHT=0" case, because "perf" Makefile uses
 # bare "ifdef CORESIGHT" constructs.
+endif
+
+ifeq ($(BR2_PACKAGE_LIBTRACEEVENT),y)
+PERF_DEPENDENCIES += libtraceevent
+else
+PERF_MAKE_FLAGS += NO_LIBTRACEEVENT=1
 endif
 
 # We really do not want to build the perf documentation, because it
