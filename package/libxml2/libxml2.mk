@@ -18,6 +18,9 @@ LIBXML2_CONFIG_SCRIPTS = xml2-config
 #0001-tree-Fix-integer-overflow-in-xmlBuildQName.patch
 LIBXML2_IGNORE_CVES += CVE-2025-6021
 
+#0002-schematron-Fix-memory-safety-issues-in-xmlSchematron.patch
+LIBXML2_IGNORE_CVES += CVE-2025-49794 CVE-2025-49796
+
 # relocation truncated to fit: R_68K_GOT16O
 ifeq ($(BR2_m68k_cf),y)
 LIBXML2_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -mxgot"
