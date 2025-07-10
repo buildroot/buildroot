@@ -1,0 +1,25 @@
+From 3fe1ce4d7aa7c4fc16471a9ab023ecf6628c2f11 Mon Sep 17 00:00:00 2001
+From: Chris McClelland <prophet3636@gmail.com>
+Date: Thu, 12 Nov 2020 14:18:27 +0000
+Subject: [PATCH] Apply uint patch
+
+Upstream: https://github.com/makestuff/libargtable2/commit/3fe1ce4d7aa7c4fc16471a9ab023ecf6628c2f11
+[thomas: strip to only have the include]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/arg_int.c     |  2 ++
+ 1 files changed, 2 insertions(+)
+
+diff --git a/src/arg_int.c b/src/arg_int.c
+index 29c20e5..c51706a 100644
+--- a/src/arg_int.c
++++ b/src/arg_int.c
+@@ -24,6 +24,8 @@ USA.
+ #include "config.h"
+ #endif
+ 
++#include <ctype.h>
++
+ /* #ifdef HAVE_STDLIB_H */
+ #include <stdlib.h>
+ /* #endif */
