@@ -83,6 +83,14 @@ ABI := $(ABI)hf
 endif
 endif
 
+# LoongArch Float ABI suffixes
+ifeq ($(BR2_LOONGARCH_ABI_LP64F),y)
+ABI = f32
+endif
+ifeq ($(BR2_LOONGARCH_ABI_LP64S),y)
+ABI = sf
+endif
+
 # For FSL PowerPC there's SPE
 ifeq ($(BR2_POWERPC_CPU_HAS_SPE),y)
 ABI = spe
