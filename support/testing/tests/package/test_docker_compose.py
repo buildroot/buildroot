@@ -3,7 +3,7 @@ import os
 import infra.basetest
 
 
-class TestDockerCompose(infra.basetest.BRTest):
+class BaseTestDockerCompose(infra.basetest.BRTest):
     scripts = ["conf/docker-compose.yml",
                "tests/package/sample_python_docker.py"]
     config = \
@@ -53,7 +53,7 @@ class TestDockerCompose(infra.basetest.BRTest):
     def python_docker_test(self):
         self.assertRunOk('python3 ./sample_python_docker.py', 120)
 
-    def test_run(self):
+    def do_test(self):
         kernel = os.path.join(self.builddir, "images", "bzImage")
         rootfs = os.path.join(self.builddir, "images", "rootfs.ext2")
         self.emulator.boot(arch="x86_64",
@@ -70,3 +70,17 @@ class TestDockerCompose(infra.basetest.BRTest):
         self.docker_test()
         self.docker_compose_test()
         self.python_docker_test()
+
+
+class TestDockerComposeRunc(BaseTestDockerCompose):
+    def test_run(self):
+        self.do_test()
+
+
+class TestDockerComposeCrun(BaseTestDockerCompose):
+    config = BaseTestDockerCompose.config + """
+        BR2_PACKAGE_CRUN=y
+        """
+
+    def test_run(self):
+        self.do_test()
