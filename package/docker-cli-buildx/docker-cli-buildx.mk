@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DOCKER_CLI_BUILDX_VERSION = 0.16.1
+DOCKER_CLI_BUILDX_VERSION = 0.25.0
 DOCKER_CLI_BUILDX_SITE = $(call github,docker,buildx,v$(DOCKER_CLI_BUILDX_VERSION))
 
 DOCKER_CLI_BUILDX_LICENSE = Apache-2.0
