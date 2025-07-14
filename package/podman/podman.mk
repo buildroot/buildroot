@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PODMAN_VERSION = v5.4.1
+PODMAN_VERSION = v5.5.2
 PODMAN_SITE = https://github.com/containers/podman
 PODMAN_SITE_METHOD = git
 
