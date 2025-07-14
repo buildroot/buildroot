@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PASST_VERSION = 2025_02_17.a1e48a0
+PASST_VERSION = 2025_06_11.0293c6f
 PASST_SITE = https://passt.top/passt
 PASST_SITE_METHOD = git
 
