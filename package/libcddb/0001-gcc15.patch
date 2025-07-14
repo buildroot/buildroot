@@ -1,0 +1,17 @@
+Fix incorrect type.
+
+Upstream: https://sourceforge.net/p/libcddb/patches/9/#b9ea
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+
+--- libcddb-1.3.2/lib/cddb_net.c	2009-03-01 03:28:07.000000000 +0000
++++ libcddb-1.3.2/lib/cddb_net.c	2025-07-03 17:58:30.064232649 +0100
+@@ -305,7 +305,7 @@
+             int rv;
+             fd_set wfds;
+             struct timeval tv;
+-            size_t l;
++            socklen_t l;
+ 
+             /* set up select time out */
+             tv.tv_sec = timeout;
