@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-LIBESMTP_VERSION = 1.1.0
-LIBESMTP_SITE = $(call github,libesmtp,libESMTP,v$(LIBESMTP_VERSION))
+LIBESMTP_VERSION = v1.1.0-14-g335ee8d2fa5cb7d30db7b818ec05563ad139ee2f
+LIBESMTP_SITE = $(call github,libesmtp,libESMTP,$(LIBESMTP_VERSION))
 LIBESMTP_INSTALL_STAGING = YES
 LIBESMTP_LICENSE = GPL-2.0+ (examples), LGPL-2.1+ (library)
 LIBESMTP_LICENSE_FILES = COPYING.GPL LICENSE
-LIBESMTP_CPE_ID_VALID = YES
+LIBESMTP_CPE_ID_VERSION = 1.1.0
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 LIBESMTP_CONF_OPTS += -Dtls=enabled
