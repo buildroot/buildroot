@@ -72,7 +72,11 @@ choice
 
 config BR2_PACKAGE_PODMAN_NET_PASST
 	bool "passt/pasta"
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_0  # passt
 	select BR2_PACKAGE_PASST  # runtime
+
+comment "passt/pasta backend needs a toolchain w/ headers >= 5.0"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_0
 
 config BR2_PACKAGE_PODMAN_NET_SLIRP4NETNS
 	bool "slirp4netns"
