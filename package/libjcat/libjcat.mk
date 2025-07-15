@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBJCAT_VERSION = 0.2.1
+LIBJCAT_VERSION = 0.2.3
 LIBJCAT_SITE = https://github.com/hughsie/libjcat/releases/download/$(LIBJCAT_VERSION)
 LIBJCAT_SOURCE = libjcat-$(LIBJCAT_VERSION).tar.xz
 LIBJCAT_LICENSE = LGPL-2.1+
