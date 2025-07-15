@@ -1,4 +1,4 @@
-From 995cf87c0dfc420908847a06661cbae21d16a8f6 Mon Sep 17 00:00:00 2001
+From 6fe6747c7d7509cc1af9667e1dae610657e5ccdf Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?J=C3=B6rg=20Krause?= <joerg.krause@embedded.rocks>
 Date: Mon, 7 Dec 2015 01:14:33 +0100
 Subject: [PATCH] add executable
@@ -22,10 +22,10 @@ Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
  2 files changed, 11 insertions(+)
 
 diff --git a/setuptools/command/install.py b/setuptools/command/install.py
-index 741b140c7..5a281237a 100644
+index 19ca60145..c4bb536b9 100644
 --- a/setuptools/command/install.py
 +++ b/setuptools/command/install.py
-@@ -39,6 +39,7 @@ class install(orig.install):
+@@ -35,6 +35,7 @@ class install(orig.install):
      distribution: Distribution  # override distutils.dist.Distribution with setuptools.dist.Distribution
  
      user_options = orig.install.user_options + [
@@ -33,7 +33,7 @@ index 741b140c7..5a281237a 100644
          ('old-and-unmanageable', None, "Try not to use this!"),
          (
              'single-version-externally-managed',
-@@ -73,6 +74,7 @@ class install(orig.install):
+@@ -67,6 +68,7 @@ class install(orig.install):
          )
  
          super().initialize_options()
@@ -42,7 +42,7 @@ index 741b140c7..5a281237a 100644
          self.single_version_externally_managed = None
  
 diff --git a/setuptools/command/install_scripts.py b/setuptools/command/install_scripts.py
-index 4401cf693..38f5d5092 100644
+index 537181e32..6893e6a8c 100644
 --- a/setuptools/command/install_scripts.py
 +++ b/setuptools/command/install_scripts.py
 @@ -18,6 +18,13 @@ class install_scripts(orig.install_scripts):
@@ -59,13 +59,13 @@ index 4401cf693..38f5d5092 100644
  
      def run(self) -> None:
          self.run_command("egg_info")
-@@ -45,6 +52,8 @@ class install_scripts(orig.install_scripts):
-         )
+@@ -39,6 +46,8 @@ class install_scripts(orig.install_scripts):
+         dist = metadata.Distribution.at(path=ei_cmd.egg_info)
          bs_cmd = self.get_finalized_command('build_scripts')
          exec_param = getattr(bs_cmd, 'executable', None)
 +        if self.executable is not None:
 +            exec_param = self.executable
-         writer = ei.ScriptWriter
+         writer = _scripts.ScriptWriter
          if exec_param == sys.executable:
              # In case the path to the Python executable contains a space, wrap
 -- 
