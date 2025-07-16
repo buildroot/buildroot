@@ -15,6 +15,10 @@ RAUC_HAWKBIT_UPDATER_CFLAGS = $(TARGET_CFLAGS) -std=c99
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 RAUC_HAWKBIT_UPDATER_DEPENDENCIES += systemd
 RAUC_HAWKBIT_UPDATER_CONF_OPTS += -Dsystemd=enabled
+# rauc-hawkbit-updater.service uses this user and group
+define RAUC_HAWKBIT_UPDATER_USERS
+	rauc-hawkbit -1 rauc-hawkbit -1 * - - - RAUC Hawkbit Updater
+endef
 else
 RAUC_HAWKBIT_UPDATER_CONF_OPTS += -Dsystemd=disabled
 endif
