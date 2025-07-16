@@ -130,6 +130,10 @@ else
 NETWORK_MANAGER_CONF_OPTS += -Dnmtui=false
 endif
 
+ifeq ($(BR2_PACKAGE_NFTABLES),y)
+NETWORK_MANAGER_CONF_OPTS += -Dnft=/usr/sbin/nft
+endif
+
 ifeq ($(BR2_PACKAGE_OFONO),y)
 NETWORK_MANAGER_DEPENDENCIES += ofono
 NETWORK_MANAGER_CONF_OPTS += -Dofono=true
