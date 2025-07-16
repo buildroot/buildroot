@@ -29,6 +29,11 @@ else ifeq ($(BR2_TOOLCHAIN_HAS_NATIVE_RPC),)
 XINETD_CFLAGS += -DNO_RPC
 endif
 
+ifeq ($(BR2_TOOLCHAIN_USES_MUSL),y)
+# Make ecvt(), fcvt(), and gcvt() available for SIO library
+XINETD_CFLAGS += -D_GNU_SOURCE
+endif
+
 XINETD_CONF_ENV += \
 	CFLAGS="$(XINETD_CFLAGS)" \
 	LIBS="$(XINETD_LIBS)"
