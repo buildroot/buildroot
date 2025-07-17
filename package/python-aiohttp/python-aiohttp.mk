@@ -13,4 +13,6 @@ PYTHON_AIOHTTP_LICENSE_FILES = LICENSE.txt
 PYTHON_AIOHTTP_CPE_ID_VENDOR = aiohttp
 PYTHON_AIOHTTP_CPE_ID_PRODUCT = aiohttp
 
+PYTHON_AIOHTTP_DEPENDENCIES = host-python-pkgconfig
+
 $(eval $(python-package))
