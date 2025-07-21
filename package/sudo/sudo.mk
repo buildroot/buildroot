@@ -37,6 +37,10 @@ else
 SUDO_CONF_OPTS += --without-pam
 endif
 
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+SUDO_DEPENDENCIES += libxcrypt
+endif
+
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 SUDO_CONF_OPTS += --enable-zlib
 SUDO_DEPENDENCIES += zlib
