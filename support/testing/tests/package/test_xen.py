@@ -3,25 +3,19 @@ import pexpect
 import infra.basetest
 
 
-class TestXen(infra.basetest.BRTest):
-    # We have a custom kernel config to reduce build time.
-    # Our genimage.cfg is inspired from qemu_aarch64_ebbr_defconfig as we boot
-    # Xen with UEFI. We run only in the initramfs; this allows to use a single
-    # ramdisk image for both the host and the guest.
-    # The Xen startup scripts need bash.
-    config = \
+class TestXenBase(infra.basetest.BRTest):
+    """A class to test Xen for multiple architectures."""
+
+    # We run only in the initramfs; this allows to use a single ramdisk image
+    # for both the host and the guest.
+    base_config = \
         """
-        BR2_aarch64=y
         BR2_TOOLCHAIN_EXTERNAL=y
-        BR2_ROOTFS_OVERLAY="support/testing/tests/package/test_xen/overlay"
-        BR2_ROOTFS_POST_BUILD_SCRIPT="support/testing/tests/package/test_xen/post-build.sh"
-        BR2_ROOTFS_POST_IMAGE_SCRIPT="support/testing/tests/package/test_xen/post-image.sh support/scripts/genimage.sh"
-        BR2_ROOTFS_POST_SCRIPT_ARGS="-c support/testing/tests/package/test_xen/genimage.cfg"
+        BR2_ROOTFS_POST_BUILD_SCRIPT="support/testing/tests/package/test_xen/common/post-build.sh"
         BR2_LINUX_KERNEL=y
         BR2_LINUX_KERNEL_CUSTOM_VERSION=y
         BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="6.12.9"
         BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG=y
-        BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE="support/testing/tests/package/test_xen/linux.config"
         BR2_LINUX_KERNEL_NEEDS_HOST_OPENSSL=y
         BR2_PACKAGE_XEN=y
         BR2_PACKAGE_XEN_HYPERVISOR=y
@@ -32,7 +26,6 @@ class TestXen(infra.basetest.BRTest):
         BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG=y
         BR2_TARGET_UBOOT_CUSTOM_VERSION=y
         BR2_TARGET_UBOOT_CUSTOM_VERSION_VALUE="2025.01"
-        BR2_TARGET_UBOOT_BOARD_DEFCONFIG="qemu_arm64"
         BR2_TARGET_UBOOT_NEEDS_OPENSSL=y
         BR2_TARGET_UBOOT_NEEDS_GNUTLS=y
         BR2_PACKAGE_HOST_DOSFSTOOLS=y
@@ -51,26 +44,14 @@ class TestXen(infra.basetest.BRTest):
         num_vm = len(out) - 1
         self.assertEqual(num_vm, x, f"Expected {x} VM(s) but found {num_vm}")
 
-    def test_run(self):
-        uboot_bin = os.path.join(self.builddir, "images", "u-boot.bin")
-        disk_img = os.path.join(self.builddir, "images", "disk.img")
+    def run_xen_test(self, arch: str, options: list[str]) -> None:
+        """This functions tests Xen for multiple architectures.
+        The arch and options parameters are passed to the emulator.
+        """
 
-        # We need to run Qemu with virtualization to run Xen.
-        qemu_opts = [
-            "-bios", uboot_bin,
-            "-cpu", "cortex-a53",
-            "-device", "virtio-blk-device,drive=hd0",
-            "-drive", f"file={disk_img},if=none,format=raw,id=hd0",
-            "-m", "1G",
-            "-machine", "virt,gic-version=3,virtualization=on,acpi=off",
-            "-smp", "2"
-        ]
-
-        # Boot the emulator:
-        # Qemu Devicetree -> U-Boot -> Xen UEFI -> Linux
-        # We need to boot Xen in UEFI to read xen.cfg; we use U-Boot as our
-        # UEFI firmware.
-        self.emulator.boot(arch="aarch64", options=qemu_opts)
+        # Boot the emulator.
+        # The system should automatically boot Xen and a Dom0.
+        self.emulator.boot(arch=arch, options=options)
         self.emulator.login()
 
         # Verify that we are indeed running under Xen.
@@ -106,3 +87,41 @@ class TestXen(infra.basetest.BRTest):
 
         # Check that we have two VMs running.
         self.assertNumVM(2)
+
+
+class TestXen(TestXenBase):
+    # Test Xen on 64b Arm.
+    # Boot flow: Qemu Devicetree -> U-Boot -> Xen UEFI -> Linux
+    # We need to boot Xen in UEFI to read xen.cfg.
+    # We use U-Boot as our UEFI firmware.
+    # We have a custom kernel config to reduce build time.
+    # Our genimage.cfg is inspired from qemu_aarch64_ebbr_defconfig as we boot
+    # Xen with UEFI.
+    config = TestXenBase.base_config + \
+        """
+        BR2_aarch64=y
+        BR2_ROOTFS_OVERLAY="support/testing/tests/package/test_xen/common/overlay \
+                            support/testing/tests/package/test_xen/aarch64/overlay"
+        BR2_ROOTFS_POST_IMAGE_SCRIPT="support/testing/tests/package/test_xen/aarch64/post-image.sh support/scripts/genimage.sh"
+        BR2_ROOTFS_POST_SCRIPT_ARGS="-c support/testing/tests/package/test_xen/aarch64/genimage.cfg"
+        BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE="support/testing/tests/package/test_xen/aarch64/linux.config"
+        BR2_TARGET_UBOOT_BOARD_DEFCONFIG="qemu_arm64"
+        """
+
+    def test_run(self):
+        uboot_bin = os.path.join(self.builddir, "images", "u-boot.bin")
+        disk_img = os.path.join(self.builddir, "images", "disk.img")
+
+        # We need to run Qemu with virtualization to run Xen.
+        qemu_opts = [
+            "-bios", uboot_bin,
+            "-cpu", "cortex-a53",
+            "-device", "virtio-blk-device,drive=hd0",
+            "-drive", f"file={disk_img},if=none,format=raw,id=hd0",
+            "-m", "1G",
+            "-machine", "virt,gic-version=3,virtualization=on,acpi=off",
+            "-smp", "2"
+        ]
+
+        # Run Xen test.
+        self.run_xen_test(arch="aarch64", options=qemu_opts)
