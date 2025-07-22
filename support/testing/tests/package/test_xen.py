@@ -125,3 +125,44 @@ class TestXen(TestXenBase):
 
         # Run Xen test.
         self.run_xen_test(arch="aarch64", options=qemu_opts)
+
+
+class TestXenArmv7(TestXenBase):
+    # Test Xen on 32b Arm v7.
+    # Boot flow: Qemu Devicetree -> U-Boot -> Xen -> Linux
+    # Xen does not boot with UEFI on 32-bit Arm v7.
+    # We use U-Boot and a script to load the Dom0 images and amend the
+    # Devicetree for Xen dynamically.
+    # We have a custom kernel config to reduce build time.
+    config = TestXenBase.base_config + \
+        """
+        BR2_arm=y
+        BR2_cortex_a15=y
+        BR2_ROOTFS_OVERLAY="support/testing/tests/package/test_xen/common/overlay \
+                            support/testing/tests/package/test_xen/arm/overlay"
+        BR2_ROOTFS_POST_IMAGE_SCRIPT="support/scripts/genimage.sh"
+        BR2_ROOTFS_POST_SCRIPT_ARGS="-c support/testing/tests/package/test_xen/arm/genimage.cfg"
+        BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE="support/testing/tests/package/test_xen/arm/linux.config"
+        BR2_TARGET_UBOOT_BOARD_DEFCONFIG="qemu_arm"
+        BR2_PACKAGE_HOST_UBOOT_TOOLS=y
+        BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT=y
+        BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT_SOURCE="support/testing/tests/package/test_xen/arm/boot.cmd"
+        """
+
+    def test_run(self):
+        uboot_bin = os.path.join(self.builddir, "images", "u-boot.bin")
+        disk_img = os.path.join(self.builddir, "images", "disk.img")
+
+        # We need to run Qemu with virtualization to run Xen.
+        qemu_opts = [
+            "-bios", uboot_bin,
+            "-cpu", "cortex-a15",
+            "-device", "virtio-blk-device,drive=hd0",
+            "-drive", f"file={disk_img},if=none,format=raw,id=hd0",
+            "-m", "1G",
+            "-machine", "virt,virtualization=on,acpi=off",
+            "-smp", "2"
+        ]
+
+        # Run Xen test.
+        self.run_xen_test(arch="armv7", options=qemu_opts)
