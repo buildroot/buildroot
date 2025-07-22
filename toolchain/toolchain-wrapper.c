@@ -487,14 +487,14 @@ int main(int argc, char **argv)
 #endif
 	}
 
-        n_args = (cur - args);
-        if ((n_args + argc) > DEFAULT_MAX_ARGS) {
+	n_args = (cur - args);
+	if ((n_args + argc) > DEFAULT_MAX_ARGS) {
 		args = realloc(args, (n_args + argc) * sizeof(char *));
 		if (args == NULL) {
 			perror(__FILE__ ": realloc");
 			return 2;
 		}
-        }
+	}
 
 	/* append forward args and terminating NULL */
 	memcpy(&args[n_args], &argv[1], sizeof(char *) * argc);
