@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-KVM_UNIT_TESTS_VERSION = 2024-01-08
+KVM_UNIT_TESTS_VERSION = 2025-06-05
 KVM_UNIT_TESTS_SOURCE = kvm-unit-tests-v$(KVM_UNIT_TESTS_VERSION).tar.bz2
 KVM_UNIT_TESTS_SITE = https://gitlab.com/kvm-unit-tests/kvm-unit-tests/-/archive/v$(KVM_UNIT_TESTS_VERSION)
 KVM_UNIT_TESTS_LICENSE = GPL-2.0, LGPL-2.0
@@ -18,6 +18,10 @@ else ifeq ($(BR2_i386),y)
 KVM_UNIT_TESTS_ARCH = i386
 else ifeq ($(BR2_powerpc64)$(BR2_powerpc64le),y)
 KVM_UNIT_TESTS_ARCH = ppc64
+else ifeq ($(BR2_RISCV_32),y)
+KVM_UNIT_TESTS_ARCH = riscv32
+else ifeq ($(BR2_RISCV_64),y)
+KVM_UNIT_TESTS_ARCH = riscv64
 else ifeq ($(BR2_s390x),y)
 KVM_UNIT_TESTS_ARCH = s390x
 else ifeq ($(BR2_x86_64),y)
