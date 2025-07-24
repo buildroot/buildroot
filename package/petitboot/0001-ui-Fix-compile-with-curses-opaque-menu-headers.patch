@@ -1,0 +1,67 @@
+Recent Debian ncurses is built with NCURSES_OPAQUE_MENU, which means
+the menu item type can't be poked directly. Fix with accessors.
+
+One wrinkle is the item name can't be modified, new_item has to be used.
+
+Signed-off-by: Nicholas Piggin <npiggin at gmail.com>
+Upstream: https://github.com/open-power/petitboot/issues/106
+Signed-off-by: Nathaniel Roach <nroach44@nroach44.id.au>
+---
+ ui/ncurses/nc-menu.c | 12 ++++++++----
+ ui/ncurses/nc-menu.h |  4 ++--
+ 2 files changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/ui/ncurses/nc-menu.c b/ui/ncurses/nc-menu.c
+index a90a02e..a1524b5 100644
+--- a/ui/ncurses/nc-menu.c
++++ b/ui/ncurses/nc-menu.c
+@@ -141,9 +141,13 @@ int pmenu_item_update(struct pmenu_item *item, const char *name)
+ 	if (!label)
+ 		return -1;
+ 
+-	i = item->nci;
+-	i->name.str = label;
+-	i->name.length = strncols(label);
++	i = new_item(label, NULL);
++	if (!i) {
++		talloc_free((char *)label);
++		return -1;
++	}
++	free_item(item->nci);
++	item->nci = i;
+ 
+ 	return 0;
+ }
+@@ -358,7 +362,7 @@ static int pmenu_item_get_index(const struct pmenu_item *item)
+ 				return i;
+ 
+ 	pb_log_fn("not found: %p %s\n", item,
+-		(item ? item->nci->name.str : "(null)"));
++		(item ? item_name(item->nci) : "(null)"));
+ 	return -1;
+ }
+ 
+diff --git a/ui/ncurses/nc-menu.h b/ui/ncurses/nc-menu.h
+index eb568c8..550c7e1 100644
+--- a/ui/ncurses/nc-menu.h
++++ b/ui/ncurses/nc-menu.h
+@@ -126,7 +126,7 @@ static inline struct pmenu *pmenu_from_scr(struct nc_scr *scr)
+ 
+ static inline void pmenu_dump_item(const ITEM *item)
+ {
+-	pb_debug("%p %s\n", item, (item ? item->name.str : "(null)"));
++	pb_debug("%p %s\n", item, (item ? item_name(item) : "(null)"));
+ }
+ 
+ static inline void pmenu_dump_items(ITEM *const *items, unsigned int count)
+@@ -135,7 +135,7 @@ static inline void pmenu_dump_items(ITEM *const *items, unsigned int count)
+ 
+ 	for (i = 0; i < count; i++)
+ 		pb_debug("%u: %p %s\n", i, items[i],
+-			(items[i] ? items[i]->name.str : "(null)"));
++			(items[i] ? item_name(items[i]) : "(null)"));
+ }
+ 
+ #endif
+-- 
+2.42.0
