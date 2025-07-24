@@ -29,12 +29,4 @@ ifeq ($(BR2_PACKAGE_HIDAPI),y)
 AVRDUDE_DEPENDENCIES += hidapi
 endif
 
-# if /etc/avrdude.conf exists, the installation process creates a
-# backup file, which we do not want in the context of Buildroot.
-define AVRDUDE_REMOVE_BACKUP_FILE
-	$(RM) -f $(TARGET_DIR)/etc/avrdude.conf.bak
-endef
-
-AVRDUDE_POST_INSTALL_TARGET_HOOKS += AVRDUDE_REMOVE_BACKUP_FILE
-
 $(eval $(cmake-package))
