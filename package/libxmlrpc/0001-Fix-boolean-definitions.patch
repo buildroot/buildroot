@@ -1,0 +1,25 @@
+Index: lib/util/include/bool.h
+===================================================================
+Don't define boolean macros for C23 standard as they are implemented
+as keywords.
+
+Upstream: https://sourceforge.net/p/xmlrpc-c/code/3318/
+
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+
+diff --git a/lib/util/include/bool.h b/lib/util/include/bool.h
+--- a/lib/util/include/bool.h	(revision 3316)
++++ b/lib/util/include/bool.h	(working copy)
+@@ -5,7 +5,11 @@
+    collision.
+ */
+ 
+-#ifndef __cplusplus
++#ifdef __cplusplus
++/* bool has always been part of the C++ language */
++#elif __STDC_VERSION__ >= 202311L
++/* bool is part of the C23 standard */
++#else
+ /* At least the GNU compiler defines __bool_true_false_are_defined */
+ #ifndef __bool_true_false_are_defined
+ #define __bool_true_false_are_defined
