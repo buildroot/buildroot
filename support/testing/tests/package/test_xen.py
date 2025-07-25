@@ -89,7 +89,7 @@ class TestXenBase(infra.basetest.BRTest):
         self.assertNumVM(2)
 
 
-class TestXen(TestXenBase):
+class TestXenAarch64(TestXenBase):
     # Test Xen on 64b Arm.
     # Boot flow: Qemu Devicetree -> U-Boot -> Xen UEFI -> Linux
     # We need to boot Xen in UEFI to read xen.cfg.
