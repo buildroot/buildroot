@@ -20,7 +20,6 @@ LIBCURL_INSTALL_STAGING = YES
 LIBCURL_CONF_OPTS = \
 	--disable-manual \
 	--disable-ntlm \
-	--with-random=/dev/urandom \
 	--disable-curldebug \
 	--disable-libcurl-option \
 	--disable-ldap \
