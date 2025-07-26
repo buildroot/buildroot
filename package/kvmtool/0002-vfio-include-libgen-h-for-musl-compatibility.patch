@@ -1,0 +1,48 @@
+From ba6830eec0f5ab734b093657b16b555e0437b927 Mon Sep 17 00:00:00 2001
+From: Thomas Perale <thomas.perale@mind.be>
+Date: Sun, 29 Jun 2025 22:22:21 +0200
+Subject: vfio: include libgen.h (for musl compatibility)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Starting GCC14 'implicit-function-declaration' are treated as errors by
+default. When building kvmtool with musl libc, the following error
+occurs due to missing declaration of 'basename':
+
+vfio/core.c:537:22: error: implicit declaration of function ‘basename’ [-Wimplicit-function-declaration]
+  537 |         group_name = basename(group_path);
+      |                      ^~~~~~~~
+vfio/core.c:537:22: warning: nested extern declaration of ‘basename’ [-Wnested-externs]
+vfio/core.c:537:20: error: assignment to ‘char *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
+  537 |         group_name = basename(group_path);
+      |                    ^
+
+This patch fixes the issue by including the appropriate header, ensuring
+compatibility with musl and GCC14.
+
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+Reviewed-by: Alexandru Elisei <alexandru.elisei@arm.com>
+Link: https://lore.kernel.org/r/20250629202221.893360-1-thomas.perale@mind.be
+Signed-off-by: Will Deacon <will@kernel.org>
+Upstream: https://git.kernel.org/pub/scm/linux/kernel/git/will/kvmtool.git/patch/?id=ba6830eec0f5ab734b093657b16b555e0437b927
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ vfio/core.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/vfio/core.c b/vfio/core.c
+index 3ff2c0b0..8f884898 100644
+--- a/vfio/core.c
++++ b/vfio/core.c
+@@ -3,6 +3,7 @@
+ #include "kvm/ioport.h"
+ 
+ #include <linux/list.h>
++#include <libgen.h>
+ 
+ #define VFIO_DEV_DIR		"/dev/vfio"
+ #define VFIO_DEV_NODE		VFIO_DEV_DIR "/vfio"
+-- 
+cgit 1.2.3-korg
+
