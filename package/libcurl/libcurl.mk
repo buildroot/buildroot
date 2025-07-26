@@ -15,17 +15,11 @@ LIBCURL_LICENSE_FILES = COPYING
 LIBCURL_CPE_ID_VENDOR = haxx
 LIBCURL_INSTALL_STAGING = YES
 
-# We disable NTLM delegation to winbinds ntlm_auth ('--disable-ntlm-wb')
-# support because it uses fork(), which doesn't work on non-MMU platforms.
-# Moreover, this authentication method is probably almost never used (see
-# https://curl.se/docs/manpage.html#--ntlm), so disable NTLM support overall.
-#
 # Likewise, there is no compiler on the target, so libcurl-option (to
 # generate C code) isn't very useful
 LIBCURL_CONF_OPTS = \
 	--disable-manual \
 	--disable-ntlm \
-	--disable-ntlm-wb \
 	--with-random=/dev/urandom \
 	--disable-curldebug \
 	--disable-libcurl-option \
