@@ -20,5 +20,8 @@ ORC_CONF_OPTS = \
 	-Dtests=disabled \
 	-Dtools=disabled
 
+# 0001-use-vasprintf-if-available-for-error-messages-and-otherwise-vsnprintf.patch
+ORC_IGNORE_CVES += CVE-2024-40897
+
 $(eval $(meson-package))
 $(eval $(host-meson-package))
