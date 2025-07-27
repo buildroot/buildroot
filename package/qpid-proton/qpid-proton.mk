@@ -6,7 +6,7 @@
 
 QPID_PROTON_VERSION = 0.35.0
 QPID_PROTON_SITE = \
-	https://downloads.apache.org/qpid/proton/$(QPID_PROTON_VERSION)
+	https://archive.apache.org/dist/qpid/proton/$(QPID_PROTON_VERSION)
 QPID_PROTON_LICENSE = Apache-2.0
 QPID_PROTON_LICENSE_FILES = LICENSE.txt
 QPID_PROTON_CPE_ID_VENDOR = apache
