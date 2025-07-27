@@ -15,6 +15,9 @@ MICROPYTHON_LICENSE_FILES = LICENSE
 MICROPYTHON_DEPENDENCIES = host-python3
 MICROPYTHON_CPE_ID_VENDOR = micropython
 
+# 0004-py-objarray-fix-use-after-free-if-extending-a-bytearray-from-itself.patch
+MICROPYTHON_IGNORE_CVES += CVE-2024-8947
+
 # Use fallback implementation for exception handling on architectures that don't
 # have explicit support.
 ifeq ($(BR2_i386)$(BR2_x86_64)$(BR2_arm)$(BR2_armeb),)
