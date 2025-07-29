@@ -1,0 +1,51 @@
+From 915f62dcd9f0a372944f749cf4acd707db10c5fd Mon Sep 17 00:00:00 2001
+From: Alper Ak <alperyasinak1@gmail.com>
+Date: Wed, 9 Jul 2025 12:59:17 +0300
+Subject: [PATCH] cmake: Set minimum required version to 3.5 for CMake 4+
+ compatibility
+
+Fix:
+
+| CMake Error at CMakeLists.txt:2 (cmake_minimum_required):
+|   Compatibility with CMake < 3.5 has been removed from CMake.
+|
+|   Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+|   to tell CMake that the project requires at least <min> but has been updated
+|   to work with policies introduced by <max> or earlier.
+|
+|   Or, add -DCMAKE_POLICY_VERSION_MINIMUM=3.5 to try configuring anyway.
+|
+|
+| -- Configuring incomplete, errors occurred!
+
+Signed-off-by: Alper Ak <alperyasinak1@gmail.com>
+Signed-off-by: Benoît Monin <benoit.monin@bootlin.com>
+Upstream: https://github.com/dvidelabs/flatcc/pull/349
+---
+ CMakeLists.txt               | 2 +-
+ external/hash/CMakeLists.txt | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d4127f598..b51e5c5bd 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -2,7 +2,7 @@
+ #cmake_minimum_required (VERSION 2.8.12.2)
+ # Centos 7
+ #cmake_minimum_required (VERSION 2.8.11)
+-cmake_minimum_required (VERSION 2.8)
++cmake_minimum_required (VERSION 3.5)
+ 
+ # Disable build of tests and samples. Due to custom build step
+ # dependency on flatcc tool, some custom build configurations may
+diff --git a/external/hash/CMakeLists.txt b/external/hash/CMakeLists.txt
+index 7b7d990dd..12eb3daa4 100644
+--- a/external/hash/CMakeLists.txt
++++ b/external/hash/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required (VERSION 3.0.2)
++cmake_minimum_required (VERSION 3.5)
+ 
+ project (HashTest)
+ 
