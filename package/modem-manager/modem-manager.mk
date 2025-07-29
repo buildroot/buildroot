@@ -48,6 +48,12 @@ else
 MODEM_MANAGER_CONF_OPTS += -Dqrtr=false
 endif
 
+ifeq ($(BR2_PACKAGE_MODEM_MANAGER_ATVIADBUS),y)
+MODEM_MANAGER_CONF_OPTS += -Dat_command_via_dbus=true
+else
+MODEM_MANAGER_CONF_OPTS += -Dat_command_via_dbus=false
+endif
+
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 MODEM_MANAGER_DEPENDENCIES += systemd
 MODEM_MANAGER_CONF_OPTS += \

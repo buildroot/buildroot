@@ -38,6 +38,12 @@ config BR2_PACKAGE_MODEM_MANAGER_LIBQRTR
 comment "QRTR support needs a toolchain w/ headers >= 4.15"
 	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_15
 
+config BR2_PACKAGE_MODEM_MANAGER_ATVIADBUS
+	bool "at-via-dbus support"
+	help
+	  This option enables support for issuing AT commands
+	  over the D-Bus interface.
+
 endif
 
 comment "modemmanager needs a toolchain w/ wchar, threads, dynamic library"
