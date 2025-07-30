@@ -1,8 +1,8 @@
-From 7f52329793c88260260631593c9bc558b7eb01f8 Mon Sep 17 00:00:00 2001
+From c01b78e37885c7c4a191f752dc346c848d73b731 Mon Sep 17 00:00:00 2001
 From: Romain Naour <romain.naour@gmail.com>
 Date: Sat, 9 Sep 2023 23:58:50 +0200
-Subject: [PATCH] HACK: keep _ISOC23_SOURCE undefined to build localedef with
- old glibc
+Subject: [PATCH] HACK: keep _ISOC23_SOURCE undefined to build localedef
+ with old glibc
 
 Fixes:
 host-localedef-2.38-13-g92201f16cbcfd9eafe314ef6654be2ea7ba25675/build/locale/ld-ctype.o: in function `ctype_read':
@@ -19,7 +19,7 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
  1 file changed, 2 deletions(-)
 
 diff --git a/include/features.h b/include/features.h
-index 44bc4bbc85..c856368a71 100644
+index 8515b06b36..9abd65af93 100644
 --- a/include/features.h
 +++ b/include/features.h
 @@ -217,9 +217,7 @@
@@ -33,5 +33,5 @@ index 44bc4bbc85..c856368a71 100644
  # define _POSIX_SOURCE	1
  # undef  _POSIX_C_SOURCE
 -- 
-2.48.1
+2.50.1
 
