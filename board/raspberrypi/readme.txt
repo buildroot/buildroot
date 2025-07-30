@@ -19,7 +19,6 @@ These instructions apply to all models of the Raspberry Pi:
   - the model CM4 (aka Raspberry Pi Compute Module 4 and IO Board).
   - the model CM4s (aka Raspberry Pi Compute Module 4s).
   - the model B5 (aka Raspberry Pi 5).
-  - the model 500 (aka Raspberry Pi 500).
 
 How to build it
 ===============
@@ -78,7 +77,7 @@ or for CM4 (on IO Board - 64 bit):
 
   $ make raspberrypicm4io_64_defconfig
 
-For model 5 B and 500:
+For model 5 B:
 
   $ make raspberrypi5_defconfig
 
@@ -118,7 +117,6 @@ After building, you should obtain this tree:
     +-- bcm2711-rpi-cm4s.dtb        [1]
     +-- bcm2712-rpi-5-b.dtb         [1]
     +-- bcm2712d0-rpi-5-b.dtb       [1]
-    +-- bcm2712-rpi-500.dtb         [1]
     +-- boot.vfat
     +-- rootfs.ext4
     +-- rpi-firmware/
