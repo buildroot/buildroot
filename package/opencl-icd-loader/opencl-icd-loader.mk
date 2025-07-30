@@ -8,7 +8,7 @@
 # must always be updated together to compatible versions.
 # Version desynchronization may result in build or runtime errors.
 # When updating one of them, make sure to check and update the others.
-OPENCL_ICD_LOADER_VERSION = 2024.10.24
+OPENCL_ICD_LOADER_VERSION = 2025.07.22
 OPENCL_ICD_LOADER_SOURCE = OpenCL-ICD-Loader-$(OPENCL_ICD_LOADER_VERSION).tar.gz
 OPENCL_ICD_LOADER_SITE = $(call github,KhronosGroup,OpenCL-ICD-Loader,v$(OPENCL_ICD_LOADER_VERSION))
 OPENCL_ICD_LOADER_LICENSE = Apache-2.0

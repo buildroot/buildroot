@@ -9,7 +9,7 @@
 # Version desynchronization may result in build or runtime errors.
 # When updating one of them, make sure to check and update the others.
 
-OPENCL_HEADERS_VERSION = 2024.10.24
+OPENCL_HEADERS_VERSION = 2025.07.22
 OPENCL_HEADERS_SOURCE = OpenCL-Headers-$(OPENCL_HEADERS_VERSION).tar.gz
 OPENCL_HEADERS_SITE = $(call github,KhronosGroup,OpenCL-Headers,v$(OPENCL_HEADERS_VERSION))
 OPENCL_HEADERS_LICENSE = Apache-2.0
