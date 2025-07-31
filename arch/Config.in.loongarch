@@ -38,12 +38,16 @@ config BR2_LOONGARCH_FPU_64
 
 config BR2_LOONGARCH_FPU_32
 	bool "32"
+	# Only supported by lp64s and lp64f ABIs which are marked as broken
+	depends on BR2_BROKEN
 	help
 	  Allow the use of hardware floating-point instructions for
 	  32-bit operations only.
 
 config BR2_LOONGARCH_FPU_NONE
 	bool "none"
+	# Only supported by lp64s ABI which is marked as broken
+	depends on BR2_BROKEN
 	help
 	  Prevent the use of hardware floating-point instructions.
 endchoice
@@ -87,11 +91,15 @@ config BR2_LOONGARCH_ABI_LP64D
 config BR2_LOONGARCH_ABI_LP64F
 	bool "lp64f"
 	depends on BR2_ARCH_IS_64
+	# Failed to build host GCC initial, pending investigation
+	depends on BR2_BROKEN
 	depends on BR2_LOONGARCH_FPU_64 || BR2_LOONGARCH_FPU_32
 
 config BR2_LOONGARCH_ABI_LP64S
 	bool "lp64s"
 	depends on BR2_ARCH_IS_64
+	# GCC can't find libraries, pending investigation
+	depends on BR2_BROKEN
 endchoice
 
 config BR2_ARCH
