@@ -24,6 +24,9 @@ LIBXML2_IGNORE_CVES += CVE-2025-49794 CVE-2025-49796
 #0003-Schematron-Fix-null-pointer-dereference-leading-to-D.patch
 LIBXML2_IGNORE_CVES += CVE-2025-49795
 
+# 0004-fix-potential-buffer-overflows-of-interactive-shell.patch
+LIBXML2_IGNORE_CVES += CVE-2025-6170
+
 # relocation truncated to fit: R_68K_GOT16O
 ifeq ($(BR2_m68k_cf),y)
 LIBXML2_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -mxgot"
