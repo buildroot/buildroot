@@ -1219,7 +1219,7 @@ help:
 # $(2): br2-external name, empty for bundled
 define list-defconfigs
 	@first=true; \
-	for defconfig in $$(find $(1)/configs -name '*_defconfig' |sort); do \
+	for defconfig in $$([ -d $(1)/configs ] && find $(1)/configs -name '*_defconfig' |sort); do \
 		[ -f "$${defconfig}" ] || continue; \
 		if $${first}; then \
 			if [ "$(2)" ]; then \
