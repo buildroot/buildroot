@@ -1,0 +1,26 @@
+From a5d6b2283834422a9fa9e79b5c7ad9b932b52568 Mon Sep 17 00:00:00 2001
+From: Calvin Rose <calsrose@gmail.com>
+Date: Fri, 21 Jun 2024 17:17:22 -0500
+Subject: [PATCH] Check for __GLIBC__ instead of _GNU_SOURCE
+
+musl doesn't obey this behavior.
+
+Upstream: https://github.com/janet-lang/janet/commit/a5d6b2283834422a9fa9e79b5c7ad9b932b52568
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/core/util.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/core/util.c b/src/core/util.c
+index 4bb37abc5..6cb5676e0 100644
+--- a/src/core/util.c
++++ b/src/core/util.c
+@@ -972,7 +972,7 @@ const char *janet_strerror(int e) {
+ #ifdef JANET_WINDOWS
+     /* Microsoft strerror seems sane here and is thread safe by default */
+     return strerror(e);
+-#elif defined(_GNU_SOURCE)
++#elif defined(__GLIBC__)
+     /* See https://linux.die.net/man/3/strerror_r */
+     return strerror_r(e, janet_vm.strerror_buf, sizeof(janet_vm.strerror_buf));
+ #else
