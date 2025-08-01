@@ -68,7 +68,7 @@ endef
 
 define MUPDF_INSTALL_TARGET_CMDS
 	$(MUPDF_MAKE_ENV) $(MAKE) -C $(@D) $(MUPDF_MAKE_OPTS) \
-		DESTDIR="$(TARGET_DIR)" install
+		DESTDIR="$(TARGET_DIR)" install-libs install-apps
 endef
 
 $(eval $(generic-package))
