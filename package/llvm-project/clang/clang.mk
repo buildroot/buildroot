@@ -109,6 +109,10 @@ CLANG_CONF_OPTS += -DLLVM_LINK_LLVM_DYLIB=ON
 HOST_CLANG_CONF_OPTS += -DLLVM_DYLIB_COMPONENTS=all
 CLANG_CONF_OPTS += -DLLVM_DYLIB_COMPONENTS=all
 
+# host-python3 is a permanent dependency of clang, so we can build the
+# python bindings unconditionally:
+HOST_CLANG_CONF_OPTS += -DCLANG_PYTHON_BINDINGS_VERSIONS=$(PYTHON3_VERSION_MAJOR)
+
 # Help host-clang to find our external toolchain, use a relative path from the clang
 # installation directory to the external toolchain installation directory in order to
 # not hardcode the toolchain absolute path.
