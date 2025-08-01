@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBCEC_VERSION = 7.1.0
+LIBCEC_VERSION = 7.1.1
 LIBCEC_SITE = $(call github,Pulse-Eight,libcec,libcec-$(LIBCEC_VERSION))
 LIBCEC_LICENSE = GPL-2.0+
 LIBCEC_LICENSE_FILES = LICENSE.md
