@@ -1,0 +1,44 @@
+From 52515bae377f221b5473d9040f5f43ab1c672672 Mon Sep 17 00:00:00 2001
+From: Florian Weimer <fweimer@redhat.com>
+Date: Mon, 19 Dec 2022 11:49:06 +0100
+Subject: [PATCH] Include <err.h> and "tcpkill.h" to avoid implicit function
+ declarations
+
+Implicit function declarations are a historic language feature that
+were removed from C in 1999.
+
+Upstream: https://github.com/jpr5/ngrep/pull/28
+
+Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+---
+ ngrep.c   | 1 +
+ tcpkill.c | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/ngrep.c b/ngrep.c
+index 3df9389..b2fcceb 100644
+--- a/ngrep.c
++++ b/ngrep.c
+@@ -98,6 +98,7 @@
+ #endif
+ 
+ #include "ngrep.h"
++#include "tcpkill.h"
+ 
+ 
+ /*
+diff --git a/tcpkill.c b/tcpkill.c
+index 5388ec5..ac8fd2e 100644
+--- a/tcpkill.c
++++ b/tcpkill.c
+@@ -14,6 +14,7 @@
+ #include <stdlib.h>
+ #include <unistd.h>
+ #include <string.h>
++#include <err.h>
+ #include <libnet.h>
+ #include <pcap.h>
+ 
+-- 
+2.50.1
+
