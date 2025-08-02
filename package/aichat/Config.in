@@ -1,0 +1,15 @@
+config BR2_PACKAGE_AICHAT
+	bool "aichat"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  AIChat helps seamlessly integrate different LLM models,
+	  providing access via the CLI and network. It can serve
+	  as a gateway to heterogeneous and distributed LLMs.
+
+	  Handy features like roles, macros, and sessions help
+	  simplify repetitive tasks and reuse of existing solutions.
+	  Features like playgrounds and arenas help to explore and
+	  compare models.
+
+	  https://github.com/sigoden/aichat
