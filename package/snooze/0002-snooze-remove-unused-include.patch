@@ -1,0 +1,36 @@
+From 2eebd33c10d5a0f1a9831e3e49215857ab41ec03 Mon Sep 17 00:00:00 2001
+From: Thomas Perale <perale.thomas@gmail.com>
+Date: Sat, 2 Aug 2025 23:09:31 +0200
+Subject: [PATCH] snooze: remove unused include
+
+The `#include <sys/auxv.h>` was orinally included in the initial commit
+(see [1]) to use the `getauxval` function declaration.
+
+This function usage has since been removed in commit [2].
+
+This commit removes the include that is no longer needed.
+
+[1] https://github.com/leahneukirchen/snooze/commit/56480881978a4cb5813746232de9950d46cb3369
+[2] https://github.com/leahneukirchen/snooze/commit/610e6b35ec614764770d47b5974b30fd90dce6fe
+
+Upstream: https://github.com/leahneukirchen/snooze/pull/24
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ snooze.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/snooze.c b/snooze.c
+index e47ad11..11925ca 100644
+--- a/snooze.c
++++ b/snooze.c
+@@ -18,10 +18,6 @@
+ #include <time.h>
+ #include <unistd.h>
+ 
+-#ifdef __linux__
+-#include <sys/auxv.h>
+-#endif
+-
+ static long slack = 60;
+ #define SLEEP_PHASE 300
+ static int nflag, vflag;
