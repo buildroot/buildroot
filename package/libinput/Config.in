@@ -2,7 +2,6 @@ config BR2_PACKAGE_LIBINPUT
 	bool "libinput"
 	depends on BR2_PACKAGE_HAS_UDEV
 	select BR2_PACKAGE_LIBEVDEV
-	select BR2_PACKAGE_MTDEV
 	help
 	  libinput is a library to handle input devices in Wayland
 	  compositors and to provide a generic X.Org input driver.
