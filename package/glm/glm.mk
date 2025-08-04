@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GLM_VERSION = 1.0.0
+GLM_VERSION = 1.0.1
 GLM_SITE = $(call github,g-truc,glm,$(GLM_VERSION))
 GLM_LICENSE = MIT
 GLM_LICENSE_FILES = copying.txt
