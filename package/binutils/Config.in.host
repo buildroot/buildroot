@@ -13,7 +13,7 @@ choice
 	  Select the version of binutils you wish to use.
 
 config BR2_BINUTILS_VERSION_ARC
-	bool "binutils arc (2.41)"
+	bool "binutils arc (2.43)"
 	depends on BR2_arc
 
 config BR2_BINUTILS_VERSION_2_42_X
@@ -29,7 +29,7 @@ endchoice
 
 config BR2_BINUTILS_VERSION
 	string
-	default "arc-2023.09-release"	if BR2_BINUTILS_VERSION_ARC
+	default "arc-2024.12-release"	if BR2_BINUTILS_VERSION_ARC
 	default "2.42"		if BR2_BINUTILS_VERSION_2_42_X
 	default "2.43.1"	if BR2_BINUTILS_VERSION_2_43_X
 	default "2.44"		if BR2_BINUTILS_VERSION_2_44_X

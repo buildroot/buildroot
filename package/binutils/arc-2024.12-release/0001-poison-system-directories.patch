@@ -1,4 +1,4 @@
-From a6d90a842e349545ceb27f022317618dd99378ce Mon Sep 17 00:00:00 2001
+From 00f6b0a7d31085831429834b2bc8f511b8fab6ce Mon Sep 17 00:00:00 2001
 From: Romain Naour <romain.naour@gmail.com>
 Date: Fri, 25 Dec 2015 11:45:38 +0100
 Subject: [PATCH] poison-system-directories
@@ -6,6 +6,8 @@ Subject: [PATCH] poison-system-directories
 Patch adapted to binutils 2.23.2 and extended to use
 BR_COMPILER_PARANOID_UNSAFE_PATH by Thomas Petazzoni.
 
+[Waldemar: rebase on top of 2.43]
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
 [Waldemar: rebase on top of 2.39]
 Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
 [Romain: rebase on top of 2.33.1]
@@ -81,10 +83,10 @@ Signed-off-by: Scott Garman <scott.a.garman@intel.com>
  9 files changed, 89 insertions(+)
 
 diff --git a/ld/config.in b/ld/config.in
-index ad0dc6a106c..d21edaddce7 100644
+index f7c9da3d02a..e4fdbf6db5b 100644
 --- a/ld/config.in
 +++ b/ld/config.in
-@@ -58,6 +58,9 @@
+@@ -74,6 +74,9 @@
     language is requested. */
  #undef ENABLE_NLS
  
@@ -95,10 +97,10 @@ index ad0dc6a106c..d21edaddce7 100644
  #undef EXTRA_SHLIB_EXTENSION
  
 diff --git a/ld/configure b/ld/configure
-index 43b44be1dc6..28f054ea3f8 100755
+index 44d79c2445d..e28cea11977 100755
 --- a/ld/configure
 +++ b/ld/configure
-@@ -839,6 +839,7 @@ with_lib_path
+@@ -844,6 +844,7 @@ with_lib_path
  enable_targets
  enable_64_bit_bfd
  with_sysroot
@@ -106,7 +108,7 @@ index 43b44be1dc6..28f054ea3f8 100755
  enable_gold
  enable_got
  enable_compressed_debug_sections
-@@ -1521,6 +1522,8 @@ Optional Features:
+@@ -1535,6 +1536,8 @@ Optional Features:
    --enable-checking       enable run-time checks
    --enable-targets        alternative target configurations
    --enable-64-bit-bfd     64-bit support (on hosts with narrower word sizes)
@@ -115,7 +117,7 @@ index 43b44be1dc6..28f054ea3f8 100755
    --enable-gold[=ARG]     build gold [ARG={default,yes,no}]
    --enable-got=<type>     GOT handling scheme (target, single, negative,
                            multigot)
-@@ -15504,7 +15507,18 @@ else
+@@ -15587,7 +15590,18 @@ else
  fi
  
  
@@ -135,10 +137,10 @@ index 43b44be1dc6..28f054ea3f8 100755
  # Check whether --enable-got was given.
  if test "${enable_got+set}" = set; then :
 diff --git a/ld/configure.ac b/ld/configure.ac
-index 77edac3258c..a74dac63038 100644
+index bdf51a062fa..3d370ff92ce 100644
 --- a/ld/configure.ac
 +++ b/ld/configure.ac
-@@ -103,6 +103,16 @@ AC_SUBST(use_sysroot)
+@@ -102,6 +102,16 @@ AC_SUBST(use_sysroot)
  AC_SUBST(TARGET_SYSTEM_ROOT)
  AC_SUBST(TARGET_SYSTEM_ROOT_DEFINE)
  
@@ -156,10 +158,10 @@ index 77edac3258c..a74dac63038 100644
  dnl "install_as_default" is set to false if gold is the default linker.
  dnl "installed_linker" is the installed BFD linker name.
 diff --git a/ld/ld.h b/ld/ld.h
-index 05649ff61b8..1818c227473 100644
+index 0dee944cf2a..83bd82d2a2e 100644
 --- a/ld/ld.h
 +++ b/ld/ld.h
-@@ -163,6 +163,14 @@ typedef struct
+@@ -166,6 +166,14 @@ typedef struct
       in the linker script.  */
    bool force_group_allocation;
  
@@ -175,10 +177,10 @@ index 05649ff61b8..1818c227473 100644
    enum endian_enum endian;
  
 diff --git a/ld/ld.texi b/ld/ld.texi
-index db3a9f09b45..9dacc934f80 100644
+index 89e3913317a..b80cf05617f 100644
 --- a/ld/ld.texi
 +++ b/ld/ld.texi
-@@ -2949,6 +2949,18 @@ string identifying the original linked file does not change.
+@@ -3234,6 +3234,18 @@ string identifying the original linked file does not change.
  Passing @code{none} for @var{style} disables the setting from any
  @code{--build-id} options earlier on the command line.
  
@@ -198,14 +200,13 @@ index db3a9f09b45..9dacc934f80 100644
  @item --package-metadata=@var{JSON}
  Request the creation of a @code{.note.package} ELF note section.  The
 diff --git a/ld/ldfile.c b/ld/ldfile.c
-index b8fd4e5d8e0..1f1d8e23bc9 100644
+index 87be885d31a..9bc7adca4bc 100644
 --- a/ld/ldfile.c
 +++ b/ld/ldfile.c
-@@ -117,6 +117,23 @@ ldfile_add_library_path (const char *name, bool cmdline)
-     new_dirs->name = concat (ld_sysroot, name + strlen ("$SYSROOT"), (const char *) NULL);
+@@ -327,6 +327,22 @@ ldfile_add_library_path (const char *name, enum search_dir_source source)
    else
      new_dirs->name = xstrdup (name);
-+
+ 
 +#ifdef ENABLE_POISON_SYSTEM_DIRECTORIES
 +  if (command_line.poison_system_directories
 +  && ((!strncmp (name, "/lib", 4))
@@ -222,27 +223,27 @@ index b8fd4e5d8e0..1f1d8e23bc9 100644
 +   }
 +#endif
 +
- }
- 
- /* Try to open a BFD for a lang_input_statement.  */
+   /* Accumulate script and command line sourced
+      search paths at the end of the current list.  */
+ #if BFD_SUPPORTS_PLUGINS
 diff --git a/ld/ldlex.h b/ld/ldlex.h
-index 0538f0a06a1..d1de3aec23d 100644
+index defe3fcbbb9..0ff12614926 100644
 --- a/ld/ldlex.h
 +++ b/ld/ldlex.h
-@@ -166,6 +166,8 @@ enum option_values
+@@ -170,6 +170,8 @@ enum option_values
    OPTION_CTF_VARIABLES,
    OPTION_NO_CTF_VARIABLES,
    OPTION_CTF_SHARE_TYPES,
 +  OPTION_NO_POISON_SYSTEM_DIRECTORIES,
 +  OPTION_ERROR_POISON_SYSTEM_DIRECTORIES,
-   OPTION_WARN_EXECSTACK,
-   OPTION_NO_WARN_EXECSTACK,
-   OPTION_WARN_RWX_SEGMENTS,
+   OPTION_ERROR_EXECSTACK,
+   OPTION_NO_ERROR_EXECSTACK,
+   OPTION_WARN_EXECSTACK_OBJECTS,
 diff --git a/ld/ldmain.c b/ld/ldmain.c
-index 9290a189b0d..e2e3074e872 100644
+index 037099b9d37..204feedc6e3 100644
 --- a/ld/ldmain.c
 +++ b/ld/ldmain.c
-@@ -321,6 +321,8 @@ main (int argc, char **argv)
+@@ -347,6 +347,8 @@ main (int argc, char **argv)
    command_line.warn_mismatch = true;
    command_line.warn_search_mismatch = true;
    command_line.check_section_addresses = -1;
@@ -252,10 +253,10 @@ index 9290a189b0d..e2e3074e872 100644
    /* We initialize DEMANGLING based on the environment variable
       COLLECT_NO_DEMANGLE.  The gcc collect2 program will demangle the
 diff --git a/ld/lexsup.c b/ld/lexsup.c
-index c5960385572..da0a7829914 100644
+index 4aa0124ce2f..c4d76943821 100644
 --- a/ld/lexsup.c
 +++ b/ld/lexsup.c
-@@ -613,6 +613,14 @@ static const struct ld_option ld_options[] =
+@@ -648,6 +648,14 @@ static const struct ld_option ld_options[] =
  		   "                                <method> is: share-unconflicted (default),\n"
  		   "                                             share-duplicated"),
      TWO_DASHES },
@@ -270,7 +271,7 @@ index c5960385572..da0a7829914 100644
  };
  
  #define OPTION_COUNT ARRAY_SIZE (ld_options)
-@@ -625,6 +633,7 @@ parse_args (unsigned argc, char **argv)
+@@ -660,6 +668,7 @@ parse_args (unsigned argc, char **argv)
    int ingroup = 0;
    char *default_dirlist = NULL;
    char *shortopts;
@@ -278,7 +279,7 @@ index c5960385572..da0a7829914 100644
    struct option *longopts;
    struct option *really_longopts;
    int last_optind;
-@@ -1692,6 +1701,14 @@ parse_args (unsigned argc, char **argv)
+@@ -1785,6 +1794,14 @@ parse_args (unsigned argc, char **argv)
  	  }
  	  break;
  
@@ -293,7 +294,7 @@ index c5960385572..da0a7829914 100644
  	case OPTION_PUSH_STATE:
  	  input_flags.pushed = xmemdup (&input_flags,
  					sizeof (input_flags),
-@@ -1837,6 +1854,10 @@ parse_args (unsigned argc, char **argv)
+@@ -1938,6 +1955,10 @@ parse_args (unsigned argc, char **argv)
        command_line.soname = NULL;
      }
  
@@ -304,6 +305,3 @@ index c5960385572..da0a7829914 100644
    while (ingroup)
      {
        einfo (_("%P: missing --end-group; added as last command line option\n"));
--- 
-2.40.1
-
