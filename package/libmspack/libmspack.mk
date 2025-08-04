@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBMSPACK_VERSION_MAJOR = 0.10.1
+LIBMSPACK_VERSION_MAJOR = 0.11
 LIBMSPACK_VERSION_MINOR = alpha
 LIBMSPACK_VERSION = $(LIBMSPACK_VERSION_MAJOR)$(LIBMSPACK_VERSION_MINOR)
 LIBMSPACK_SITE = https://www.cabextract.org.uk/libmspack
