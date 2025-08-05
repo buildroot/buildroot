@@ -13,6 +13,9 @@ PYTHON3_LICENSE_FILES = LICENSE
 PYTHON3_CPE_ID_VENDOR = python
 PYTHON3_CPE_ID_PRODUCT = python
 
+# 0009-3.13-gh-130577-tarfile-now-validates-archives-to-ens.patch
+PYTHON3_IGNORE_CVES += CVE-2025-8194
+
 # This host Python is installed in $(HOST_DIR), as it is needed when
 # cross-compiling third-party Python modules.
 
