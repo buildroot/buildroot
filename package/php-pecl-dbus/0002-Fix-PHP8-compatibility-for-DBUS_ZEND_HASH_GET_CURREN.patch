@@ -1,0 +1,51 @@
+From 46a6aa1308b32549625fd7bc265ad011091b3992 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Date: Tue, 1 Jul 2025 17:12:32 +0200
+Subject: [PATCH] Fix PHP8 compatibility for
+ DBUS_ZEND_HASH_GET_CURRENT_KEY_INFO
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+php-pecl-dbus currently does not build with PHP8 because of the
+following error:
+
+  In file included from dbus.c:27:
+  dbus.c: In function 'dbus_append_var_dict':
+  php_dbus.h:108:64: error: passing argument 3 of 'zend_hash_get_current_key' from incompatible pointer type [-Wincompatible-pointer-types]
+    108 |         _info.type = zend_hash_get_current_key(_ht, &tmp_info, &_idx); \
+  dbus.c:1295:17: note: in expansion of macro 'DBUS_ZEND_HASH_GET_CURRENT_KEY_INFO'
+   1295 | DBUS_ZEND_HASH_GET_CURRENT_KEY_INFO(Z_ARRVAL_P(obj->elements), num_index, key);
+        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  In file included from ../../host/arm-buildroot-linux-gnueabihf/sysroot/usr/include/php/Zend/zend.h:33,
+                   from ../../host/arm-buildroot-linux-gnueabihf/sysroot/usr/include/php/main/php.h:31,
+                   from dbus.c:21:
+  ../../host/arm-buildroot-linux-gnueabihf/sysroot/usr/include/php/Zend/zend_hash.h:269:115: note: expected 'zend_ulong *' {aka 'unsigned int *'} but argument is of type 'ulong *' {aka 'long unsigned int *'}
+    269 | static zend_always_inline int zend_hash_get_current_key(const HashTable *ht, zend_string **str_index, zend_ulong *num_index) {
+        |                                                                                                       ~~~~~~~~~~~~^~~~~~~~~
+
+Fix the build error by explicitely casting the passed index pointer to
+(zend_ulong *)
+
+Upstream: https://github.com/derickr/pecl-dbus/pull/15
+Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+---
+ php_dbus.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/php_dbus.h b/php_dbus.h
+index a080159c407d..68aec7bc3c42 100644
+--- a/php_dbus.h
++++ b/php_dbus.h
+@@ -105,7 +105,7 @@
+ # define DBUS_ZEND_HASH_GET_CURRENT_KEY_INFO(_ht, _idx, _info) \
+     do { \
+         zend_string *tmp_info = NULL; \
+-        _info.type = zend_hash_get_current_key(_ht, &tmp_info, &_idx); \
++        _info.type = zend_hash_get_current_key(_ht, &tmp_info, (zend_ulong *)&_idx); \
+         if (tmp_info) { \
+             _info.name = ZSTR_VAL(tmp_info); \
+             _info.length = ZSTR_LEN(tmp_info); \
+-- 
+2.50.0
+
