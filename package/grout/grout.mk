@@ -20,4 +20,8 @@ GROUT_DEPENDENCIES = \
 	libecoli \
 	util-linux
 
+define GROUT_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_TUN)
+endef
+
 $(eval $(meson-package))
