@@ -205,7 +205,7 @@ def cyclonedx_dependency(ref, depends):
     """
     return {
         "ref": ref,
-        "dependsOn": depends,
+        "dependsOn": sorted(depends),
     }
 
 
