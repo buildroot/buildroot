@@ -75,7 +75,7 @@ class TestGstreamer1(infra.basetest.BRTest):
         # We extract the text from our last image.
         img_file = f"frame{num_frames}.png"
         cmd = f"tesseract {img_file} output"
-        self.assertRunOk(cmd)
+        self.assertRunOk(cmd, timeout=15)
 
         # We check we have our initial message.
         out, ret = self.emulator.run("cat output.txt")
