@@ -13,6 +13,15 @@ config BR2_PACKAGE_IWD
 
 	  https://iwd.wiki.kernel.org/
 
+if BR2_PACKAGE_IWD
+
+config BR2_PACKAGE_IWD_IWMON
+	bool "iwmon"
+	help
+	  iwmon - Internet wireless monitor utility
+
+endif
+
 comment "iwd needs a toolchain w/ threads, wchar, headers >= 4.12"
 	depends on BR2_USE_MMU # dbus
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # ell

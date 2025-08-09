@@ -41,6 +41,15 @@ else
 IWD_RESOLV_SERVICE = resolvconf
 endif
 
+ifeq ($(BR2_PACKAGE_IWD_IWMON),y)
+IWD_CONF_OPTS += --enable-monitor
+define IWD_LINUX_CONFIG_FIXUP_MONITOR
+	$(call KCONFIG_ENABLE_OPT,CONFIG_NLMON)
+endef
+else
+IWD_CONF_OPTS += --disable-monitor
+endif
+
 define IWD_INSTALL_CONFIG_FILE
 	$(INSTALL) -D -m 644 package/iwd/main.conf $(TARGET_DIR)/etc/iwd/main.conf
 	$(SED) 's,__RESOLV_SERVICE__,$(IWD_RESOLV_SERVICE),' $(TARGET_DIR)/etc/iwd/main.conf
@@ -76,6 +85,7 @@ define IWD_LINUX_CONFIG_FIXUPS
 	$(call KCONFIG_ENABLE_OPT,CONFIG_PKCS7_MESSAGE_PARSER)
 	$(call KCONFIG_ENABLE_OPT,CONFIG_PKCS8_PRIVATE_KEY_PARSER)
 	$(call KCONFIG_ENABLE_OPT,CONFIG_X509_CERTIFICATE_PARSER)
+	$(IWD_LINUX_CONFIG_FIXUP_MONITOR)
 endef
 
 $(eval $(autotools-package))
