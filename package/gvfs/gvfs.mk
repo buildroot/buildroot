@@ -157,16 +157,4 @@ GVFS_CONF_OPTS += \
 	-Dtmpfilesdir=no
 endif
 
-define GVFS_REMOVE_TARGET_SCHEMAS
-	rm $(TARGET_DIR)/usr/share/glib-2.0/schemas/*.xml
-endef
-
-define GVFS_COMPILE_SCHEMAS
-	$(HOST_DIR)/bin/glib-compile-schemas --targetdir=$(TARGET_DIR)/usr/share/glib-2.0/schemas $(STAGING_DIR)/usr/share/glib-2.0/schemas
-endef
-
-GVFS_POST_INSTALL_TARGET_HOOKS += \
-	GVFS_REMOVE_TARGET_SCHEMAS \
-	GVFS_COMPILE_SCHEMAS
-
 $(eval $(meson-package))
