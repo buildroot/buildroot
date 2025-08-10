@@ -1,0 +1,19 @@
+GCC 15 switched to C23 by default, which made "void foo()" equivalent to
+"void foo(void)". This causes a build error because init_comm() doesn't
+actually take any arguments.
+
+Upstream: Submitted to author via email
+Signed-off-by: Florian Larysch <fl@n621.de>
+
+diff -purN old/nanocom.c new/nanocom.c
+--- old/nanocom.c	2025-08-10 01:34:12.000284003 +0200
++++ new/nanocom.c	2025-08-10 01:31:05.639050630 +0200
+@@ -329,7 +329,7 @@ int main(int argc, char *argv[]) {
+     memcpy(&pots, &pts, sizeof(pots));
+     
+     /*setup serial port with new settings*/
+-    init_comm(&pts);
++    init_comm();
+         
+     fprintf(stderr,"Press CTRL+T for menu options");   
+     display_state();
