@@ -1,3 +1,33 @@
+2025.08-rc1, released August 11th, 2025
+
+	Fixes all over the tree and new features.
+
+	Arch: Add LoongArch64 architecture support
+
+	Toolchains:
+	- ARC toolchain updated to 2024.12
+	- Bootlin external toolchains updated to 2025.08-1
+	- GCC 15.1.0 added, 12.x dropped, 14.x is now default
+	- GCC 13.x updated to 13.4.0, 14.x updated to 14.3.0
+	- Default to Linux 6.16.x kernel headers
+
+	Misc:
+	- Various tweaks to utils/generate-cyclonedx for better SBOM
+	  compatibility and project name/version customization
+
+	New defconfigs: BeagleY-AI, CoolPI 4B, Freescale i.MX91
+	Freedom, LoongArch64 EFI, QEMU LoongArch64 Virt, Raspberrypi
+	Compute Module 5 IO
+
+	New packages: containers-image-config, distribution-registry,
+	llvm-runtimes, lua-lrexlib-pcre2, msgpack-c, opencl-headers,
+	opencl-icd-loader, pocketpy, python-apscheduler, python-crc,
+	python-log-rate-limit, python-sdbus-modemmanager, soapy-sdr,
+	vulkan-sdk
+
+	Removed packages: libebur128, libolm, libwebsock,
+	python-dunamai, python-poetry-dynamic-versioning
+
 2025.05, released June 9th, 2025
 
 	Various fixes.
