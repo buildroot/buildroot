@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_RICH
+	bool "python-rich"
+	select BR2_PACKAGE_PYTHON_MARKDOWN_IT_PY # runtime
+	select BR2_PACKAGE_PYTHON_PYGMENTS # runtime
+	help
+	  Render rich text, tables, progress bars, syntax
+	  highlighting, markdown and more to the terminal.
+
+	  https://github.com/Textualize/rich
