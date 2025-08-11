@@ -1,0 +1,77 @@
+From de1068d634519abf2461dac9427b5ff24b6603af Mon Sep 17 00:00:00 2001
+From: Mikhail Galanin <mikhail.galanin@team.bumble.com>
+Date: Tue, 24 Aug 2021 08:28:47 +0100
+Subject: [PATCH] php8: Signature of write_property/read_property was changed
+ in https://github.com/php/php-src/commit/91ef4124e56
+
+Upstream: upstream dead, taken from fork at https://github.com/badoo/php-lua/pull/8
+Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+---
+ lua.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/lua.c b/lua.c
+index edc2868..32c1471 100755
+--- a/lua.c
++++ b/lua.c
+@@ -229,46 +229,46 @@ zend_object *php_lua_create_object(zend_class_entry *ce)
+ 
+ /** {{{ static zval * php_lua_read_property(zval *object, zval *member, int type)
+ */
+-zval *php_lua_read_property(zval *object, zval *member, int type, void **cache_slot, zval *rv){
+-	lua_State *L = (Z_LUAVAL_P(object))->L;
+-	zend_string *str_member;
++zval *php_lua_read_property(zend_object *object, zend_string *member, int type, void **cache_slot, zval *rv){
++	lua_State *L = php_lua_obj_from_obj(object)->L;
+ 
+ 	if (type != BP_VAR_R) {
+ 		ZVAL_NULL(rv);
+ 		return rv;
+ 	}
+ 
+-	str_member = zval_get_string(member);
+ #if (LUA_VERSION_NUM < 502)
+-	lua_getfield(L, LUA_GLOBALSINDEX, ZSTR_VAL(str_member));
++	lua_getfield(L, LUA_GLOBALSINDEX, ZSTR_VAL(member));
+ #else
+-	lua_getglobal(L, ZSTR_VAL(str_member));
++	lua_getglobal(L, ZSTR_VAL(member));
+ #endif
+-	zend_string_release(str_member);
+ 
+-	php_lua_get_zval_from_lua(L, -1, object, rv);
++	zval lua_zval_object;
++	ZVAL_OBJ(&lua_zval_object, object);
++
++	php_lua_get_zval_from_lua(L, -1, &lua_zval_object, rv);
+ 	lua_pop(L, 1);
++
+ 	return rv;
+ }
+ /* }}} */
+ 
+ /** {{{ static void php_lua_write_property(zval *object, zval *member, zval *value)
+ */
+-static void php_lua_write_property(zval *object, zval *member, zval *value, void ** key) {
+-	lua_State *L = (Z_LUAVAL_P(object))->L;
+-	zend_string *str_member = zval_get_string(member);
++static zval* php_lua_write_property(zend_object *object, zend_string *member, zval *value, void ** key) {
++	lua_State *L = php_lua_obj_from_obj(object)->L;
+ 
+ #if (LUA_VERSION_NUM < 502)
+-	php_lua_send_zval_to_lua(L, member);
++	lua_pushlstring(L, ZSTR_VAL(val), ZSTR_LEN(val));
+ 	php_lua_send_zval_to_lua(L, value);
+ 
+ 	lua_settable(L, LUA_GLOBALSINDEX);
+ #else
+ 	php_lua_send_zval_to_lua(L, value);
+-	lua_setglobal(L, Z_STRVAL_P(member));
++	lua_setglobal(L, ZSTR_VAL(member));
+ #endif
+ 
+-	zend_string_release(str_member);
++	return value;
+ }
+ /* }}} */
+ 
