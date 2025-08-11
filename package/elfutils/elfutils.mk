@@ -49,8 +49,13 @@ ifeq ($(BR2_microblaze),y)
 ELFUTILS_CONF_OPTS += --disable-symbol-versioning
 endif
 
-# disable for now, needs "distro" support
-ELFUTILS_CONF_OPTS += --disable-libdebuginfod --disable-debuginfod
+ifeq ($(BR2_PACKAGE_ELFUTILS_LIBDEBUGINFOD),y)
+ELFUTILS_CONF_OPTS += --enable-libdebuginfod
+ELFUTILS_DEPENDENCIES += json-c libcurl
+else
+ELFUTILS_CONF_OPTS += --disable-libdebuginfod
+endif
+ELFUTILS_CONF_OPTS += --disable-debuginfod
 HOST_ELFUTILS_CONF_OPTS += --disable-libdebuginfod --disable-debuginfod
 
 ELFUTILS_CONF_ENV += \

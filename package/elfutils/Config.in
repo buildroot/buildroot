@@ -33,4 +33,14 @@ comment "elfutils programs needs a glibc toolchain w/ C++"
 	depends on !BR2_TOOLCHAIN_USES_GLIBC \
 		|| !BR2_INSTALL_LIBSTDCPP
 
+config BR2_PACKAGE_ELFUTILS_LIBDEBUGINFOD
+	bool "Build libdebuginfod"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # json-c
+	select BR2_PACKAGE_JSON_C
+	select BR2_PACKAGE_LIBCURL
+	help
+	  This option enables building libdebuginfod. Note that this
+	  only builds the library, it does not provide any service or
+	  data to download debug info.
+
 endif
