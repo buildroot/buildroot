@@ -1,0 +1,49 @@
+From d76100a2b9a2ec814ad0a1fb844a395a6dc2f6bd Mon Sep 17 00:00:00 2001
+From: Maxime Leroy <maxime@leroys.fr>
+Date: Mon, 11 Aug 2025 13:44:02 +0200
+Subject: [PATCH] lib: make getloadavg() optional in late timer warnings
+
+Commit ff76fb21d7b3 ("lib: improve late timer warnings") added an
+unconditional getloadavg() call. Older libcs (e.g. uClibc, dietlibc)
+lack this function, breaking the build. Before, no system load was
+shown, so skipping it restores prior behavior.
+
+Fixes: ff76fb21d7b3 ("lib: improve late timer warnings")
+Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+Upstream: https://github.com/FRRouting/frr/pull/19366
+---
+ configure.ac | 1 +
+ lib/event.c  | 4 ++++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index 87eba6784a..b8ef7bb777 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1369,6 +1369,7 @@ dnl ---------------
+ AC_CHECK_FUNCS([ \
+ 	strlcat strlcpy \
+ 	getgrouplist \
++	getloadavg \
+ 	openat \
+ 	unlinkat \
+ 	posix_fallocate \
+diff --git a/lib/event.c b/lib/event.c
+index 1eb41d07ce..22876574fb 100644
+--- a/lib/event.c
++++ b/lib/event.c
+@@ -1924,7 +1924,11 @@ static void event_tardy_warn(struct event *thread, unsigned long since_us)
+ 	double loadavg[3];
+ 	int rv;
+ 
++#ifdef HAVE_GETLOADAVG
+ 	rv = getloadavg(loadavg, array_size(loadavg));
++#else
++	rv = -1;
++#endif
+ 	if (rv < 0)
+ 		bprintfrr(&fb, "not available");
+ 	else {
+-- 
+2.43.0
+

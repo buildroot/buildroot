@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FRR_VERSION = 10.3.1
+FRR_VERSION = 10.4.1
 FRR_SITE = $(call github,FRRouting,frr,frr-$(FRR_VERSION))
 FRR_LICENSE = GPL-2.0+
 FRR_LICENSE_FILES = \
@@ -25,7 +25,6 @@ FRR_CPE_ID_PRODUCT = free_range_routing
 FRR_AUTORECONF = YES
 
 FRR_DEPENDENCIES = host-frr readline json-c libyang \
-	protobuf-c \
 	$(if $(BR2_PACKAGE_C_ARES),c-ares) \
 	$(if $(BR2_PACKAGE_LIBXCRYPT),libxcrypt)
 
@@ -87,6 +86,14 @@ ifeq ($(BR2_PACKAGE_FRR_BFD),y)
 FRR_CONF_OPTS += --enable-bfdd
 else
 FRR_CONF_OPTS += --disable-bfdd
+endif
+
+# Optional protobuf support
+ifeq ($(BR2_PACKAGE_FRR_PROTOBUF),y)
+FRR_DEPENDENCIES += protobuf-c
+FRR_CONF_OPTS += --enable-protobuf
+else
+FRR_CONF_OPTS += --disable-protobuf
 endif
 
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
