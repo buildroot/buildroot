@@ -17,7 +17,7 @@ BASH_CONF_OPTS = \
 	--with-installed-readline \
 	--without-bash-malloc
 
-BASH_CONF_ENV += \
+BASH_CONF_ENV = \
 	ac_cv_rl_prefix="$(STAGING_DIR)" \
 	ac_cv_rl_version="$(READLINE_VERSION)" \
 	bash_cv_getcwd_malloc=yes \
