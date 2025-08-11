@@ -40,7 +40,7 @@ FRR_CONF_OPTS = --with-clippy=$(HOST_DIR)/bin/clippy \
 	--with-moduledir=/usr/lib/frr/modules \
 	--enable-configfile-mask=0640 \
 	--enable-logfile-mask=0640 \
-	--enable-multipath=256 \
+	--enable-multipath=$(BR2_PACKAGE_FRR_MULTIPATH_MAX) \
 	--disable-ospfclient \
 	--enable-user=frr \
 	--enable-group=frr \

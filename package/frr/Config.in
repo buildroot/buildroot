@@ -33,6 +33,14 @@ config BR2_PACKAGE_FRR_BMP
 	help
 	  Build BGP Monitoring Protocol daemon.
 
+config BR2_PACKAGE_FRR_MULTIPATH_MAX
+	int "maximum ECMP paths"
+	default 256
+	range 1 999
+	help
+	  Compile FRR with support for up to this many equal-cost
+	  next-hops (ECMP).
+
 config BR2_PACKAGE_FRR_NHRPD
 	bool "NHRPD protocol"
 	select BR2_PACKAGE_C_ARES
