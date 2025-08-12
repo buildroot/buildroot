@@ -9,6 +9,7 @@ OPENCONNECT_SITE = https://www.infradead.org/openconnect/download
 OPENCONNECT_DEPENDENCIES = host-pkgconf libxml2 zlib
 OPENCONNECT_LICENSE = LGPL-2.1
 OPENCONNECT_LICENSE_FILES = COPYING.LGPL
+OPENCONNECT_CPE_ID_VENDOR = infradead
 OPENCONNECT_CONF_OPTS = \
 	--disable-dsa-tests \
 	--with-vpnc-script=/etc/vpnc/vpnc-script \
