@@ -1,0 +1,140 @@
+From 92d44b6383a3e053feac2c820b8114873fcd798e Mon Sep 17 00:00:00 2001
+From: entryway <entryway@localhost>
+Date: Fri, 10 Jun 2011 19:59:18 +0000
+Subject: [PATCH] gcc warnings: 'const **myargv' instead of 'const char * const
+ * myargv'
+
+Upstream: https://github.com/coelckers/prboom-plus/commit/92d44b6383a3e053feac2c820b8114873fcd798e
+[thomas: backport to 2.5.0]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/SDL/i_main.c |  3 ++-
+ src/d_main.c     | 20 ++++++++++++--------
+ src/m_argv.c     |  3 +--
+ src/m_argv.h     |  2 +-
+ 4 files changed, 16 insertions(+), 12 deletions(-)
+
+diff --git a/src/SDL/i_main.c b/src/SDL/i_main.c
+index 05cd655..1c19ef0 100644
+--- a/src/SDL/i_main.c
++++ b/src/SDL/i_main.c
+@@ -356,7 +356,8 @@ int main(int argc, char **argv)
+ #endif
+ 
+   myargc = argc;
+-  myargv = argv;
++  myargv = malloc(sizeof(myargv[0]) * myargc);
++  memcpy(myargv, argv, sizeof(myargv[0]) * myargc);
+ 
+ #ifdef _WIN32
+   if (!M_CheckParm("-nodraw")) {
+diff --git a/src/d_main.c b/src/d_main.c
+index 6d8493e..320e07a 100644
+--- a/src/d_main.c
++++ b/src/d_main.c
+@@ -870,7 +870,7 @@ static void FindResponseFile (void)
+ 	int indexinfile;
+         byte *file = NULL;
+         const char **moreargs = malloc(myargc * sizeof(const char*));
+-        const char **newargv;
++        char **newargv;
+         // proff 04/05/2000: Added for searching responsefile
+         char fname[PATH_MAX+1];
+ 
+@@ -904,14 +904,15 @@ static void FindResponseFile (void)
+ 	  int k;
+           lprintf(LO_ERROR,"\nResponse file empty!\n");
+ 
+-	  newargv = calloc(sizeof(char *),MAXARGVS);
++	  newargv = calloc(sizeof(newargv[0]),myargc);
+ 	  newargv[0] = myargv[0];
+           for (k = 1,index = 1;k < myargc;k++)
+           {
+             if (i!=k)
+               newargv[index++] = myargv[k];
+           }
+-          myargc = index; myargv = newargv;
++          myargc = index;
++          myargv = newargv;
+           return;
+         }
+ 
+@@ -919,8 +920,8 @@ static void FindResponseFile (void)
+ 	memcpy((void *)moreargs,&myargv[i+1],(index = myargc - i - 1) * sizeof(myargv[0]));
+ 
+ 	{
+-	  const char *firstargv = myargv[0];
+-	  newargv = calloc(sizeof(char *),MAXARGVS);
++	  char *firstargv = myargv[0];
++	  newargv = calloc(sizeof(newargv[0]), 1);
+ 	  newargv[0] = firstargv;
+ 	}
+ 
+@@ -949,16 +950,19 @@ static void FindResponseFile (void)
+ 
+ 	      // Terminate string, realloc and add to argv
+ 	      *p = 0;
++	      newargv = realloc(newargv, sizeof(newargv[0]) * (indexinfile + 1));
+ 	      newargv[indexinfile++] = realloc(s,strlen(s)+1);
+ 	    }
+ 	  } while(size > 0);
+ 	}
+ 	free(file);
+ 
++	newargv = realloc(newargv, sizeof(newargv[0]) * (indexinfile + index));
+ 	memcpy((void *)&newargv[indexinfile],moreargs,index*sizeof(moreargs[0]));
+ 	free((void *)moreargs);
+ 
+-        myargc = indexinfile+index; myargv = newargv;
++        myargc = indexinfile+index;
++        myargv = newargv;
+ 
+         // DISPLAY ARGS
+         //jff 9/3/98 use logical output routine
+@@ -999,7 +1003,7 @@ static void DoLooseFiles(void)
+   int lmpcount = 0;
+   int dehcount = 0;
+   int i,j,p;
+-  const char **tmyargv;  // use these to recreate the argv array
++  char **tmyargv;  // use these to recreate the argv array
+   int tmyargc;
+   boolean skip[MAXARGVS]; // CPhipps - should these be skipped at the end
+ 
+@@ -1060,7 +1064,7 @@ static void DoLooseFiles(void)
+ 
+   // Now go back and redo the whole myargv array with our stuff in it.
+   // First, create a new myargv array to copy into
+-  tmyargv = calloc(sizeof(char *),MAXARGVS);
++  tmyargv = calloc(sizeof(tmyargv[0]),MAXARGVS);
+   tmyargv[0] = myargv[0]; // invocation
+   tmyargc = 1;
+ 
+diff --git a/src/m_argv.c b/src/m_argv.c
+index 9392840..4fa1ed8 100644
+--- a/src/m_argv.c
++++ b/src/m_argv.c
+@@ -37,8 +37,7 @@
+ #include "m_argv.h"
+ 
+ int    myargc;
+-const char * const * myargv; // CPhipps - not sure if ANSI C allows you to
+-// modify contents of argv, but I can't imagine it does.
++char **myargv;
+ 
+ //
+ // M_CheckParm
+diff --git a/src/m_argv.h b/src/m_argv.h
+index 5340c15..b1d5907 100644
+--- a/src/m_argv.h
++++ b/src/m_argv.h
+@@ -39,7 +39,7 @@
+  * MISC
+  */
+ extern int  myargc;
+-extern const char * const * myargv; /* CPhipps - const * const * */
++extern char **myargv;
+ 
+ /* Returns the position of the given parameter in the arg list (0 if not found). */
+ int M_CheckParm(const char *check);
+-- 
+2.50.1
