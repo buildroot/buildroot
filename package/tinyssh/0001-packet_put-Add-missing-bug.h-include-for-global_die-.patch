@@ -1,0 +1,33 @@
+From f863e60d93006019855a0431ea5cd71c8f1fc173 Mon Sep 17 00:00:00 2001
+From: Haelwenn Monnier <contact+github.com@hacktivis.me>
+Date: Tue, 9 Jan 2024 20:15:29 +0100
+Subject: [PATCH] packet_put: Add missing bug.h include for global_die (#84)
+
+```
+packet_put.c:53:9: error: call to undeclared function 'global_die'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+        global_die(111);
+        ^
+1 error generated.
+```
+
+Upstream: https://github.com/janmojzis/tinyssh/commit/f863e60d93006019855a0431ea5cd71c8f1fc173
+Signed-off-by: Florian Larysch <fl@n621.de>
+---
+ tinyssh/packet_put.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tinyssh/packet_put.c b/tinyssh/packet_put.c
+index 17e8d84..7f46ff6 100644
+--- a/tinyssh/packet_put.c
++++ b/tinyssh/packet_put.c
+@@ -6,6 +6,7 @@ Public domain.
+ 
+ #include "uint32_pack_big.h"
+ #include "buf.h"
++#include "bug.h"
+ #include "sshcrypto.h"
+ #include "ssh.h"
+ #include "log.h"
+-- 
+2.50.1
+
