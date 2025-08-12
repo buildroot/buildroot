@@ -1255,7 +1255,7 @@ release:
 	$(MAKE) O=$(OUT) distclean
 	tar rf $(OUT).tar --owner=0 --group=0 \
 		--mtime="$$(git log -1 --pretty=format:%ci)" $(OUT)
-	gzip -9 -c < $(OUT).tar > $(OUT).tar.gz
+	gzip -9 -n -c < $(OUT).tar > $(OUT).tar.gz
 	xz -9 -c < $(OUT).tar > $(OUT).tar.xz
 	rm -rf $(OUT) $(OUT).tar
 
