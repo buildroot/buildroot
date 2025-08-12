@@ -1,0 +1,70 @@
+From 7fe256a6e3b28e3ca5c163e38844c9e7c05099c1 Mon Sep 17 00:00:00 2001
+From: Thomas Perale <thomas.perale@mind.be>
+Date: Tue, 12 Aug 2025 18:43:26 +0200
+Subject: [PATCH] include unistd for close declaration
+
+When using gcc-14 the compilation fails with the following error
+message:
+
+```
+close.c: In function 'EIBClose':
+close.c:38:3: error: implicit declaration of function 'close'; did you mean 'pclose'? [-Wimplicit-function-declaration]
+   38 |   close (con->fd);
+      |   ^~~~~
+      |   pclose
+openlocal.c: In function 'EIBSocketLocal':
+openlocal.c:57:7: error: implicit declaration of function 'close'; did you mean 'pclose'? [-Wimplicit-function-declaration]
+   57 |       close (con->fd);
+      |       ^~~~~
+      |       pclose
+make[6]: *** [Makefile:611: close.lo] Error 1
+```
+
+This patch include <unistd.h> to include the declaration of close.
+
+Upstream: https://sourceforge.net/p/bcusdk/patches/6/
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ eibd/client/c/close.c      | 1 +
+ eibd/client/c/openlocal.c  | 1 +
+ eibd/client/c/openremote.c | 1 +
+ 3 files changed, 3 insertions(+)
+
+diff --git a/eibd/client/c/close.c b/eibd/client/c/close.c
+index 900fcd8..f7508bb 100644
+--- a/eibd/client/c/close.c
++++ b/eibd/client/c/close.c
+@@ -24,6 +24,7 @@
+     along with this program; if not, write to the Free Software
+     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
++#include <unistd.h>
+ 
+ #include "eibclient-int.h"
+ 
+diff --git a/eibd/client/c/openlocal.c b/eibd/client/c/openlocal.c
+index c7fd5d7..df2e9f9 100644
+--- a/eibd/client/c/openlocal.c
++++ b/eibd/client/c/openlocal.c
+@@ -27,6 +27,7 @@
+ 
+ #include <sys/socket.h>
+ #include <sys/un.h>
++#include <unistd.h>
+ 
+ #include "eibclient-int.h"
+ 
+diff --git a/eibd/client/c/openremote.c b/eibd/client/c/openremote.c
+index 24d7ecd..9b2be39 100644
+--- a/eibd/client/c/openremote.c
++++ b/eibd/client/c/openremote.c
+@@ -30,6 +30,7 @@
+ #include <netinet/in.h>
+ #include <netinet/tcp.h>
+ #include <netdb.h>
++#include <unistd.h>
+ 
+ #include "eibclient-int.h"
+ 
+-- 
+2.50.1
