@@ -8,6 +8,7 @@ RRDTOOL_VERSION = 1.9.0
 RRDTOOL_SITE = https://github.com/oetiker/rrdtool-1.x/releases/download/v$(RRDTOOL_VERSION)
 RRDTOOL_LICENSE = GPL-2.0+ with FLOSS license exceptions as explained in COPYRIGHT
 RRDTOOL_LICENSE_FILES = COPYRIGHT LICENSE
+RRDTOOL_CPE_ID_VALID = YES
 RRDTOOL_DEPENDENCIES = host-pkgconf libglib2 $(TARGET_NLS_DEPENDENCIES)
 
 # 0001-Fix-BUILD_DATE-in-rrdtool-help-output.patch
