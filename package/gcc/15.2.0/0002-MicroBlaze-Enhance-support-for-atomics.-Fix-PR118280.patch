@@ -1,4 +1,4 @@
-From cd01b277c4a9e03c83427290228e4b289a169431 Mon Sep 17 00:00:00 2001
+From f14e0b13a5abbc15b4b3b4c0c6a125bbb0509465 Mon Sep 17 00:00:00 2001
 From: Gopi Kumar Bulusu <gopi@sankhya.com>
 Date: Thu, 10 Jul 2025 12:44:44 +0530
 Subject: [PATCH] MicroBlaze : Enhance support for atomics. Fix PR118280
@@ -39,7 +39,7 @@ new file mode 100644
 index 00000000000..2ffc2422a0a
 --- /dev/null
 +++ b/gcc/config/microblaze/iterators.md
-@@ -0,0 +1,25 @@ 
+@@ -0,0 +1,25 @@
 +;; Iterator definitions for GCC MicroBlaze machine description files.
 +;; Copyright (C) 2012-2024 Free Software Foundation, Inc.
 +;;
@@ -69,7 +69,7 @@ diff --git a/gcc/config/microblaze/microblaze-protos.h b/gcc/config/microblaze/m
 index 90b79cfe716..1cee0b3096c 100644
 --- a/gcc/config/microblaze/microblaze-protos.h
 +++ b/gcc/config/microblaze/microblaze-protos.h
-@@ -62,6 +62,7 @@  extern int symbol_mentioned_p (rtx);
+@@ -62,6 +62,7 @@ extern int symbol_mentioned_p (rtx);
  extern int label_mentioned_p (rtx);
  extern bool microblaze_cannot_force_const_mem (machine_mode, rtx);
  extern void microblaze_eh_return (rtx op0);
@@ -78,10 +78,10 @@ index 90b79cfe716..1cee0b3096c 100644
  
  /* Declare functions in microblaze-c.cc.  */
 diff --git a/gcc/config/microblaze/microblaze.cc b/gcc/config/microblaze/microblaze.cc
-index 2ab5ada4ec9..80d10ab60e0 100644
+index 4b7f0a1a5e0..78b9428ef3b 100644
 --- a/gcc/config/microblaze/microblaze.cc
 +++ b/gcc/config/microblaze/microblaze.cc
-@@ -1299,6 +1299,34 @@  microblaze_expand_block_move (rtx dest, rtx src, rtx length, rtx align_rtx)
+@@ -1300,6 +1300,34 @@ microblaze_expand_block_move (rtx dest, rtx src, rtx length, rtx align_rtx)
    return false;
  }
  
@@ -120,7 +120,7 @@ diff --git a/gcc/config/microblaze/microblaze.h b/gcc/config/microblaze/microbla
 index 2390542434b..b2e9ccde363 100644
 --- a/gcc/config/microblaze/microblaze.h
 +++ b/gcc/config/microblaze/microblaze.h
-@@ -57,7 +57,7 @@  extern enum pipeline_type microblaze_pipe;
+@@ -57,7 +57,7 @@ extern enum pipeline_type microblaze_pipe;
  
  /* Default target_flags if no switches are specified  */
  #define TARGET_DEFAULT      (MASK_SOFT_MUL | MASK_SOFT_DIV | MASK_SOFT_FLOAT \
@@ -133,7 +133,7 @@ diff --git a/gcc/config/microblaze/microblaze.md b/gcc/config/microblaze/microbl
 index 45c48a71e8d..270df8da0c5 100644
 --- a/gcc/config/microblaze/microblaze.md
 +++ b/gcc/config/microblaze/microblaze.md
-@@ -21,6 +21,7 @@ 
+@@ -21,6 +21,7 @@
  
  (include "constraints.md")
  (include "predicates.md")
@@ -141,7 +141,7 @@ index 45c48a71e8d..270df8da0c5 100644
  
  ;;----------------------------------------------------
  ;; Constants
-@@ -43,6 +44,10 @@ 
+@@ -43,6 +44,10 @@
    (UNSPEC_TLS           106)    ;; jump table
    (UNSPEC_SET_TEXT      107)    ;; set text start
    (UNSPEC_TEXT          108)    ;; data text relative
@@ -152,7 +152,7 @@ index 45c48a71e8d..270df8da0c5 100644
  ])
  
  (define_c_enum "unspec" [
-@@ -79,7 +84,7 @@ 
+@@ -79,7 +84,7 @@
  ;; bshift 	Shift operations
  
  (define_attr "type"
@@ -165,7 +165,7 @@ diff --git a/gcc/config/microblaze/sync.md b/gcc/config/microblaze/sync.md
 index db7b11e5379..6478ab6dcac 100644
 --- a/gcc/config/microblaze/sync.md
 +++ b/gcc/config/microblaze/sync.md
-@@ -18,26 +18,97 @@ 
+@@ -18,26 +18,97 @@
  ;; <http://www.gnu.org/licenses/>.
  
  (define_insn "atomic_compare_and_swapsi"
@@ -282,5 +282,5 @@ index db7b11e5379..6478ab6dcac 100644
 +  DONE;
 +})
 -- 
-2.43.5
+2.50.1
 

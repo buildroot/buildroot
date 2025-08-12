@@ -1,4 +1,4 @@
-From b6163bbd898e2462455998d5d38fe1463e70ca66 Mon Sep 17 00:00:00 2001
+From d2fdbd8c4abe67eea86877dfb3b3b9d8508c165f Mon Sep 17 00:00:00 2001
 From: Romain Naour <romain.naour@gmail.com>
 Date: Wed, 6 Aug 2025 22:32:30 +0200
 Subject: [PATCH] gcc/config/microblaze: fix ira for GCC15
@@ -23,10 +23,10 @@ Signed-off-by: Romain Naour <romain.naour@gmail.com>
  1 file changed, 11 insertions(+)
 
 diff --git a/gcc/config/microblaze/microblaze.cc b/gcc/config/microblaze/microblaze.cc
-index 4b7f0a1a5e0..3710755ae8d 100644
+index 78b9428ef3b..84ea7e8d55a 100644
 --- a/gcc/config/microblaze/microblaze.cc
 +++ b/gcc/config/microblaze/microblaze.cc
-@@ -3200,6 +3200,14 @@ microblaze_secondary_reload (bool in_p ATTRIBUTE_UNUSED, rtx x ATTRIBUTE_UNUSED,
+@@ -3228,6 +3228,14 @@ microblaze_secondary_reload (bool in_p ATTRIBUTE_UNUSED, rtx x ATTRIBUTE_UNUSED,
    return NO_REGS;
  }
  
@@ -41,7 +41,7 @@ index 4b7f0a1a5e0..3710755ae8d 100644
  static void
  microblaze_globalize_label (FILE * stream, const char *name)
  {
-@@ -4038,6 +4046,9 @@ microblaze_starting_frame_offset (void)
+@@ -4066,6 +4074,9 @@ microblaze_starting_frame_offset (void)
  #undef TARGET_SECONDARY_RELOAD
  #define TARGET_SECONDARY_RELOAD		microblaze_secondary_reload
  
