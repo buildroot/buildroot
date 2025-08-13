@@ -1,0 +1,31 @@
+From 209ffbbf7c8fcf49d9296c969feb7a41aece6525 Mon Sep 17 00:00:00 2001
+From: Guillem Jover <guillem@debian.org>
+Date: Tue, 6 Dec 2022 18:37:08 +0100
+Subject: [PATCH] s-s-d: Cast struct sockaddr_un to struct sockaddr on bind()
+ call
+
+Changelog: internal
+Warned-by: gcc -Wincompatible-pointer-types on musl-libc
+
+Upstream: https://git.dpkg.org/cgit/dpkg/dpkg.git/commit/?id=209ffbbf7c8fcf49d9296c969feb7a41aece6525
+Signed-off-by: Florian Larysch <fl@n621.de>
+---
+ utils/start-stop-daemon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/utils/start-stop-daemon.c b/utils/start-stop-daemon.c
+index 6863151c1..a15c0493f 100644
+--- a/utils/start-stop-daemon.c
++++ b/utils/start-stop-daemon.c
+@@ -632,7 +632,7 @@ create_notify_socket(void)
+ 	su.sun_family = AF_UNIX;
+ 	strncpy(su.sun_path, sockname, sizeof(su.sun_path) - 1);
+ 
+-	rc = bind(fd, &su, sizeof(su));
++	rc = bind(fd, (struct sockaddr *)&su, sizeof(su));
+ 	if (rc < 0)
+ 		fatale("cannot bind to notification socket");
+ 
+-- 
+2.50.1
+
