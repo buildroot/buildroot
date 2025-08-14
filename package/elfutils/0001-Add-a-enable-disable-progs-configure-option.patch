@@ -24,6 +24,8 @@ Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 [Rebased on 0.192]
 Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+[Rebased on 0.193]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
 ---
  Makefile.am  | 6 +++++-
  configure.ac | 8 +++++++-
@@ -33,7 +35,7 @@ diff --git a/Makefile.am b/Makefile.am
 index 92130b57..00f5176b 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -26,8 +26,12 @@ AM_MAKEFLAGS = --no-print-directory
+@@ -28,8 +28,12 @@ AM_MAKEFLAGS = --no-print-directory
  
  pkginclude_HEADERS = version.h
  
@@ -41,17 +43,17 @@ index 92130b57..00f5176b 100644
 +PROGS_SUBDIR = src
 +endif
 +
- SUBDIRS = config lib libelf libcpu backends libebl libdwelf libdwfl libdw \
--	  libasm debuginfod src po doc tests
-+	  libasm debuginfod $(PROGS_SUBDIR) po doc tests
- 
+ SUBDIRS = config lib libelf libcpu backends libebl libdwelf libdwfl \
+-	  libdwfl_stacktrace libdw libasm debuginfod src po doc tests
++	  libdwfl_stacktrace libdw libasm debuginfod $(PROGS_SUBDIR) po doc tests
+
  EXTRA_DIST = elfutils.spec GPG-KEY NOTES CONTRIBUTING SECURITY \
  	     COPYING COPYING-GPLV2 COPYING-LGPLV3 CONDUCT
 diff --git a/configure.ac b/configure.ac
 index f191488f..87d91f8f 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -426,6 +426,12 @@ AS_HELP_STRING([--enable-tests-rpath],[build $ORIGIN-using rpath into tests]),
+@@ -427,6 +427,12 @@ AS_HELP_STRING([--enable-tests-rpath],[build $ORIGIN-using rpath into tests]),
  	       [tests_use_rpath=$enableval], [tests_use_rpath=no])
  AM_CONDITIONAL(TESTS_RPATH, test "$tests_use_rpath" = yes)
  
@@ -64,7 +66,7 @@ index f191488f..87d91f8f 100644
  dnl zlib is mandatory.
  save_LIBS="$LIBS"
  LIBS=
-@@ -670,7 +676,7 @@ saved_LIBS="$LIBS"
+@@ -671,7 +677,7 @@ saved_LIBS="$LIBS"
  AC_SEARCH_LIBS([_obstack_free], [obstack])
  LIBS="$saved_LIBS"
  case "$ac_cv_search__obstack_free" in
