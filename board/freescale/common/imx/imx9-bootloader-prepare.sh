@@ -20,7 +20,7 @@ main ()
 		"${HOST_DIR}/bin/mkimage_imx8" -soc IMX9 -c \
 			-ap "${BINARIES_DIR}/bl31.bin" a55 ${ATF_LOAD_ADDR} \
 			-ap "${BINARIES_DIR}/u-boot-hash.bin" a55 0x80200000 \
-			-ap "${BINARIES_DIR}/tee.bin" a55 0x96000000 \
+			-ap "${BINARIES_DIR}/tee-raw.bin" a55 0x96000000 \
 			-out "${BINARIES_DIR}/u-boot-atf-container.img"
 	else
 		"${HOST_DIR}/bin/mkimage_imx8" -soc IMX9 -c \
