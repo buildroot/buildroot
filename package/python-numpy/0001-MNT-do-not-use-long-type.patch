@@ -1,0 +1,34 @@
+From 6dc2fd31f8a5a4ef502cb7734f004f5bce94e671 Mon Sep 17 00:00:00 2001
+From: Thomas A Caswell <tcaswell@gmail.com>
+Date: Sat, 18 Nov 2023 16:46:52 -0500
+Subject: [PATCH] MNT: do not use `long` type
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Removed as type at language level 3 in ed7e95912b6ed7d20e190fbf1aecb9f2a997d479
+in cython
+
+Upstream: https://github.com/numpy/numpy/commit/6dc2fd31f8a5a4ef502cb7734f004f5bce94e671
+
+Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+---
+ numpy/random/_generator.pyx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/numpy/random/_generator.pyx b/numpy/random/_generator.pyx
+index d067e795eb5c..ae481d69d696 100644
+--- a/numpy/random/_generator.pyx
++++ b/numpy/random/_generator.pyx
+@@ -3757,7 +3757,7 @@ def multivariate_normal(self, mean, cov, size=None, check_valid='warn',
+ 
+         if size is None:
+             shape = []
+-        elif isinstance(size, (int, long, np.integer)):
++        elif isinstance(size, (int, np.integer)):
+             shape = [size]
+         else:
+             shape = size
+-- 
+2.49.1
+
