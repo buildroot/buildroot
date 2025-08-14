@@ -24,9 +24,20 @@
 					algo = "sha256";
 				};
 			};
-			base_fdt {
+			fdt-mpfs-icicle-kit.dtb {
 				description = "Flattened Device Tree blob";
 				data = /incbin/("./mpfs-icicle-kit.dtb");
+				type = "flat_dt";
+				arch = "riscv";
+				compression = "none";
+				load = <0x8a000000>;
+				hash-1 {
+					algo = "sha256";
+				};
+			};
+			fdt-mpfs-icicle-kit-prod.dtb {
+				description = "Flattened Device Tree blob";
+				data = /incbin/("./mpfs-icicle-kit-prod.dtb");
 				type = "flat_dt";
 				arch = "riscv";
 				compression = "none";
@@ -38,16 +49,27 @@
 		};
 
 		configurations {
-			default = "kernel_dtb";
-			kernel_dtb {
+			default = "conf-microchip,mpfs-icicle-kit-prod";
+			conf-microchip,mpfs-icicle-kit {
 				description = "1 Linux kernel, FDT blob";
 				kernel = "kernel";
-				fdt = "base_fdt";
+				fdt = "fdt-mpfs-icicle-kit.dtb";
 			};
 
-			base_dtb {
+			conf-microchip,mpfs-icicle-kit-prod {
+				description = "1 Linux kernel, FDT blob";
+				kernel = "kernel";
+				fdt = "fdt-mpfs-icicle-kit-prod.dtb";
+			};
+
+			conf-microchip,fdt-mpfs-icicle-kit.dtb {
 				description = "Base FDT blob for MPFS Icicle board";
-				fdt = "base_fdt";
+				fdt = "fdt-mpfs-icicle-kit.dtb";
+			};
+
+			conf-microchip,fdt-mpfs-icicle-kit-prod.dtb {
+				description = "Base FDT blob for MPFS Icicle Production board";
+				fdt = "fdt-mpfs-icicle-kit-prod.dtb";
 			};
 		};
 };
