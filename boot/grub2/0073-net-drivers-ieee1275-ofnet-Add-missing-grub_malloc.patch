@@ -1,0 +1,36 @@
+From 516af0a5bd172123d4c7ff281d65b1f4b0035258 Mon Sep 17 00:00:00 2001
+From: Nicolas Frayer <nfrayer@redhat.com>
+Date: Wed, 19 Mar 2025 17:39:41 +0100
+Subject: [PATCH] net/drivers/ieee1275/ofnet: Add missing grub_malloc()
+
+The grub_malloc() has been inadvertently removed from the code after it
+has been modified to use safe math functions.
+
+Fixes: 4beeff8a (net: Use safe math macros to prevent overflows)
+
+Signed-off-by: Nicolas Frayer <nfrayer@redhat.com>
+Tested-by: Marta Lewandowska <mlewando@redhat.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Upstream: 3b25e494d47e7a728e7ce6264b10f2aa1063f9c7
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ grub-core/net/drivers/ieee1275/ofnet.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/grub-core/net/drivers/ieee1275/ofnet.c b/grub-core/net/drivers/ieee1275/ofnet.c
+index c35b107ad..3004b970e 100644
+--- a/grub-core/net/drivers/ieee1275/ofnet.c
++++ b/grub-core/net/drivers/ieee1275/ofnet.c
+@@ -467,6 +467,9 @@ search_net_devices (struct grub_ieee1275_devalias *alias)
+ 	  return 0;
+ 	}
+     }
++
++  ofdata->path = grub_malloc (sz);
++
+   if (!ofdata->path)
+     {
+       grub_print_error ();
+-- 
+2.50.1
+

@@ -1,0 +1,55 @@
+From 51c3e37bb23b3ce1919f3ff582cb31fc32a10b4b Mon Sep 17 00:00:00 2001
+From: B Horn <b@horn.uk>
+Date: Thu, 18 Apr 2024 20:37:10 +0100
+Subject: [PATCH] commands/memrw: Disable memory reading in lockdown mode
+
+With the rest of module being blocked in lockdown mode it does not make
+a lot of sense to leave memory reading enabled. This also goes in par
+with disabling the dump command.
+
+Reported-by: B Horn <b@horn.uk>
+Signed-off-by: B Horn <b@horn.uk>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Upstream: 340e4d058f584534f4b90b7dbea2b64a9f8c418c
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ grub-core/commands/memrw.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
+
+diff --git a/grub-core/commands/memrw.c b/grub-core/commands/memrw.c
+index d401a6db0..3542683d1 100644
+--- a/grub-core/commands/memrw.c
++++ b/grub-core/commands/memrw.c
+@@ -122,17 +122,20 @@ grub_cmd_write (grub_command_t cmd, int argc, char **argv)
+ GRUB_MOD_INIT(memrw)
+ {
+   cmd_read_byte =
+-    grub_register_extcmd ("read_byte", grub_cmd_read, 0,
+-			  N_("ADDR"), N_("Read 8-bit value from ADDR."),
+-			  options);
++    grub_register_extcmd_lockdown ("read_byte", grub_cmd_read, 0,
++                                   N_("ADDR"),
++                                   N_("Read 8-bit value from ADDR."),
++                                   options);
+   cmd_read_word =
+-    grub_register_extcmd ("read_word", grub_cmd_read, 0,
+-			  N_("ADDR"), N_("Read 16-bit value from ADDR."),
+-			  options);
++    grub_register_extcmd_lockdown ("read_word", grub_cmd_read, 0,
++                                   N_("ADDR"),
++                                   N_("Read 16-bit value from ADDR."),
++                                   options);
+   cmd_read_dword =
+-    grub_register_extcmd ("read_dword", grub_cmd_read, 0,
+-			  N_("ADDR"), N_("Read 32-bit value from ADDR."),
+-			  options);
++    grub_register_extcmd_lockdown ("read_dword", grub_cmd_read, 0,
++                                   N_("ADDR"),
++                                   N_("Read 32-bit value from ADDR."),
++                                   options);
+   cmd_write_byte =
+     grub_register_command_lockdown ("write_byte", grub_cmd_write,
+                                     N_("ADDR VALUE [MASK]"),
+-- 
+2.50.1
+

@@ -1,0 +1,29 @@
+From 462f1d1a64e57310d10dcd325b36587a1a367d0a Mon Sep 17 00:00:00 2001
+From: Egor Ignatov <egori@altlinux.org>
+Date: Thu, 23 Jan 2025 20:44:13 +0300
+Subject: [PATCH] fs/xfs: Handle root inode read failure in grub_xfs_mount
+
+Signed-off-by: Egor Ignatov <egori@altlinux.org>
+Upstream: https://www.mail-archive.com/grub-devel@gnu.org/msg40099.html
+[Not accepted upstream, but in Debian]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ grub-core/fs/xfs.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/grub-core/fs/xfs.c b/grub-core/fs/xfs.c
+index 28a342996..59bdee5f9 100644
+--- a/grub-core/fs/xfs.c
++++ b/grub-core/fs/xfs.c
+@@ -1086,6 +1086,8 @@ grub_xfs_mount (grub_disk_t disk)
+ 	       grub_cpu_to_be64(data->sblock.rootino));
+ 
+   grub_xfs_read_inode (data, data->diropen.ino, &data->diropen.inode);
++  if (grub_errno)
++    goto fail;
+ 
+   return data;
+  fail:
+-- 
+2.50.1
+
