@@ -5,8 +5,8 @@
 ################################################################################
 
 # When updating the version here, please also update the libapparmor package
-APPARMOR_VERSION_MAJOR = 3.1
-APPARMOR_VERSION = $(APPARMOR_VERSION_MAJOR).7
+APPARMOR_VERSION_MAJOR = 4.1
+APPARMOR_VERSION = $(APPARMOR_VERSION_MAJOR).1
 APPARMOR_SOURCE = apparmor-v$(APPARMOR_VERSION).tar.gz
 APPARMOR_SITE = https://gitlab.com/apparmor/apparmor/-/archive/v$(APPARMOR_VERSION)
 APPARMOR_DL_SUBDIR = apparmor
