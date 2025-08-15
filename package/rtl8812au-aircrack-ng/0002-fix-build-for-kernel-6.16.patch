@@ -1,0 +1,34 @@
+From de764c6b43fef79bdea8783232a89d2e8ff0e059 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Fri, 15 Aug 2025 23:48:33 +0200
+Subject: [PATCH] fix build for kernel 6.16
+
+With commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=41cb08555c4164996d67c78b3bf1c658075b75f1
+from_timer() has been renamed to timer_container_of() so let's rename
+according to linux version >= 6.16
+
+Upstream: https://github.com/aircrack-ng/rtl8812au/pull/1236
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ include/osdep_service_linux.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/include/osdep_service_linux.h b/include/osdep_service_linux.h
+index 4c276f6..9f9a317 100644
+--- a/include/osdep_service_linux.h
++++ b/include/osdep_service_linux.h
+@@ -355,7 +355,9 @@ static inline void timer_hdl(struct timer_list *in_timer)
+ static inline void timer_hdl(unsigned long cntx)
+ #endif
+ {
+-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0))
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 16, 0))
++	_timer *ptimer = timer_container_of(ptimer, in_timer, timer);
++#elif (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0))
+ 	_timer *ptimer = from_timer(ptimer, in_timer, timer);
+ #else
+ 	_timer *ptimer = (_timer *)cntx;
+-- 
+2.43.0
+
