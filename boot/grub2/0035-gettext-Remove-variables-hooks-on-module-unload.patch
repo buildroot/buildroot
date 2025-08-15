@@ -1,0 +1,39 @@
+From 69e0cb299c479e01e1c13a032172d29293db8e69 Mon Sep 17 00:00:00 2001
+From: B Horn <b@horn.uk>
+Date: Fri, 1 Nov 2024 23:52:06 +0000
+Subject: [PATCH] gettext: Remove variables hooks on module unload
+
+The gettext module does not entirely cleanup after itself in
+its GRUB_MOD_FINI() leaving a few variables hooks in place.
+It is not possible to unload gettext module because normal
+module depends on it. Though fix the issues for completeness.
+
+Fixes: CVE-2025-0622
+
+Reported-by: B Horn <b@horn.uk>
+Signed-off-by: B Horn <b@horn.uk>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Upstream: 7580addfc8c94cedb0cdfd7a1fd65b539215e637
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ grub-core/gettext/gettext.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/grub-core/gettext/gettext.c b/grub-core/gettext/gettext.c
+index 7a1c14e4f..e4f4f8ee6 100644
+--- a/grub-core/gettext/gettext.c
++++ b/grub-core/gettext/gettext.c
+@@ -535,6 +535,10 @@ GRUB_MOD_INIT (gettext)
+ 
+ GRUB_MOD_FINI (gettext)
+ {
++  grub_register_variable_hook ("locale_dir", NULL, NULL);
++  grub_register_variable_hook ("secondary_locale_dir", NULL, NULL);
++  grub_register_variable_hook ("lang", NULL, NULL);
++
+   grub_gettext_delete_list (&main_context);
+   grub_gettext_delete_list (&secondary_context);
+ 
+-- 
+2.50.1
+

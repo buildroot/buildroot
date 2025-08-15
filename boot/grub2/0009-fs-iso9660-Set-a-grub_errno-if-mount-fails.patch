@@ -1,0 +1,38 @@
+From a0e37c98e6f330110e4009f8e5ba73ca0c2eaff5 Mon Sep 17 00:00:00 2001
+From: B Horn <b@horn.uk>
+Date: Sun, 12 May 2024 06:37:08 +0100
+Subject: [PATCH] fs/iso9660: Set a grub_errno if mount fails
+
+It was possible for a grub_errno to not be set if mount of an ISO 9660
+filesystem failed when set_rockridge() returned 0.
+
+This isn't known to be exploitable as the other filesystems due to
+filesystem helper checking the requested file type. Though fixing
+as a precaution.
+
+Reported-by: B Horn <b@horn.uk>
+Signed-off-by: B Horn <b@horn.uk>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Upstream: 965db5970811d18069b34f28f5f31ddadde90a97
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ grub-core/fs/iso9660.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/grub-core/fs/iso9660.c b/grub-core/fs/iso9660.c
+index 8c348b59a..8d480e602 100644
+--- a/grub-core/fs/iso9660.c
++++ b/grub-core/fs/iso9660.c
+@@ -551,6 +551,9 @@ grub_iso9660_mount (grub_disk_t disk)
+   return data;
+ 
+  fail:
++  if (grub_errno == GRUB_ERR_NONE)
++    grub_error (GRUB_ERR_BAD_FS, "not a ISO9660 filesystem");
++
+   grub_free (data);
+   return 0;
+ }
+-- 
+2.50.1
+

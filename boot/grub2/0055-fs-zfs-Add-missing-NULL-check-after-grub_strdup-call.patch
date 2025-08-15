@@ -1,0 +1,29 @@
+From f60272b284e98ecd4ee38ec06aab6587cf525616 Mon Sep 17 00:00:00 2001
+From: Lidong Chen <lidong.chen@oracle.com>
+Date: Wed, 22 Jan 2025 07:17:04 +0000
+Subject: [PATCH] fs/zfs: Add missing NULL check after grub_strdup() call
+
+Signed-off-by: Lidong Chen <lidong.chen@oracle.com>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Upstream: dd6a4c8d10e02ca5056681e75795041a343636e4
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ grub-core/fs/zfs/zfs.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/grub-core/fs/zfs/zfs.c b/grub-core/fs/zfs/zfs.c
+index 6e6d1c921..5ff647ffb 100644
+--- a/grub-core/fs/zfs/zfs.c
++++ b/grub-core/fs/zfs/zfs.c
+@@ -3309,6 +3309,8 @@ dnode_get_fullpath (const char *fullpath, struct subvolume *subvol,
+       filename = 0;
+       snapname = 0;
+       fsname = grub_strdup (fullpath);
++      if (!fsname)
++	return grub_errno;
+     }
+   else
+     {
+-- 
+2.50.1
+

@@ -1,0 +1,47 @@
+From 9a5c23756f2e2d4ee8438bf449881c8f854e59ab Mon Sep 17 00:00:00 2001
+From: B Horn <b@horn.uk>
+Date: Sun, 12 May 2024 06:03:58 +0100
+Subject: [PATCH] fs/xfs: Ensuring failing to mount sets a grub_errno
+
+It was previously possible for grub_xfs_mount() to return NULL without
+setting grub_errno if the XFS version was invalid. This resulted in it
+being possible for grub_dl_unref() to be called twice allowing the XFS
+module to be unloaded while there were still references to it.
+
+Fixing this problem in general by ensuring a grub_errno is set if the
+fail label is reached.
+
+Reported-by: B Horn <b@horn.uk>
+Signed-off-by: B Horn <b@horn.uk>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Upstream: d1d6b7ea58aa5a80a4c4d0666b49460056c8ef0a
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ grub-core/fs/xfs.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/grub-core/fs/xfs.c b/grub-core/fs/xfs.c
+index d2d533531..56738a135 100644
+--- a/grub-core/fs/xfs.c
++++ b/grub-core/fs/xfs.c
+@@ -327,6 +327,8 @@ static int grub_xfs_sb_valid(struct grub_xfs_data *data)
+ 	}
+       return 1;
+     }
++
++  grub_error (GRUB_ERR_BAD_FS, "unsupported XFS filesystem version");
+   return 0;
+ }
+ 
+@@ -1058,7 +1060,7 @@ grub_xfs_mount (grub_disk_t disk)
+   return data;
+  fail:
+ 
+-  if (grub_errno == GRUB_ERR_OUT_OF_RANGE)
++  if (grub_errno == GRUB_ERR_OUT_OF_RANGE || grub_errno == GRUB_ERR_NONE)
+     grub_error (GRUB_ERR_BAD_FS, "not an XFS filesystem");
+ 
+   grub_free (data);
+-- 
+2.50.1
+

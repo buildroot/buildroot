@@ -1,0 +1,108 @@
+From a81ef3044791e7ee02bd349b5ec0adcbf6947555 Mon Sep 17 00:00:00 2001
+From: B Horn <b@horn.uk>
+Date: Sun, 12 May 2024 03:26:19 +0100
+Subject: [PATCH] disk/loopback: Reference tracking for the loopback
+
+It was possible to delete a loopback while there were still references
+to it. This led to an exploitable use-after-free.
+
+Fixed by implementing a reference counting in the grub_loopback struct.
+
+Reported-by: B Horn <b@horn.uk>
+Signed-off-by: B Horn <b@horn.uk>
+Reviewed-by: Daniel Kiper <daniel.kiper@oracle.com>
+Upstream: 67f70f70a36b6e87a65f928fe1e840a12eafb7ae
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ grub-core/disk/loopback.c | 18 ++++++++++++++++++
+ include/grub/err.h        |  3 ++-
+ 2 files changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/grub-core/disk/loopback.c b/grub-core/disk/loopback.c
+index 4635dcfde..2bea4e922 100644
+--- a/grub-core/disk/loopback.c
++++ b/grub-core/disk/loopback.c
+@@ -24,6 +24,7 @@
+ #include <grub/mm.h>
+ #include <grub/extcmd.h>
+ #include <grub/i18n.h>
++#include <grub/safemath.h>
+ 
+ GRUB_MOD_LICENSE ("GPLv3+");
+ 
+@@ -33,6 +34,7 @@ struct grub_loopback
+   grub_file_t file;
+   struct grub_loopback *next;
+   unsigned long id;
++  grub_uint64_t refcnt;
+ };
+ 
+ static struct grub_loopback *loopback_list;
+@@ -64,6 +66,8 @@ delete_loopback (const char *name)
+   if (! dev)
+     return grub_error (GRUB_ERR_BAD_DEVICE, "device not found");
+ 
++  if (dev->refcnt > 0)
++    return grub_error (GRUB_ERR_STILL_REFERENCED, "device still referenced");
+   /* Remove the device from the list.  */
+   *prev = dev->next;
+ 
+@@ -120,6 +124,7 @@ grub_cmd_loopback (grub_extcmd_context_t ctxt, int argc, char **args)
+ 
+   newdev->file = file;
+   newdev->id = last_id++;
++  newdev->refcnt = 0;
+ 
+   /* Add the new entry to the list.  */
+   newdev->next = loopback_list;
+@@ -161,6 +166,9 @@ grub_loopback_open (const char *name, grub_disk_t disk)
+   if (! dev)
+     return grub_error (GRUB_ERR_UNKNOWN_DEVICE, "can't open device");
+ 
++  if (grub_add (dev->refcnt, 1, &dev->refcnt))
++    grub_fatal ("Reference count overflow");
++
+   /* Use the filesize for the disk size, round up to a complete sector.  */
+   if (dev->file->size != GRUB_FILE_SIZE_UNKNOWN)
+     disk->total_sectors = ((dev->file->size + GRUB_DISK_SECTOR_SIZE - 1)
+@@ -178,6 +186,15 @@ grub_loopback_open (const char *name, grub_disk_t disk)
+   return 0;
+ }
+ 
++static void
++grub_loopback_close (grub_disk_t disk)
++{
++  struct grub_loopback *dev = disk->data;
++
++  if (grub_sub (dev->refcnt, 1, &dev->refcnt))
++    grub_fatal ("Reference count underflow");
++}
++
+ static grub_err_t
+ grub_loopback_read (grub_disk_t disk, grub_disk_addr_t sector,
+ 		    grub_size_t size, char *buf)
+@@ -220,6 +237,7 @@ static struct grub_disk_dev grub_loopback_dev =
+     .id = GRUB_DISK_DEVICE_LOOPBACK_ID,
+     .disk_iterate = grub_loopback_iterate,
+     .disk_open = grub_loopback_open,
++    .disk_close = grub_loopback_close,
+     .disk_read = grub_loopback_read,
+     .disk_write = grub_loopback_write,
+     .next = 0
+diff --git a/include/grub/err.h b/include/grub/err.h
+index 1c07034cd..b0e54e0a0 100644
+--- a/include/grub/err.h
++++ b/include/grub/err.h
+@@ -73,7 +73,8 @@ typedef enum
+     GRUB_ERR_NET_NO_DOMAIN,
+     GRUB_ERR_EOF,
+     GRUB_ERR_BAD_SIGNATURE,
+-    GRUB_ERR_BAD_FIRMWARE
++    GRUB_ERR_BAD_FIRMWARE,
++    GRUB_ERR_STILL_REFERENCED
+   }
+ grub_err_t;
+ 
+-- 
+2.50.1
+
