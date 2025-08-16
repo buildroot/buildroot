@@ -12,6 +12,9 @@ QUICKJS_LICENSE_FILES = LICENSE
 QUICKJS_CPE_ID_VALID = YES
 QUICKJS_INSTALL_STAGING = YES
 
+# 0001-fixed-buffer-overflow-in-bjson-string-and-bigint-reader.patch
+QUICKJS_IGNORE_CVES += CVE-2025-46688
+
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 QUICKJS_EXTRA_LIBS += -latomic
 endif

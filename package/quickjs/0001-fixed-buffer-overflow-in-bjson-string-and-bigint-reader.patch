@@ -1,0 +1,29 @@
+From 1eb05e44fad89daafa8ee3eb74b8520b4a37ec9a Mon Sep 17 00:00:00 2001
+From: Fabrice Bellard <fabrice@bellard.org>
+Date: Mon, 7 Apr 2025 18:40:49 +0200
+Subject: [PATCH] fixed buffer overflow in BJSON String and BigInt reader
+ (#399)
+
+Upstream: https://github.com/bellard/quickjs/commit/1eb05e44fad89daafa8ee3eb74b8520b4a37ec9a
+CVE: CVE-2025-46688
+[thomas: backport JS_ReadBigInt function not present in 2024-01-13]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ quickjs.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/quickjs.c b/quickjs.c
+index 9be262e50..b2470ba64 100644
+--- a/quickjs.c
++++ b/quickjs.c
+@@ -35652,6 +35652,10 @@ static JSString *JS_ReadString(BCReaderState *s)
+         return NULL;
+     is_wide_char = len & 1;
+     len >>= 1;
++    if (len > JS_STRING_LEN_MAX) {
++        JS_ThrowInternalError(s->ctx, "string too long");
++        return NULL;
++    }
+     p = js_alloc_string(s->ctx, len, is_wide_char);
+     if (!p) {
+         s->error_state = -1;
