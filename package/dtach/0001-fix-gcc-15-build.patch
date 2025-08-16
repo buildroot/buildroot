@@ -1,0 +1,27 @@
+From 6d80909a8c0fd19717010a3c76fec560f988ca48 Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Mon, 9 Dec 2024 12:35:09 +0000
+Subject: [PATCH] fix gcc-15 build
+
+Upstream: https://github.com/crigler/dtach/commit/6d80909a8c0fd19717010a3c76fec560f988ca48
+Signed-off-by: Florian Larysch <fl@n621.de>
+---
+ attach.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/attach.c b/attach.c
+index 41a696c..e4a46bd 100644
+--- a/attach.c
++++ b/attach.c
+@@ -96,7 +96,7 @@ die(int sig)
+ 
+ /* Window size change. */
+ static RETSIGTYPE
+-win_change()
++win_change(int sig)
+ {
+ 	signal(SIGWINCH, win_change);
+ 	win_changed = 1;
+-- 
+2.50.1
+
