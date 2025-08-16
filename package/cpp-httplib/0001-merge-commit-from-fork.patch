@@ -1,0 +1,103 @@
+From 7b752106ac42bd5b907793950d9125a0972c8e8e Mon Sep 17 00:00:00 2001
+From: Ville Vesilehto <ville@vesilehto.fi>
+Date: Sat, 3 May 2025 11:39:01 +0300
+Subject: [PATCH] Merge commit from fork
+
+* fix(parser): Limit line length in getline
+
+Prevents potential infinite loop and memory exhaustion in
+stream_line_reader::getline by enforcing max line length.
+
+Signed-off-by: Ville Vesilehto <ville@vesilehto.fi>
+
+* fix: increase default max line length to 32k
+
+LONG_QUERY_VALUE test is set at 25k.
+
+Signed-off-by: Ville Vesilehto <ville@vesilehto.fi>
+
+* test(client): expect read error with too long query
+
+Adds a test case (`TooLongQueryValue`) to verify client behavior
+when the request URI is excessively long, exceeding
+`CPPHTTPLIB_MAX_LINE_LENGTH`. In this scenario, the server is
+expected to reset the connection.
+
+Signed-off-by: Ville Vesilehto <ville@vesilehto.fi>
+
+CVE: CVE-2025-46728
+Upstream: https://github.com/yhirose/cpp-httplib/commit/7b752106ac42bd5b907793950d9125a0972c8e8e
+[thomas: adapt lines numbers to v0.19.0]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ httplib.h    |  9 +++++++++
+ test/test.cc | 15 +++++++++++++++
+ 2 files changed, 24 insertions(+)
+
+diff --git a/httplib.h b/httplib.h
+index cb182c4129..a2aa24f96b 100644
+--- a/httplib.h
++++ b/httplib.h
+@@ -145,6 +145,10 @@
+ #define CPPHTTPLIB_LISTEN_BACKLOG 5
+ #endif
+ 
++#ifndef CPPHTTPLIB_MAX_LINE_LENGTH
++#define CPPHTTPLIB_MAX_LINE_LENGTH 32768
++#endif
++
+ /*
+  * Headers
+  */
+@@ -2998,6 +3002,11 @@ inline bool stream_line_reader::getline() {
+ #endif
+ 
+   for (size_t i = 0;; i++) {
++    if (size() >= CPPHTTPLIB_MAX_LINE_LENGTH) {
++      // Treat exceptionally long lines as an error to
++      // prevent infinite loops/memory exhaustion
++      return false;
++    }
+     char byte;
+     auto n = strm_.read(&byte, 1);
+ 
+diff --git a/test/test.cc b/test/test.cc
+index 4fd9983bd8..7f5cc8a9d0 100644
+--- a/test/test.cc
++++ b/test/test.cc
+@@ -42,6 +42,9 @@ const int PORT = 1234;
+ const string LONG_QUERY_VALUE = string(25000, '@');
+ const string LONG_QUERY_URL = "/long-query-value?key=" + LONG_QUERY_VALUE;
+ 
++const string TOO_LONG_QUERY_VALUE = string(35000, '@');
++const string TOO_LONG_QUERY_URL = "/too-long-query-value?key=" + TOO_LONG_QUERY_VALUE;
++
+ const std::string JSON_DATA = "{\"hello\":\"world\"}";
+ 
+ const string LARGE_DATA = string(1024 * 1024 * 100, '@'); // 100MB
+@@ -2839,6 +2842,11 @@ class ServerTest : public ::testing::Test {
+                EXPECT_EQ(LONG_QUERY_URL, req.target);
+                EXPECT_EQ(LONG_QUERY_VALUE, req.get_param_value("key"));
+              })
++        .Get("/too-long-query-value",
++             [&](const Request &req, Response & /*res*/) {
++               EXPECT_EQ(TOO_LONG_QUERY_URL, req.target);
++               EXPECT_EQ(TOO_LONG_QUERY_VALUE, req.get_param_value("key"));
++             })
+         .Get("/array-param",
+              [&](const Request &req, Response & /*res*/) {
+                EXPECT_EQ(3u, req.get_param_value_count("array"));
+@@ -3624,6 +3632,13 @@ TEST_F(ServerTest, LongQueryValue) {
+   EXPECT_EQ(StatusCode::UriTooLong_414, res->status);
+ }
+ 
++TEST_F(ServerTest, TooLongQueryValue) {
++  auto res = cli_.Get(TOO_LONG_QUERY_URL.c_str());
++
++  ASSERT_FALSE(res);
++  EXPECT_EQ(Error::Read, res.error());
++}
++
+ TEST_F(ServerTest, TooLongHeader) {
+   Request req;
+   req.method = "GET";
