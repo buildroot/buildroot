@@ -1,0 +1,801 @@
+From 3e8c6e03675963d65a2f98eb006336c5cd375ec3 Mon Sep 17 00:00:00 2001
+From: Vladimir Mezentsev <vladimir.mezentsev@oracle.com>
+Date: Tue, 3 Sep 2024 21:30:31 -0700
+Subject: [PATCH] Fix 32097 Warnings when building gprofng with Clang
+
+gprofng/ChangeLog
+2024-09-03  Vladimir Mezentsev  <vladimir.mezentsev@oracle.com>.
+
+	PR gprofng/32097
+	* common/hwcdrv.c: Fix -Wempty-body warnings.
+	* common/hwcentry.h: Fix -Wdeprecated-non-prototype warnings.
+	* common/hwctable.c: Fix -Wdeprecated-non-prototype warnings.
+	* libcollector/collector.c: Likewise.
+	* libcollector/collector.h: Likewise.
+	* libcollector/collectorAPI.c: Likewise.
+	* libcollector/dispatcher.c: Likewise.
+	* libcollector/iotrace.c: Likewise.
+	* libcollector/libcol_util.c: Fix -Wunused-but-set-variable warnings.
+	* libcollector/libcol_util.h: Remove unused declarations.
+	* libcollector/linetrace.c: Fix -Wdeprecated-non-prototype warnings.
+	* src/BaseMetricTreeNode.h: Fix -Wunused-private-field warnings.
+	* src/Dbe.cc: Fix -Wself-assign warnings.
+	* src/DbeSession.cc: Fix -Wunused-but-set-variable warnings.
+	* src/Disasm.cc: Fix -Wunused-const-variable warnings.
+	* src/Experiment.cc: Fix -Wunused-private-field warnings.
+	* src/HashMap.h: Fix -Wself-assign warnings.
+	* src/IOActivity.h: Fix -Wunused-private-field warnings.
+	* src/collctrl.cc: Fix -Wself-assign, -Wparentheses-equality warnings.
+	* src/collctrl.h: Fix -Wunused-private-field warnings.
+	* src/collector_module.h: Fix -Wdeprecated-non-prototype warnings.
+	* src/gp-display-src.cc: Fix -Wunused-private-field warnings.
+	* src/gp-print.h: Fix -Wheader-guard warnings.
+	* src/hwc_intel_icelake.h: Fix -Winitializer-overrides warnings.
+	* src/util.cc: Fix -Wunused-but-set-variable warnings.
+
+Upstream: b79c457ca01df82dbe1facb708e45def4584c903
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ gprofng/common/hwcdrv.c             |  3 ++-
+ gprofng/common/hwcentry.h           |  7 +----
+ gprofng/common/hwctable.c           | 13 +---------
+ gprofng/libcollector/collector.c    | 15 ++++-------
+ gprofng/libcollector/collector.h    |  2 +-
+ gprofng/libcollector/collectorAPI.c | 15 ++++++-----
+ gprofng/libcollector/dispatcher.c   | 19 ++++++++------
+ gprofng/libcollector/iotrace.c      | 12 ++++-----
+ gprofng/libcollector/libcol_util.c  |  2 --
+ gprofng/libcollector/libcol_util.h  |  6 -----
+ gprofng/libcollector/linetrace.c    | 40 +++++++++++++++++------------
+ gprofng/src/BaseMetricTreeNode.h    |  1 -
+ gprofng/src/Dbe.cc                  | 12 ++++-----
+ gprofng/src/DbeSession.cc           |  3 ---
+ gprofng/src/Disasm.cc               |  1 -
+ gprofng/src/Experiment.cc           |  2 --
+ gprofng/src/HashMap.h               |  3 +--
+ gprofng/src/IOActivity.h            |  1 -
+ gprofng/src/collctrl.cc             | 14 +++++-----
+ gprofng/src/collctrl.h              |  1 -
+ gprofng/src/collector_module.h      | 20 +++++++--------
+ gprofng/src/gp-display-src.cc       |  8 ------
+ gprofng/src/gp-print.h              |  2 +-
+ gprofng/src/hwc_intel_icelake.h     |  6 +++--
+ gprofng/src/util.cc                 | 10 +++-----
+ 25 files changed, 88 insertions(+), 130 deletions(-)
+
+diff --git a/gprofng/common/hwcdrv.c b/gprofng/common/hwcdrv.c
+index aaf3acdf9cd..51492a8d35c 100644
+--- a/gprofng/common/hwcdrv.c
++++ b/gprofng/common/hwcdrv.c
+@@ -574,6 +574,7 @@ read_sample (counter_state_t *ctr_state, int msgsz, uint64_t *rvalue,
+ static void
+ dump_perf_event_attr (struct perf_event_attr *at)
+ {
++#if defined(DEBUG)
+   TprintfT (DBG_LT2, "dump_perf_event_attr:  size=%d  type=%d  sample_period=%lld\n"
+ 	    "  config=0x%llx  config1=0x%llx  config2=0x%llx  wakeup_events=%lld __reserved_1=%lld\n",
+ 	    (int) at->size, (int) at->type, (unsigned long long) at->sample_period,
+@@ -589,13 +590,13 @@ dump_perf_event_attr (struct perf_event_attr *at)
+   DUMP_F (exclude_kernel);
+   DUMP_F (exclude_hv);
+   DUMP_F (exclude_idle);
+-  //    DUMP_F(xmmap);
+   DUMP_F (comm);
+   DUMP_F (freq);
+   DUMP_F (inherit_stat);
+   DUMP_F (enable_on_exec);
+   DUMP_F (task);
+   DUMP_F (watermark);
++#endif
+ }
+ 
+ static void
+diff --git a/gprofng/common/hwcentry.h b/gprofng/common/hwcentry.h
+index b2ab8b9b22c..0b923fc3576 100644
+--- a/gprofng/common/hwcentry.h
++++ b/gprofng/common/hwcentry.h
+@@ -200,17 +200,12 @@ extern "C"
+   extern char *hwc_get_docref (char *buf, size_t buflen);
+   /* Return a CPU HWC document reference, or NULL. */
+ 
+-  // TBR
+-  extern char *hwc_get_default_cntrs ();
+-  /* Return a default HW counter string; may be NULL, or zero-length */
+-  /* NULL means none is defined in the table; or zero-length means string defined could not be loaded */
+-
+   extern char *hwc_get_default_cntrs2 (int forKernel, int style);
+   /* like hwc_get_default_cntrs() for style==1 */
+   /* but allows other styles of formatting as well */
+   /* deprecate and eventually remove hwc_get_default_cntrs() */
+ 
+-  extern char *hwc_get_orig_default_cntrs ();
++  extern char *hwc_get_orig_default_cntrs (int forKernel);
+   /* Get the default HW counter string as set in the table */
+   /* NULL means none is defined in the table */
+ 
+diff --git a/gprofng/common/hwctable.c b/gprofng/common/hwctable.c
+index 0baf63b1805..338a1ea86f4 100644
+--- a/gprofng/common/hwctable.c
++++ b/gprofng/common/hwctable.c
+@@ -1783,7 +1783,7 @@ check_tables ()
+ }
+ #endif
+ 
+-static int try_a_counter ();
++static int try_a_counter (int forKernel);
+ static void hwc_process_raw_ctrs (int forKernel, Hwcentry ***pstd_out,
+ 				  Hwcentry ***praw_out, Hwcentry ***phidden_out,
+ 				  Hwcentry**static_tables,
+@@ -2824,17 +2824,6 @@ hwc_get_docref (char *buf, size_t buflen)
+   return buf;
+ }
+ 
+-//TBR:
+-
+-extern char*
+-hwc_get_default_cntrs ()
+-{
+-  setup_cpcx ();
+-  if (cpcx_default_hwcs[0] != NULL)
+-    return strdup (cpcx_default_hwcs[0]); // TBR deprecate this
+-  return NULL;
+-}
+-
+ extern char*
+ hwc_get_default_cntrs2 (int forKernel, int style)
+ {
+diff --git a/gprofng/libcollector/collector.c b/gprofng/libcollector/collector.c
+index 3a8f27a719d..2ff95e58fde 100644
+--- a/gprofng/libcollector/collector.c
++++ b/gprofng/libcollector/collector.c
+@@ -210,15 +210,10 @@ get_collector_interface ()
+ static void
+ collector_module_init (CollectorInterface *col_intf)
+ {
+-  int nmodules = 0;
+-
+   ModuleInitFunc next_init = (ModuleInitFunc) dlsym (RTLD_DEFAULT, "__collector_module_init");
+   if (next_init != NULL)
+-    {
+-      nmodules++;
+-      next_init (col_intf);
+-    }
+-  TprintfT (DBG_LT1, "collector_module_init: %d modules\n", nmodules);
++    next_init (col_intf);
++  TprintfT (DBG_LT1, "collector_module_init: %d modules\n", next_init ? 1 : 0);
+ }
+ 
+ /*   Routines concerned with general experiment start and stop */
+@@ -1783,7 +1778,7 @@ __collector_pause ()
+ }
+ 
+ void
+-__collector_pause_m (char *reason)
++__collector_pause_m (const char *reason)
+ {
+   hrtime_t now;
+   char xreason[MAXPATHLEN];
+@@ -2449,8 +2444,8 @@ __collector_dlog (int tflag, int level, char *format, ...)
+ 
+ static void (*__real__exit) (int status) = NULL; /* libc only: _exit */
+ static void (*__real__Exit) (int status) = NULL; /* libc only: _Exit */
+-void _exit () __attribute__ ((weak, alias ("__collector_exit")));
+-void _Exit () __attribute__ ((weak, alias ("__collector_Exit")));
++void _exit (int status) __attribute__ ((weak, alias ("__collector_exit")));
++void _Exit (int status) __attribute__ ((weak, alias ("__collector_Exit")));
+ 
+ void
+ __collector_exit (int status)
+diff --git a/gprofng/libcollector/collector.h b/gprofng/libcollector/collector.h
+index 07a03bdd17a..eda68a0e4f5 100644
+--- a/gprofng/libcollector/collector.h
++++ b/gprofng/libcollector/collector.h
+@@ -123,7 +123,7 @@ extern void __collector_terminate_expt ();
+ extern void __collector_terminate_hook ();
+ extern void __collector_sample (char *name);
+ extern void __collector_pause ();
+-extern void __collector_pause_m ();
++extern void __collector_pause_m (const char *reason);
+ extern void __collector_resume ();
+ extern int collector_sigemt_sigaction (const struct sigaction*,
+ 				       struct sigaction*);
+diff --git a/gprofng/libcollector/collectorAPI.c b/gprofng/libcollector/collectorAPI.c
+index 5fa6403ad49..449bbbaab65 100644
+--- a/gprofng/libcollector/collectorAPI.c
++++ b/gprofng/libcollector/collectorAPI.c
+@@ -26,16 +26,17 @@
+ #include "collectorAPI.h"
+ #include "gp-experiment.h"
+ 
+-static void *__real_collector_sample = NULL;
+-static void *__real_collector_pause = NULL;
+-static void *__real_collector_resume = NULL;
+-static void *__real_collector_terminate_expt = NULL;
+-static void *__real_collector_func_load = NULL;
+-static void *__real_collector_func_unload = NULL;
++static void (*__real_collector_sample)(const char *) = NULL;
++static void (*__real_collector_pause)() = NULL;
++static void (*__real_collector_resume)() = NULL;
++static void (*__real_collector_terminate_expt)() = NULL;
++static void (*__real_collector_func_load)(const char *, const char *,
++		const char *, void *, int, int, Lineno *) = NULL;
++static void (*__real_collector_func_unload)(void *) = NULL;
+ 
+ #define INIT_API        if (init_API == 0) collectorAPI_initAPI()
+ #define NULL_PTR(x)     (__real_##x == NULL)
+-#define CALL_REAL(x)    (*(void(*)())__real_##x)
++#define CALL_REAL(x)    (__real_##x)
+ #define CALL_IF_REAL(x) INIT_API; if (!NULL_PTR(x)) CALL_REAL(x)
+ 
+ static int init_API = 0;
+diff --git a/gprofng/libcollector/dispatcher.c b/gprofng/libcollector/dispatcher.c
+index 8b8ad77b5ee..f7cd46e7e6b 100644
+--- a/gprofng/libcollector/dispatcher.c
++++ b/gprofng/libcollector/dispatcher.c
+@@ -908,8 +908,9 @@ sigset (int sig, sighandler_t handler)
+ 
+ // map interposed symbol versions
+ static int
+-gprofng_timer_create (int (real_func) (), clockid_t clockid,
+-                      struct sigevent *sevp, timer_t *timerid)
++gprofng_timer_create (int (real_func) (clockid_t, struct sigevent *, timer_t *),
++		      clockid_t clockid,
++		      struct sigevent *sevp, timer_t *timerid)
+ {
+   // collector reserves SIGPROF
+   if (sevp == NULL || sevp->sigev_notify != SIGEV_SIGNAL ||
+@@ -1044,7 +1045,7 @@ __collector_thr_sigsetmask (int how, const sigset_t* iset, sigset_t* oset)
+ // map interposed symbol versions
+ 
+ static int
+-gprofng_pthread_sigmask (int (real_func) (),
++gprofng_pthread_sigmask (int (real_func) (int, const sigset_t *, sigset_t*),
+                          int how, const sigset_t *iset, sigset_t* oset)
+ {
+   sigset_t lsigset;
+@@ -1139,9 +1140,10 @@ collector_root (void *cargs)
+ // map interposed symbol versions
+ 
+ static int
+-gprofng_pthread_create (int (real_func) (), pthread_t *thread,
+-                        const pthread_attr_t *attr,
+-                        void *(*func)(void*), void *arg)
++gprofng_pthread_create (int (real_func) (pthread_t *, const pthread_attr_t *,
++					 void *(*)(void *), void *),
++			pthread_t *thread, const pthread_attr_t *attr,
++			void *(*func)(void*), void *arg)
+ {
+   TprintfT (DBG_LTT, "gprofng_pthread_create @%p\n", real_func);
+   if (dispatch_mode != DISPATCH_ON)
+@@ -1276,6 +1278,7 @@ __collector_ext_clone_pthread (int (*fn)(void *), void *child_stack, int flags,
+ }
+ 
+ // weak symbols:
+-int sigprocmask () __attribute__ ((weak, alias ("__collector_sigprocmask")));
+-int thr_sigsetmask () __attribute__ ((weak, alias ("__collector_thr_sigsetmask")));
++int sigprocmask (int, const sigset_t*, sigset_t*) __attribute__ ((weak, alias ("__collector_sigprocmask")));
++int thr_sigsetmask (int, const sigset_t*, sigset_t*) __attribute__ ((weak, alias ("__collector_thr_sigsetmask")));
+ int setitimer () __attribute__ ((weak, alias ("_setitimer")));
++
+diff --git a/gprofng/libcollector/iotrace.c b/gprofng/libcollector/iotrace.c
+index 18060864796..3deb441d9c7 100644
+--- a/gprofng/libcollector/iotrace.c
++++ b/gprofng/libcollector/iotrace.c
+@@ -1350,7 +1350,7 @@ mkstemp (char *template)
+   unsigned pktSize;
+   if (NULL_PTR (mkstemp))
+     init_io_intf ();
+-  if (CHCK_REENTRANCE (guard) || template == NULL)
++  if (CHCK_REENTRANCE (guard))
+     return CALL_REAL (mkstemp)(template);
+   PUSH_REENTRANCE (guard);
+   hrtime_t reqt = gethrtime ();
+@@ -1405,7 +1405,7 @@ mkstemps (char *template, int slen)
+   unsigned pktSize;
+   if (NULL_PTR (mkstemps))
+     init_io_intf ();
+-  if (CHCK_REENTRANCE (guard) || template == NULL)
++  if (CHCK_REENTRANCE (guard))
+     return CALL_REAL (mkstemps)(template, slen);
+   PUSH_REENTRANCE (guard);
+   hrtime_t reqt = gethrtime ();
+@@ -1485,7 +1485,7 @@ close (int fildes)
+ 
+ /*------------------------------------------------------------- fopen */
+ static FILE*
+-gprofng_fopen (FILE*(real_fopen) (), const char *filename, const char *mode)
++gprofng_fopen (FILE*(real_fopen) (const char *, const char *), const char *filename, const char *mode)
+ {
+   int *guard;
+   FILE *fp = NULL;
+@@ -1559,7 +1559,7 @@ DCL_FOPEN (fopen)
+ 
+ /*------------------------------------------------------------- fclose */
+ static int
+-gprofng_fclose (int(real_fclose) (), FILE *stream)
++gprofng_fclose (int(real_fclose) (FILE *), FILE *stream)
+ {
+   int *guard;
+   int stat;
+@@ -1645,7 +1645,7 @@ fflush (FILE *stream)
+ 
+ /*------------------------------------------------------------- fdopen */
+ static FILE*
+-gprofng_fdopen (FILE*(real_fdopen) (), int fildes, const char *mode)
++gprofng_fdopen (FILE*(real_fdopen) (int, const char *), int fildes, const char *mode)
+ {
+   int *guard;
+   FILE *fp = NULL;
+@@ -2957,7 +2957,7 @@ DCL_FGETPOS (fgetpos)
+ 
+ /*------------------------------------------------------------- fgetpos64 */
+ static int
+-gprofng_fgetpos64 (int(real_fgetpos64) (), FILE *stream, fpos64_t *pos)
++gprofng_fgetpos64 (int(real_fgetpos64) (FILE *, fpos64_t *), FILE *stream, fpos64_t *pos)
+ {
+   int *guard;
+   int ret;
+diff --git a/gprofng/libcollector/libcol_util.c b/gprofng/libcollector/libcol_util.c
+index 1e58cf491a1..baac15db5c4 100644
+--- a/gprofng/libcollector/libcol_util.c
++++ b/gprofng/libcollector/libcol_util.c
+@@ -1013,7 +1013,6 @@ __collector_open (const char *path, int oflag, ...)
+   mode_t mode = 0;
+ 
+   hrtime_t t_timeout = __collector_gethrtime () + 5 * ((hrtime_t) NANOSEC);
+-  int nretries = 0;
+   long long delay = 100; /* start at some small, arbitrary value */
+ 
+   /* get optional mode argument if it's expected/required */
+@@ -1058,7 +1057,6 @@ __collector_open (const char *path, int oflag, ...)
+       delay *= 2;
+       if (delay > 100000000)
+ 	delay = 100000000; /* cap at some large, arbitrary value */
+-      nretries++;
+     }
+   return fd;
+ }
+diff --git a/gprofng/libcollector/libcol_util.h b/gprofng/libcollector/libcol_util.h
+index c8ec83ff0d9..aa30db72bcc 100644
+--- a/gprofng/libcollector/libcol_util.h
++++ b/gprofng/libcollector/libcol_util.h
+@@ -81,12 +81,6 @@ extern int __collector_mutex_trylock (collector_mutex_t *mp);
+ #define __collector_mutex_init(xx) \
+   do { collector_mutex_t tmp=COLLECTOR_MUTEX_INITIALIZER; *(xx)=tmp; } while(0)
+ 
+-void __collector_sample (char *name);
+-void __collector_terminate_expt ();
+-void __collector_pause ();
+-void __collector_pause_m ();
+-void __collector_resume ();
+-
+ struct DT_lineno;
+ 
+ typedef enum
+diff --git a/gprofng/libcollector/linetrace.c b/gprofng/libcollector/linetrace.c
+index 67b2d7e9030..66844bc1337 100644
+--- a/gprofng/libcollector/linetrace.c
++++ b/gprofng/libcollector/linetrace.c
+@@ -1207,7 +1207,7 @@ __collector_vfork (void)
+ }
+ 
+ /*------------------------------------------------------------- execve */
+-int execve () __attribute__ ((weak, alias ("__collector_execve")));
++int execve (const char *, char *const [], char *const []) __attribute__ ((weak, alias ("__collector_execve")));
+ 
+ int
+ __collector_execve (const char* path, char *const argv[], char *const envp[])
+@@ -1237,7 +1237,7 @@ __collector_execve (const char* path, char *const argv[], char *const envp[])
+   return ret;
+ }
+ 
+-int execvp () __attribute__ ((weak, alias ("__collector_execvp")));
++int execvp (const char *, char *const []) __attribute__ ((weak, alias ("__collector_execvp")));
+ 
+ int
+ __collector_execvp (const char* file, char *const argv[])
+@@ -1269,7 +1269,7 @@ __collector_execvp (const char* file, char *const argv[])
+   return ret;
+ }
+ 
+-int execv () __attribute__ ((weak, alias ("__collector_execv")));
++int execv (const char *, char *const []) __attribute__ ((weak, alias ("__collector_execv")));
+ 
+ int
+ __collector_execv (const char* path, char *const argv[])
+@@ -1408,7 +1408,10 @@ __collector_execl (const char* path, const char *arg0, ...)
+ /*-------------------------------------------------------- posix_spawn */
+ // map interposed symbol versions
+ static int
+-gprofng_posix_spawn (int(real_posix_spawn) (),
++gprofng_posix_spawn (int(real_posix_spawn) (pid_t *, const char *,
++				const posix_spawn_file_actions_t *,
++				const posix_spawnattr_t *,
++				char *const [], char *const []),
+ 		     pid_t *pidp, const char *path,
+ 		     const posix_spawn_file_actions_t *file_actions,
+ 		     const posix_spawnattr_t *attrp,
+@@ -1466,7 +1469,10 @@ DCL_POSIX_SPAWN (posix_spawn)
+ 
+ /*-------------------------------------------------------- posix_spawnp */
+ static int
+-gprofng_posix_spawnp (int (real_posix_spawnp) (),
++gprofng_posix_spawnp (int (real_posix_spawnp) (pid_t *, const char *,
++				const posix_spawn_file_actions_t *,
++				const posix_spawnattr_t *,
++				char *const [], char *const []),
+                       pid_t *pidp, const char *path,
+                       const posix_spawn_file_actions_t *file_actions,
+                       const posix_spawnattr_t *attrp,
+@@ -1754,8 +1760,8 @@ __collector_clone (int (*fn)(void *), void *child_stack, int flags, void *arg,
+ }
+ 
+ /*-------------------------------------------------------------------- setuid */
+-int setuid () __attribute__ ((weak, alias ("__collector_setuid")));
+-int _setuid () __attribute__ ((weak, alias ("__collector_setuid")));
++int setuid (uid_t) __attribute__ ((weak, alias ("__collector_setuid")));
++int _setuid (uid_t) __attribute__ ((weak, alias ("__collector_setuid")));
+ 
+ int
+ __collector_setuid (uid_t ruid)
+@@ -1770,8 +1776,8 @@ __collector_setuid (uid_t ruid)
+ }
+ 
+ /*------------------------------------------------------------------- seteuid */
+-int seteuid () __attribute__ ((weak, alias ("__collector_seteuid")));
+-int _seteuid () __attribute__ ((weak, alias ("__collector_seteuid")));
++int seteuid (uid_t) __attribute__ ((weak, alias ("__collector_seteuid")));
++int _seteuid (uid_t) __attribute__ ((weak, alias ("__collector_seteuid")));
+ 
+ int
+ __collector_seteuid (uid_t euid)
+@@ -1786,8 +1792,8 @@ __collector_seteuid (uid_t euid)
+ }
+ 
+ /*------------------------------------------------------------------ setreuid */
+-int setreuid () __attribute__ ((weak, alias ("__collector_setreuid")));
+-int _setreuid () __attribute__ ((weak, alias ("__collector_setreuid")));
++int setreuid (uid_t, uid_t) __attribute__ ((weak, alias ("__collector_setreuid")));
++int _setreuid (uid_t, uid_t) __attribute__ ((weak, alias ("__collector_setreuid")));
+ 
+ int
+ __collector_setreuid (uid_t ruid, uid_t euid)
+@@ -1802,8 +1808,8 @@ __collector_setreuid (uid_t ruid, uid_t euid)
+ }
+ 
+ /*-------------------------------------------------------------------- setgid */
+-int setgid () __attribute__ ((weak, alias ("__collector_setgid")));
+-int _setgid () __attribute__ ((weak, alias ("__collector_setgid")));
++int setgid (gid_t) __attribute__ ((weak, alias ("__collector_setgid")));
++int _setgid (gid_t) __attribute__ ((weak, alias ("__collector_setgid")));
+ 
+ int
+ __collector_setgid (gid_t rgid)
+@@ -1818,8 +1824,8 @@ __collector_setgid (gid_t rgid)
+ }
+ 
+ /*------------------------------------------------------------------- setegid */
+-int setegid () __attribute__ ((weak, alias ("__collector_setegid")));
+-int _setegid () __attribute__ ((weak, alias ("__collector_setegid")));
++int setegid (gid_t) __attribute__ ((weak, alias ("__collector_setegid")));
++int _setegid (gid_t) __attribute__ ((weak, alias ("__collector_setegid")));
+ 
+ int
+ __collector_setegid (gid_t egid)
+@@ -1834,8 +1840,8 @@ __collector_setegid (gid_t egid)
+ }
+ 
+ /*------------------------------------------------------------------ setregid */
+-int setregid () __attribute__ ((weak, alias ("__collector_setregid")));
+-int _setregid () __attribute__ ((weak, alias ("__collector_setregid")));
++int setregid (gid_t, gid_t) __attribute__ ((weak, alias ("__collector_setregid")));
++int _setregid (gid_t, gid_t) __attribute__ ((weak, alias ("__collector_setregid")));
+ 
+ int
+ __collector_setregid (gid_t rgid, gid_t egid)
+diff --git a/gprofng/src/BaseMetricTreeNode.h b/gprofng/src/BaseMetricTreeNode.h
+index d73d244e27e..7698f9c6eaf 100644
+--- a/gprofng/src/BaseMetricTreeNode.h
++++ b/gprofng/src/BaseMetricTreeNode.h
+@@ -85,7 +85,6 @@ private:
+ 
+   BaseMetricTreeNode *root;     // root of tree
+   BaseMetricTreeNode *parent;   // my parent
+-  bool aggregation;             // value is based on children's values
+   char *name;           // bm->get_cmd() for metrics, unique string otherwise
+   char *uname;                  // user-visible text
+   char *unit;                   // see UNIT_* defines
+diff --git a/gprofng/src/Dbe.cc b/gprofng/src/Dbe.cc
+index 95daa727186..09b7f94eaa8 100644
+--- a/gprofng/src/Dbe.cc
++++ b/gprofng/src/Dbe.cc
+@@ -9591,14 +9591,12 @@ dbeGetTLDataRepVals (VMode view_mode, hrtime_t start_ts, hrtime_t delta,
+ 	}
+       if (sampleVals != NULL)
+ 	{
+-	  Sample* sample = (Sample*) packets->getObjValue (PROP_SMPLOBJ, packetIdx);
+-	  if (!sample || !sample->get_usage ())
+-	    sample = sample;
+-	  else
++	  Sample *sample = (Sample*) packets->getObjValue (PROP_SMPLOBJ, packetIdx);
++	  if (sample != NULL)
+ 	    {
+-	      PrUsage* prusage = sample->get_usage ();
+-	      Vector<long long> *mstateVals = prusage->getMstateValues ();
+-	      sampleVals->store (eventIdx, mstateVals);
++	      PrUsage *prusage = sample->get_usage ();
++	      if (prusage != NULL)
++		sampleVals->store (eventIdx, prusage->getMstateValues ());
+ 	    }
+ 	}
+     }
+diff --git a/gprofng/src/DbeSession.cc b/gprofng/src/DbeSession.cc
+index a6808d8d8f6..3649357bc79 100644
+--- a/gprofng/src/DbeSession.cc
++++ b/gprofng/src/DbeSession.cc
+@@ -1164,8 +1164,6 @@ DbeSession::open_experiment (Experiment *exp, char *path)
+   closedir (exp_dir);
+   exp_names->sort (dir_name_cmp);
+   Experiment **t_exp_list = new Experiment *[exp_names->size ()];
+-  int nsubexps = 0;
+-
+   for (int j = 0, jsz = exp_names->size (); j < jsz; j++)
+     {
+       t_exp_list[j] = NULL;
+@@ -1222,7 +1220,6 @@ DbeSession::open_experiment (Experiment *exp, char *path)
+ 	dexp->open (dpath);
+       append (dexp);
+       t_exp_list[j] = dexp;
+-      nsubexps++;
+       dexp->set_clock (exp->clock);
+ 
+       // DbeView add_experiment() is split into two parts
+diff --git a/gprofng/src/Disasm.cc b/gprofng/src/Disasm.cc
+index e41bf679292..19f2174d536 100644
+--- a/gprofng/src/Disasm.cc
++++ b/gprofng/src/Disasm.cc
+@@ -49,7 +49,6 @@ struct DisContext
+ };
+ 
+ static const int MAX_DISASM_STR     = 2048;
+-static const int MAX_INSTR_SIZE     = 8;
+ 
+ Disasm::Disasm (char *fname)
+ {
+diff --git a/gprofng/src/Experiment.cc b/gprofng/src/Experiment.cc
+index a1f78fc0cde..627a755c88c 100644
+--- a/gprofng/src/Experiment.cc
++++ b/gprofng/src/Experiment.cc
+@@ -1937,8 +1937,6 @@ private:
+   }
+ 
+   Experiment *exp;
+-  char *hostname;
+-  hrtime_t time, tstamp;
+ };
+ 
+ void
+diff --git a/gprofng/src/HashMap.h b/gprofng/src/HashMap.h
+index 918c0dc95f9..c5fdd345ba8 100644
+--- a/gprofng/src/HashMap.h
++++ b/gprofng/src/HashMap.h
+@@ -78,9 +78,8 @@ copy_key (uint64_t a)
+ }
+ 
+ template<> inline void
+-delete_key (uint64_t a)
++delete_key (uint64_t)
+ {
+-  a = a;
+ }
+ 
+ template<> inline int
+diff --git a/gprofng/src/IOActivity.h b/gprofng/src/IOActivity.h
+index cf462cf8d55..f3a22ada6b1 100644
+--- a/gprofng/src/IOActivity.h
++++ b/gprofng/src/IOActivity.h
+@@ -78,7 +78,6 @@ private:
+   Hist_data *hist_data_file_all;
+   Hist_data *hist_data_vfd_all;
+   Hist_data *hist_data_callstack_all;
+-  Hist_data *hist_data_callstack;
+ 
+   DbeView *dbev;
+ };
+diff --git a/gprofng/src/collctrl.cc b/gprofng/src/collctrl.cc
+index 029c0387f19..c0234130f00 100644
+--- a/gprofng/src/collctrl.cc
++++ b/gprofng/src/collctrl.cc
+@@ -880,9 +880,7 @@ Coll_Ctrl::set_clkprof (const char *string, char** warn)
+       double dval = strtod (string, &endchar);
+       if (*endchar == 'm' || *endchar == 0) /* user specified milliseconds */
+ 	dval = dval * 1000.;
+-      else if (*endchar == 'u') /* user specified microseconds */
+-	dval = dval;
+-      else
++      else if (*endchar != 'u')
+ 	return dbe_sprintf (GTXT ("Unrecognized clock-profiling interval `%s'\n"), string);
+       nclkprof_timer = (int) (dval + 0.5);
+     }
+@@ -2791,7 +2789,7 @@ Coll_Ctrl::get (char * control)
+     }
+   if (!strncmp (control, ipc_str_javaprof, len))
+     {
+-      if ((java_mode == 0))
++      if (java_mode == 0)
+ 	return strdup (ipc_str_off);
+       return strdup (ipc_str_on);
+     }
+@@ -2807,7 +2805,7 @@ Coll_Ctrl::get (char * control)
+     }
+   if (!strncmp (control, ipc_str_sample_sig, len))
+     {
+-      if ((sample_sig == 0))
++      if (sample_sig == 0)
+ 	return strdup (ipc_str_off);
+       char *str_signal = find_signal_name (sample_sig);
+       if (str_signal != NULL)
+@@ -2841,15 +2839,15 @@ Coll_Ctrl::get (char * control)
+     }
+   if (!strncmp (control, ipc_str_iotrace, len))
+     {
+-      if ((iotrace_enabled == 0))
++      if (iotrace_enabled == 0)
+ 	return strdup (ipc_str_off);
+       return strdup (ipc_str_on);
+     }
+   if (!strncmp (control, ipc_str_count, len))
+     {
+-      if ((count_enabled == 0))
++      if (count_enabled == 0)
+ 	return strdup (ipc_str_off);
+-      if ((count_enabled < 0))
++      if (count_enabled < 0)
+ 	return strdup ("on\nstatic");
+       return strdup (ipc_str_on);
+     }
+diff --git a/gprofng/src/collctrl.h b/gprofng/src/collctrl.h
+index a41647440ac..e2a8e450890 100644
+--- a/gprofng/src/collctrl.h
++++ b/gprofng/src/collctrl.h
+@@ -272,7 +272,6 @@ private:
+   char *node_name;      /* name of machine on which experiment is run */
+   long ncpus;           /* number of online CPUs */
+   int cpu_clk_freq;     /* chip clock (MHz.), as reported from processor_info */
+-  int cpc_cpuver;       /* chip version, as reported from libcpc */
+   long sys_resolution;  /* system clock resolution */
+   int sample_period;    /* period for sampling, seconds */
+   int sample_default;    /* if period for sampling set by default */
+diff --git a/gprofng/src/collector_module.h b/gprofng/src/collector_module.h
+index bb48eadb9f8..ebcdbca561f 100644
+--- a/gprofng/src/collector_module.h
++++ b/gprofng/src/collector_module.h
+@@ -40,12 +40,12 @@ struct tm;
+  * If you add any, please put it in the right place */
+ typedef struct CollectorUtilFuncs
+ {
+-  int (*access)();
++  int (*access)(const char *, int);
+   int (*atoi)(const char *nptr);
+   void *(*calloc)(size_t nelem, size_t elsize);
+   int (*clearenv)(void);
+   int (*close)(int);
+-  int (*closedir)();
++  int (*closedir)(DIR *);
+   int (*execv)(const char *path, char *const argv[]);
+   void (*exit)(int status);
+   int (*fclose)(FILE *stream);
+@@ -66,20 +66,20 @@ typedef struct CollectorUtilFuncs
+   off_t (*lseek)(int fd, off_t offset, int whence);
+   void *(*malloc)(size_t size);
+   void *(*memset)(void *s1, int c, size_t n);
+-  int (*mkdir)();
++  int (*mkdir)(const char *, mode_t);
+   time_t (*mktime)(struct tm *timeptr);
+   void *(*mmap)(void *, size_t, int, int, int, off_t);
+-  void *(*mmap64_)();
+-  int (*munmap)();
++  void *(*mmap64_)(void *, size_t, int, int, int, off_t);
++  int (*munmap)(void *, size_t);
+   int (*open)(const char *, int, ...);
+   int (*open_bare)(const char *, int, ...);
+-  DIR *(*opendir)();
++  DIR *(*opendir)(const char *);
+   int (*pclose)(FILE *stream);
+   FILE *(*popen)(const char *command, const char *mode);
+   int (*putenv)(char *string);
+-  ssize_t (*pwrite)();
+-  ssize_t (*pwrite64_)();
+-  ssize_t (*read)();
++  ssize_t (*pwrite)(int, const void *, size_t, off_t);
++  ssize_t (*pwrite64_)(int, const void *, size_t, off_t);
++  ssize_t (*read)(int, void *, size_t);
+   int (*setenv)(const char *name, const char *value, int overwrite);
+   int (*sigfillset)(sigset_t *set);
+   int (*sigprocmask)(int how, const sigset_t *set, sigset_t *oldset);
+@@ -112,7 +112,7 @@ typedef struct CollectorUtilFuncs
+   int (*unsetenv)(const char *name);
+   int (*vsnprintf)(char *str, size_t size, const char *format, va_list ap);
+   pid_t (*waitpid)(pid_t pid, int *stat_loc, int options);
+-  ssize_t (*write)();
++  ssize_t (*write)(int, void *, size_t);
+   double (*atof)();
+   void *n_a;
+ } CollectorUtilFuncs;
+diff --git a/gprofng/src/gp-display-src.cc b/gprofng/src/gp-display-src.cc
+index 200e6080d2e..24af375edf1 100644
+--- a/gprofng/src/gp-display-src.cc
++++ b/gprofng/src/gp-display-src.cc
+@@ -75,14 +75,6 @@ private:
+   bool v_opt;
+   int multiple;
+   char *str_compcom;
+-  bool hex_visible;
+-  int src_visible;
+-  int vis_src;
+-  int vis_dis;
+-  int threshold_src;
+-  int threshold_dis;
+-  int threshold;
+-  int vis_bits;
+ };
+ 
+ static int
+diff --git a/gprofng/src/gp-print.h b/gprofng/src/gp-print.h
+index 1b748ea60a3..1a8ad3b6c13 100644
+--- a/gprofng/src/gp-print.h
++++ b/gprofng/src/gp-print.h
+@@ -19,7 +19,7 @@
+    MA 02110-1301, USA.  */
+ 
+ #ifndef _GP_PRINT_H
+-#define _ER_PRINT_H
++#define _GP_PRINT_H
+ 
+ #include "Command.h"
+ #include "DbeApplication.h"
+diff --git a/gprofng/src/hwc_intel_icelake.h b/gprofng/src/hwc_intel_icelake.h
+index 46f4ac5005f..4fe2e26f63b 100644
+--- a/gprofng/src/hwc_intel_icelake.h
++++ b/gprofng/src/hwc_intel_icelake.h
+@@ -24,8 +24,10 @@
+ #define SH(val, n) (((unsigned long long) (val)) << n)
+ #define I(nm, event, umask, edge, cmask, inv, \
+ 	  offcore_rsp, ldlat, frontend, period, mtr) \
+-	  INIT_HWC(nm, mtr, SH(event, 0) | SH(umask, 8) | SH(edge, 18) \
+-		     | SH(cmask, 24) | SH(inv, 23), PERF_TYPE_RAW), \
++	  .use_perf_event_type = 1, .type = PERF_TYPE_RAW, \
++	  .name = (nm), .metric = (mtr), .reg_num = REGNO_ANY, \
++	  .config = SH(event, 0) | SH(umask, 8) | SH(edge, 18) | SH(cmask, 24) \
++		  | SH(inv, 23), \
+ 	  .config1 = SH(offcore_rsp, 0) | SH(ldlat, 0) | SH(frontend, 0), \
+ 	  .val = period
+ 
+diff --git a/gprofng/src/util.cc b/gprofng/src/util.cc
+index 201f7088b66..228140b61ae 100644
+--- a/gprofng/src/util.cc
++++ b/gprofng/src/util.cc
+@@ -741,17 +741,13 @@ get_relative_link (const char *path_from, const char *path_to)
+   s2 = canonical_path (s2);
+   long l = dbe_sstrlen (s1);
+   // try to find common directories
+-  int common_slashes = 0;
+   int last_common_slash = -1;
+   for (int i = 0; i < l; i++)
+     {
+-      if (s1[i] != s2[i]) break;
+-      if (s1[i] == 0) break;
++      if (s1[i] != s2[i] || s1[i] == 0)
++	break;
+       if (s1[i] == '/')
+-	{
+-	  common_slashes++;
+-	  last_common_slash = i;
+-	}
++	last_common_slash = i;
+     }
+   // find slashes in remaining path_to
+   int slashes = 0;
+-- 
+2.50.1
+

@@ -1,0 +1,199 @@
+From 9ca25799ea0e92855d19adc46634e6dd0675a0b7 Mon Sep 17 00:00:00 2001
+From: Vladimir Mezentsev <vladimir.mezentsev@oracle.com>
+Date: Thu, 21 Nov 2024 14:48:20 -0800
+Subject: [PATCH] gprofng: fix build with -std=gnu23
+
+Fix function pointer types accordingly.
+Remove unused function pointers.
+
+gprofng/ChangeLog
+2024-11-21  Vladimir Mezentsev  <vladimir.mezentsev@oracle.com>
+
+	PR gprofng/32374
+	PR gprofng/32373
+	* common/cpuid.c: Define ATTRIBUTE_UNUSED if necessary.
+	* libcollector/libcol_util.c (sysinfo): Remove unused pointer.
+	* src/collector_module.h: Likewise.
+	* libcollector/dispatcher.c (setitimer): Fix prototype.
+	* libcollector/linetrace.c (system, grantpt, ptsname): Likewise.
+	* testsuite/gprofng.display/mttest/mttest.c (dump_arrays): Likewise.
+	* testsuite/gprofng.display/synprog/endcases.c (xinline_code,
+	s_inline_code): Likewise.
+	* testsuite/gprofng.display/synprog/inc_inline.h (ext_inline_code):
+	Likewise.
+	* testsuite/gprofng.display/synprog/synprog.c (doabort): Rename nullptr.
+
+Upstream: 4e943705e3e8a5a9448d087502bcb390a694ad02
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ gprofng/common/cpuid.c                                 |  2 ++
+ gprofng/libcollector/dispatcher.c                      |  2 +-
+ gprofng/libcollector/libcol_util.c                     |  9 ---------
+ gprofng/libcollector/linetrace.c                       | 10 +++++-----
+ gprofng/src/collector_module.h                         |  1 -
+ gprofng/testsuite/gprofng.display/mttest/mttest.c      |  2 +-
+ gprofng/testsuite/gprofng.display/synprog/endcases.c   |  4 ++--
+ gprofng/testsuite/gprofng.display/synprog/inc_inline.h |  2 +-
+ gprofng/testsuite/gprofng.display/synprog/synprog.c    |  4 ++--
+ 9 files changed, 14 insertions(+), 22 deletions(-)
+
+diff --git a/gprofng/common/cpuid.c b/gprofng/common/cpuid.c
+index 891d5471335..b4caef54f57 100644
+--- a/gprofng/common/cpuid.c
++++ b/gprofng/common/cpuid.c
+@@ -21,7 +21,9 @@
+ #if defined(__i386__) || defined(__x86_64)
+ #include <cpuid.h>  /* GCC-provided */
+ #elif defined(__aarch64__)
++#if !defined(ATTRIBUTE_UNUSED)
+ #define ATTRIBUTE_UNUSED __attribute__((unused))
++#endif
+ 
+ static inline uint_t __attribute_const__
+ __get_cpuid (unsigned int op ATTRIBUTE_UNUSED, unsigned int *eax,
+diff --git a/gprofng/libcollector/dispatcher.c b/gprofng/libcollector/dispatcher.c
+index 4eda18ec324..6f0364cc52c 100644
+--- a/gprofng/libcollector/dispatcher.c
++++ b/gprofng/libcollector/dispatcher.c
+@@ -1280,4 +1280,4 @@ __collector_ext_clone_pthread (int (*fn)(void *), void *child_stack, int flags,
+ // weak symbols:
+ int sigprocmask (int, const sigset_t*, sigset_t*) __attribute__ ((weak, alias ("__collector_sigprocmask")));
+ int thr_sigsetmask (int, const sigset_t*, sigset_t*) __attribute__ ((weak, alias ("__collector_thr_sigsetmask")));
+-int setitimer () __attribute__ ((weak, alias ("_setitimer")));
++__typeof(setitimer) setitimer __attribute__ ((weak, alias ("_setitimer")));
+diff --git a/gprofng/libcollector/libcol_util.c b/gprofng/libcollector/libcol_util.c
+index a73488e3f60..77dc886be22 100644
+--- a/gprofng/libcollector/libcol_util.c
++++ b/gprofng/libcollector/libcol_util.c
+@@ -1427,15 +1427,6 @@ __collector_util_init ()
+       err = COL_ERROR_UTIL_INIT;
+     }
+ 
+-  ptr = dlsym (libc, "sysinfo");
+-  if (ptr)
+-    __collector_util_funcs.sysinfo = (long (*)())ptr;
+-  else
+-    {
+-      CALL_UTIL (fprintf)(stderr, "collector_util_init COL_ERROR_UTIL_INIT sysinfo: %s\n", dlerror ());
+-      err = COL_ERROR_UTIL_INIT;
+-    }
+-
+   ptr = dlsym (libc, "clearenv");
+   if (ptr)
+     __collector_util_funcs.clearenv = (int(*)())ptr;
+diff --git a/gprofng/libcollector/linetrace.c b/gprofng/libcollector/linetrace.c
+index 66844bc1337..c81ae1a2272 100644
+--- a/gprofng/libcollector/linetrace.c
++++ b/gprofng/libcollector/linetrace.c
+@@ -1527,7 +1527,7 @@ DCL_FUNC_VER (DCL_POSIX_SPAWNP, posix_spawnp_2_2, posix_spawnp@GLIBC_2.2)
+ DCL_POSIX_SPAWNP (posix_spawnp)
+ 
+ /*------------------------------------------------------------- system */
+-int system () __attribute__ ((weak, alias ("__collector_system")));
++int system (const char *cmd) __attribute__ ((weak, alias ("__collector_system")));
+ 
+ int
+ __collector_system (const char *cmd)
+@@ -1582,10 +1582,10 @@ DCL_FUNC_VER (DCL_POPEN, popen_2_0, popen@GLIBC_2.0)
+ DCL_POPEN (popen)
+ 
+ /*------------------------------------------------------------- grantpt */
+-int grantpt () __attribute__ ((weak, alias ("__collector_grantpt")));
++int grantpt (int fildes) __attribute__ ((weak, alias ("__collector_grantpt")));
+ 
+ int
+-__collector_grantpt (const int fildes)
++__collector_grantpt (int fildes)
+ {
+   if (NULL_PTR (grantpt))
+     init_lineage_intf ();
+@@ -1607,10 +1607,10 @@ __collector_grantpt (const int fildes)
+ }
+ 
+ /*------------------------------------------------------------- ptsname */
+-char *ptsname () __attribute__ ((weak, alias ("__collector_ptsname")));
++char *ptsname (int fildes) __attribute__ ((weak, alias ("__collector_ptsname")));
+ 
+ char *
+-__collector_ptsname (const int fildes)
++__collector_ptsname (int fildes)
+ {
+   if (NULL_PTR (ptsname))
+     init_lineage_intf ();
+diff --git a/gprofng/src/collector_module.h b/gprofng/src/collector_module.h
+index fd888cd58dd..6640f12fa3c 100644
+--- a/gprofng/src/collector_module.h
++++ b/gprofng/src/collector_module.h
+@@ -107,7 +107,6 @@ typedef struct CollectorUtilFuncs
+   int (*symlink)(const char *s1, const char *s2);
+   int (*syscall)(int number, ...);
+   long (*sysconf)(int name);
+-  long (*sysinfo)(int command, char *buf, long count);
+   time_t (*time)(time_t *tloc);
+   int (*unsetenv)(const char *name);
+   int (*vsnprintf)(char *str, size_t size, const char *format, ...);
+diff --git a/gprofng/testsuite/gprofng.display/mttest/mttest.c b/gprofng/testsuite/gprofng.display/mttest/mttest.c
+index e0835c833e5..3db5b8d8e86 100644
+--- a/gprofng/testsuite/gprofng.display/mttest/mttest.c
++++ b/gprofng/testsuite/gprofng.display/mttest/mttest.c
+@@ -171,7 +171,7 @@ void computeJ (workStruct_t *x);
+ void computeK (workStruct_t *x);
+ void addone (workCtr_t *x);
+ void init_arrays (int strat);
+-void dump_arrays ();
++void dump_arrays (hrtime_t real, hrtime_t cpu, int case_index);
+ void *do_work (void *v);
+ void thread_work ();
+ void nothreads (Workblk *array, struct scripttab *k);
+diff --git a/gprofng/testsuite/gprofng.display/synprog/endcases.c b/gprofng/testsuite/gprofng.display/synprog/endcases.c
+index a6a1389658a..6f1c83b6859 100644
+--- a/gprofng/testsuite/gprofng.display/synprog/endcases.c
++++ b/gprofng/testsuite/gprofng.display/synprog/endcases.c
+@@ -40,8 +40,8 @@ static void s_inline_code (int);
+ void ext_inline_code (int);
+ 
+ #ifndef NO_INLINE
+-void xinline_code () __attribute__ ((always_inline));
+-void s_inline_code () __attribute__ ((always_inline));
++void xinline_code (int) __attribute__ ((always_inline));
++void s_inline_code (int) __attribute__ ((always_inline));
+ #endif
+ 
+ #include "inc_inline.h"
+diff --git a/gprofng/testsuite/gprofng.display/synprog/inc_inline.h b/gprofng/testsuite/gprofng.display/synprog/inc_inline.h
+index da42563c828..6600eacb66d 100644
+--- a/gprofng/testsuite/gprofng.display/synprog/inc_inline.h
++++ b/gprofng/testsuite/gprofng.display/synprog/inc_inline.h
+@@ -19,7 +19,7 @@
+    MA 02110-1301, USA.  */
+ 
+ #ifndef NO_INLINE
+-void ext_inline_code() __attribute__ ((always_inline));
++void ext_inline_code(int) __attribute__ ((always_inline));
+ #endif
+ 
+ void
+diff --git a/gprofng/testsuite/gprofng.display/synprog/synprog.c b/gprofng/testsuite/gprofng.display/synprog/synprog.c
+index cf1bc5b0909..05920dc7419 100644
+--- a/gprofng/testsuite/gprofng.display/synprog/synprog.c
++++ b/gprofng/testsuite/gprofng.display/synprog/synprog.c
+@@ -528,14 +528,14 @@ reapchildren ()
+ int
+ doabort (int k)
+ {
+-  char *nullptr = NULL;
++  char *p = NULL;
+   char c;
+ 
+   /* Log the event */
+   wlog ("start of doabort", NULL);
+ 
+   /* and dereference a NULL */
+-  c = *nullptr;
++  c = *p;
+ 
+   /* this should never be reached */
+   return (int) c;
+-- 
+2.50.1
+
