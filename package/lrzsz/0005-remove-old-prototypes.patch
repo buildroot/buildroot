@@ -1,0 +1,38 @@
+From 8d91782ae404c59f42029b3af394fbccb2d43856 Mon Sep 17 00:00:00 2001
+From: Uwe Ohse <uwe@ohse.de>
+Date: Mon, 2 Mar 2020 21:24:45 +0000
+Subject: [PATCH] remove old prototypes
+
+Upstream: 34f9527076276aace5fc2e31388e09aaaf1773eb
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/lrz.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/src/lrz.c b/src/lrz.c
+index 63e1326..a31e82d 100644
+--- a/src/lrz.c
++++ b/src/lrz.c
+@@ -32,6 +32,7 @@
+ #include <ctype.h>
+ #include <errno.h>
+ #include <getopt.h>
++#include <time.h>
+ 
+ #ifdef HAVE_UTIME_H
+ #include <utime.h>
+@@ -42,11 +43,6 @@
+ #include "xstrtoul.h"
+ #include "error.h"
+ 
+-#ifndef STRICT_PROTOTYPES
+-extern time_t time();
+-extern char *strerror();
+-extern char *strstr();
+-#endif
+ 
+ #ifndef HAVE_ERRNO_DECLARATION
+ extern int errno;
+-- 
+2.50.1
+

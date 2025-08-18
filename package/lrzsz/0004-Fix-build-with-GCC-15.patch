@@ -1,0 +1,93 @@
+From 01a8cdf3f8e64b80ff219c250c899605c50312f5 Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Sat, 22 Mar 2025 23:06:54 -0700
+Subject: [PATCH] Fix build with GCC 15
+
+This is collection of changes needed to get compiling with gcc-15
+which switched to use C23 as default std.
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+Upstream: https://github.com/UweOhse/lrzsz/pull/8
+Signed-off-by: Frank Chung <uuidxx@163.com>
+---
+ lib/error.c        | 2 +-
+ lib/getopt.h       | 2 +-
+ lib/long-options.c | 3 ++-
+ lib/long-options.h | 2 +-
+ lib/xstrtol.c      | 2 --
+ 5 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/lib/error.c b/lib/error.c
+index 3861578..2a2f1ff 100644
+--- a/lib/error.c
++++ b/lib/error.c
+@@ -74,7 +74,7 @@ extern char *program_name;
+ 
+ # if HAVE_STRERROR
+ #  ifndef strerror		/* On some systems, strerror is a macro */
+-char *strerror ();
++char *strerror (int);
+ #  endif
+ # else
+ static char *
+diff --git a/lib/getopt.h b/lib/getopt.h
+index 4ac33b7..46971cb 100644
+--- a/lib/getopt.h
++++ b/lib/getopt.h
+@@ -101,7 +101,7 @@ struct option
+    errors, only prototype getopt for the GNU C library.  */
+ extern int getopt (int argc, char *const *argv, const char *shortopts);
+ #else /* not __GNU_LIBRARY__ */
+-extern int getopt ();
++extern int getopt (int, char * const [], const char *);
+ #endif /* __GNU_LIBRARY__ */
+ extern int getopt_long (int argc, char *const *argv, const char *shortopts,
+ 		        const struct option *longopts, int *longind);
+diff --git a/lib/long-options.c b/lib/long-options.c
+index fe069fd..4db5cea 100644
+--- a/lib/long-options.c
++++ b/lib/long-options.c
+@@ -22,6 +22,7 @@
+ #endif
+ 
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <getopt.h>
+ #include "long-options.h"
+ 
+@@ -43,7 +44,7 @@ parse_long_options (argc, argv,version, usage)
+      int argc;
+      char **argv;
+      void (*version)();
+-     void (*usage)();
++     void (*usage)(int);
+ #endif
+ {
+   int c;
+diff --git a/lib/long-options.h b/lib/long-options.h
+index 14459cd..3fb8fa6 100644
+--- a/lib/long-options.h
++++ b/lib/long-options.h
+@@ -6,5 +6,5 @@
+ #endif
+ 
+ void parse_long_options __P ((int _argc, char **_argv, 
+-							  void (*_version) (void), 
++							  void (*_version) (), 
+ 							  void (*_usage) (int)));
+diff --git a/lib/xstrtol.c b/lib/xstrtol.c
+index d7b4b56..7d0737d 100644
+--- a/lib/xstrtol.c
++++ b/lib/xstrtol.c
+@@ -65,8 +65,6 @@ extern int errno;
+ 	}								\
+       while (0)
+ 
+-__unsigned long int __strtol ();
+-
+ /* FIXME: comment.  */
+ 
+ strtol_error
+-- 
+2.50.1
+

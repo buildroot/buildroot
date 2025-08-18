@@ -1,0 +1,31 @@
+From 755da0781a2b20674f183cbf8cddf28ac56f7bad Mon Sep 17 00:00:00 2001
+From: Uwe Ohse <uwe@ohse.de>
+Date: Mon, 2 Mar 2020 21:26:21 +0000
+Subject: [PATCH] remove old prototypes
+
+Upstream: 7cdaef47634d2d8944a4192bb87c6e57dd24c41f
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/lsz.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/src/lsz.c b/src/lsz.c
+index 1598150..b8041b2 100644
+--- a/src/lsz.c
++++ b/src/lsz.c
+@@ -51,12 +51,6 @@ void *mm_addr=NULL;
+ #include "xstrtoul.h"
+ #include "error.h"
+ 
+-#ifndef STRICT_PROTOTYPES
+-extern time_t time();
+-extern char *strerror();
+-extern char *strstr();
+-#endif
+-
+ #ifndef HAVE_ERRNO_DECLARATION
+ extern int errno;
+ #endif
+-- 
+2.50.1
+
