@@ -1,0 +1,53 @@
+From d05241ce690018548857199bd34d7734c7164679 Mon Sep 17 00:00:00 2001
+From: Serhei Makarov <serhei@serhei.io>
+Date: Mon, 5 May 2025 12:08:55 -0400
+Subject: [PATCH] PR32930 backends/: guard asm/perf_regs.h include
+
+asm/perf_regs.h is an arch-specific linux include, not present on
+architectures like hppa and m68k that lack perf_events support.
+
+Only one place we need to fix; others already guard the include by
+architecture, or use architecture-independent headers (e.g.
+linux/perf_events.h).
+
+* backends/libebl_PERF_FLAGS.h: Only include asm/perf_regs.h on
+  architectures where we use it.
+
+Signed-off-by: Serhei Makarov <serhei@serhei.io>
+Upstream: d05241ce690018548857199bd34d7734c7164679
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ backends/libebl_PERF_FLAGS.h | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/backends/libebl_PERF_FLAGS.h b/backends/libebl_PERF_FLAGS.h
+index 2ed45f0f..51c20ea6 100644
+--- a/backends/libebl_PERF_FLAGS.h
++++ b/backends/libebl_PERF_FLAGS.h
+@@ -32,8 +32,12 @@
+ #define _LIBEBL_PERF_FLAGS_H 1
+ 
+ #if defined(__linux__)
++/* XXX Need to exclude __linux__ arches without perf_regs.h. */
++#if defined(__x86_64__) || defined(__i386__)
++/* || defined(other_architecture)... */
+ # include <asm/perf_regs.h>
+ #endif
++#endif
+ 
+ #if defined(_ASM_X86_PERF_REGS_H)
+ /* See the code in x86_initreg_sample.c for list of required regs and
+@@ -49,8 +53,8 @@
+    see the code in tools/perf/util/intel-pt.c intel_pt_add_gp_regs()
+    and note how regs are added in the same order as the perf_regs.h enum.  */
+ #else
+-/* Since asm/perf_regs.h gives the register layout for a different arch,
+-   we can't unwind x86_64 frames.  */
++/* Since asm/perf_regs.h is absent, or gives the register layout for a
++   different arch, we can't unwind i386 and x86_64 frames. */
+ #define PERF_FRAME_REGISTERS_I386 0
+ #define PERF_FRAME_REGISTERS_X86_64 0
+ #endif
+-- 
+2.50.1
+
