@@ -47,6 +47,13 @@ BINUTILS_DISABLE_GDB_CONF_OPTS = \
 	--disable-gdb
 
 # We need to specify host & target to avoid breaking ARM EABI
+#
+# --with-system-readline to never build readline, as binutils doesn't
+# need it (only gdb does). For binutils release tarballs, readline
+# is not shipped, but when we get it from git, it is present and
+# gets built which can cause build issues, so force skipping
+# it. Note: the configure script will not check for readline as it
+# doesn't need it.
 BINUTILS_CONF_OPTS = \
 	--disable-multilib \
 	--disable-werror \
@@ -58,7 +65,8 @@ BINUTILS_CONF_OPTS = \
 	--disable-gprofng \
 	$(BINUTILS_DISABLE_GDB_CONF_OPTS) \
 	$(BINUTILS_EXTRA_CONFIG_OPTIONS) \
-	--without-zstd
+	--without-zstd \
+	--with-system-readline
 
 ifeq ($(BR2_STATIC_LIBS),y)
 BINUTILS_CONF_OPTS += --disable-plugins
@@ -82,6 +90,13 @@ endif
 
 # "host" binutils should actually be "cross"
 # We just keep the convention of "host utility" for now
+#
+# --with-system-readline to never build readline, as binutils doesn't
+# need it (only gdb does). For binutils release tarballs, readline
+# is not shipped, but when we get it from git, it is present and
+# gets built which can cause build issues, so force skipping
+# it. Note: the configure script will not check for readline as it
+# doesn't need it.
 HOST_BINUTILS_CONF_OPTS = \
 	--disable-multilib \
 	--disable-werror \
@@ -95,7 +110,8 @@ HOST_BINUTILS_CONF_OPTS = \
 	--enable-lto \
 	$(BINUTILS_DISABLE_GDB_CONF_OPTS) \
 	$(BINUTILS_EXTRA_CONFIG_OPTIONS) \
-	--without-zstd
+	--without-zstd \
+	--with-system-readline
 
 ifeq ($(BR2_BINUTILS_GPROFNG),y)
 HOST_BINUTILS_DEPENDENCIES += host-bison
