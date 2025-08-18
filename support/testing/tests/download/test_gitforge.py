@@ -5,7 +5,10 @@ import infra
 
 
 class GitforgeTestBase(infra.basetest.BRConfigTest):
-    config = ""
+    config = \
+        """
+        BR2_BACKUP_SITE=""
+        """
 
     def setUp(self):
         super(GitforgeTestBase, self).setUp()

@@ -7,7 +7,9 @@ import infra
 
 
 class SSHTestBase(infra.basetest.BRConfigTest):
-    config = infra.basetest.MINIMAL_CONFIG
+    config = infra.basetest.MINIMAL_CONFIG + '''
+BR2_BACKUP_SITE=""
+'''
     sshd_test_dir = infra.filepath("tests/download/sshd")
     sshd = None
 
