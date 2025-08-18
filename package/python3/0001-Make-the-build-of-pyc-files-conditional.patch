@@ -1,4 +1,4 @@
-From 96a5a899445bee3bc1b750cc4aca730cc1733375 Mon Sep 17 00:00:00 2001
+From 52bb6f2a3ef352cda16d95a588a0356da562de8e Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 16:21:31 -0800
 Subject: [PATCH] Make the build of pyc files conditional
@@ -21,10 +21,10 @@ Signed-off-by: Vincent Fazio <vfazio@gmail.com>
  2 files changed, 9 insertions(+)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 46a37ded970..b9a2ab2b02b 100644
+index a7dc9709d62..a1d460b36f4 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2563,6 +2563,7 @@ libinstall:	all $(srcdir)/Modules/xxmodule.c
+@@ -2570,6 +2570,7 @@ libinstall:	all $(srcdir)/Modules/xxmodule.c
  		patch --force --reject-file "$(abs_builddir)/app-store-compliance.rej" --strip 2 --directory "$(DESTDIR)$(LIBDEST)" --input "$(abs_srcdir)/$(APP_STORE_COMPLIANCE_PATCH)" || true ; \
  	fi
  	@ # Build PYC files for the 3 optimization levels (0, 1, 2)
@@ -32,7 +32,7 @@ index 46a37ded970..b9a2ab2b02b 100644
  	-PYTHONPATH=$(DESTDIR)$(LIBDEST) $(RUNSHARED) \
  		$(PYTHON_FOR_BUILD) -Wi $(DESTDIR)$(LIBDEST)/compileall.py \
  		-o 0 -o 1 -o 2 $(COMPILEALL_OPTS) -d $(LIBDEST) -f \
-@@ -2572,6 +2573,7 @@ libinstall:	all $(srcdir)/Modules/xxmodule.c
+@@ -2579,6 +2580,7 @@ libinstall:	all $(srcdir)/Modules/xxmodule.c
  		$(PYTHON_FOR_BUILD) -Wi $(DESTDIR)$(LIBDEST)/compileall.py \
  		-o 0 -o 1 -o 2 $(COMPILEALL_OPTS) -d $(LIBDEST)/site-packages -f \
  		-x badsyntax $(DESTDIR)$(LIBDEST)/site-packages
@@ -41,7 +41,7 @@ index 46a37ded970..b9a2ab2b02b 100644
  # bpo-21536: Misc/python-config.sh is generated in the build directory
  # from $(srcdir)Misc/python-config.sh.in.
 diff --git a/configure.ac b/configure.ac
-index 3fcb18922c5..c60381f9605 100644
+index 597a44b331a..edac73ec5d3 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -1513,6 +1513,13 @@ fi
@@ -59,5 +59,5 @@ index 3fcb18922c5..c60381f9605 100644
  # library that we build, but we do not want to link against it (we
  # will find it with a -framework option). For this reason there is an
 -- 
-2.34.1
+2.50.1
 

@@ -1,4 +1,4 @@
-From 7db6ccbed6dd0b47011d1dfecb040d447ccf4595 Mon Sep 17 00:00:00 2001
+From 8ba9dc9a12687d37454dd949409599f108f1ce44 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:07:56 -0800
 Subject: [PATCH] Add an option to disable pydoc
@@ -24,10 +24,10 @@ Signed-off-by: Vincent Fazio <vfazio@gmail.com>
  2 files changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index b9a2ab2b02b..4360b60165a 100644
+index a1d460b36f4..81f3fd54ee4 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2275,7 +2275,9 @@ bininstall: commoninstall altbininstall
+@@ -2281,7 +2281,9 @@ bininstall: commoninstall altbininstall
  	-rm -f $(DESTDIR)$(BINDIR)/idle3
  	(cd $(DESTDIR)$(BINDIR); $(LN) -s idle$(VERSION) idle3)
  	-rm -f $(DESTDIR)$(BINDIR)/pydoc3
@@ -37,7 +37,7 @@ index b9a2ab2b02b..4360b60165a 100644
  	if test "x$(LIPO_32BIT_FLAGS)" != "x" ; then \
  		rm -f $(DESTDIR)$(BINDIR)/python3-32$(EXE); \
  		(cd $(DESTDIR)$(BINDIR); $(LN) -s python$(VERSION)-32$(EXE) python3-32$(EXE)) \
-@@ -2325,7 +2327,6 @@ LIBSUBDIRS=	asyncio \
+@@ -2331,7 +2333,6 @@ LIBSUBDIRS=	asyncio \
  		logging \
  		multiprocessing multiprocessing/dummy \
  		pathlib \
@@ -45,7 +45,7 @@ index b9a2ab2b02b..4360b60165a 100644
  		re \
  		site-packages \
  		sqlite3 \
-@@ -2483,6 +2484,10 @@ TESTSUBDIRS=	idlelib/idle_test \
+@@ -2490,6 +2491,10 @@ TESTSUBDIRS=	idlelib/idle_test \
  
  COMPILEALL_OPTS=-j0
  
@@ -56,7 +56,7 @@ index b9a2ab2b02b..4360b60165a 100644
  TEST_MODULES=@TEST_MODULES@
  
  .PHONY: libinstall
-@@ -2710,7 +2715,9 @@ libainstall: all scripts
+@@ -2717,7 +2722,9 @@ libainstall: all scripts
  	$(INSTALL_SCRIPT) python-config.py $(DESTDIR)$(LIBPL)/python-config.py
  	$(INSTALL_SCRIPT) python-config $(DESTDIR)$(BINDIR)/python$(LDVERSION)-config
  	$(INSTALL_SCRIPT) $(SCRIPT_IDLE) $(DESTDIR)$(BINDIR)/idle$(VERSION)
@@ -67,10 +67,10 @@ index b9a2ab2b02b..4360b60165a 100644
  		"`echo $(MACHDEP) | sed 's/^\(...\).*/\1/'`" = "aix" ]; then \
  		echo; echo "Installing support files for building shared extension modules on AIX:"; \
 diff --git a/configure.ac b/configure.ac
-index c60381f9605..583adc7e16a 100644
+index edac73ec5d3..7ed4fa578f3 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4661,6 +4661,12 @@ AS_VAR_IF([posix_threads], [stub], [
+@@ -4749,6 +4749,12 @@ AS_VAR_IF([posix_threads], [stub], [
    AC_DEFINE([HAVE_PTHREAD_STUBS], [1], [Define if platform requires stubbed pthreads support])
  ])
  
@@ -84,5 +84,5 @@ index c60381f9605..583adc7e16a 100644
  AH_TEMPLATE([ENABLE_IPV6], [Define if --enable-ipv6 is specified])
  AC_MSG_CHECKING([if --enable-ipv6 is specified])
 -- 
-2.34.1
+2.50.1
 

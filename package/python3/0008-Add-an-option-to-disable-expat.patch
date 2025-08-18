@@ -1,4 +1,4 @@
-From fb7d73d6e3c4cdc9cb272120845103b1aa965240 Mon Sep 17 00:00:00 2001
+From 2a7412e43554830ffbc831454de8df903e765b73 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:40:45 -0800
 Subject: [PATCH] Add an option to disable expat
@@ -25,10 +25,10 @@ Signed-off-by: Vincent Fazio <vfazio@gmail.com>
  2 files changed, 17 insertions(+), 12 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index a4531d1f0fc..f6719bd19b3 100644
+index bfb6cb65354..7a662ea4b32 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2336,7 +2336,6 @@ LIBSUBDIRS=	asyncio \
+@@ -2342,7 +2342,6 @@ LIBSUBDIRS=	asyncio \
  		urllib \
  		venv venv/scripts venv/scripts/common venv/scripts/posix \
  		wsgiref \
@@ -36,7 +36,7 @@ index a4531d1f0fc..f6719bd19b3 100644
  		xmlrpc \
  		zipfile zipfile/_path \
  		zoneinfo \
-@@ -2501,6 +2500,10 @@ ifeq (@SQLITE3@,yes)
+@@ -2508,6 +2507,10 @@ ifeq (@SQLITE3@,yes)
  LIBSUBDIRS += sqlite3
  endif
  
@@ -48,10 +48,10 @@ index a4531d1f0fc..f6719bd19b3 100644
  
  .PHONY: libinstall
 diff --git a/configure.ac b/configure.ac
-index 30ad6f1e68d..370eb94730f 100644
+index 0895dc57808..34e4d5dd244 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3970,17 +3970,19 @@ LIBS="$withval $LIBS"
+@@ -4058,17 +4058,19 @@ LIBS="$withval $LIBS"
  [AC_MSG_RESULT([no])])
  
  # Check for use of the system expat library
@@ -83,5 +83,5 @@ index 30ad6f1e68d..370eb94730f 100644
    LIBEXPAT_LDFLAGS=${LIBEXPAT_LDFLAGS-"-lexpat"}
    LIBEXPAT_INTERNAL=
 -- 
-2.34.1
+2.50.1
 

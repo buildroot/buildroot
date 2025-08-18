@@ -1,4 +1,4 @@
-From 3de626186e6abeb23f0c3c0f6442058884e4a3f6 Mon Sep 17 00:00:00 2001
+From 930c4763ac46d180880615eceeb68698e9b35e85 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Date: Tue, 6 Feb 2024 22:46:59 +0100
 Subject: [PATCH] configure.ac: move PY_STDLIB_MOD_SET_NA further up
@@ -16,7 +16,7 @@ Signed-off-by: Vincent Fazio <vfazio@gmail.com>
  1 file changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 744c5bebd39..8d56a24ffcb 100644
+index d5dac4bf8bc..6635aaa134d 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -95,6 +95,12 @@ AC_DEFUN([PY_CHECK_EMSCRIPTEN_PORT], [
@@ -32,7 +32,7 @@ index 744c5bebd39..8d56a24ffcb 100644
  AC_SUBST([BASECPPFLAGS])
  if test "$srcdir" != . -a "$srcdir" != "$(pwd)"; then
      # If we're building out-of-tree, we need to make sure the following
-@@ -7478,13 +7484,6 @@ AS_VAR_IF([ac_cv_libatomic_needed], [yes],
+@@ -7595,13 +7601,6 @@ AS_VAR_IF([ac_cv_libatomic_needed], [yes],
             LIBATOMIC=${LIBATOMIC-"-latomic"}])
  _RESTORE_VAR([CPPFLAGS])
  
@@ -47,5 +47,5 @@ index 744c5bebd39..8d56a24ffcb 100644
  dnl Modules that are not available on some platforms
  AS_CASE([$ac_sys_system],
 -- 
-2.34.1
+2.50.1
 

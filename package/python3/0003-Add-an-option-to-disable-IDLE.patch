@@ -1,4 +1,4 @@
-From 8da950588cd2597a6588a46374ad917d642c583d Mon Sep 17 00:00:00 2001
+From 463c64020b288b8ddfd32a63c4a23ab7369b9669 Mon Sep 17 00:00:00 2001
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:45:14 -0800
 Subject: [PATCH] Add an option to disable IDLE
@@ -23,10 +23,10 @@ Signed-off-by: Vincent Fazio <vfazio@gmail.com>
  2 files changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 4360b60165a..e88f89b91b1 100644
+index 81f3fd54ee4..2d067730633 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2273,7 +2273,9 @@ bininstall: commoninstall altbininstall
+@@ -2279,7 +2279,9 @@ bininstall: commoninstall altbininstall
  	-rm -f $(DESTDIR)$(LIBPC)/python3-embed.pc
  	(cd $(DESTDIR)$(LIBPC); $(LN) -s python-$(VERSION)-embed.pc python3-embed.pc)
  	-rm -f $(DESTDIR)$(BINDIR)/idle3
@@ -36,7 +36,7 @@ index 4360b60165a..e88f89b91b1 100644
  	-rm -f $(DESTDIR)$(BINDIR)/pydoc3
  ifeq (@PYDOC@,yes)
  	(cd $(DESTDIR)$(BINDIR); $(LN) -s pydoc$(VERSION) pydoc3)
-@@ -2321,7 +2323,6 @@ LIBSUBDIRS=	asyncio \
+@@ -2327,7 +2329,6 @@ LIBSUBDIRS=	asyncio \
  		ensurepip ensurepip/_bundled \
  		html \
  		http \
@@ -44,7 +44,7 @@ index 4360b60165a..e88f89b91b1 100644
  		importlib importlib/resources importlib/metadata \
  		json \
  		logging \
-@@ -2488,6 +2489,10 @@ ifeq (@PYDOC@,yes)
+@@ -2495,6 +2496,10 @@ ifeq (@PYDOC@,yes)
  LIBSUBDIRS += pydoc_data
  endif
  
@@ -55,7 +55,7 @@ index 4360b60165a..e88f89b91b1 100644
  TEST_MODULES=@TEST_MODULES@
  
  .PHONY: libinstall
-@@ -2714,7 +2719,9 @@ libainstall: all scripts
+@@ -2721,7 +2726,9 @@ libainstall: all scripts
  	$(INSTALL_SCRIPT) $(srcdir)/install-sh $(DESTDIR)$(LIBPL)/install-sh
  	$(INSTALL_SCRIPT) python-config.py $(DESTDIR)$(LIBPL)/python-config.py
  	$(INSTALL_SCRIPT) python-config $(DESTDIR)$(BINDIR)/python$(LDVERSION)-config
@@ -66,10 +66,10 @@ index 4360b60165a..e88f89b91b1 100644
  	$(INSTALL_SCRIPT) $(SCRIPT_PYDOC) $(DESTDIR)$(BINDIR)/pydoc$(VERSION)
  endif
 diff --git a/configure.ac b/configure.ac
-index 583adc7e16a..744c5bebd39 100644
+index 7ed4fa578f3..d5dac4bf8bc 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -7810,6 +7810,12 @@ PY_STDLIB_MOD([xxlimited_35], [test "$TEST_MODULES" = yes], [test "$ac_cv_func_d
+@@ -7927,6 +7927,12 @@ PY_STDLIB_MOD([xxlimited_35], [test "$TEST_MODULES" = yes], [test "$ac_cv_func_d
  # substitute multiline block, must come after last PY_STDLIB_MOD()
  AC_SUBST([MODULE_BLOCK])
  
@@ -83,5 +83,5 @@ index 583adc7e16a..744c5bebd39 100644
  AC_CONFIG_FILES(m4_normalize([
    Makefile.pre
 -- 
-2.34.1
+2.50.1
 
