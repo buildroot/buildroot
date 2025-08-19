@@ -1,0 +1,42 @@
+From 1dfc4a60ebf96766b682c464ae69c453ce15105a Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Tue, 19 Aug 2025 20:04:09 +0200
+Subject: [PATCH] examples/userloc_formatter.c: drop usage of sd_debug()
+
+With recent compilers, log4c-localtime fails to build with:
+
+userloc_formatter.c: In function 'userloc_format':
+userloc_formatter.c:30:5: error: implicit declaration of function 'sd_debug' [-Wimplicit-function-declaration]
+   30 |     sd_debug("Formatter s13_userloc checking location info for userdata %X",a_event->evt_loc->loc_data);
+      |     ^~~~~~~~
+make[4]: *** [Makefile:519: userloc_formatter.lo] Error 1
+
+This function seems to be an internal function of the log4c-localtime
+library, and is not used by any other example application. Since it's
+only used to print some debugging information, we simply get rid of
+the problematic code.
+
+Upstream: https://github.com/rcmadruga/log4c-localtime/pull/2
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ examples/userloc_formatter.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/examples/userloc_formatter.c b/examples/userloc_formatter.c
+index 4299a48..7bcf0e9 100644
+--- a/examples/userloc_formatter.c
++++ b/examples/userloc_formatter.c
+@@ -27,10 +27,8 @@ static const char* userloc_format(
+     static char buffer[4096];
+     user_locinfo_t* uloc = NULL;
+ 
+-    sd_debug("Formatter s13_userloc checking location info for userdata %X",a_event->evt_loc->loc_data);
+     if (a_event->evt_loc->loc_data != NULL)
+     {
+-	sd_debug("Formatter s13_userloc getting a valid user location info pointer");
+         uloc = (user_locinfo_t*) a_event->evt_loc->loc_data;
+         sprintf(buffer, "[%s][HOST:%s][PID:%i][FILE:%s][LINE:%i][MSG:%s]",
+ 		a_event->evt_category,  
+-- 
+2.50.1
+
