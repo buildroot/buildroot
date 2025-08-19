@@ -1,0 +1,59 @@
+From 48a22bddfcc67b3a433ded695f906cc314a0bd5f Mon Sep 17 00:00:00 2001
+From: Florian Larysch <fl@n621.de>
+Date: Sun, 17 Aug 2025 00:20:57 +0200
+Subject: [PATCH] fix build on i386 without SSE2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Commit 3cba6b1 ("Use _Float16 for half conversions if available") added
+support for using half-width float support in the compiler to perform
+encoding operations, using the FLT16_MANT_DIG macro to check for
+support on the given target.
+
+However, on x86 GCC only supports this when SSE2 is enabled[1]. Unlike
+clang and the other architectures where support for this is conditional,
+GCC *does* define those macros even without SSE2 support, causing a
+build failure:
+
+  In file included from cborencoder_float.c:29:
+  cborinternal_p.h: In function ‘encode_half’:
+  cborinternal_p.h:56:5: error: invalid conversion to type ‘_Float16’ without option ‘-msse2’
+     56 |     _Float16 f = (_Float16)x;
+        |     ^~~~~~~~
+  cborinternal_p.h: In function ‘decode_half’:
+  cborinternal_p.h:65:5: error: invalid conversion from type ‘_Float16’ without option ‘-msse2’
+     65 |     return (float)f;
+        |
+
+Work around this by additionally checking for this specific condition.
+
+[1] https://gcc.gnu.org/onlinedocs/gcc/Half-Precision.html
+
+Upstream: https://github.com/intel/tinycbor/commit/48a22bddfcc67b3a433ded695f906cc314a0bd5f
+Signed-off-by: Florian Larysch <fl@n621.de>
+---
+ src/cborinternal_p.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/cborinternal_p.h b/src/cborinternal_p.h
+index 19273ac..ee9c117 100644
+--- a/src/cborinternal_p.h
++++ b/src/cborinternal_p.h
+@@ -48,8 +48,12 @@
+ /* Check for FLT16_MANT_DIG using integer comparison. Clang headers incorrectly
+  * define this macro unconditionally when __STDC_WANT_IEC_60559_TYPES_EXT__
+  * is defined (regardless of actual support for _Float16).
++ *
++ * GCC defines these macros but doesn't support arithmetic including
++ * conversions on x86 without SSE2.
+  */
+-#  if FLT16_MANT_DIG > 0 || __FLT16_MANT_DIG__ > 0
++#  if (FLT16_MANT_DIG > 0 || __FLT16_MANT_DIG__ > 0) && \
++      !(defined(__i386__) && !defined(__SSE2__))
+ static inline unsigned short encode_half(float x)
+ {
+     unsigned short h;
+-- 
+2.50.1
+

@@ -1,0 +1,55 @@
+From 45e4641059709862b4e46f3608d140337566334b Mon Sep 17 00:00:00 2001
+From: Thiago Macieira <thiago.macieira@intel.com>
+Date: Wed, 2 Apr 2025 08:39:04 -0700
+Subject: [PATCH] Fix build with GCC < 11: [[fallthrough]] is supported but not
+ allowed in C
+
+I think GCC says `__has_cpp_attribute(fallthrough)` is true because C++
+supports it (it means "has C++ attribute"), but that doesn't apply to
+the C language. This causes a compilation error:
+
+```
+compilersupport_p.h:57:41: error: expected expression before '[' token
+   57 | #    define CBOR_FALLTHROUGH            [[fallthrough]]
+      |                                         ^
+cborparser.c:225:13: note: in expansion of macro 'CBOR_FALLTHROUGH'
+  225 |             CBOR_FALLTHROUGH;
+      |             ^~~~~~~~~~~~~~~~
+```
+
+Instead, we should use the C23 `__has_c_attribute` to detect the C
+attribute.
+
+Fixes #293.
+
+Signed-off-by: Thiago Macieira <thiago.macieira@intel.com>
+
+Upstream: https://github.com/intel/tinycbor/commit/45e4641059709862b4e46f3608d140337566334b
+Signed-off-by: Florian Larysch <fl@n621.de>
+---
+ src/compilersupport_p.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/compilersupport_p.h b/src/compilersupport_p.h
+index c91ea93..9251799 100644
+--- a/src/compilersupport_p.h
++++ b/src/compilersupport_p.h
+@@ -52,10 +52,14 @@
+ #  define cbor_static_assert(x)         ((void)sizeof(char[2*!!(x) - 1]))
+ #endif
+ 
+-#if defined(__has_cpp_attribute)    // C23 and C++17
++#if defined(__has_cpp_attribute) && defined(__cplusplus)    // C++17
+ #  if __has_cpp_attribute(fallthrough)
+ #    define CBOR_FALLTHROUGH            [[fallthrough]]
+ #  endif
++#elif defined(__has_c_attribute) && !defined(__cplusplus)   // C23
++#  if __has_c_attribute(fallthrough)
++#    define CBOR_FALLTHROUGH            [[fallthrough]]
++#  endif
+ #endif
+ #ifndef CBOR_FALLTHROUGH
+ #  ifdef __GNUC__
+-- 
+2.50.1
+
