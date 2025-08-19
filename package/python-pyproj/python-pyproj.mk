@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-PYTHON_PYPROJ_VERSION = 3.7.1
+PYTHON_PYPROJ_VERSION = 3.7.2
 PYTHON_PYPROJ_SOURCE = pyproj-$(PYTHON_PYPROJ_VERSION).tar.gz
-PYTHON_PYPROJ_SITE = https://files.pythonhosted.org/packages/67/10/a8480ea27ea4bbe896c168808854d00f2a9b49f95c0319ddcbba693c8a90
+PYTHON_PYPROJ_SITE = https://files.pythonhosted.org/packages/04/90/67bd7260b4ea9b8b20b4f58afef6c223ecb3abf368eb4ec5bc2cdef81b49
 PYTHON_PYPROJ_SETUP_TYPE = setuptools
 PYTHON_PYPROJ_LICENSE = MIT
 PYTHON_PYPROJ_LICENSE_FILES = LICENSE
