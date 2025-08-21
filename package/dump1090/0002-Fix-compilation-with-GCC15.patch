@@ -1,0 +1,50 @@
+From 93be1da123215e8ac15a0deaffedd480e8899f77 Mon Sep 17 00:00:00 2001
+From: Conrad Kostecki <conrad@kostecki.com>
+Date: Tue, 22 Apr 2025 00:41:31 +0200
+Subject: [PATCH] Fix compilation with GCC15
+
+Upstream: https://github.com/flightaware/dump1090/pull/261
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ ais_charset.c | 2 +-
+ ais_charset.h | 2 +-
+ interactive.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/ais_charset.c b/ais_charset.c
+index a487e3c..0d3af03 100644
+--- a/ais_charset.c
++++ b/ais_charset.c
+@@ -1,3 +1,3 @@
+ #include "ais_charset.h"
+ 
+-char ais_charset[64] = "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_ !\"#$%&'()*+,-./0123456789:;<=>?";
++char ais_charset[65] = "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_ !\"#$%&'()*+,-./0123456789:;<=>?";
+diff --git a/ais_charset.h b/ais_charset.h
+index 93d4a72..95ef373 100644
+--- a/ais_charset.h
++++ b/ais_charset.h
+@@ -1,6 +1,6 @@
+ #ifndef AIS_CHARSET_H
+ #define AIS_CHARSET_H
+ 
+-extern char ais_charset[64];
++extern char ais_charset[65];
+ 
+ #endif
+diff --git a/interactive.c b/interactive.c
+index 8761c95..75775ad 100644
+--- a/interactive.c
++++ b/interactive.c
+@@ -140,7 +140,7 @@ void interactiveShowData(void) {
+     static bool need_clear = true;
+     uint64_t now = mstime();
+     char progress;
+-    char spinner[4] = "|/-\\";
++    char spinner[5] = "|/-\\";
+     int valid = 0;
+     double signalMax = -100.0;
+     double signalMin = +100.0;
+-- 
+2.39.5
+
