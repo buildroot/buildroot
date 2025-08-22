@@ -1,0 +1,39 @@
+From d6d5168713b1513dc2a780d21bb33dcf16a7a518 Mon Sep 17 00:00:00 2001
+From: NHOrus <jy6x2b32pie9@yahoo.com>
+Date: Sat, 22 Feb 2025 01:12:32 +0400
+Subject: [PATCH] Add incomplete type definition for WINDOW in Gpm_Wgetch()
+
+Window handle is an opaque pointer that Gpm_Wgetch() passes
+through straight to ncurses if it's not null and calls getch
+if it's null. Code doesn't care what's inside the handle
+as long as it agrees with curses definition.
+
+Upstream: https://github.com/telmich/gpm/pull/49
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/headers/gpm.h | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/src/headers/gpm.h b/src/headers/gpm.h
+index 57dc618..6c53fbf 100644
+--- a/src/headers/gpm.h
++++ b/src/headers/gpm.h
+@@ -268,7 +268,14 @@ Gpm_Roi * Gpm_LowerRoi(Gpm_Roi *which, Gpm_Roi *after);
+ /* libcurses.c */
+ /* #include <curses.h>  Hmm... seems risky */
+ 
+-extern int Gpm_Wgetch();
++/* Window handle is an opaque pointer that Gpm_Wgetch()
++ * passes through to ncurses if it's not null and calls getch
++ * if it's null. Code doesn't care what's inside the handle
++ * as long as it agrees with curses definition.
++*/
++typedef struct _win_st WINDOW;
++
++extern int Gpm_Wgetch(WINDOW *);
+ #define Gpm_Getch() (Gpm_Wgetch(NULL))
+ 
+ /* libxtra.c */
+-- 
+2.50.1
+

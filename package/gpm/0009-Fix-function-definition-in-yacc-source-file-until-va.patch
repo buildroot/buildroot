@@ -1,0 +1,83 @@
+From 4e3d358da1c6066d7a320ffc157ca9e35ed34e49 Mon Sep 17 00:00:00 2001
+From: NHOrus <jy6x2b32pie9@yahoo.com>
+Date: Tue, 11 Feb 2025 19:01:48 +0400
+Subject: [PATCH] Fix function definition in yacc source file until valid C23.
+ Fill empty argument lists with values. Add 0 as third argument for
+ two-argument function, it will be ignored at call site.
+
+Upstream: https://github.com/telmich/gpm/pull/49
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/prog/gpm-root.y | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/src/prog/gpm-root.y b/src/prog/gpm-root.y
+index 7001d6e..56072ac 100644
+--- a/src/prog/gpm-root.y
++++ b/src/prog/gpm-root.y
+@@ -128,7 +128,7 @@ typedef struct DrawItem {
+    char *name;
+    char *arg;   /* a cmd string */
+    void *clientdata;  /* a (Draw *) for menus or whatever   */
+-   int (*fun)();
++   int (*fun)(int, struct DrawItem *, int);
+    struct DrawItem *next;
+ } DrawItem;
+ 
+@@ -159,7 +159,7 @@ int yyerror(char *s);
+ int yylex(void);
+ 
+ DrawItem *cfg_cat(DrawItem *, DrawItem *);
+-DrawItem *cfg_makeitem(int mode, char *msg, int(*fun)(), void *detail);
++DrawItem *cfg_makeitem(int mode, char *msg, int(*fun)(int,  DrawItem *, int), void *detail);
+ 
+ 
+ /*===================================================================*
+@@ -195,7 +195,7 @@ int f_pipe(int mode, DrawItem *self, int uid);
+       char *string;
+       Draw *draw;
+       DrawItem *item;
+-      int (*fun)();
++      int (*fun)(int,  DrawItem *, int);
+       }
+ 
+ %token <string> T_STRING
+@@ -284,7 +284,7 @@ struct tokenName tokenList[] = {
+ struct funcName {
+    char *name;
+    int token;
+-   int (*fun)();
++   int (*fun)(int,  DrawItem *, int);
+    };
+ struct funcName funcList[] = {
+    {"f.debug",T_FUNC,f_debug},
+@@ -390,7 +390,7 @@ Draw *cfg_alloc(void)
+ 
+ /*---------------------------------------------------------------------*/
+ /* malloc an empty DrawItem and fill it */
+-DrawItem *cfg_makeitem(int mode, char *msg, int(*fun)(), void *detail)
++DrawItem *cfg_makeitem(int mode, char *msg, int(*fun)(int,  DrawItem *, int), void *detail)
+ {
+    DrawItem *new=calloc(1,sizeof(DrawItem));
+ 
+@@ -405,7 +405,7 @@ DrawItem *cfg_makeitem(int mode, char *msg, int(*fun)(), void *detail)
+ 
+       case 'F': /* a function without args */
+          new->fun=fun;
+-         if (fun) fun(F_CREATE,new);
++         if (fun) fun(F_CREATE,new,0);
+          break;
+ 
+       case 'M':
+@@ -1047,7 +1047,7 @@ Posted *postmenu(int fd, FILE *f, Draw *draw, int x, int y, int console)
+    }
+    /* sides and items */
+    for (item=draw->menu; y++, item; item=item->next) {
+-         if (item->fun) (*(item->fun))(F_POST,item);
++         if (item->fun) (*(item->fun))(F_POST,item,0);
+          GOTO(x,y); PUTC(VERLINE,draw->bord,draw->back);
+          for (i=0;i<item->pad;i++) PUTC(' ',draw->fore,draw->back);
+          PUTS(item->name,draw->fore,draw->back); i+=strlen(item->name);
+-- 
+2.50.1
+

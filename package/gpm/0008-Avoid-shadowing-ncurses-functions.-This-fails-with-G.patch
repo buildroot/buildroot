@@ -1,0 +1,236 @@
+From 436f3f0a75a42dc9e07f2fe85b73eeb4c95e0515 Mon Sep 17 00:00:00 2001
+From: NHOrus <jy6x2b32pie9@yahoo.com>
+Date: Tue, 11 Feb 2025 18:42:47 +0400
+Subject: [PATCH] Avoid shadowing ncurses functions. This fails with GCC-15 and
+ other compilers implementing C23 Added prefix gpm_ to raw() and noraw() used
+ in two files because they are implemented in same two files, and are static.
+ Same with scr_dump() and src_restore() in yacc source file
+
+Upstream: https://github.com/telmich/gpm/pull/49
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/prog/gpm-root.y   | 10 +++++-----
+ src/prog/hltest.c     | 11 +++++------
+ src/prog/mouse-test.c | 24 ++++++++++++------------
+ 3 files changed, 22 insertions(+), 23 deletions(-)
+
+diff --git a/src/prog/gpm-root.y b/src/prog/gpm-root.y
+index d3d064c..7001d6e 100644
+--- a/src/prog/gpm-root.y
++++ b/src/prog/gpm-root.y
+@@ -939,7 +939,7 @@ static unsigned short clear_sel_args[6]={0, 0,0, 0,0, 4};
+ static unsigned char *clear_sel_arg= (unsigned char *)clear_sel_args+1;
+ 
+ /*------------*/
+-static inline void scr_dump(int fd, FILE *f, unsigned char *buffer, int vc)
++static inline void gpm_scr_dump(int fd, FILE *f, unsigned char *buffer, int vc)
+ {
+    int dumpfd;
+    char dumpname[20];
+@@ -958,7 +958,7 @@ static inline void scr_dump(int fd, FILE *f, unsigned char *buffer, int vc)
+ }
+ 
+ /*------------*/
+-static inline void scr_restore(int fd, FILE *f, unsigned char *buffer, int vc)
++static inline void gpm_scr_restore(int fd, FILE *f, unsigned char *buffer, int vc)
+ {
+    int x,y, dumpfd;
+    char dumpname[20];
+@@ -1002,7 +1002,7 @@ Posted *postmenu(int fd, FILE *f, Draw *draw, int x, int y, int console)
+    if (!new) return NULL;
+    new->draw=draw;
+    new->dump=dump=malloc(opt_buf);
+-   scr_dump(fd,f,dump,console);
++   gpm_scr_dump(fd,f,dump,console);
+    lines=dump[0]; columns=dump[1];
+    i=(columns*dump[3]+dump[2])*2+1; /* where to get it */
+    if (i<0) i=1;
+@@ -1060,7 +1060,7 @@ Posted *postmenu(int fd, FILE *f, Draw *draw, int x, int y, int console)
+    for (i=0; i<draw->width; i++) PUTC(HORLINE,draw->bord,draw->back);
+    PUTC(LRCORNER,draw->bord,draw->back);
+ 
+-   scr_restore(fd,f,dump,console);
++   gpm_scr_restore(fd,f,dump,console);
+    free(dump);
+ 
+ #undef PUTC
+@@ -1077,7 +1077,7 @@ Posted *unpostmenu(int fd, FILE *f, Posted *which, int vc)
+ {
+    Posted *prev=which->prev;
+ 
+-   scr_restore(fd,f,which->dump, vc);
++   gpm_scr_restore(fd,f,which->dump, vc);
+    ioctl(fd,TCXONC,TCOON); /* activate the console */  
+    free(which->dump);
+    free(which);
+diff --git a/src/prog/hltest.c b/src/prog/hltest.c
+index cce0abc..a916873 100644
+--- a/src/prog/hltest.c
++++ b/src/prog/hltest.c
+@@ -80,7 +80,6 @@ int wid,hei,vcsize;
+ unsigned short clear_sel_args[6]={0, 0,0, 0,0, 4};
+ unsigned char *clear_sel_arg= (unsigned char *)clear_sel_args+1;
+ 
+-
+ static inline int scrdump(char *buf)
+ {
+    clear_sel_arg[0]=2;  /* clear_selection */
+@@ -99,7 +98,7 @@ static inline int scrrestore(char *buf)
+ 
+ 
+ /* I don't like curses, so I'm doing low level stuff here */
+-static void raw(void)
++static void gpm_raw(void)
+ {
+ struct termios it;
+ 
+@@ -115,7 +114,7 @@ tcsetattr(fileno(stdin),TCSANOW,&it);
+ 
+ }
+ 
+-static void noraw(void)
++static void gpm_noraw(void)
+ {
+ struct termios it;
+ 
+@@ -136,7 +135,7 @@ void killed(int signo)
+ {
+    CLEAR;
+    fprintf(stderr,"hltest: killed by signal %i\r\n",signo);
+-   noraw();
++   gpm_noraw();
+    exit(0);
+ }
+ 
+@@ -525,7 +524,7 @@ int main(int argc, char **argv)
+    gpm_roi_handler=xhandler;
+    gpm_roi_data=NULL;
+ 
+-   raw();
++   gpm_raw();
+    newmsg(0,NULL); /* init data structures */
+    while((c=Gpm_Getchar())!=EOF) {
+       char s[32];
+@@ -538,6 +537,6 @@ int main(int argc, char **argv)
+    newmsg(roi ? ((WinInfo *)roi->clientdata)->number : 0,s);
+    }
+ 
+-   noraw();
++   gpm_noraw();
+    exit(0);
+ }
+diff --git a/src/prog/mouse-test.c b/src/prog/mouse-test.c
+index 0bb1982..7235bba 100644
+--- a/src/prog/mouse-test.c
++++ b/src/prog/mouse-test.c
+@@ -106,7 +106,7 @@ return 0;
+ /*----------------------------------------------------------------------------- 
+    Place the description here.
+  -----------------------------------------------------------------------------*/
+-static void raw(void)
++static void gpm_raw(void)
+ {
+    struct termios it;
+ 
+@@ -125,7 +125,7 @@ static void raw(void)
+ /*----------------------------------------------------------------------------- 
+    Place the description here.
+  -----------------------------------------------------------------------------*/
+-static void noraw(void)
++static void gpm_noraw(void)
+ {
+    struct termios it;
+ 
+@@ -144,7 +144,7 @@ static void noraw(void)
+ void killed(int signo)
+ {
+    fprintf(stderr,"mouse-test: killed by signal %i\r\n",signo);
+-   noraw();
++   gpm_noraw();
+    exit(0);
+ }
+ 
+@@ -196,7 +196,7 @@ int mousereopen(int oldfd, char *name, Gpm_Type *type)
+ 
+ int noneofthem(void)
+ {
+-   noraw();
++   gpm_noraw();
+    printf("\n\nSomething went wrong, I didn't manage to detect your"
+ 	 "protocol\n\nFeel free to report your problems to the author\n");
+    exit(1);
+@@ -336,7 +336,7 @@ int main(int argc, char **argv)
+    I_serial=mice->init; /* the first one has I_serial */
+ 
+    signal(SIGINT,killed);   /* control-C kills us */
+-   raw();
++   gpm_raw();
+ 
+ /*====================================== First of all, detect the device */
+ 
+@@ -568,7 +568,7 @@ int main(int argc, char **argv)
+    /* why checking and not using return value ??? */
+    CHECKFAIL(typecount);
+    if (typecount==1) {
+-      noraw();
++      gpm_noraw();
+       printf("\n\n\nWell, it seems like your mouse is already detected:\n"
+       "it is on the device \"%s\", and speaks the protocol \"%s\"\n",
+       mousename,list->this->name);
+@@ -587,7 +587,7 @@ int main(int argc, char **argv)
+    } while(i!='y' && i!='n');
+ 
+    if (i=='n') {
+-      noraw();
++      gpm_noraw();
+       printf("\nThen, you should use the \"bare\" protocol on \"%s\"\n",
+ 	   mousename);
+       exit(0);
+@@ -634,7 +634,7 @@ int main(int argc, char **argv)
+    for (pending=0,i=0;i<got-16;i++)
+       if(!memcmp(buf+i,buf+i+8,8)) pending++;
+    if (pending > 3) {
+-      noraw();
++      gpm_noraw();
+       printf("\nYour mouse seems to be a 'mman' one  on \"%s\" (%i matches)\n",
+ 	   mousename,pending);
+       exit(0);
+@@ -660,7 +660,7 @@ int main(int argc, char **argv)
+          continue;
+       }
+ 	   if (pending>3) {
+-	      noraw();
++	      gpm_noraw();
+ 	      printf("\nYour mouse seems to be a '%s' one on \"%s\" (%i matches)\n",
+ 		   cur->this->name,mousename,pending);
+ 	      exit(0);
+@@ -695,7 +695,7 @@ int main(int argc, char **argv)
+          for (pending=0,i=0;i<got-20;i++)
+             if(!memcmp(buf+i,buf+i+10,10)) pending++;
+          if (pending>3) {
+-            noraw();
++            gpm_noraw();
+             printf("\nYour mouse becomes a 3-buttons ('-t msc') one when\n"
+ 	         "gpm gets '-o %s' on it command line, and X gets\n"
+ 	         "%s in XF86Config\nThe device is \"%s\"",
+@@ -726,7 +726,7 @@ int main(int argc, char **argv)
+    for (pending=0,i=0;i<got-20;i++)
+       if(!memcmp(buf+i,buf+i+10,10)) pending++;
+    if (pending>3) {
+-      noraw();
++      gpm_noraw();
+       printf("\nWorked. You should keep the button pressed every time the\n"
+ 	   "computer boots, and run gpm in '-R' mode in order to ignore\n"
+ 	   "such hassle when starting X\n\nStill better, but a better mouse\n"
+@@ -734,7 +734,7 @@ int main(int argc, char **argv)
+ 
+       exit(0);
+    }
+-   noraw();
++   gpm_noraw();
+    printf("\nI'm lost. Can't tell you how to use your middle button\n");
+    return 0;
+ }
+-- 
+2.50.1
+
