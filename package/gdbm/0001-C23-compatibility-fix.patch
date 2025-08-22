@@ -1,0 +1,158 @@
+From 238315e9f4f547dff4f5b9dff2f903385a8048cb Mon Sep 17 00:00:00 2001
+From: Sergey Poznyakoff <gray@gnu.org>
+Date: Sun, 17 Nov 2024 22:58:54 +0200
+Subject: [PATCH] C23 compatibility fix
+
+This fixes https://puszcza.gnu.org.ua/bugs/?642
+
+* tools/var.c (union value): Rename bool to b.
+
+Upstream: 734f69451392ffb6280d8a3aef51e2673c9b8554
+[Thomas: needed a few backporting adjustements]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ tools/var.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/tools/var.c b/tools/var.c
+index 0f285f1..c553ae5 100644
+--- a/tools/var.c
++++ b/tools/var.c
+@@ -27,7 +27,7 @@
+ union value
+ {
+   char *string;
+-  int bool;
++  int b;
+   int num;
+ };
+ 
+@@ -90,7 +90,7 @@ static struct variable vartab[] = {
+     .name = "confirm",
+     .type = VART_BOOL,
+     .flags = VARF_INIT,
+-    .init = { .bool = 1 }
++    .init = { .b = 1 }
+   },
+   {
+     .name = "cachesize",
+@@ -114,32 +114,32 @@ static struct variable vartab[] = {
+     .name = "lock",
+     .type = VART_BOOL,
+     .flags = VARF_INIT,
+-    .init = { .bool = 1 }
++    .init = { .b = 1 }
+   },
+   {
+     .name = "mmap",
+     .type = VART_BOOL,
+     .flags = VARF_INIT,
+-    .init = { .bool = 1 }
++    .init = { .b = 1 }
+   },
+   {
+     .name = "sync",
+     .type = VART_BOOL,
+     .flags = VARF_INIT,
+-    .init = { .bool = 0 }
++    .init = { .b = 0 }
+   },
+   {
+     .name = "coalesce",
+     .type = VART_BOOL,
+     .flags = VARF_INIT,
+-    .init = { .bool = 0 },
++    .init = { .b = 0 },
+     .sethook = coalesce_sethook
+   },
+   {
+     .name = "centfree",
+     .type = VART_BOOL,
+     .flags = VARF_INIT,
+-    .init = { .bool = 0 },
++    .init = { .b = 0 },
+     .sethook = centfree_sethook
+   },
+   {
+@@ -252,21 +252,21 @@ s2b (union value *vp, void *val, int flags)
+   for (i = 0; trueval[i]; i++)
+     if (strcasecmp (trueval[i], val) == 0)
+       {
+-	vp->bool = 1;
++	vp->b = 1;
+ 	return VAR_OK;
+       }
+   
+   for (i = 0; falseval[i]; i++)
+     if (strcasecmp (falseval[i], val) == 0)
+       {
+-	vp->bool = 0;
++	vp->b = 0;
+ 	return VAR_OK;
+       }
+   
+   n = strtoul (val, &p, 0);
+   if (*p)
+     return VAR_ERR_BADTYPE;
+-  vp->bool = !!n;
++  vp->b = !!n;
+   return VAR_OK;
+ }
+   
+@@ -286,7 +286,7 @@ s2i (union value *vp, void *val, int flags)
+ static int
+ b2b (union value *vp, void *val, int flags)
+ {
+-  vp->bool = !!*(int*)val;
++  vp->b = !!*(int*)val;
+   return VAR_OK;
+ }
+ 
+@@ -307,7 +307,7 @@ i2i (union value *vp, void *val, int flags)
+ static int
+ i2b (union value *vp, void *val, int flags)
+ {
+-  vp->bool = *(int*)val;
++  vp->b = *(int*)val;
+   return VAR_OK;
+ }
+ 
+@@ -414,7 +414,7 @@ variable_get (const char *name, int type, void **val)
+       break;
+ 
+     case VART_BOOL:
+-      *(int*)val = vp->v.bool;
++      *(int*)val = vp->v.b;
+       break;
+       
+     case VART_INT:
+@@ -461,7 +461,7 @@ variable_print_all (FILE *fp)
+ 	      break;
+ 	      
+ 	    case VART_BOOL:
+-	      fprintf (fp, "%s%s", vp->v.bool ? "" : "no", vp->name);
++	      fprintf (fp, "%s%s", vp->v.b ? "" : "no", vp->name);
+ 	      break;
+ 	      
+ 	    case VART_STRING:
+@@ -647,7 +647,7 @@ centfree_sethook (struct variable *var, union value *v)
+ {
+   if (!v)
+     return VAR_OK;
+-  return gdbmshell_setopt ("GDBM_SETCENTFREE", GDBM_SETCENTFREE, v->bool) == 0
++  return gdbmshell_setopt ("GDBM_SETCENTFREE", GDBM_SETCENTFREE, v->b) == 0
+          ? VAR_OK : VAR_ERR_GDBM;
+ }
+ 
+@@ -656,7 +656,7 @@ coalesce_sethook (struct variable *var, union value *v)
+ {
+   if (!v)
+     return VAR_OK;
+-  return gdbmshell_setopt ("GDBM_SETCOALESCEBLKS", GDBM_SETCOALESCEBLKS, v->bool) == 0
++  return gdbmshell_setopt ("GDBM_SETCOALESCEBLKS", GDBM_SETCOALESCEBLKS, v->b) == 0
+          ? VAR_OK : VAR_ERR_GDBM;
+ }
+ 
+-- 
+2.50.1
+
