@@ -321,9 +321,12 @@ Now check the coding style for the changes you committed:
 $ utils/docker-run make check-package
 ----
 
-Now, you are ready to generate then submit your patch set.
+This command (unlike calling +utils/check-package+ directly) will also warn
+about any stale entries in the +.checkpackageignore+ file that your patches
+might have resolved. If this is the case, make sure to remove those lines
+from +.checkpackageignore+ as well.
 
-To generate it, run:
+Now, you are ready to generate then submit your patch set. To generate it, run:
 
 ----
 $ git format-patch -M -n -s -o outgoing origin/master
