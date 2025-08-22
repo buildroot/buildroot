@@ -14,6 +14,12 @@ P11_KIT_CONF_ENV = ac_cv_have_decl_program_invocation_short_name=yes \
 P11_KIT_LICENSE = BSD-3-Clause
 P11_KIT_LICENSE_FILES = COPYING
 P11_KIT_CPE_ID_VALID = YES
+# Needed because the pre-generated ./configure script has an old
+# broken expansion of AC_HEADER_STDBOOL, which incorrectly detects
+# that <stdbool.h> cannot be used, causing breakage down the road.
+P11_KIT_AUTORECONF = YES
+# Needed for autoreconf
+P11_KIT_DEPENDENCIES = host-pkgconf
 
 ifeq ($(BR2_PACKAGE_LIBFFI),y)
 P11_KIT_DEPENDENCIES += host-pkgconf libffi
