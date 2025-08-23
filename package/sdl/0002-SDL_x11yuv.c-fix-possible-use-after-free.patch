@@ -1,9 +1,10 @@
-From d7e00208738a0bc6af302723fe64908ac35b777b Mon Sep 17 00:00:00 2001
+From c24c08c9aa0f92213793e5ef404f2c387603d7f8 Mon Sep 17 00:00:00 2001
 From: Ozkan Sezer <sezeroz@gmail.com>
 Date: Sat, 18 Jun 2022 14:55:00 +0300
 Subject: [PATCH] SDL_x11yuv.c: fix possible use-after-free
 
 Fixes: https://github.com/libsdl-org/SDL-1.2/issues/863
+Upstream: d7e00208738a0bc6af302723fe64908ac35b777b
 Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
 ---
  src/video/x11/SDL_x11yuv.c | 2 +-
@@ -24,5 +25,5 @@ index 62698dfd..0d5754e3 100644
  								0, width, height);
  		}
 -- 
-2.30.2
+2.50.1
 
