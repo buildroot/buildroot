@@ -170,7 +170,7 @@ class CVE:
 
     def each_cpe(self):
         for nodes in self.nvd_cve.get('configurations', []):
-            for node in nodes['nodes']:
+            for node in nodes.get('nodes', []):
                 for cpe in self.parse_node(node):
                     yield cpe
 
