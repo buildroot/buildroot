@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2025.08"
 
+config BR2_PACKAGE_THTTPD
+	bool "thttpd has been removed"
+	select BR2_LEGACY
+	help
+	  thttpd is no longer maintained actively by upstream and has
+	  been removed from Buildroot.
+
 config BR2_KERNEL_HEADERS_6_15
 	bool "kernel headers version 6.15.x are no longer supported"
 	select BR2_LEGACY
