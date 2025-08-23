@@ -1,0 +1,28 @@
+From cf6d0ac0d31fcc2e64c83b8105b078e792f2d441 Mon Sep 17 00:00:00 2001
+From: Krawlow <mglarecerca@gmail.com>
+Date: Wed, 23 Mar 2022 16:46:18 +0100
+Subject: [PATCH] Fix raspicommonsettings_parse_cmdline
+
+Fix raspicommonsettings_parse_cmdline's definition to match declaration
+
+Upstream: c4fd1b8986c6d6d4ae5cd51e65a8bbeb495dfa4e
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ host_applications/linux/apps/raspicam/RaspiCommonSettings.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/host_applications/linux/apps/raspicam/RaspiCommonSettings.h b/host_applications/linux/apps/raspicam/RaspiCommonSettings.h
+index 75b2937..2e9de7d 100644
+--- a/host_applications/linux/apps/raspicam/RaspiCommonSettings.h
++++ b/host_applications/linux/apps/raspicam/RaspiCommonSettings.h
+@@ -54,6 +54,6 @@ typedef struct
+ void raspicommonsettings_set_defaults(RASPICOMMONSETTINGS_PARAMETERS *);
+ void raspicommonsettings_dump_parameters(RASPICOMMONSETTINGS_PARAMETERS *);
+ void raspicommonsettings_display_help();
+-int raspicommonsettings_parse_cmdline(RASPICOMMONSETTINGS_PARAMETERS *state, const char *arg1, const char *arg2, void (*app_help)());
++int raspicommonsettings_parse_cmdline(RASPICOMMONSETTINGS_PARAMETERS *state, const char *arg1, const char *arg2, void (*app_help)(char*));
+ 
+ #endif
+-- 
+2.50.1
+

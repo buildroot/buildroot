@@ -1,0 +1,41 @@
+From c2337c83c627dd94f9b673361dca6ffafca7f59b Mon Sep 17 00:00:00 2001
+From: Jonas Kvinge <jonas@jkvinge.net>
+Date: Sun, 6 Jul 2025 20:21:00 +0200
+Subject: [PATCH] Fix conflicting types build error
+
+Upstream: https://github.com/raspberrypi/userland/pull/744
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ interface/vchiq_arm/vchiq_lib.c       | 2 +-
+ interface/vmcs_host/vc_vchi_gpuserv.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/interface/vchiq_arm/vchiq_lib.c b/interface/vchiq_arm/vchiq_lib.c
+index 133d5ca..7a2dae5 100755
+--- a/interface/vchiq_arm/vchiq_lib.c
++++ b/interface/vchiq_arm/vchiq_lib.c
+@@ -537,7 +537,7 @@ vchiq_bulk_receive_handle(VCHIQ_SERVICE_HANDLE_T handle,
+    int size,
+    void *userdata,
+    VCHIQ_BULK_MODE_T mode,
+-   int (*copy_pagelist)())
++   int (*copy_pagelist)(char *vcptr, const struct pagelist_struct *pagelist))
+ {
+    VCHIQ_SERVICE_T *service = find_service_by_handle(handle);
+    VCHIQ_QUEUE_BULK_TRANSFER_T args;
+diff --git a/interface/vmcs_host/vc_vchi_gpuserv.h b/interface/vmcs_host/vc_vchi_gpuserv.h
+index fc0bfee..ce6cb58 100755
+--- a/interface/vmcs_host/vc_vchi_gpuserv.h
++++ b/interface/vmcs_host/vc_vchi_gpuserv.h
+@@ -58,7 +58,7 @@ struct sync_job_s {
+ 
+ struct gpu_callback_s {
+   // callback to call when complete (can be NULL)
+-  void (*func)();
++  void (*func)(void*);
+   void *cookie;
+ };
+ 
+-- 
+2.50.1
+
