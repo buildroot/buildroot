@@ -1,0 +1,40 @@
+From 53a53af30ce1704b7de806a51d822472fbcc57de Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@smile.fr>
+Date: Sun, 24 Aug 2025 18:26:52 +0200
+Subject: [PATCH] Makefile: Use '-std=gnu11' to fix build with GCC 15
+
+GCC 15 changed the default C standard version to C23 [1], resulting in
+errors from the xvisor definitions of bool from core/include/vmm_types.h,
+which is a reserved keyword under C23.
+
+Since CFLAGS are hardcoded in the main Makefile, add '-std=gnu11' to
+'cflags' to resolve the error.
+
+[1] https://gcc.gnu.org/gcc-15/porting_to.html
+
+Upstream: https://github.com/xvisor/xvisor/pull/200
+
+Fixes:
+https://gitlab.com/buildroot.org/buildroot/-/jobs/11042295047
+
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 1984408c..8731ece0 100644
+--- a/Makefile
++++ b/Makefile
+@@ -166,7 +166,7 @@ cppflags+=-I$(libs_dir)/include
+ cppflags+=$(cpu-cppflags)
+ cppflags+=$(board-cppflags)
+ cppflags+=$(libs-cppflags-y)
+-cflags=-g -Wall -nostdlib --sysroot=$(drivers_dir)/include -fno-builtin -fno-stack-protector -D__VMM__
++cflags=-std=gnu11 -g -Wall -nostdlib --sysroot=$(drivers_dir)/include -fno-builtin -fno-stack-protector -D__VMM__
+ cflags+=$(board-cflags)
+ cflags+=$(cpu-cflags)
+ cflags+=$(libs-cflags-y)
+-- 
+2.50.1
+
