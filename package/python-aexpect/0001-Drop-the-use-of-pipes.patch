@@ -1,0 +1,70 @@
+From 3753ad491bf5847a11a7f4baf3ecaa490e0e9111 Mon Sep 17 00:00:00 2001
+From: Xu Han <xuhan@redhat.com>
+Date: Wed, 31 Jan 2024 14:57:37 +0800
+Subject: [PATCH] Drop the use of pipes
+
+`pipes` was deprecated since version 3.11 so let's replace the use
+of that module with the alternatives.
+
+Signed-off-by: Xu Han <xuhan@redhat.com>
+Upstream: https://github.com/avocado-framework/aexpect/commit/f2b888b1bd453a46820d38b62fd2b5db1228e4b7
+[Romain: backport to 1.7.0]
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ aexpect/remote.py | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/aexpect/remote.py b/aexpect/remote.py
+index d7e09ec..2bfd92a 100644
+--- a/aexpect/remote.py
++++ b/aexpect/remote.py
+@@ -47,7 +47,7 @@ import logging
+ import time
+ import re
+ import os
+-import pipes
++import shlex
+ 
+ from aexpect.client import Expect
+ from aexpect.client import RemoteSession
+@@ -217,8 +217,8 @@ def quote_path(path):
+     :return: Shell escaped version
+     """
+     if isinstance(path, list):
+-        return ' '.join(map(pipes.quote, path))
+-    return pipes.quote(path)
++        return ' '.join(map(shlex.quote, path))
++    return shlex.quote(path)
+ 
+ 
+ def handle_prompts(session, username, password, prompt=PROMPT_LINUX,
+@@ -621,7 +621,7 @@ def scp_to_remote(host, port, username, password, local_path, remote_path,
+                 r"-o StrictHostKeyChecking=no "
+                 fr"-o PreferredAuthentications=password {limit} "
+                 fr"-P {port} {quote_path(local_path)} {username}@\[{host}\]:"
+-                fr"{pipes.quote(remote_path)}")
++                fr"{shlex.quote(remote_path)}")
+     password_list = [password]
+     return remote_scp(command, password_list,
+                       log_filename, log_function, timeout)
+@@ -664,7 +664,7 @@ def scp_from_remote(host, port, username, password, remote_path, local_path,
+                 r"-o StrictHostKeyChecking=no "
+                 fr"-o PreferredAuthentications=password {limit} "
+                 fr"-P {port} {username}@\[{host}\]:{quote_path(remote_path)} "
+-                fr"{pipes.quote(local_path)}")
++                fr"{shlex.quote(local_path)}")
+     password_list = [password]
+     remote_scp(command, password_list,
+                log_filename, log_function, timeout)
+@@ -717,7 +717,7 @@ def scp_between_remotes(src, dst, port, s_passwd, d_passwd, s_name, d_name,
+                 r"-o StrictHostKeyChecking=no "
+                 fr"-o PreferredAuthentications=password {limit} -P {port}"
+                 fr" {s_name}@\[{src}\]:{quote_path(s_path)} {d_name}@\[{dst}\]"
+-                fr":{pipes.quote(d_path)}")
++                fr":{shlex.quote(d_path)}")
+     password_list = [s_passwd, d_passwd]
+     return remote_scp(command, password_list,
+                       log_filename, log_function, timeout)
+-- 
+2.50.1
+
