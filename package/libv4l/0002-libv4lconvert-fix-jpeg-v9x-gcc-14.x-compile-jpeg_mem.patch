@@ -1,0 +1,83 @@
+From 9f0da8467183f9f647bddc4a5b4f01aad930846a Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Mon, 2 Sep 2024 15:59:53 +0200
+Subject: [PATCH] libv4lconvert: fix jpeg-v9x/gcc-14.x compile (jpeg_mem_dest
+ argument mismatch)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- fix jpeg_mem_dest pointer arument mismatch (long unsigned int vs. size_t)
+  with jpeg-v9x/gcc-14.x 32-bit arm compile
+
+Fixes:
+
+  ../lib/libv4lconvert/jl2005bcd.c: In function ‘v4lconvert_decode_jl2005bcd’:
+  ../lib/libv4lconvert/jl2005bcd.c:94:46: error: passing argument 3 of ‘jpeg_mem_dest’ from incompatible pointer type [-Wincompatible-pointer-types]
+     94 |         jpeg_mem_dest (&cinfo, &jpeg_header, &jpeg_header_size);
+        |                                              ^~~~~~~~~~~~~~~~~
+        |                                              |
+        |                                              long unsigned int *
+  In file included from ../lib/libv4lconvert/libv4lconvert-priv.h:26,
+                   from ../lib/libv4lconvert/jl2005bcd.c:30:
+  .../host/arm-buildroot-linux-gnueabihf/sysroot/usr/include/jpeglib.h:979:28: note: expected ‘size_t *’ {aka ‘unsigned int *’} but argument is of type ‘long unsigned int *’
+    979 | EXTERN(void) jpeg_mem_dest JPP((j_compress_ptr cinfo,
+        |                            ^~~
+
+  ../lib/libv4lconvert/jpeg.c: In function ‘init_libjpeg_cinfo’:
+  ../lib/libv4lconvert/jpeg.c:157:45: error: passing argument 3 of ‘jpeg_mem_dest’ from incompatible pointer type [-Wincompatible-pointer-types]
+    157 |         jpeg_mem_dest(&cinfo, &jpeg_header, &jpeg_header_size);
+        |                                             ^~~~~~~~~~~~~~~~~
+        |                                             |
+        |                                             long unsigned int *
+  In file included from ../lib/libv4lconvert/libv4lconvert-priv.h:26,
+                   from ../lib/libv4lconvert/jpeg.c:21:
+  .../host/arm-buildroot-linux-gnueabihf/sysroot/usr/include/jpeglib.h:979:28: note: expected ‘size_t *’ {aka ‘unsigned int *’} but argument is of type ‘long unsigned int *’
+    979 | EXTERN(void) jpeg_mem_dest JPP((j_compress_ptr cinfo,
+        |                            ^~~
+
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+Upstream: https://git.linuxtv.org/v4l-utils.git/commit/?id=e11e10ff7c8a4ef69526edd275c0ed92a450fbf3
+[Romain: backport to 1.28.1]
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ lib/libv4lconvert/jl2005bcd.c | 4 ++++
+ lib/libv4lconvert/jpeg.c      | 4 ++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/lib/libv4lconvert/jl2005bcd.c b/lib/libv4lconvert/jl2005bcd.c
+index 707c3205..14b040f3 100644
+--- a/lib/libv4lconvert/jl2005bcd.c
++++ b/lib/libv4lconvert/jl2005bcd.c
+@@ -63,7 +63,11 @@ int v4lconvert_decode_jl2005bcd(struct v4lconvert_data *data,
+ 	struct jpeg_decompress_struct dinfo;
+ 	struct jpeg_error_mgr jcerr, jderr;
+ 	JOCTET *jpeg_header = NULL;
++#if JPEG_LIB_VERSION >= 90
++	size_t jpeg_header_size = 0;
++#else
+ 	unsigned long jpeg_header_size = 0;
++#endif
+ 	int i, x, y, x1, y1, jpeg_data_size, jpeg_data_idx, eoi, size;
+ 
+ 	/* src_size had better be bigger than 16 */
+diff --git a/lib/libv4lconvert/jpeg.c b/lib/libv4lconvert/jpeg.c
+index ebfc8149..450d0967 100644
+--- a/lib/libv4lconvert/jpeg.c
++++ b/lib/libv4lconvert/jpeg.c
+@@ -136,7 +136,11 @@ static void init_libjpeg_cinfo(struct v4lconvert_data *data)
+ {
+ 	struct jpeg_compress_struct cinfo;
+ 	unsigned char *jpeg_header = NULL;
++#if JPEG_LIB_VERSION >= 90
++	size_t jpeg_header_size = 0;
++#else
+ 	unsigned long jpeg_header_size = 0;
++#endif
+ 
+ 	if (data->cinfo_initialized)
+ 		return;
+-- 
+2.50.1
+
