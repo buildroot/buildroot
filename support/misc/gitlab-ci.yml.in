@@ -45,7 +45,7 @@ before_script:
 
 .run_make: &run_make
     |
-      make O=${OUTPUT_DIR} > >(tee build.log |grep '>>>') 2>&1 || {
+      make O=${OUTPUT_DIR} world legal-info > >(tee build.log |grep '>>>') 2>&1 || {
           echo 'Failed build last output'
           tail -200 build.log
           exit 1
