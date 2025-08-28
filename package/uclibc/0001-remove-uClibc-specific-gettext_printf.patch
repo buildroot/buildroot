@@ -1,0 +1,34 @@
+From 9ffed9adb130d45b9f31ca7a305153e86586c877 Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Fri, 15 Aug 2025 20:29:52 +0200
+Subject: [PATCH] remove uClibc specific gettext_printf
+
+Other C libraries like musl/glibc does not define it.
+Including stdio.h here breaks Grub2 compilation with
+gcc 14 and above.
+Thanks to Thomas Petazzoni for analyzing the Grub2 build error.
+
+Reported-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+Upstream: https://cgit.uclibc-ng.org/cgi/cgit/uclibc-ng.git/commit/?id=9ffed9adb130d45b9f31ca7a305153e86586c877
+---
+ include/libintl.h | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/include/libintl.h b/include/libintl.h
+index b7123a963..6d8b9f342 100644
+--- a/include/libintl.h
++++ b/include/libintl.h
+@@ -50,9 +50,6 @@ char *bindtextdomain(const char *domainname, const char *dirname);
+ 
+ #endif
+ 
+-#include <stdio.h>
+-#define gettext_printf(args...) printf(args)
+-
+ /* to supply LC_MESSAGES and other stuff GNU expects to be exported when
+    including libintl.h */
+ #include <locale.h>
+-- 
+2.47.2
+
