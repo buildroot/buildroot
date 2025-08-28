@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2025.08"
 
+config BR2_PACKAGE_LIBSVGTINY
+	bool "libsvgtiny has been removed"
+	select BR2_LEGACY
+	help
+	  Libsvgtiny has been removed from Buildroot.
+
 config BR2_PACKAGE_THTTPD
 	bool "thttpd has been removed"
 	select BR2_LEGACY
