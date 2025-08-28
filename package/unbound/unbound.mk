@@ -23,6 +23,9 @@ UNBOUND_CONF_OPTS = \
 	--with-libexpat=$(STAGING_DIR)/usr \
 	--with-ssl=$(STAGING_DIR)/usr
 
+# Only vulnerable if built with --enable-subnet
+UNBOUND_IGNORE_CVES += CVE-2025-5994
+
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS_NPTL),y)
 UNBOUND_CONF_OPTS += --with-pthreads
 else
