@@ -14,6 +14,11 @@ LIBCAP_NG_INSTALL_STAGING = YES
 LIBCAP_NG_CONF_ENV = ac_cv_prog_swig_found=no
 LIBCAP_NG_CONF_OPTS = --without-python3
 
+# pthread support uses pthread_atfork, which is not available on nommu
+ifneq ($(BR2_USE_MMU),y)
+LIBCAP_NG_CONF_ENV += ac_cv_header_pthread_h=no
+endif
+
 HOST_LIBCAP_NG_CONF_ENV = ac_cv_prog_swig_found=no
 HOST_LIBCAP_NG_CONF_OPTS = --without-python3
 
