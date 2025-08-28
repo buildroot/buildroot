@@ -67,12 +67,6 @@ config BR2_PACKAGE_LIGHTTPD_LDAP
 comment "ldap support needs a toolchain w/ wchar"
 	depends on !BR2_USE_WCHAR
 
-config BR2_PACKAGE_LIGHTTPD_LIBEV
-	bool "libev support"
-	select BR2_PACKAGE_LIBEV
-	help
-	  Enable libev support for lighttpd fdevent handlers.
-
 config BR2_PACKAGE_LIGHTTPD_LUA
 	bool "lua support"
 	depends on BR2_PACKAGE_LUA
