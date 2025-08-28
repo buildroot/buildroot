@@ -1,0 +1,33 @@
+From 2592f0d38826e8db3603ce1535d82ab427ac73bc Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Thu, 28 Aug 2025 18:11:13 +0200
+Subject: [PATCH] CMakeLists.txt: allow building without ffmpeg support
+
+The ffmpeg support is optional, but is automatically pulled in (if
+available) on ARM with SIMD, even when WITH_AVFFT is disabled.
+
+Instead, ensure WITH_AVFFT does its job, which is to allow disabling
+ffmpeg usage if not desired.
+
+Upstream: https://github.com/chirlu/soxr/pull/16
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ee48f6c..48f91f1 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -134,7 +134,7 @@ if (WITH_AVFFT)
+   endif ()
+ endif ()
+ 
+-if (WITH_AVFFT OR (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm" AND SIMD32_FOUND AND WITH_CR32))
++if (WITH_AVFFT AND (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm" AND SIMD32_FOUND AND WITH_CR32))
+   find_package (LibAVUtil)
+   if (AVUTIL_FOUND)
+     include_directories (${AVUTIL_INCLUDE_DIRS})
+-- 
+2.50.1
+
