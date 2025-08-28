@@ -5,7 +5,7 @@
 ################################################################################
 
 LIGHTTPD_VERSION_MAJOR = 1.4
-LIGHTTPD_VERSION = $(LIGHTTPD_VERSION_MAJOR).77
+LIGHTTPD_VERSION = $(LIGHTTPD_VERSION_MAJOR).81
 LIGHTTPD_SOURCE = lighttpd-$(LIGHTTPD_VERSION).tar.xz
 LIGHTTPD_SITE = http://download.lighttpd.net/lighttpd/releases-$(LIGHTTPD_VERSION_MAJOR).x
 LIGHTTPD_LICENSE = BSD-3-Clause
@@ -74,13 +74,6 @@ LIGHTTPD_DEPENDENCIES += openldap
 LIGHTTPD_CONF_OPTS += -Dwith_ldap=enabled
 else
 LIGHTTPD_CONF_OPTS += -Dwith_ldap=disabled
-endif
-
-ifeq ($(BR2_PACKAGE_LIGHTTPD_LIBEV),y)
-LIGHTTPD_DEPENDENCIES += libev
-LIGHTTPD_CONF_OPTS += -Dwith_libev=enabled
-else
-LIGHTTPD_CONF_OPTS += -Dwith_libev=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIGHTTPD_LUA),y)
