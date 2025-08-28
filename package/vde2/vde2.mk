@@ -38,5 +38,10 @@ HOST_VDE2_CONF_OPTS = \
 	--disable-profile \
 	--enable-tuntap
 
+# C23 changes meaning of empty argument prototypes like int (*)()
+# causing build failures, so force gnu99
+VDE2_CONF_ENV = CFLAGS="$(TARGET_CFLAGS) -std=gnu99"
+HOST_VDE2_CONF_ENV = CFLAGS="$(HOST_CFLAGS) -std=gnu99"
+
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
