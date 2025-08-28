@@ -9,13 +9,14 @@ config BR2_PACKAGE_RAUC
 	# uses ENGINE_* API
 	select BR2_PACKAGE_LIBOPENSSL_ENGINES
 	select BR2_PACKAGE_SQUASHFS # run-time dependency
-	select BR2_PACKAGE_UBOOT_TOOLS if BR2_TARGET_UBOOT # run-time dependency
-	select BR2_PACKAGE_UBOOT_TOOLS_FWPRINTENV if BR2_TARGET_UBOOT
 	help
 	  RAUC is the Robust Auto-Update Controller developed by
 	  Pengutronix. It supports updating embedded Linux
 	  systems over the network or from disks and provides a
 	  d-bus interface.
+
+	  Notice: The U-Boot bootloader support requires fw_getenv /
+	  fw_setenv from uboot-tools.
 
 	  http://rauc.io/
 
