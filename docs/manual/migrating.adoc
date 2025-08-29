@@ -228,3 +228,17 @@ your kernel or use an alternative network manager.
 In 2025.11, the +FOO_INSTALL_BINS+ variable for golang packages is no longer
 supported; the list of binaries to install is automatically derived from
 the +FOO_BUILD_TARGETS+ variable.
+
+[[migrating-js-libs]]
+=== Migration to 2026.02
+
+Starting 2025.08, JavaScript libraries that were just copied to `/var/www` on
+the target filesystem are not part of the Buildroot packages.
+If you want to provide such libraries either:
+
+- Use a CDN to target the library version of your choice.
+- Serve it by adding the package to your external and installing the content to
+  the destination of your choice
+- Serve it by adding the library to your overlay.
+- Install the libraries from your project with NPM and bundle with a JavaScript
+  bundler.
