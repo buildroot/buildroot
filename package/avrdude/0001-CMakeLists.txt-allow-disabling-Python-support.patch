@@ -1,0 +1,59 @@
+From 41ee27cf1d31bbc62425aab286b7e524acc64bff Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Fri, 29 Aug 2025 22:21:50 +0200
+Subject: [PATCH] CMakeLists.txt: allow disabling Python support
+
+In some cases, even if Swig is found and Python3 is found, it may not
+be desirable to build Python support in avrdude, so this commit adds
+an ENABLE_PYTHON_SUPPORT option to be able to explicitly disable using
+Python support (unfortunately CMake doesn't allow passing arguments
+that would prevent it from finding Swig/Python 3 if available).
+
+To preserve existing behavior, this option defaults to enabled (ON).
+
+Upstream: https://github.com/avrdudes/avrdude/pull/2051
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ CMakeLists.txt | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 7f3fce92..94263bab 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -34,6 +34,7 @@ option(USE_EXTERNAL_LIBS "Use external libraries from AVRDUDE GitHub repositorie
+ option(USE_LIBUSBWIN32 "Prefer libusb-win32 over libusb" OFF)
+ option(DEBUG_CMAKE "Enable debugging output for this CMake project" OFF)
+ option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
++option(ENABLE_PYTHON_SUPPORT "Enable Python support" ON)
+ 
+ if(WIN32)
+     # Prefer static libraries over DLLs on Windows
+@@ -281,14 +282,16 @@ if(HAVE_LINUXGPIO)
+ endif()
+ 
+ # -------------------------------------
+-# Find SWIG
+-find_package(SWIG 4.0 COMPONENTS python)
+-if(SWIG_FOUND)
+-  find_package(Python3 COMPONENTS Interpreter Development)
+-  if(PYTHON3_FOUND)
+-    set(HAVE_SWIG 1)
+-  else()
+-    message(STATUS "Found SWIG but no Python3 header/library; cannot use SWIG")
++# Find SWIG/Python3 if needed
++if(ENABLE_PYTHON_SUPPORT)
++  find_package(SWIG 4.0 COMPONENTS python)
++  if(SWIG_FOUND)
++    find_package(Python3 COMPONENTS Interpreter Development)
++    if(PYTHON3_FOUND)
++      set(HAVE_SWIG 1)
++    else()
++      message(STATUS "Found SWIG but no Python3 header/library; cannot use SWIG")
++    endif()
+   endif()
+ endif()
+ 
+-- 
+2.50.1
+
