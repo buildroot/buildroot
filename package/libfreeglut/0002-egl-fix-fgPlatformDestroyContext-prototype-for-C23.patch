@@ -1,0 +1,31 @@
+From 6d0178a1c43f94b046e4d5f3dfa7185a398706ae Mon Sep 17 00:00:00 2001
+From: Sam James <sam@gentoo.org>
+Date: Sun, 17 Nov 2024 01:14:26 +0000
+Subject: [PATCH] egl: fix fgPlatformDestroyContext prototype for C23
+
+C23 removes unprototyped functions, so this conflicted with the definition
+in fg_init_x11.c.
+
+Bug: https://github.com/freeglut/freeglut/issues/186
+
+Upstream: 800772e993a3ceffa01ccf3fca449d3279cde338
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/egl/fg_init_egl.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/egl/fg_init_egl.h b/src/egl/fg_init_egl.h
+index 592c5221..8753dc0b 100644
+--- a/src/egl/fg_init_egl.h
++++ b/src/egl/fg_init_egl.h
+@@ -28,6 +28,6 @@
+ 
+ extern void fghPlatformInitializeEGL();
+ extern void fghPlatformCloseDisplayEGL();
+-extern void fgPlatformDestroyContext();
++extern void fgPlatformDestroyContext ( SFG_PlatformDisplay pDisplay, SFG_WindowContextType MContext );
+ 
+ #endif
+-- 
+2.50.1
+
