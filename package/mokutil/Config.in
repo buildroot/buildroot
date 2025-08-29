@@ -6,7 +6,6 @@ config BR2_PACKAGE_MOKUTIL
 	depends on BR2_PACKAGE_EFIVAR_ARCH_SUPPORTS
 	depends on BR2_USE_MMU # keyutils
 	depends on !BR2_STATIC_LIBS # efivar, keyutils
-	depends on !BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_MIPS # efivar
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # efivar
 	depends on BR2_TOOLCHAIN_HAS_THREADS # efivar
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12 # efivar
