@@ -10,4 +10,8 @@ BRCM_PATCHRAM_PLUS_LICENSE = Apache-2.0
 BRCM_PATCHRAM_PLUS_LICENSE_FILES = COPYING
 BRCM_PATCHRAM_PLUS_AUTORECONF = YES
 
+# C23 changes meaning of empty argument prototypes like int (*)()
+# causing build failures, so force gnu99
+BRCM_PATCHRAM_PLUS_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -std=gnu99"
+
 $(eval $(autotools-package))
