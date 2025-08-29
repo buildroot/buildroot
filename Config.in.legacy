@@ -146,6 +146,20 @@ endif
 
 comment "Legacy options removed in 2026.02"
 
+config BR2_PACKAGE_HOST_JSMIN
+	bool "host-jsmin has been removed"
+	select BR2_LEGACY
+	help
+	  JSMin is no longer maintained and better alternative
+	  exists since then.
+
+config BR2_PACKAGE_JSMIN
+	bool "jsmin has been removed"
+	select BR2_LEGACY
+	help
+	  JSMin is no longer maintained and better alternative
+	  exists since then.
+
 config BR2_PACKAGE_VUEJS_ROUTER
 	bool "vuejs-router has been removed"
 	select BR2_LEGACY
