@@ -1,0 +1,31 @@
+From 49ed8770b87af46d92091464ecf41ae9b5027cd7 Mon Sep 17 00:00:00 2001
+From: Davide Beatrici <davidebeatrici@gmail.com>
+Date: Fri, 10 Aug 2018 21:21:19 +0200
+Subject: [PATCH] VLanUnix: fix "implicit declaration of function 'FreeTap'"
+ warning
+
+In file included from /builds/SoftEther/SoftEtherVPN/src/Cedar/Bridge.c:130:0:
+/builds/SoftEther/SoftEtherVPN/src/Cedar/BridgeUnix.c: In function 'CloseEth':
+/builds/SoftEther/SoftEtherVPN/src/Cedar/BridgeUnix.c:1568:3: warning: implicit declaration of function 'FreeTap'; did you mean 'FreeCaps'? [-Wimplicit-function-declaration]
+   FreeTap(e->Tap);
+   ^~~~~~~
+   FreeCaps
+
+Upstream: https://github.com/SoftEtherVPN/SoftEtherVPN/commit/49ed8770b87af46d92091464ecf41ae9b5027cd7
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/Cedar/VLanUnix.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/Cedar/VLanUnix.h b/src/Cedar/VLanUnix.h
+index b628dcd4f..89ae9c2d8 100644
+--- a/src/Cedar/VLanUnix.h
++++ b/src/Cedar/VLanUnix.h
+@@ -122,6 +122,7 @@ struct VLAN
+ VLAN *NewVLan(char *instance_name, VLAN_PARAM *param);
+ VLAN *NewTap(char *name, char *mac_address);
+ void FreeVLan(VLAN *v);
++void FreeTap(VLAN *v);
+ CANCEL *VLanGetCancel(VLAN *v);
+ bool VLanGetNextPacket(VLAN *v, void **buf, UINT *size);
+ bool VLanPutPacket(VLAN *v, void *buf, UINT size);
