@@ -4,6 +4,7 @@
 #
 ################################################################################
 
+GO_SRC_VERSION = $(GO_VERSION)
 GO_SRC_SITE = https://storage.googleapis.com/golang
 GO_SRC_SOURCE = go$(GO_VERSION).src.tar.gz
 GO_SRC_DL_SUBDIR = go
@@ -11,6 +12,7 @@ GO_SRC_DL_SUBDIR = go
 GO_SRC_LICENSE = BSD-3-Clause
 GO_SRC_LICENSE_FILES = LICENSE
 GO_SRC_CPE_ID_VENDOR = golang
+GO_SRC_CPE_ID_PRODUCT = go
 
 HOST_GO_SRC_PROVIDES = host-go
 HOST_GO_SRC_DEPENDENCIES = \
