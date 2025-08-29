@@ -1,0 +1,61 @@
+From 7ffab0a5028f0bfcb864c2387f41b8d4eb33fb8e Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Fri, 29 Aug 2025 17:27:55 +0200
+Subject: [PATCH] Fix signal handler prototype
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Recent versions of gcc, starting from gcc 15.x, are more picky about
+function prototypes, and that cause the following issue:
+
+usr/include/signal.h:93:23: note: expected ‘__sighandler_t’ {aka ‘void (*)(int)’} but argument is of type ‘void (*)(void)’
+
+ultimately causing a build failure.
+
+This patch fixes that by ensuring the signal handler has the right
+prototype. The onintr() function is not only used as a signal handler,
+but also on memory allocation failure, in which case a dummy value of
+0 is passed as argument, since anyway this value isn't used by
+onintr().
+
+Upstream: sent by e-mail to Jutta Degener <jutta@pobox.com>
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/toast.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/toast.c b/src/toast.c
+index 05cd0b3..70a14ba 100644
+--- a/src/toast.c
++++ b/src/toast.c
+@@ -211,7 +211,7 @@ static char * suffix P2((name, suf), char *name, char * suf)
+ }
+ 
+ 
+-static void catch_signals P1((fun), SIGHANDLER_T (*fun) ())
++static void catch_signals P1((fun), SIGHANDLER_T (*fun) (int))
+ {
+ #ifdef	SIGHUP
+ 	signal( SIGHUP,   fun );
+@@ -230,7 +230,7 @@ static void catch_signals P1((fun), SIGHANDLER_T (*fun) ())
+ #endif
+ }
+ 
+-static SIGHANDLER_T onintr P0()
++static SIGHANDLER_T onintr P1((signo), int signo)
+ {
+ 	char * tmp = outname;
+ 
+@@ -253,7 +253,7 @@ static char * emalloc P1((len), size_t len)
+ 	if (!(s = malloc(len))) {
+ 		fprintf(stderr, "%s: failed to malloc %d bytes -- abort\n",
+ 			progname, (int)len);
+-		onintr();
++		onintr(0);
+ 		exit(1);
+ 	}
+ 	return s;
+-- 
+2.50.1
+
