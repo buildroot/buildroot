@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2026.02"
 
+config BR2_PACKAGE_SOFTETHER
+	bool "softether has been removed"
+	select BR2_LEGACY
+	help
+	  The version packaged in Buildroot version was outdated
+	  compared to upstream and no longer maintained by anyone
+	  listed in the DEVELOPERS file.
+
 config BR2_PACKAGE_RPI_USERLAND
 	bool "rpi-userland has been removed"
 	select BR2_LEGACY
