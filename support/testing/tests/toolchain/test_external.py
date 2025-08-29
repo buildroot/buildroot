@@ -37,15 +37,15 @@ class TestExternalToolchain(infra.basetest.BRTest):
             self.assertTrue(os.path.exists(interp_path))
 
 
-class TestExternalToolchainLinaroArm(TestExternalToolchain):
+class TestExternalToolchainArmGnu(TestExternalToolchain):
     config = BASIC_CONFIG + \
         """
         BR2_arm=y
         BR2_cortex_a8=y
         BR2_TOOLCHAIN_EXTERNAL=y
-        BR2_TOOLCHAIN_EXTERNAL_LINARO_ARM=y
+        BR2_TOOLCHAIN_EXTERNAL_ARM_ARM=y
         """
-    toolchain_prefix = "arm-linux-gnueabihf"
+    toolchain_prefix = "arm-none-linux-gnueabihf"
 
     def test_run(self):
         TestExternalToolchain.common_check(self)
