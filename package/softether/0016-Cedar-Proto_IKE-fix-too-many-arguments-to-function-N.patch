@@ -1,0 +1,54 @@
+From f37845f6ab06d68ea6c669f150eab71ff20f21ff Mon Sep 17 00:00:00 2001
+From: Thomas Perale <thomas.perale@mind.be>
+Date: Wed, 9 Jul 2025 18:17:21 +0200
+Subject: [PATCH] Cedar/Proto_IKE: fix too many arguments to function 'NewBuf'
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This commit fixes the following error:
+
+```
+Proto_IKE.c: In function ‘ProcIkeQuickModePacketRecv’:
+Proto_IKE.c:2362:146: error: too many arguments to function ‘NewBuf’; expected 0, have 2
+ 2362 |                                                                                                                         ipsec_sa_sc->SharedKey = NewBuf(shared_key, shared_key_size);
+      |                                                                                                                                                  ^~~~~~ ~~~~~~~~~~
+In file included from ../../src/Mayaqua/Mayaqua.h:338,
+                 from CedarPch.h:115,
+                 from IPsec_IKE.c:105:
+../../src/Mayaqua/Memory.h:303:6: note: declared here
+  303 | BUF *NewBuf();
+      |      ^~~~~~
+Proto_IKE.c:2363:146: error: too many arguments to function ‘NewBuf’; expected 0, have 2
+ 2363 |                                                                                                                         ipsec_sa_cs->SharedKey = NewBuf(shared_key, shared_key_size);
+      |                                                                                                                                                  ^~~~~~ ~~~~~~~~~~
+```
+
+The function `NewBuf` is defined without arguments. Replace it in favour
+of `NewBufFromMemory` that copy the content of the pointer into a new
+buffer.
+
+Upstream: https://github.com/SoftEtherVPN/SoftEtherVPN/pull/2135
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/Cedar/IPsec_IKE.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/Cedar/IPsec_IKE.c b/src/Cedar/IPsec_IKE.c
+index 5d407494..8234f100 100644
+--- a/src/Cedar/IPsec_IKE.c
++++ b/src/Cedar/IPsec_IKE.c
+@@ -2359,8 +2359,8 @@ void ProcIkeQuickModePacketRecv(IKE_SERVER *ike, UDPPACKET *p, IKE_PACKET *heade
+ 														// Update the information of IPsec SA
+ 														if (shared_key != NULL)
+ 														{
+-															ipsec_sa_sc->SharedKey = NewBuf(shared_key, shared_key_size);
+-															ipsec_sa_cs->SharedKey = NewBuf(shared_key, shared_key_size);
++															ipsec_sa_sc->SharedKey = NewBufFromMemory(shared_key, shared_key_size);
++															ipsec_sa_cs->SharedKey = NewBufFromMemory(shared_key, shared_key_size);
+ 														}
+ 
+ 														ipsec_sa_sc->Spi = setting.SpiServerToClient;
+-- 
+2.50.0
+

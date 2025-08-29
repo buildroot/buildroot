@@ -1,0 +1,55 @@
+From dcdbce63d51651d6d3d1d8a95c43d04258295621 Mon Sep 17 00:00:00 2001
+From: Koichiro Iwao <meta@vmeta.jp>
+Date: Mon, 3 Jul 2023 16:49:08 +0900
+Subject: [PATCH] Fix build on __FreeBSD_version >= 140091 (LLVM 16)
+
+Fails to build after:
+https://cgit.freebsd.org/src/commit/?id=a681cba16d8967651a2146385ce44a2bfeb1c4c3
+
+As the commit title is "Bump __FreeBSD_version for llvm 16.0.6 merge",
+I suppose LLVM 16 is stricter than LLVM 15. It was building successfully
+at least the previous week.
+
+Build log: https://pkg-status.freebsd.org/beefy18/data/main-amd64-default/p4785b313b958_se8efee297c/logs/softether5-5.02.5180.335,2.log
+
+```
+[ 32%] Building C object src/Mayaqua/CMakeFiles/mayaqua.dir/Unix.c.o
+cd /wrkdirs/usr/ports/security/softether5/work/.build/src/Mayaqua && /usr/bin/cc -DBRIDGE_BPF -DCPU_64 -DHAVE_SSL_CTX_SET_NUM_TICKETS -DNDEBUG -DOS_UNIX -DREENTRANT -DSE_DBDIR=\"/var/db/softether\" -DSE_LOGDIR=\"/var/log/softether\" -DSE_PIDDIR=\"/var/run/softether\" -DSE_TAGNAME=\"5.02.5180-335-g1c0bdb0c/freebsd\" -DTHREADSAFE -DTHREAD_SAFE -DUNIX -DUNIX_BSD -DVPN_SPEED -D_FILE_OFFSET_BITS=64 -D_REENTRANT -D_THREADSAFE -D_THREAD_SAFE -Dmayaqua_EXPORTS -I/wrkdirs/usr/ports/security/softether5/work/SoftEtherVPN-5.02.5180-335-g1c0bdb0c/src/. -I/wrkdirs/usr/ports/security/softether5/work/SoftEtherVPN-5.02.5180-335-g1c0bdb0c/src/Mayaqua/. -I/wrkdirs/usr/ports/security/softether5/work/SoftEtherVPN-5.02.5180-335-g1c0bdb0c/src/libhamcore/include -O2 -pipe  -I/usr/local/include/cpu_features -fstack-protector-strong -isystem /usr/local/include -fno-strict-aliasing -fsigned-char -O2 -pipe  -I/usr/local/include/cpu_features -fstack-protector-strong -isystem /usr/local/include -fno-strict-aliasing  -DNDEBUG -O2 -std=gnu99 -fPIC -pthread -MD -MT src/Mayaqua/CMakeFiles/mayaqua.dir/Unix.c.o -MF CMakeFiles/mayaqua.dir/Unix.c.o.d -o CMakeFiles/mayaqua.dir/Unix.c.o -c /wrkdirs/usr/ports/security/softether5/work/SoftEtherVPN-5.02.5180-335-g1c0bdb0c/src/Mayaqua/Unix.c
+/wrkdirs/usr/ports/security/softether5/work/SoftEtherVPN-5.02.5180-335-g1c0bdb0c/src/Mayaqua/Unix.c:259:18: error: incompatible function pointer types assigning to 'void (*)(int, struct __siginfo *, void *)' from 'void *(int, siginfo_t *, void *)' (aka 'void *(int, struct __siginfo *, void *)') [-Wincompatible-function-pointer-types]
+        sa.sa_sigaction = signal_received_for_ignore;
+                        ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+
+Upstream: https://github.com/SoftEtherVPN/SoftEtherVPN/commit/5633314981937671f2f2e6fefc4e8f9440888671
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/Mayaqua/Unix.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/src/Mayaqua/Unix.c b/src/Mayaqua/Unix.c
+index 0a3d33099..bd1263c96 100755
+--- a/src/Mayaqua/Unix.c
++++ b/src/Mayaqua/Unix.c
+@@ -244,9 +244,11 @@ OS_DISPATCH_TABLE *UnixGetDispatchTable()
+ 	return &t;
+ }
+ 
+-static void *signal_received_for_ignore(int sig, siginfo_t *info, void *ucontext) 
++static void signal_received_for_ignore(int sig, siginfo_t *info, void *ucontext)
+ {
+-	return NULL;
++	(void)sig;
++	(void)info;
++	(void)ucontext;
+ }
+ 
+ // Ignore the signal flew to the thread
+@@ -256,7 +258,7 @@ void UnixIgnoreSignalForThread(int sig)
+ 
+ 	Zero(&sa, sizeof(sa));
+ 	sa.sa_handler = NULL;
+-	sa.sa_sigaction = signal_received_for_ignore;
++	sa.sa_sigaction = &signal_received_for_ignore;
+ 	sa.sa_flags = SA_SIGINFO;
+ 
+ 	sigemptyset(&sa.sa_mask);
