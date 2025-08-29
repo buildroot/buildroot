@@ -1,0 +1,27 @@
+From a1f2a71b286135d89865bb0332cbe3db59cea300 Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Mon, 9 Dec 2024 16:57:53 +1100
+Subject: [PATCH] fix build with gcc-15
+
+Upstream: https://github.com/kynesim/tstools/pull/44
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ tsserve.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tsserve.c b/tsserve.c
+index d81042e..253ba0c 100644
+--- a/tsserve.c
++++ b/tsserve.c
+@@ -2958,7 +2958,7 @@ static void set_child_exit_handler();
+ /*
+  * Signal handler - catch children and stop them becoming zombies
+  */
+-static void on_child_exit()
++static void on_child_exit(int signum)
+ {
+ #if 0
+   print_msg("sighandler: starting\n");
+-- 
+2.39.5
+
