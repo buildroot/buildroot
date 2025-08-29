@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2025.08"
 
+config BR2_PACKAGE_NETSTAT_NAT
+	bool "netstat-nat has been removed"
+	select BR2_LEGACY
+	help
+	  The upstream URL is gone and netstat-nat has been removed
+	  from Buildroot.
+
 config BR2_PACKAGE_LIGHTTPD_LIBEV
 	bool "lighttpd removed libev support"
 	select BR2_LEGACY
