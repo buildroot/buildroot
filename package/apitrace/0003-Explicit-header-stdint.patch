@@ -1,0 +1,42 @@
+From 3cc8956995d6d702a2c3ef0d7f91500c6accbfad Mon Sep 17 00:00:00 2001
+From: Nicolas PARLANT <nicolas.parlant@parhuet.fr>
+Date: Fri, 21 Mar 2025 05:02:23 +0000
+Subject: [PATCH] Explicit header: stdint
+
+Fix building with GCC-15. It no longer includes it by default.
+
+Signed-off-by: Nicolas PARLANT <nicolas.parlant@parhuet.fr>
+Upstream: 952bad1469ea747012bdc48c48993bd5f13eec04
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ frametrim/ft_dependecyobject.hpp | 1 +
+ retrace/metric_writer.cpp        | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/frametrim/ft_dependecyobject.hpp b/frametrim/ft_dependecyobject.hpp
+index cf1885f1..53b910d0 100644
+--- a/frametrim/ft_dependecyobject.hpp
++++ b/frametrim/ft_dependecyobject.hpp
+@@ -28,6 +28,7 @@
+ #pragma once
+ 
+ #include "ft_tracecall.hpp"
++#include <stdint.h>
+ 
+ namespace frametrim {
+ 
+diff --git a/retrace/metric_writer.cpp b/retrace/metric_writer.cpp
+index e923ed1d..4e4ce748 100644
+--- a/retrace/metric_writer.cpp
++++ b/retrace/metric_writer.cpp
+@@ -24,6 +24,7 @@
+  **************************************************************************/
+ 
+ #include <iostream>
++#include <stdint.h>
+ 
+ #include "metric_writer.hpp"
+ 
+-- 
+2.50.1
+
