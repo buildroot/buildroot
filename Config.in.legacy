@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2025.11"
 
+config BR2_LINUX_KERNEL_EXT_FBTFT
+	bool "FB TFT drivers are deprecated"
+	select BR2_LEGACY
+	help
+	  FB TFT drivers were only needed for linux kernels until v3.19,
+	  since v4.0 the drivers are included in the staging area.
+
 config BR2_PACKAGE_DMENU_WAYLAND
 	bool "dmenu-wayland has been removed"
 	select BR2_LEGACY

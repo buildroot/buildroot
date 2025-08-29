@@ -55,27 +55,6 @@ config BR2_LINUX_KERNEL_EXT_RTAI
 	help
 	  RTAI Kernel part.
 
-#-------------------------------------------------------------------------------
-# fbtft
-config BR2_LINUX_KERNEL_EXT_FBTFT
-	bool "FB TFT drivers"
-	select BR2_PACKAGE_FBTFT
-	help
-	  Linux Framebuffer drivers for small TFT LCD display modules,
-	  e.g. Adafruit PiTFT displays for Raspberry Pi (this extra
-	  package is only needed for linux kernels until v3.19, since
-	  v4.0 the drivers are included in the staging area).
-
-	  To enable fbtft, e.g. for Adafruit 2.8 PiTFT, enable the
-	  following kernel configurations:
-	  - CONFIG_SPI
-	  - CONFIG_GPIOLIB
-	  - CONFIG_FB
-	  - CONFIG_FB_TFT
-	  - CONFIG_FB_TFT_ILI9341
-
-	  https://github.com/notro/fbtft
-
 # kernel extensions from br2-external trees, if any
 source "$BR2_BASE_DIR/.br2-external.in.linux"
 
