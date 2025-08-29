@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2025.11"
 
+config BR2_PACKAGE_LOGSURFER
+	bool "logsurfer has been removed"
+	select BR2_LEGACY
+	help
+	  Logsurfer last updates was on 2011 and fails to build with
+	  GCC14.
+
 config BR2_LINUX_KERNEL_EXT_FBTFT
 	bool "FB TFT drivers are deprecated"
 	select BR2_LEGACY
