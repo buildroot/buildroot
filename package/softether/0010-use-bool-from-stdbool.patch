@@ -1,0 +1,167 @@
+From 914bfe7d44f8e693d21178055f0b845c613dc777 Mon Sep 17 00:00:00 2001
+From: Davide Beatrici <git@davidebeatrici.dev>
+Date: Sun, 28 Feb 2021 06:04:11 +0100
+Subject: [PATCH] Use bool from stdbool.h, get rid of BOOL
+
+BOOL was just an alias for bool, this commit replaces all instances of it for consistency.
+
+For some reason bool was defined as a 4-byte integer instead of a 1-byte one, presumably to match WinAPI's definition: https://docs.microsoft.com/en-us/windows/win32/winprog/windows-data-types
+Nothing should break now that bool is 1-byte, as no protocol code appears to be relying on the size of the data type.
+PACK, for example, explicitly stores boolean values as 4-byte integers.
+
+This commit can be seen as a follow-up to 61ccaed4f6c1bba53202a6d10841fd78b8b6cf8.
+
+Upstream: https://github.com/SoftEtherVPN/SoftEtherVPN/commit/914bfe7d44f8e693d21178055f0b845c613dc777
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/Cedar/Cedar.h         | 4 ----
+ src/Cedar/Command.c       | 2 +-
+ src/Cedar/Connection.h    | 2 +-
+ src/Cedar/EtherLog.h      | 2 +-
+ src/Cedar/Radius.c        | 2 +-
+ src/Cedar/Win32Com.cpp    | 2 --
+ src/Cedar/Win32Com.h      | 6 ------
+ src/Cedar/WinJumpList.cpp | 3 ---
+ src/Mayaqua/MayaType.h    | 9 ++-------
+ 9 files changed, 6 insertions(+), 26 deletions(-)
+
+diff --git a/src/Cedar/Cedar.h b/src/Cedar/Cedar.h
+index cc32fc28..267b3957 100644
+--- a/src/Cedar/Cedar.h
++++ b/src/Cedar/Cedar.h
+@@ -121,10 +121,6 @@
+ 
+ #endif	// VPN_SPEED
+ 
+-#define	bool	UINT
+-#define	BOOL	UINT
+-
+-
+ // Version number
+ #define	CEDAR_VER					430
+ 
+diff --git a/src/Cedar/Command.c b/src/Cedar/Command.c
+index 5b2c67e8..7bd19799 100644
+--- a/src/Cedar/Command.c
++++ b/src/Cedar/Command.c
+@@ -22433,7 +22433,7 @@ void CtEscapeCsv(wchar_t *dst, UINT size, wchar_t *src){
+ 	UINT i;
+ 	UINT len = UniStrLen(src);
+ 	UINT idx;
+-	BOOL need_to_escape = false;
++	bool need_to_escape = false;
+ 	wchar_t tmp[2]=L"*";
+ 
+ 	// Check the input value
+diff --git a/src/Cedar/Connection.h b/src/Cedar/Connection.h
+index 2b1f8091..47b2e4aa 100644
+--- a/src/Cedar/Connection.h
++++ b/src/Cedar/Connection.h
+@@ -244,7 +244,7 @@ struct UDP
+ // Data block
+ struct BLOCK
+ {
+-	BOOL Compressed;				// Compression flag
++	bool Compressed;				// Compression flag
+ 	UINT Size;						// Block size
+ 	UINT SizeofData;				// Data size
+ 	UCHAR *Buf;						// Buffer
+diff --git a/src/Cedar/EtherLog.h b/src/Cedar/EtherLog.h
+index 3fdcf140..e3dda9da 100644
+--- a/src/Cedar/EtherLog.h
++++ b/src/Cedar/EtherLog.h
+@@ -148,7 +148,7 @@ struct RPC_ENUM_DEVICE
+ // License status of the service
+ struct RPC_EL_LICENSE_STATUS
+ {
+-	BOOL Valid;								// Enable flag
++	bool Valid;								// Enable flag
+ 	UINT64 SystemId;						// System ID
+ 	UINT64 SystemExpires;					// System expiration date
+ };
+diff --git a/src/Cedar/Radius.c b/src/Cedar/Radius.c
+index bcbac5d4..9dcfe05d 100644
+--- a/src/Cedar/Radius.c
++++ b/src/Cedar/Radius.c
+@@ -1889,7 +1889,7 @@ bool RadiusLogin(CONNECTION *c, char *server, UINT port, UCHAR *secret, UINT sec
+ 			SOCK *sock;
+ 			USHORT sz = 0;
+ 			UINT pos = 0;
+-			BOOL *finish = ZeroMallocEx(sizeof(BOOL) * LIST_NUM(ip_list), true);
++			bool *finish = ZeroMallocEx(sizeof(bool) * LIST_NUM(ip_list), true);
+ 
+ 			Zero(tmp, sizeof(tmp));
+ 
+diff --git a/src/Cedar/Win32Com.cpp b/src/Cedar/Win32Com.cpp
+index e567c557..65c21988 100644
+--- a/src/Cedar/Win32Com.cpp
++++ b/src/Cedar/Win32Com.cpp
+@@ -106,8 +106,6 @@
+ 
+ #ifdef	WIN32
+ 
+-#define	WIN32COM_CPP
+-
+ #define _WIN32_DCOM
+ 
+ //#define	_WIN32_WINNT		0x0502
+diff --git a/src/Cedar/Win32Com.h b/src/Cedar/Win32Com.h
+index 6191d7e0..eb4810e4 100644
+--- a/src/Cedar/Win32Com.h
++++ b/src/Cedar/Win32Com.h
+@@ -105,12 +105,6 @@
+ #ifndef	WIN32COM_H
+ #define	WIN32COM_H
+ 
+-#ifdef	WIN32COM_CPP
+-
+-// Internal function
+-
+-#endif	// WIN32COM_CPP
+-
+ // For external function
+ 
+ #pragma comment(lib,"htmlhelp.lib")
+diff --git a/src/Cedar/WinJumpList.cpp b/src/Cedar/WinJumpList.cpp
+index 7bd375a1..7b5fabe2 100644
+--- a/src/Cedar/WinJumpList.cpp
++++ b/src/Cedar/WinJumpList.cpp
+@@ -132,9 +132,6 @@
+ #undef StrCmp
+ #endif
+ 
+-
+-#define	WIN32COM_CPP
+-
+ //#define	_WIN32_WINNT		0x0502
+ //#define	WINVER				0x0502
+ #include <winsock2.h>
+diff --git a/src/Mayaqua/MayaType.h b/src/Mayaqua/MayaType.h
+index ae173617..9d5bc3c1 100644
+--- a/src/Mayaqua/MayaType.h
++++ b/src/Mayaqua/MayaType.h
+@@ -105,6 +105,8 @@
+ #ifndef	MAYATYPE_H
+ #define	MAYATYPE_H
+ 
++#include <stdbool.h>
++
+ // Check whether the windows.h header is included
+ #ifndef	WINDOWS_H
+ #ifdef	_WINDOWS_
+@@ -252,13 +254,6 @@ typedef	unsigned int		BOOL;
+ #define	FALSE				0
+ #endif	// WINDOWS_H
+ 
+-// bool type
+-#ifndef	WIN32COM_CPP
+-typedef	unsigned int		bool;
+-#define	true				1
+-#define	false				0
+-#endif	// WIN32COM_CPP
+-
+ // 32bit integer type
+ #ifndef	WINDOWS_H
+ typedef	unsigned int		UINT;
+-- 
+2.39.5

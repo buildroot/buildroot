@@ -1,0 +1,93 @@
+From 60ee4630442c4458896553060c795732fd4a04de Mon Sep 17 00:00:00 2001
+From: Ilya Shipitsin <chipitsine@gmail.com>
+Date: Fri, 23 Feb 2024 11:06:27 +0100
+Subject: [PATCH] adjust types of variables
+
+gcc14 is not happy on "error: passing argument .. from incompatible pointer type [-Wincompatible-pointer-types]"
+
+Upstream: https://github.com/SoftEtherVPN/SoftEtherVPN/commit/60ee4630442c4458896553060c795732fd4a04de
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/Mayaqua/pkcs11f.h | 6 +++---
+ src/Mayaqua/pkcs11t.h | 9 ++++++---
+ 2 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/src/Mayaqua/pkcs11f.h b/src/Mayaqua/pkcs11f.h
+index 300975352..33550c3dd 100644
+--- a/src/Mayaqua/pkcs11f.h
++++ b/src/Mayaqua/pkcs11f.h
+@@ -73,7 +73,7 @@ CK_PKCS11_FUNCTION_INFO(C_GetSlotList)
+ (
+   CK_BBOOL       tokenPresent,  /* only slots with tokens? */
+   CK_SLOT_ID_PTR pSlotList,     /* receives array of slot IDs */
+-  CK_ULONG_PTR   pulCount       /* receives number of slots */
++  CK_UINT_PTR   pulCount       /* receives number of slots */
+ );
+ #endif
+ 
+@@ -351,7 +351,7 @@ CK_PKCS11_FUNCTION_INFO(C_FindObjects)
+  CK_SESSION_HANDLE    hSession,          /* session's handle */
+  CK_OBJECT_HANDLE_PTR phObject,          /* gets obj. handles */
+  CK_ULONG             ulMaxObjectCount,  /* max handles to get */
+- CK_ULONG_PTR         pulObjectCount     /* actual # returned */
++ CK_UINT_PTR         pulObjectCount     /* actual # returned */
+ );
+ #endif
+ 
+@@ -558,7 +558,7 @@ CK_PKCS11_FUNCTION_INFO(C_Sign)
+   CK_BYTE_PTR       pData,           /* the data to sign */
+   CK_ULONG          ulDataLen,       /* count of bytes to sign */
+   CK_BYTE_PTR       pSignature,      /* gets the signature */
+-  CK_ULONG_PTR      pulSignatureLen  /* gets signature length */
++  CK_UINT_PTR      pulSignatureLen  /* gets signature length */
+ );
+ #endif
+ 
+diff --git a/src/Mayaqua/pkcs11t.h b/src/Mayaqua/pkcs11t.h
+index c04b57192..f157ce738 100644
+--- a/src/Mayaqua/pkcs11t.h
++++ b/src/Mayaqua/pkcs11t.h
+@@ -51,6 +51,8 @@ typedef CK_BYTE           CK_BBOOL;
+ /* an unsigned value, at least 32 bits long */
+ typedef unsigned long int CK_ULONG;
+ 
++typedef unsigned int CK_UINT;
++
+ /* a signed value, the same size as a CK_ULONG */
+ /* CK_LONG is new for v2.0 */
+ typedef long int          CK_LONG;
+@@ -68,6 +70,7 @@ typedef CK_BYTE     CK_PTR   CK_BYTE_PTR;
+ typedef CK_CHAR     CK_PTR   CK_CHAR_PTR;
+ typedef CK_UTF8CHAR CK_PTR   CK_UTF8CHAR_PTR;
+ typedef CK_ULONG    CK_PTR   CK_ULONG_PTR;
++typedef CK_UINT     CK_PTR   CK_UINT_PTR;
+ typedef void        CK_PTR   CK_VOID_PTR;
+ 
+ /* Pointer to a CK_VOID_PTR-- i.e., pointer to pointer to void */
+@@ -110,7 +113,7 @@ typedef CK_ULONG CK_NOTIFICATION;
+ #define CKN_SURRENDER       0
+ 
+ 
+-typedef CK_ULONG          CK_SLOT_ID;
++typedef CK_UINT          CK_SLOT_ID;
+ 
+ typedef CK_SLOT_ID CK_PTR CK_SLOT_ID_PTR;
+ 
+@@ -262,7 +265,7 @@ typedef CK_TOKEN_INFO CK_PTR CK_TOKEN_INFO_PTR;
+ 
+ /* CK_SESSION_HANDLE is a Cryptoki-assigned value that
+  * identifies a session */
+-typedef CK_ULONG          CK_SESSION_HANDLE;
++typedef CK_UINT          CK_SESSION_HANDLE;
+ 
+ typedef CK_SESSION_HANDLE CK_PTR CK_SESSION_HANDLE_PTR; 
+ 
+@@ -310,7 +313,7 @@ typedef CK_SESSION_INFO CK_PTR CK_SESSION_INFO_PTR;
+ 
+ /* CK_OBJECT_HANDLE is a token-specific identifier for an
+  * object  */
+-typedef CK_ULONG          CK_OBJECT_HANDLE;
++typedef CK_UINT          CK_OBJECT_HANDLE;
+ 
+ typedef CK_OBJECT_HANDLE CK_PTR CK_OBJECT_HANDLE_PTR;
+ 
