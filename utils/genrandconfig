@@ -149,9 +149,6 @@ async def fixup_config(sysinfo, configfile):
         configlines.remove('BR2_TOOLCHAIN_BARE_METAL_BUILDROOT_ARCH=""\n')
         configlines.append('BR2_TOOLCHAIN_BARE_METAL_BUILDROOT_ARCH="microblazeel-buildroot-elf"\n')
 
-    if 'BR2_PACKAGE_AUFS_UTIL=y\n' in configlines and \
-       'BR2_PACKAGE_AUFS_UTIL_VERSION=""\n' in configlines:
-        return False
     if 'BR2_PACKAGE_A10DISP=y\n' in configlines:
         return False
 
@@ -251,11 +248,6 @@ async def fixup_config(sysinfo, configfile):
     if 'BR2_LINUX_KERNEL=y\n' in configlines and \
        'BR2_LINUX_KERNEL_IMAGE_TARGET_CUSTOM=y\n' in configlines:
         configlines.remove('BR2_LINUX_KERNEL_IMAGE_TARGET_CUSTOM=y')
-
-    if 'BR2_LINUX_KERNEL_EXT_AUFS=y\n' in configlines and \
-       'BR2_LINUX_KERNEL_EXT_AUFS_VERSION=""\n' in configlines:
-        configlines.remove('BR2_LINUX_KERNEL_EXT_AUFS=y\n')
-        configlines.remove('BR2_LINUX_KERNEL_EXT_AUFS_VERSION=""\n')
 
     if 'BR2_PACKAGE_LINUX_BACKPORTS=y\n' in configlines and \
        'BR2_PACKAGE_LINUX_BACKPORTS_USE_CUSTOM_CONFIG=y\n' in configlines and \

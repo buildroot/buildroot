@@ -75,9 +75,6 @@ def test_Ifdef(testname, filename, string, expected):
 
 
 get_package_prefix_from_filename = [
-    ('linux extension',
-     'linux/linux-ext-aufs.mk',
-     ['aufs', 'AUFS']),
     ('linux tool',
      'package/linux-tools/linux-tool-gpio.mk.in',
      ['gpio', 'GPIO']),

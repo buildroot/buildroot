@@ -146,6 +146,19 @@ endif
 
 comment "Legacy options removed in 2025.11"
 
+config BR2_LINUX_KERNEL_EXT_AUFS
+	bool "Aufs Filesystem Module patch has been removed"
+	select BR2_LEGACY
+	help
+	  aufs kernel module patch is unmaintained and has been
+	  removed.
+
+config BR2_PACKAGE_AUFS_UTIL
+	bool "aufs-util has been removed"
+	select BR2_LEGACY
+	help
+	  aufs-util package is unmaintained and has been removed.
+
 config BR2_TOOLCHAIN_EXTERNAL_LINARO_ARMEB
 	bool "Linaro armeb 2018.05 external toolchain is deprecated"
 	select BR2_LEGACY
