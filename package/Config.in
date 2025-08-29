@@ -656,6 +656,7 @@ endmenu
 menu "Interpreter languages and scripting"
 	source "package/4th/Config.in"
 	source "package/chicken/Config.in"
+	source "package/duktape/Config.in"
 	source "package/enscript/Config.in"
 	source "package/erlang/Config.in"
 if BR2_PACKAGE_ERLANG
@@ -1864,10 +1865,6 @@ menu "Hardware handling"
 	source "package/tslib/Config.in"
 	source "package/uhd/Config.in"
 	source "package/urg/Config.in"
-endmenu
-
-menu "Javascript"
-	source "package/duktape/Config.in"
 endmenu
 
 menu "JSON/XML"
