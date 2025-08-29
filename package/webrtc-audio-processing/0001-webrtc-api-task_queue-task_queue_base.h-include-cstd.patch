@@ -1,0 +1,29 @@
+From 9b59846b4f9a723743532f26c344d84084b7af96 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Fri, 29 Aug 2025 07:31:50 +0200
+Subject: [PATCH] webrtc/api/task_queue/task_queue_base.h: include <cstdint>
+ for uint32_t
+
+This is needed since GCC 15.x.
+
+Upstream: not applicable, code has completely changed in latest versions
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ webrtc/api/task_queue/task_queue_base.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/webrtc/api/task_queue/task_queue_base.h b/webrtc/api/task_queue/task_queue_base.h
+index 90b1efd..7403ee9 100644
+--- a/webrtc/api/task_queue/task_queue_base.h
++++ b/webrtc/api/task_queue/task_queue_base.h
+@@ -11,6 +11,7 @@
+ #define API_TASK_QUEUE_TASK_QUEUE_BASE_H_
+ 
+ #include <memory>
++#include <cstdint>
+ 
+ #include "api/task_queue/queued_task.h"
+ #include "rtc_base/system/rtc_export.h"
+-- 
+2.50.1
+
