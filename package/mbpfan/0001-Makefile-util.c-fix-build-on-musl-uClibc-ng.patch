@@ -1,0 +1,62 @@
+From 924e38f159e4f5906f88cd8ddbe27f273c601cb0 Mon Sep 17 00:00:00 2001
+From: Peter Korsgaard <peter@korsgaard.com>
+Date: Mon, 1 Sep 2025 12:08:53 +0200
+Subject: [PATCH] {Makefile,util.c}: fix build on musl / uClibc-ng
+
+vsyslog() is not in POSIX, so only exposed by <syslog.h> on musl and
+uclibc-ng if we define _DEFAULT_SOURCE.
+
+https://git.musl-libc.org/cgit/musl/tree/include/syslog.h#n64
+https://cgit.uclibc-ng.org/cgi/cgit/uclibc-ng.git/tree/include/sys/syslog.h#n200
+
+While we are at it, drop the glibc-implementation-specific __USE_MISC define
+in src/util.c to get rid of a double definition:
+
+src/util.c:3: warning: "__USE_MISC" redefined
+    3 | #define __USE_MISC
+      |
+In file included from /usr/include/x86_64-linux-gnu/bits/libc-header-start.h:33,
+                 from /usr/include/stdio.h:27,
+                 from src/util.c:2:
+/usr/include/features.h:395: note: this is the location of the previous definition
+  395 | # define __USE_MISC     1
+
+On glibc (and uClibc-ng) the internal __USE_MISC symbol gets defined if
+_DEFAULT_SOURCE is:
+
+https://github.com/bminor/glibc/blob/master/include/features.h#L417-L419
+
+Upstream: https://github.com/linux-on-mac/mbpfan/pull/271
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ Makefile   | 2 +-
+ src/util.c | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 94d72ee..ff1b7e6 100644
+--- a/Makefile
++++ b/Makefile
+@@ -19,7 +19,7 @@ BINFLAG = -o
+ INCLUDES =
+ LIBS = -lm
+ LIBPATH =
+-CFLAGS += $(COPT) -g $(INCLUDES) -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -std=c99 -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=500
++CFLAGS += $(COPT) -g $(INCLUDES) -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -std=c99 -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=500 -D_DEFAULT_SOURCE
+ LDFLAGS += $(LIBPATH) -g
+ 
+ OBJS := $(patsubst %.$(C),%.$(OBJ),$(wildcard $(SOURCE_PATH)*.$(C)))
+diff --git a/src/util.c b/src/util.c
+index df5b03f..25415b9 100644
+--- a/src/util.c
++++ b/src/util.c
+@@ -1,6 +1,5 @@
+ #include <stdarg.h>
+ #include <stdio.h>
+-#define __USE_MISC
+ #define _GNU_SOURCE
+ #include <syslog.h>
+ 
+-- 
+2.39.5
+
