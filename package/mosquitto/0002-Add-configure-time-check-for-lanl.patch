@@ -1,0 +1,47 @@
+From 447a6aa8df882a67ca3df6f5e95be42e1463eaf0 Mon Sep 17 00:00:00 2001
+From: Titouan Christophe <titouan.christophe@mind.be>
+Date: Fri, 29 Aug 2025 19:47:34 +0200
+Subject: [PATCH] Add configure-time check for -lanl
+
+Since glibc 2.34, libanl features have been integrated directly into libc [1].
+For backward compatibility, some toolchains still provide a shim for
+libanl as a separate .so, but new toolchains (for example for new archs
+like loongarch) do not provide it anymore.
+
+In such a case, building mosquitto fails at link time with (see [2])
+    > cannot find -lanl: No such file or directory
+
+To fix this problem while maintaining compatibility with older toolchains,
+check if a simple program that uses libanl can be compiled without -lanl,
+and only add the linker flag otherwise.
+
+[1] https://sourceware.org/pipermail/libc-alpha/2021-August/129718.html
+[2] https://autobuild.buildroot.org/results/16223cd838876abc9b6f941f7dc20d23afa32c3b/build-end.log
+
+Upstream: https://github.com/eclipse-mosquitto/mosquitto/pull/3358
+
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ config.mk | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/config.mk b/config.mk
+index 34d5163f..cc7987c4 100644
+--- a/config.mk
++++ b/config.mk
+@@ -318,8 +318,11 @@ ifeq ($(WITH_EC),yes)
+ endif
+ 
+ ifeq ($(WITH_ADNS),yes)
+-	BROKER_LDADD:=$(BROKER_LDADD) -lanl
+ 	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_ADNS
++	NEED_LIBANL := $(shell printf '#include <stdlib.h>\n#include <netdb.h>\nint main(){return getaddrinfo_a(0, NULL, 0, NULL);}'| $(CC) -D_GNU_SOURCE -o /dev/null -x c - 2>/dev/null || echo YES)
++	ifeq ($(NEED_LIBANL),YES)
++		BROKER_LDADD:=$(BROKER_LDADD) -lanl
++	endif
+ endif
+ 
+ ifeq ($(WITH_CONTROL),yes)
+-- 
+2.50.1
+
