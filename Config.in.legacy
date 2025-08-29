@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2026.02"
 
+config BR2_PACKAGE_JSZIP
+	bool "jszip has been removed"
+	select BR2_LEGACY
+	help
+	  JS libraries are no longer part of Buildroot packages.
+
 config BR2_PACKAGE_JSON_JAVASCRIPT
 	bool "json-javascript has been removed"
 	select BR2_LEGACY
