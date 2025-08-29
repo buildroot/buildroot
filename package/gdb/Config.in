@@ -50,6 +50,7 @@ if BR2_PACKAGE_GDB
 config BR2_PACKAGE_GDB_SERVER
 	bool "gdbserver"
 	depends on !BR2_TOOLCHAIN_EXTERNAL_GDB_SERVER_COPY
+	select BR2_PACKAGE_READLINE
 	help
 	  Build the gdbserver stub to run on the target.
 	  A full gdb is needed to debug the program.
@@ -60,7 +61,7 @@ config BR2_PACKAGE_GDB_DEBUGGER
 	depends on !BR2_sh
 	select BR2_PACKAGE_GMP
 	select BR2_PACKAGE_MPFR
-	select BR2_PACKAGE_NCURSES
+	select BR2_PACKAGE_READLINE
 	select BR2_PACKAGE_ZLIB
 
 comment "full gdb on target needs a toolchain w/ wchar"
@@ -71,6 +72,7 @@ if BR2_PACKAGE_GDB_DEBUGGER
 
 config BR2_PACKAGE_GDB_TUI
 	bool "TUI support"
+	select BR2_PACKAGE_NCURSES
 	help
 	  This option enables terminal user interface (TUI) for gdb
 

@@ -30,7 +30,7 @@ GDB_PRE_CONFIGURE_HOOKS += GDB_CONFIGURE_SYMLINK
 # For the host variant, we really want to build with XML support,
 # which is needed to read XML descriptions of target architectures. We
 # also need ncurses.
-HOST_GDB_DEPENDENCIES = host-expat host-ncurses host-zlib
+HOST_GDB_DEPENDENCIES = host-expat host-readline host-zlib
 
 # Disable building documentation
 GDB_MAKE_OPTS += MAKEINFO=true
@@ -136,9 +136,10 @@ ifeq ($(BR2_PACKAGE_GDB_DEBUGGER),y)
 GDB_DEPENDENCIES += zlib
 GDB_CONF_OPTS += \
 	--enable-gdb \
+	--with-system-readline \
 	--with-curses \
 	--with-system-zlib
-GDB_DEPENDENCIES += ncurses \
+GDB_DEPENDENCIES += readline \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv)
 else
 # When only building gdbserver, we don't need zlib. But we have no way to
@@ -169,8 +170,12 @@ GDB_CONF_OPTS += --without-mpfr
 endif
 
 ifeq ($(BR2_PACKAGE_GDB_SERVER),y)
-GDB_CONF_OPTS += --enable-gdbserver
-GDB_DEPENDENCIES += $(TARGET_NLS_DEPENDENCIES)
+GDB_CONF_OPTS += \
+	--enable-gdbserver \
+	--with-system-readline
+GDB_DEPENDENCIES += \
+	$(TARGET_NLS_DEPENDENCIES) \
+	readline
 else
 GDB_CONF_OPTS += --disable-gdbserver
 endif
@@ -187,6 +192,7 @@ GDB_CONF_OPTS += --disable-inprocess-agent
 endif
 
 ifeq ($(BR2_PACKAGE_GDB_TUI),y)
+GDB_DEPENDENCIES += ncurses
 GDB_CONF_OPTS += --enable-tui
 else
 GDB_CONF_OPTS += --disable-tui
@@ -262,10 +268,12 @@ HOST_GDB_CONF_OPTS = \
 	--with-system-zlib \
 	--with-curses \
 	--disable-source-highlight \
+	--with-system-readline \
 	$(GDB_DISABLE_BINUTILS_CONF_OPTS) \
 	--with-mpfr=$(HOST_DIR)
 
 ifeq ($(BR2_PACKAGE_HOST_GDB_TUI),y)
+HOST_GDB_DEPENDENCIES += host-ncurses
 HOST_GDB_CONF_OPTS += --enable-tui
 else
 HOST_GDB_CONF_OPTS += --disable-tui
