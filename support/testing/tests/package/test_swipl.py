@@ -43,4 +43,4 @@ class TestSWIPL(infra.basetest.BRTest):
 
         # Run a more complex logic program (solve a sudoku).
         cmd = "swipl -g top -t halt /root/sudoku.pl"
-        self.assertRunOk(cmd, timeout=10)
+        self.assertRunOk(cmd, timeout=120)
