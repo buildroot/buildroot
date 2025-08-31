@@ -704,6 +704,7 @@ endif
 config BR2_TARGET_UBOOT_ZYNQ
 	bool "Boot on the Xilinx Zynq SoCs"
 	depends on BR2_arm
+	depends on BR2_cortex_a9
 	help
 	  Enable options specific to the Xilinx Zynq family of SoCs.
 
