@@ -29,8 +29,10 @@ void execute_function(void(*function)(void*), void* context)
 }
 void set_time_in_seconds(int seconds)
 {
-	time_t timeToSet = seconds;
-	stime(&timeToSet);
+	struct timespec timeToSet = { 0, 0 };
+
+	timeToSet.tv_sec = seconds;
+	clock_settime(CLOCK_REALTIME, &timeToSet);
 }
 void write_internal_time_in_seconds()
 {
