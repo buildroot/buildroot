@@ -27,6 +27,7 @@ define SKELETON_CUSTOM_CONFIGURE_CMDS
 	support/scripts/check-merged \
 		--type skeleton \
 		$(if $(BR2_ROOTFS_MERGED_USR),--merged-usr) \
+		$(if $(BR2_ROOTFS_MERGED_BIN),--merged-bin) \
 		$(SKELETON_CUSTOM_PATH)
 endef
 

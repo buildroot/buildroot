@@ -785,6 +785,7 @@ endif
 	support/scripts/check-merged \
 		--type overlay \
 		$(if $(BR2_ROOTFS_MERGED_USR),--merged-usr) \
+		$(if $(BR2_ROOTFS_MERGED_BIN),--merged-bin) \
 		$(call qstrip,$(BR2_ROOTFS_OVERLAY))
 
 	$(foreach d, $(call qstrip,$(BR2_ROOTFS_OVERLAY)), \

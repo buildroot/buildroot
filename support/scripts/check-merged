@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 #
-# Check if a given custom skeleton or overlay complies to the merged /usr
+# Check if a given custom skeleton or overlay complies to the merged
 # requirements:
+#
+# - for merged-usr:
 #   /bin            missing, or a relative symlink to usr/bin
 #   /lib            missing, or a relative symlink to usr/lib
 #   /sbin           missing, or a relative symlink to usr/sbin
@@ -11,9 +13,14 @@
 #
 # *: must be present for skeletons, can be missing for overlays
 #
+# - for merged-bin: all of the above, except:
+#   /usr/sbin       missing, or a relative symlink to bin (thus points
+#                   to /usr/bin)
+#
 # Input:
 #   --type TYPE     the type of root to check: 'skeleton' or 'overlay'
 #   --merged-usr    check for merged /usr
+#   --merged-bin    check for merged /usr/bin
 #   $*:             the root directories (skeleton, overlays) to check
 # Output:
 #   stdout:         the list of non-compliant paths (empty if compliant).
@@ -22,12 +29,13 @@
 #   !0:             if any directory to check is improperly merged
 #
 
-opts="type:,merged-usr"
+opts="type:,merged-usr,merged-bin"
 ARGS="$(getopt -n check-merged -o "" -l "${opts}" -- "${@}")" || exit 1
 eval set -- "${ARGS}"
 
 type=
 merged_usr=false
+merged_bin=false
 while :; do
 	case "${1}" in
 	(--type)
@@ -36,6 +44,10 @@ while :; do
 		;;
 	(--merged-usr)
 		merged_usr=true
+		shift
+		;;
+	(--merged-bin)
+		merged_bin=true
 		shift
 		;;
 	(--)
@@ -110,10 +122,14 @@ for root; do
 	if ${merged_usr}; then
 		test_dir "${type}" "${root}" "/" "usr/bin"
 		test_dir "${type}" "${root}" "/" "usr/lib"
-		test_dir "${type}" "${root}" "/" "usr/sbin"
 		test_merged "${type}" "${root}" "/" "bin" "usr/bin"
 		test_merged "${type}" "${root}" "/" "lib" "usr/lib"
 		test_merged "${type}" "${root}" "/" "sbin" "usr/sbin"
+		if ${merged_bin}; then
+			test_merged "${type}" "${root}" "/usr/" "sbin" "bin"
+		else
+			test_dir "${type}" "${root}" "/" "usr/sbin"
+		fi
 	fi
 done
 
