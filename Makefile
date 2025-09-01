@@ -783,7 +783,7 @@ endif
 # counterparts are appropriately setup as symlinks ones to the others.
 ifeq ($(BR2_ROOTFS_MERGED_USR),y)
 	@$(call MESSAGE,"Sanity check in overlays $(call qstrip,$(BR2_ROOTFS_OVERLAY))")
-	support/scripts/check-merged-usr.sh \
+	support/scripts/check-merged \
 		--type overlay \
 		$(call qstrip,$(BR2_ROOTFS_OVERLAY))
 endif # merged /usr

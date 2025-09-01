@@ -27,7 +27,7 @@ endif
 # counterparts are appropriately setup as symlinks ones to the others.
 ifeq ($(BR2_ROOTFS_MERGED_USR),y)
 define SKELETON_CUSTOM_NOT_MERGED_USR_DIRS
-	support/scripts/check-merged-usr.sh \
+	support/scripts/check-merged \
 		--type skeleton \
 		$(SKELETON_CUSTOM_PATH)
 endef
