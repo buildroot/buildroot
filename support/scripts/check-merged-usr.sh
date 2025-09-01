@@ -14,6 +14,9 @@
 #   $1:     the root directory (skeleton, overlay) to check
 # Output:
 #   stdout: the list of non-compliant paths (empty if compliant).
+# Exit code:
+#   0:      in case of success (stdout will be empty)
+#   !0:     if any path is improperly merged
 #
 
 # The directory to check for merged-usr
@@ -45,9 +48,13 @@ test_merged() {
 
 	if ! is_valid_merged "${root}" "${dir1}" "${dir2}"; then
 		printf '%s\n' "${dir1}"
+		is_success=false
 	fi
 }
 
+is_success=true
 test_merged "${root}" "/lib" "/usr/lib"
 test_merged "${root}" "/bin" "/usr/bin"
 test_merged "${root}" "/sbin" "/usr/sbin"
+
+${is_success}
