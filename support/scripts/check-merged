@@ -3,15 +3,20 @@
 # Check if a given custom skeleton or overlay complies to the merged
 # requirements:
 #
-# - for merged-usr:
-#   /bin            missing, or a relative symlink to usr/bin
-#   /lib            missing, or a relative symlink to usr/lib
-#   /sbin           missing, or a relative symlink to usr/sbin
+# - for unmerged:
+#   /bin            missing*, or an existing directory; not a symlink
+#   /lib            missing*, or an existing directory; not a symlink
+#   /sbin           missing*, or an existing directory; not a symlink
 #   /usr/bin/       missing*, or an existing directory; not a symlink
 #   /usr/lib/       missing*, or an existing directory; not a symlink
 #   /usr/sbin/      missing*, or an existing directory; not a symlink
 #
 # *: must be present for skeletons, can be missing for overlays
+#
+# - for merged-usr: all of the above, except:
+#   /bin            missing, or a relative symlink to usr/bin
+#   /lib            missing, or a relative symlink to usr/lib
+#   /sbin           missing, or a relative symlink to usr/sbin
 #
 # - for merged-bin: all of the above, except:
 #   /usr/sbin       missing, or a relative symlink to bin (thus points
@@ -119,9 +124,9 @@ test_dir() {
 is_success=true
 for root; do
 	first=true
+	test_dir "${type}" "${root}" "/" "usr/bin"
+	test_dir "${type}" "${root}" "/" "usr/lib"
 	if ${merged_usr}; then
-		test_dir "${type}" "${root}" "/" "usr/bin"
-		test_dir "${type}" "${root}" "/" "usr/lib"
 		test_merged "${type}" "${root}" "/" "bin" "usr/bin"
 		test_merged "${type}" "${root}" "/" "lib" "usr/lib"
 		test_merged "${type}" "${root}" "/" "sbin" "usr/sbin"
@@ -130,6 +135,11 @@ for root; do
 		else
 			test_dir "${type}" "${root}" "/" "usr/sbin"
 		fi
+	else
+		test_dir "${type}" "${root}" "/" "bin"
+		test_dir "${type}" "${root}" "/" "lib"
+		test_dir "${type}" "${root}" "/" "sbin"
+		test_dir "${type}" "${root}" "/" "usr/sbin"
 	fi
 done
 
