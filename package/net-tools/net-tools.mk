@@ -42,10 +42,16 @@ endef
 
 # ifconfig & route reside in /sbin for busybox, so ensure we don't end
 # up with two versions of those.
-define NET_TOOLS_INSTALL_TARGET_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR=$(TARGET_DIR) install
+ifeq ($(BR2_ROOTFS_MERGED_BIN),)
+define NET_TOOLS_INSTALL_MV_BINS
 	mv -f $(TARGET_DIR)/bin/ifconfig $(TARGET_DIR)/sbin/ifconfig
 	mv -f $(TARGET_DIR)/bin/route $(TARGET_DIR)/sbin/route
+endef
+endif
+
+define NET_TOOLS_INSTALL_TARGET_CMDS
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR=$(TARGET_DIR) install
+	$(NET_TOOLS_INSTALL_MV_BINS)
 endef
 
 $(eval $(generic-package))
