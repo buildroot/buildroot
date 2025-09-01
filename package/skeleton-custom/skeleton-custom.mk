@@ -23,18 +23,11 @@ $(error No path specified for the custom skeleton)
 endif
 endif
 
-# For a merged /usr, ensure that /lib, /bin and /sbin and their /usr
-# counterparts are appropriately setup as symlinks ones to the others.
-ifeq ($(BR2_ROOTFS_MERGED_USR),y)
-define SKELETON_CUSTOM_NOT_MERGED_USR_DIRS
+define SKELETON_CUSTOM_CONFIGURE_CMDS
 	support/scripts/check-merged \
 		--type skeleton \
+		$(if $(BR2_ROOTFS_MERGED_USR),--merged-usr) \
 		$(SKELETON_CUSTOM_PATH)
-endef
-endif # merged /usr
-
-define SKELETON_CUSTOM_CONFIGURE_CMDS
-	$(SKELETON_CUSTOM_NOT_MERGED_USR_DIRS)
 endef
 
 # The target-dir-warning file and the lib{32,64} symlinks are the only

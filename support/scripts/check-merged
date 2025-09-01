@@ -13,6 +13,7 @@
 #
 # Input:
 #   --type TYPE     the type of root to check: 'skeleton' or 'overlay'
+#   --merged-usr    check for merged /usr
 #   $*:             the root directories (skeleton, overlays) to check
 # Output:
 #   stdout:         the list of non-compliant paths (empty if compliant).
@@ -21,16 +22,21 @@
 #   !0:             if any directory to check is improperly merged
 #
 
-opts="type:"
+opts="type:,merged-usr"
 ARGS="$(getopt -n check-merged -o "" -l "${opts}" -- "${@}")" || exit 1
 eval set -- "${ARGS}"
 
 type=
+merged_usr=false
 while :; do
 	case "${1}" in
 	(--type)
 		type="${2}"
 		shift 2
+		;;
+	(--merged-usr)
+		merged_usr=true
+		shift
 		;;
 	(--)
 		shift
@@ -101,12 +107,14 @@ test_dir() {
 is_success=true
 for root; do
 	first=true
-	test_dir "${type}" "${root}" "/" "usr/bin"
-	test_dir "${type}" "${root}" "/" "usr/lib"
-	test_dir "${type}" "${root}" "/" "usr/sbin"
-	test_merged "${type}" "${root}" "/" "bin" "usr/bin"
-	test_merged "${type}" "${root}" "/" "lib" "usr/lib"
-	test_merged "${type}" "${root}" "/" "sbin" "usr/sbin"
+	if ${merged_usr}; then
+		test_dir "${type}" "${root}" "/" "usr/bin"
+		test_dir "${type}" "${root}" "/" "usr/lib"
+		test_dir "${type}" "${root}" "/" "usr/sbin"
+		test_merged "${type}" "${root}" "/" "bin" "usr/bin"
+		test_merged "${type}" "${root}" "/" "lib" "usr/lib"
+		test_merged "${type}" "${root}" "/" "sbin" "usr/sbin"
+	fi
 done
 
 ${is_success}
