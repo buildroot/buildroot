@@ -125,6 +125,7 @@ define COREUTILS_CREATE_TEST_SYMLINK
 endef
 COREUTILS_POST_INSTALL_TARGET_HOOKS += COREUTILS_CREATE_TEST_SYMLINK
 
+ifeq ($(BR2_ROOTFS_MERGED_BIN),)
 # gnu thinks chroot is in bin, debian thinks it's in sbin
 ifeq ($(BR2_PACKAGE_COREUTILS_INDIVIDUAL_BINARIES),y)
 define COREUTILS_FIX_CHROOT_LOCATION
@@ -137,6 +138,7 @@ define COREUTILS_FIX_CHROOT_LOCATION
 endef
 endif
 COREUTILS_POST_INSTALL_TARGET_HOOKS += COREUTILS_FIX_CHROOT_LOCATION
+endif
 
 # Explicitly install ln and realpath, which we *are* insterested in.
 # A lot of other programs still get installed, however, but disabling
