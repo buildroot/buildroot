@@ -575,7 +575,8 @@ config BR2_TARGET_UBOOT_INITIAL_ENV
 
 config BR2_TARGET_UBOOT_ZYNQMP
 	bool "Boot on the Xilinx ZynqMP SoCs"
-	depends on BR2_aarch64
+	depends on BR2_TARGET_XILINX_FIRMWARE_ARCH_SUPPORTS
+	depends on BR2_cortex_a53
 	help
 	  Enable options specific to the Xilinx ZynqMP family of SoCs.
 
