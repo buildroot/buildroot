@@ -144,15 +144,13 @@ endif
 
 ###############################################################################
 
-comment "Legacy options removed in 2025.11"
+comment "Legacy options removed in 2025.08"
 
 config BR2_PACKAGE_LIGHTTPD_LIBEV
 	bool "lighttpd removed libev support"
 	select BR2_LEGACY
 	help
 	  Lighttpd 1.4.80 removed optional libev support.
-
-comment "Legacy options removed in 2025.08"
 
 config BR2_PACKAGE_LIBSVGTINY
 	bool "libsvgtiny has been removed"
