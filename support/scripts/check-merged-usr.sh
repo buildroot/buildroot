@@ -26,7 +26,7 @@ root="${1}"
 # each of them.
 #
 
-test_merged() {
+is_valid_merged() {
 	local root="${1}"
 	local dir1="${2}"
 	local dir2="${3}"
@@ -35,9 +35,17 @@ test_merged() {
 	inode1="$(stat -c '%i' "${root}${dir1}/." 2>/dev/null)"
 	inode2="$(stat -c '%i' "${root}${dir2}/." 2>/dev/null)"
 
-	test -z "${inode1}" || \
-		test "${inode1}" = "${inode2}" || \
-			printf '%s\n' "${dir1}"
+	test -z "${inode1}" || test "${inode1}" = "${inode2}"
+}
+
+test_merged() {
+	local root="${1}"
+	local dir1="${2}"
+	local dir2="${3}"
+
+	if ! is_valid_merged "${root}" "${dir1}" "${dir2}"; then
+		printf '%s\n' "${dir1}"
+	fi
 }
 
 test_merged "${root}" "/lib" "/usr/lib"
