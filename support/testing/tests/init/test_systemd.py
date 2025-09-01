@@ -31,6 +31,25 @@ class InitSystemSystemdBase(InitSystemBase):
             self.start_emulator(fs)
         self.check_init("/lib/systemd/systemd")
 
+        # Test there is no tainted flag.
+        output, ret = self.emulator.run("systemctl --no-pager status")
+        self.assertEqual(ret, 0, f"'systemctl status' failed with exit code {ret}, with:\n{output}")
+        try:
+            # 'support-ended' tainted flag is only set based on the
+            # SUPPORT_END variable in /etc/os-release; as we don't set
+            # it in Buildroot, we can't get that flag in the runtime
+            # tests, even on our maintenance branches, so we don't need
+            # to filter it out.
+            tainted_flags = [
+                "".join(line.split(":")[1:]).strip()
+                for line in output
+                if line.strip().startswith("Tainted: ")
+            ][0]
+            raise RuntimeError(f"Tainted flags: {tainted_flags}")
+        except IndexError:
+            # No tainted flag \o/
+            pass
+
         # Test all units are OK
         output, _ = self.emulator.run("systemctl --no-pager --failed --no-legend")
         self.assertEqual(len(output), 0)
