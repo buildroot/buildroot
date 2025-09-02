@@ -1,0 +1,42 @@
+From 0bfa4eb3e15d8df8a68a8c3429505905afae112e Mon Sep 17 00:00:00 2001
+From: Thomas Haller <thaller@redhat.com>
+Date: Fri, 7 Jul 2023 18:13:10 +0200
+Subject: [PATCH] improvement(functions): don't use deprecated pipes.quote()
+
+Since Python 3.3, shlex.quote() replaces it. This avoids a deprecation
+warning.
+
+Upstream: f7f5613b76c044c62c876ae87c6b85f5a41acb2a
+[Romain: backport to 2.0.2]
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ src/firewall/functions.py | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/src/firewall/functions.py b/src/firewall/functions.py
+index f7133d71..6213e778 100644
+--- a/src/firewall/functions.py
++++ b/src/firewall/functions.py
+@@ -34,7 +34,6 @@ import socket
+ import os
+ import os.path
+ import shlex
+-import pipes
+ import string
+ import tempfile
+ from firewall.core.logger import log
+@@ -607,10 +606,7 @@ def checkContext(context):
+     return True
+ 
+ def joinArgs(args):
+-    if "quote" in dir(shlex):
+-        return " ".join(shlex.quote(a) for a in args)
+-    else:
+-        return " ".join(pipes.quote(a) for a in args)
++    return " ".join(shlex.quote(a) for a in args)
+ 
+ def splitArgs(_string):
+     return shlex.split(_string)
+-- 
+2.51.0
+
