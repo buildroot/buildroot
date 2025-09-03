@@ -15,6 +15,8 @@ SQLITE_INSTALL_STAGING = YES
 
 # 0002-Add-a-typecast-to-avoid-32-bit-integer-overflow-in-t.patch
 SQLITE_IGNORE_CVES = CVE-2025-29087 CVE-2025-3277
+# 0003-Raise-error-if-too-many-aggregate-terms.patch
+SQLITE_IGNORE_CVES += CVE-2025-6965
 
 ifeq ($(BR2_PACKAGE_SQLITE_STAT4),y)
 SQLITE_CFLAGS += -DSQLITE_ENABLE_STAT4
