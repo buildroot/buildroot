@@ -1,0 +1,47 @@
+From 9b6727df25e45222b3863dbe5f5bc58237b68ab9 Mon Sep 17 00:00:00 2001
+From: El Mehdi YOUNES <elmehdi.younes@smile.fr>
+Date: Tue, 2 Sep 2025 14:02:11 +0200
+Subject: [PATCH] Replace regex-onig by regex-fancy in minimal-application
+
+The default "application" feature enables "minimal-application", which
+in turn pulls in the "regex-onig" feature of syntect. This brings in the
+onig crate (version 6.4.0) and its dependency onig_sys, which fail to
+build with GCC 15 due to C23 keyword conflicts.
+
+It is not possible to simply update the onig crate from bat itself,
+since its version is pinned indirectly by syntect. To avoid this
+dependency and fix the build, replace "regex-onig" with "regex-fancy" in
+"minimal-application". This makes bat use the pure-Rust fancy-regex
+engine instead of Oniguruma, removing the need for onig_sys and allowing
+the package to build with GCC 15.
+
+There is an an ongoing discussion about removing Oniguruma from bat
+since Oniguruma has been declared archived:
+
+see https://github.com/sharkdp/bat/issues/3285
+
+The Upstream project for now is refusing to use fancy-regex as default.
+
+Upstream: not submitted
+
+Signed-off-by: El Mehdi YOUNES <elmehdi.younes@smile.fr>
+---
+ Cargo.toml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Cargo.toml b/Cargo.toml
+index 80d19321..93a07a1d 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -29,7 +29,7 @@ minimal-application = [
+     "clap",
+     "etcetera",
+     "paging",
+-    "regex-onig",
++    "regex-fancy",
+     "wild",
+ ]
+ git = ["git2"] # Support indicating git modifications
+-- 
+2.43.0
+
