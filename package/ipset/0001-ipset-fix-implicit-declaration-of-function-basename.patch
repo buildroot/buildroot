@@ -1,0 +1,31 @@
+From 316f592ddc547c28388da4e7cb7c5c8f89cd3591 Mon Sep 17 00:00:00 2001
+From: Mike Pagano <mpagano@gentoo.org>
+Date: Fri, 30 Aug 2024 11:31:19 -0400
+Subject: ipset: Fix implicit declaration of function basename
+
+basename(3) is defined in libgen.h in MUSL.
+Include libgen.h where basename(3) is used.
+
+Signed-off-by: Mike Pagano <mpagano@gentoo.org>
+Acked-by: Phil Sutter <phil@nwl.cc>
+Signed-off-by: Jozsef Kadlecsik <kadlec@netfilter.org>
+Upstream: https://git.netfilter.org/ipset/commit/?id=316f592ddc547c28388da4e7cb7c5c8f89cd3591
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/ipset.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/ipset.c b/src/ipset.c
+index 162f477..d7733bf 100644
+--- a/src/ipset.c
++++ b/src/ipset.c
+@@ -15,6 +15,7 @@
+ #include <config.h>
+ #include <libipset/ipset.h>		/* ipset library */
+ #include <libipset/xlate.h>		/* translate to nftables */
++#include <libgen.h>
+ 
+ int
+ main(int argc, char *argv[])
+-- 
+cgit v1.2.3
