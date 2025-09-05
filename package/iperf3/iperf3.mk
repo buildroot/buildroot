@@ -14,6 +14,9 @@ IPERF3_CPE_ID_VENDOR = es
 # 0001-Fix-off-by-one-head-overflow-in-auth.patch
 IPERF3_IGNORE_CVES += CVE-2025-54349
 
+# 0002-Prevent-crash-due-to-assertion-failures-on-malformed-authentication-attempt.patch
+IPERF3_IGNORE_CVES += CVE-2025-54350
+
 IPERF3_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -D_GNU_SOURCE"
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
