@@ -20,6 +20,18 @@ config BR2_PACKAGE_EXIV2
 
 if BR2_PACKAGE_EXIV2
 
+config BR2_PACKAGE_EXIV2_BROTLI
+	bool "Brotli support"
+	select BR2_PACKAGE_BROTLI
+	help
+	  Build with Brotli support for JPEG XL
+
+config BR2_PACKAGE_EXIV2_INIH
+	bool "Inih support"
+	select BR2_PACKAGE_INIH
+	help
+	  Build with inih support
+
 config BR2_PACKAGE_EXIV2_PNG
 	bool "PNG image support"
 	select BR2_PACKAGE_ZLIB
