@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IOZONE_VERSION = 3.506
+IOZONE_VERSION = 3.508
 IOZONE_SOURCE = iozone$(subst .,_,$(IOZONE_VERSION)).tar
 IOZONE_SITE = http://www.iozone.org/src/current
 IOZONE_LICENSE = IOzone license (NO DERIVED WORKS ALLOWED)

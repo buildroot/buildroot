@@ -1,4 +1,4 @@
-From 5b1e973b2333e838624abf195b3ba9716591f304 Mon Sep 17 00:00:00 2001
+From 015b6fa0c4a503ae822e6cf787de82e09bc44511 Mon Sep 17 00:00:00 2001
 From: Gustavo Zacarias <gustavo@zacarias.com.ar>
 Date: Sun, 10 Oct 2021 10:15:26 +0200
 Subject: [PATCH] Add new targets for iozone:
@@ -10,12 +10,14 @@ And make largefile support optional via CFLAGS.
 
 Signed-off-by: Gustavo Zacarias <gustavo@zacarias.com.ar>
 Signed-off-by: Gilles Talis <gilles.talis@gmail.com>
+[Romain: rebase on 3.508]
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
 ---
  src/current/makefile | 56 +++++++++++++++++++++++++++++++++++++-------
  1 file changed, 47 insertions(+), 9 deletions(-)
 
 diff --git a/src/current/makefile b/src/current/makefile
-index 3a54701..3b17b1b 100644
+index 24a391e..bd66a4e 100755
 --- a/src/current/makefile
 +++ b/src/current/makefile
 @@ -172,10 +172,28 @@ hpux_no_ansi:	iozone_hpux_no.o  libbif.o
@@ -54,15 +56,15 @@ index 3a54701..3b17b1b 100644
  	@echo ""
  	@echo "Building iozone for Linux"
  	@echo ""
--	$(CC) -Wmissing-prototypes -Wall -c -O3 -Dunix -DHAVE_ANSIC_C -DASYNC_IO -DHAVE_PREAD \
+-	$(CC) -Wmissing-prototypes -c -O3 -Dunix -DHAVE_ANSIC_C -DASYNC_IO -DHAVE_PREAD \
 -		-DSHARED_MEM -Dlinux -D_LARGEFILE64_SOURCE $(CFLAGS) iozone.c \
-+	$(CC) -Wmissing-prototypes -Wall -c -Dunix -DHAVE_ANSIC_C -DASYNC_IO -DHAVE_PREAD \
++	$(CC) -Wmissing-prototypes -c -Dunix -DHAVE_ANSIC_C -DASYNC_IO -DHAVE_PREAD \
 +		-DSHARED_MEM -Dlinux $(CFLAGS) iozone.c \
  		-DNAME='"linux"' -o iozone_linux.o
--	$(CC) -Wmissing-prototypes -Wall -c -O3 -Dunix -DHAVE_ANSIC_C -DASYNC_IO -D_LARGEFILE64_SOURCE \
-+	$(CC) -Wmissing-prototypes -Wall -c -Dunix -DHAVE_ANSIC_C -DASYNC_IO \
+-	$(CC) -Wmissing-prototypes -c -O3 -Dunix -DHAVE_ANSIC_C -DASYNC_IO -D_LARGEFILE64_SOURCE \
++	$(CC) -Wmissing-prototypes -c -Dunix -DHAVE_ANSIC_C -DASYNC_IO \
 +		-DSHARED_MEM -Dlinux $(CFLAGS) libbif.c -o libbif.o
-+	$(CC) -Wmissing-prototypes -Wall -c -Dunix -Dlinux -DHAVE_ANSIC_C -DASYNC_IO \
++	$(CC) -Wmissing-prototypes -c -Dunix -Dlinux -DHAVE_ANSIC_C -DASYNC_IO \
 +		$(CFLAGS) libasync.c  -o libasync.o
 +
 +iozone_linux-noaio.o: iozone.c libbif.c
@@ -84,7 +86,7 @@ index 3a54701..3b17b1b 100644
 +		-DNAME='"linux"' -o iozone_linux-noth.o
 +	$(CC) -Wmissing-prototypes -Wall -c -Dunix -DHAVE_ANSIC_C -DNO_THREADS \
  		-DSHARED_MEM -Dlinux $(CFLAGS) libbif.c -o libbif.o
--	$(CC) -Wmissing-prototypes -Wall -c -O3 -Dunix -Dlinux -DHAVE_ANSIC_C -DASYNC_IO \
+-	$(CC) -Wmissing-prototypes -c -O3 -Dunix -Dlinux -DHAVE_ANSIC_C -DASYNC_IO \
 -		-D_LARGEFILE64_SOURCE $(CFLAGS) libasync.c  -o libasync.o 
  
  fileop_AIX.o:	fileop.c
@@ -93,11 +95,11 @@ index 3a54701..3b17b1b 100644
  	@echo ""
  	@echo "Building fileop for Linux"
  	@echo ""
--	$(CC) -Wall -c -O3 $(CFLAGS) fileop.c -o fileop_linux.o
-+	$(CC) -Wall -c $(CFLAGS) fileop.c -o fileop_linux.o
+-	$(CC) -c -O3 $(CFLAGS) fileop.c -o fileop_linux.o
++	$(CC) -c $(CFLAGS) fileop.c -o fileop_linux.o
  
  fileop_openbsd.o:	fileop.c
  	@echo ""
 -- 
-2.27.0
+2.51.0
 
