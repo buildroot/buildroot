@@ -1,0 +1,58 @@
+From feda38c6b7ef4c564f77213037dc20768c638d9c Mon Sep 17 00:00:00 2001
+From: Caleb Maclennan <caleb@alerque.com>
+Date: Thu, 2 Jan 2025 15:42:05 +0300
+Subject: [PATCH] Explicitly include limits.h instead of transitively assuming
+ it
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Recent upstream releases of LuaJIT have broken building this Lua Rock
+entirely. PUC Lua and LuaJIT builds up to a certain point included this
+header in lua.h, which meant that it was always around as a transitive
+dependency. Recent upstream LuaJIT builds no longer include the header
+since they aren't using it directly any more, but that means things that
+include lua.h don't get it for free any more. It should never have been
+assumed anyway, but that's been the status quo for a while.
+
+This fixes build errors when using LuaJIT headers instead of PUC Lua:
+
+```
+lutf8lib.c: In function ‘Lutf8_codepoint’:
+lutf8lib.c:398:22: error: ‘INT_MAX’ undeclared (first use in this function)
+  398 |   if (pose - posi >= INT_MAX)  /* (lua_Integer -> int) overflow? */
+      |                      ^~~~~~~
+lutf8lib.c:12:1: note: ‘INT_MAX’ is defined in header ‘<limits.h>’; did you forget to ‘#include <limits.h>’?
+   11 | #include "unidata.h"
+  +++ |+#include <limits.h>
+   12 |
+lutf8lib.c:398:22: note: each undeclared identifier is reported only once for each function it appears in
+  398 |   if (pose - posi >= INT_MAX)  /* (lua_Integer -> int) overflow? */
+      |                      ^~~~~~~
+```
+
+This is because `INT_MAX` is defined appropriately for a given platfrom
+in in limits.h.
+
+Upstream: 1bb70d45208d4033dcc75efee968be70534dd3ab
+[Romain: rebase on 0.1.5]
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ luautf8-0.1.5/lutf8lib.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/luautf8-0.1.5/lutf8lib.c b/luautf8-0.1.5/lutf8lib.c
+index 522599e..71f2f42 100644
+--- a/luautf8-0.1.5/lutf8lib.c
++++ b/luautf8-0.1.5/lutf8lib.c
+@@ -7,6 +7,7 @@
+ #include <assert.h>
+ #include <string.h>
+ #include <stdint.h>
++#include <limits.h>
+ 
+ #include "unidata.h"
+ 
+-- 
+2.51.0
+
