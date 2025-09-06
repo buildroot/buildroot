@@ -1,4 +1,7 @@
-Fix build without ASYNC_IO
+From cdd5e78a275c8cda5d48d15acc96c3be5170bf2f Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@smile.fr>
+Date: Sat, 6 Sep 2025 00:26:00 +0200
+Subject: [PATCH] Fix build without ASYNC_IO
 
 Fix the following build failure without ASYNC_IO:
 
@@ -10,11 +13,20 @@ Fixes:
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Upstream: sent to capps@iozone.org
+[Romain:
+  rebase on 3.508
+  convert to git format
+]
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ src/current/iozone.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/current/iozone.c
---- iozone3_506.orig/src/current/iozone.c	2024-03-06 12:28:16.734023725 +0100
-+++ iozone3_506/src/current/iozone.c	2024-03-06 12:39:14.453991162 +0100
-@@ -9153,6 +9153,7 @@
+diff --git a/src/current/iozone.c b/src/current/iozone.c
+index 6657a9b..8de26cf 100755
+--- a/src/current/iozone.c
++++ b/src/current/iozone.c
+@@ -9196,6 +9196,7 @@ long long *data1,*data2;
  				}
  			  }
  			}
@@ -22,7 +34,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  			if(async_flag)
  			{
  				if(no_copy_flag)
-@@ -9160,6 +9161,7 @@
+@@ -9203,6 +9204,7 @@ long long *data1,*data2;
  				end_async(gc);
  				gc=0;
  			}
@@ -30,7 +42,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  			buffer1=0;
  			if(hist_summary)
  			{
-@@ -9634,6 +9636,7 @@
+@@ -9677,6 +9679,7 @@ long long *data1, *data2;
  				}
  			  }
  			}
@@ -38,7 +50,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  			if(async_flag)
  			{
  				if(no_copy_flag)
-@@ -9641,6 +9644,7 @@
+@@ -9684,6 +9687,7 @@ long long *data1, *data2;
  				end_async(gc);
  				gc=0;
  			}
@@ -46,7 +58,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  			if(rlocking)
  			{
  				lock_offset=I_LSEEK(fd,0,SEEK_CUR);
-@@ -10097,6 +10101,7 @@
+@@ -10140,6 +10144,7 @@ long long *data1,*data2;
  				}
  			   }
  			}
@@ -54,7 +66,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  			if(async_flag)
  			{
  				if(no_copy_flag)
-@@ -10104,6 +10109,7 @@
+@@ -10147,6 +10152,7 @@ long long *data1,*data2;
  				end_async(gc);
  				gc=0;
  			}
@@ -62,7 +74,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  			if(rlocking)
  			{
  				mylockr((int) fd, (int) 0, (int)1,
-@@ -10749,6 +10755,7 @@
+@@ -10792,6 +10798,7 @@ printf("Read_Stride\n");
  			   }
  			}
  		}
@@ -70,7 +82,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  		if(async_flag)
  		{
  			if(no_copy_flag)
-@@ -10756,6 +10763,7 @@
+@@ -10799,6 +10806,7 @@ printf("Read_Stride\n");
  			end_async(gc);
  			gc=0;
  		}
@@ -78,7 +90,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  			
  		/* This is a bit tricky.  The goal is to read with a stride through
  		   the file. The problem is that you need to touch all of the file
-@@ -15485,6 +15493,7 @@
+@@ -15528,6 +15536,7 @@ thread_read_test(x)
  			   }
  		   }
  		}
@@ -86,7 +98,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  		if(async_flag)
  		{
  			if(no_copy_flag)
-@@ -15492,6 +15501,7 @@
+@@ -15535,6 +15544,7 @@ thread_read_test(x)
  			end_async(gc);
  			gc=0;
  		}
@@ -94,7 +106,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  		read_so_far+=reclen/1024;
  		r_traj_bytes_completed+=reclen;
  		r_traj_ops_completed++;
-@@ -16050,6 +16060,7 @@
+@@ -16093,6 +16103,7 @@ thread_pread_test(x)
  			   }
  		   }
  		}
@@ -102,7 +114,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  		if(async_flag)
  		{
  			if(no_copy_flag)
-@@ -16057,6 +16068,7 @@
+@@ -16100,6 +16111,7 @@ thread_pread_test(x)
  			end_async(gc);
  			gc=0;
  		}
@@ -110,7 +122,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  		read_so_far+=reclen/1024;
  		r_traj_bytes_completed+=reclen;
  		r_traj_ops_completed++;
-@@ -16665,6 +16677,7 @@
+@@ -16708,6 +16720,7 @@ thread_rread_test(x)
  			}
  		   }
  		}
@@ -118,7 +130,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  		if(async_flag)
  		{
  			if(no_copy_flag)
-@@ -16672,6 +16685,7 @@
+@@ -16715,6 +16728,7 @@ thread_rread_test(x)
  			end_async(gc);
  			gc=0;
  		}
@@ -126,7 +138,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  		re_read_so_far+=reclen/1024;
  		r_traj_bytes_completed+=reclen;
  		r_traj_ops_completed++;
-@@ -17244,6 +17258,7 @@
+@@ -17287,6 +17301,7 @@ thread_reverse_read_test(x)
  			  lock_offset, reclen);
  		}
  		current_position+=reclen;
@@ -134,7 +146,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  		if(async_flag)
  		{
  			if(no_copy_flag)
-@@ -17251,6 +17266,7 @@
+@@ -17294,6 +17309,7 @@ thread_reverse_read_test(x)
  			end_async(gc);
  			gc=0;
  		}
@@ -142,7 +154,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  		t_offset = (off64_t)reclen*2;
  		if (!(h_flag || k_flag || mmapflag))
  		{
-@@ -17778,6 +17794,7 @@
+@@ -17821,6 +17837,7 @@ thread_stride_read_test(x)
  			}
  		   }
  		}
@@ -150,7 +162,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  		if(async_flag)
  		{
  			if(no_copy_flag)
-@@ -17785,6 +17802,7 @@
+@@ -17828,6 +17845,7 @@ thread_stride_read_test(x)
  			end_async(gc);
  			gc=0;
  		}
@@ -158,7 +170,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  		if(current_position + (stride * reclen) >= (numrecs64 * reclen)-reclen) 
  		{
  			current_position=0;
-@@ -18528,6 +18546,7 @@
+@@ -18571,6 +18589,7 @@ void *x;
  			}
  		   }
  		}
@@ -166,7 +178,7 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  		if(async_flag)
  		{
  			if(no_copy_flag)
-@@ -18535,6 +18554,7 @@
+@@ -18578,6 +18597,7 @@ void *x;
  			end_async(gc);
  			gc=0;
  		}
@@ -174,3 +186,6 @@ diff '--color=auto' -Nura iozone3_506.orig/src/current/iozone.c iozone3_506/src/
  		ranread_so_far+=reclen/1024;
  		if(*stop_flag)
  		{
+-- 
+2.51.0
+
