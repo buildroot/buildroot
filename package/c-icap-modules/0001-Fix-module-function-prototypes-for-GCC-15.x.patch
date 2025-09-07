@@ -1,0 +1,59 @@
+From 5cc2e2764588fc5025e1ba7e07361d50659bb06a Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 7 Sep 2025 17:58:00 +0200
+Subject: [PATCH] Fix module function prototypes for GCC 15.x
+
+Upstream: N/A, upstream has completely changed how modules work
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ services/virus_scan/clamav_mod.c | 4 ++--
+ services/virus_scan/clamd_mod.c  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/services/virus_scan/clamav_mod.c b/services/virus_scan/clamav_mod.c
+index a138006..ee26ce6 100644
+--- a/services/virus_scan/clamav_mod.c
++++ b/services/virus_scan/clamav_mod.c
+@@ -75,7 +75,7 @@ static struct ci_conf_entry clamav_conf_variables[] = {
+ 
+ int clamav_init(struct ci_server_conf *server_conf);
+ int clamav_post_init(struct ci_server_conf *server_conf);
+-void clamav_release();
++void clamav_release(struct ci_server_conf *server_conf);
+ 
+ CI_DECLARE_MOD_DATA common_module_t module = {
+     "clamav_mod",
+@@ -273,7 +273,7 @@ int clamav_post_init(struct ci_server_conf *server_conf)
+      return CI_OK;
+ }
+ 
+-void clamav_release()
++void clamav_release(struct ci_server_conf *server_conf)
+ {
+     clamav_destroy_virusdb();
+     if (CLAMAV_TMP)
+diff --git a/services/virus_scan/clamd_mod.c b/services/virus_scan/clamd_mod.c
+index c0d2909..c522a9c 100644
+--- a/services/virus_scan/clamd_mod.c
++++ b/services/virus_scan/clamd_mod.c
+@@ -34,7 +34,7 @@ static struct ci_conf_entry clamd_conf_variables[] = {
+ 
+ int clamd_init(struct ci_server_conf *server_conf);
+ int clamd_post_init(struct ci_server_conf *server_conf);
+-void clamd_release();
++void clamd_release(struct ci_server_conf *server_conf);
+ 
+ CI_DECLARE_MOD_DATA common_module_t module = {
+     "clamd_mod",
+@@ -301,7 +301,7 @@ int clamd_post_init(struct ci_server_conf *server_conf)
+     return CI_OK;
+ }
+ 
+-void clamd_release()
++void clamd_release(struct ci_server_conf *server_conf)
+ {
+ }
+ 
+-- 
+2.51.0
+
