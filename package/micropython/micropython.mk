@@ -29,6 +29,13 @@ ifeq ($(BR2_xtensa),y)
 MICROPYTHON_CFLAGS = -DMICROPY_NLR_SETJMP=1
 endif
 
+# https://github.com/micropython/micropython/issues/14115
+# Temporary fix for GCC 14 compatibility, should be removed after updating to
+# 1.23.0 or later.
+ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_14),y)
+MICROPYTHON_CFLAGS += -DMICROPY_NLR_SETJMP=1
+endif
+
 # When building from a tarball we don't have some of the dependencies that are in
 # the git repository as submodules
 MICROPYTHON_MAKE_OPTS += \
