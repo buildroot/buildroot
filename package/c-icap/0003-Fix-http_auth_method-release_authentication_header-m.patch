@@ -1,0 +1,47 @@
+From 9ca4e5e2bd5fdf1d15a862faf8d4d1ddc0664bd0 Mon Sep 17 00:00:00 2001
+From: Christos Tsantilas <christos@chtsanti.net>
+Date: Fri, 21 Feb 2025 13:34:06 +0200
+Subject: [PATCH] Fix http_auth_method::release_authentication_header method
+ declaration
+
+Requires a "char *" argument.
+
+Reported with PR#72 at github:
+ https://github.com/c-icap/c-icap-server/pull/72
+
+Upstream: 48a221b0197727b26f90c00544fa19c67d0f5d47
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ http_auth.c      | 2 +-
+ include/module.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/http_auth.c b/http_auth.c
+index 1883b55..b831bb1 100644
+--- a/http_auth.c
++++ b/http_auth.c
+@@ -62,7 +62,7 @@ int http_authenticate(ci_request_t * req, char *use_method)
+     authenticator_module_t **authenticators;
+     void *method_data;
+     const char *auth_str, *method_str, *username;
+-    char *auth_header = NULL;
++    const char *auth_header = NULL;
+     int len, res;
+ 
+     if (ALLOW_REMOTE_PROXY_USERS && !use_method) {
+diff --git a/include/module.h b/include/module.h
+index 286ef72..0e57586 100644
+--- a/include/module.h
++++ b/include/module.h
+@@ -96,7 +96,7 @@ typedef struct http_auth_method {
+     void *(*create_auth_data)(const char *authorization_header,const char **username);
+     void (*release_auth_data)(void *data);
+     char *(*authentication_header)();
+-    void (*release_authentication_header)();
++    void (*release_authentication_header)(char *);
+     struct ci_conf_entry *conf_table;
+ } http_auth_method_t;
+ 
+-- 
+2.51.0
+
