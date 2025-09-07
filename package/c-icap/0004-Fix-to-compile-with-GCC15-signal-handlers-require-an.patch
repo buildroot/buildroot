@@ -1,0 +1,31 @@
+From 8d21c9c18e3b03e28ef2831f3ecd287c4cc44694 Mon Sep 17 00:00:00 2001
+From: Christos Tsantilas <christos@chtsanti.net>
+Date: Fri, 21 Feb 2025 13:41:37 +0200
+Subject: [PATCH] Fix to compile with GCC15: signal handlers require an int
+ argument
+
+Reported with PR#72 at github:
+     https://github.com/c-icap/c-icap-server/pull/72
+
+Upstream: 0b3408ad0e9f5ccadcd4d77dffa651f9211e4cd2
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ mpmt_server.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mpmt_server.c b/mpmt_server.c
+index aab9db5..01bab65 100644
+--- a/mpmt_server.c
++++ b/mpmt_server.c
+@@ -140,7 +140,7 @@ static void sigchld_handler_main(int sig)
+     /*Do nothing the signal will be ignored..... */
+ }
+ 
+-static void sighup_handler_main()
++static void sighup_handler_main(int sig)
+ {
+     c_icap_reconfigure = 1;
+ }
+-- 
+2.51.0
+

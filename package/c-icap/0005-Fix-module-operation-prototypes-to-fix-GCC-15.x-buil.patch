@@ -1,0 +1,233 @@
+From 608392c023b00e9e512f012eab295995127c577a Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 7 Sep 2025 17:45:00 +0200
+Subject: [PATCH] Fix module operation prototypes to fix GCC 15.x build
+
+Upstream: N/A, code has completely changed upstream
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ default_acl.c          | 4 ++--
+ http_auth.c            | 8 ++++----
+ include/module.h       | 8 ++++----
+ modules/bdb_tables.c   | 4 ++--
+ modules/dnsbl_tables.c | 4 ++--
+ modules/ldap_module.c  | 4 ++--
+ modules/memcached.c    | 4 ++--
+ modules/shared_cache.c | 4 ++--
+ 8 files changed, 20 insertions(+), 20 deletions(-)
+
+diff --git a/default_acl.c b/default_acl.c
+index 135176a..cb84d9d 100644
+--- a/default_acl.c
++++ b/default_acl.c
+@@ -34,7 +34,7 @@
+ /* Default Authenticator  definitions                                                        */
+ int default_acl_init(struct ci_server_conf *server_conf);
+ int default_acl_post_init(struct ci_server_conf *server_conf);
+-void default_acl_release();
++void default_acl_release(struct ci_server_conf *server_conf);
+ int default_acl_client_match(ci_request_t *req);
+ int default_acl_request_match(ci_request_t *req);
+ 
+@@ -75,7 +75,7 @@ int default_acl_post_init(struct ci_server_conf *server_conf)
+     return 1;
+ }
+ 
+-void default_acl_release()
++void default_acl_release(struct ci_server_conf *server_conf)
+ {
+     ci_access_entry_release(acl_access_list);
+     ci_access_entry_release(acl_connection_access_list);
+diff --git a/http_auth.c b/http_auth.c
+index b831bb1..0000b12 100644
+--- a/http_auth.c
++++ b/http_auth.c
+@@ -378,7 +378,7 @@ static struct ci_conf_entry basic_conf_params[] = {
+ };
+ 
+ int basic_post_init(struct ci_server_conf *server_conf);
+-void basic_close();
++void basic_close(struct ci_server_conf *);
+ struct http_basic_auth_data *basic_create_auth_data(const char *auth_line,
+         const char **username);
+ void basic_release_auth_data(struct http_basic_auth_data *data);
+@@ -409,7 +409,7 @@ int basic_post_init(struct ci_server_conf *server_conf)
+     return 1;
+ }
+ 
+-void basic_close()
++void basic_close(struct ci_server_conf *)
+ {
+     if (basic_authentication) {
+         free(basic_authentication);
+@@ -468,7 +468,7 @@ static struct ci_conf_entry basic_simple_db_conf_variables[] = {
+ };
+ 
+ int basic_simple_db_post_init(struct ci_server_conf *server_conf);
+-void basic_simple_db_close();
++void basic_simple_db_close(struct ci_server_conf *server_conf);
+ int basic_simple_db_athenticate(struct http_basic_auth_data *data, const char *usedb);
+ 
+ 
+@@ -495,7 +495,7 @@ int basic_simple_db_post_init(struct ci_server_conf *server_conf)
+     return 1;
+ }
+ 
+-void basic_simple_db_close()
++void basic_simple_db_close(struct ci_server_conf *server_conf)
+ {
+     if (users_db) {
+         ci_lookup_table_destroy(users_db);
+diff --git a/include/module.h b/include/module.h
+index 0e57586..21124df 100644
+--- a/include/module.h
++++ b/include/module.h
+@@ -63,7 +63,7 @@ typedef struct common_module {
+     const char *name;
+     int (*init_module)(struct ci_server_conf *server_conf);
+     int (*post_init_module)(struct ci_server_conf *server_conf);
+-    void (*close_module)();
++    void (*close_module)(struct ci_server_conf *);
+     struct ci_conf_entry *conf_table;
+ } common_module_t;
+ 
+@@ -81,7 +81,7 @@ typedef struct  access_control_module {
+     const char *name;
+     int (*init_access_controller)(struct ci_server_conf *server_conf);
+     int (*post_init_access_controller)(struct ci_server_conf *server_conf);
+-    void (*release_access_controller)();
++    void (*release_access_controller)(struct ci_server_conf *);
+     int (*client_access)(ci_request_t *req);
+     int (*request_access)(ci_request_t *req);
+     struct ci_conf_entry *conf_table;
+@@ -92,7 +92,7 @@ typedef struct http_auth_method {
+     const char *name;
+     int (*init_auth_method)(struct ci_server_conf *server_conf);
+     int (*post_init_auth_method)(struct ci_server_conf *server_conf);
+-    void (*close_auth_method)();
++    void (*close_auth_method)(struct ci_server_conf *);
+     void *(*create_auth_data)(const char *authorization_header,const char **username);
+     void (*release_auth_data)(void *data);
+     char *(*authentication_header)();
+@@ -106,7 +106,7 @@ typedef struct authenticator_module {
+     const char *method;
+     int (*init_authenticator)(struct ci_server_conf *server_conf);
+     int (*post_init_authenticator)(struct ci_server_conf *server_conf);
+-    void (*close_authenticator)();
++    void (*close_authenticator)(struct ci_server_conf *);
+     int (*authenticate)(void *data, const char *usedb);
+     struct ci_conf_entry *conf_table;
+ } authenticator_module_t;
+diff --git a/modules/bdb_tables.c b/modules/bdb_tables.c
+index 1e908a9..c205278 100644
+--- a/modules/bdb_tables.c
++++ b/modules/bdb_tables.c
+@@ -9,7 +9,7 @@
+ 
+ 
+ int init_bdb_tables(struct ci_server_conf *server_conf);
+-void release_bdb_tables();
++void release_bdb_tables(struct ci_server_conf *server_conf);
+ 
+ CI_DECLARE_MOD_DATA common_module_t module = {
+     "bdb_tables",
+@@ -41,7 +41,7 @@ int init_bdb_tables(struct ci_server_conf *server_conf)
+     return (ci_lookup_table_type_register(&bdb_table_type) != NULL);
+ }
+ 
+-void release_bdb_tables()
++void release_bdb_tables(struct ci_server_conf *server_conf)
+ {
+     ci_lookup_table_type_unregister(&bdb_table_type);
+ }
+diff --git a/modules/dnsbl_tables.c b/modules/dnsbl_tables.c
+index 328c6fb..a90c715 100644
+--- a/modules/dnsbl_tables.c
++++ b/modules/dnsbl_tables.c
+@@ -10,7 +10,7 @@
+ 
+ 
+ int init_dnsbl_tables(struct ci_server_conf *server_conf);
+-void release_dnsbl_tables();
++void release_dnsbl_tables(struct ci_server_conf *server_conf);
+ 
+ CI_DECLARE_MOD_DATA common_module_t module = {
+     "dnsbl_tables",
+@@ -42,7 +42,7 @@ int init_dnsbl_tables(struct ci_server_conf *server_conf)
+     return (ci_lookup_table_type_register(&dnsbl_table_type) != NULL);
+ }
+ 
+-void release_dnsbl_tables()
++void release_dnsbl_tables(struct ci_server_conf *server_conf)
+ {
+     ci_lookup_table_type_unregister(&dnsbl_table_type);
+ }
+diff --git a/modules/ldap_module.c b/modules/ldap_module.c
+index 97e36d8..96668a9 100644
+--- a/modules/ldap_module.c
++++ b/modules/ldap_module.c
+@@ -19,7 +19,7 @@ static int init_ldap_pools();
+ static void release_ldap_pools();
+ 
+ int init_ldap_module(struct ci_server_conf *server_conf);
+-void release_ldap_module();
++void release_ldap_module(struct ci_server_conf *server_conf);
+ 
+ CI_DECLARE_MOD_DATA common_module_t module = {
+     "ldap_module",
+@@ -76,7 +76,7 @@ int init_ldap_module(struct ci_server_conf *server_conf)
+     return 1;
+ }
+ 
+-void release_ldap_module()
++void release_ldap_module(struct ci_server_conf *server_conf)
+ {
+     release_ldap_pools();
+     ci_lookup_table_type_unregister(&ldap_table_type);
+diff --git a/modules/memcached.c b/modules/memcached.c
+index 8f15fbd..b1bbe5a 100644
+--- a/modules/memcached.c
++++ b/modules/memcached.c
+@@ -61,7 +61,7 @@ static struct ci_conf_entry mc_conf_variables[] = {
+ 
+ static int mc_module_init(struct ci_server_conf *server_conf);
+ static int mc_module_post_init(struct ci_server_conf *server_conf);
+-static void mc_module_release();
++static void mc_module_release(struct ci_server_conf *server_conf);
+ CI_DECLARE_MOD_DATA common_module_t module = {
+     "memcached",
+     mc_module_init,
+@@ -209,7 +209,7 @@ int mc_module_post_init(struct ci_server_conf *server_conf)
+     return 1;
+ }
+ 
+-void mc_module_release()
++void mc_module_release(struct ci_server_conf *server_conf)
+ {
+     memcached_pool_destroy(MC_POOL);
+     memcached_free(MC);
+diff --git a/modules/shared_cache.c b/modules/shared_cache.c
+index a79d51a..49a3784 100644
+--- a/modules/shared_cache.c
++++ b/modules/shared_cache.c
+@@ -9,7 +9,7 @@
+ #include <assert.h>
+ 
+ static int init_shared_cache(struct ci_server_conf *server_conf);
+-static void release_shared_cache();
++static void release_shared_cache(struct ci_server_conf *server_conf);
+ 
+ CI_DECLARE_MOD_DATA common_module_t module = {
+     "shared_cache",
+@@ -26,7 +26,7 @@ static int init_shared_cache(struct ci_server_conf *server_conf)
+     return 1;
+ }
+ 
+-static void release_shared_cache()
++static void release_shared_cache(struct ci_server_conf *server_conf)
+ {
+ }
+ 
+-- 
+2.51.0
+
