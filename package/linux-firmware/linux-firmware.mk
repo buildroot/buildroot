@@ -432,6 +432,23 @@ LINUX_FIRMWARE_FILES += mediatek/mt7925/BT_RAM_CODE_MT7925_1_1_hdr.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
 endif
 
+# Mediatek MT7986 SoC WiFi
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7986),y)
+LINUX_FIRMWARE_FILES += \
+	mediatek/mt7986_eeprom_mt7975_dual.bin \
+	mediatek/mt7986_eeprom_mt7976.bin \
+	mediatek/mt7986_eeprom_mt7976_dbdc.bin \
+	mediatek/mt7986_eeprom_mt7976_dual.bin \
+	mediatek/mt7986_rom_patch.bin \
+	mediatek/mt7986_rom_patch_mt7975.bin \
+	mediatek/mt7986_wa.bin \
+	mediatek/mt7986_wm.bin \
+	mediatek/mt7986_wm_mt7975.bin \
+	mediatek/mt7986_wo_0.bin \
+	mediatek/mt7986_wo_1.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
+endif
+
 # qca6174
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_6174),y)
 LINUX_FIRMWARE_FILES += ath10k/QCA6174
@@ -626,6 +643,11 @@ endif
 
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_6E),y)
 LINUX_FIRMWARE_FILES += iwlwifi-so-a0-gf-a0*.{ucode,pnvm}
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_7),y)
+LINUX_FIRMWARE_FILES += iwlwifi-gl-c0-fm-c0*.{ucode,pnvm}
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.iwlwifi_firmware
 endif
 

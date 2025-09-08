@@ -81,8 +81,8 @@ config BR2_PACKAGE_LINUX_FIRMWARE_AMLOGIC
 config BR2_PACKAGE_LINUX_FIRMWARE_IBT
 	bool "Intel Wireless Bluetooth"
 	help
-	  Firmware files for Intel 3160/7260/7265/8260/8265 Wireless
-	  bluetooth support.
+	  Firmware files for Intel 3160/7260/7265/8260/8265/9xxx/6E/7
+	  Wireless bluetooth support.
 
 config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7650
 	bool "MediaTek MT7650"
@@ -355,6 +355,12 @@ config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_6E
 	  Firmware files for the Intel Wi-Fi 6 and Wi-Fi 6E devices
 	  supported by the iwlwifi kernel driver.
 
+config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_7
+	bool "Intel iwlwifi 7"
+	help
+	  Firmware files for the Intel Wi-Fi 7 (BE20x) devices
+	  supported by the iwlwifi kernel driver.
+
 config BR2_PACKAGE_LINUX_FIRMWARE_IWLWIFI_QUZ
 	bool "Intel iwlwifi QuZ"
 	help
@@ -473,6 +479,11 @@ config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7925
 	bool "MediaTek MT7925"
 	help
 	  MediaTek MT7925
+
+config BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7986
+	bool "MediaTek MT7986 SOC WiFi"
+	help
+	  MediaTek MT7986 SOC WiFi
 
 config BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_6174
 	bool "Qualcomm Atheros 6174"

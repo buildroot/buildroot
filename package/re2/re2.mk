@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RE2_VERSION = 2024-07-02
+RE2_VERSION = 2025-08-12
 RE2_SITE = $(call github,google,re2,$(RE2_VERSION))
 RE2_LICENSE = BSD-3-Clause
 RE2_LICENSE_FILES = LICENSE

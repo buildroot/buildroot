@@ -1,19 +1,15 @@
 config BR2_PACKAGE_FRR
 	bool "frr"
-	depends on BR2_TOOLCHAIN_HAS_THREADS # protobuf-c
+	depends on BR2_TOOLCHAIN_HAS_THREADS # pthread
 	depends on !BR2_STATIC_LIBS # libyang
 	depends on BR2_USE_MMU # fork()
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # json-c, libyang
-	depends on BR2_INSTALL_LIBSTDCPP # protobuf-c
-	depends on BR2_PACKAGE_HOST_PROTOBUF_ARCH_SUPPORTS # protobuf-c
-	depends on BR2_HOST_GCC_AT_LEAST_7 # protobuf-c
 	select BR2_PACKAGE_BASH
 	select BR2_PACKAGE_BUSYBOX_SHOW_OTHERS # bash
 	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	select BR2_PACKAGE_LIBYANG
 	select BR2_PACKAGE_READLINE
 	select BR2_PACKAGE_JSON_C
-	select BR2_PACKAGE_PROTOBUF_C
 	help
 	  The FRRouting Protocol Suite.
 
@@ -37,17 +33,38 @@ config BR2_PACKAGE_FRR_BMP
 	help
 	  Build BGP Monitoring Protocol daemon.
 
+config BR2_PACKAGE_FRR_MULTIPATH_MAX
+	int "maximum ECMP paths"
+	default 256
+	range 1 999
+	help
+	  Compile FRR with support for up to this many equal-cost
+	  next-hops (ECMP).
+
 config BR2_PACKAGE_FRR_NHRPD
 	bool "NHRPD protocol"
 	select BR2_PACKAGE_C_ARES
 	help
 	  Build Next Hop Routing Protocol daemon.
 
+config BR2_PACKAGE_FRR_PROTOBUF
+	bool "Protobuf support (Binary-FPM and MLAG)"
+	default y
+	depends on BR2_INSTALL_LIBSTDCPP # protobuf-c
+	depends on BR2_PACKAGE_HOST_PROTOBUF_ARCH_SUPPORTS # protobuf-c
+	depends on BR2_HOST_GCC_AT_LEAST_7 # protobuf-c
+	select  BR2_PACKAGE_PROTOBUF_C
+	help
+	  Build FRR with protobuf-based Binary-FPM export and MLAG
+	  peer synchronization.
+
 endif
 
-comment "frr needs a toolchain w/ threads, dynamic library, C++, host gcc >= 7"
-	depends on BR2_PACKAGE_HOST_PROTOBUF_ARCH_SUPPORTS
+comment "frr needs a toolchain w/ threads, dynamic library"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_USE_MMU
-	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS || \
-		!BR2_INSTALL_LIBSTDCPP || !BR2_HOST_GCC_AT_LEAST_7
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
+
+comment "protobuf support for frr needs a toolchain w/ protobuf, C++, host gcc >= 7"
+	depends on BR2_PACKAGE_HOST_PROTOBUF_ARCH_SUPPORTS
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_HOST_GCC_AT_LEAST_7

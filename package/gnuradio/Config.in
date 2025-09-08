@@ -91,6 +91,12 @@ comment "python support needs a glibc or musl toolchain w/ host gcc >= 9"
 	depends on !BR2_HOST_GCC_AT_LEAST_9 || \
 		!(BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL)
 
+config BR2_PACKAGE_GNURADIO_SOAPY
+	bool "gr-soapy support"
+	select BR2_PACKAGE_SOAPY_SDR
+	help
+	  Soapy SDR support
+
 config BR2_PACKAGE_GNURADIO_UTILS
 	bool "gr-utils support"
 	depends on BR2_PACKAGE_GNURADIO_PYTHON

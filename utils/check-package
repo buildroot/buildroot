@@ -276,6 +276,8 @@ def check_file_using_lib(fname):
         return nwarnings, nlines
 
     for name, cf in objects:
+        if cf.disable.search(lastline):
+            continue
         warn, fail = print_warnings(cf.after(), name in xfail)
         if fail > 0:
             failed.add(name)

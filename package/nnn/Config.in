@@ -1,0 +1,20 @@
+config BR2_PACKAGE_NNN
+	bool "nnn"
+	depends on BR2_USE_MMU # fork
+	# Building nnn without widechar/UTF support is theoretically
+	# possible, but in practice it leads to unstable builds.
+	# That’s why the WCHAR dependency is here.
+	depends on BR2_USE_WCHAR
+	select BR2_PACKAGE_NCURSES
+	select BR2_PACKAGE_NCURSES_WCHAR
+	select BR2_PACKAGE_MUSL_FTS if !BR2_TOOLCHAIN_USES_GLIBC
+	help
+	  nnn is a lightweight yet powerful terminal file manager.
+	  It is written in C, has minimal dependency, and works
+	  out of the box.
+
+	  https://github.com/jarun/nnn
+
+comment "nnn needs a toolchain with wchar"
+	depends on BR2_USE_MMU # fork
+	depends on !BR2_USE_WCHAR

@@ -4,10 +4,15 @@
 #
 ################################################################################
 
-APITRACE_VERSION = 10.0
-APITRACE_SITE = $(call github,apitrace,apitrace,$(APITRACE_VERSION))
+APITRACE_VERSION = 13.0
+APITRACE_SITE = https://github.com/apitrace/apitrace.git
+APITRACE_SITE_METHOD = git
+APITRACE_GIT_SUBMODULES = YES
 APITRACE_LICENSE = MIT
 APITRACE_LICENSE_FILES = LICENSE
+APITRACE_CONF_OPTS = \
+	-DBUILD_TESTING=OFF \
+	-DENABLE_TESTS=OFF
 
 APITRACE_DEPENDENCIES = host-python3 libpng
 

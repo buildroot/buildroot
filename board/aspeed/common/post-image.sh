@@ -3,8 +3,8 @@
 BOARD_DIR="$(dirname $0)"
 mkimage=$HOST_DIR/bin/mkimage
 
-BOARD_DT=$(sed -n \
-           's/^BR2_LINUX_KERNEL_INTREE_DTS_NAME="\([a-z0-9\-]*\).*"$/\1/p' \
+BOARD_DT=$(sed -nr \
+           -e 's|^BR2_LINUX_KERNEL_INTREE_DTS_NAME="(aspeed/)?([a-z0-9\-]*).*"$|\2|p' \
            ${BR2_CONFIG})
 
 sed -e "s/%BOARD_DTB%/${BOARD_DT}.dtb/" \
