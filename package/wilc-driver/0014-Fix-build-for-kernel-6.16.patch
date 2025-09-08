@@ -1,0 +1,34 @@
+From 8ee37436cfa1bdac354ff63e17b647e7b5fb20f9 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Mon, 8 Sep 2025 21:14:22 +0200
+Subject: [PATCH] Fix build for kernel 6.16
+
+With commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=41cb08555c4164996d67c78b3bf1c658075b75f1
+from_timer() has been renamed to timer_container_of() so let's rename
+according to linux version >= 6.16.
+
+Upstream: https://github.com/embeddedTS/wilc3000-external-module/pull/10
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ netdev.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/netdev.h b/netdev.h
+index 607a3b5..33708ad 100644
+--- a/netdev.h
++++ b/netdev.h
+@@ -15,6 +15,10 @@
+ #include <linux/gpio/consumer.h>
+ #include <linux/version.h>
+ 
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 16, 0))
++#define from_timer	timer_container_of
++#endif
++
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 15, 0))
+ static inline int del_timer_sync(struct timer_list *timer)
+ {
+-- 
+2.43.0
+
