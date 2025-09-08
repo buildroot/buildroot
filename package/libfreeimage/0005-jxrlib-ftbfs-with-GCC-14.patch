@@ -1,0 +1,40 @@
+From 11383a017e8d040f1376c964d2b8769108204f0b Mon Sep 17 00:00:00 2001
+From: YOKOTA Hiroshi <yokota.hgml@gmail.com>
+Date: Thu, 25 Jul 2024 15:03:31 +0900
+Subject: [PATCH] jxrlib: ftbfs with GCC-14
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Bug-Debian: https://bugs.debian.org/1075105
+
+_byteswap_ulong() is defined in image/sys/strcodec.c
+
+Upstream: Bug submitted at https://sourceforge.net/p/freeimage/bugs/389/
+[Thomas: patch taken from https://sources.debian.org/patches/jxrlib/1.2~git20170615.f752187-5.3/0013-jxrlib-ftbfs-with-GCC-14.patch/]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+----
+/usr/bin/cc -DDISABLE_PERF_MEASUREMENT -D__ANSI__ -Djpegxr_EXPORTS -I"/<<PKGBUILDDIR>>/common/include" -I"/<<PKGBUILDDIR>>/image/sys" -I"/<<PKGBUILDDIR>>/jxrgluelib" -I"/<<PKGBUILDDIR>>/jxrtestlib" -g -O2 -Werror=implicit-function-declaration -ffile-prefix-map=/<<PKGBUILDDIR>>=. -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -Wall -Wextra -Wdate-time -D_FORTIFY_SOURCE=2 -fPIC -w -MD -MT CMakeFiles/jpegxr.dir/image/encode/strenc.c.o -MF CMakeFiles/jpegxr.dir/image/encode/strenc.c.o.d -o CMakeFiles/jpegxr.dir/image/encode/strenc.c.o -c "/<<PKGBUILDDIR>>/image/encode/strenc.c"
+/<<PKGBUILDDIR>>/image/decode/segdec.c: In function ‘_load4’:
+/<<PKGBUILDDIR>>/image/decode/segdec.c:68:12: error: implicit declaration of function ‘_byteswap_ulong’ [-Wimplicit-function-declaration]
+   68 |     return _byteswap_ulong(v);
+      |            ^~~~~~~~~~~~~~~
+---
+ Source/LibJXR/image/decode/segdec.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Source/LibJXR/image/decode/segdec.c b/Source/LibJXR/image/decode/segdec.c
+index 1299458..8050355 100644
+--- a/Source/LibJXR/image/decode/segdec.c
++++ b/Source/LibJXR/image/decode/segdec.c
+@@ -63,6 +63,7 @@ static U32 _FORCEINLINE _load4(void* pv)
+     v |= ((U32)((U16 *) pv)[1]) << 16;
+     return _byteswap_ulong(v);
+ #else // _M_IA64
++    U32 _byteswap_ulong(U32 bits); // from image/sys/strcodec.c
+     return _byteswap_ulong(*(U32*)pv);
+ #endif // _M_IA64
+ #endif // _BIG__ENDIAN_
+-- 
+2.51.0
+
