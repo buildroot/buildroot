@@ -1,0 +1,29 @@
+From 7b59b3757521d82406771cc47127aa70ffb26f3f Mon Sep 17 00:00:00 2001
+From: YOKOTA Hiroshi <yokota.hgml@gmail.com>
+Date: Thu, 25 Jul 2024 16:01:01 +0900
+Subject: [PATCH] FTBFS fix for function prototype error
+
+Bug-Debian: https://bugs.debian.org/1075105
+
+Upstream: Bug submitted at https://sourceforge.net/p/freeimage/bugs/389/
+[Thomas: patch taken from https://sources.debian.org/patches/jxrlib/1.2~git20170615.f752187-5.3/0015-FTBFS-fix-for-function-prototype-error.patch/]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ Source/LibJXR/jxrgluelib/JXRGlueJxr.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Source/LibJXR/jxrgluelib/JXRGlueJxr.c b/Source/LibJXR/jxrgluelib/JXRGlueJxr.c
+index 2bf085a..182fc7f 100644
+--- a/Source/LibJXR/jxrgluelib/JXRGlueJxr.c
++++ b/Source/LibJXR/jxrgluelib/JXRGlueJxr.c
+@@ -28,6 +28,7 @@
+ //*@@@---@@@@******************************************************************
+ #include <limits.h>
+ #include <JXRGlue.h>
++#include <wchar.h>
+ 
+ 
+ static const char szHDPhotoFormat[] = "<dc:format>image/vnd.ms-photo</dc:format>";
+-- 
+2.51.0
+
