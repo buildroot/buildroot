@@ -479,6 +479,14 @@ config BR2_TARGET_UBOOT_FORMAT_QSPI_BIN
 	  file for flashing by combining the spl/boot.bin and
 	  u-boot.itb files into a unified binary.
 
+config BR2_TARGET_UBOOT_FORMAT_ADSP_LDR
+	bool "u-boot.ldr"
+	depends on BR2_arm || BR2_aarch64
+	help
+	  Boot stream format for Analog Devices, Inc. ADSP-SCxxx
+	  processors including 32-bit SC589, SC592, and SC594, as
+	  well as 64-bit SC596 and SC598
+
 config BR2_TARGET_UBOOT_FORMAT_STM32
 	bool "u-boot.stm32"
 	depends on BR2_arm
