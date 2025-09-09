@@ -3,8 +3,6 @@ config BR2_PACKAGE_CHOCOLATE_DOOM
 	depends on BR2_USE_MMU # fork()
 	depends on !BR2_STATIC_LIBS # sdl2
 	select BR2_PACKAGE_SDL2
-	select BR2_PACKAGE_SDL2_MIXER
-	select BR2_PACKAGE_SDL2_NET
 	help
 	  Chocolate Doom is a set of conservative source ports for Doom,
 	  Heretic, Hexen and Strife, with a philosophy of preserving the
