@@ -1,0 +1,56 @@
+From bfcdaf2ff36d69a57810470f5405e5f27e51e01c Mon Sep 17 00:00:00 2001
+From: Alyssa Ross <hi@alyssa.is>
+Date: Sat, 26 Apr 2025 17:13:57 +0200
+Subject: [PATCH] libselinux: be careful with non-portable LFS macro
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+musl does not provide the obsolete LFS64 APIs (like ino64_t) — ino_t
+has always been 64-bit on all platforms there.  That means there's
+also no __INO_T_MATCHES_INO64_T macro, meaning the check would pass
+and reach the static asserts for the shim, which would fail due to
+there being no ino64_t to check the size of.  Fix this by only
+assuming the absense of __INO_T_MATCHES_INO64_t is meaningful when
+another non-portable Glibc macro, __INO64_T_TYPE, is defined.  If both
+are missing, that probably just means there is no ino64_t.
+
+Fixes: 5c3fcbd9 ("Inject matchpathcon_filespec_add64() if !defined(__INO_T_MATCHES_INO64_T) instead of using __BITS_PER_LONG < 64 as proxy")
+Signed-off-by: Alyssa Ross <hi@alyssa.is>
+Acked-by: James Carter <jwcart2@gmail.com>
+Upstream: 21dd00713ae99b13e36c632992cb171c6ec1abce
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ include/selinux/selinux.h | 2 +-
+ src/matchpathcon.c        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/selinux/selinux.h b/include/selinux/selinux.h
+index f64896b7..b1431e5d 100644
+--- a/include/selinux/selinux.h
++++ b/include/selinux/selinux.h
+@@ -537,7 +537,7 @@ extern int matchpathcon_index(const char *path,
+    with the same inode (e.g. due to multiple hard links).  If so, then
+    use the latter of the two specifications based on their order in the 
+    file contexts configuration.  Return the used specification index. */
+-#if defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64 && !defined(__INO_T_MATCHES_INO64_T)
++#if defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64 && defined(__INO64_T_TYPE) && !defined(__INO_T_MATCHES_INO64_T)
+ #define matchpathcon_filespec_add matchpathcon_filespec_add64
+ #endif
+ extern int matchpathcon_filespec_add(ino_t ino, int specind, const char *file);
+diff --git a/src/matchpathcon.c b/src/matchpathcon.c
+index a4f65045..240c9fa7 100644
+--- a/src/matchpathcon.c
++++ b/src/matchpathcon.c
+@@ -261,7 +261,7 @@ int matchpathcon_filespec_add(ino_t ino, int specind, const char *file)
+ 	return -1;
+ }
+ 
+-#if (defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64) && !defined(__INO_T_MATCHES_INO64_T)
++#if (defined(_FILE_OFFSET_BITS) && _FILE_OFFSET_BITS == 64) && defined(__INO64_T_TYPE) && !defined(__INO_T_MATCHES_INO64_T)
+ /* alias defined in the public header but we undefine it here */
+ #undef matchpathcon_filespec_add
+ 
+-- 
+2.51.0
+
