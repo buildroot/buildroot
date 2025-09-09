@@ -1,0 +1,38 @@
+From 7bf334832ad36d1f2976406d680b35a168ffaa91 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Date: Mon, 8 Sep 2025 17:20:12 +0200
+Subject: [PATCH] lua.c: fix ZSTR_VAL usage when using lua < 5.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When using a lua interpreter with a version lower than 5.1, the
+php_lua_write_property ends up calling the ZSTR_VAL with the wrong
+variable (it is expected to receive "member", a zend_string variable,
+but it is "value" that is passed, which is a zval).
+
+Fix php-lua compatibility with interpreters < 5.2 by passing the correct
+variable
+
+Upstream: upstream dead, custom patch
+Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+---
+ lua.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lua.c b/lua.c
+index a40e5da442a4..5889bc7f83ea 100755
+--- a/lua.c
++++ b/lua.c
+@@ -244,7 +244,7 @@ static zval* php_lua_write_property(zend_object *object, zend_string *member, zv
+ 	lua_State *L = php_lua_obj_from_obj(object)->L;
+ 
+ #if (LUA_VERSION_NUM < 502)
+-	lua_pushlstring(L, ZSTR_VAL(val), ZSTR_LEN(val));
++	lua_pushlstring(L, ZSTR_VAL(member), ZSTR_LEN(member));
+ 	php_lua_send_zval_to_lua(L, value);
+ 
+ 	lua_settable(L, LUA_GLOBALSINDEX);
+-- 
+2.51.0
+
