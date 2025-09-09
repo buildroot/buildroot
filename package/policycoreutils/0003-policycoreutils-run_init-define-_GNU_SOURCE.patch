@@ -1,0 +1,39 @@
+From f338b2e7d2bbf70cb811eb1331162e33deb4ce6c Mon Sep 17 00:00:00 2001
+From: Robert Marko <robimarko@gmail.com>
+Date: Thu, 1 May 2025 21:59:13 +0200
+Subject: [PATCH] policycoreutils: run_init: define _GNU_SOURCE
+
+Trying to compile run_init with musl will fail with:
+run_init.c: In function 'authenticate_via_shadow_passwd':
+run_init.c:206:40: error: implicit declaration of function 'getpass' [-Wimplicit-function-declaration]
+  206 |         if (!(unencrypted_password_s = getpass(PASSWORD_PROMPT))) {
+
+This is because getpass in musl is guarded only for _GNU_SOURCE, so
+define _GNU_SOURCE for run_init.
+
+Signed-off-by: Robert Marko <robimarko@gmail.com>
+Acked-by: James Carter <jwcart2@gmail.com>
+Upstream: 50bafc3d9c08cf26c3b0f61e29157a0ea8efbf4a
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+[thomas: fix filename]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ policycoreutils/run_init/run_init.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/run_init/run_init.c b/run_init/run_init.c
+index ce499781..4531a8ba 100644
+--- a/run_init/run_init.c
++++ b/run_init/run_init.c
+@@ -37,6 +37,8 @@
+  *
+  *************************************************************************/
+ 
++#define _GNU_SOURCE
++
+ #include <stdio.h>
+ #include <stdlib.h>		/* for malloc(), realloc(), free() */
+ #include <pwd.h>		/* for getpwuid() */
+-- 
+2.51.0
+
