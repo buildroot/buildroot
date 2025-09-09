@@ -99,6 +99,94 @@
 	Removed packages: libebur128, libolm, libwebsock,
 	python-dunamai, python-poetry-dynamic-versioning
 
+2025.05.2, released September 09, 2025
+
+	Important / security related fixes:
+
+	- libssh: CVE-2025-4878, CVE-2025-5318, CVE-2025-5351, CVE-2025-5372,
+	    CVE-2025-5449, CVE-2025-5987
+	- glibc: CVE-2025-5702, CVE-2025-5745, CVE-2025-8058
+	- gnutls: CVE-2025-32989, CVE-2025-32988, CVE-2025-32990, CVE-2025-6395
+	- python3: CVE-2025-8194
+	- libhtp: CVE-2025-53537
+	- tiff: CVE-2025-8176, CVE-2025-8177
+	- libglib2: CVE-2025-6052
+	- ofono: CVE-2023-2794, CVE-2024-7537, CVE-2024-7539, CVE-2024-7540,
+	    CVE-2024-7541, CVE-2024-7542
+	- elfutils: CVE-2025-1352, CVE-2025-1365, CVE-2025-1371, CVE-2025-1372,
+	    CVE-2025-1376, CVE-2025-1377
+	- grub2: CVE-2024-45777, CVE-2024-45778, CVE-2024-45779,
+	    CVE-2024-45780, CVE-2024-45782, CVE-2024-56737, CVE-2024-56738,
+	    CVE-2025-0678, CVE-2025-0684, CVE-2025-0685, CVE-2025-0686,
+	    CVE-2025-0689, CVE-2025-1125
+	- openjpeg: CVE-2025-54874
+	- go: CVE-2025-4674, CVE-2025-47907
+	- gst1-plugins-base: CVE-2025-47806, CVE-2025-47807
+	- gst1-plugins-good: CVE-2025-47219, CVE-2025-47183
+	- vorbis-tools: CVE-2023-43361
+	- vim: CVE-2024-41957, CVE-2024-41965, CVE-2024-45306, CVE-2024-47814,
+	    CVE-2025-1215, CVE-2025-22134, CVE-2025-24014, CVE-2025-26603,
+	    CVE-2025-29768, CVE-2025-53905, CVE-2025-53906
+	- ffmpeg: CVE-2023-6602
+	- lighttpd: CVE-2025-8671
+	- python-h2: CPE-2025-57804
+	- cpp-httplib: CVE-2025-46728
+
+	Removed packages: liboauth, thttpd
+
+	Removed defconfigs: at91sam9g20dfc, at91sam9g45m10ek,
+	at91sam9rlek, bananapro, beelink_gs1, chromebook_snow, galileo,
+	odroidxu4, orangepi_lite2, orangepi_one_plus, pcengines_apu2,
+	pine64_sopine, riotboard, rock64, rock_pi_n8, socrates_cyclone5,
+	toradex_apalis_imx6, ts7680, engicam_imx6*, kontron_pitx_imx8m,
+	imx6ulz_bsh_smm_m2,
+
+	Test Improvements:
+
+	- test_gstreamer1: raise tesseract-ocr timeout to 15s
+	- test_wine: fix test after bootlin toolchains update
+	- test_numactl: fix test after bootlin toolchains update
+	- test_dpdk: fix test after bootlin toolchains update
+	- test_msr_tools: fix test after bootlin toolchains update
+	- test_dmidecode: fix test after bootlin toolchains update
+	- test_iso9660: use a more recent toolchain
+	- test_grub: use glibc toolchain
+	- test_wget: replace thttpd by Busybox's httpd server
+	- test_libcurl: replace thttpd by Busybox's httpd server
+	- test_systemd_selinux: fix test after bootlin toolchains update
+
+	Updated / fixed packages: python-propcache, pipewire, apache, xinetd,
+	libssh, glibc, libhtp, libapparmor, libopenssl, rpi-firmware,
+	brcmfmac_sdio-firmware-rpi, grout, php-pecl-dbus, tini, snooze, ngrep,
+	libzenoh-pico, janet, cjson, flatcc, nanocom, rtl8189es, gcc, ofono,
+	python-numpy, elfutils, libtracefs, tinyssh, start-stop-daemon, bcusdk,
+	prboom, setserial, grub2, openjpeg, go, gstreamer1, gst1-plugins-base,
+	gst1-plugins-good, gst1-plugins-bad, gst1-plugins-ugly, gst1-devtools,
+	gst1-libav, gst1-python, gst1-rtsp-server, gst1-vaapi,
+	gstreamer1-editing-services, vorbis-tools, jq, lbijwt, vim, ffmpeg,
+	libv4l, python-yarl, lirc-tools, b43-firmware, tcpreplay, libsvgtiny,
+	libsoxr, lighttpd, uclibc, vde2, libcap-ng, python-h2, squid, ipmitool,
+	ell, proftpd, liblog4c-localtime, wpewebkit, weston, cpp-httplib,
+	ipset, python3, python-aexpect, libftdi1
+
+	Infrastructure updates/fixes:
+	- Various tweaks to utils/generate-cyclonedx for better SBOM
+	  compatibility and project name/version customization
+	- go: make pre-built compiler provide target support too
+	- test-pkg: add new option -T/--toolchain-name
+	- pkg-utils.mk: include package directory in show-info output
+	- bump-stable-kernel-versions: new tool
+
+	Boards updated / fixed:
+
+	- qemu_sh4*: switch back to disk emulation
+	- acmesystems_acqua_a5_*: update linux
+	- sipeed_licheepi_zero: update linux & uboot
+	- zynqmp: increase vfat partition to 64M
+	- qemu_{arm,aarch64}_{ebbr,sbsa}*: linux needs host python3
+	- canaan_kd233, sipeed*: use BR2_LINUX_KENREL_IMAGE_TARGET_NAME
+	- ci20: U-Boot needs host-openssl
+
 2025.05.1, released August 11th, 2025
 
 	Important / security related fixes:
