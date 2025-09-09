@@ -4,6 +4,8 @@ DAEMON="htpdate"
 PIDFILE="/var/run/$DAEMON.pid"
 
 HTPDATE_ARGS="-a -s -t https://google.com"
+
+# shellcheck source=/dev/null
 test -r "/etc/default/$DAEMON" && . "/etc/default/$DAEMON"
 
 start() {
