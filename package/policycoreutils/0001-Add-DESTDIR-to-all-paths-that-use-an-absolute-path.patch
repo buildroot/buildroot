@@ -32,7 +32,7 @@ index a3bbbe1..df675cf 100644
 +AUDITH ?= $(shell test -f $(DESTDIR)$(PREFIX)/include/libaudit.h && echo y)
  
  CFLAGS ?= -g -Werror -Wall -W
- override LDLIBS += -lselinux -lsepol -lpthread
+ override CFLAGS += -I../../libselinux/include
 -- 
 2.13.6
 
