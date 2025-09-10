@@ -1,4 +1,4 @@
-From f32c4e909ec4a4872c2c5fc186f27d1f7e4e8c2a Mon Sep 17 00:00:00 2001
+From a21de9cb95f2199270a6ac6922ffa4ca8d453f26 Mon Sep 17 00:00:00 2001
 From: Thomas Devoogdt <thomas@devoogdt.com>
 Date: Sat, 16 Nov 2024 19:46:28 +0100
 Subject: [PATCH] plugins: kafka: fix cmake cross compile error
@@ -17,26 +17,26 @@ Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
  2 files changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/plugins/in_kafka/CMakeLists.txt b/plugins/in_kafka/CMakeLists.txt
-index ede0831f9..02e2dc786 100644
+index 928266b57..dc251276e 100644
 --- a/plugins/in_kafka/CMakeLists.txt
 +++ b/plugins/in_kafka/CMakeLists.txt
 @@ -3,5 +3,7 @@ set(src
    )
  
- FLB_PLUGIN(in_kafka "${src}" ${KAFKA_LIBRARIES})
+ FLB_PLUGIN(in_kafka "${src}" ${KAFKA_LIBRARIES} flb-aws)
 -target_include_directories(flb-plugin-in_kafka PUBLIC ${KAFKA_INCLUDEDIR}/librdkafka)
 +if(DEFINED KAFKA_INCLUDEDIR)
 +  target_include_directories(flb-plugin-in_kafka PUBLIC ${KAFKA_INCLUDEDIR}/librdkafka)
 +endif()
  target_link_libraries(flb-plugin-in_kafka -lpthread)
 diff --git a/plugins/out_kafka/CMakeLists.txt b/plugins/out_kafka/CMakeLists.txt
-index 01c96529b..54b14fc2a 100644
+index 9d8b34642..1c967329f 100644
 --- a/plugins/out_kafka/CMakeLists.txt
 +++ b/plugins/out_kafka/CMakeLists.txt
 @@ -5,5 +5,7 @@ set(src
    kafka.c)
  
- FLB_PLUGIN(out_kafka "${src}" ${KAFKA_LIBRARIES})
+ FLB_PLUGIN(out_kafka "${src}" ${KAFKA_LIBRARIES} flb-aws)
 -target_include_directories(flb-plugin-out_kafka PUBLIC ${KAFKA_INCLUDEDIR}/librdkafka)
 +if(DEFINED KAFKA_INCLUDEDIR)
 +  target_include_directories(flb-plugin-out_kafka PUBLIC ${KAFKA_INCLUDEDIR}/librdkafka)

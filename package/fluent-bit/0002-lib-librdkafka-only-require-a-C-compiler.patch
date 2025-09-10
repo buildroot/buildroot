@@ -1,4 +1,4 @@
-From dea6fb0138d9356ebdc4983a61c185bc759d86b0 Mon Sep 17 00:00:00 2001
+From c33d6bd392c5c8bbd231b2a9d00d4959cc553c44 Mon Sep 17 00:00:00 2001
 From: Thomas Devoogdt <thomas.devoogdt@barco.com>
 Date: Tue, 25 Jul 2023 09:10:41 +0200
 Subject: [PATCH] lib: librdkafka: only require a C compiler
@@ -6,14 +6,14 @@ Subject: [PATCH] lib: librdkafka: only require a C compiler
 Upstream: https://github.com/confluentinc/librdkafka/pull/4366
 Signed-off-by: Thomas Devoogdt <thomas.devoogdt@barco.com>
 ---
- lib/librdkafka-2.8.0/CMakeLists.txt          | 22 ++++++++++++--
- lib/librdkafka-2.8.0/examples/CMakeLists.txt | 31 +++++++++++++-------
+ lib/librdkafka-2.10.1/CMakeLists.txt          | 22 +++++++++++--
+ lib/librdkafka-2.10.1/examples/CMakeLists.txt | 31 ++++++++++++-------
  2 files changed, 39 insertions(+), 14 deletions(-)
 
-diff --git a/lib/librdkafka-2.8.0/CMakeLists.txt b/lib/librdkafka-2.8.0/CMakeLists.txt
+diff --git a/lib/librdkafka-2.10.1/CMakeLists.txt b/lib/librdkafka-2.10.1/CMakeLists.txt
 index f3d05bad7..8ef47053a 100644
---- a/lib/librdkafka-2.8.0/CMakeLists.txt
-+++ b/lib/librdkafka-2.8.0/CMakeLists.txt
+--- a/lib/librdkafka-2.10.1/CMakeLists.txt
++++ b/lib/librdkafka-2.10.1/CMakeLists.txt
 @@ -3,7 +3,16 @@ cmake_minimum_required(VERSION 3.5)
  include("packaging/cmake/parseversion.cmake")
  parseversion("src/rdkafka.h")
@@ -57,10 +57,10 @@ index f3d05bad7..8ef47053a 100644
  
  if(RDKAFKA_BUILD_EXAMPLES)
    add_subdirectory(examples)
-diff --git a/lib/librdkafka-2.8.0/examples/CMakeLists.txt b/lib/librdkafka-2.8.0/examples/CMakeLists.txt
+diff --git a/lib/librdkafka-2.10.1/examples/CMakeLists.txt b/lib/librdkafka-2.10.1/examples/CMakeLists.txt
 index 91851d2cb..6874195ce 100644
---- a/lib/librdkafka-2.8.0/examples/CMakeLists.txt
-+++ b/lib/librdkafka-2.8.0/examples/CMakeLists.txt
+--- a/lib/librdkafka-2.10.1/examples/CMakeLists.txt
++++ b/lib/librdkafka-2.10.1/examples/CMakeLists.txt
 @@ -5,8 +5,10 @@ endif(WIN32)
  add_executable(producer producer.c ${win32_sources})
  target_link_libraries(producer PUBLIC rdkafka)
