@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2025.11"
 
+config BR2_PACKAGE_SYLPHEED
+	bool "sylpheed has been removed"
+	select BR2_LEGACY
+	help
+	  Due to the removal of libgtk2, the sylpheed package has been
+	  removed.
+
 config BR2_PACKAGE_PINENTRY_GTK2
 	bool "gtk2 backend of pinentry has been removed"
 	select BR2_LEGACY
