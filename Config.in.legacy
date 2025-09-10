@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2025.11"
 
+config BR2_PACKAGE_LEAFPAD
+	bool "leafpad has been removed"
+	select BR2_LEGACY
+	help
+	  The leafpad package has been removed, as libgtk2 has been
+	  removed as well.
+
 config BR2_PACKAGE_GTKPERF
 	bool "gtkperf has been removed"
 	select BR2_LEGACY
