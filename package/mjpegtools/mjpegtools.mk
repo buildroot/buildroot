@@ -10,6 +10,7 @@ MJPEGTOOLS_DEPENDENCIES = host-pkgconf jpeg
 MJPEGTOOLS_INSTALL_STAGING = YES
 MJPEGTOOLS_LICENSE = GPL-2.0+
 MJPEGTOOLS_LICENSE_FILES = COPYING
+MJPEGTOOLS_CONF_OPTS = --without-gtk
 
 ifeq ($(BR2_PACKAGE_MJPEGTOOLS_SIMD_SUPPORT),y)
 MJPEGTOOLS_CONF_OPTS += --enable-simd-accel
@@ -51,13 +52,6 @@ MJPEGTOOLS_CONF_OPTS += --with-dga
 MJPEGTOOLS_DEPENDENCIES += xlib_libXxf86dga
 else
 MJPEGTOOLS_CONF_OPTS += --without-dga
-endif
-
-ifeq ($(BR2_PACKAGE_LIBGTK2),y)
-MJPEGTOOLS_CONF_OPTS += --with-gtk
-MJPEGTOOLS_DEPENDENCIES += libgtk2
-else
-MJPEGTOOLS_CONF_OPTS += --without-gtk
 endif
 
 $(eval $(autotools-package))
