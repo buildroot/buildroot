@@ -13,10 +13,12 @@ PINENTRY_DEPENDENCIES = \
 	libassuan libgpg-error \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv) \
 	host-pkgconf
+# --disable-libcap to avoid PAM dependency
 PINENTRY_CONF_OPTS += \
 	--with-libassuan-prefix=$(STAGING_DIR)/usr \
 	--with-libgpg-error-prefix=$(STAGING_DIR)/usr \
-	--without-libcap       # requires PAM
+	--without-libcap \
+	--disable-pinentry-gtk2
 
 # Force the path to "gpgrt-config" (from the libgpg-error package) to
 # avoid using the one on host, if present.
@@ -56,14 +58,6 @@ PINENTRY_CONF_OPTS += --enable-ncurses --with-ncurses-include-dir=none
 PINENTRY_DEPENDENCIES += ncurses
 else
 PINENTRY_CONF_OPTS += --disable-ncurses
-endif
-
-# pinentry-gtk2 backend
-ifeq ($(BR2_PACKAGE_PINENTRY_GTK2),y)
-PINENTRY_CONF_OPTS += --enable-pinentry-gtk2
-PINENTRY_DEPENDENCIES += libgtk2
-else
-PINENTRY_CONF_OPTS += --disable-pinentry-gtk2
 endif
 
 # pinentry-qt5 backend
