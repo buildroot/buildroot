@@ -63,15 +63,6 @@ choice
 config BR2_PACKAGE_OPENCV3_GUI_NONE
 	bool "none"
 
-config BR2_PACKAGE_OPENCV3_WITH_GTK
-	bool "gtk2"
-	depends on BR2_PACKAGE_LIBGTK2
-
-comment "gtk2 support needs libgtk2"
-	depends on BR2_USE_MMU # libgtk2 -> glib2
-	depends on BR2_TOOLCHAIN_HAS_SYNC_4
-	depends on !BR2_PACKAGE_LIBGTK2
-
 config BR2_PACKAGE_OPENCV3_WITH_GTK3
 	bool "gtk3"
 	depends on BR2_PACKAGE_LIBGTK3

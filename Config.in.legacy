@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2025.11"
 
+config BR2_PACKAGE_OPENCV3_WITH_GTK
+	bool "opencv3 gtk support has been removed"
+	select BR2_LEGACY
+	help
+	  Due to the removal of libgtk2, the gtk support of opencv3
+	  has been removed. gtk3 support is still available.
+
 config BR2_PACKAGE_NETSURF_GTK
 	bool "gtk frontend of netsurf has been removed"
 	select BR2_LEGACY
