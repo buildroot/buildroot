@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2025.11"
 
+config BR2_PACKAGE_CWIID_WMGUI
+	bool "cwiid wmgui has been removed"
+	select BR2_LEGACY
+	help
+	  The wmgui part of cwiid required libgtk2, which has been
+	  removed from Buildroot.
+
 config BR2_LINUX_KERNEL_EXT_AUFS
 	bool "Aufs Filesystem Module patch has been removed"
 	select BR2_LEGACY
