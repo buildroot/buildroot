@@ -48,6 +48,19 @@ QEMU_VARS = LIBTOOL=$(HOST_DIR)/bin/libtool
 ifeq ($(BR2_PACKAGE_QEMU_SYSTEM),y)
 QEMU_DEPENDENCIES += pixman
 QEMU_OPTS += --enable-system
+
+ifeq ($(BR2_PACKAGE_QEMU_SYSTEM_KVM), y)
+QEMU_OPTS += --enable-kvm
+else
+QEMU_OPTS += --disable-kvm
+endif
+
+ifeq ($(BR2_PACKAGE_QEMU_SYSTEM_TCG), y)
+QEMU_OPTS += --enable-tcg
+else
+QEMU_OPTS += --disable-tcg
+endif
+
 QEMU_TARGET_LIST_$(BR2_PACKAGE_QEMU_TARGET_AARCH64) += aarch64-softmmu
 QEMU_TARGET_LIST_$(BR2_PACKAGE_QEMU_TARGET_ALPHA) += alpha-softmmu
 QEMU_TARGET_LIST_$(BR2_PACKAGE_QEMU_TARGET_ARM) += arm-softmmu
@@ -333,7 +346,6 @@ define QEMU_CONFIGURE_CMDS
 			--disable-whpx \
 			--disable-xen \
 			--enable-attr \
-			--enable-kvm \
 			--enable-vhost-net \
 			--disable-download \
 			--disable-hexagon-idef-parser \
