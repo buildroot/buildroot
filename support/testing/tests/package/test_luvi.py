@@ -11,7 +11,7 @@ class TestLuvi(infra.basetest.BRTest):
         BR2_PACKAGE_LUAJIT=y
         BR2_PACKAGE_LUVI=y
         BR2_PACKAGE_OPENSSL=y
-        BR2_PACKAGE_PCRE=y
+        BR2_PACKAGE_PCRE2=y
         BR2_PACKAGE_ZLIB=y
         """
 

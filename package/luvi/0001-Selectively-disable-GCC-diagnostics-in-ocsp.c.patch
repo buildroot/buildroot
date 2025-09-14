@@ -1,0 +1,80 @@
+From 52bc36f5a548543835c24b87e7b7b72a327b1df7 Mon Sep 17 00:00:00 2001
+From: RDW <duckwhale@mail.ru>
+Date: Sun, 14 Sep 2025 00:33:10 +0200
+Subject: [PATCH] Selectively disable GCC diagnostics in ocsp.c
+
+GCC 14 fails to compile the library because -Wincompatible-pointer-types is now fatal.
+Since the warning is already disabled for clang here, might as well include GCC also.
+Needless to say, this is a workaround and a proper fix would require upstream changes.
+
+Upstream: https://github.com/zhaozg/lua-openssl/commit/bfeedbe8c06d8b4400fa670edecd452a433ddac4
+[Romain:
+  - rebase on lua-openssl 0.9.0-0
+  - format the patch as luvi patch (patching lua-openssl submodule)
+]
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ deps/lua-openssl/src/ocsp.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/deps/lua-openssl/src/ocsp.c b/deps/lua-openssl/src/ocsp.c
+index ac67a53..00e3b61 100644
+--- a/deps/lua-openssl/src/ocsp.c
++++ b/deps/lua-openssl/src/ocsp.c
+@@ -183,15 +183,26 @@ static int openssl_ocsp_request_read(lua_State *L)
+   BIO *bio = load_bio_object(L, 1);
+   int pem = lua_gettop(L) > 1 ? auxiliar_checkboolean(L, 2) : 0;
+ 
++#if defined(__GNUC__)
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
++#endif
++
+ #if defined(__clang__)
+ #pragma clang diagnostic push
+ #pragma clang diagnostic ignored "-Wincompatible-pointer-types"
+ #endif
+   OCSP_REQUEST *req = pem ? PEM_read_bio_OCSP_REQUEST(bio, NULL, NULL)
+                           : d2i_OCSP_REQUEST_bio(bio, NULL);
++
++#if defined(__GNUC__)
++#pragma GCC diagnostic pop
++#endif
++
+ #if defined(__clang__)
+ #pragma clang diagnostic pop
+ #endif
++
+   BIO_free(bio);
+ 
+   if (req)
+@@ -359,15 +370,26 @@ static int openssl_ocsp_response_read(lua_State *L)
+   int pem = lua_gettop(L) > 1 ? auxiliar_checkboolean(L, 2) : 0;
+   int ret = 0;
+ 
++#if defined(__GNUC__)
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
++#endif
++
+ #if defined(__clang__)
+ #pragma clang diagnostic push
+ #pragma clang diagnostic ignored "-Wincompatible-pointer-types"
+ #endif
+   OCSP_RESPONSE *res = pem ? PEM_read_bio_OCSP_RESPONSE(bio, NULL, NULL)
+                            : d2i_OCSP_RESPONSE_bio(bio, NULL);
++
++#if defined(__GNUC__)
++#pragma GCC diagnostic pop
++#endif
++
+ #if defined(__clang__)
+ #pragma clang diagnostic pop
+ #endif
++
+   if (res)
+   {
+     PUSH_OBJECT(res, "openssl.ocsp_response");
+-- 
+2.51.0
+
