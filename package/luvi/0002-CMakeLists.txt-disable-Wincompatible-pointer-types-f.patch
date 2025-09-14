@@ -1,0 +1,54 @@
+From c82c147e83d6a21f572353bf6e95dcf3a736490c Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@smile.fr>
+Date: Sat, 13 Sep 2025 23:21:04 +0200
+Subject: [PATCH] CMakeLists.txt: disable Wincompatible-pointer-types for gcc
+ >= 14
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Backport partially a patch [1] disabling GCC 14 warning
+Wincompatible-pointer-types.
+
+From [1]:
+"lua-openssl triggering the incompatible pointer types error by
+silencing the warning, which lua-openssl does internally but only for
+clang."
+
+Latest lua-openssl version (0.9.1-0) also disable this warning [2].
+
+Fixes:
+https://gitlab.com/buildroot.org/buildroot/-/jobs/11271124430 (TestLuvi)
+
+[1] https://github.com/luvit/luvi/commit/85d7d7bf51bc523159ad579d846cbefbbff38fdb
+[2] https://github.com/zhaozg/lua-openssl/commit/bfeedbe8c06d8b4400fa670edecd452a433ddac4
+
+Upstream: https://github.com/luvit/luvi/commit/85d7d7bf51bc523159ad579d846cbefbbff38fdb
+
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ CMakeLists.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0b0007d..bf10de5 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -141,6 +141,14 @@ if (WIN32)
+   add_library (luvi_renamed src/luvi_renamed.c)
+ endif ()
+ 
++if (CMAKE_C_COMPILER_ID MATCHES "Clang|GNU")
++  add_compile_options(-Wno-incompatible-pointer-types)
++endif()
++
++if(UNIX)
++  add_definitions(-Wall)
++endif()
++
+ if (WITH_LUA_ENGINE STREQUAL Lua)
+   add_definitions(-DWITH_PLAIN_LUA)
+ endif ()
+-- 
+2.51.0
+
