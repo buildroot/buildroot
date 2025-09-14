@@ -4,9 +4,10 @@
 #
 ################################################################################
 
-LUVI_VERSION = 2.14.0
-LUVI_SOURCE = luvi-src-v$(LUVI_VERSION).tar.gz
-LUVI_SITE = https://github.com/luvit/luvi/releases/download/v$(LUVI_VERSION)
+LUVI_VERSION = v2.15.0
+LUVI_SITE = https://github.com/luvit/luvi.git
+LUVI_SITE_METHOD = git
+LUVI_GIT_SUBMODULES = YES
 LUVI_LICENSE = Apache-2.0
 LUVI_LICENSE_FILES = LICENSE.txt
 LUVI_DEPENDENCIES = libuv luajit luv host-luajit host-pkgconf
@@ -44,12 +45,12 @@ LUVI_CONF_OPTS = \
 	-DTARGET_ARCH=$(LUVI_TARGET_ARCH) \
 	-DLUA_PATH=$(HOST_DIR)/share/luajit-$(LUVI_LUAJIT_MAJVER).$(LUVI_LUAJIT_MINVER)/?.lua
 
-# Add "rex" module (PCRE via bundled lrexlib)
-ifeq ($(BR2_PACKAGE_PCRE),y)
-LUVI_DEPENDENCIES += pcre
-LUVI_CONF_OPTS += -DWithPCRE=ON -DWithSharedPCRE=ON
+# Add "rex" module (PCRE2 via bundled lrexlib)
+ifeq ($(BR2_PACKAGE_PCRE2),y)
+LUVI_DEPENDENCIES += pcre2
+LUVI_CONF_OPTS += -DWithPCRE2=ON -DWithSharedPCRE2=ON
 else
-LUVI_CONF_OPTS += -DWithPCRE=OFF -DWithSharedPCRE=OFF
+LUVI_CONF_OPTS += -DWithPCRE2=OFF -DWithSharedPCRE2=OFF
 endif
 
 # Add "ssl" module (via bundled lua-openssl)
