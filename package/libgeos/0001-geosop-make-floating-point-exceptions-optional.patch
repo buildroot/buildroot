@@ -1,0 +1,71 @@
+From a6bac7bd506988085fa692ff2e12727ae0e9db84 Mon Sep 17 00:00:00 2001
+From: Maxim Kochetkov <fido_max@inbox.ru>
+Date: Mon, 15 Sep 2025 17:16:08 +0300
+Subject: [PATCH] geosop: make floating-point exceptions optional
+
+commit 26292ce ("geosop: show most floating-point exceptions in verbose mode")
+add fenv.h dependency. Some libc implementations (uclibc-ng )may have no fenv
+support. So make floating-point exceptions optional and detetct fenv.h at
+configure stage.
+
+Upstream: https://github.com/libgeos/geos/pull/1305
+Signed-off-by: Maxim Kochetkov <fido_max@inbox.ru>
+---
+ CMakeLists.txt         | 7 +++++++
+ util/geosop/GeosOp.cpp | 6 ++++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 12411e586..a1e2f0c6e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -558,3 +558,10 @@ if(PROJECT_IS_TOP_LEVEL)
+ 
+   unset(_is_multi_config_generator)
+ endif()  # PROJECT_IS_TOP_LEVEL
++
++include(CheckIncludeFile)
++check_include_file(fenv.h HAVE_FENV_H)
++
++if(HAVE_FENV_H)
++    target_compile_definitions(geos_cxx_flags INTERFACE HAVE_FENV)
++endif()
+diff --git a/util/geosop/GeosOp.cpp b/util/geosop/GeosOp.cpp
+index 2cb17f000..05307cf30 100644
+--- a/util/geosop/GeosOp.cpp
++++ b/util/geosop/GeosOp.cpp
+@@ -26,7 +26,9 @@
+ #include <geos/io/WKBStreamReader.h>
+ #include <geos/io/WKBWriter.h>
+ 
++#if defined(HAVE_FENV)
+ #include <cfenv>
++#endif
+ #include <fstream>
+ #include <iostream>
+ #include <sstream>
+@@ -394,10 +396,13 @@ void GeosOp::run(OpArguments& opArgs) {
+     //------------------------
+ 
+     try {
++#if defined(HAVE_FENV)
+         std::feclearexcept(FE_ALL_EXCEPT); // clear floating-point status flags
++#endif
+ 
+         execute(op, opArgs);
+ 
++#if defined(HAVE_FENV)
+         // Catch everything except for FE_INEXACT, which is usually harmless
+         const int fpexp = std::fetestexcept(FE_ALL_EXCEPT ^ FE_INEXACT);
+         if (args.isVerbose && (fpexp != 0)) {
+@@ -414,6 +419,7 @@ void GeosOp::run(OpArguments& opArgs) {
+                 std::cerr << " FE_UNDERFLOW";
+             std::cerr << std::endl;
+         }
++#endif
+     }
+     catch (std::exception &e) {
+         std::cerr << "Run-time exception: " << e.what() << std::endl;
+-- 
+2.51.0
+
