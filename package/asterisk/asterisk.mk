@@ -21,8 +21,7 @@ ASTERISK_LICENSE_FILES = \
 	codecs/speex/speex_resampler.h \
 	utils/db1-ast/include/db.h
 
-ASTERISK_CPE_ID_VENDOR = asterisk
-ASTERISK_CPE_ID_PRODUCT = open_source
+ASTERISK_CPE_ID_VENDOR = sangoma
 ASTERISK_SELINUX_MODULES = asterisk
 
 # For patches 0002 and 0003
