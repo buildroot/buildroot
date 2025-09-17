@@ -196,6 +196,19 @@ config BR2_TARGET_ARM_TRUSTED_FIRMWARE_EDK2_AS_BL33
 	  for the 'qemu_sbsa' platform. In this case, due to the EDK2
 	  build system, the dependency between ATF and EDK is reversed.
 
+config BR2_TARGET_ARM_TRUSTED_FIRMWARE_LINUX_AS_BL33
+	bool "Linux kernel"
+	depends on BR2_LINUX_KERNEL
+	depends on (BR2_arm || BR2_armeb)
+	depends on (BR2_LINUX_KERNEL_ZIMAGE || BR2_LINUX_KERNEL_APPENDED_ZIMAGE)
+	help
+	  This option allows to embed the Linux kernel as the BL33
+	  part of the ARM Trusted Firmware.
+
+	  Do not choose this option if you intend to use U-Boot or
+	  another second-stage bootloader. With this option, TF-A
+	  starts Linux directly.
+
 endchoice
 
 if BR2_TARGET_ARM_TRUSTED_FIRMWARE_BAREBOX_AS_BL33
