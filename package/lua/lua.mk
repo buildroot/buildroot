@@ -21,6 +21,12 @@ LUA_LICENSE_FILES = COPYRIGHT
 endif
 LUA_CPE_ID_VENDOR = lua
 
+ifeq ($(BR2_PACKAGE_LUA_5_1),y)
+# Only affect lua version 5.1.5
+# 5.1.5/0003-Fix-stack-overflow-in-vararg-functions.patch
+LUA_IGNORE_CVES += CVE-2014-5461
+endif
+
 LUA_PROVIDES = luainterpreter
 
 LUA_CFLAGS = -Wall -fPIC -DLUA_USE_POSIX
