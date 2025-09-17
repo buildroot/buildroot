@@ -1,0 +1,46 @@
+From aeef5293c978158255ad4f127089644745602f2a Mon Sep 17 00:00:00 2001
+From: Michael Adams <mdadams@ece.uvic.ca>
+Date: Thu, 14 Dec 2023 19:04:19 -0800
+Subject: [PATCH] Fixes #367.
+
+Fixed an integer-overflow bug in the ICC profile parsing code.
+Added another invalid image to the test set.
+
+CVE: CVE-2023-51257
+Upstream: https://github.com/jasper-software/jasper/commit/aeef5293c978158255ad4f127089644745602f2a
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/libjasper/base/jas_icc.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/src/libjasper/base/jas_icc.c b/src/libjasper/base/jas_icc.c
+index 905b823..2d1e91e 100644
+--- a/src/libjasper/base/jas_icc.c
++++ b/src/libjasper/base/jas_icc.c
+@@ -1295,10 +1295,22 @@ static int jas_icctxt_input(jas_iccattrval_t *attrval, jas_stream_t *in,
+ {
+ 	jas_icctxt_t *txt = &attrval->data.txt;
+ 	txt->string = 0;
+-	if (!(txt->string = jas_malloc(cnt)))
++	/* The string must at least contain a single null character. */
++	if (cnt < 1) {
+ 		goto error;
+-	if (jas_stream_read(in, txt->string, cnt) != cnt)
++	}
++	if (!(txt->string = jas_malloc(cnt))) {
++		goto error;
++	}
++	if (jas_stream_read(in, txt->string, cnt) != cnt) {
+ 		goto error;
++	}
++	/* Ensure that the string is null terminated. */
++	if (txt->string[cnt - 1] != '\0') {
++		goto error;
++	}
++	/* The following line is redundant, unless we do not enforce that
++	  the last character must be null. */
+ 	txt->string[cnt - 1] = '\0';
+ 	if (strlen(txt->string) + 1 != cnt)
+ 		goto error;
+-- 
+2.39.5
