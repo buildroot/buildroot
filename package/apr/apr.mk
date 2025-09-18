@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-APR_VERSION = 1.7.5
+APR_VERSION = 1.7.6
 APR_SOURCE = apr-$(APR_VERSION).tar.bz2
 APR_SITE = https://archive.apache.org/dist/apr
 APR_LICENSE = Apache-2.0
