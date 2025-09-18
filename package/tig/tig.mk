@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TIG_VERSION = 2.5.12
+TIG_VERSION = 2.6.0
 TIG_SITE = https://github.com/jonas/tig/releases/download/tig-$(TIG_VERSION)
 TIG_LICENSE = GPL-2.0+
 TIG_LICENSE_FILES = COPYING
