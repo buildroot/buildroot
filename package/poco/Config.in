@@ -18,6 +18,7 @@ config BR2_PACKAGE_POCO
 	depends on !BR2_STATIC_LIBS # dlopen()
 	depends on BR2_PACKAGE_POCO_ARCH_SUPPORTS
 	select BR2_PACKAGE_PCRE2
+	select BR2_PACKAGE_UTF8PROC
 	select BR2_PACKAGE_ZLIB
 	help
 	  The C++ Portable Components Libraries
