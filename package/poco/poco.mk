@@ -11,6 +11,9 @@ POCO_LICENSE_FILES = LICENSE
 POCO_CPE_ID_VENDOR = pocoproject
 POCO_INSTALL_STAGING = YES
 
+# 0001-fix-Net-A-SEGV-at-Net-src-MultipartReader-cpp.patch
+POCO_IGNORE_CVES += CVE-2025-6375
+
 POCO_DEPENDENCIES = \
 	pcre2 \
 	zlib \
