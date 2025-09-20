@@ -5,6 +5,7 @@
 ################################################################################
 
 BAD_VERSION = a238b1dfcd825d47d834af3c5223417c8411d90d
-BAD_SITE = git://localhost:$(GITREMOTE_PORT_NUMBER)/repo.git
+BAD_SITE = $(GITREMOTE_DIR)/repo.git
+BAD_SITE_METHOD = git
 
 $(eval $(generic-package))
