@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BATS_ASSERT_VERSION = 2.1.0
+BATS_ASSERT_VERSION = 2.2.0
 BATS_ASSERT_SITE = $(call github,bats-core,bats-assert,v$(BATS_ASSERT_VERSION))
 BATS_ASSERT_LICENSE = CC0-1.0
 BATS_ASSERT_LICENSE_FILES = LICENSE
