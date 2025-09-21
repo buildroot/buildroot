@@ -1,0 +1,16 @@
+image disk.img {
+	hdimage {
+		partition-table-type = "mbr"
+		disk-signature = 0x%PARTUUID%
+	}
+
+	partition boot {
+		partition-type= 0xF0
+		size = 16M
+	}
+
+	partition root {
+		partition-type= 0x83
+		image = "rootfs.ext2"
+	}
+}

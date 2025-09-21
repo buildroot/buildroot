@@ -1,0 +1,21 @@
+#!/bin/sh
+set -eu
+
+# Generate lifimage.
+palo \
+	--bootloader="${BINARIES_DIR}/iplboot" \
+	--commandline='0/vmlinux initrd=0/ramdisk' \
+	--configfile=/dev/null \
+	--init-tape="${BINARIES_DIR}/lifimage" \
+	--ramdisk="${BINARIES_DIR}/rootfs.cpio.gz" \
+	--recoverykernel="${BINARIES_DIR}/vmlinux" \
+	--verbose
+
+# Install loader to disk image.
+palo \
+	--bootloader="${BINARIES_DIR}/iplboot" \
+	--commandline="1/vmlinux root=PARTUUID=%PARTUUID%-02 rootwait" \
+	--configfile=/dev/null \
+	--init-partitioned="${BINARIES_DIR}/disk.img" \
+	--recoverykernel="${BINARIES_DIR}/vmlinux" \
+	--verbose
