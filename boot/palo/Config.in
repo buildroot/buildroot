@@ -1,0 +1,13 @@
+config BR2_TARGET_PALO
+	bool "palo"
+	depends on BR2_hppa
+	help
+	  Palo is a PA-RISC/Linux boot loader.
+
+	  It comprises iplboot, a bootloader loaded by the HP firmware,
+	  and palo, a boot media management tool.
+
+	  Palo allows to update disk images with a bootloader to make
+	  them bootable, or to create network bootable images.
+
+	  https://parisc.docs.kernel.org
