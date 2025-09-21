@@ -65,6 +65,15 @@ config BR2_aarch64_be
 	  http://www.arm.com/products/processors/instruction-set-architectures/armv8-architecture.php
 	  http://en.wikipedia.org/wiki/ARM
 
+config BR2_hppa
+	bool "HPPA"
+	select BR2_USE_MMU
+	select BR2_ARCH_HAS_NO_TOOLCHAIN_BUILDROOT
+	help
+	  Precision Architecture (a.k.a. PA-RISC) is a 32-bit
+	  (big endian) architecture developed by Hewlett Packard.
+	  https://en.wikipedia.org/wiki/PA-RISC
+
 config BR2_i386
 	bool "i386"
 	select BR2_USE_MMU
@@ -383,6 +392,10 @@ endif
 
 if BR2_arm || BR2_armeb || BR2_aarch64 || BR2_aarch64_be
 source "arch/Config.in.arm"
+endif
+
+if BR2_hppa
+source "arch/Config.in.hppa"
 endif
 
 if BR2_loongarch64

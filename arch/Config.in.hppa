@@ -1,0 +1,22 @@
+choice
+	prompt "Target Architecture Type"
+	help
+	  Architecture type (or version) to use.
+
+config BR2_parisc10
+	bool "PA-RISC 1.0"
+config BR2_parisc11
+	bool "PA-RISC 1.1"
+endchoice
+
+config BR2_ARCH
+	default "hppa"
+
+config BR2_NORMALIZED_ARCH
+	default "parisc"
+
+config BR2_ENDIAN
+	default "BIG"
+
+config BR2_READELF_ARCH_NAME
+	default "HPPA"
