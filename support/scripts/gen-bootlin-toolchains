@@ -363,7 +363,7 @@ class Toolchain:
                 selects.append("BR2_ENABLE_LOCALE")
 
             # thread support
-            if frag.startswith("BR2_TOOLCHAIN_EXTERNAL_HAS_THREADS"):
+            if frag.startswith("BR2_TOOLCHAIN_EXTERNAL_HAS_THREADS="):
                 selects.append("BR2_TOOLCHAIN_HAS_THREADS")
 
             if frag.startswith("BR2_TOOLCHAIN_EXTERNAL_HAS_THREADS_DEBUG"):
