@@ -369,6 +369,7 @@ HOST_QEMU_DEPENDENCIES = \
 #       -------         ----
 #       arm             arm
 #       armeb           armeb
+#       hppa            hppa
 #       i486            i386
 #       i586            i386
 #       i686            i386
