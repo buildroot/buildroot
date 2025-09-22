@@ -16,19 +16,15 @@ Signed-off-by: Romain Naour <romain.naour@openwide.fr>
  source/Makefile.in | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/source/Makefile.in b/source/Makefile.in
-index 9db6c52..ca48e16 100644
---- a/source/Makefile.in
-+++ b/source/Makefile.in
-@@ -264,7 +264,7 @@ config/icu-uc.pc: config/icu.pc Makefile icudefs.mk
- 	@echo "Description: $(PACKAGE_ICU_DESCRIPTION): Common and Data libraries" >> $@
- 	@echo "Name: $(PACKAGE)-uc" >> $@
- 	@echo "Libs:" '-L$${libdir}' "${ICULIBS_UC}" "${ICULIBS_DT}" >> $@
--	@echo "Libs.private:" '$${baselibs}' >> $@
-+	@echo "Libs.private:" '$${baselibs}' -lstdc++ >> $@
+diff -git icu.orig/source/Makefile.in icu/source/Makefile.in
+--- icu.orig/source/Makefile.in	2025-03-13 19:31:23.000000000 +0100
++++ icu/source/Makefile.in	2025-09-22 08:56:36.791792784 +0200
+@@ -279,7 +279,7 @@
+ 	@echo "Libs:" '-L$${libdir}' "${ICULIBS_UC}" "${ICULIBS_DT}" '$${baselibs}' >> $@
+ else
+ 	@echo "Libs:" '-L$${libdir}' "${ICULIBS_UC}" >> $@
+-	@echo "Libs.private:" "${ICULIBS_DT}" '$${baselibs}' >> $@
++	@echo "Libs.private:" "${ICULIBS_DT}" '$${baselibs}' -lstdc++ >> $@
+ endif
  	@echo $@ updated.
  
- config/icu-i18n.pc: config/icu.pc Makefile icudefs.mk
--- 
-2.4.3
-
