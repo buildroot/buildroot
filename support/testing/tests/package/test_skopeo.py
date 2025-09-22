@@ -9,6 +9,7 @@ class TestSkopeo(infra.basetest.BRTest):
         BR2_PER_PACKAGE_DIRECTORIES=y
         BR2_SYSTEM_DHCP="eth0"
         BR2_PACKAGE_CA_CERTIFICATES=y
+        BR2_PACKAGE_SQLITE=y
         BR2_PACKAGE_SKOPEO=y
         BR2_PACKAGE_HOST_GO_BIN=y
         BR2_TARGET_ROOTFS_CPIO=y

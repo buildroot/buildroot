@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SKOPEO_VERSION = 1.18.0
+SKOPEO_VERSION = 1.20.0
 SKOPEO_SITE = $(call github,containers,skopeo,v$(SKOPEO_VERSION))
 
 SKOPEO_LICENSE = Apache-2.0
@@ -16,6 +16,11 @@ SKOPEO_DEPENDENCIES = \
 	btrfs-progs \
 	libgpgme \
 	lvm2
+
+ifeq ($(BR2_PACKAGE_SQLITE),y)
+SKOPEO_DEPENDENCIES += sqlite
+SKOPEO_TAGS += libsqlite3
+endif
 
 HOST_SKOPEO_DEPENDENCIES = \
 	host-btrfs-progs \

@@ -21,6 +21,7 @@ class TestDistributionRegistry(infra.basetest.BRTest):
         BR2_LINUX_KERNEL_INTREE_DTS_NAME="vexpress-v2p-ca9"
         BR2_PACKAGE_CA_CERTIFICATES=y
         BR2_PACKAGE_DISTRIBUTION_REGISTRY=y
+        BR2_PACKAGE_SQLITE=y
         BR2_PACKAGE_SKOPEO=y
         BR2_PACKAGE_HOST_GO_BIN=y
         BR2_TARGET_ROOTFS_CPIO=y
