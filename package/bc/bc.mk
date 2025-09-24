@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BC_VERSION = 1.07.1
+BC_VERSION = 1.08.2
 BC_SITE = $(BR2_GNU_MIRROR)/bc
 BC_DEPENDENCIES = host-flex
 BC_LICENSE = GPL-2.0+, LGPL-2.1+
@@ -12,8 +12,8 @@ BC_LICENSE_FILES = COPYING COPYING.LIB
 BC_CPE_ID_VENDOR = gnu
 BC_CONF_ENV = MAKEINFO=true
 
-# 0001-bc-use-MAKEINFO-variable-for-docs.patch and 0004-no-gen-libmath.patch
-# are patching doc/Makefile.am and Makefile.am respectively
+# 0001-bc-use-MAKEINFO-variable-for-docs.patch
+# is patching doc/Makefile.am
 BC_AUTORECONF = YES
 
 $(eval $(autotools-package))
