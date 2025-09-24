@@ -1,0 +1,32 @@
+image efi-part.vfat {
+	vfat {
+		file EFI {
+			image = "efi-part/EFI"
+		}
+
+		file bzImage {
+			image = "bzImage"
+		}
+	}
+
+	size = 16352K # 16MB - 32KB
+}
+
+image disk.img {
+	hdimage {
+		partition-table-type = "gpt"
+	}
+
+	partition boot {
+		image = "efi-part.vfat"
+		partition-type-uuid = U
+		offset = 32K
+		bootable = true
+	}
+
+	partition root {
+		partition-type-uuid = root-x86-64
+		partition-uuid = %PARTUUID%
+		image = "rootfs.ext2"
+	}
+}
