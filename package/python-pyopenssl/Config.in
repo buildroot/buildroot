@@ -2,6 +2,7 @@ config BR2_PACKAGE_PYTHON_PYOPENSSL
 	bool "python-pyopenssl"
 	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-cryptography
 	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime
+	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS
 	help
 	  Python wrapper module around the OpenSSL library.
 
