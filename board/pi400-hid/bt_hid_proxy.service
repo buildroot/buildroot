@@ -1,0 +1,11 @@
+[Unit]
+Description=Pi400 Bluetooth HID Proxy
+After=bluetooth.target
+
+[Service]
+ExecStart=/usr/bin/python3 /usr/share/bt-hid-proxy/bt_hid_proxy.py
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
