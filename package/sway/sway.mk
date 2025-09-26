@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SWAY_VERSION = 1.10
+SWAY_VERSION = 1.11
 SWAY_SITE = https://github.com/swaywm/sway/releases/download/$(SWAY_VERSION)
 SWAY_LICENSE = MIT
 SWAY_LICENSE_FILES = LICENSE
