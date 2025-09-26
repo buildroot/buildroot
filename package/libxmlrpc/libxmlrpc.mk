@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-# 1.60.01 (code/advanced@r3176)
-LIBXMLRPC_VERSION = r3176
+# 1.67.00 (code/advanced@r3335)
+LIBXMLRPC_VERSION = r3335
 LIBXMLRPC_SITE = https://svn.code.sf.net/p/xmlrpc-c/code/advanced
 LIBXMLRPC_SITE_METHOD = svn
 LIBXMLRPC_LICENSE = BSD-3-Clause (xml-rpc main code and abyss web server), BSD like (lib/expat), Python 1.5.2 license (parts of xmlrpc_base64.c)
@@ -45,6 +45,12 @@ LIBXMLRPC_DEPENDENCIES += host-pkgconf openssl
 LIBXMLRPC_CONF_OPTS += --enable-abyss-openssl
 else
 LIBXMLRPC_CONF_OPTS += --disable-abyss-openssl
+endif
+
+ifeq ($(BR2_PACKAGE_LIBXML2),y)
+LIBXMLRPC_DEPENDENCIES += libxml2
+else
+LIBXMLRPC_CONF_OPTS += --disable-libxml2-backend
 endif
 
 LIBXMLRPC_MAKE_OPTS += $(LIBXMLRPC_STATIC_OPTS)
