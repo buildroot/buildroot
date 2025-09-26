@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TIFF_VERSION = 4.7.0
+TIFF_VERSION = 4.7.1
 TIFF_SOURCE = tiff-$(TIFF_VERSION).tar.xz
 TIFF_SITE = https://download.osgeo.org/libtiff
 TIFF_LICENSE = tiff license
@@ -12,12 +12,6 @@ TIFF_LICENSE_FILES = LICENSE.md
 TIFF_CPE_ID_VENDOR = libtiff
 TIFF_CPE_ID_PRODUCT = libtiff
 TIFF_INSTALL_STAGING = YES
-
-# 0001-don-t-skip-the-first-line-of-the-input-image.patch, 0002-fix-tiffmedian-bug.patch, 0003-conflict-resolution.patch
-TIFF_IGNORE_CVES += CVE-2025-8176
-
-# 0004-fix-for-thumbnail-issue.patch
-TIFF_IGNORE_CVES += CVE-2025-8177
 
 # Fixed in 4.7.0
 TIFF_IGNORE_CVES += CVE-2025-8851
