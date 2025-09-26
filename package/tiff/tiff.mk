@@ -19,6 +19,9 @@ TIFF_IGNORE_CVES += CVE-2025-8176
 # 0004-fix-for-thumbnail-issue.patch
 TIFF_IGNORE_CVES += CVE-2025-8177
 
+# Fixed in 4.7.0
+TIFF_IGNORE_CVES += CVE-2025-8851
+
 # webp has a (optional) dependency on tiff, so we can't have webp
 # support in tiff, or that would create a circular dependency.
 TIFF_CONF_OPTS = \
