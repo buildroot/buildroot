@@ -19,6 +19,7 @@ WLROOTS_DEPENDENCIES = \
 	libxkbcommon \
 	libegl \
 	libgles \
+	libgbm \
 	pixman \
 	seatd \
 	udev \
