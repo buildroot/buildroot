@@ -36,11 +36,11 @@ myboot=...
 References:
  - ZC702 information including schematics, reference designs, and manuals are
    available from
-   https://www.xilinx.com/products/boards-and-kits/ek-z7-zc702-g.html
+   https://www.amd.com/en/products/adaptive-socs-and-fpgas/evaluation-boards/ek-z7-zc702-g.html
 
  - ZC706 information including schematics, reference designs, and manuals are
    available from
-   http://www.xilinx.com/products/boards-and-kits/ek-z7-zc706-g.html.
+   https://www.amd.com/en/products/adaptive-socs-and-fpgas/evaluation-boards/ek-z7-zc706-g.html
 
  - Zedboard/Microzed information including schematics, reference designs, and
    manuals are available from http://www.zedboard.org .

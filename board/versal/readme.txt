@@ -11,13 +11,13 @@ Xilinx VPK180 board
 Evaluation board features can be found here with the links below.
 
 VCK190:
-https://www.xilinx.com/products/boards-and-kits/vck190.html
+https://www.amd.com/en/products/adaptive-socs-and-fpgas/evaluation-boards/vck190.html
 
 VEK280:
-https://www.xilinx.com/products/boards-and-kits/vek280.html
+https://www.amd.com/en/products/adaptive-socs-and-fpgas/evaluation-boards/vek280.html
 
 VPK180:
-https://www.xilinx.com/products/boards-and-kits/vpk180.html
+https://www.amd.com/en/products/adaptive-socs-and-fpgas/evaluation-boards/vpk180.html
 
 
 How to build it

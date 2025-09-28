@@ -10,13 +10,13 @@ the KD240, KR260 and KV260 production boards.
 Evaluation board features can be found here with the links below.
 
 KD240:
-https://www.xilinx.com/products/som/kria/kd240-drives-starter-kit.html
+https://www.amd.com/en/products/system-on-modules/kria/k24/kd240-drives-starter-kit.html
 
 KR260:
-https://www.xilinx.com/products/som/kria/kr260-robotics-starter-kit.html
+https://www.amd.com/en/products/system-on-modules/kria/k26/kr260-robotics-starter-kit.html
 
 KV260:
-https://www.xilinx.com/products/som/kria/kv260-vision-starter-kit.html
+https://www.amd.com/en/products/system-on-modules/kria/k26/kv260-vision-starter-kit.html
 
 How to build it
 ===============
