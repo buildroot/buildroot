@@ -10,13 +10,13 @@ boards.
 Evaluation board features can be found here with the links below.
 
 ZCU102:
-https://www.xilinx.com/products/boards-and-kits/zcu102.html
+https://www.amd.com/en/products/adaptive-socs-and-fpgas/evaluation-boards/ek-u1-zcu102-g.html
 
 ZCU104:
-https://www.xilinx.com/products/boards-and-kits/zcu104.html
+https://www.amd.com/en/products/adaptive-socs-and-fpgas/evaluation-boards/zcu104.html
 
 ZCU106:
-https://www.xilinx.com/products/boards-and-kits/zcu106.html
+https://www.amd.com/en/products/adaptive-socs-and-fpgas/evaluation-boards/zcu106.html
 
 
 How to build it
