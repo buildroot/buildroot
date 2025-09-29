@@ -43,7 +43,9 @@ References:
    https://www.amd.com/en/products/adaptive-socs-and-fpgas/evaluation-boards/ek-z7-zc706-g.html
 
  - Zedboard/Microzed information including schematics, reference designs, and
-   manuals are available from http://www.zedboard.org .
+   manuals are available from
+   https://www.avnet.com/americas/products/avnet-boards/avnet-board-families/zedboard/
+   https://www.tria-technologies.com/product/microzed/
 
 Support for other boards:
 
