@@ -125,7 +125,8 @@ endif
 noconfig_targets := menuconfig nconfig gconfig xconfig config oldconfig randconfig \
 	defconfig %_defconfig allyesconfig allnoconfig alldefconfig syncconfig release \
 	randpackageconfig allyespackageconfig allnopackageconfig \
-	print-version olddefconfig distclean manual manual-% check-package
+	print-version olddefconfig distclean manual manual-% check-package \
+	check-package-external
 
 # Some global targets do not trigger a build, but are used to collect
 # metadata, or do various checks. When such targets are triggered,
@@ -1255,9 +1256,28 @@ release:
 print-version:
 	@echo $(BR2_VERSION_FULL)
 
+# $(1): br2-external path
+# $(2): br2-external description
+define check-package-external
+	@$(call MESSAGE,"Checking packages in $(2)")
+	$(Q)if [ -r "$(1)/.checkpackageignore" ]; then \
+		ignore="--ignore-list=$(1)/.checkpackageignore" ; \
+	else \
+		ignore=""; \
+	fi ; \
+	$(TOPDIR)/utils/check-package \
+		--br2-external $${ignore} \
+		`git -C $(1) ls-tree -r --format='$(1)/%(path)' HEAD`
+endef
+
 check-package:
 	$(Q)./utils/check-package `git ls-tree -r --name-only HEAD` \
 		--ignore-list=$(TOPDIR)/.checkpackageignore
+
+check-package-external:
+	$(foreach name,$(BR2_EXTERNAL_NAMES),\
+		$(call check-package-external,$(BR2_EXTERNAL_$(name)_PATH),\
+			$(BR2_EXTERNAL_$(name)_DESC))$(sep))
 
 .PHONY: .checkpackageignore
 .checkpackageignore:
