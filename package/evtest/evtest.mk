@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EVTEST_VERSION = 1.35
+EVTEST_VERSION = 1.36
 EVTEST_SOURCE = evtest-evtest-$(EVTEST_VERSION).tar.gz
 EVTEST_SITE = https://gitlab.freedesktop.org/libevdev/evtest/-/archive/evtest-$(EVTEST_VERSION)
 EVTEST_LICENSE = GPL-2.0+
