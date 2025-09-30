@@ -459,6 +459,25 @@ LINUX_FIRMWARE_ALL_LICENSE_FILES += \
 	ath10k/QCA6174/hw3.0/notice_ath10k_firmware-6.txt
 endif
 
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_WCN7850),y)
+LINUX_FIRMWARE_FILES += \
+	ath12k/WCN7850/hw2.0/board-2.bin \
+	ath12k/WCN7850/hw2.0/amss.bin \
+	ath12k/WCN7850/hw2.0/m3.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += \
+	LICENSE.QualcommAtheros_ath10k \
+	ath12k/WCN7850/hw2.0/Notice.txt
+endif
+
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_QCN9274),y)
+LINUX_FIRMWARE_FILES += \
+	ath12k/QCN9274/hw2.0/board-2.bin \
+	ath12k/QCN9274/hw2.0/firmware-2.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += \
+	LICENSE.QualcommAtheros_ath10k \
+	ath12k/QCN9274/hw2.0/Notice.txt
+endif
+
 # CC2560(A)
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_TI_CC2560),y)
 LINUX_FIRMWARE_FILES += \
