@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-UEFISETTINGS_VERSION = f90aed759b9c2217bea336e37ab5282616ece390
+UEFISETTINGS_VERSION = 149bc92970949d44be641ae1e3e942220d7390e7
 UEFISETTINGS_SITE = $(call github,linuxboot,uefisettings,$(UEFISETTINGS_VERSION))
 UEFISETTINGS_LICENSE = BSD-3-Clause
 UEFISETTINGS_LICENSE_FILES = LICENSE
