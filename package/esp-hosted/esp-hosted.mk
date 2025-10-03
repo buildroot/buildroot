@@ -29,11 +29,5 @@ else
 ESP_HOSTED_MODULE_MAKE_OPTS = target=sdio
 endif
 
-ifeq ($(BR2_PACKAGE_ESP_HOSTED_TARGET_ESP32),y)
-ESP_HOSTED_MODULE_MAKE_OPTS += ESP_SLAVE=CONFIG_TARGET_ESP32=y
-else
-ESP_HOSTED_MODULE_MAKE_OPTS += ESP_SLAVE=CONFIG_TARGET_ESP32C6=y
-endif
-
 $(eval $(kernel-module))
 $(eval $(generic-package))
