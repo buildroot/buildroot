@@ -1,0 +1,36 @@
+From 0182e2b94bbc6bb964f96527d18e93c9b4709a3a Mon Sep 17 00:00:00 2001
+From: Javad Rahimipetroudi <javad.rahimipetroudi@mind.be>
+Date: Fri, 19 Jul 2024 07:57:45 +0200
+Subject: [PATCH] src/pl_assert.h:add static_assert define for ulibc
+
+This PR adds the static_assert macro defination for uClibc that is
+missed in some platforms. However, it is limited to C versions lower
+than C23. From C23, static_assert is not defined as macro anymore:
+https://en.cppreference.com/w/c/language/_Static_assert
+
+Signed-off-by: Javad Rahimipetroudi <javad.rahimipetroudi@mind.be>
+Upstream: https://github.com/haasn/libplacebo/commit/0182e2b94bbc6bb964f96527d18e93c9b4709a3a
+---
+ src/pl_assert.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/pl_assert.h b/src/pl_assert.h
+index b4c6656c..de9d3547 100644
+--- a/src/pl_assert.h
++++ b/src/pl_assert.h
+@@ -20,6 +20,12 @@
+ #include <stdio.h>
+ #include <assert.h>
+ 
++#if !defined (__cplusplus)
++#if (__STDC_VERSION__ < 202301L)
++#define static_assert _Static_assert
++#endif
++#endif
++
+ #ifndef NDEBUG
+ # define pl_assert assert
+ #else
+-- 
+2.45.2
+

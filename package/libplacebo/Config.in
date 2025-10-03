@@ -1,0 +1,21 @@
+config BR2_PACKAGE_LIBPLACEBO
+	bool "libplacebo"
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_10 # C++20
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC
+	depends on !BR2_STATIC_LIBS # needs <dlfcn.h>
+	help
+	  libplacebo is, in a nutshell, the core rendering algorithms
+	  and ideas of mpv rewritten as an independent library. As of
+	  today, libplacebo contains a large assortment of video
+	  processing shaders, focusing on both quality and
+	  performance.
+
+	  https://libplacebo.org
+
+comment "libplacebo needs a toolchain w/ C++, dynamic library, NPTL threads, gcc >= 10"
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC
+	depends on !BR2_INSTALL_LIBSTDCPP || BR2_STATIC_LIBS || \
+		!BR2_TOOLCHAIN_HAS_THREADS_NPTL || BR2_TOOLCHAIN_GCC_AT_LEAST_10

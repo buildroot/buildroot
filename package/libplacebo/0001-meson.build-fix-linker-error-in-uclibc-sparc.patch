@@ -1,0 +1,45 @@
+From 4386f3e3b3d02c55776e3f674d8447fd24388c2c Mon Sep 17 00:00:00 2001
+From: Javad Rahimipetroudi <javad.rahimipetroudi@mind.be>
+Date: Fri, 19 Jul 2024 07:02:48 +0200
+Subject: [PATCH] meson.build: add libatomic dependency if needed
+
+This PR fixes the problem related to not finding the libatomic during the
+build. Some combinations or architecture and libc (e.g. uClibc on SPARC)
+operations in a separate library and don't link with it automatically.
+An optional find_library to meson.build has been added to 
+discover this.
+
+
+Fixes:
+ - https://github.com/haasn/libplacebo/issues/278
+
+Signed-off-by: Javad Rahimipetroudi <javad.rahimipetroudi@mind.be>
+Upstream: https://github.com/haasn/libplacebo/commit/4386f3e3b3d02c55776e3f674d8447fd24388c2c
+---
+ meson.build | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index a73e49ff..f8cbf9f1 100644
+--- a/meson.build
++++ b/meson.build
+@@ -450,6 +450,7 @@ add_project_link_arguments(link_args, language: ['c', 'cpp'])
+ # Global dependencies
+ fs = import('fs')
+ libm = cc.find_library('m', required: false)
++atomic = cc.find_library('atomic', required: false)
+ thirdparty = meson.project_source_root()/'3rdparty'
+ python = import('python').find_installation()
+ python_env = environment()
+@@ -475,7 +476,7 @@ else
+     )
+ endif
+ 
+-build_deps = [ libm, threads ]
++build_deps = [ libm, threads, atomic]
+ 
+ subdir('tools')
+ subdir('src')
+-- 
+2.45.2
+
