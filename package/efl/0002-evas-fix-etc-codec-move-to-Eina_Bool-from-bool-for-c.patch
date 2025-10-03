@@ -1,0 +1,198 @@
+From 0fcaf460c4a33eb54a51b9d8cb38321603019529 Mon Sep 17 00:00:00 2001
+From: "Carsten Haitzler (Rasterman)" <raster@rasterman.com>
+Date: Thu, 24 Apr 2025 10:54:38 +0100
+Subject: [PATCH] evas - fix etc codec - move to Eina_Bool from bool for c23
+ changes
+
+fixes #84
+
+@fix
+
+Upstream: https://git.enlightenment.org/enlightenment/efl/commit/0fcaf460c4a33eb54a51b9d8cb38321603019529
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ src/static_libs/rg_etc/rg_etc1.c | 44 ++++++++++++++++----------------
+ src/static_libs/rg_etc/rg_etc1.h |  6 ++---
+ 2 files changed, 25 insertions(+), 25 deletions(-)
+
+diff --git a/src/static_libs/rg_etc/rg_etc1.c b/src/static_libs/rg_etc/rg_etc1.c
+index 9b889a3995..49e1aa3eff 100644
+--- a/src/static_libs/rg_etc/rg_etc1.c
++++ b/src/static_libs/rg_etc/rg_etc1.c
+@@ -1074,7 +1074,7 @@ rg_etc1_block_color4_pack(unsigned int color, unsigned char scaled, unsigned cha
+ 
+ static inline void
+ rg_etc1_block_color4_component_unpack(unsigned char *r, unsigned char *g, unsigned char *b,
+-                                      unsigned short packed_color4, bool scaled)
++                                      unsigned short packed_color4, Eina_Bool scaled)
+ {
+    *r = (packed_color4 >> 8) & 15;
+    *g = (packed_color4 >> 4) & 15;
+@@ -1103,7 +1103,7 @@ rg_etc1_block_color4_unpack(unsigned short packed_color4, unsigned char scaled,
+ 
+ static inline unsigned char
+ rg_etc1_block_color5_delta3_component_unpack(unsigned char *r, unsigned char *g, unsigned char *b,
+-                                             unsigned short packed_color5, unsigned short packed_delta3, bool scaled)
++                                             unsigned short packed_color5, unsigned short packed_delta3, Eina_Bool scaled)
+ {
+    unsigned char success = 1;
+    char dc_r, dc_g, dc_b;
+@@ -1136,7 +1136,7 @@ rg_etc1_block_color5_delta3_component_unpack(unsigned char *r, unsigned char *g,
+ static inline unsigned char
+ rg_etc1_block_color5_delta3_unpack(unsigned int *result,
+                                    unsigned short packed_color5, unsigned short packed_delta3,
+-                                   bool scaled, unsigned char alpha)
++                                   Eina_Bool scaled, unsigned char alpha)
+ {
+    unsigned char success;
+    unsigned char r, g, b;
+@@ -1220,8 +1220,8 @@ rg_etc1_block_subblock_color4_abs_get(unsigned int dst[4], unsigned short packed
+ }
+ 
+ // This is the exported function to unpack a block
+-bool
+-rg_etc1_unpack_block(const void *ETC1_block, unsigned int *pDst_pixels_BGRA, bool preserve_alpha)
++Eina_Bool
++rg_etc1_unpack_block(const void *ETC1_block, unsigned int *pDst_pixels_BGRA, Eina_Bool preserve_alpha)
+ {
+    unsigned char diff_flag, flip_flag, table_index0, table_index1;
+    unsigned int subblock_colors0[4] = { 0 };
+@@ -1627,12 +1627,12 @@ struct _rg_etc1_optimizer_params
+    uint m_num_src_pixels;
+    const color_quad_u8* m_pSrc_pixels;
+ 
+-   bool m_use_color4;
++   Eina_Bool m_use_color4;
+    const int* m_pScan_deltas;
+    uint m_scan_delta_size;
+ 
+    color_quad_u8 m_base_color5;
+-   bool m_constrain_against_base_color5;
++   Eina_Bool m_constrain_against_base_color5;
+ };
+ 
+ static inline void
+@@ -1665,7 +1665,7 @@ typedef struct
+    uint m_block_inten_table;
+    uint m_n;
+    uint8* m_pSelectors;
+-   bool m_block_color4;
++   Eina_Bool m_block_color4;
+ } rg_etc1_optimizer_results;
+ 
+ static inline void
+@@ -1685,7 +1685,7 @@ typedef struct
+    Etc1_Solution_Coordinates m_coords;
+    uint8                      m_selectors[8];
+    uint64                     m_error;
+-   bool                       m_valid;
++   Eina_Bool                  m_valid;
+ } rg_etc1_potential_solution;
+ 
+ static inline void
+@@ -1730,14 +1730,14 @@ rg_etc1_optimizer_clear(rg_etc1_optimizer *optimizer)
+    rg_etc1_potential_solution_clear(&optimizer->m_trial_solution);
+ }
+ 
+-static bool rg_etc1_optimizer_evaluate_solution(rg_etc1_optimizer *optimizer, const Etc1_Solution_Coordinates* coords,
+-                                                rg_etc1_potential_solution* trial_solution,
+-                                                rg_etc1_potential_solution* pBest_solution);
+-static bool rg_etc1_optimizer_evaluate_solution_fast(rg_etc1_optimizer *optimizer,const Etc1_Solution_Coordinates *coords,
+-                                                     rg_etc1_potential_solution *trial_solution,
+-                                                     rg_etc1_potential_solution *pBest_solution);
++static Eina_Bool rg_etc1_optimizer_evaluate_solution(rg_etc1_optimizer *optimizer, const Etc1_Solution_Coordinates* coords,
++                                                     rg_etc1_potential_solution* trial_solution,
++                                                     rg_etc1_potential_solution* pBest_solution);
++static Eina_Bool rg_etc1_optimizer_evaluate_solution_fast(rg_etc1_optimizer *optimizer,const Etc1_Solution_Coordinates *coords,
++                                                          rg_etc1_potential_solution *trial_solution,
++                                                          rg_etc1_potential_solution *pBest_solution);
+ 
+-static bool
++static Eina_Bool
+ rg_etc1_optimizer_compute(rg_etc1_optimizer *optimizer)
+ {
+    const uint n = optimizer->m_pParams->m_num_src_pixels;
+@@ -1811,7 +1811,7 @@ rg_etc1_optimizer_compute(rg_etc1_optimizer *optimizer)
+                        color_quad_u8 base_color;
+                        float avg_delta_r_f, avg_delta_g_f, avg_delta_b_f;
+                        int br1, bg1, bb1;
+-                       bool skip;
++                       Eina_Bool skip;
+                        Etc1_Solution_Coordinates coords1;
+                        rg_etc1_solution_coordinates_get_scaled_color(&base_color, &optimizer->m_best_solution.m_coords);
+ 
+@@ -1958,14 +1958,14 @@ rg_etc1_optimizer_init(rg_etc1_optimizer *optimizer, const rg_etc1_optimizer_par
+    optimizer->m_best_solution.m_error = cUINT64_MAX;
+ }
+ 
+-static bool
++static Eina_Bool
+ rg_etc1_optimizer_evaluate_solution(rg_etc1_optimizer *optimizer, const Etc1_Solution_Coordinates* coords,
+                                     rg_etc1_potential_solution* trial_solution, rg_etc1_potential_solution* pBest_solution)
+ {
+    color_quad_u8 base_color;
+    const uint n = 8;
+    uint inten_table;
+-   bool success = EINA_FALSE;
++   Eina_Bool success = EINA_FALSE;
+ 
+    trial_solution->m_valid = EINA_FALSE;
+ 
+@@ -2062,14 +2062,14 @@ rg_etc1_optimizer_evaluate_solution(rg_etc1_optimizer *optimizer, const Etc1_Sol
+    return success;
+ }
+ 
+-static bool
++static Eina_Bool
+ rg_etc1_optimizer_evaluate_solution_fast(rg_etc1_optimizer *optimizer, const Etc1_Solution_Coordinates *coords,
+                                          rg_etc1_potential_solution *trial_solution, rg_etc1_potential_solution *pBest_solution)
+ {
+    color_quad_u8 base_color;
+    const uint n = 8;
+    int inten_table;
+-   bool success = EINA_FALSE;
++   Eina_Bool success = EINA_FALSE;
+ 
+    if (optimizer->m_pParams->m_constrain_against_base_color5)
+      {
+@@ -2380,7 +2380,7 @@ rg_etc1_pack_block_solid_color(unsigned char *block, const color_quad_u8 *color,
+ static uint
+ rg_etc1_pack_block_solid_color_constrained(rg_etc1_optimizer_results *results,uint num_colors,
+                                            const uint8* pColor, rg_etc1_pack_params *pack_params EINA_UNUSED,
+-                                           bool use_diff, const color_quad_u8* pBase_color5_unscaled)
++                                           Eina_Bool use_diff, const color_quad_u8* pBase_color5_unscaled)
+ {
+    static uint s_next_comp[4] = { 1, 2, 0, 1 };
+    uint best_error = cUINT32_MAX, best_i = 0;
+diff --git a/src/static_libs/rg_etc/rg_etc1.h b/src/static_libs/rg_etc/rg_etc1.h
+index 4a695dc2d0..28742ca768 100644
+--- a/src/static_libs/rg_etc/rg_etc1.h
++++ b/src/static_libs/rg_etc/rg_etc1.h
+@@ -3,13 +3,13 @@
+ #ifndef __RG_ETC1_H__
+ #define __RG_ETC1_H__
+ 
+-typedef unsigned char bool;
++#include <Eina.h>
+ 
+ // Unpacks an 8-byte ETC1 compressed block to a block of 4x4 32bpp RGBA pixels.
+ // Returns false if the block is invalid. Invalid blocks will still be unpacked with clamping.
+ // This function is thread safe, and does not dynamically allocate any memory.
+ // If preserve_alpha is true, the alpha channel of the destination pixels will not be overwritten. Otherwise, alpha will be set to 255.
+-bool rg_etc1_unpack_block(const void *pETC1_block, unsigned int* pDst_pixels_rgba, bool preserve_alpha);
++Eina_Bool rg_etc1_unpack_block(const void *pETC1_block, unsigned int* pDst_pixels_rgba, Eina_Bool preserve_alpha);
+ 
+ // Quality setting = the higher the quality, the slower.
+ // To pack large textures, it is highly recommended to call pack_etc1_block() in parallel, on different blocks, from multiple threads (particularly when using cHighQuality).
+@@ -23,7 +23,7 @@ typedef enum {
+ typedef struct
+ {
+    rg_etc1_quality m_quality;
+-   bool m_dithering;
++   Eina_Bool m_dithering;
+ } rg_etc1_pack_params;
+ 
+ // pack_etc1_block_init() should be called before calling pack_etc1_block(),
+-- 
+2.47.3
+

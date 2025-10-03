@@ -1,0 +1,75 @@
+From 628c40cce2de0a18818b40615d3351b0c9e9b889 Mon Sep 17 00:00:00 2001
+From: "Carsten Haitzler (Rasterman)" <raster@rasterman.com>
+Date: Sat, 3 May 2025 15:04:54 +0100
+Subject: [PATCH] edje - edit - gcc15 break - adapt to new keywords in c23
+
+gcc 15 default policy of breaking existing code. adapt.
+
+Upstream: https://git.enlightenment.org/enlightenment/efl/commit/628c40cce2de0a18818b40615d3351b0c9e9b889
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ src/lib/edje/edje_edit.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/src/lib/edje/edje_edit.c b/src/lib/edje/edje_edit.c
+index 70294fd824..e4a5b4a1da 100644
+--- a/src/lib/edje/edje_edit.c
++++ b/src/lib/edje/edje_edit.c
+@@ -7757,11 +7757,11 @@ edje_edit_state_map_backface_cull_get(Evas_Object *obj, const char *part, const
+ }
+ 
+ EAPI Eina_Bool
+-edje_edit_state_map_backface_cull_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool bool)
++edje_edit_state_map_backface_cull_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool b)
+ {
+    GET_PD_OR_RETURN(EINA_FALSE);
+ 
+-   pd->map.backcull = bool;
++   pd->map.backcull = b;
+ 
+    edje_object_calc_force(obj);
+    return EINA_TRUE;
+@@ -7776,11 +7776,11 @@ edje_edit_state_map_perspective_on_get(Evas_Object *obj, const char *part, const
+ }
+ 
+ EAPI Eina_Bool
+-edje_edit_state_map_perspective_on_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool bool)
++edje_edit_state_map_perspective_on_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool b)
+ {
+    GET_PD_OR_RETURN(EINA_FALSE);
+ 
+-   pd->map.persp_on = bool;
++   pd->map.persp_on = b;
+ 
+    edje_object_calc_force(obj);
+    return EINA_TRUE;
+@@ -7795,22 +7795,22 @@ edje_edit_state_map_alpha_get(Evas_Object *obj, const char *part, const char *st
+ }
+ 
+ EAPI Eina_Bool
+-edje_edit_state_map_alpha_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool bool)
++edje_edit_state_map_alpha_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool b)
+ {
+    GET_PD_OR_RETURN(EINA_FALSE);
+ 
+-   pd->map.alpha = bool;
++   pd->map.alpha = b;
+ 
+    edje_object_calc_force(obj);
+    return EINA_TRUE;
+ }
+ 
+ EAPI Eina_Bool
+-edje_edit_state_map_smooth_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool bool)
++edje_edit_state_map_smooth_set(Evas_Object *obj, const char *part, const char *state, double value, Eina_Bool b)
+ {
+    GET_PD_OR_RETURN(EINA_FALSE);
+ 
+-   pd->map.smooth = bool;
++   pd->map.smooth = b;
+ 
+    edje_object_calc_force(obj);
+    return EINA_TRUE;
+-- 
+2.47.3
+

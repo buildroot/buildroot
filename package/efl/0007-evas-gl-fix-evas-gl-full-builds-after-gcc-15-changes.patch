@@ -1,0 +1,30 @@
+From c7ff646ed8b62e60159bdf0ff77132c3a242d919 Mon Sep 17 00:00:00 2001
+From: "Carsten Haitzler (Rasterman)" <raster@rasterman.com>
+Date: Sun, 4 May 2025 09:29:41 +0100
+Subject: [PATCH] evas - gl - fix evas gl full builds after gcc 15 changes
+
+Upstream: https://git.enlightenment.org/enlightenment/efl/commit/c7ff646ed8b62e60159bdf0ff77132c3a242d919
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ src/modules/evas/engines/gl_x11/evas_engine.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/modules/evas/engines/gl_x11/evas_engine.c b/src/modules/evas/engines/gl_x11/evas_engine.c
+index 86f5064cf3..8926c6afea 100644
+--- a/src/modules/evas/engines/gl_x11/evas_engine.c
++++ b/src/modules/evas/engines/gl_x11/evas_engine.c
+@@ -1382,9 +1382,9 @@ eng_gl_symbols(Outbuf *ob)
+ #define FINDSYM(dst, sym, ext) do { \
+    if (!dst) { \
+       if (_has_ext(exts, ext) && glsym_glXGetProcAddress) \
+-        dst = (typ) glsym_glXGetProcAddress(sym); \
++        dst = glsym_glXGetProcAddress(sym); \
+       if (!dst) \
+-        dst = (typ) dlsym(RTLD_DEFAULT, sym); \
++        dst = dlsym(RTLD_DEFAULT, sym); \
+    }} while (0)
+ 
+    // Find GLX extensions
+-- 
+2.47.3
+
