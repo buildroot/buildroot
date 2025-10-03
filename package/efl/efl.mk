@@ -4,14 +4,13 @@
 #
 ################################################################################
 
-EFL_VERSION = 1.26.3
+EFL_VERSION = 1.28.1
 EFL_SOURCE = efl-$(EFL_VERSION).tar.xz
 EFL_SITE = https://download.enlightenment.org/rel/libs/efl
 EFL_LICENSE = BSD-2-Clause, LGPL-2.1+, GPL-2.0+, FTL, MIT
 EFL_LICENSE_FILES = \
 	COMPLIANCE \
 	COPYING \
-	COPYING.images \
 	licenses/COPYING.ASL \
 	licenses/COPYING.BSD \
 	licenses/COPYING.FTL \
@@ -214,7 +213,7 @@ endif
 # json evas loader is disabled by default by upstream.
 # Disable libspectre (ps).
 # Keep all other evas loader enabled or handled below.
-EFL_EVAS_LOADERS_DISABLER = avif gst heif json ps
+EFL_EVAS_LOADERS_DISABLER = avif gst heif json ps jxl
 
 # efl already depends on jpeg.
 ifeq ($(BR2_PACKAGE_EFL_JPEG),y)
@@ -348,7 +347,7 @@ HOST_EFL_CONF_OPTS += \
 
 # List of modular image/vector loaders to disable in efl
 HOST_EFL_EVAS_LOADERS_DISABLER = avif bmp dds eet generic gst heif ico json \
-	jp2k pdf pmaps ps psd raw rsvg tga tgv tiff wbmp webp xcf xpm
+	jp2k jxl pdf pmaps ps psd raw rsvg tga tgv tiff wbmp webp xcf xpm
 
 HOST_EFL_CONF_OPTS += -Devas-loaders-disabler=$(subst $(space),$(comma),$(HOST_EFL_EVAS_LOADERS_DISABLER))
 

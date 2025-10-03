@@ -1,0 +1,857 @@
+From 60217eff9672e55c67454df13a16236d106fc92f Mon Sep 17 00:00:00 2001
+From: "Carsten Haitzler (Rasterman)" <raster@rasterman.com>
+Date: Sat, 3 May 2025 15:08:54 +0100
+Subject: [PATCH] efl all - gcc 15 break older c std code
+
+gcc 15 default policy of breaking existing code. adapt. this time it's
+the old func() == i take zero or more arguments func not NO arguments.
+gcc15 made this a compile error and efl used it as a shortcut all over
+to save being verbose when not needed.
+
+adapt
+
+Upstream: https://git.enlightenment.org/enlightenment/efl/commit/60217eff9672e55c67454df13a16236d106fc92f
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ src/bin/elementary/test_win_stack.c           |   2 +-
+ src/bin/exactness/player.c                    |   2 +-
+ src/bin/exactness/recorder.c                  |   2 +-
+ src/lib/ecore_imf/ecore_imf_context.c         |  19 ++-
+ src/lib/ecore_imf/ecore_imf_private.h         |   4 +-
+ src/lib/eeze/eeze_udev_watch.c                |   2 +-
+ src/lib/efl_canvas_wl/efl_canvas_wl.c         |  16 +-
+ src/lib/efl_canvas_wl/x11.x                   |   2 +-
+ src/lib/efreet/efreet_cache.c                 |   2 +-
+ src/lib/eio/eio_monitor_inotify.c             |   2 +-
+ .../system/systemd/ecore_system_systemd.c     |   2 +-
+ .../ecore/system/upower/ecore_system_upower.c |   2 +-
+ .../evas/engines/gl_common/evas_gl_context.c  | 158 ++++++++----------
+ .../evas/engines/gl_common/evas_gl_core.c     |   2 +-
+ src/modules/evas/engines/gl_drm/evas_engine.c |  28 +---
+ src/modules/evas/engines/gl_x11/evas_engine.c |  94 +++++------
+ src/modules/evas/engines/gl_x11/evas_x_main.c |   4 +-
+ .../evas/engines/wayland_egl/evas_engine.c    |  31 +---
+ 18 files changed, 172 insertions(+), 202 deletions(-)
+
+diff --git a/src/bin/elementary/test_win_stack.c b/src/bin/elementary/test_win_stack.c
+index e3ca2b943e..96e0b54f41 100644
+--- a/src/bin/elementary/test_win_stack.c
++++ b/src/bin/elementary/test_win_stack.c
+@@ -92,7 +92,7 @@ _bt_pressed(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUS
+ }
+ 
+ static void
+-_del()
++_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o EINA_UNUSED, void *info EINA_UNUSED)
+ {
+    level = 0;
+    popto_win = NULL;
+diff --git a/src/bin/exactness/player.c b/src/bin/exactness/player.c
+index 6802c72efe..7e47a15664 100644
+--- a/src/bin/exactness/player.c
++++ b/src/bin/exactness/player.c
+@@ -1040,7 +1040,7 @@ _write_unit_file(void)
+ }
+ #ifdef HAVE_DLSYM
+ # define ORIGINAL_CALL_T(t, name, ...) \
+-   t (*_original_init_cb)(); \
++   t (*_original_init_cb)(...); \
+    _original_init_cb = dlsym(RTLD_NEXT, name); \
+    original_return = _original_init_cb(__VA_ARGS__);
+ #else
+diff --git a/src/bin/exactness/recorder.c b/src/bin/exactness/recorder.c
+index f161100cbc..45394c3c59 100644
+--- a/src/bin/exactness/recorder.c
++++ b/src/bin/exactness/recorder.c
+@@ -301,7 +301,7 @@ _setup_ee_creation(void)
+ 
+ #ifdef HAVE_DLSYM
+ # define ORIGINAL_CALL_T(t, name, ...) \
+-   t (*_original_init_cb)(); \
++   t (*_original_init_cb)(...); \
+    _original_init_cb = dlsym(RTLD_NEXT, name); \
+    original_return = _original_init_cb(__VA_ARGS__);
+ #else
+diff --git a/src/lib/ecore_imf/ecore_imf_context.c b/src/lib/ecore_imf/ecore_imf_context.c
+index 5ade47002b..cea45ba54e 100644
+--- a/src/lib/ecore_imf/ecore_imf_context.c
++++ b/src/lib/ecore_imf/ecore_imf_context.c
+@@ -780,7 +780,7 @@ ecore_imf_context_event_callback_add(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_
+    fn = calloc(1, sizeof (Ecore_IMF_Func_Node));
+    if (!fn) return;
+ 
+-   fn->func = func;
++   fn->func = (void *)func;
+    fn->data = data;
+    fn->type = type;
+ 
+@@ -806,7 +806,7 @@ ecore_imf_context_event_callback_del(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_
+ 
+    EINA_LIST_FOREACH_SAFE(ctx->callbacks, l, l_next, fn)
+      {
+-        if ((fn) && (fn->func == func) && (fn->type == type))
++        if ((fn) && (fn->func == (void *)func) && (fn->type == type))
+           {
+              void *tmp = (void *)fn->data;
+              free(fn);
+@@ -833,7 +833,11 @@ ecore_imf_context_event_callback_call(Ecore_IMF_Context *ctx, Ecore_IMF_Callback
+    EINA_LIST_FOREACH(ctx->callbacks, l, fn)
+      {
+         if ((fn) && (fn->type == type) && (fn->func))
+-          fn->func(fn->data, ctx, event_info);
++         {
++           Ecore_IMF_Event_Cb cb = (Ecore_IMF_Event_Cb)fn->func;
++
++           cb((void *)fn->data, ctx, event_info);
++         }
+      }
+ }
+ 
+@@ -1210,6 +1214,8 @@ ecore_imf_context_input_panel_state_get(Ecore_IMF_Context *ctx)
+    return state;
+ }
+ 
++typedef void (*Ecore_IMF_Input_Panel_Callback) (void *data, Ecore_IMF_Context *ctx, int value);
++
+ EAPI void
+ ecore_imf_context_input_panel_event_callback_add(Ecore_IMF_Context *ctx,
+                                                  Ecore_IMF_Input_Panel_Event type,
+@@ -1230,7 +1236,7 @@ ecore_imf_context_input_panel_event_callback_add(Ecore_IMF_Context *ctx,
+    fn = calloc(1, sizeof (Ecore_IMF_Input_Panel_Callback_Node));
+    if (!fn) return;
+ 
+-   fn->func = func;
++   fn->func = (void *)func;
+    fn->data = data;
+    fn->type = type;
+ 
+@@ -1258,7 +1264,7 @@ ecore_imf_context_input_panel_event_callback_del(Ecore_IMF_Context *ctx,
+ 
+    EINA_LIST_FOREACH_SAFE(ctx->input_panel_callbacks, l, l_next, fn)
+      {
+-        if ((fn) && (fn->func == func) && (fn->type == type))
++        if ((fn) && (fn->func == (void *)func) && (fn->type == type))
+           {
+              free(fn);
+              ctx->input_panel_callbacks = eina_list_remove_list(ctx->input_panel_callbacks, l);
+@@ -1284,7 +1290,8 @@ ecore_imf_context_input_panel_event_callback_call(Ecore_IMF_Context *ctx, Ecore_
+      {
+         if ((fn) && (fn->type == type) && (fn->func))
+           {
+-             fn->func(fn->data, ctx, value);
++             Ecore_IMF_Input_Panel_Callback cb = (Ecore_IMF_Input_Panel_Callback)fn->func;
++             cb((void *)fn->data, ctx, value);
+              if (type == ECORE_IMF_INPUT_PANEL_STATE_EVENT &&
+                  value == ECORE_IMF_INPUT_PANEL_STATE_HIDE &&
+                  show_req_ctx == ctx)
+diff --git a/src/lib/ecore_imf/ecore_imf_private.h b/src/lib/ecore_imf/ecore_imf_private.h
+index 22d2942109..b9622bd165 100644
+--- a/src/lib/ecore_imf/ecore_imf_private.h
++++ b/src/lib/ecore_imf/ecore_imf_private.h
+@@ -77,14 +77,14 @@ struct _Ecore_IMF_Module
+ 
+ struct _Ecore_IMF_Func_Node
+ {
+-   void (*func) ();
++   void *func; // cast at call time
+    const void *data;
+    Ecore_IMF_Callback_Type type;
+ };
+ 
+ struct _Ecore_IMF_Input_Panel_Callback_Node
+ {
+-   void (*func) ();
++   void *func;
+    const void *data;
+    Ecore_IMF_Input_Panel_Event type;
+ };
+diff --git a/src/lib/eeze/eeze_udev_watch.c b/src/lib/eeze/eeze_udev_watch.c
+index 7245f9d0a6..ba5b231a34 100644
+--- a/src/lib/eeze/eeze_udev_watch.c
++++ b/src/lib/eeze/eeze_udev_watch.c
+@@ -362,7 +362,7 @@ error:
+ }
+ 
+ static void
+-_eeze_udev_watch_reset()
++_eeze_udev_watch_reset(void *data EINA_UNUSED)
+ {
+    Eeze_Udev_Watch *watch;
+ 
+diff --git a/src/lib/efl_canvas_wl/efl_canvas_wl.c b/src/lib/efl_canvas_wl/efl_canvas_wl.c
+index 51ecde1b92..f0ef4a076c 100644
+--- a/src/lib/efl_canvas_wl/efl_canvas_wl.c
++++ b/src/lib/efl_canvas_wl/efl_canvas_wl.c
+@@ -3199,11 +3199,11 @@ shell_surface_toplevel_set_app_id(struct wl_client *client EINA_UNUSED, struct w
+ }
+ 
+ static void
+-shell_surface_toplevel_show_window_menu(){}
++shell_surface_toplevel_show_window_menu(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *resource2 EINA_UNUSED, uint32_t a EINA_UNUSED, int32_t b EINA_UNUSED, int32_t c EINA_UNUSED){}
+ static void
+-shell_surface_toplevel_move(){}
++shell_surface_toplevel_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *resource2 EINA_UNUSED, uint32_t a EINA_UNUSED){}
+ static void
+-shell_surface_toplevel_resize(){}
++shell_surface_toplevel_resize(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *resource2 EINA_UNUSED, uint32_t a EINA_UNUSED, uint32_t b EINA_UNUSED){}
+ 
+ static void
+ shell_surface_toplevel_set_max_size(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t w, int32_t h)
+@@ -3224,15 +3224,15 @@ shell_surface_toplevel_set_min_size(struct wl_client *client EINA_UNUSED, struct
+ }
+ 
+ static void
+-shell_surface_toplevel_set_maximized(){}
++shell_surface_toplevel_set_maximized(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED){}
+ static void
+-shell_surface_toplevel_unset_maximized(){}
++shell_surface_toplevel_unset_maximized(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED){}
+ static void
+-shell_surface_toplevel_set_fullscreen(){}
++shell_surface_toplevel_set_fullscreen(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *resource2 EINA_UNUSED){}
+ static void
+-shell_surface_toplevel_unset_fullscreen(){}
++shell_surface_toplevel_unset_fullscreen(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED){}
+ static void
+-shell_surface_toplevel_set_minimized(){}
++shell_surface_toplevel_set_minimized(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED){}
+ 
+ static const struct xdg_toplevel_interface shell_surface_toplevel_interface =
+ {
+diff --git a/src/lib/efl_canvas_wl/x11.x b/src/lib/efl_canvas_wl/x11.x
+index 2d7a88352f..93d5e21f01 100644
+--- a/src/lib/efl_canvas_wl/x11.x
++++ b/src/lib/efl_canvas_wl/x11.x
+@@ -640,7 +640,7 @@ x11_kbd_apply(Comp_Seat *s)
+ static void seat_keymap_update(Comp_Seat *s);
+ 
+ static Eina_Bool
+-x11_xkb_refresh()
++x11_xkb_refresh(void *data EINA_UNUSED, int event EINA_UNUSED, void *info EINA_UNUSED)
+ {
+    Eina_List *l;
+    Comp *c;
+diff --git a/src/lib/efreet/efreet_cache.c b/src/lib/efreet/efreet_cache.c
+index dd4dfb0b99..62134fdcd0 100644
+--- a/src/lib/efreet/efreet_cache.c
++++ b/src/lib/efreet/efreet_cache.c
+@@ -222,7 +222,7 @@ _cb_server_del(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+ }
+ 
+ static void
+-_efreet_cache_reset()
++_efreet_cache_reset(void *data EINA_UNUSED)
+ {
+    const char *s;
+    int len = 0;
+diff --git a/src/lib/eio/eio_monitor_inotify.c b/src/lib/eio/eio_monitor_inotify.c
+index e266877134..4c3353e832 100644
+--- a/src/lib/eio/eio_monitor_inotify.c
++++ b/src/lib/eio/eio_monitor_inotify.c
+@@ -159,7 +159,7 @@ _eio_inotify_handler(void *data EINA_UNUSED, Ecore_Fd_Handler *fdh)
+  */
+ static Eina_Bool reseting;
+ static void
+-_eio_monitor_reset()
++_eio_monitor_reset(void *data EINA_UNUSED)
+ {
+    Eina_Hash *h = _inotify_monitors;
+    Eina_Iterator *it;
+diff --git a/src/modules/ecore/system/systemd/ecore_system_systemd.c b/src/modules/ecore/system/systemd/ecore_system_systemd.c
+index ab19ff36cd..3295e8f713 100644
+--- a/src/modules/ecore/system/systemd/ecore_system_systemd.c
++++ b/src/modules/ecore/system/systemd/ecore_system_systemd.c
+@@ -253,7 +253,7 @@ static Eina_Bool _ecore_system_systemd_init(void);
+ static unsigned int reseting = 0;
+ 
+ static void
+-_ecore_system_systemd_reset()
++_ecore_system_systemd_reset(void *data EINA_UNUSED)
+ {
+    reseting = 1;
+    _ecore_system_systemd_shutdown();
+diff --git a/src/modules/ecore/system/upower/ecore_system_upower.c b/src/modules/ecore/system/upower/ecore_system_upower.c
+index 17ef5170c8..9e0a3d04b4 100644
+--- a/src/modules/ecore/system/upower/ecore_system_upower.c
++++ b/src/modules/ecore/system/upower/ecore_system_upower.c
+@@ -413,7 +413,7 @@ static void _ecore_system_upower_shutdown(void);
+ static unsigned int reseting;
+ 
+ static void
+-_ecore_system_upower_reset()
++_ecore_system_upower_reset(void *data EINA_UNUSED)
+ {
+    reseting = 1;
+    _ecore_system_upower_shutdown();
+diff --git a/src/modules/evas/engines/gl_common/evas_gl_context.c b/src/modules/evas/engines/gl_common/evas_gl_context.c
+index 85035d42f9..5c7deb4b30 100644
+--- a/src/modules/evas/engines/gl_common/evas_gl_context.c
++++ b/src/modules/evas/engines/gl_common/evas_gl_context.c
+@@ -42,14 +42,6 @@ const char *(*glsym_glGetStringi) (GLenum name, GLuint index) = NULL;
+ #  define GL_LINE_SMOOTH 0x0B20
+ # endif
+ 
+-// just used for finding symbols :)
+-typedef void (*_eng_fn) (void);
+-
+-typedef _eng_fn (*glsym_func_eng_fn) ();
+-typedef int  (*secsym_func_int) ();
+-typedef unsigned int  (*secsym_func_uint) ();
+-typedef void         *(*secsym_func_void_ptr) ();
+-
+ unsigned int   (*eglsym_eglDestroyImage)              (void *a, void *b) = NULL;
+ void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b) = NULL;
+ void          *(*secsym_eglMapImageSEC)               (void *a, void *b, int c, int d) = NULL;
+@@ -71,10 +63,6 @@ int  (*secsym_tbm_surface_map) (void *surface, int opt, void *info) = NULL;
+ int  (*secsym_tbm_surface_unmap) (void *surface) = NULL;
+ int  (*secsym_tbm_surface_get_info) (void *surface, void *info) = NULL;
+ ////////////////////////////////////
+-#else
+-typedef void (*_eng_fn) (void);
+-
+-typedef _eng_fn (*glsym_func_eng_fn) ();
+ #endif
+ 
+ static int dbgflushnum = -1;
+@@ -216,27 +204,27 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn)
+ 
+    glsym_glGetStringi = dlsym(RTLD_DEFAULT, "glGetStringi");
+ 
+-#define FINDSYM(dst, sym, ext, typ) do { \
++#define FINDSYM(dst, sym, ext) do { \
+    if (!dst) { \
+       if (_has_ext(ext, &exts, &num) && GetProcAddress) \
+-        dst = (typ) GetProcAddress(sym); \
++        dst = GetProcAddress(sym); \
+       if (!dst) \
+-        dst = (typ) dlsym(RTLD_DEFAULT, sym); \
++        dst = dlsym(RTLD_DEFAULT, sym); \
+    }} while (0)
+-#define FALLBAK(dst, typ) do { \
++#define FALLBAK(dst) do { \
+    if (!dst) { \
+       ERR("Symbol '%s' could not be found!", (#dst) + 6); \
+-      dst = (typ) sym_missing; \
++      dst = (void *)sym_missing; \
+       failed = EINA_TRUE; \
+    }} while (0)
+ 
+ #ifdef GL_GLES
+ 
+-   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", NULL, glsym_func_void);
+-   FALLBAK(glsym_glGenFramebuffers, glsym_func_void);
++   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", NULL);
++   FALLBAK(glsym_glGenFramebuffers);
+ 
+-   FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer", NULL, glsym_func_void);
+-   FALLBAK(glsym_glBindFramebuffer, glsym_func_void);
++   FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer", NULL);
++   FALLBAK(glsym_glBindFramebuffer);
+ 
+ #else
+ 
+@@ -274,79 +262,79 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn)
+    glGenFramebuffers, glBindFramebuffer, glFramebufferTexture2D, glDeleteFramebuffers
+    */
+ 
+-   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", NULL, glsym_func_void);
+-   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersARB", "GL_ARB_framebuffer_object", glsym_func_void);
+-   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersEXT", "GL_EXT_framebuffer_object", glsym_func_void);
+-   FALLBAK(glsym_glGenFramebuffers, glsym_func_void);
++   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffers", NULL);
++   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersARB", "GL_ARB_framebuffer_object");
++   FINDSYM(glsym_glGenFramebuffers, "glGenFramebuffersEXT", "GL_EXT_framebuffer_object");
++   FALLBAK(glsym_glGenFramebuffers);
+ 
+-   FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer", NULL, glsym_func_void);
+-   FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferARB", "GL_ARB_framebuffer_object", glsym_func_void);
+-   FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferEXT", "GL_EXT_framebuffer_object", glsym_func_void);
+-   FALLBAK(glsym_glBindFramebuffer, glsym_func_void);
++   FINDSYM(glsym_glBindFramebuffer, "glBindFramebuffer", NULL);
++   FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferARB", "GL_ARB_framebuffer_object");
++   FINDSYM(glsym_glBindFramebuffer, "glBindFramebufferEXT", "GL_EXT_framebuffer_object");
++   FALLBAK(glsym_glBindFramebuffer);
+ 
+ #endif
+ 
+-   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2D", NULL, glsym_func_void);
+-   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DARB", "GL_ARB_framebuffer_object", glsym_func_void);
+-   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DEXT", "GL_EXT_framebuffer_object", glsym_func_void);
+-   FALLBAK(glsym_glFramebufferTexture2D, glsym_func_void);
++   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2D", NULL);
++   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DARB", "GL_ARB_framebuffer_object");
++   FINDSYM(glsym_glFramebufferTexture2D, "glFramebufferTexture2DEXT", "GL_EXT_framebuffer_object");
++   FALLBAK(glsym_glFramebufferTexture2D);
+ 
+-   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffers", NULL, glsym_func_void);
+-   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersARB", "GL_ARB_framebuffer_object", glsym_func_void);
+-   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersEXT", "GL_EXT_framebuffer_object", glsym_func_void);
+-   FALLBAK(glsym_glDeleteFramebuffers, glsym_func_void);
++   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffers", NULL);
++   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersARB", "GL_ARB_framebuffer_object");
++   FINDSYM(glsym_glDeleteFramebuffers, "glDeleteFramebuffersEXT", "GL_EXT_framebuffer_object");
++   FALLBAK(glsym_glDeleteFramebuffers);
+ 
+    // Not sure there's an EXT variant
+-   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinary", NULL, glsym_func_void);
+-   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryOES", "GL_OES_get_program_binary", glsym_func_void);
+-   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryEXT", "GL_EXT_get_program_binary", glsym_func_void);
++   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinary", NULL);
++   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryOES", "GL_OES_get_program_binary");
++   FINDSYM(glsym_glGetProgramBinary, "glGetProgramBinaryEXT", "GL_EXT_get_program_binary");
+ 
+    // Not sure there's an EXT variant
+-   FINDSYM(glsym_glProgramBinary, "glProgramBinary", NULL, glsym_func_void);
+-   FINDSYM(glsym_glProgramBinary, "glProgramBinaryOES", "GL_OES_get_program_binary", glsym_func_void);
+-   FINDSYM(glsym_glProgramBinary, "glProgramBinaryEXT", "GL_EXT_get_program_binary", glsym_func_void);
++   FINDSYM(glsym_glProgramBinary, "glProgramBinary", NULL);
++   FINDSYM(glsym_glProgramBinary, "glProgramBinaryOES", "GL_OES_get_program_binary");
++   FINDSYM(glsym_glProgramBinary, "glProgramBinaryEXT", "GL_EXT_get_program_binary");
+ 
+-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", NULL, glsym_func_void);
+-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", "GL_EXT_separate_shader_objects", glsym_func_void);
+-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriARB", "GL_ARB_geometry_shader4", glsym_func_void);
++   FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", NULL);
++   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", "GL_EXT_separate_shader_objects");
++   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriARB", "GL_ARB_geometry_shader4");
+ 
+-   FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompiler", NULL, glsym_func_void);
++   FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompiler", NULL);
+ #ifndef GL_GLES
+-   FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompiler", "GL_ARB_ES2_compatibility", glsym_func_void);
++   FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompiler", "GL_ARB_ES2_compatibility");
+ #endif
+ 
+    // Not sure there's a core variant, glActivateTileQCOM is strange as well
+-   FINDSYM(glsym_glStartTiling, "glStartTilingQCOM", "GL_QCOM_tiled_rendering", glsym_func_void);
+-   FINDSYM(glsym_glStartTiling, "glStartTiling", NULL, glsym_func_void);
+-   FINDSYM(glsym_glStartTiling, "glActivateTileQCOM", NULL, glsym_func_void);
+-   FINDSYM(glsym_glEndTiling, "glEndTilingQCOM", "GL_QCOM_tiled_rendering", glsym_func_void);
+-   FINDSYM(glsym_glEndTiling, "glEndTiling", NULL, glsym_func_void);
++   FINDSYM(glsym_glStartTiling, "glStartTilingQCOM", "GL_QCOM_tiled_rendering");
++   FINDSYM(glsym_glStartTiling, "glStartTiling", NULL);
++   FINDSYM(glsym_glStartTiling, "glActivateTileQCOM", NULL);
++   FINDSYM(glsym_glEndTiling, "glEndTilingQCOM", "GL_QCOM_tiled_rendering");
++   FINDSYM(glsym_glEndTiling, "glEndTiling", NULL);
+ 
+    if (!getenv("EVAS_GL_MAPBUFFER_DISABLE"))
+      {
+         // Not sure there's an EXT variant. (probably no KHR variant)
+-        FINDSYM(glsym_glMapBuffer, "glMapBuffer", NULL, glsym_func_void_ptr);
+-        FINDSYM(glsym_glMapBuffer, "glMapBufferOES", "GL_OES_mapbuffer", glsym_func_void_ptr);
+-        FINDSYM(glsym_glMapBuffer, "glMapBufferARB", "GL_ARB_vertex_buffer_object", glsym_func_void_ptr);
+-        FINDSYM(glsym_glMapBuffer, "glMapBufferARB", "GLX_ARB_vertex_buffer_object", glsym_func_void_ptr);
+-        FINDSYM(glsym_glMapBuffer, "glMapBufferEXT", NULL, glsym_func_void_ptr);
+-
+-        FINDSYM(glsym_glUnmapBuffer, "glUnmapBuffer", NULL, glsym_func_boolean);
+-        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferOES", "GL_OES_mapbuffer", glsym_func_boolean);
+-        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferARB", "GL_ARB_vertex_buffer_object", glsym_func_boolean);
+-        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferARB", "GLX_ARB_vertex_buffer_object", glsym_func_boolean);
+-        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferEXT", NULL, glsym_func_boolean);
++        FINDSYM(glsym_glMapBuffer, "glMapBuffer", NULL);
++        FINDSYM(glsym_glMapBuffer, "glMapBufferOES", "GL_OES_mapbuffer");
++        FINDSYM(glsym_glMapBuffer, "glMapBufferARB", "GL_ARB_vertex_buffer_object");
++        FINDSYM(glsym_glMapBuffer, "glMapBufferARB", "GLX_ARB_vertex_buffer_object");
++        FINDSYM(glsym_glMapBuffer, "glMapBufferEXT", NULL);
++
++        FINDSYM(glsym_glUnmapBuffer, "glUnmapBuffer", NULL);
++        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferOES", "GL_OES_mapbuffer");
++        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferARB", "GL_ARB_vertex_buffer_object");
++        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferARB", "GLX_ARB_vertex_buffer_object");
++        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferEXT", NULL);
+      }
+ 
+-   FINDSYM(glsym_glRenderbufferStorageMultisample, "glRenderbufferStorageMultisample", NULL, glsym_func_void);
++   FINDSYM(glsym_glRenderbufferStorageMultisample, "glRenderbufferStorageMultisample", NULL);
+ 
+ #ifdef GL_GLES
+-#define FINDSYMN(dst, sym, ext, typ) do { \
++#define FINDSYMN(dst, sym, ext) do { \
+    if (!dst) { \
+       if (_ckext(extsn, ext) && GetProcAddress) \
+-        dst = (typ) GetProcAddress(sym); \
++        dst = GetProcAddress(sym); \
+       if (!dst) \
+-        dst = (typ) dlsym(RTLD_DEFAULT, sym); \
++        dst = dlsym(RTLD_DEFAULT, sym); \
+    }} while (0)
+ 
+ // yes - gl core looking for egl stuff. i know it's odd. a reverse-layer thing
+@@ -374,22 +362,22 @@ evas_gl_symbols(void *(*GetProcAddress)(const char *name), const char *extsn)
+         {
+            eglsym_eglCreateImage = NULL;
+            eglsym_eglDestroyImage = NULL;
+-           FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image_base", secsym_func_void_ptr);
+-           FINDSYMN(eglsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image_base", secsym_func_uint);
++           FINDSYMN(eglsym_eglCreateImageKHR, "eglCreateImageKHR", "EGL_KHR_image_base");
++           FINDSYMN(eglsym_eglDestroyImage, "eglDestroyImageKHR", "EGL_KHR_image_base");
+         }
+    }
+ 
+-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", NULL, glsym_func_void);
+-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", "GL_EXT_geometry_shader4", glsym_func_void);
+-   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriARB", "GL_ARB_geometry_shader4", glsym_func_void);
++   FINDSYM(glsym_glProgramParameteri, "glProgramParameteri", NULL);
++   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriEXT", "GL_EXT_geometry_shader4");
++   FINDSYM(glsym_glProgramParameteri, "glProgramParameteriARB", "GL_ARB_geometry_shader4");
+ 
+-   FINDSYM(secsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external", glsym_func_void);
+-   FINDSYM(secsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image", glsym_func_void);
++   FINDSYM(secsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external");
++   FINDSYM(secsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image");
+ 
+    // Old SEC extensions
+-   FINDSYMN(secsym_eglMapImageSEC, "eglMapImageSEC", NULL, secsym_func_void_ptr);
+-   FINDSYMN(secsym_eglUnmapImageSEC, "eglUnmapImageSEC", NULL, secsym_func_uint);
+-   FINDSYMN(secsym_eglGetImageAttribSEC, "eglGetImageAttribSEC", NULL, secsym_func_uint);
++   FINDSYMN(secsym_eglMapImageSEC, "eglMapImageSEC", NULL);
++   FINDSYMN(secsym_eglUnmapImageSEC, "eglUnmapImageSEC", NULL);
++   FINDSYMN(secsym_eglGetImageAttribSEC, "eglGetImageAttribSEC", NULL);
+ 
+ #undef FINDSYMN
+ 
+@@ -421,19 +409,19 @@ tbm_symbols(void)
+         return;
+      }
+ 
+-#define FINDSYM(dst, sym, typ) \
+-   if (!dst) dst = (typ)dlsym(tbm_lib_handle, sym); \
++#define FINDSYM(dst, sym) \
++   if (!dst) dst = dlsym(tbm_lib_handle, sym); \
+    if (!dst)  \
+      { \
+         ERR("Symbol not found %s\n", sym); \
+         return; \
+      }
+ 
+-   FINDSYM(secsym_tbm_surface_create, "tbm_surface_create", secsym_func_void_ptr);
+-   FINDSYM(secsym_tbm_surface_destroy, "tbm_surface_destroy", secsym_func_int);
+-   FINDSYM(secsym_tbm_surface_map, "tbm_surface_map", secsym_func_int);
+-   FINDSYM(secsym_tbm_surface_unmap, "tbm_surface_unmap", secsym_func_int);
+-   FINDSYM(secsym_tbm_surface_get_info, "tbm_surface_get_info", secsym_func_int);
++   FINDSYM(secsym_tbm_surface_create, "tbm_surface_create");
++   FINDSYM(secsym_tbm_surface_destroy, "tbm_surface_destroy");
++   FINDSYM(secsym_tbm_surface_map, "tbm_surface_map");
++   FINDSYM(secsym_tbm_surface_unmap, "tbm_surface_unmap");
++   FINDSYM(secsym_tbm_surface_get_info, "tbm_surface_get_info");
+ 
+ #undef FINDSYM
+ #endif
+diff --git a/src/modules/evas/engines/gl_common/evas_gl_core.c b/src/modules/evas/engines/gl_common/evas_gl_core.c
+index c7d453ffbd..40518b5cd9 100644
+--- a/src/modules/evas/engines/gl_common/evas_gl_core.c
++++ b/src/modules/evas/engines/gl_common/evas_gl_core.c
+@@ -21,7 +21,7 @@ EVGL_Engine *evgl_engine = NULL;
+ int _evas_gl_log_dom   = -1;
+ int _evas_gl_log_level = -1;
+ 
+-typedef void           *(*glsym_func_void_ptr) ();
++typedef void           *(*glsym_func_void_ptr) (void *);
+ glsym_func_void_ptr glsym_evas_gl_native_context_get = NULL;
+ glsym_func_void_ptr glsym_evas_gl_engine_data_get = NULL;
+ 
+diff --git a/src/modules/evas/engines/gl_drm/evas_engine.c b/src/modules/evas/engines/gl_drm/evas_engine.c
+index d59f762160..1d57b69f4b 100644
+--- a/src/modules/evas/engines/gl_drm/evas_engine.c
++++ b/src/modules/evas/engines/gl_drm/evas_engine.c
+@@ -74,11 +74,7 @@ static struct gbm_device *gbm_dev = NULL;
+ static int gbm_dev_refs = 0;
+ 
+ /* local function prototype types */
+-typedef void (*glsym_func_void)();
+-typedef void *(*glsym_func_void_ptr)();
+-typedef int (*glsym_func_int)();
+-typedef unsigned int (*glsym_func_uint)();
+-typedef const char *(*glsym_func_const_char_ptr)();
++typedef void *(*glsym_func_void_ptr)(void);
+ 
+ /* external dynamic loaded Evas_GL function pointers */
+ Evas_GL_Common_Image_Call glsym_evas_gl_common_image_ref = NULL;
+@@ -255,26 +251,20 @@ eng_egl_symbols(EGLDisplay edsp)
+ 
+    if (done) return;
+ 
+-#define FINDSYM(dst, sym, typ) \
+-   if (!dst) dst = (typ)glsym_eglGetProcAddress(sym);
++#define FINDSYM(dst, sym) \
++   if (!dst) dst = glsym_eglGetProcAddress(sym)
+ 
+    exts = eglQueryString(edsp, EGL_EXTENSIONS);
+ 
+-   FINDSYM(glsym_glEGLImageTargetTexture2DOES,
+-           "glEGLImageTargetTexture2DOES", glsym_func_void);
++   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES");
+ 
+-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT",
+-           glsym_func_uint);
+-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL",
+-           glsym_func_uint);
+-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage",
+-           glsym_func_uint);
++   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT");
++   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL");
++   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage");
+ 
+-   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR",
+-           glsym_func_uint);
++   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR");
+ 
+-   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL",
+-           glsym_func_uint);
++   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL");
+ 
+    if (_ckext(exts, "EGL_IMG_context_priority"))
+      _extn_have_context_priority = 1;
+diff --git a/src/modules/evas/engines/gl_x11/evas_engine.c b/src/modules/evas/engines/gl_x11/evas_engine.c
+index 72edcbf50e..86f5064cf3 100644
+--- a/src/modules/evas/engines/gl_x11/evas_engine.c
++++ b/src/modules/evas/engines/gl_x11/evas_engine.c
+@@ -33,13 +33,11 @@ static int gl_wins = 0;
+ static int extn_have_y_inverted = 1;
+ #endif
+ 
+-typedef void            (*_eng_fn) (void);
+-typedef _eng_fn         (*glsym_func_eng_fn) ();
+-typedef void            (*glsym_func_void) ();
+-typedef void           *(*glsym_func_void_ptr) ();
+-typedef int             (*glsym_func_int) ();
+-typedef unsigned int    (*glsym_func_uint) ();
+-typedef const char     *(*glsym_func_const_char_ptr) ();
++typedef void           *(*glsym_func_void_ptr) (void);
++
++typedef void            (*glsym_func_void_in_voidp) (void *);
++typedef void            (*glsym_func_void_in_int) (int);
++typedef int             (*glsym_func_int_in_voidp) (void *);
+ 
+ Evas_GL_Common_Image_Call glsym_evas_gl_common_image_ref = NULL;
+ Evas_GL_Common_Image_Call glsym_evas_gl_common_image_unref = NULL;
+@@ -68,14 +66,14 @@ Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_lock = NULL;
+ Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_unlock = NULL;
+ Evas_GL_Preload_Render_Call glsym_evas_gl_preload_render_relax = NULL;
+ 
+-glsym_func_void     glsym_evas_gl_common_shaders_flush = NULL;
+-glsym_func_void     glsym_evas_gl_common_error_set = NULL;
+-glsym_func_int      glsym_evas_gl_common_error_get = NULL;
+-glsym_func_void_ptr glsym_evas_gl_common_current_context_get = NULL;
++glsym_func_void_in_voidp glsym_evas_gl_common_shaders_flush = NULL;
++glsym_func_void_in_int   glsym_evas_gl_common_error_set = NULL;
++glsym_func_int_in_voidp  glsym_evas_gl_common_error_get = NULL;
++glsym_func_void_ptr      glsym_evas_gl_common_current_context_get = NULL;
+ 
+ #ifdef GL_GLES
+ 
+-_eng_fn      (*glsym_eglGetProcAddress)            (const char *a) = NULL;
++void        *(*glsym_eglGetProcAddress)            (const char *a) = NULL;
+ EGLImageKHR  (*glsym_evas_gl_common_eglCreateImage)(EGLDisplay a, EGLContext b, EGLenum c, EGLClientBuffer d, const EGLAttrib *e) = NULL;
+ int          (*glsym_evas_gl_common_eglDestroyImage) (EGLDisplay a, void *b) = NULL;
+ void         (*glsym_glEGLImageTargetTexture2DOES) (int a, void *b)  = NULL;
+@@ -87,7 +85,7 @@ unsigned int (*glsym_eglQueryWaylandBufferWL)(EGLDisplay a, /*struct wl_resource
+ 
+ typedef XID     (*glsym_func_xid) ();
+ 
+-_eng_fn  (*glsym_glXGetProcAddress)  (const char *a) = NULL;
++void    *(*glsym_glXGetProcAddress)  (const char *a) = NULL;
+ void     (*glsym_glXBindTexImage)    (Display *a, GLXDrawable b, int c, int *d) = NULL;
+ void     (*glsym_glXReleaseTexImage) (Display *a, GLXDrawable b, int c) = NULL;
+ int      (*glsym_glXGetVideoSync)    (unsigned int *a) = NULL;
+@@ -1310,19 +1308,19 @@ gl_symbols(void)
+    LINK2GENERIC(evas_gl_common_current_context_get);
+    LINK2GENERIC(evas_gl_common_shaders_flush);
+ 
+-#define FINDSYM(dst, sym, typ) if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym);
++#define FINDSYM(dst, sym) if (!dst) dst = dlsym(RTLD_DEFAULT, sym)
+ #ifdef GL_GLES
+ 
+-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR", glsym_func_eng_fn);
+-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT", glsym_func_eng_fn);
+-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB", glsym_func_eng_fn);
+-   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress", glsym_func_eng_fn);
++   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressKHR");
++   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressEXT");
++   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddressARB");
++   FINDSYM(glsym_eglGetProcAddress, "eglGetProcAddress");
+ 
+ #else
+ 
+-   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressEXT", glsym_func_eng_fn);
+-   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressARB", glsym_func_eng_fn);
+-   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress", glsym_func_eng_fn);
++   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressEXT");
++   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddressARB");
++   FINDSYM(glsym_glXGetProcAddress, "glXGetProcAddress");
+ 
+ #endif
+ #undef FINDSYM
+@@ -1348,12 +1346,12 @@ eng_gl_symbols(Outbuf *ob)
+     */
+ 
+ #ifdef GL_GLES
+-#define FINDSYM(dst, sym, ext, typ) do { \
++#define FINDSYM(dst, sym, ext) do { \
+    if (!dst) { \
+       if (_has_ext(exts, ext) && glsym_eglGetProcAddress) \
+-        dst = (typ) glsym_eglGetProcAddress(sym); \
++        dst = glsym_eglGetProcAddress(sym); \
+       if (!dst) \
+-        dst = (typ) dlsym(RTLD_DEFAULT, sym); \
++        dst = dlsym(RTLD_DEFAULT, sym); \
+    }} while (0)
+ 
+    // Find EGL extensions
+@@ -1365,23 +1363,23 @@ eng_gl_symbols(Outbuf *ob)
+    LINK2GENERIC(evas_gl_common_eglCreateImage);
+    LINK2GENERIC(evas_gl_common_eglDestroyImage);
+ 
+-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage", NULL, glsym_func_uint);
+-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT", "EGL_EXT_swap_buffers_with_damage", glsym_func_uint);
+-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageKHR", "EGL_KHR_swap_buffers_with_damage", glsym_func_uint);
+-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL", "EGL_INTEL_swap_buffers_with_damage", glsym_func_uint);
++   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage", NULL);
++   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT", "EGL_EXT_swap_buffers_with_damage");
++   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageKHR", "EGL_KHR_swap_buffers_with_damage");
++   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL", "EGL_INTEL_swap_buffers_with_damage");
+ 
+-   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR", "EGL_KHR_partial_update", glsym_func_uint);
++   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR", "EGL_KHR_partial_update");
+ 
+-   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL", "EGL_WL_bind_wayland_display", glsym_func_uint);
++   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL", "EGL_WL_bind_wayland_display");
+ 
+    // This is a GL extension
+    exts = (const char *) glGetString(GL_EXTENSIONS);
+-   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external", glsym_func_void);
+-   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image", glsym_func_void);
++   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image_external");
++   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES", "GL_OES_EGL_image");
+ 
+ #else
+ 
+-#define FINDSYM(dst, sym, ext, typ) do { \
++#define FINDSYM(dst, sym, ext) do { \
+    if (!dst) { \
+       if (_has_ext(exts, ext) && glsym_glXGetProcAddress) \
+         dst = (typ) glsym_glXGetProcAddress(sym); \
+@@ -1395,30 +1393,30 @@ eng_gl_symbols(Outbuf *ob)
+    // Find GL extensions
+    glsym_evas_gl_symbols((void*)glsym_glXGetProcAddress, exts);
+ 
+-   FINDSYM(glsym_glXBindTexImage, "glXBindTexImage", NULL, glsym_func_void);
+-   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageEXT", "GLX_EXT_texture_from_pixmap", glsym_func_void);
+-   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageARB", "GLX_ARB_render_texture", glsym_func_void);
++   FINDSYM(glsym_glXBindTexImage, "glXBindTexImage", NULL);
++   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageEXT", "GLX_EXT_texture_from_pixmap");
++   FINDSYM(glsym_glXBindTexImage, "glXBindTexImageARB", "GLX_ARB_render_texture");
+ 
+-   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImage", NULL, glsym_func_void);
+-   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageEXT", "GLX_EXT_texture_from_pixmap", glsym_func_void);
+-   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageARB", "GLX_ARB_render_texture", glsym_func_void);
++   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImage", NULL);
++   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageEXT", "GLX_EXT_texture_from_pixmap");
++   FINDSYM(glsym_glXReleaseTexImage, "glXReleaseTexImageARB", "GLX_ARB_render_texture");
+ 
+-   FINDSYM(glsym_glXGetVideoSync, "glXGetVideoSyncSGI", "GLX_SGI_video_sync", glsym_func_int);
+-   FINDSYM(glsym_glXWaitVideoSync, "glXWaitVideoSyncSGI", "GLX_SGI_video_sync", glsym_func_int);
++   FINDSYM(glsym_glXGetVideoSync, "glXGetVideoSyncSGI", "GLX_SGI_video_sync");
++   FINDSYM(glsym_glXWaitVideoSync, "glXWaitVideoSyncSGI", "GLX_SGI_video_sync");
+ 
+    // GLX 1.3
+-   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmap", NULL, glsym_func_xid);
+-   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmap", NULL, glsym_func_void);
+-   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable", NULL, glsym_func_void);
++   FINDSYM(glsym_glXCreatePixmap, "glXCreatePixmap", NULL);
++   FINDSYM(glsym_glXDestroyPixmap, "glXDestroyPixmap", NULL);
++   FINDSYM(glsym_glXQueryDrawable, "glXQueryDrawable", NULL);
+ 
+    // swap interval: MESA and SGI take (interval)
+-   FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalMESA", "GLX_MESA_swap_control", glsym_func_int);
+-   FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalSGI", "GLX_SGI_swap_control", glsym_func_int);
++   FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalMESA", "GLX_MESA_swap_control");
++   FINDSYM(glsym_glXSwapIntervalSGI, "glXSwapIntervalSGI", "GLX_SGI_swap_control");
+ 
+    // swap interval: EXT takes (dpy, drawable, interval)
+-   FINDSYM(glsym_glXSwapIntervalEXT, "glXSwapIntervalEXT", "GLX_EXT_swap_control", glsym_func_void);
++   FINDSYM(glsym_glXSwapIntervalEXT, "glXSwapIntervalEXT", "GLX_EXT_swap_control");
+ 
+-   FINDSYM(glsym_glXReleaseBuffersMESA, "glXReleaseBuffersMESA", "GLX_MESA_release_buffers", glsym_func_void);
++   FINDSYM(glsym_glXReleaseBuffersMESA, "glXReleaseBuffersMESA", "GLX_MESA_release_buffers");
+ 
+ #endif
+ #undef FINDSYM
+diff --git a/src/modules/evas/engines/gl_x11/evas_x_main.c b/src/modules/evas/engines/gl_x11/evas_x_main.c
+index 3bc2b0b6e5..06e05f8e4d 100644
+--- a/src/modules/evas/engines/gl_x11/evas_x_main.c
++++ b/src/modules/evas/engines/gl_x11/evas_x_main.c
+@@ -7,8 +7,8 @@
+ static Eina_TLS _outbuf_key = 0;
+ static Eina_TLS _context_key = 0;
+ 
+-typedef void (*glsym_func_void) ();
+-glsym_func_void glsym_evas_gl_common_context_restore_set = NULL;
++typedef void (*glsym_func_void_in_bool) (Eina_Bool);
++glsym_func_void_in_bool glsym_evas_gl_common_context_restore_set = NULL;
+ 
+ Eina_Bool gles3_supported = EINA_FALSE;
+ 
+diff --git a/src/modules/evas/engines/wayland_egl/evas_engine.c b/src/modules/evas/engines/wayland_egl/evas_engine.c
+index 58eb54a467..3d1b106ecf 100644
+--- a/src/modules/evas/engines/wayland_egl/evas_engine.c
++++ b/src/modules/evas/engines/wayland_egl/evas_engine.c
+@@ -27,13 +27,6 @@ struct _Render_Engine
+    Render_Output_GL_Generic generic;
+ };
+ 
+-/* local function prototypes */
+-typedef void (*glsym_func_void) ();
+-typedef void *(*glsym_func_void_ptr) ();
+-typedef int (*glsym_func_int) ();
+-typedef unsigned int (*glsym_func_uint) ();
+-typedef const char *(*glsym_func_const_char_ptr) ();
+-
+ Evas_GL_Common_Image_Call glsym_evas_gl_common_image_ref = NULL;
+ Evas_GL_Common_Image_Call glsym_evas_gl_common_image_unref = NULL;
+ Evas_GL_Common_Image_Call glsym_evas_gl_common_image_free = NULL;
+@@ -142,11 +135,11 @@ eng_gl_symbols(EGLDisplay edsp)
+    const char *exts = NULL;
+ 
+    if (done) return;
+-#define FINDSYM(dst, sym, typ) \
++#define FINDSYM(dst, sym) \
+    if (glsym_eglGetProcAddress) { \
+-      if (!dst) dst = (typ)glsym_eglGetProcAddress(sym); \
++      if (!dst) dst = glsym_eglGetProcAddress(sym); \
+    } else { \
+-      if (!dst) dst = (typ)dlsym(RTLD_DEFAULT, sym); \
++      if (!dst) dst = dlsym(RTLD_DEFAULT, sym); \
+    }
+ 
+    // Find EGL extensions
+@@ -155,20 +148,14 @@ eng_gl_symbols(EGLDisplay edsp)
+    // Find GL extensions
+    glsym_evas_gl_symbols(glsym_eglGetProcAddress, exts);
+ 
+-   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES",
+-           glsym_func_void);
++   FINDSYM(glsym_glEGLImageTargetTexture2DOES, "glEGLImageTargetTexture2DOES");
+ 
+-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT",
+-           glsym_func_uint);
+-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL",
+-           glsym_func_uint);
+-   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage",
+-           glsym_func_uint);
+-   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR",
+-           glsym_func_uint);
++   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageEXT");
++   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamageINTEL");
++   FINDSYM(glsym_eglSwapBuffersWithDamage, "eglSwapBuffersWithDamage");
++   FINDSYM(glsym_eglSetDamageRegionKHR, "eglSetDamageRegionKHR");
+ 
+-   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL",
+-           glsym_func_uint);
++   FINDSYM(glsym_eglQueryWaylandBufferWL, "eglQueryWaylandBufferWL");
+ 
+    done = EINA_TRUE;
+ }
+-- 
+2.47.3
+

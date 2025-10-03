@@ -1,0 +1,40 @@
+From 6e63309b26c25cc1c09228b9d06fd47bd6b13884 Mon Sep 17 00:00:00 2001
+From: "Carsten Haitzler (Rasterman)" <raster@rasterman.com>
+Date: Mon, 28 Apr 2025 18:27:37 +0100
+Subject: [PATCH] ecore-file: silence gcc 15 warnings
+
+no bug here - just warnings for perfectly ok code and people using -Werror ...
+
+fixes #85
+
+Upstream: https://git.enlightenment.org/enlightenment/efl/commit/6e63309b26c25cc1c09228b9d06fd47bd6b13884
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ src/lib/ecore_file/ecore_file_monitor_inotify.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/lib/ecore_file/ecore_file_monitor_inotify.c b/src/lib/ecore_file/ecore_file_monitor_inotify.c
+index 988893de4f..b187fbc2c1 100644
+--- a/src/lib/ecore_file/ecore_file_monitor_inotify.c
++++ b/src/lib/ecore_file/ecore_file_monitor_inotify.c
+@@ -51,7 +51,7 @@ static Eina_Bool reseting;
+ static Eina_Hash *monitor_hash;
+ 
+ static void
+-_ecore_file_monitor_inotify_reset()
++_ecore_file_monitor_inotify_reset(void *data EINA_UNUSED)
+ {
+    Eina_Iterator *it;
+    Ecore_File_Monitor *em;
+@@ -132,7 +132,7 @@ ecore_file_monitor_backend_add(const char *path,
+    if (_inotify_fd_pid == -1) return NULL;
+ 
+    if (_inotify_fd_pid != getpid())
+-     _ecore_file_monitor_inotify_reset();
++     _ecore_file_monitor_inotify_reset(NULL);
+ 
+    em = (Ecore_File_Monitor *)calloc(1, sizeof(Ecore_File_Monitor_Inotify));
+    if (!em) return NULL;
+-- 
+2.47.3
+
