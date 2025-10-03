@@ -4,12 +4,11 @@
 #
 ################################################################################
 
-LIBUDFREAD_VERSION = 1.1.2
-LIBUDFREAD_SOURCE = libudfread-$(LIBUDFREAD_VERSION).tar.bz2
-LIBUDFREAD_SITE = https://code.videolan.org/videolan/libudfread/-/archive/$(LIBUDFREAD_VERSION)
-LIBUDFREAD_AUTORECONF = YES
+LIBUDFREAD_VERSION = 1.2.0
+LIBUDFREAD_SOURCE = libudfread-$(LIBUDFREAD_VERSION).tar.xz
+LIBUDFREAD_SITE = https://download.videolan.org/pub/videolan/libudfread
 LIBUDFREAD_INSTALL_STAGING = YES
 LIBUDFREAD_LICENSE = LGPL-2.1+
 LIBUDFREAD_LICENSE_FILES = COPYING
 
-$(eval $(autotools-package))
+$(eval $(meson-package))
