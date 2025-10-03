@@ -14,6 +14,11 @@ RAPTOR_CPE_ID_VENDOR = librdf
 RAPTOR_CPE_ID_PRODUCT = raptor_rdf_syntax_library
 RAPTOR_INSTALL_STAGING = YES
 
+# 0003-Fix-Heap-read-buffer-overflow-in-ntriples-bnode.patch
+RAPTOR_IGNORE_CVES += CVE-2024-57822
+# 0004-Fix-integer-underflow-in-raptor_uri_normalize_path.patch
+RAPTOR_IGNORE_CVES += CVE-2024-57823
+
 # Flag is added to make sure the patch is applied for the configure.ac of raptor.
 RAPTOR_AUTORECONF = YES
 
