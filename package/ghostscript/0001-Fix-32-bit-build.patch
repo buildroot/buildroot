@@ -1,0 +1,63 @@
+From 3c0be6e4fcffa63e4a5a1b0aec057cebc4d2562f Mon Sep 17 00:00:00 2001
+From: Ken Sharp <Ken.Sharp@artifex.com>
+Date: Wed, 10 Sep 2025 08:55:30 +0100
+Subject: [PATCH] Fix 32-bit build
+
+Bug #708824 "ghostscript 10.06.0 compilation failure on 32-bit archs"
+
+nbytes shiouldn't be an intptr_t, it doesn't get used for pointer
+arithmetic. Previously it was a uint, should be a int64_t, to fit with
+all the other devices.
+
+Checked other warnings, and found a (very minor) one in gdevdbit.c, fix
+that while we're here (signed/unsigned mismatch, we don't really care).
+
+Upstream: https://github.com/ArtifexSoftware/ghostpdl/commit/3c0be6e4fcffa63e4a5a1b0aec057cebc4d2562f
+
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ base/gdevdbit.c | 2 +-
+ base/gdevmpla.c | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/base/gdevdbit.c b/base/gdevdbit.c
+index e07cc3f3b8..1b5c69325b 100644
+--- a/base/gdevdbit.c
++++ b/base/gdevdbit.c
+@@ -191,7 +191,7 @@ gx_default_copy_alpha_hl_color(gx_device * dev, const byte * data, int data_x,
+     fit_copy(dev, data, data_x, raster, id, x, y, width, height);
+     row_alpha = data;
+     out_raster = bitmap_raster(width * (size_t)byte_depth);
+-    if (check_64bit_multiply(out_raster, ncomps, &product) != 0)
++    if (check_64bit_multiply(out_raster, ncomps, (int64_t *) &product) != 0)
+         return gs_note_error(gs_error_undefinedresult);
+     gb_buff = gs_alloc_bytes(mem, product, "copy_alpha_hl_color(gb_buff)");
+     if (gb_buff == 0) {
+diff --git a/base/gdevmpla.c b/base/gdevmpla.c
+index 2f0d522561..ffc5ff42e6 100644
+--- a/base/gdevmpla.c
++++ b/base/gdevmpla.c
+@@ -1954,12 +1954,12 @@ mem_planar_strip_copy_rop2(gx_device * dev,
+         int i;
+         int j;
+         intptr_t chunky_sraster;
+-        intptr_t nbytes;
++        int64_t nbytes;
+         byte **line_ptrs;
+         byte *sbuf, *buf;
+ 
+         chunky_sraster = sraster * (intptr_t)mdev->num_planar_planes;
+-        if (check_64bit_multiply(height, chunky_sraster, (size_t *)&nbytes) != 0)
++        if (check_64bit_multiply(height, chunky_sraster, &nbytes) != 0)
+             return gs_note_error(gs_error_undefinedresult);
+         buf = gs_alloc_bytes(mdev->memory, nbytes, "mem_planar_strip_copy_rop(buf)");
+         if (buf == NULL) {
+@@ -2003,7 +2003,7 @@ mem_planar_strip_copy_rop2(gx_device * dev,
+         intptr_t i;
+         intptr_t chunky_t_raster;
+         int chunky_t_height;
+-        intptr_t nbytes;
++        int64_t nbytes;
+         byte **line_ptrs;
+         byte *tbuf, *buf;
+         gx_strip_bitmap newtex;
