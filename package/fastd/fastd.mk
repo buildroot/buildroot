@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-FASTD_VERSION = 22
+FASTD_VERSION = 23
 FASTD_SITE = https://github.com/NeoRaider/fastd/releases/download/v$(FASTD_VERSION)
 FASTD_SOURCE = fastd-$(FASTD_VERSION).tar.xz
 FASTD_LICENSE = BSD-2-Clause
-FASTD_LICENSE_FILES = COPYRIGHT
+FASTD_LICENSE_FILES = LICENSE
 FASTD_CPE_ID_VERSION = $(FASTD_VERSION).0
 FASTD_DEPENDENCIES = host-bison host-pkgconf libuecc libsodium
 
