@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBDECOR_VERSION = 0.1.1
+LIBDECOR_VERSION = 0.2.3
 LIBDECOR_SITE = https://gitlab.freedesktop.org/libdecor/libdecor/-/archive/$(LIBDECOR_VERSION)
 LIBDECOR_LICENSE = MIT
 LIBDECOR_LICENSE_FILES = LICENSE
@@ -17,6 +17,13 @@ LIBDECOR_CONF_OPTS += -Ddbus=enabled
 LIBDECOR_DEPENDENCIES += dbus
 else
 LIBDECOR_CONF_OPTS += -Ddbus=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_LIBGTK3),y)
+LIBDECOR_CONF_OPTS += -Dgtk=enabled
+LIBDECOR_DEPENDENCIES += libgtk3
+else
+LIBDECOR_CONF_OPTS += -Dgtk=disabled
 endif
 
 $(eval $(meson-package))
