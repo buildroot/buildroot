@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-LIBAO_VERSION = 1.2.0
-LIBAO_SITE = http://downloads.xiph.org/releases/ao
+LIBAO_VERSION = 1.2.2
+LIBAO_SITE = https://gitlab.xiph.org/xiph/libao/-/archive/$(LIBAO_VERSION)
 LIBAO_DEPENDENCIES = host-pkgconf
 LIBAO_INSTALL_STAGING = YES
 LIBAO_LICENSE = GPL-2.0+
 LIBAO_LICENSE_FILES = COPYING
 LIBAO_CPE_ID_VENDOR = xiph
+LIBAO_AUTORECONF = YES
 LIBAO_CONF_OPTS = \
 	--disable-esd \
 	--disable-wmm \
