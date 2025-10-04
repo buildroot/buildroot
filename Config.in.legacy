@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2025.11"
 
+config BR2_PACKAGE_LIBBSON
+	bool "libbson has been removed"
+	select BR2_LEGACY
+	help
+	  libbson is officially deprecated upstream and has been removed
+
 config BR2_TARGET_ROOTFS_AXFS
 	bool "AXFS root filesystem has been removed"
 	select BR2_LEGACY
