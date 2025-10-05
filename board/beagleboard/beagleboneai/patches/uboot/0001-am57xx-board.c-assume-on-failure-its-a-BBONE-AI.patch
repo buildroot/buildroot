@@ -1,0 +1,31 @@
+From 0b161f8e89a411fe54059cf1d0ba61354ee1e8a2 Mon Sep 17 00:00:00 2001
+From: Robert Nelson <robertcnelson@gmail.com>
+Date: Wed, 3 Aug 2022 11:28:10 -0500
+Subject: [PATCH] am57xx/board.c: assume on failure its a BBONE-AI
+
+Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
+Upstream: https://github.com/beagleboard/u-boot/commit/0b161f8e89a411fe54059cf1d0ba61354ee1e8a2
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ board/ti/am57xx/board.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/board/ti/am57xx/board.c b/board/ti/am57xx/board.c
+index cfc825e52a3..f369693f382 100644
+--- a/board/ti/am57xx/board.c
++++ b/board/ti/am57xx/board.c
+@@ -529,8 +529,10 @@ void do_board_detect(void)
+ 
+ 	rc = ti_i2c_eeprom_am_get(CONFIG_EEPROM_BUS_ADDRESS,
+ 				  CONFIG_EEPROM_CHIP_ADDRESS);
+-	if (rc)
++	if (rc) {
+ 		printf("ti_i2c_eeprom_init failed %d\n", rc);
++		ti_i2c_eeprom_am_set("BBONE-AI", "A");
++	};
+ 
+ #ifdef CONFIG_SUPPORT_EMMC_BOOT
+ 	rc = board_bootmode_has_emmc();
+-- 
+2.39.5
+
