@@ -1,0 +1,26 @@
+From 2294389397912c9a6505a88221abb7dca0a4fb79 Mon Sep 17 00:00:00 2001
+From: John Tsiombikas <nuclear@member.fsf.org>
+Date: Thu, 20 Mar 2025 09:28:29 +0200
+Subject: [PATCH] Let cmake know we are aware there are newer versions and we
+ don't care
+
+Closes issue #207
+
+Upstream: https://github.com/freeglut/freeglut/commit/2294389397912c9a6505a88221abb7dca0a4fb79
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[Bernd: rebased for version 3.6.0]
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 791771e7..e5903ef4 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-CMAKE_MINIMUM_REQUIRED(VERSION 3.1 FATAL_ERROR)
++CMAKE_MINIMUM_REQUIRED(VERSION 3.1...3.5 FATAL_ERROR)
+ PROJECT(freeglut LANGUAGES C)
+ 
+ if (POLICY CMP0072)
