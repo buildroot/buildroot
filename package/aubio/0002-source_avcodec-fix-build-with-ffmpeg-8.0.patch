@@ -1,0 +1,37 @@
+From d79fa30d780eca95548352ce01cf9104f46aeec4 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 5 Oct 2025 11:37:52 +0200
+Subject: [PATCH] [source_avcodec] fix build with ffmpeg 8.0
+
+AV_INPUT_BUFFER_MIN_SIZE was removed with upstream commit
+https://git.videolan.org/?p=ffmpeg.git;a=commitdiff;h=1d66a122df9fd5d8400b05c74462d0082990fc01
+
+A similar fix is used by Arch Linux:
+https://gitlab.archlinux.org/archlinux/packaging/packages/aubio/-/commit/bdf858e4291aa170a23c470ac1caf2c827bfd01d
+
+Upstream: https://github.com/aubio/aubio/pull/427
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/io/source_avcodec.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/io/source_avcodec.c b/src/io/source_avcodec.c
+index 71ea8b5f..1fb14bf5 100644
+--- a/src/io/source_avcodec.c
++++ b/src/io/source_avcodec.c
+@@ -67,7 +67,11 @@
+ #if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(56, 56, 0)
+ #define AUBIO_AVCODEC_MAX_BUFFER_SIZE FF_MIN_BUFFER_SIZE
+ #else
++#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(60, 40, 100)
+ #define AUBIO_AVCODEC_MAX_BUFFER_SIZE AV_INPUT_BUFFER_MIN_SIZE
++#else
++#define AUBIO_AVCODEC_MAX_BUFFER_SIZE 16384
++#endif
+ #endif
+ 
+ #if LIBAVCODEC_VERSION_MAJOR >= 59
+-- 
+2.47.3
+
