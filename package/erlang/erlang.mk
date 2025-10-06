@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ERLANG_VERSION = 26.0.2
+ERLANG_VERSION = 26.2.5.15
 ERLANG_RELEASE = $(firstword $(subst ., ,$(ERLANG_VERSION)))
 ERLANG_SITE = \
 	https://github.com/erlang/otp/releases/download/OTP-$(ERLANG_VERSION)
