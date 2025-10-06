@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SHIM_VERSION = 16.0
+SHIM_VERSION = 16.1
 SHIM_SITE = https://github.com/rhboot/shim/releases/download/$(SHIM_VERSION)
 SHIM_SOURCE = shim-$(SHIM_VERSION).tar.bz2
 SHIM_LICENSE = BSD-2-Clause
