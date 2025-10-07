@@ -17,6 +17,8 @@ To fix this, add -S PREFIX='$(INSTALL_ROOT)/usr' to apxs call in configure
 Signed-off-by: Fabrice Fontaine <fabrice.fontaine@orange.com>
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 [aduskett@gmail.com: Update for 8.0.7]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[Bernd: rebased for 8.4.13]
 ---
  sapi/apache2handler/config.m4 | 3 +++
  1 file changed, 3 insertions(+)
@@ -25,20 +27,20 @@ diff --git a/sapi/apache2handler/config.m4 b/sapi/apache2handler/config.m4
 index 55c16179..68ce66c0 100644
 --- a/sapi/apache2handler/config.m4
 +++ b/sapi/apache2handler/config.m4
-@@ -63,10 +63,12 @@ if test "$PHP_APXS2" != "no"; then
-     AC_MSG_ERROR([Please note that Apache version >= 2.0.44 is required])
-   fi
+@@ -68,10 +68,12 @@
+   AS_VERSION_COMPARE([$APACHE_VERSION], [2.4.0],
+     [AC_MSG_ERROR([Please note that Apache version >= 2.4 is required])])
  
 +  APXS_PREFIX='$(INSTALL_ROOT)'/usr
-   APXS_LIBEXECDIR='$(INSTALL_ROOT)'`$APXS -q LIBEXECDIR`
-   if test -z `$APXS -q SYSCONFDIR`; then
+   APXS_LIBEXECDIR='$(INSTALL_ROOT)'$($APXS -q LIBEXECDIR)
+   if test -z $($APXS -q SYSCONFDIR); then
      INSTALL_IT="\$(mkinstalldirs) '$APXS_LIBEXECDIR' && \
                   $APXS -S LIBEXECDIR='$APXS_LIBEXECDIR' \
 +                       -S PREFIX='$APXS_PREFIX' \
                         -i -n php"
    else
-     APXS_SYSCONFDIR='$(INSTALL_ROOT)'`$APXS -q SYSCONFDIR`
-@@ -74,6 +76,7 @@ if test "$PHP_APXS2" != "no"; then
+     APXS_SYSCONFDIR='$(INSTALL_ROOT)'$($APXS -q SYSCONFDIR)
+@@ -79,6 +81,7 @@ if test "$PHP_APXS2" != "no"; then
                  \$(mkinstalldirs) '$APXS_SYSCONFDIR' && \
                   $APXS -S LIBEXECDIR='$APXS_LIBEXECDIR' \
                         -S SYSCONFDIR='$APXS_SYSCONFDIR' \
