@@ -18,13 +18,13 @@ start(){
 	# the directory with SELinux permissions if possible
 	if command -v selabel_lookup >/dev/null 2>&1; then
 		audit_log_selable="$(selabel_lookup -b file -k /var/log/audit | cut -d ' ' -f 3)"
-		mkdir -p /var/log/audit -Z "${audit_log_selable}"
+		mkdir -p --context="${audit_log_selable}" /var/log/audit
 	else
 		mkdir -p /var/log/audit
 	fi
 
-	start-stop-daemon --start --background --make-pidfile \
-		--pidfile "${PIDFILE}" --exec "/usr/sbin/${DAEMON}"
+	start-stop-daemon --start --pidfile "${PIDFILE}" \
+		--exec "/usr/sbin/${DAEMON}"
 	status=$?
 	if [ "${status}" -eq 0 ]; then
 		# Load the default rules
