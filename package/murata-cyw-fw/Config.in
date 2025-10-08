@@ -25,20 +25,9 @@ config BR2_PACKAGE_MURATA_CYW_FW_CYW43362
 	  Murata Wireless CYW43362 (SN8000) module firmware files.
 
 config BR2_PACKAGE_MURATA_CYW_FW_CYW4339
-	bool "CYW4339 (1CK/ZP)"
+	bool "CYW4339 (ZP)"
 	help
-	  Murata Wireless CYW4339 (1CK/ZP) module firmware files.
-
-choice
-	prompt "CYW4339 module" if BR2_PACKAGE_MURATA_CYW_FW_CYW4339
-
-config BR2_PACKAGE_MURATA_CYW_FW_CYW4339_1CK
-	bool "1CK"
-
-config BR2_PACKAGE_MURATA_CYW_FW_CYW4339_ZP
-	bool "ZP"
-
-endchoice
+	  Murata Wireless CYW4339 (ZP) module firmware files.
 
 config BR2_PACKAGE_MURATA_CYW_FW_CYW43430
 	bool "CYW43430/CYW4343W/CYW43364 (1DX/1FX/1LN)"
@@ -59,6 +48,11 @@ config BR2_PACKAGE_MURATA_CYW_FW_CYW43430_1LN
 	bool "1LN"
 
 endchoice
+
+config BR2_PACKAGE_MURATA_CYW_FW_CYW43439
+	bool "CYW43439 (1YN)"
+	help
+	  Murata Wireless CYW43439 (1YN) module firmware files.
 
 config BR2_PACKAGE_MURATA_CYW_FW_CYW43455
 	bool "CYW43455 (1HK/1LC/1MW)"

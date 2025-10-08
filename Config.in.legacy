@@ -146,6 +146,20 @@ endif
 
 comment "Legacy options removed in 2025.11"
 
+config BR2_PACKAGE_MURATA_CYW_FW_CYW4339_1CK
+	bool "This firmware has been removed"
+	select BR2_LEGACY
+	help
+	  This firmware has been removed from Murata package
+
+config BR2_PACKAGE_MURATA_CYW_FW_CYW4339_ZP
+	bool "BR2_PACKAGE_MURATA_CYW_FW_CYW4339_ZP has been renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_MURATA_CYW_FW_CYW4339
+	help
+	  The option has been renamed to
+	  BR2_PACKAGE_MURATA_CYW_FW_CYW4339
+
 config BR2_PACKAGE_LIBBSON
 	bool "libbson has been removed"
 	select BR2_LEGACY
