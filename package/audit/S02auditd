@@ -28,7 +28,7 @@ start(){
 	status=$?
 	if [ "${status}" -eq 0 ]; then
 		# Load the default rules
-		test -f /etc/audit/rules.d/audit.rules && /usr/sbin/auditctl -R /etc/audit/rules.d/audit.rules >/dev/null
+		test -f /etc/audit/audit.rules && /usr/sbin/auditctl -R /etc/audit/audit.rules >/dev/null
 		echo "OK"
 	else
 		echo "FAIL"
