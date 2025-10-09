@@ -1,0 +1,23 @@
+From: Shengjing Zhu <shengjing.zhu@canonical.com>
+Subject: Fix buffer overflow when filename contains unicode characters
+Bug-Debian: https://bugs.debian.org/1077054
+Bug-Debian: https://bugs.debian.org/1093629
+Bug-Ubuntu: https://launchpad.net/bugs/2062535
+Forwarded: https://sourceforge.net/p/infozip/bugs/81/
+Origin: https://src.fedoraproject.org/rpms/zip/raw/f41/f/buffer_overflow.patch
+
+Upstream: https://sources.debian.org/src/zip/3.0-15/debian/patches/14-buffer-overflow-unicode-filename.patch
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+diff -Nura a/fileio.c b/fileio.c
+--- a/fileio.c
++++ b/fileio.c
+@@ -3502,7 +3502,7 @@
+   if ((wc_string = (wchar_t *)malloc((wsize + 1) * sizeof(wchar_t))) == NULL) {
+     ZIPERR(ZE_MEM, "local_to_wide_string");
+   }
+-  wsize = mbstowcs(wc_string, local_string, strlen(local_string) + 1);
++  wsize = mbstowcs(wc_string, local_string, wsize + 1);
+   wc_string[wsize] = (wchar_t) 0;
+ 
+   /* in case wchar_t is not zwchar */

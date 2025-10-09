@@ -12,6 +12,9 @@ ZIP_LICENSE = Info-ZIP
 ZIP_LICENSE_FILES = LICENSE
 ZIP_CPE_ID_VENDOR = info-zip_project
 
+# 0010-buffer-overflow-cve-2018-13410.patch
+ZIP_IGNORE_CVES += CVE-2018-13410
+
 ifeq ($(BR2_PACKAGE_BZIP2),y)
 ZIP_DEPENDENCIES += bzip2
 endif
