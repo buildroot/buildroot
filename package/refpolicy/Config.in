@@ -121,6 +121,18 @@ config BR2_REFPOLICY_EXTRA_MODULES
 
 endif
 
+config BR2_REFPOLICY_ENABLEAUDIT
+	bool "remove dontaudit rules from policy (debugging only)"
+	help
+	  Remove dontaudit rules from policy.conf before compiling the
+	  policy. This can be useful for debugging to see "denied"
+	  audit log messages that would otherwise be hidden, which
+	  show the cause of problems.
+
+	  Warning: This option will likely produce a high rate of
+	  audit log messages, and should be enabled only for
+	  debugging.
+
 endif
 
 comment "refpolicy needs a toolchain w/ threads, gcc >= 5, host gcc >= 5"
