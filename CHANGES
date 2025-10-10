@@ -1,3 +1,72 @@
+2025.02.7, released October 11, 2025
+
+    Important / security related fixes:
+
+    - asterisk: CVE-2024-42491
+    - atop: CVE-2025-31160
+    - civetweb: CVE-2025-55763
+    - cjson: CVE-2025-57052
+    - connman: CVE-2025-32366, CVE-2025-32743
+    - cups: CVE-2025-58060, CVE-2025-58364
+    - exiv2: CVE-2023-44398, CVE-2024-24826, CVE-2024-25112, CVE-2024-39695,
+             CVE-2025-26623, CVE-2025-54080, CVE-2025-55304
+    - expat: CVE-2025-59375
+    - fastd: CVE-2025-24356
+    - fetchmail: CVE-2025-61962
+    - ghostscript: CVE-2025-59798, CVE-2025-59799, CVE-2025-59800, CVE-2025-59801
+    - imagemagick: CVE-2023-5341, CVE-2025-55004, CVE-2025-55005, CVE-2025-55160
+    - intel-microcode: CVE-2025-20053, CVE-2025-20109, CVE-2025-22839,
+                       CVE-2025-22840, CVE-2025-22889, CVE-2025-26403
+    - jasper: CVE-2023-51257, CVE-2025-8835
+    - libcurl: CVE-2025-10148, CVE-2025-9086
+    - libopenssl: CVE-2025-9230, CVE-2025-9231, CVE-2025-9232
+    - libssh: CVE-2025-8114, CVE-2025-8277
+    - lua: CVE-2014-5461
+    - opencv4: CVE-2025-53644
+    - pcre2: CVE-2025-58050
+    - poco: CVE-2025-6375
+    - postgresql: CVE-2025-8713, CVE-2025-8714, CVE-2025-8715
+    - python-django: CVE-2025-57833, CVE-2025-59681, CVE-2025-59682
+    - python-flask-cors: CVE-2024-6839, CVE-2024-6844, CVE-2024-6866
+    - python-pip: CVE-2025-8869
+    - raptor: CVE-2024-57822, CVE-2024-57823
+    - sqlite: CVE-2025-6965
+    - syslog-ng: CVE-2024-47619
+    - tiff: CVE-2024-13978, CVE-2025-8961, CVE-2025-9165
+    - udisks: CVE-2025-8067
+    - webkitgtk: CVE-2025-24189, CVE-2025-31273, CVE-2025-31278, CVE-2025-43211,
+      CVE-2025-43212, CVE-2025-43216, CVE-2025-43227, CVE-2025-43228,
+      CVE-2025-43240, CVE-2025-43265, CVE-2025-6558
+    - wireshark: CVE-2025-5601
+
+    Updated / fixed packages: asterisk, atop, boinc, civetweb, cjson,
+    connman, cpp-httplib, cups, cutekeyboard, ecryptfs-utils, exiv2, expat,
+    fastd, fetchmail, ghostscript, gnupg2, gnuplot, htpdate, imagemagick,
+    intel-microcode, iputils, jasper, jose, kodi, libcurl, libopenssl,
+    libssh, libxkbcommon, libxmlrpc, linux-firmware, linux-headers,
+    linuxptp, llvm-project, lua, luaossl, luvi, mariadb, micropython,
+    modsecurity2, opencv4, opencv4-contrib, openjpeg, pango, pcre2, poco,
+    postgresql, python-certifi, python-cryptography, python-django,
+    python-flask-cors, python-pip, python-pyopenssl, python-pytz, raptor,
+    rtl_433, ruby, samba4, sqlite, syslog-ng, sysprof, tiff, tor, uclibc,
+    udisks, upx, webkitgtk, wireshark, wlroots, x11r7, zziplib
+
+    Removed package: netstat-nat
+
+    Boards updated / fixed: beagleboneai, qemu/{x86, x86_64}, ti_am62x_sk
+    versal, zedboard
+
+    Boards removed: roseapplepi, atmel_sama5d3xek, at91sam9260eknf
+
+    Test Improvements:
+
+    - TestSWIPL: increase timeout value
+    - TestOpenJdk: remove stime() function call
+    - test_hardening: update toolchain to aarch64 for checksec tests
+    - test_docker_compose: update kernel & VM CPU
+    - TestZfsUclibc: use internal backend for uClibc-ng toolchain
+    - GitTestBase: remove git daemon due to Gitlab-CI security settings
+
 2025.02.6, released September 09, 2025
 
 	Important / security related fixes:
