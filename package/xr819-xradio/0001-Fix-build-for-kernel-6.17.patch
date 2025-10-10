@@ -1,0 +1,80 @@
+From dbf3f744650e05a40fc3df6325fc657e5c23cece Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Fri, 10 Oct 2025 22:18:12 +0200
+Subject: [PATCH] Fix build for kernel 6.17
+
+With commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b74947b4f6ff7c122a1bb6eb38bb7ecfbb1d3820
+set_rts_threshold() and config() gain argument radio_idx to get radio
+index. So let's add that argument according to Linux version >= 6.17.
+
+Upstream: https://github.com/fifteenhex/xradio/commit/43992a7e7ed95ff815cf6d8ba81cef1085e50ab9
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ sta.c | 12 ++++++++++--
+ sta.h | 12 ++++++++++--
+ 2 files changed, 20 insertions(+), 4 deletions(-)
+
+diff --git a/sta.c b/sta.c
+index 1203ce9..d769b81 100644
+--- a/sta.c
++++ b/sta.c
+@@ -381,7 +381,11 @@ int xradio_change_interface(struct ieee80211_hw *dev,
+ 	return ret;
+ }
+ 
+-int xradio_config(struct ieee80211_hw *dev, u32 changed)
++int xradio_config(struct ieee80211_hw *dev,
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 17, 0))
++		  int radio_idx,
++#endif
++		  u32 changed)
+ {
+ 	int ret = 0;
+ 	struct xradio_common *hw_priv = dev->priv;
+@@ -796,7 +800,11 @@ void xradio_wep_key_work(struct work_struct *work)
+ 	wsm_unlock_tx(hw_priv);
+ }
+ 
+-int xradio_set_rts_threshold(struct ieee80211_hw *hw, u32 value)
++int xradio_set_rts_threshold(struct ieee80211_hw *hw,
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 17, 0))
++			     int radio_idx,
++#endif
++			     u32 value)
+ {
+ 	struct xradio_common *hw_priv = hw->priv;
+ 	int ret = 0;
+diff --git a/sta.h b/sta.h
+index 39a023a..de8f837 100644
+--- a/sta.h
++++ b/sta.h
+@@ -42,7 +42,11 @@ int xradio_change_interface(struct ieee80211_hw *dev,
+                             struct ieee80211_vif *vif,
+                             enum nl80211_iftype new_type,
+                             bool p2p);
+-int xradio_config(struct ieee80211_hw *dev, u32 changed);
++int xradio_config(struct ieee80211_hw *dev,
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 17, 0))
++		  int radio_idx,
++#endif
++		  u32 changed);
+ int xradio_change_interface(struct ieee80211_hw *dev,
+                             struct ieee80211_vif *vif,
+                             enum nl80211_iftype new_type,
+@@ -65,7 +69,11 @@ int xradio_get_stats(struct ieee80211_hw *dev,
+ int xradio_get_tx_stats(struct ieee80211_hw *dev,
+ 			struct ieee80211_tx_queue_stats *stats);
+ */
+-int xradio_set_rts_threshold(struct ieee80211_hw *hw, u32 value);
++int xradio_set_rts_threshold(struct ieee80211_hw *hw,
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(6, 17, 0))
++			     int radio_idx,
++#endif
++			     u32 value);
+ 
+ void xradio_flush(struct ieee80211_hw *hw, struct ieee80211_vif *vif, u32 queues, bool drop);
+ 
+-- 
+2.47.3
+
