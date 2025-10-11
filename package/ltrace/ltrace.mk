@@ -4,11 +4,8 @@
 #
 ################################################################################
 
-# This github version has some extra fixes on top of https://ltrace.org/
-# in particular the following commit to avoid a crash:
-#   192e0a6 void struct members are now ignored
-LTRACE_VERSION = 82c66409c7a93ca6ad2e4563ef030dfb7e6df4d4
-LTRACE_SITE = $(call github,dkogan,ltrace,$(LTRACE_VERSION))
+LTRACE_VERSION = 0.8.1
+LTRACE_SITE = $(call gitlab,cespedes,ltrace,$(LTRACE_VERSION))
 LTRACE_DEPENDENCIES = elfutils
 LTRACE_CONF_OPTS = --disable-werror
 LTRACE_LICENSE = GPL-2.0
