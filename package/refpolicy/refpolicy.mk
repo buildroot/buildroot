@@ -107,6 +107,15 @@ define REFPOLICY_CONFIGURE_ENABLEAUDIT
 endef
 endif
 
+# Override defaults for policy booleans. name=(true|false) will result
+# in the given value, just a name implies "true".
+define REFPOLICY_CONFIGURE_BOOLEANS
+	$(foreach b,$(call qstrip,$(BR2_REFPOLICY_SET_BOOLEANS)),
+		read -r name value < <(echo "$(subst =, ,$(b))"); \
+		$(SED) "/^$${name} =/c\\$${name} = $${value:-true}" $(@D)/policy/booleans.conf
+	)
+endef
+
 define REFPOLICY_CONFIGURE_CMDS
 	$(SED) "/OUTPUT_POLICY/c\OUTPUT_POLICY = $(REFPOLICY_POLICY_VERSION)" \
 		$(@D)/build.conf
@@ -119,6 +128,7 @@ define REFPOLICY_CONFIGURE_CMDS
 	$(REFPOLICY_MAKE) -C $(@D) bare conf
 	$(REFPOLICY_CONFIGURE_ENABLEAUDIT)
 	$(REFPOLICY_CONFIGURE_MODULES)
+	$(REFPOLICY_CONFIGURE_BOOLEANS)
 endef
 
 define REFPOLICY_BUILD_CMDS

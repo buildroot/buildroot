@@ -51,6 +51,24 @@ class TestSELinuxExtraModulesDirs(TestSELinuxInfra):
         self.assertEqual(out[2].strip(), "buildroot_test_t")
 
 
+class TestSELinuxSetBooleans(TestSELinuxInfra):
+    config = TestSELinuxInfra.config + \
+        """
+        BR2_REFPOLICY_SET_BOOLEANS="user_dmesg user_all_users_send_syslog=false"
+        """
+
+    def test_run(self):
+        TestSELinuxInfra.base_test_run(self)
+
+        out, ret = self.emulator.run("seinfo -x -b", 15)
+        self.assertEqual(ret, 0)
+        # lines follow the pattern "name (true|false);", plus indentation
+        bools = dict(line.strip().rstrip(';').split()[1:] for line in out[2:])
+        # both of these booleans have the opposite default in refpolicy
+        self.assertEqual(bools["user_dmesg"], "true")
+        self.assertEqual(bools["user_all_users_send_syslog"], "false")
+
+
 class TestSELinuxCustomGit(TestSELinuxInfra):
     config = TestSELinuxInfra.config + \
         """

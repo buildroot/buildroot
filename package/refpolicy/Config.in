@@ -121,6 +121,19 @@ config BR2_REFPOLICY_EXTRA_MODULES
 
 endif
 
+config BR2_REFPOLICY_SET_BOOLEANS
+	string "Set policy booleans"
+	help
+	  Set default values for policy booleans before compiling the
+	  policy (see policy/booleans.conf in the refpolicy
+	  README). The value of this option is a space separated list
+	  of either plain names (to set that boolean to true), or
+	  "name=(true|false)" pairs (to set the given value).
+
+	  Boolean values can still be changed at runtime if the policy
+	  permits, but such changes cannot be persisted with a
+	  monolithic policy.
+
 config BR2_REFPOLICY_ENABLEAUDIT
 	bool "remove dontaudit rules from policy (debugging only)"
 	help
