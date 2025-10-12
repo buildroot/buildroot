@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-X265_VERSION = 3.5
+X265_VERSION = 4.1
 X265_SOURCE = x265_$(X265_VERSION).tar.gz
 X265_SITE = https://bitbucket.org/multicoreware/x265_git/downloads
 X265_LICENSE = GPL-2.0+
@@ -23,7 +23,9 @@ endif
 ifeq ($(BR2_ARM_CPU_ARMV7A),y)
 X265_CONF_OPTS += -DCROSS_COMPILE_ARM=1
 ifeq ($(BR2_ARM_CPU_HAS_NEON),y)
-X265_CONF_OPTS += -DCPU_HAS_NEON=1
+X265_CONF_OPTS += -DENABLE_NEON=ON
+else
+X265_CONF_OPTS += -DENABLE_NEON=OFF
 endif
 endif
 

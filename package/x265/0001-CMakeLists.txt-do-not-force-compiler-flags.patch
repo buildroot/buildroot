@@ -21,43 +21,37 @@ Bernd Kuhls <bernd.kuhls@t-online.de>.
 
 Upstream: https://bitbucket.org/multicoreware/x265_git/pull-requests/26
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+[Bernd: rebased for 4.1]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
- source/CMakeLists.txt              | 10 +++-------
- source/dynamicHDR10/CMakeLists.txt |  6 +++---
- 2 files changed, 6 insertions(+), 10 deletions(-)
+ source/CMakeLists.txt              | 6 +++---
+ source/dynamicHDR10/CMakeLists.txt | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/source/CMakeLists.txt b/source/CMakeLists.txt
-index a407271b4..a34bf4d4f 100755
+index c14489ea6..fa331e8af 100755
 --- a/source/CMakeLists.txt
 +++ b/source/CMakeLists.txt
-@@ -239,11 +239,7 @@ if(GCC)
-         endif()
+@@ -270,14 +270,14 @@ if(GCC)
      endif()
      if(ARM AND CROSS_COMPILE_ARM)
--        if(ARM64)
--            set(ARM_ARGS -fPIC)
--        else()
--            set(ARM_ARGS -march=armv6 -mfloat-abi=soft -mfpu=vfp -marm -fPIC)
--        endif()
-+        set(ARM_ARGS -fPIC)
          message(STATUS "cross compile arm")
+-		set(ARM_ARGS -march=armv6 -mfloat-abi=soft -mfpu=vfp -marm -fPIC)
++		set(ARM_ARGS -fPIC)
      elseif(ARM)
-         if(ARM64)
-@@ -252,10 +248,10 @@ if(GCC)
+         find_package(Neon)
+         if(CPU_HAS_NEON)
+-            set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=neon -marm -fPIC)
++            set(ARM_ARGS -mfpu=neon -fPIC)
+             add_definitions(-DHAVE_NEON)
          else()
-             find_package(Neon)
-             if(CPU_HAS_NEON)
--                set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=neon -marm -fPIC)
-+                set(ARM_ARGS -mfpu=neon -fPIC)
-                 add_definitions(-DHAVE_NEON)
-             else()
--                set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=vfp -marm)
-+	        set(ARM_ARGS -fPIC)
-             endif()
+-            set(ARM_ARGS -mcpu=native -mfloat-abi=hard -mfpu=vfp -marm)
++            set(ARM_ARGS -fPIC)
          endif()
      endif()
+     if(ARM64)
 diff --git a/source/dynamicHDR10/CMakeLists.txt b/source/dynamicHDR10/CMakeLists.txt
-index 22fb79d44..2cea7c48a 100644
+index 4243338c6..62853a06b 100644
 --- a/source/dynamicHDR10/CMakeLists.txt
 +++ b/source/dynamicHDR10/CMakeLists.txt
 @@ -43,14 +43,14 @@ if(GCC)

@@ -1,0 +1,28 @@
+From ddb1933598736394b646cb0f78da4a4201ffc656 Mon Sep 17 00:00:00 2001
+From: Uthayakumar Muthu <uthayakumar.muthu@multicorewareinc.com>
+Date: Sun, 12 Jan 2025 13:17:21 +0530
+Subject: [PATCH] Fix neon undefined symbols in armv6l,armv7l
+
+Upstream: https://bitbucket.org/multicoreware/x265_git/commits/ddb1933598736394b646cb0f78da4a4201ffc656
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ source/common/cpu.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/source/common/cpu.cpp b/source/common/cpu.cpp
+index ae0907890..35c43deaf 100644
+--- a/source/common/cpu.cpp
++++ b/source/common/cpu.cpp
+@@ -352,7 +352,7 @@ uint32_t cpu_detect(bool benableavx512)
+ {
+     int flags = 0;
+ 
+-#if HAVE_ARMV6
++#if HAVE_ARMV6 && ENABLE_ASSEMBLY
+     flags |= X265_CPU_ARMV6;
+ 
+     // don't do this hack if compiled with -mfpu=neon
+-- 
+2.51.0
+
