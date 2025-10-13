@@ -1,0 +1,49 @@
+From 6b3ca3549abb998947088bdf264d65a0a86684cd Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 12 Oct 2025 18:38:54 +0200
+Subject: [PATCH] xml_pyx: remove ATTRIBUTE_UNUSED
+
+This define was removed in libxml2 2.14.0:
+https://gitlab.gnome.org/GNOME/libxml2/-/commit/208f27f9641a59863ce1f7d4992df77f7eb0ea9d
+
+Upstream: https://sourceforge.net/p/xmlstar/patches/23/
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/xml_pyx.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/xml_pyx.c b/src/xml_pyx.c
+index ab295f1..8adc028 100644
+--- a/src/xml_pyx.c
++++ b/src/xml_pyx.c
+@@ -200,7 +200,7 @@ pyxExternalEntityReferenceHandler(void* userData,
+ }
+ 
+ static void
+-pyxExternalSubsetHandler(void *ctx ATTRIBUTE_UNUSED, const xmlChar *name,
++pyxExternalSubsetHandler(void *ctx, const xmlChar *name,
+                          const xmlChar *ExternalID, const xmlChar *SystemID)
+ {
+     fprintf(stdout, "D %s PUBLIC", name); /* TODO: re-check */
+@@ -215,7 +215,7 @@ pyxExternalSubsetHandler(void *ctx ATTRIBUTE_UNUSED, const xmlChar *name,
+ }
+ 
+ static void
+-pyxCommentHandler(void *ctx ATTRIBUTE_UNUSED, const xmlChar *value)
++pyxCommentHandler(void *ctx, const xmlChar *value)
+ {
+     fprintf(stdout,"C");
+     SanitizeData(value, xmlStrlen(value));
+@@ -223,7 +223,7 @@ pyxCommentHandler(void *ctx ATTRIBUTE_UNUSED, const xmlChar *value)
+ }
+ 
+ static void
+-pyxCdataBlockHandler(void *ctx ATTRIBUTE_UNUSED, const xmlChar *value, int len)
++pyxCdataBlockHandler(void *ctx, const xmlChar *value, int len)
+ {
+     fprintf(stdout,"[");
+     SanitizeData(value, len);
+-- 
+2.47.3
+
