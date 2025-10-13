@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBXML2_VERSION_MAJOR = 2.13
-LIBXML2_VERSION = $(LIBXML2_VERSION_MAJOR).8
+LIBXML2_VERSION_MAJOR = 2.15
+LIBXML2_VERSION = $(LIBXML2_VERSION_MAJOR).0
 LIBXML2_SOURCE = libxml2-$(LIBXML2_VERSION).tar.xz
 LIBXML2_SITE = \
 	https://download.gnome.org/sources/libxml2/$(LIBXML2_VERSION_MAJOR)
@@ -14,18 +14,6 @@ LIBXML2_LICENSE = MIT
 LIBXML2_LICENSE_FILES = Copyright
 LIBXML2_CPE_ID_VENDOR = xmlsoft
 LIBXML2_CONFIG_SCRIPTS = xml2-config
-
-#0001-tree-Fix-integer-overflow-in-xmlBuildQName.patch
-LIBXML2_IGNORE_CVES += CVE-2025-6021
-
-#0002-schematron-Fix-memory-safety-issues-in-xmlSchematron.patch
-LIBXML2_IGNORE_CVES += CVE-2025-49794 CVE-2025-49796
-
-#0003-Schematron-Fix-null-pointer-dereference-leading-to-D.patch
-LIBXML2_IGNORE_CVES += CVE-2025-49795
-
-# 0004-fix-potential-buffer-overflows-of-interactive-shell.patch
-LIBXML2_IGNORE_CVES += CVE-2025-6170
 
 # relocation truncated to fit: R_68K_GOT16O
 ifeq ($(BR2_m68k_cf),y)
@@ -37,20 +25,18 @@ LIBXML2_CONF_OPTS = --with-http --with-gnu-ld --without-debug
 HOST_LIBXML2_DEPENDENCIES = host-pkgconf
 LIBXML2_DEPENDENCIES = host-pkgconf
 
-HOST_LIBXML2_CONF_OPTS = --without-zlib --without-lzma
+HOST_LIBXML2_CONF_OPTS = --without-zlib
 
-ifeq ($(BR2_PACKAGE_PYTHON3),y)
-LIBXML2_DEPENDENCIES += python3
-LIBXML2_CONF_OPTS += --with-python
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+LIBXML2_CONF_OPTS += --with-threads
 else
-LIBXML2_CONF_OPTS += --without-python
+LIBXML2_CONF_OPTS += --without-threads
 endif
 
-ifeq ($(BR2_PACKAGE_HOST_PYTHON3),y)
-HOST_LIBXML2_DEPENDENCIES += host-python3
-HOST_LIBXML2_CONF_OPTS += --with-python
+ifeq ($(BR2_STATIC_LIBS),y)
+LIBXML2_CONF_OPTS += --without-modules
 else
-HOST_LIBXML2_CONF_OPTS += --without-python
+LIBXML2_CONF_OPTS += --with-modules
 endif
 
 ifeq ($(BR2_PACKAGE_ICU),y)
@@ -65,13 +51,6 @@ LIBXML2_DEPENDENCIES += zlib
 LIBXML2_CONF_OPTS += --with-zlib=$(STAGING_DIR)/usr
 else
 LIBXML2_CONF_OPTS += --without-zlib
-endif
-
-ifeq ($(BR2_PACKAGE_XZ),y)
-LIBXML2_DEPENDENCIES += xz
-LIBXML2_CONF_OPTS += --with-lzma
-else
-LIBXML2_CONF_OPTS += --without-lzma
 endif
 
 LIBXML2_DEPENDENCIES += $(if $(BR2_PACKAGE_LIBICONV),libiconv)
