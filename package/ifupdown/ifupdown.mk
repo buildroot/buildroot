@@ -4,16 +4,16 @@
 #
 ################################################################################
 
-IFUPDOWN_VERSION = 0.8.41
+IFUPDOWN_VERSION = 0.8.44
 IFUPDOWN_SOURCE = ifupdown_$(IFUPDOWN_VERSION).tar.xz
-IFUPDOWN_SITE = http://snapshot.debian.org/archive/debian/20230222T205615Z/pool/main/i/ifupdown
+IFUPDOWN_SITE = http://snapshot.debian.org/archive/debian/20240917T144520Z/pool/main/i/ifupdown
 IFUPDOWN_LICENSE = GPL-2.0+
 IFUPDOWN_LICENSE_FILES = COPYING
 IFUPDOWN_CPE_ID_VENDOR = debian
 
 define IFUPDOWN_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) $(TARGET_CONFIGURE_OPTS) \
-		CFLAGS="$(TARGET_CFLAGS) -std=gnu99 -D'IFUPDOWN_VERSION=\"$(IFUPDOWN_VERSION)\"'" \
+		CFLAGS="$(TARGET_CFLAGS) -std=gnu99 -D'PKGLIBDIR=\"/lib/ifupdown\"' -D'IFUPDOWN_VERSION=\"$(IFUPDOWN_VERSION)\"'" \
 		ARCH=linux \
 		-C $(@D)
 endef
