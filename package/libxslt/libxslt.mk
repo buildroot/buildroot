@@ -4,12 +4,12 @@
 #
 ################################################################################
 
-LIBXSLT_VERSION = 1.1.42
+LIBXSLT_VERSION = 1.1.43
 LIBXSLT_SOURCE = libxslt-$(LIBXSLT_VERSION).tar.xz
 LIBXSLT_SITE = https://download.gnome.org/sources/libxslt/1.1
 LIBXSLT_INSTALL_STAGING = YES
 LIBXSLT_LICENSE = MIT
-LIBXSLT_LICENSE_FILES = COPYING
+LIBXSLT_LICENSE_FILES = Copyright
 LIBXSLT_CPE_ID_VENDOR = xmlsoft
 
 LIBXSLT_CONF_OPTS = \
