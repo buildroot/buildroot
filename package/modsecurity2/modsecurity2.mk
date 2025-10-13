@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MODSECURITY2_VERSION = 2.9.10
+MODSECURITY2_VERSION = 2.9.12
 MODSECURITY2_SOURCE = modsecurity-v$(MODSECURITY2_VERSION).tar.gz
 MODSECURITY2_SITE = https://github.com/owasp-modsecurity/ModSecurity/releases/download/v$(MODSECURITY2_VERSION)
 MODSECURITY2_LICENSE = Apache-2.0
