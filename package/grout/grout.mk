@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GROUT_VERSION = 0.11.0
+GROUT_VERSION = 0.13.0
 GROUT_SITE = $(call github,DPDK,grout,v$(GROUT_VERSION))
 GROUT_LICENSE = BSD-3-Clause
 GROUT_LICENSE_FILES = licenses/BSD-3-clause.txt
