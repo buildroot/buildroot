@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-IPTRAF_NG_VERSION = 1.2.1
+IPTRAF_NG_VERSION = 1.2.2
 IPTRAF_NG_SITE = $(call github,iptraf-ng,iptraf-ng,v$(IPTRAF_NG_VERSION))
 IPTRAF_NG_LICENSE = GPL-2.0+
 IPTRAF_NG_LICENSE_FILES = LICENSE
