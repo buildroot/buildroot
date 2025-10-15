@@ -14,9 +14,10 @@ class TestXenBase(infra.basetest.BRTest):
         BR2_ROOTFS_POST_BUILD_SCRIPT="support/testing/tests/package/test_xen/common/post-build.sh"
         BR2_LINUX_KERNEL=y
         BR2_LINUX_KERNEL_CUSTOM_VERSION=y
-        BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="6.12.9"
+        BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="6.17.1"
         BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG=y
         BR2_LINUX_KERNEL_NEEDS_HOST_OPENSSL=y
+        BR2_PACKAGE_BRIDGE_UTILS=y
         BR2_PACKAGE_XEN=y
         BR2_PACKAGE_XEN_HYPERVISOR=y
         BR2_PACKAGE_XEN_TOOLS=y
@@ -25,7 +26,7 @@ class TestXenBase(infra.basetest.BRTest):
         BR2_TARGET_UBOOT=y
         BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG=y
         BR2_TARGET_UBOOT_CUSTOM_VERSION=y
-        BR2_TARGET_UBOOT_CUSTOM_VERSION_VALUE="2025.01"
+        BR2_TARGET_UBOOT_CUSTOM_VERSION_VALUE="2025.07"
         BR2_TARGET_UBOOT_NEEDS_OPENSSL=y
         BR2_TARGET_UBOOT_NEEDS_GNUTLS=y
         BR2_PACKAGE_HOST_DOSFSTOOLS=y
@@ -47,6 +48,20 @@ class TestXenBase(infra.basetest.BRTest):
     def run_xen_test(self, arch: str, options: list[str]) -> None:
         """This functions tests Xen for multiple architectures.
         The arch and options parameters are passed to the emulator.
+
+        Here is the network setup we use in the test:
+
+                    :         dom0        :   dom1   :
+                    :                     :          :
+                    :        br0          :          :
+                    :      10.0.2.x       :          :
+             gw     :         |           :          :
+          10.0.2.2 -:- eth0 --+-- vif1.0 -:-- eth0   :
+                    :                     : 10.0.2.y :
+
+        The VMs get their IP addresses with DHCP.
+        We create a bridge in dom0, which allows dom1 to reach the gateway.
+        vif1.0 is added to the bridge automatically when dom1 is created.
         """
 
         # Boot the emulator.
@@ -65,6 +80,20 @@ class TestXenBase(infra.basetest.BRTest):
         # Check that we have one VM running.
         self.assertNumVM(1)
 
+        # Create a network bridge.
+        self.assertRunOk("brctl addbr br0")
+        self.assertRunOk("brctl addif br0 eth0")
+        self.assertRunOk("brctl show")
+
+        # Bring up the network in the dom0.
+        self.assertRunOk("ifconfig eth0 up")
+        self.assertRunOk("ifconfig br0 up")
+        self.assertRunOk("udhcpc -i br0")
+        self.assertRunOk("ifconfig -a")
+
+        # Verify that we can ping the gateway.
+        self.assertRunOk("ping -c 3 -A 10.0.2.2")
+
         # Create dom1 with console attached and login.
         self.emulator.qemu.sendline("xl create -c /etc/xen/dom1.cfg")
         self.emulator.login()
@@ -72,6 +101,14 @@ class TestXenBase(infra.basetest.BRTest):
         # Check that we are not talking to dom0 anymore.
         uuid = self.get_dom_uuid()
         self.assertNotEqual(uuid, dom0_uuid, "Unexpected dom0 UUID")
+
+        # Bring up the network in the dom1.
+        self.assertRunOk("ifconfig eth0 up")
+        self.assertRunOk("udhcpc -i eth0")
+        self.assertRunOk("ifconfig -a")
+
+        # Verify that we can ping the gateway.
+        self.assertRunOk("ping -c 3 -A 10.0.2.2")
 
         # Detach from dom1's console with CTRL-].
         # dom1 is still running in the background after that.
@@ -87,6 +124,9 @@ class TestXenBase(infra.basetest.BRTest):
 
         # Check that we have two VMs running.
         self.assertNumVM(2)
+
+        # Print the bridge setup for debugging.
+        self.assertRunOk("brctl show")
 
 
 class TestXenAarch64(TestXenBase):
@@ -117,8 +157,10 @@ class TestXenAarch64(TestXenBase):
             "-bios", uboot_bin,
             "-cpu", "cortex-a53",
             "-device", "virtio-blk-device,drive=hd0",
+            "-device", "virtio-net-device,netdev=eth0",
             "-drive", f"file={disk_img},if=none,format=raw,id=hd0",
             "-m", "1G",
+            "-netdev", "user,id=eth0,restrict=yes",
             "-machine", "virt,gic-version=3,virtualization=on,acpi=off",
             "-smp", "2"
         ]
@@ -158,9 +200,11 @@ class TestXenArmv7(TestXenBase):
             "-bios", uboot_bin,
             "-cpu", "cortex-a15",
             "-device", "virtio-blk-device,drive=hd0",
+            "-device", "virtio-net-device,netdev=eth0",
             "-drive", f"file={disk_img},if=none,format=raw,id=hd0",
             "-m", "1G",
             "-machine", "virt,virtualization=on,acpi=off",
+            "-netdev", "user,id=eth0,restrict=yes",
             "-smp", "2"
         ]
 

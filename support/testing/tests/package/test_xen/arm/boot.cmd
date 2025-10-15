@@ -1,4 +1,4 @@
-fdt addr ${fdtcontroladdr}
+fdt addr ${fdt_addr}
 fdt resize
 
 fdt set /chosen \#address-cells <1>
@@ -20,4 +20,4 @@ load ${devtype} ${devnum} ${loadaddr} xen
 fdt set /chosen xen,dom0-bootargs "console=hvc0"
 fdt set /chosen xen,xen-bootargs "dom0_mem=256M loglvl=all guest_loglvl=all"
 fdt print /chosen
-bootz ${loadaddr} - ${fdtcontroladdr}
+bootz ${loadaddr} - ${fdt_addr}
