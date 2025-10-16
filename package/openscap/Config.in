@@ -1,0 +1,24 @@
+config BR2_PACKAGE_OPENSCAP
+	bool "openscap"
+	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS  # libgcrypt
+	depends on !BR2_STATIC_LIBS # dlfcn.h
+	select BR2_PACKAGE_LIBCURL
+	# In theory should build without crypto, but in practice it
+	# doesn't: https://github.com/OpenSCAP/openscap/issues/2310
+	select BR2_PACKAGE_LIBGCRYPT if !BR2_PACKAGE_LIBNSS
+	select BR2_PACKAGE_LIBXML2
+	select BR2_PACKAGE_LIBXSLT
+	select BR2_PACKAGE_LIBXMLSEC1
+	select BR2_PACKAGE_MUSL_FTS if !BR2_TOOLCHAIN_USES_GLIBC
+	select BR2_PACKAGE_PCRE
+	select BR2_PACKAGE_PCRE_UTF
+	help
+	  The purpose of this project is to create security policy
+	  content for various platforms
+
+	  https://www.open-scap.org/
+	  https://github.com/OpenSCAP/openscap
+
+comment "openscap needs a toolchain w/ dynamic library"
+	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS
+	depends on BR2_STATIC_LIBS
