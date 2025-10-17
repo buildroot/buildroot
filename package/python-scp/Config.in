@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_SCP
+	bool "python-scp"
+	select BR2_PACKAGE_PYTHON_PARAMIKO # runtime
+	help
+	  scp module for paramiko.
+
+	  https://github.com/jbardin/scp.py
