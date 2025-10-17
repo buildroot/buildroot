@@ -1,4 +1,4 @@
-From 74e95c96e8d82e4e374f86142972fcf4305fe1f2 Mon Sep 17 00:00:00 2001
+From e94b6dd7b3ca884f72f02879fd85792a3aee961d Mon Sep 17 00:00:00 2001
 From: Florian Fainelli <f.fainelli@gmail.com>
 Date: Wed, 2 Jul 2025 20:47:58 -0700
 Subject: [PATCH] Correct loop function signature
@@ -23,7 +23,7 @@ Upstream: https://github.com/opsengine/cpulimit/pull/127
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/tests/busy.c b/tests/busy.c
-index b3afb7cd853b..93f0bcce67a8 100644
+index b3afb7cd853b..8acbcd82e04f 100644
 --- a/tests/busy.c
 +++ b/tests/busy.c
 @@ -3,7 +3,7 @@
@@ -31,7 +31,7 @@ index b3afb7cd853b..93f0bcce67a8 100644
  #include <unistd.h>
  
 -void *loop()
-+void *loop(void *)
++void *loop(void *unused)
  {
  	while(1);
  }
