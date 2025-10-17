@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LEDMON_VERSION = 1.0.0
+LEDMON_VERSION = 1.1.0
 LEDMON_SITE = $(call github,intel,ledmon,v$(LEDMON_VERSION))
 LEDMON_DEPENDENCIES = host-autoconf-archive host-pkgconf pciutils sg3_utils udev
 # The code base also include a COPYING.LIB file with the LGPL-2.1 text,
