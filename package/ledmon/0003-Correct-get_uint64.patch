@@ -1,0 +1,43 @@
+From ed747ac3540cb38797f56533f9f51f5627e6b994 Mon Sep 17 00:00:00 2001
+From: Tony Asleson <tasleson@redhat.com>
+Date: Wed, 21 Aug 2024 12:27:28 -0500
+Subject: [PATCH] Correct get_uint64
+
+For large integer values, the existing implementation will be
+incorrect.
+
+The current implementation of converting strings to integer values
+uses a signed integer for the intermediate conversion and performs
+a range check. Since any value in an unsigned 64-bit integer is valid,
+the range check seems unnecessary. To mimic the same code path, we would
+need a larger integer type.
+
+Signed-off-by: Tony Asleson <tasleson@redhat.com>
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://github.com/intel/ledmon/commit/ed747ac3540cb38797f56533f9f51f5627e6b994
+---
+ src/lib/utils.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/src/lib/utils.c b/src/lib/utils.c
+index a7936c69b242..a6ee29ba7f22 100644
+--- a/src/lib/utils.c
++++ b/src/lib/utils.c
+@@ -98,8 +98,12 @@ uint64_t get_uint64(const char *path, uint64_t defval, const char *name)
+ 	if (!p)
+ 		return defval;
+ 
+-	str_toul(&defval, p, NULL, 16);
+-	return defval;
++	errno = 0;
++	uint64_t t = strtoull(p, NULL, 16);
++
++	if (errno)
++		return defval;
++	return t;
+ }
+ 
+ int get_int(const char *path, int defval, const char *name)
+-- 
+2.43.0
+
