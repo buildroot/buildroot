@@ -12,6 +12,8 @@ SIPROXD_LICENSE_FILES = COPYING
 
 SIPROXD_DEPENDENCIES = libosip2 libtool sqlite
 
+# 0001-Fix-compilation-on-gcc-14.patch
+SIPROXD_AUTORECONF = YES
 SIPROXD_CONF_OPTS = --without-included-ltdl
 
 $(eval $(autotools-package))
