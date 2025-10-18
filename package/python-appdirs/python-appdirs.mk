@@ -12,3 +12,4 @@ PYTHON_APPDIRS_LICENSE = MIT
 PYTHON_APPDIRS_LICENSE_FILES = LICENSE.txt
 
 $(eval $(python-package))
+$(eval $(host-python-package))
