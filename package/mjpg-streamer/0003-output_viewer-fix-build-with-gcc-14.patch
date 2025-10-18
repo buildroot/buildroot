@@ -1,0 +1,34 @@
+From c0656c6a538739635441b165b4f1ba7c22c68b1d Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sat, 18 Oct 2025 18:54:36 +0200
+Subject: [PATCH] output_viewer: fix build with gcc >= 14
+
+Fixes build error found by buildroot autobuilders:
+
+output_viewer.c:125:32: error: assignment to 'boolean (*)(struct jpeg_decompress_struct *)'
+from incompatible pointer type 'int (*)(struct jpeg_decompress_struct *)'
+[-Wincompatible-pointer-types]
+
+Upstream: https://github.com/jacksonliam/mjpg-streamer/pull/420
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ .../plugins/output_viewer/output_viewer.c                       | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mjpg-streamer-experimental/plugins/output_viewer/output_viewer.c b/mjpg-streamer-experimental/plugins/output_viewer/output_viewer.c
+index dd6c55b..c50f701 100644
+--- a/mjpg-streamer-experimental/plugins/output_viewer/output_viewer.c
++++ b/mjpg-streamer-experimental/plugins/output_viewer/output_viewer.c
+@@ -86,7 +86,7 @@ static void init_source(j_decompress_ptr cinfo)
+     return;
+ }
+ 
+-static int fill_input_buffer(j_decompress_ptr cinfo)
++static boolean fill_input_buffer(j_decompress_ptr cinfo)
+ {
+     my_source_mgr * src = (my_source_mgr *) cinfo->src;
+ 
+-- 
+2.47.3
+
