@@ -1,0 +1,50 @@
+From 985c2cd198213b250c61d8c6621af52e318c4c12 Mon Sep 17 00:00:00 2001
+From: crumpled-acronym <60061744+crumpled-acronym@users.noreply.github.com>
+Date: Mon, 30 Jun 2025 12:32:02 +0200
+Subject: [PATCH] Fix compilation on gcc >= 14
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+`./configure` fails for gcc >= 14 with the following error
+
+```
+checking "libosip prefix"...
+checking for osip_init in -losip2... yes
+checking for parser_init in -losipparser2... yes
+checking libosip2 version > 3.0.0... *** ERROR: libosip2-3.x.x is required!
+```
+
+which in fact is caused by the test program in `ACX_CHECK_LIBOSIP_VERSION` function in `acinclude.m4` due to
+
+```
+conftest.c:4:3: error: return type defaults to ‘int’ [-Wimplicit-int]
+    4 | main() {
+      | ^~~~
+```
+
+This patch fixes the issue!
+
+Upstream: https://github.com/hb9xar/siproxd/commit/985c2cd198213b250c61d8c6621af52e318c4c12
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ acinclude.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/acinclude.m4 b/acinclude.m4
+index 6fa4828..8164246 100644
+--- a/acinclude.m4
++++ b/acinclude.m4
+@@ -340,7 +340,7 @@ dnl pointer to the structure (bad)
+ AC_COMPILE_IFELSE(
+ [AC_LANG_SOURCE([
+   #include <osipparser2/osip_parser.h>
+-  main() {
++  int main() {
+   osip_message_t t;
+   int  e;
+   e=t.contacts.nb_elt;
+-- 
+2.47.3
+
