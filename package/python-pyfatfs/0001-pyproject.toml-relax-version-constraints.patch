@@ -1,0 +1,45 @@
+From 9d40ef086d25c8434adcf6552de1d8bb5022a277 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Mon, 22 Sep 2025 23:27:47 +0200
+Subject: [PATCH] pyproject.toml: relax version constraints
+
+The version constraints defined with ~= in pyproject.toml are too
+strict, and don't allow using pyfatfs with newer versions.
+
+We have successfully tested with:
+
+- setuptools 80.9.0
+- setuptools-scm 8.3.1
+- python 3.13
+- fs 2.4.16
+
+Upstream: https://github.com/nathanhi/pyfatfs/pull/47
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ pyproject.toml | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/pyproject.toml b/pyproject.toml
+index 9649c10..a6eb198 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -1,13 +1,13 @@
+ [build-system]
+-requires = ["setuptools ~= 67.8", "setuptools_scm[toml] ~= 7.1"]
++requires = ["setuptools >= 67.8", "setuptools_scm[toml] >= 7.1"]
+ build-backend = "setuptools.build_meta"
+ 
+ [project]
+ name = "pyfatfs"
+ description = "FAT12/FAT16/FAT32 implementation with VFAT support"
+ readme = "README.rst"
+-requires-python = "~=3.8"
+-dependencies = ["fs~=2.4"]
++requires-python = ">=3.8"
++dependencies = ["fs>=2.4"]
+ keywords = ["filesystem", "PyFilesystem2", "FAT12", "FAT16", "FAT32", "VFAT", "LFN"]
+ license = {file = "LICENSE"}
+ classifiers = [
+-- 
+2.51.0
+
