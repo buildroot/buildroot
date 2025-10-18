@@ -11,5 +11,7 @@ PYTHON_PYUSB_LICENSE = BSD-3-Clause
 PYTHON_PYUSB_LICENSE_FILES = LICENSE
 PYTHON_PYUSB_SETUP_TYPE = setuptools
 PYTHON_PYUSB_DEPENDENCIES = host-python-setuptools-scm libusb
+HOST_PYTHON_PYUSB_DEPENDENCIES = host-python-setuptools-scm host-libusb
 
 $(eval $(python-package))
+$(eval $(host-python-package))
