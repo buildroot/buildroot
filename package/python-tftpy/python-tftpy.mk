@@ -11,3 +11,4 @@ PYTHON_TFTPY_LICENSE_FILES = LICENSE
 PYTHON_TFTPY_SETUP_TYPE = setuptools
 
 $(eval $(python-package))
+$(eval $(host-python-package))
