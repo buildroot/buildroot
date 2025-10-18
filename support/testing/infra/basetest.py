@@ -60,6 +60,28 @@ class BRConfigTest(unittest.TestCase):
             self.b.delete()
 
 
+class BRHostPkgTest(BRConfigTest):
+    """Test up to the build stage of a host package. Define hostpkgs in
+    the class to the list of host packages that should be built."""
+    config = \
+        BASIC_TOOLCHAIN_CONFIG + \
+        MINIMAL_CONFIG
+    hostpkgs = None
+
+    def __init__(self, names):
+        super(BRHostPkgTest, self).__init__(names)
+
+    def setUp(self):
+        super(BRHostPkgTest, self).setUp()
+        if not self.b.is_finished():
+            self.show_msg("Building")
+            self.b.build(make_extra_opts=self.hostpkgs)
+            self.show_msg("Building done")
+
+    def tearDown(self):
+        super(BRHostPkgTest, self).tearDown()
+
+
 class BRTest(BRConfigTest):
     """Test up to the build stage and instantiate an emulator."""
     def __init__(self, names):
