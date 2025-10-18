@@ -1,0 +1,36 @@
+From a37d316e643a4c2be4708d504cc3ecbf37ec1773 Mon Sep 17 00:00:00 2001
+From: Kai Pastor <dg0yt@darc.de>
+Date: Wed, 8 Oct 2025 18:50:33 +0200
+Subject: [PATCH] Scope aes_cfb128_vaes_encdec_wrapper to x64
+
+This function is only used on x64 and relies on other functions which
+are only implemented for x64.
+Fixes #28745.
+
+Upstream: https://github.com/openssl/openssl/pull/28792
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ providers/implementations/ciphers/cipher_aes_cfb_hw_aesni.inc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/providers/implementations/ciphers/cipher_aes_cfb_hw_aesni.inc b/providers/implementations/ciphers/cipher_aes_cfb_hw_aesni.inc
+index d5577d00f132e..eb8e0164ac9ed 100644
+--- a/providers/implementations/ciphers/cipher_aes_cfb_hw_aesni.inc
++++ b/providers/implementations/ciphers/cipher_aes_cfb_hw_aesni.inc
+@@ -30,6 +30,7 @@
+ static int ossl_aes_cfb8_vaes_eligible(void) { return 0; }
+ static int ossl_aes_cfb1_vaes_eligible(void) { return 0; }
+ 
++#if (defined(__x86_64) || defined(__x86_64__) || defined(_M_AMD64) || defined(_M_X64))
+ /* active in 64-bit builds when AES-NI, AVX512F, and VAES are detected */
+ static int aes_cfb128_vaes_encdec_wrapper(
+     PROV_CIPHER_CTX* dat,
+@@ -56,6 +57,7 @@ static int aes_cfb128_vaes_encdec_wrapper(
+ 
+     return 1;
+ }
++#endif
+  
+ /* generates AES round keys for AES-NI and VAES implementations */
+ static int cipher_hw_aesni_initkey(PROV_CIPHER_CTX *dat,
