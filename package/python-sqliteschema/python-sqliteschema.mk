@@ -10,5 +10,6 @@ PYTHON_SQLITESCHEMA_SITE = https://files.pythonhosted.org/packages/90/ad/0d7010b
 PYTHON_SQLITESCHEMA_SETUP_TYPE = setuptools
 PYTHON_SQLITESCHEMA_LICENSE = MIT
 PYTHON_SQLITESCHEMA_LICENSE_FILES = LICENSE
+PYTHON_SQLITESCHEMA_DEPENDENCIES = host-python-setuptools-scm
 
 $(eval $(python-package))
