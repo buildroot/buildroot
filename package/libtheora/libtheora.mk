@@ -22,7 +22,7 @@ LIBTHEORA_CONF_OPTS = \
 
 # assembly code on arm is broken:
 # https://gitlab.xiph.org/xiph/theora/-/merge_requests/53
-ifeq ($(BR2_arm),y)
+ifeq ($(BR2_arm)$(BR2_armeb),y)
 LIBTHEORA_CONF_OPTS += --disable-asm
 endif
 
