@@ -1,0 +1,31 @@
+From 3ea67b511bdf4f12b3d5de4d7e133badf8c18d54 Mon Sep 17 00:00:00 2001
+From: Alexandre Janniaux <ajanni@videolabs.io>
+Date: Wed, 14 Sep 2022 16:29:22 +0200
+Subject: [PATCH] icy: include stdlib.h and stdio.h
+
+malloc, free, and snprintf had no valid previous declaration, making the
+build fail with clang.
+
+Upstream: https://gitlab.xiph.org/xiph/icecast-libshout/-/merge_requests/4
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/icy.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/icy.c b/src/icy.c
+index 8e83552..4de3c14 100644
+--- a/src/icy.c
++++ b/src/icy.c
+@@ -24,6 +24,8 @@
+ #endif
+ 
+ #include <stdbool.h>
++#include <stdlib.h> /* for free() and malloc() */
++#include <stdio.h> /* for snprintf() */
+ #include <string.h>
+ 
+ #include <shout/shout.h>
+-- 
+2.47.3
+
