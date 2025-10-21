@@ -12,4 +12,4 @@ ssh_client.connect('127.0.0.1', username='root')
 scp_client = SCPClient(ssh_client.get_transport())
 scp_client.get("/etc/hostname", "/tmp/hostname")
 
-assert filecmp("/etc/hostname", "/tmp/hostname")
+assert filecmp.cmp("/etc/hostname", "/tmp/hostname")
