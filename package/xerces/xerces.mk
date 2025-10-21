@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XERCES_VERSION = 3.2.4
-XERCES_SOURCE = xerces-c-$(XERCES_VERSION).tar.xz
-XERCES_SITE = http://archive.apache.org/dist/xerces/c/3/sources
+XERCES_VERSION = 3.2.5
+XERCES_SOURCE = xerces-c-$(XERCES_VERSION).tar.gz
+XERCES_SITE = https://archive.apache.org/dist/xerces/c/3/sources
 XERCES_LICENSE = Apache-2.0
 XERCES_LICENSE_FILES = LICENSE
 XERCES_CPE_ID_VENDOR = apache
