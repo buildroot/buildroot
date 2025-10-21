@@ -1,0 +1,28 @@
+From 1ccd5b54a408d12fce0c94ab0bbaedbb5ef69830 Mon Sep 17 00:00:00 2001
+From: fundawang <fundawang@yeah.net>
+Date: Sun, 27 Oct 2024 22:11:21 +0800
+Subject: [PATCH] configure: Explicitly check for icu-uc
+
+Ensure we link against libicu-uc when it's split in v76.
+
+Upstream: https://github.com/dovecot/core/commit/1ccd5b54a408d12fce0c94ab0bbaedbb5ef69830
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[Bernd: backported to version 2.3.21.1]
+---
+ m4/want_icu.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/m4/want_icu.m4 b/m4/want_icu.m4
+index b656ef9f479..405a73b361f 100644
+--- a/m4/want_icu.m4
++++ b/m4/want_icu.m4
+@@ -1,7 +1,7 @@
+ AC_DEFUN([DOVECOT_WANT_ICU], [
+   if test "$want_icu" != "no"; then
+     if test "$PKG_CONFIG" != "" && $PKG_CONFIG --exists icu-i18n 2>/dev/null; then
+-      PKG_CHECK_MODULES(LIBICU, icu-i18n)
++      PKG_CHECK_MODULES(LIBICU, icu-i18n icu-uc)
+       have_icu=yes
+       AC_DEFINE(HAVE_LIBICU,, [Define if you want ICU normalization support for FTS])
+     elif test "$want_icu" = "yes"; then
