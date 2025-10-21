@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBUCONTEXT_VERSION = 1.2
+LIBUCONTEXT_VERSION = 1.3.3
 LIBUCONTEXT_SITE = $(call github,kaniini,libucontext,libucontext-$(LIBUCONTEXT_VERSION))
 LIBUCONTEXT_LICENSE = ISC
 LIBUCONTEXT_LICENSE_FILES = LICENSE
