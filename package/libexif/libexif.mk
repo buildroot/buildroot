@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBEXIF_VERSION = 0.6.24
+LIBEXIF_VERSION = 0.6.25
 LIBEXIF_SOURCE = libexif-$(LIBEXIF_VERSION).tar.bz2
 LIBEXIF_SITE = \
 	https://github.com/libexif/libexif/releases/download/v$(LIBEXIF_VERSION)
