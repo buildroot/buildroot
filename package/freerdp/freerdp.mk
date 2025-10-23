@@ -13,6 +13,10 @@ FREERDP_LICENSE = Apache-2.0
 FREERDP_LICENSE_FILES = LICENSE
 FREERDP_CPE_ID_VENDOR = freerdp
 
+# As explained on https://github.com/FreeRDP/FreeRDP/pull/11573#issuecomment-2904160524,
+# the affected code is new with 3.x, was not there on 2.x
+FREERDP_IGNORE_CVES += CVE-2025-4478
+
 FREERDP_INSTALL_STAGING = YES
 
 FREERDP_CONF_OPTS = -DWITH_MANPAGES=OFF -Wno-dev -DWITH_GSTREAMER_0_10=OFF
