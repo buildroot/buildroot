@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NETDATA_VERSION = 1.33.1
+NETDATA_VERSION = 1.37.1
 NETDATA_SOURCE = netdata-v$(NETDATA_VERSION).tar.gz
 NETDATA_SITE = \
 	https://github.com/netdata/netdata/releases/download/v$(NETDATA_VERSION)
@@ -18,6 +18,9 @@ NETDATA_CONF_OPTS = \
 	--disable-ml \
 	--disable-unit-tests
 NETDATA_DEPENDENCIES = libuv util-linux zlib
+
+# 0001-libjudy-remove-JudyLTablesGen.patch
+NETDATA_AUTORECONF = YES
 
 # ac_cv_prog_cc_c99 is required for BR2_USE_WCHAR=n because the C99 test
 # provided by autoconf relies on wchar_t.
