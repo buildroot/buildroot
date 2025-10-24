@@ -1,0 +1,707 @@
+From 4241f557597013dcdf959b688730888b4370660c Mon Sep 17 00:00:00 2001
+From: mochaaP <git@mochaa.ws>
+Date: Sat, 29 Apr 2023 14:52:02 +0800
+Subject: [PATCH] libjudy: remove JudyLTablesGen
+
+JudyLTablesGen could be replaced with a pregenerated file
+with 32-bit / 64-bit specific macros. Fixes #14185
+
+Upstream: https://github.com/netdata/netdata/pull/14984
+
+[Titouan: adapt to netdata v1.37.1]
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ Makefile.am                                   |  17 +-
+ libnetdata/libjudy/src/JudyL/JudyLTables.c    | 338 ++++++++++++++++++
+ libnetdata/libjudy/src/JudyL/JudyLTablesGen.c | 296 ---------------
+ 3 files changed, 339 insertions(+), 312 deletions(-)
+ create mode 100644 libnetdata/libjudy/src/JudyL/JudyLTables.c
+ delete mode 100644 libnetdata/libjudy/src/JudyL/JudyLTablesGen.c
+
+diff --git a/Makefile.am b/Makefile.am
+index 5e16052..750d86e 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -504,15 +504,10 @@ libjudy_a_SOURCES = libnetdata/libjudy/src/Judy.h \
+     libnetdata/libjudy/src/JudyL/JudyLNextEmpty.c \
+     libnetdata/libjudy/src/JudyL/JudyLPrev.c \
+     libnetdata/libjudy/src/JudyL/JudyLPrevEmpty.c \
++    libnetdata/libjudy/src/JudyL/JudyLTables.c \
+     libnetdata/libjudy/src/JudyHS/JudyHS.c \
+     $(NULL)
+ 
+-nodist_libjudy_a_SOURCES = JudyLTables.c
+-
+-BUILT_SOURCES += JudyLTables.c
+-
+-CLEANFILES += JudyLTables.c
+-
+ libjudy_a_CFLAGS = $(LIBJUDY_CFLAGS) -DJUDYL -I$(abs_top_srcdir)/libnetdata/libjudy/src -I$(abs_top_srcdir)/libnetdata/libjudy/src/JudyCommon -Wno-sign-compare -Wno-implicit-fallthrough
+ 
+ libnetdata/libjudy/src/JudyL/libjudy_a-JudyLPrev.$(OBJEXT) : CFLAGS += -DJUDYPREV
+@@ -522,16 +517,6 @@ libnetdata/libjudy/src/JudyL/libjudy_a-JudyLNextEmpty.$(OBJEXT) : CFLAGS += -DJU
+ libnetdata/libjudy/src/JudyL/libjudy_a-JudyLByCount.$(OBJEXT) : CFLAGS +=  -DNOSMARTJBB -DNOSMARTJBU -DNOSMARTJLB
+ libnetdata/libjudy/src/JudyL/libjudy_a-j__udyLGet.$(OBJEXT) : CFLAGS +=  -DJUDYGETINLINE
+ 
+-noinst_PROGRAMS = judyltablesgen
+-
+-judyltablesgen_SOURCES = libnetdata/libjudy/src/JudyL/JudyLTablesGen.c
+-judyltablesgen_CFLAGS = $(LIBJUDY_CFLAGS) -DJUDYL -I$(abs_top_srcdir)/libnetdata/libjudy/src -I$(abs_top_srcdir)/libnetdata/libjudy/src/JudyCommon -Wno-sign-compare -Wno-implicit-fallthrough
+-
+-$(builddir)/judyltablesgen$(EXEEXT) : CFLAGS += -Wno-format -Wno-format-security
+-
+-JudyLTables.c: $(abs_top_srcdir)/libnetdata/libjudy/src/JudyL/JudyLTablesGen.c $(builddir)/judyltablesgen$(EXEEXT)
+-	$(builddir)/judyltablesgen$(EXEEXT)
+-
+ libjudy_a-JudyLTables.$(OBJEXT) : CFLAGS += -I$(abs_top_srcdir)/libnetdata/libjudy/src/JudyL
+ 
+ if ENABLE_DBENGINE
+diff --git a/libnetdata/libjudy/src/JudyL/JudyLTables.c b/libnetdata/libjudy/src/JudyL/JudyLTables.c
+new file mode 100644
+index 0000000..21c9749
+--- /dev/null
++++ b/libnetdata/libjudy/src/JudyL/JudyLTables.c
+@@ -0,0 +1,338 @@
++// @(#) From generation tool: $Revision: 4.37 $ $Source: /judy/src/JudyCommon/JudyTables.c $
++// Pregenerated and modified by hand. Do not overwrite!
++
++#include "JudyL.h"
++// Leave the malloc() sizes readable in the binary (via strings(1)):
++#ifdef JU_64BIT
++const char * JudyLMallocSizes = "JudyLMallocSizes = 3, 5, 7, 11, 15, 23, 32, 47, 64, Leaf1 = 13";
++#else // JU_32BIT
++const char * JudyLMallocSizes = "JudyLMallocSizes = 3, 5, 7, 11, 15, 23, 32, 47, 64, Leaf1 = 25";
++#endif // JU_64BIT
++
++#ifdef JU_64BIT
++//	object uses 64 words
++//	cJU_BITSPERSUBEXPB = 32
++const uint8_t
++j__L_BranchBJPPopToWords[cJU_BITSPERSUBEXPB + 1] =
++{
++	 0,
++	 3,  5,  7, 11, 11, 15, 15, 23,
++	23, 23, 23, 32, 32, 32, 32, 32,
++	47, 47, 47, 47, 47, 47, 47, 64,
++	64, 64, 64, 64, 64, 64, 64, 64
++};
++
++//	object uses 15 words
++//	cJL_LEAF1_MAXPOP1 = 13
++const uint8_t
++j__L_Leaf1PopToWords[cJL_LEAF1_MAXPOP1 + 1] =
++{
++	 0,
++	 3,  3,  5,  5,  7,  7, 11, 11,
++	11, 15, 15, 15, 15
++};
++const uint8_t
++j__L_Leaf1Offset[cJL_LEAF1_MAXPOP1 + 1] =
++{
++	 0,
++	 1,  1,  1,  1,  1,  1,  2,  2,
++	 2,  2,  2,  2,  2
++};
++
++//	object uses 64 words
++//	cJL_LEAF2_MAXPOP1 = 51
++const uint8_t
++j__L_Leaf2PopToWords[cJL_LEAF2_MAXPOP1 + 1] =
++{
++	 0,
++	 3,  3,  5,  5,  7, 11, 11, 11,
++	15, 15, 15, 15, 23, 23, 23, 23,
++	23, 23, 32, 32, 32, 32, 32, 32,
++	32, 47, 47, 47, 47, 47, 47, 47,
++	47, 47, 47, 47, 47, 64, 64, 64,
++	64, 64, 64, 64, 64, 64, 64, 64,
++	64, 64, 64
++};
++const uint8_t
++j__L_Leaf2Offset[cJL_LEAF2_MAXPOP1 + 1] =
++{
++	 0,
++	 1,  1,  1,  1,  2,  3,  3,  3,
++	 3,  3,  3,  3,  5,  5,  5,  5,
++	 5,  5,  7,  7,  7,  7,  7,  7,
++	 7, 10, 10, 10, 10, 10, 10, 10,
++	10, 10, 10, 10, 10, 13, 13, 13,
++	13, 13, 13, 13, 13, 13, 13, 13,
++	13, 13, 13
++};
++
++//	object uses 64 words
++//	cJL_LEAF3_MAXPOP1 = 46
++const uint8_t
++j__L_Leaf3PopToWords[cJL_LEAF3_MAXPOP1 + 1] =
++{
++	 0,
++	 3,  3,  5,  7,  7, 11, 11, 11,
++	15, 15, 23, 23, 23, 23, 23, 23,
++	32, 32, 32, 32, 32, 32, 32, 47,
++	47, 47, 47, 47, 47, 47, 47, 47,
++	47, 47, 64, 64, 64, 64, 64, 64,
++	64, 64, 64, 64, 64, 64
++};
++const uint8_t
++j__L_Leaf3Offset[cJL_LEAF3_MAXPOP1 + 1] =
++{
++	 0,
++	 1,  1,  2,  2,  2,  3,  3,  3,
++	 4,  4,  6,  6,  6,  6,  6,  6,
++	 9,  9,  9,  9,  9,  9,  9, 13,
++	13, 13, 13, 13, 13, 13, 13, 13,
++	13, 13, 18, 18, 18, 18, 18, 18,
++	18, 18, 18, 18, 18, 18
++};
++
++//	object uses 63 words
++//	cJL_LEAF4_MAXPOP1 = 42
++const uint8_t
++j__L_Leaf4PopToWords[cJL_LEAF4_MAXPOP1 + 1] =
++{
++	 0,
++	 3,  3,  5,  7, 11, 11, 11, 15,
++	15, 15, 23, 23, 23, 23, 23, 32,
++	32, 32, 32, 32, 32, 47, 47, 47,
++	47, 47, 47, 47, 47, 47, 47, 63,
++	63, 63, 63, 63, 63, 63, 63, 63,
++	63, 63
++};
++const uint8_t
++j__L_Leaf4Offset[cJL_LEAF4_MAXPOP1 + 1] =
++{
++	 0,
++	 1,  1,  2,  2,  4,  4,  4,  5,
++	 5,  5,  8,  8,  8,  8,  8, 11,
++	11, 11, 11, 11, 11, 16, 16, 16,
++	16, 16, 16, 16, 16, 16, 16, 21,
++	21, 21, 21, 21, 21, 21, 21, 21,
++	21, 21
++};
++
++//	object uses 64 words
++//	cJL_LEAF5_MAXPOP1 = 39
++const uint8_t
++j__L_Leaf5PopToWords[cJL_LEAF5_MAXPOP1 + 1] =
++{
++	 0,
++	 3,  5,  5,  7, 11, 11, 15, 15,
++	15, 23, 23, 23, 23, 23, 32, 32,
++	32, 32, 32, 47, 47, 47, 47, 47,
++	47, 47, 47, 47, 64, 64, 64, 64,
++	64, 64, 64, 64, 64, 64, 64
++};
++const uint8_t
++j__L_Leaf5Offset[cJL_LEAF5_MAXPOP1 + 1] =
++{
++	 0,
++	 2,  2,  2,  3,  4,  4,  6,  6,
++	 6,  9,  9,  9,  9,  9, 12, 12,
++	12, 12, 12, 18, 18, 18, 18, 18,
++	18, 18, 18, 18, 25, 25, 25, 25,
++	25, 25, 25, 25, 25, 25, 25
++};
++
++//	object uses 63 words
++//	cJL_LEAF6_MAXPOP1 = 36
++const uint8_t
++j__L_Leaf6PopToWords[cJL_LEAF6_MAXPOP1 + 1] =
++{
++	 0,
++	 3,  5,  7,  7, 11, 11, 15, 15,
++	23, 23, 23, 23, 23, 32, 32, 32,
++	32, 32, 47, 47, 47, 47, 47, 47,
++	47, 47, 63, 63, 63, 63, 63, 63,
++	63, 63, 63, 63
++};
++const uint8_t
++j__L_Leaf6Offset[cJL_LEAF6_MAXPOP1 + 1] =
++{
++	 0,
++	 1,  3,  3,  3,  5,  5,  6,  6,
++	10, 10, 10, 10, 10, 14, 14, 14,
++	14, 14, 20, 20, 20, 20, 20, 20,
++	20, 20, 27, 27, 27, 27, 27, 27,
++	27, 27, 27, 27
++};
++
++//	object uses 64 words
++//	cJL_LEAF7_MAXPOP1 = 34
++const uint8_t
++j__L_Leaf7PopToWords[cJL_LEAF7_MAXPOP1 + 1] =
++{
++	 0,
++	 3,  5,  7, 11, 11, 15, 15, 15,
++	23, 23, 23, 23, 32, 32, 32, 32,
++	32, 47, 47, 47, 47, 47, 47, 47,
++	47, 64, 64, 64, 64, 64, 64, 64,
++	64, 64
++};
++const uint8_t
++j__L_Leaf7Offset[cJL_LEAF7_MAXPOP1 + 1] =
++{
++	 0,
++	 1,  3,  3,  5,  5,  7,  7,  7,
++	11, 11, 11, 11, 15, 15, 15, 15,
++	15, 22, 22, 22, 22, 22, 22, 22,
++	22, 30, 30, 30, 30, 30, 30, 30,
++	30, 30
++};
++
++//	object uses 63 words
++//	cJL_LEAFW_MAXPOP1 = 31
++const uint8_t
++j__L_LeafWPopToWords[cJL_LEAFW_MAXPOP1 + 1] =
++{
++	 0,
++	 3,  5,  7, 11, 11, 15, 15, 23,
++	23, 23, 23, 32, 32, 32, 32, 47,
++	47, 47, 47, 47, 47, 47, 47, 63,
++	63, 63, 63, 63, 63, 63, 63
++};
++const uint8_t
++j__L_LeafWOffset[cJL_LEAFW_MAXPOP1 + 1] =
++{
++	 0,
++	 2,  3,  4,  6,  6,  8,  8, 12,
++	12, 12, 12, 16, 16, 16, 16, 24,
++	24, 24, 24, 24, 24, 24, 24, 32,
++	32, 32, 32, 32, 32, 32, 32
++};
++
++//	object uses 64 words
++//	cJU_BITSPERSUBEXPL = 64
++const uint8_t
++j__L_LeafVPopToWords[cJU_BITSPERSUBEXPL + 1] =
++{
++	 0,
++	 3,  3,  3,  5,  5,  7,  7, 11,
++	11, 11, 11, 15, 15, 15, 15, 23,
++	23, 23, 23, 23, 23, 23, 23, 32,
++	32, 32, 32, 32, 32, 32, 32, 32,
++	47, 47, 47, 47, 47, 47, 47, 47,
++	47, 47, 47, 47, 47, 47, 47, 64,
++	64, 64, 64, 64, 64, 64, 64, 64,
++	64, 64, 64, 64, 64, 64, 64, 64
++};
++#else // JU_32BIT
++//	object uses 64 words
++//	cJU_BITSPERSUBEXPB = 32
++const uint8_t
++j__L_BranchBJPPopToWords[cJU_BITSPERSUBEXPB + 1] =
++{
++	 0,
++	 3,  5,  7, 11, 11, 15, 15, 23,
++	23, 23, 23, 32, 32, 32, 32, 32,
++	47, 47, 47, 47, 47, 47, 47, 64,
++	64, 64, 64, 64, 64, 64, 64, 64
++};
++
++//	object uses 32 words
++//	cJL_LEAF1_MAXPOP1 = 25
++const uint8_t
++j__L_Leaf1PopToWords[cJL_LEAF1_MAXPOP1 + 1] =
++{
++	 0,
++	 3,  3,  5,  5,  7, 11, 11, 11,
++	15, 15, 15, 15, 23, 23, 23, 23,
++	23, 23, 32, 32, 32, 32, 32, 32,
++	32
++};
++const uint8_t
++j__L_Leaf1Offset[cJL_LEAF1_MAXPOP1 + 1] =
++{
++	 0,
++	 1,  1,  1,  1,  2,  3,  3,  3,
++	 3,  3,  3,  3,  5,  5,  5,  5,
++	 5,  5,  7,  7,  7,  7,  7,  7,
++	 7
++};
++
++//	object uses 63 words
++//	cJL_LEAF2_MAXPOP1 = 42
++const uint8_t
++j__L_Leaf2PopToWords[cJL_LEAF2_MAXPOP1 + 1] =
++{
++	 0,
++	 3,  3,  5,  7, 11, 11, 11, 15,
++	15, 15, 23, 23, 23, 23, 23, 32,
++	32, 32, 32, 32, 32, 47, 47, 47,
++	47, 47, 47, 47, 47, 47, 47, 63,
++	63, 63, 63, 63, 63, 63, 63, 63,
++	63, 63
++};
++const uint8_t
++j__L_Leaf2Offset[cJL_LEAF2_MAXPOP1 + 1] =
++{
++	 0,
++	 1,  1,  2,  2,  4,  4,  4,  5,
++	 5,  5,  8,  8,  8,  8,  8, 11,
++	11, 11, 11, 11, 11, 16, 16, 16,
++	16, 16, 16, 16, 16, 16, 16, 21,
++	21, 21, 21, 21, 21, 21, 21, 21,
++	21, 21
++};
++
++//	object uses 63 words
++//	cJL_LEAF3_MAXPOP1 = 36
++const uint8_t
++j__L_Leaf3PopToWords[cJL_LEAF3_MAXPOP1 + 1] =
++{
++	 0,
++	 3,  5,  7,  7, 11, 11, 15, 15,
++	23, 23, 23, 23, 23, 32, 32, 32,
++	32, 32, 47, 47, 47, 47, 47, 47,
++	47, 47, 63, 63, 63, 63, 63, 63,
++	63, 63, 63, 63
++};
++const uint8_t
++j__L_Leaf3Offset[cJL_LEAF3_MAXPOP1 + 1] =
++{
++	 0,
++	 1,  3,  3,  3,  5,  5,  6,  6,
++	10, 10, 10, 10, 10, 14, 14, 14,
++	14, 14, 20, 20, 20, 20, 20, 20,
++	20, 20, 27, 27, 27, 27, 27, 27,
++	27, 27, 27, 27
++};
++
++//	object uses 63 words
++//	cJL_LEAFW_MAXPOP1 = 31
++const uint8_t
++j__L_LeafWPopToWords[cJL_LEAFW_MAXPOP1 + 1] =
++{
++	 0,
++	 3,  5,  7, 11, 11, 15, 15, 23,
++	23, 23, 23, 32, 32, 32, 32, 47,
++	47, 47, 47, 47, 47, 47, 47, 63,
++	63, 63, 63, 63, 63, 63, 63
++};
++const uint8_t
++j__L_LeafWOffset[cJL_LEAFW_MAXPOP1 + 1] =
++{
++	 0,
++	 2,  3,  4,  6,  6,  8,  8, 12,
++	12, 12, 12, 16, 16, 16, 16, 24,
++	24, 24, 24, 24, 24, 24, 24, 32,
++	32, 32, 32, 32, 32, 32, 32
++};
++
++//	object uses 32 words
++//	cJU_BITSPERSUBEXPL = 32
++const uint8_t
++j__L_LeafVPopToWords[cJU_BITSPERSUBEXPL + 1] =
++{
++	 0,
++	 3,  3,  3,  5,  5,  7,  7, 11,
++	11, 11, 11, 15, 15, 15, 15, 23,
++	23, 23, 23, 23, 23, 23, 23, 32,
++	32, 32, 32, 32, 32, 32, 32, 32
++};
++#endif // JU_64BIT
+diff --git a/libnetdata/libjudy/src/JudyL/JudyLTablesGen.c b/libnetdata/libjudy/src/JudyL/JudyLTablesGen.c
+deleted file mode 100644
+index cb8b13f..0000000
+--- a/libnetdata/libjudy/src/JudyL/JudyLTablesGen.c
++++ /dev/null
+@@ -1,296 +0,0 @@
+-// Copyright (C) 2000 - 2002 Hewlett-Packard Company
+-//
+-// This program is free software; you can redistribute it and/or modify it
+-// under the term of the GNU Lesser General Public License as published by the
+-// Free Software Foundation; either version 2 of the License, or (at your
+-// option) any later version.
+-//
+-// This program is distributed in the hope that it will be useful, but WITHOUT
+-// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+-// FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+-// for more details.
+-//
+-// You should have received a copy of the GNU Lesser General Public License
+-// along with this program; if not, write to the Free Software Foundation,
+-// Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+-// _________________
+-
+-// @(#) $Revision: 4.37 $ $Source: /judy/src/JudyCommon/JudyTables.c $
+-
+-#ifndef JU_WIN
+-#include <unistd.h>		// unavailable on win_*.
+-#endif
+-
+-#include <stdlib.h>
+-#include <stdio.h>
+-
+-#if (! (defined(JUDY1) || defined(JUDYL)))
+-#error:  One of -DJUDY1 or -DJUDYL must be specified.
+-#endif
+-
+-#define	TERMINATOR 999		// terminator for Alloc tables
+-
+-#define BPW sizeof(Word_t)	// define bytes per word
+-
+-#ifdef JUDY1
+-#include "Judy1.h"
+-#else
+-#include "JudyL.h"
+-#endif
+-    
+-FILE *fd;
+-
+-// Definitions come from header files Judy1.h and JudyL.h:
+-
+-int AllocSizes[] = ALLOCSIZES;
+-
+-#define	ROUNDUP(BYTES,BPW,OFFSETW) \
+-	((((BYTES) + (BPW) - 1) / (BPW)) + (OFFSETW))
+-
+-
+-// ****************************************************************************
+-// G E N   T A B L E
+-//
+-// Note:  "const" is required for newer compilers.
+-
+-FUNCTION void GenTable(
+-    const char * TableName,	// name of table string
+-    const char * TableSize,	// dimentioned size string
+-    int		 IndexBytes,	// bytes per Index
+-    int		 LeafSize,	// number elements in object
+-    int		 ValueBytes,	// bytes per Value
+-    int		 OffsetWords)	// 1 for LEAFW
+-{
+-    int *	 PAllocSizes = AllocSizes;
+-    int		 OWord;
+-    int		 CurWord;
+-    int		 IWord;
+-    int		 ii;
+-    int		 BytesOfIndex;
+-    int		 BytesOfObject;
+-    int		 Index;
+-    int		 LastWords;
+-    int		 Words [1000] = { 0 };
+-    int		 Offset[1000] = { 0 };
+-    int		 MaxWords;
+-
+-    MaxWords  =	ROUNDUP((IndexBytes + ValueBytes) * LeafSize, BPW, OffsetWords);
+-    Words[0]  = 0;
+-    Offset[0] = 0;
+-    CurWord   = TERMINATOR;
+-
+-// Walk through all number of Indexes in table:
+-
+-    for (Index = 1; /* null */; ++Index)
+-    {
+-
+-// Calculate byte required for next size:
+-
+-	BytesOfIndex  = IndexBytes * Index;
+-	BytesOfObject = (IndexBytes + ValueBytes) * Index;
+-
+-// Round up and calculate words required for next size:
+-
+-        OWord =	ROUNDUP(BytesOfObject, BPW, OffsetWords);
+-        IWord =	ROUNDUP(BytesOfIndex,  BPW, OffsetWords);
+-
+-// Root-level leaves of population of 1 and 2 do not have the 1 word offset:
+-
+-// Save minimum value of offset:
+-
+-        Offset[Index] = IWord;
+-
+-// Round up to next available size of words:
+-
+-	while (OWord > *PAllocSizes) PAllocSizes++;
+-
+-        if (Index == LeafSize)
+-        {
+-	    CurWord = Words[Index] = OWord;
+-            break;
+-        }
+-//      end of available sizes ?
+-
+-	if (*PAllocSizes == TERMINATOR)
+-        {
+-            fprintf(stderr, "BUG, in %sPopToWords, sizes not big enough for object\n", TableName);
+-	    exit(1);
+-        }
+-
+-// Save words required and last word:
+-
+-        if (*PAllocSizes < MaxWords) { CurWord = Words[Index] = *PAllocSizes; }
+-        else                         { CurWord = Words[Index] = MaxWords; }
+-
+-    } // for each index
+-
+-    LastWords = TERMINATOR;
+-
+-// Round up to largest size in each group of malloc sizes:
+-
+-    for (ii = LeafSize; ii > 0; ii--)
+-    {
+-        if (LastWords > (Words[ii] - ii)) LastWords = Offset[ii];
+-        else                              Offset[ii] = LastWords;
+-    }
+-
+-// Print the PopToWords[] table:
+-
+-    fprintf(fd,"\n//\tobject uses %d words\n", CurWord);
+-    fprintf(fd,"//\t%s = %d\n", TableSize, LeafSize);
+-
+-    fprintf(fd,"const uint8_t\n");
+-    fprintf(fd,"%sPopToWords[%s + 1] =\n", TableName, TableSize);
+-    fprintf(fd,"{\n\t 0,");
+-
+-    for (ii = 1; ii <= LeafSize; ii++)
+-    {
+-
+-// 8 columns per line, starting with 1:
+-
+-	if ((ii % 8) == 1) fprintf(fd,"\n\t");
+-
+-	fprintf(fd,"%2d", Words[ii]);
+-
+-// If not last number place comma:
+-
+-	if (ii != LeafSize) fprintf(fd,", ");
+-    }
+-    fprintf(fd,"\n};\n");
+-
+-// Print the Offset table if needed:
+-
+-    if (! ValueBytes) return;
+-
+-    fprintf(fd,"const uint8_t\n");
+-    fprintf(fd,"%sOffset[%s + 1] =\n", TableName, TableSize);
+-    fprintf(fd,"{\n");
+-    fprintf(fd,"\t 0,");
+-
+-    for (ii = 1; ii <= LeafSize; ii++)
+-    {
+-        if ((ii % 8) == 1) fprintf(fd,"\n\t");
+-
+-	fprintf(fd,"%2d", Offset[ii]);
+-
+-	if (ii != LeafSize) fprintf(fd,", ");
+-    }
+-    fprintf(fd,"\n};\n");
+-
+-} // GenTable()
+-
+-
+-// ****************************************************************************
+-// M A I N
+-
+-FUNCTION int main()
+-{
+-    int ii;
+-
+-#ifdef JUDY1
+-    char *fname = "Judy1Tables.c";
+-#else
+-    char *fname = "JudyLTables.c";
+-#endif
+-
+-    if ((fd = fopen(fname, "w")) == NULL){
+-	perror("FATAL ERROR: could not write to Judy[1L]Tables.c file\n");
+-	return (-1);
+-    }
+-
+-
+-    fprintf(fd,"// @(#) From generation tool: $Revision: 4.37 $ $Source: /judy/src/JudyCommon/JudyTables.c $\n");
+-    fprintf(fd,"//\n\n");
+-
+-
+-// ================================ Judy1 =================================
+-#ifdef JUDY1
+-
+-    fprintf(fd,"#include \"Judy1.h\"\n");
+-
+-    fprintf(fd,"// Leave the malloc() sizes readable in the binary (via "
+-	   "strings(1)):\n");
+-    fprintf(fd,"const char * Judy1MallocSizes = \"Judy1MallocSizes =");
+-
+-    for (ii = 0; AllocSizes[ii] != TERMINATOR; ii++)
+-	fprintf(fd," %d,", AllocSizes[ii]);
+-
+-#ifndef JU_64BIT
+-    fprintf(fd," Leaf1 = %d\";\n\n", cJ1_LEAF1_MAXPOP1);
+-#else
+-    fprintf(fd,"\";\n\n");			// no Leaf1 in this case.
+-#endif
+-
+-// ================================ 32 bit ================================
+-#ifndef JU_64BIT
+-
+-    GenTable("j__1_BranchBJP","cJU_BITSPERSUBEXPB", 8, cJU_BITSPERSUBEXPB,0,0);
+-
+-    GenTable("j__1_Leaf1", "cJ1_LEAF1_MAXPOP1", 1, cJ1_LEAF1_MAXPOP1, 0, 0);
+-    GenTable("j__1_Leaf2", "cJ1_LEAF2_MAXPOP1", 2, cJ1_LEAF2_MAXPOP1, 0, 0);
+-    GenTable("j__1_Leaf3", "cJ1_LEAF3_MAXPOP1", 3, cJ1_LEAF3_MAXPOP1, 0, 0);
+-    GenTable("j__1_LeafW", "cJ1_LEAFW_MAXPOP1", 4, cJ1_LEAFW_MAXPOP1, 0, 1);
+-
+-#endif
+-
+-// ================================ 64 bit ================================
+-#ifdef JU_64BIT
+-    GenTable("j__1_BranchBJP","cJU_BITSPERSUBEXPB",16, cJU_BITSPERSUBEXPB,0,0);
+-
+-    GenTable("j__1_Leaf2", "cJ1_LEAF2_MAXPOP1", 2, cJ1_LEAF2_MAXPOP1, 0, 0);
+-    GenTable("j__1_Leaf3", "cJ1_LEAF3_MAXPOP1", 3, cJ1_LEAF3_MAXPOP1, 0, 0);
+-    GenTable("j__1_Leaf4", "cJ1_LEAF4_MAXPOP1", 4, cJ1_LEAF4_MAXPOP1, 0, 0);
+-    GenTable("j__1_Leaf5", "cJ1_LEAF5_MAXPOP1", 5, cJ1_LEAF5_MAXPOP1, 0, 0);
+-    GenTable("j__1_Leaf6", "cJ1_LEAF6_MAXPOP1", 6, cJ1_LEAF6_MAXPOP1, 0, 0);
+-    GenTable("j__1_Leaf7", "cJ1_LEAF7_MAXPOP1", 7, cJ1_LEAF7_MAXPOP1, 0, 0);
+-    GenTable("j__1_LeafW", "cJ1_LEAFW_MAXPOP1", 8, cJ1_LEAFW_MAXPOP1, 0, 1);
+-#endif
+-#endif // JUDY1
+-
+-
+-// ================================ JudyL =================================
+-#ifdef JUDYL
+-
+-    fprintf(fd,"#include \"JudyL.h\"\n");
+-
+-    fprintf(fd,"// Leave the malloc() sizes readable in the binary (via "
+-	   "strings(1)):\n");
+-    fprintf(fd,"const char * JudyLMallocSizes = \"JudyLMallocSizes =");
+-
+-    for (ii = 0; AllocSizes[ii] != TERMINATOR; ii++)
+-	fprintf(fd," %d,", AllocSizes[ii]);
+-
+-    fprintf(fd," Leaf1 = %ld\";\n\n", (Word_t)cJL_LEAF1_MAXPOP1);
+-
+-#ifndef JU_64BIT
+-// ================================ 32 bit ================================
+-    GenTable("j__L_BranchBJP","cJU_BITSPERSUBEXPB", 8, cJU_BITSPERSUBEXPB, 0,0);
+-
+-    GenTable("j__L_Leaf1", "cJL_LEAF1_MAXPOP1",  1, cJL_LEAF1_MAXPOP1, BPW,0);
+-    GenTable("j__L_Leaf2", "cJL_LEAF2_MAXPOP1",  2, cJL_LEAF2_MAXPOP1, BPW,0);
+-    GenTable("j__L_Leaf3", "cJL_LEAF3_MAXPOP1",  3, cJL_LEAF3_MAXPOP1, BPW,0);
+-    GenTable("j__L_LeafW", "cJL_LEAFW_MAXPOP1",  4, cJL_LEAFW_MAXPOP1, BPW,1);
+-    GenTable("j__L_LeafV", "cJU_BITSPERSUBEXPL", 4, cJU_BITSPERSUBEXPL,  0,0);
+-#endif // 32 BIT
+-
+-#ifdef JU_64BIT
+-// ================================ 64 bit ================================
+-    GenTable("j__L_BranchBJP","cJU_BITSPERSUBEXPB",16, cJU_BITSPERSUBEXPB, 0,0);
+-
+-    GenTable("j__L_Leaf1", "cJL_LEAF1_MAXPOP1",  1, cJL_LEAF1_MAXPOP1,  BPW,0);
+-    GenTable("j__L_Leaf2", "cJL_LEAF2_MAXPOP1",  2, cJL_LEAF2_MAXPOP1,  BPW,0);
+-    GenTable("j__L_Leaf3", "cJL_LEAF3_MAXPOP1",  3, cJL_LEAF3_MAXPOP1,  BPW,0);
+-    GenTable("j__L_Leaf4", "cJL_LEAF4_MAXPOP1",  4, cJL_LEAF4_MAXPOP1,  BPW,0);
+-    GenTable("j__L_Leaf5", "cJL_LEAF5_MAXPOP1",  5, cJL_LEAF5_MAXPOP1,  BPW,0);
+-    GenTable("j__L_Leaf6", "cJL_LEAF6_MAXPOP1",  6, cJL_LEAF6_MAXPOP1,  BPW,0);
+-    GenTable("j__L_Leaf7", "cJL_LEAF7_MAXPOP1",  7, cJL_LEAF7_MAXPOP1,  BPW,0);
+-    GenTable("j__L_LeafW", "cJL_LEAFW_MAXPOP1",  8, cJL_LEAFW_MAXPOP1,  BPW,1);
+-    GenTable("j__L_LeafV", "cJU_BITSPERSUBEXPL", 8, cJU_BITSPERSUBEXPL, 0,0);
+-#endif // 64 BIT
+-
+-#endif // JUDYL
+-    fclose(fd);
+-
+-    return(0);
+-
+-} // main()
+-- 
+2.51.0
+
