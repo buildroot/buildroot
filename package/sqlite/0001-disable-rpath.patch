@@ -1,0 +1,59 @@
+Add the --disable-rpath configure script flag to address
+
+Upstream: https://sqlite.org/src/info/a59d9bb25e
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+
+Index: autosetup/sqlite-config.tcl
+==================================================================
+--- a/autosetup/sqlite-config.tcl
++++ b/autosetup/sqlite-config.tcl
+@@ -334,12 +334,12 @@
+         # canonical build!
+         static-shell=1
+           => {Link the sqlite3 shell app against the DLL instead of embedding sqlite3.c}
+       }
+       {canonical autoconf} {
+-        # A potential TODO without a current use case:
+-        #rpath=1 => {Disable use of the rpath linker flag}
++        rpath=1 => {Disable use of the rpath linker flag}
++
+         # soname: https://sqlite.org/src/forumpost/5a3b44f510df8ded
+         soname:=legacy
+           => {SONAME for libsqlite3.so. "none", or not using this flag, sets no
+               soname. "legacy" sets it to its historical value of
+               libsqlite3.so.0.  A value matching the glob "libsqlite3.*" sets
+@@ -2138,25 +2138,25 @@
+ }
+ 
+ ########################################################################
+ # Handle the --enable/disable-rpath flag.
+ proc sqlite-handle-rpath {} {
+-  proj-check-rpath
+   # autosetup/cc-shared.tcl sets the rpath flag definition in
+   # [get-define SH_LINKRPATH], but it does so on a per-platform basis
+   # rather than as a compiler check. Though we should do a proper
+   # compiler check (as proj-check-rpath does), we may want to consider
+   # adopting its approach of clearing the rpath flags for environments
+   # for which sqlite-env-is-unix-on-windows returns a non-empty
+   # string.
+ 
+-#  if {[proj-opt-truthy rpath]} {
+-#    proj-check-rpath
+-#  } else {
+-#    msg-result "Disabling use of rpath."
+-#    define LDFLAGS_RPATH ""
+-#  }
++  # https://sqlite.org/forum/forumpost/13cac3b56516f849
++  if {[proj-opt-truthy rpath]} {
++    proj-check-rpath
++  } else {
++    msg-result "Disabling use of rpath."
++    define LDFLAGS_RPATH ""
++  }
+ }
+ 
+ ########################################################################
+ # If the --dump-defines configure flag is provided then emit a list of
+ # all [define] values to config.defines.txt, else do nothing.
+
