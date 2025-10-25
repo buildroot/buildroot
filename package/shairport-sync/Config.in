@@ -26,6 +26,19 @@ config BR2_PACKAGE_SHAIRPORT_SYNC_CONVOLUTION
 	help
 	  Enable audio DSP convolution support.
 
+config BR2_PACKAGE_SHAIRPORT_SYNC_AIRPLAY2
+	bool "AirPlay2 support"
+	select BR2_PACKAGE_NQPTP # runtime
+	select BR2_PACKAGE_LIBPLIST
+	select BR2_PACKAGE_LIBSODIUM
+	select BR2_PACKAGE_LIBGCRYPT
+	select BR2_PACKAGE_FFMPEG
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
+	help
+	  Enable support for the more modern AirPlay2 protocol.
+	  This will also require ffmpeg and many other libraries.
+
 config BR2_PACKAGE_SHAIRPORT_SYNC_DBUS
 	bool "dbus support"
 	depends on BR2_USE_WCHAR # libglib2

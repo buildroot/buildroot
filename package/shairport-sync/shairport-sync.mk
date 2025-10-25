@@ -53,6 +53,14 @@ else
 SHAIRPORT_SYNC_CONF_OPTS += --without-convolution
 endif
 
+ifeq ($(BR2_PACKAGE_SHAIRPORT_SYNC_AIRPLAY2),y)
+# host-vim needed for xxd
+SHAIRPORT_SYNC_DEPENDENCIES += libplist libsodium libgcrypt ffmpeg util-linux host-vim
+SHAIRPORT_SYNC_CONF_OPTS += --with-airplay-2
+else
+SHAIRPORT_SYNC_CONF_OPTS += --without-airplay-2
+endif
+
 ifeq ($(BR2_PACKAGE_SHAIRPORT_SYNC_DBUS),y)
 SHAIRPORT_SYNC_DEPENDENCIES += libglib2
 SHAIRPORT_SYNC_CONF_OPTS += --with-dbus-interface --with-mpris-interface
