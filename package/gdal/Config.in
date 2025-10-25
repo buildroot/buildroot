@@ -14,6 +14,7 @@ config BR2_PACKAGE_GDAL
 	select BR2_PACKAGE_LIBPNG
 	select BR2_PACKAGE_PROJ
 	select BR2_PACKAGE_QHULL
+	select BR2_PACKAGE_SQLITE_ENABLE_RTREE if BR2_PACKAGE_SQLITE
 	select BR2_PACKAGE_ZLIB
 	help
 	  GDAL is a translator library for raster and vector geospatial
