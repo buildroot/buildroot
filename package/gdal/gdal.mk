@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GDAL_VERSION = 3.8.2
+GDAL_VERSION = 3.11.4
 GDAL_SITE = https://download.osgeo.org/gdal/$(GDAL_VERSION)
 GDAL_SOURCE = gdal-$(GDAL_VERSION).tar.xz
 GDAL_LICENSE = Apache-2.0, ISC, MIT, many others
