@@ -1,0 +1,83 @@
+From 2d0718a4f2001c857d9af24398c68d676a98a3ca Mon Sep 17 00:00:00 2001
+From: Gong Zhile <gongzl.oerv@isrc.iscas.ac.cn>
+Date: Wed, 22 Oct 2025 18:14:30 +0800
+Subject: [PATCH] Fix qsort_r preprocessor for musl and FreeBSD
+
+The original mentioned qsort_r signature difference now only exists in DragonFly
+BSD & MacOS. However, the preprocessor also broke the compliation on musl+linux
+and FreeBSD, leading the compilation error on buildroot.
+
+musl: https://git.musl-libc.org/cgit/musl/commit/?id=b76f37fd5625d038141b52184956fb4b7838e9a5
+freebsd, dragonfly, macos: QSORT(3)
+
+FreeBSD and musl use the same GNU-like signature.
+
+Upstream: https://github.com/openSUSE/libsolv/commit/2d0718a4f2001c857d9af24398c68d676a98a3ca
+
+Signed-off-by: Gong Zhile <gongzl.oerv@isrc.iscas.ac.cn>
+[Bernd: added Upstream: tag]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/util.c | 35 +++++++++++++++++++----------------
+ 1 file changed, 19 insertions(+), 16 deletions(-)
+
+diff --git a/src/util.c b/src/util.c
+index 72426e09..a60ed3da 100644
+--- a/src/util.c
++++ b/src/util.c
+@@ -154,26 +154,14 @@ solv_setcloexec(int fd, int state)
+   #endif
+ }
+ 
+-/* bsd's qsort_r has different arguments, so we define our
++#if defined(HAVE_QSORT_R) || defined(HAVE___QSORT_R)
++#if (defined(__APPLE__) || defined(__DragonFly__)) && defined(HAVE_QSORT_R)
++
++/* MacOS and DragonFly have qsort_r with different arguments, so we define our
+    own version in case we need to do some clever mapping
+ 
+    see also: http://sources.redhat.com/ml/libc-alpha/2008-12/msg00003.html
+  */
+-#if (defined(__GLIBC__) || defined(__NEWLIB__)) && (defined(HAVE_QSORT_R) || defined(HAVE___QSORT_R))
+-
+-void
+-solv_sort(void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *, void *), void *compard)
+-{
+-# if defined(HAVE_QSORT_R)
+-  qsort_r(base, nmemb, size, compar, compard);
+-# else
+-  /* backported for SLE10-SP2 */
+-  __qsort_r(base, nmemb, size, compar, compard);
+-# endif
+-
+-}
+-
+-#elif defined(HAVE_QSORT_R) /* not glibc, but has qsort_r() */
+ 
+ struct solv_sort_data {
+   int (*compar)(const void *, const void *, void *);
+@@ -196,6 +184,21 @@ solv_sort(void *base, size_t nmemb, size_t size, int (*compar)(const void *, con
+   qsort_r(base, nmemb, size, &d, solv_sort_helper);
+ }
+ 
++#else
++
++void
++solv_sort(void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *, void *), void *compard)
++{
++# if defined(HAVE_QSORT_R)
++  qsort_r(base, nmemb, size, compar, compard);
++# else
++  /* backported for SLE10-SP2 */
++  __qsort_r(base, nmemb, size, compar, compard);
++# endif
++
++}
++
++#endif
+ #else /* not glibc and no qsort_r() */
+ /* use own version of qsort if none available */
+ #include "qsort_r.c"
+-- 
+2.47.3
+
