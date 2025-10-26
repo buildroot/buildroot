@@ -4,11 +4,15 @@
 #
 ################################################################################
 
-LIBICONV_VERSION = 1.15
+LIBICONV_VERSION = 1.18
 LIBICONV_SITE = $(BR2_GNU_MIRROR)/libiconv
 LIBICONV_INSTALL_STAGING = YES
-LIBICONV_LICENSE = GPL-3.0+ (iconv program), LGPL-2.0+ (library)
+LIBICONV_LICENSE = GPL-3.0+ (iconv program), LGPL-2.1+ (library)
 LIBICONV_LICENSE_FILES = COPYING COPYING.LIB
+
+# libiconv uses a patched version of libtool 2.5.4
+# we use a package-specific patch instead
+LIBICONV_LIBTOOL_PATCH = NO
 
 ifeq ($(BR2_PACKAGE_LIBICONV_EXTRA_ENCODINGS),y)
 LIBICONV_CONF_OPTS += --enable-extra-encodings
