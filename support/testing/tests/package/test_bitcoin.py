@@ -1,3 +1,4 @@
+import json
 import os
 import time
 
@@ -47,19 +48,25 @@ class TestBitcoin(infra.basetest.BRTest):
         self.create_btc_wallet(wallet_name)
         return self.gen_btc_address(wallet_name)
 
+    def get_wallet_balances(self, wallet):
+        """Return the balances of a wallet."""
+        cmd = f"{self.cli_cmd} -rpcwallet={wallet} getbalances"
+        out, ret = self.emulator.run(cmd)
+        self.assertEqual(ret, 0)
+        balances = json.loads("".join(out))
+        return balances
+
     def get_wallet_balance(self, wallet):
         """Return the (confirmed) balance of a wallet."""
-        cmd = f"{self.cli_cmd} -rpcwallet={wallet} getbalance"
-        out, ret = self.emulator.run(cmd)
-        self.assertEqual(ret, 0)
-        return float(out[0])
+        balances = self.get_wallet_balances(wallet)
+        balance = balances["mine"]["trusted"]
+        return balance
 
     def get_wallet_unconfirmed_balance(self, wallet):
-        """Return the unconfirmed balance of a wallet."""
-        cmd = f"{self.cli_cmd} -rpcwallet={wallet} getunconfirmedbalance"
-        out, ret = self.emulator.run(cmd)
-        self.assertEqual(ret, 0)
-        return float(out[0])
+        """Return the untrusted pending (unconfirmed) balance of a wallet."""
+        balances = self.get_wallet_balances(wallet)
+        untrusted_balance = balances["mine"]["untrusted_pending"]
+        return untrusted_balance
 
     def get_block_count(self):
         """Returns the height of the most-work fully-validated chain."""
