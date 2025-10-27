@@ -25,6 +25,9 @@ endif
 # 0001-gstring-Fix-overflow-check-when-expanding-the-string.patch
 LIBGLIB2_IGNORE_CVES += CVE-2025-6052
 
+# 0002-gfileutils-fix-computation-of-temporary-file-name.patch
+LIBGLIB2_IGNORE_CVES += CVE-2025-7039
+
 HOST_LIBGLIB2_CONF_OPTS = \
 	-Ddtrace=false \
 	-Dglib_debug=disabled \
