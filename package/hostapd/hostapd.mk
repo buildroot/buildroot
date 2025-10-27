@@ -16,6 +16,10 @@ HOSTAPD_LICENSE_FILES = README
 HOSTAPD_CPE_ID_VENDOR = w1.fi
 HOSTAPD_SELINUX_MODULES = hostapd
 
+# 0001-RADIUS-Drop-pending-request-only-when-accepting-the-response.patch
+# 0002-RADIUS-Fix-pending-request-dropping.patch
+HOSTAPD_IGNORE_CVES += CVE-2025-24912
+
 HOSTAPD_CONFIG_ENABLE = \
 	CONFIG_INTERNAL_LIBTOMMATH \
 	CONFIG_DEBUG_FILE \
