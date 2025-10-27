@@ -1,0 +1,32 @@
+From 55c230d61ece7213506f1dccac76c21aefbade9e Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Mon, 27 Oct 2025 19:18:13 +0100
+Subject: [PATCH] refclock_gpsd: add build fix for gcc => 14.x
+
+../../ntpd/refclock_gpsd.c:2076:14: error: implicit declaration of
+ function 'strptime'; did you mean 'strftime'?
+ [-Wimplicit-function-declaration]
+
+Upstream: https://gitlab.com/NTPsec/ntpsec/-/merge_requests/1484
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ ntpd/refclock_gpsd.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/ntpd/refclock_gpsd.c b/ntpd/refclock_gpsd.c
+index a4a6f7095..a3995896a 100644
+--- a/ntpd/refclock_gpsd.c
++++ b/ntpd/refclock_gpsd.c
+@@ -59,6 +59,8 @@
+  */
+ 
+ 
++#define _XOPEN_SOURCE
++#define _DEFAULT_SOURCE
+ #include "config.h"
+ #include "ntp.h"
+ #include "ntp_types.h"
+-- 
+2.47.3
+
