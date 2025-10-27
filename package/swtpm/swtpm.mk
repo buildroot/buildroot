@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SWTPM_VERSION = 0.8.2
+SWTPM_VERSION = 0.10.1
 SWTPM_SITE = $(call github,stefanberger,swtpm,v$(SWTPM_VERSION))
 SWTPM_LICENSE = BSD-4-Clause
 SWTPM_LICENSE_FILES = LICENSE
