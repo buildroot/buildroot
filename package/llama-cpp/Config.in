@@ -1,0 +1,51 @@
+config BR2_PACKAGE_LLAMA_CPP_ARCH_SUPPORTS
+	bool
+	default y
+	depends on !BR2_s390x_z13 # ggml requires z14 or higher
+
+config BR2_PACKAGE_LLAMA_CPP
+	bool "llama.cpp"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_PACKAGE_LLAMA_CPP_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_9
+	# llama.cpp needs libexecinfo when built with uclibc,
+	# and libexecinfo needs dynamic libraries.
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC \
+		|| (BR2_TOOLCHAIN_USES_UCLIBC && !BR2_STATIC_LIBS)
+	depends on BR2_USE_WCHAR
+	select BR2_PACKAGE_LIBEXECINFO if BR2_TOOLCHAIN_USES_UCLIBC
+	help
+	  LLM inference in C/C++
+
+	  https://github.com/ggml-org/llama.cpp
+
+if BR2_PACKAGE_LLAMA_CPP
+
+config BR2_PACKAGE_LLAMA_CPP_TOOLS
+	bool "Enable tools"
+	help
+	  Build CLI tools like llama-cli, llama-bench, etc.
+
+config BR2_PACKAGE_LLAMA_CPP_SERVER
+	bool "Enable server"
+	help
+	  Build OpenAI API-compatible web server, llama-server.
+
+config BR2_PACKAGE_LLAMA_CPP_VULKAN
+	bool "Vulkan support"
+	depends on !BR2_ARM_CPU_ARMV5
+	depends on !BR2_STATIC_LIBS # vulkan-loader
+	select BR2_PACKAGE_VULKAN_LOADER
+	help
+	  Enable Vulkan backend for GPU acceleration.
+
+endif
+
+comment "llama-cpp needs a toolchain w/ C++, wchar, threads, and gcc >= 9"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_USE_WCHAR \
+		|| !BR2_TOOLCHAIN_HAS_THREADS \
+		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_9
+
+comment "llama-cpp needs a uclibc toolchain w/ dynamic library"
+	depends on BR2_TOOLCHAIN_USES_UCLIBC && BR2_STATIC_LIBS
