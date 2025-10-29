@@ -1,0 +1,85 @@
+From 81992efb40b37cc893c55575a83cdd1cec1fde2a Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Wed, 29 Oct 2025 21:45:09 +0100
+Subject: [PATCH] Revert "cmake: Fix installation directories in
+ libxml2-config.cmake"
+
+This reverts commit 75dde50b20215a2a3a445b62f36a67c8ed337cab.
+
+Upstream: https://gitlab.gnome.org/GNOME/libxml2/-/issues/898#note_2452864
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.ac            | 11 -----------
+ libxml2-config.cmake.in | 11 +++++++----
+ meson.build             |  3 ---
+ 3 files changed, 7 insertions(+), 18 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 4eb629bb..150e06eb 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1006,17 +1006,6 @@ AC_SUBST(XML_PRIVATE_LIBS)
+ AC_SUBST(XML_PRIVATE_CFLAGS)
+ AC_SUBST(XML_INCLUDEDIR)
+ 
+-# for libxml2-config.cmake.in
+-AX_RECURSIVE_EVAL(["$bindir"], [INSTALL_BINDIR])
+-AX_RECURSIVE_EVAL(["$includedir"], [INSTALL_INCLUDEDIR])
+-AX_RECURSIVE_EVAL(["$libdir"], [INSTALL_LIBDIR])
+-AC_SUBST(INSTALL_BINDIR)
+-AC_SUBST(INSTALL_INCLUDEDIR)
+-AC_SUBST(INSTALL_LIBDIR)
+-AM_SUBST_NOTMAKE(INSTALL_BINDIR)
+-AM_SUBST_NOTMAKE(INSTALL_INCLUDEDIR)
+-AM_SUBST_NOTMAKE(INSTALL_LIBDIR)
+-
+ AX_RECURSIVE_EVAL(["$sysconfdir"], [XML_SYSCONFDIR])
+ AC_DEFINE_UNQUOTED([XML_SYSCONFDIR], ["$XML_SYSCONFDIR"],
+                    [System configuration directory (/etc)])
+diff --git a/libxml2-config.cmake.in b/libxml2-config.cmake.in
+index ff6433fa..b775cfee 100644
+--- a/libxml2-config.cmake.in
++++ b/libxml2-config.cmake.in
+@@ -24,17 +24,20 @@
+ #   LibXml2::LibXml2          - the LibXml2 library
+ #   LibXml2::xmllint          - the xmllint command-line executable
+ 
++get_filename_component(_libxml2_rootdir ${CMAKE_CURRENT_LIST_DIR}/../../../ ABSOLUTE)
++
+ set(LIBXML2_VERSION_MAJOR  @LIBXML_MAJOR_VERSION@)
+ set(LIBXML2_VERSION_MINOR  @LIBXML_MINOR_VERSION@)
+ set(LIBXML2_VERSION_MICRO  @LIBXML_MICRO_VERSION@)
+ set(LIBXML2_VERSION_STRING "@VERSION@")
+ set(LIBXML2_DEFINITIONS    "@XML_CFLAGS@")
+-set(LIBXML2_INCLUDE_DIR    @INSTALL_INCLUDEDIR@/libxml2)
+-set(LIBXML2_LIBRARY_DIR    @INSTALL_LIBDIR@)
++set(LIBXML2_INSTALL_PREFIX ${_libxml2_rootdir})
++set(LIBXML2_INCLUDE_DIR    ${_libxml2_rootdir}/include/libxml2)
++set(LIBXML2_LIBRARY_DIR    ${_libxml2_rootdir}/lib)
+ 
+ find_library(LIBXML2_LIBRARY NAMES xml2 HINTS ${LIBXML2_LIBRARY_DIR} NO_DEFAULT_PATH)
+-find_program(LIBXML2_XMLCATALOG_EXECUTABLE NAMES xmlcatalog HINTS @INSTALL_BINDIR@ NO_DEFAULT_PATH)
+-find_program(LIBXML2_XMLLINT_EXECUTABLE NAMES xmllint HINTS @INSTALL_BINDIR@ NO_DEFAULT_PATH)
++find_program(LIBXML2_XMLCATALOG_EXECUTABLE NAMES xmlcatalog HINTS ${_libxml2_rootdir}/bin NO_DEFAULT_PATH)
++find_program(LIBXML2_XMLLINT_EXECUTABLE NAMES xmllint HINTS ${_libxml2_rootdir}/bin NO_DEFAULT_PATH)
+ 
+ set(LIBXML2_LIBRARIES ${LIBXML2_LIBRARY})
+ set(LIBXML2_INCLUDE_DIRS ${LIBXML2_INCLUDE_DIR})
+diff --git a/meson.build b/meson.build
+index 31c73b62..8728852c 100644
+--- a/meson.build
++++ b/meson.build
+@@ -577,9 +577,6 @@ config_cmake = configuration_data()
+ config_cmake.set('LIBXML_MAJOR_VERSION', v_maj)
+ config_cmake.set('LIBXML_MINOR_VERSION', v_min)
+ config_cmake.set('LIBXML_MICRO_VERSION', v_mic)
+-config_cmake.set('INSTALL_BINDIR', dir_bin)
+-config_cmake.set('INSTALL_INCLUDEDIR', dir_include)
+-config_cmake.set('INSTALL_LIBDIR', dir_lib)
+ config_cmake.set('VERSION', meson.project_version())
+ config_cmake.set10('BUILD_SHARED_LIBS',
+                    get_option('default_library') != 'static')
+-- 
+2.47.3
+
