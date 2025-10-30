@@ -509,9 +509,9 @@ not and can not work as people would expect it should:
 * +LIBFOO_IGNORE_CVES+ is a space-separated list of CVEs that tells
   Buildroot CVE tracking tools which CVEs should be ignored for this
   package. This is typically used when the CVE is fixed by a patch in
-  the package, or when the CVE for some reason does not affect the
-  Buildroot package. A Makefile comment must always precede the
-  addition of a CVE to this variable. Example:
+  the package (see xref:additional-patch-documentation[]), or when the CVE for
+  some reason does not affect the Buildroot package. A Makefile comment must
+  always precede the addition of a CVE to this variable. Example:
 +
 ----
 # 0001-fix-cve-2020-12345.patch
