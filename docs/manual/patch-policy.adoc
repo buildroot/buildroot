@@ -144,6 +144,7 @@ AC_PROG_MAKE_SET
 +AM_CONDITIONAL([CXX_WORKS], [test "x$rw_cv_prog_cxx_works" = "xyes"])
 ----
 
+[[additional-patch-documentation]]
 === Additional patch documentation
 
 Ideally, all patches should document an upstream patch or patch submission, when
@@ -178,3 +179,13 @@ Upstream: N/A <additional information about why patch is Buildroot specific>
 
 Adding this documentation helps streamline the patch review process during
 package version updates.
+
+If the patch addresses one or multiple vulnerabilities, list each identifier on
+a separate line with a +CVE+ trailer.
+
+----
+CVE: <vulnerability identifier>
+----
+
+If multiple patches address the same vulnerability, reference the vulnerability
+in every patch.
