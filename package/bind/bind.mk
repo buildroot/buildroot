@@ -109,16 +109,6 @@ else
 BIND_CONF_OPTS += --with-readline=no
 endif
 
-ifeq ($(BR2_STATIC_LIBS),y)
-BIND_CONF_OPTS += \
-	--without-dlopen \
-	--without-libtool
-else
-BIND_CONF_OPTS += \
-	--with-dlopen \
-	--with-libtool
-endif
-
 define BIND_TARGET_REMOVE_SERVER
 	rm -rf $(addprefix $(TARGET_DIR)/usr/sbin/, $(BIND_TARGET_SERVER_SBIN))
 endef
