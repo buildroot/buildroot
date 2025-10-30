@@ -1,0 +1,32 @@
+From 41ba7031ca4852739dd1f66102d34e4a98490906 Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Tue, 1 Jul 2025 15:41:56 +0200
+Subject: [PATCH] setproject: Fix openWRT build
+
+basename() needs libgen.h include in openWRT build environment. Add it.
+
+Reported-by: "W. Michael Petullo" <mike@flyn.org>
+Signed-off-by: Jan Kara <jack@suse.cz>
+
+Upstream: https://sourceforge.net/p/linuxquota/code/ci/41ba7031ca4852739dd1f66102d34e4a98490906/
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ setproject.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/setproject.c b/setproject.c
+index e688dcd..4308435 100644
+--- a/setproject.c
++++ b/setproject.c
+@@ -13,6 +13,7 @@
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ #include <unistd.h>
++#include <libgen.h>
+ 
+ #include <linux/fs.h>
+ 
+-- 
+2.47.3
+
