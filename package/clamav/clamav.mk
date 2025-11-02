@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CLAMAV_VERSION = 1.4.3
+CLAMAV_VERSION = 1.5.1
 CLAMAV_SITE = https://www.clamav.net/downloads/production
 CLAMAV_LICENSE = GPL-2.0
 CLAMAV_LICENSE_FILES = \
@@ -45,6 +45,9 @@ CLAMAV_DEPENDENCIES += musl-fts
 CLAMAV_LIBS += -lfts
 endif
 
+CLAMAV_MAKE_OPTS = \
+	CROSS_COMPILE=$(TARGET_CROSS)
+
 CLAMAV_CONF_OPTS = \
 	-DCMAKE_EXE_LINKER_FLAGS="$(CLAMAV_LIBS)" \
 	-DCMAKE_SKIP_INSTALL_RPATH=ON \
@@ -54,6 +57,7 @@ CLAMAV_CONF_OPTS = \
 	-DENABLE_TESTS=OFF \
 	-DHAVE_SYSTEM_LFS_FTS=ON \
 	-DRUST_COMPILER_TARGET=$(RUSTC_TARGET_NAME) \
+	-DCARGO_HOME=$(HOST_DIR)/share/cargo \
 	-Dtest_run_result=ON \
 	-Dtest_run_result__TRYRUN_OUTPUT=ON
 
