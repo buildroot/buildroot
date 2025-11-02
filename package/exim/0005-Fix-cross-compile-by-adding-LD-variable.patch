@@ -1,0 +1,95 @@
+From a47de397eb1f28356086f315a443c288599d8657 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sat, 1 Nov 2025 17:00:52 +0100
+Subject: [PATCH] Fix cross-compile by adding LD variable
+
+Fixes cross-build error due to commit
+a449ff8ca50e6df5faee2f1e83e1198c27738dfc.
+
+Hard-coding "ld" when cross-compiling is a bad idea.
+
+Upstream: https://github.com/Exim/exim/pull/98
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/OS/Makefile-Base      | 10 +++++-----
+ src/OS/Makefile-Default   |  1 +
+ src/src/miscmods/Makefile |  2 +-
+ 3 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/OS/Makefile-Base b/OS/Makefile-Base
+index 5a15b0a6b..0250647f0 100644
+--- a/OS/Makefile-Base
++++ b/OS/Makefile-Base
+@@ -1065,7 +1065,7 @@ dynmodules: buildlookups buildrouters buildtransports buildauths \
+ buildlookups: config
+ 	 @cd lookups && $(MAKE) SHELL=$(SHELL) AR="$(AR)" $(MFLAGS) CC="$(CC)" CFLAGS="$(CFLAGS)" \
+ 	   CFLAGS_DYNAMIC="$(CFLAGS_DYNAMIC)" HDRS="../version.h $(PHDRS)" \
+-	   FE="$(FE)" RANLIB="$(RANLIB)" RM_COMMAND="$(RM_COMMAND)" \
++	   FE="$(FE)" RANLIB="$(RANLIB)" LD="$(LD)" RM_COMMAND="$(RM_COMMAND)" \
+ 	   INCLUDE="$(INCLUDE) $(IPV6_INCLUDE) $(TLS_INCLUDE) $(LOOKUP_INCLUDE)"
+ 	 @echo " "
+ 
+@@ -1074,7 +1074,7 @@ buildlookups: config
+ buildrouters: config
+ 	 @cd routers && $(MAKE) SHELL=$(SHELL) AR="$(AR)" $(MFLAGS) CC="$(CC)" CFLAGS="$(CFLAGS)" \
+ 	   CFLAGS_DYNAMIC="$(CFLAGS_DYNAMIC)" \
+-	   FE="$(FE)" RANLIB="$(RANLIB)" RM_COMMAND="$(RM_COMMAND)" HDRS="$(PHDRS)" \
++	   FE="$(FE)" RANLIB="$(RANLIB)" LD="$(LD)" RM_COMMAND="$(RM_COMMAND)" HDRS="$(PHDRS)" \
+ 	   INCLUDE="$(INCLUDE) $(IPV6_INCLUDE) $(TLS_INCLUDE)"
+ 	 @echo " "
+ 
+@@ -1083,7 +1083,7 @@ buildrouters: config
+ buildtransports: config
+ 	 @cd transports && $(MAKE) SHELL=$(SHELL) AR="$(AR)" $(MFLAGS) CC="$(CC)" CFLAGS="$(CFLAGS)" \
+ 	   CFLAGS_DYNAMIC="$(CFLAGS_DYNAMIC)" \
+-	   FE="$(FE)" RANLIB="$(RANLIB)" RM_COMMAND="$(RM_COMMAND)" HDRS="$(PHDRS)" \
++	   FE="$(FE)" RANLIB="$(RANLIB)" LD="$(LD)" RM_COMMAND="$(RM_COMMAND)" HDRS="$(PHDRS)" \
+ 	   INCLUDE="$(INCLUDE) $(IPV6_INCLUDE) $(TLS_INCLUDE)"
+ 	 @echo " "
+ 
+@@ -1092,7 +1092,7 @@ buildtransports: config
+ buildauths: config
+ 	 @cd auths && $(MAKE) SHELL=$(SHELL) AR="$(AR)" $(MFLAGS) CC="$(CC)" CFLAGS="$(CFLAGS)" \
+ 	   CFLAGS_DYNAMIC="$(CFLAGS_DYNAMIC)" \
+-	   FE="$(FE)" RANLIB="$(RANLIB)" RM_COMMAND="$(RM_COMMAND)" HDRS="$(PHDRS)" \
++	   FE="$(FE)" RANLIB="$(RANLIB)" LD="$(LD)" RM_COMMAND="$(RM_COMMAND)" HDRS="$(PHDRS)" \
+ 	   INCLUDE="$(INCLUDE) $(IPV6_INCLUDE) $(TLS_INCLUDE)"
+ 	 @echo " "
+ 
+@@ -1101,7 +1101,7 @@ buildmisc: config
+ 	   CC="$(CC)" CFLAGS="$(CFLAGS)" \
+ 	     CFLAGS_DYNAMIC="$(CFLAGS_DYNAMIC)" \
+ 	     LDFLAGS_PARTIAL="$(LDFLAGS_PARTIAL)" HDRS="../version.h $(PHDRS)" \
+-	     FE="$(FE)" RANLIB="$(RANLIB)" RM_COMMAND="$(RM_COMMAND)" \
++	     FE="$(FE)" RANLIB="$(RANLIB)" LD="$(LD)" RM_COMMAND="$(RM_COMMAND)" \
+ 	     PERL_CC="$(PERL_CC)" PERL_CCOPTS="$(PERL_CCOPTS)" \
+ 	     PERL_CFLAGS="$(PERL_CFLAGS)" PERL_LFLAGS="$(PERL_LFLAGS)" \
+ 	     INCLUDE="$(INCLUDE) $(IPV6_INCLUDE)" TLS_INCLUDE="$(TLS_INCLUDE)"
+diff --git a/OS/Makefile-Default b/OS/Makefile-Default
+index 858361bf3..c469c7f01 100644
+--- a/OS/Makefile-Default
++++ b/OS/Makefile-Default
+@@ -227,6 +227,7 @@ HOSTNAME_COMMAND=/bin/hostname
+ 
+ RANLIB=ranlib
+ 
++LD=ld
+ 
+ # EXIM_CHMOD is available to specify a command that is automatically applied
+ # to the Exim binary immediately it is compiled. (I find this useful when
+diff --git a/src/miscmods/Makefile b/src/miscmods/Makefile
+index 1e46d4456..cfae5aac2 100644
+--- a/src/miscmods/Makefile
++++ b/src/miscmods/Makefile
+@@ -62,7 +62,7 @@ dkim.o:
+ 	$(FE)$(CC) -c $(CFLAGS) $(INCLUDE) pdkim.c
+ 	$(FE)$(CC) -c $(CFLAGS) $(INCLUDE) $(TLS_INCLUDE) signing.c
+ 	$(FE)mv dkim.o dkim_tmp.o
+-	$(FE)ld -r -o dkim.o $(LDFLAGS_PARTIAL) \
++	$(FE)$(LD) -r -o dkim.o $(LDFLAGS_PARTIAL) \
+ 		dkim_tmp.o dkim_transport.o pdkim.o signing.o
+ 
+ # Similarly, we want a single .so for the dynamic-load module
+-- 
+2.47.3
+
