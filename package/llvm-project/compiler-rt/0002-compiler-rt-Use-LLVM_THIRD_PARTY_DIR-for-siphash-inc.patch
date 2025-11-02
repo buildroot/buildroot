@@ -1,0 +1,32 @@
+From 8fb17d03f8f7cec84dc8d6baebd479c4c34ba74b Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 2 Nov 2025 21:18:24 +0100
+Subject: [PATCH] compiler-rt: Use LLVM_THIRD_PARTY_DIR for siphash include
+
+Introduced by https://github.com/llvm/llvm-project/commit/7f3afab9181d83f92771293ad3b6c00ac62800fd
+but currently unused in compiler-rt leading to build errors with
+COMPILER_RT_STANDALONE_BUILD=ON
+
+Upstream: https://github.com/llvm/llvm-project/pull/166097
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ lib/builtins/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/builtins/CMakeLists.txt b/lib/builtins/CMakeLists.txt
+index 6c226aa7d2d4..7eb5ef487d31 100644
+--- a/lib/builtins/CMakeLists.txt
++++ b/lib/builtins/CMakeLists.txt
+@@ -64,7 +64,7 @@ include(CMakePushCheckState)
+ option(COMPILER_RT_BUILTINS_HIDE_SYMBOLS
+   "Do not export any symbols from the static library." ON)
+ 
+-include_directories(../../../third-party/siphash/include)
++include_directories(${LLVM_THIRD_PARTY_DIR}/siphash/include)
+ 
+ # TODO: Need to add a mechanism for logging errors when builtin source files are
+ # added to a sub-directory and not this CMakeLists file.
+-- 
+2.47.3
+
