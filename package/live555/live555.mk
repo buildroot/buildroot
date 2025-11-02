@@ -6,7 +6,8 @@
 
 LIVE555_VERSION = 2021.05.03
 LIVE555_SOURCE = live.$(LIVE555_VERSION).tar.gz
-LIVE555_SITE = http://www.live555.com/liveMedia/public
+# upstream site removes older versions, use videolan.org instead
+LIVE555_SITE = https://download.videolan.org/contrib/live555
 # There is a COPYING file with the GPL-3.0 license text, but none of
 # the source files appear to be released under GPL-3.0, and the
 # project web site says it's licensed under the LGPL:
