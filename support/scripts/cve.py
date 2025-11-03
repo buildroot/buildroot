@@ -39,22 +39,98 @@ ops = {
 }
 
 
-# Check if two CPE IDs match each other
-def cpe_matches(cpe1, cpe2):
-    cpe1_elems = cpe1.split(":")
-    cpe2_elems = cpe2.split(":")
+class CPE:
+    DISJOINT = 0
+    SUBSET = 1
+    SUPERSET = 2
+    EQUAL = 3
 
-    remains = filter(lambda x: x[0] not in ["*", "-"] and x[1] not in ["*", "-"] and x[0] != x[1],
-                     zip(cpe1_elems, cpe2_elems))
-    return len(list(remains)) == 0
+    ANY = '*'
+    NA = '-'
 
+    @staticmethod
+    def compareAttribute(left, right):
+        """
+        This static method compare two single attributes part of two CPE.
 
-def cpe_product(cpe):
-    return cpe.split(':')[4]
+        This is an implementation of table 6-2 of [1].
 
+        Attribute that are empty will be matched to the '*' (ANY) attribute.
+        According to [2] section 6.1.2.1.1 the empty attribute is inherited
+        from CPE22 and now bind to ANY.
 
-def cpe_version(cpe):
-    return cpe.split(':')[5]
+        The hyphen '-' bind to the NA attribute (see [2]).
+
+        [1] https://nvlpubs.nist.gov/nistpubs/Legacy/IR/nistir7696.pdf
+        [2] https://nvlpubs.nist.gov/nistpubs/Legacy/IR/nistir7695.pdf
+        """
+        if left == '':
+            left = CPE.ANY
+
+        if right == '':
+            right = CPE.ANY
+
+        if left == right:
+            # 1 6 9 - equals
+            return CPE.EQUAL
+        elif left == CPE.ANY:
+            # 2 3 4 - superset
+            return CPE.SUPERSET
+        elif left == CPE.NA and right == CPE.ANY:
+            # 5 - subset
+            return CPE.SUBSET
+        elif left == CPE.NA:
+            # 12 16 - disjoint
+            return CPE.DISJOINT
+        elif right == CPE.ANY:
+            # 13 15 - subset
+            return CPE.SUBSET
+        return CPE.DISJOINT
+
+    def matches(self, target) -> bool:
+        """
+        As an example let's take the example of CVE-2023-... for syslog-ng.
+        One of the node as the following CPE criteria matched with the Buildroot CPE:
+
+        cpe:2.3:a:oneidentitty:syslog-ng:*:*:*:*:-:*:*:*
+        cpe:2.3:a:oneidentitty:syslog-ng:4.71:*:*:*:*:*:*:*
+
+        vendor: EQUAL (3)
+        product: EQUAL (3)
+        version: SUPERSET (2)
+        update: EQUAL (3)
+        edition: EQUAL (3)
+        language: EQUAL (3)
+        sw_edition: SUBSET (1)
+        ...
+
+        This operation results in the two CPE matching.
+        """
+        if not isinstance(target, CPE):
+            target = CPE(target)
+
+        for selfAttribute, targetAttribute in zip(self.parts, target.parts):
+            if CPE.compareAttribute(selfAttribute, targetAttribute) == CPE.DISJOINT:
+                return False
+
+        return True
+
+    def __str__(self):
+        return self.cpe
+
+    def __init__(self, cpe):
+        self.cpe = cpe
+        self.parts = cpe.split(':')
+        self.vendor = self.parts[3]
+        self.product = self.parts[4]
+        self.version = self.parts[5]
+        self.update = self.parts[6]
+        self.edition = self.parts[7]
+        self.language = self.parts[8]
+        self.sw_edition = self.parts[9]
+        self.target_sw = self.parts[10]
+        self.target_hw = self.parts[11]
+        self.other = self.parts[12]
 
 
 class CVE:
@@ -127,8 +203,9 @@ class CVE:
         for cpe in node.get('cpeMatch', ()):
             if not cpe['vulnerable']:
                 return
-            product = cpe_product(cpe['criteria'])
-            version = cpe_version(cpe['criteria'])
+            cpeId = CPE(cpe['criteria'])
+            product = cpeId.product
+            version = cpeId.version
             # ignore when product is '-', which means N/A
             if product == '-':
                 return
@@ -160,7 +237,7 @@ class CVE:
                     v_end = cpe['versionEndExcluding']
 
             yield {
-                'id': cpe['criteria'],
+                'id': cpeId,
                 'v_start': v_start,
                 'op_start': op_start,
                 'v_end': v_end,
@@ -181,30 +258,29 @@ class CVE:
     @property
     def affected_products(self):
         """The set of CPE products referred by this CVE definition"""
-        return set(cpe_product(p['id']) for p in self.each_cpe())
+        return set(p['id'].product for p in self.each_cpe())
 
     def affects(self, name, version, cpeid=None):
         """
         True if the Buildroot Package object passed as argument is affected
         by this CVE.
         """
+        if cpeid is None:
+            # if we don't have a cpeid, build one based on name and version
+            cpeid = CPE("cpe:2.3:*:*:%s:%s:*:*:*:*:*:*:*" % (name, version))
+        elif not isinstance(cpeid, CPE):
+            cpeid = CPE(cpeid)
 
-        pkg_version = distutils.version.LooseVersion(version)
+        # Always prefer the package version of the CPE ID.
+        pkg_version = distutils.version.LooseVersion(cpeid.version)
         if not hasattr(pkg_version, "version"):
             print("Cannot parse package '%s' version '%s'" % (name, version), file=sys.stderr)
             pkg_version = None
 
-        # if we don't have a cpeid, build one based on name and version
-        if not cpeid:
-            cpeid = "cpe:2.3:*:*:%s:%s:*:*:*:*:*:*:*" % (name, version)
-        # if we have a cpeid, use its version instead of the package
-        # version, as they might be different due to
-        # <pkg>_CPE_ID_VERSION
-        else:
-            pkg_version = distutils.version.LooseVersion(cpe_version(cpeid))
-
         for cpe in self.each_cpe():
-            if not cpe_matches(cpe['id'], cpeid):
+            if not cpe['id'].matches(cpeid):
+                # If the node CPE id is not a subset of the target package we
+                # don't check for affect
                 continue
             if not cpe['v_start'] and not cpe['v_end']:
                 return self.CVE_AFFECTS
