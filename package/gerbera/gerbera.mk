@@ -4,12 +4,14 @@
 #
 ################################################################################
 
-GERBERA_VERSION = 2.4.1
+GERBERA_VERSION = 2.6.1
 GERBERA_SITE = $(call github,gerbera,gerbera,v$(GERBERA_VERSION))
 GERBERA_LICENSE = GPL-2.0
 GERBERA_LICENSE_FILES = LICENSE.md
 GERBERA_DEPENDENCIES = \
 	fmt \
+	icu \
+	jsoncpp \
 	host-pkgconf \
 	pugixml \
 	spdlog \
