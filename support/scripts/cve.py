@@ -69,7 +69,6 @@ class CVE:
 
     @staticmethod
     def download_nvd(nvd_git_dir):
-        print(f"Updating from {NVD_BASE_URL}")
         if os.path.exists(nvd_git_dir):
             subprocess.check_call(
                 ["git", "pull"],
@@ -192,7 +191,7 @@ class CVE:
 
         pkg_version = distutils.version.LooseVersion(version)
         if not hasattr(pkg_version, "version"):
-            print("Cannot parse package '%s' version '%s'" % (name, version))
+            print("Cannot parse package '%s' version '%s'" % (name, version), file=sys.stderr)
             pkg_version = None
 
         # if we don't have a cpeid, build one based on name and version
