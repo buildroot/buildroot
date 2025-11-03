@@ -51,17 +51,21 @@ class TestXenBase(infra.basetest.BRTest):
 
         Here is the network setup we use in the test:
 
-                    :         dom0        :   dom1   :
-                    :                     :          :
-                    :        br0          :          :
-                    :      10.0.2.x       :          :
-             gw     :         |           :          :
-          10.0.2.2 -:- eth0 --+-- vif1.0 -:-- eth0   :
-                    :                     : 10.0.2.y :
+                    :       dom0          :   dom1    :
+                    :                     :           :
+                    :        br0          :           :
+                    :     10.0.2.42       :           :
+             gw     :         |           :           :
+          10.0.2.2 -:- eth0 --+-- vif1.0 -:-- eth0    :
+                    :                     : 10.0.2.43 :
 
-        The VMs get their IP addresses with DHCP.
-        We create a bridge in dom0, which allows dom1 to reach the gateway.
+        The VMs use static IP addresses.
+        We create a bridge in dom0, which allows dom0 to reach the gateway.
         vif1.0 is added to the bridge automatically when dom1 is created.
+
+        There is a stability issue for Armv7 with Qemu < 9.1, which makes the
+        dom1 -> gw connection unreliable. As a workaround, we interact only with
+        dom0 from dom1 (hence the fixed IP addresses).
         """
 
         # Boot the emulator.
@@ -87,8 +91,7 @@ class TestXenBase(infra.basetest.BRTest):
 
         # Bring up the network in the dom0.
         self.assertRunOk("ifconfig eth0 up")
-        self.assertRunOk("ifconfig br0 up")
-        self.assertRunOk("udhcpc -i br0")
+        self.assertRunOk("ifconfig br0 10.0.2.42")
         self.assertRunOk("ifconfig -a")
 
         # Verify that we can ping the gateway.
@@ -103,12 +106,11 @@ class TestXenBase(infra.basetest.BRTest):
         self.assertNotEqual(uuid, dom0_uuid, "Unexpected dom0 UUID")
 
         # Bring up the network in the dom1.
-        self.assertRunOk("ifconfig eth0 up")
-        self.assertRunOk("udhcpc -i eth0")
+        self.assertRunOk("ifconfig eth0 10.0.2.43")
         self.assertRunOk("ifconfig -a")
 
-        # Verify that we can ping the gateway.
-        self.assertRunOk("ping -c 3 -A 10.0.2.2")
+        # Verify that we can ping the dom0.
+        self.assertRunOk("ping -c 3 -A 10.0.2.42")
 
         # Detach from dom1's console with CTRL-].
         # dom1 is still running in the background after that.
