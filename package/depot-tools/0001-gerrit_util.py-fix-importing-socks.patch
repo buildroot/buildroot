@@ -1,0 +1,32 @@
+From e52f67026d7ce5b30887e1cfe486ed994169119d Mon Sep 17 00:00:00 2001
+From: Adam Duskett <adam.duskett@amarulasolutions.com>
+Date: Tue, 4 Nov 2025 11:58:37 +0100
+Subject: [PATCH] gerrit_util.py: fix importing socks
+
+As of commit 1a6ff781792099e9e14d7beb610bd99112b17b07,
+httplib2 removed the internal copy of socksipy module.
+
+The commit message specifically states to install pysocks.
+
+Upstream: unsubmitted
+Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
+---
+ gerrit_util.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gerrit_util.py b/gerrit_util.py
+index eef2f5749..d866bc47a 100644
+--- a/gerrit_util.py
++++ b/gerrit_util.py
+@@ -35,7 +35,7 @@ from typing import NamedTuple, List, Optional
+ from typing import Tuple, TypedDict, cast
+ 
+ import httplib2
+-import httplib2.socks
++import socks
+ 
+ import auth
+ import gclient_utils
+-- 
+2.51.1
+

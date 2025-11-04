@@ -14,6 +14,7 @@ HOST_DEPOT_TOOLS_DEPENDENCIES = \
 	host-python3 \
 	host-python-httplib2 \
 	host-python-pyparsing \
+	host-python-pysocks \
 	host-python-six
 
 define HOST_DEPOT_TOOLS_INSTALL_CMDS
