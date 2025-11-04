@@ -1,0 +1,53 @@
+From 051be0c987622683c75b335bda16b9b61fc67fa4 Mon Sep 17 00:00:00 2001
+From: yonghong-song <ys114321@gmail.com>
+Date: Mon, 14 Jul 2025 20:21:59 -0700
+Subject: [PATCH] Fix a build failure with clang21 (#5369)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The build error message:
+  src/cc/frontends/clang/loader.cc:400:73: error: no matching function for
+   call to ‘clang::TextDiagnosticPrinter::TextDiagnosticPrinter(
+     llvm::raw_fd_ostream&, clang::DiagnosticOptions*)’
+  400 |   auto diag_client = new TextDiagnosticPrinter(llvm::errs(), &*diag_opts);
+      |                                                                         ^
+The llvm commit
+  https://github.com/llvm/llvm-project/pull/139584
+caused the build failure.
+
+Adjust the code properly and the error is fixed.
+
+Upstream: https://github.com/iovisor/bcc/commit/8c5c96ad3beeed2fa827017f451a952306826974
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ src/cc/frontends/clang/loader.cc | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/src/cc/frontends/clang/loader.cc b/src/cc/frontends/clang/loader.cc
+index 07dc9d6a..6f8387aa 100644
+--- a/src/cc/frontends/clang/loader.cc
++++ b/src/cc/frontends/clang/loader.cc
+@@ -396,11 +396,19 @@ int ClangLoader::do_compile(
+                     flags_cstr_rem.end());
+ 
+   // set up the error reporting class
++#if LLVM_VERSION_MAJOR >= 21
++  DiagnosticOptions diag_opts;
++  auto diag_client = new TextDiagnosticPrinter(llvm::errs(), diag_opts);
++
++  IntrusiveRefCntPtr<DiagnosticIDs> DiagID(new DiagnosticIDs());
++  DiagnosticsEngine diags(DiagID, diag_opts, diag_client);
++#else
+   IntrusiveRefCntPtr<DiagnosticOptions> diag_opts(new DiagnosticOptions());
+   auto diag_client = new TextDiagnosticPrinter(llvm::errs(), &*diag_opts);
+ 
+   IntrusiveRefCntPtr<DiagnosticIDs> DiagID(new DiagnosticIDs());
+   DiagnosticsEngine diags(DiagID, &*diag_opts, diag_client);
++#endif
+ 
+   // set up the command line argument wrapper
+ 
+-- 
+2.51.1
+
