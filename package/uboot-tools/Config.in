@@ -68,11 +68,16 @@ config BR2_PACKAGE_UBOOT_TOOLS_MKIMAGE
 
 config BR2_PACKAGE_UBOOT_TOOLS_MKEFICAPSULE
 	bool "mkeficapsule"
+	depends on !BR2_STATIC_LIBS # gnutls
+	depends on BR2_USE_WCHAR # gnutls
 	help
 	  Install the mkeficapsule tool on the target system
 
 	  The mkeficapsule tool from Das U-Boot bootloader, which allows
 	  generation of UEFI capsule binaries.
+
+comment "mkeficapsule support needs a toolchain w/ wchar, dynamic library"
+	depends on !BR2_USE_WCHAR || BR2_STATIC_LIBS
 
 config BR2_PACKAGE_UBOOT_TOOLS_MKENVIMAGE
 	bool "mkenvimage"
