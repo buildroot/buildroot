@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BRLTTY_VERSION = 6.6
+BRLTTY_VERSION = 6.8
 BRLTTY_SOURCE = brltty-$(BRLTTY_VERSION).tar.xz
 BRLTTY_SITE = http://brltty.com/archive
 BRLTTY_INSTALL_STAGING_OPTS = INSTALL_ROOT=$(STAGING_DIR) install
@@ -17,6 +17,7 @@ BRLTTY_DEPENDENCIES = \
 	host-autoconf \
 	host-gawk \
 	host-pkgconf \
+	ncurses \
 	$(if $(BR2_PACKAGE_AT_SPI2_CORE),at-spi2-core)
 
 BRLTTY_CONF_ENV = \
@@ -37,8 +38,10 @@ BRLTTY_CONF_OPTS = \
 	--without-theta
 
 # Autoreconf is needed because we're patching configure.ac in
-# 0001-Fix-linking-error-on-mips64el. However, a plain autoreconf doesn't work,
-# because this package is only autoconf-based.
+# 0001-Fix-linking-error-on-mips64el and
+# 0002-configure.ac-link-fv-driver-with-ltinfo-only-if-avai.
+# However, a plain autoreconf doesn't work, because this package
+# is only autoconf-based.
 define BRLTTY_AUTOCONF
 	cd $(BRLTTY_SRCDIR) && $(AUTOCONF)
 endef

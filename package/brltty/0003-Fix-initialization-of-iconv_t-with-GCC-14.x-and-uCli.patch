@@ -1,0 +1,72 @@
+From 229a5c4319ef32ab837c7029d3a565c4673fdbf7 Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Mon, 3 Nov 2025 11:39:53 +0100
+Subject: [PATCH] =?UTF-8?q?Fix=20initialization=20of=20=E2=80=98iconv=5Ft?=
+ =?UTF-8?q?=E2=80=99=20with=20GCC=2014.x=20and=20uClibc?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The patch fixes the following error raised by the compilation of brltty
+with the combination of GCC 14.x and uClibc.
+
+./unicode.c:349:27: error: initialization of ‘iconv_t’ {aka ‘long int’} from ‘void *’ makes integer from pointer without a cast [-Wint-conversion]
+  349 |   static iconv_t handle = NULL;
+      |                           ^~~~
+make[3]: *** [Makefile:366: unicode.o] Error 1
+
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://github.com/brltty/brltty/pull/504
+---
+ Drivers/Braille/TTY/braille.c | 7 ++++---
+ Programs/unicode.c            | 2 +-
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/Drivers/Braille/TTY/braille.c b/Drivers/Braille/TTY/braille.c
+index c8cba4999459..a2080532bc53 100644
+--- a/Drivers/Braille/TTY/braille.c
++++ b/Drivers/Braille/TTY/braille.c
+@@ -30,7 +30,8 @@
+ 
+ #ifdef HAVE_ICONV_H
+ #include <iconv.h>
+-static iconv_t conversionDescriptor = NULL;
++#define ICONV_NULL ((iconv_t)-1)
++static iconv_t conversionDescriptor = ICONV_NULL;
+ #endif /* HAVE_ICONV_H */
+ 
+ #include "log.h"
+@@ -211,7 +212,7 @@ brl_construct (BrailleDisplay *brl, char **parameters, const char *device) {
+     logSystemError("iconv_open");
+   }
+ 
+-  conversionDescriptor = NULL;
++  conversionDescriptor = ICONV_NULL;
+ #endif /* HAVE_ICONV_H */
+ 
+   return 0;
+@@ -240,7 +241,7 @@ brl_destruct (BrailleDisplay *brl) {
+ #ifdef HAVE_ICONV_H
+   if (conversionDescriptor) {
+     iconv_close(conversionDescriptor);
+-    conversionDescriptor = NULL;
++    conversionDescriptor = ICONV_NULL;
+   }
+ #endif /* HAVE_ICONV_H */
+ }
+diff --git a/Programs/unicode.c b/Programs/unicode.c
+index 45e43be292c7..cbdcb4382291 100644
+--- a/Programs/unicode.c
++++ b/Programs/unicode.c
+@@ -346,7 +346,7 @@ getBaseCharacter (wchar_t character) {
+ wchar_t
+ getTransliteratedCharacter (wchar_t character) {
+ #ifdef HAVE_ICONV_H
+-  static iconv_t handle = NULL;
++  static iconv_t handle = (iconv_t)-1;
+   if (!handle) handle = iconv_open("ASCII//TRANSLIT", "WCHAR_T");
+ 
+   if (handle != (iconv_t)-1) {
+-- 
+2.43.0
+

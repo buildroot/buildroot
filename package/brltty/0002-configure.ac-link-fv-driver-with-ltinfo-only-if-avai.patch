@@ -1,0 +1,58 @@
+From a4f55ee941fdc94511c72c1831dedcf5bea7935d Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Thu, 30 Oct 2025 16:52:53 +0100
+Subject: [PATCH] configure.ac: link fv driver with -ltinfo only if available
+
+During the brltty bump to version 6.8 in Buildroot, the build failed on
+systems without libtinfo:
+
+  /usr/bin/ld: cannot find -ltinfo: No such file or directory
+
+Link libtinfo only if the library is present.
+
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://github.com/brltty/brltty/pull/503
+---
+ configure.ac | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 68c9c6d1b7f5..5c931f71b79a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -813,6 +813,7 @@ BRLTTY_ARG_ENABLE(
+ ])
+ AC_SUBST(fuzzer_libs)
+ 
++have_tinfo="no"
+ brltty_curses_libs_save="${LIBS}"
+ BRLTTY_PACKAGE_CHOOSE([curses],
+    [ncursesw ncursesw/ncurses.h],
+@@ -823,8 +824,10 @@ BRLTTY_PACKAGE_CHOOSE([curses],
+    [pdcurses curses.h])
+ if test -n "${curses_package}"
+ then
+-   AC_CHECK_LIB([tinfo], [intrflush])
++   AC_CHECK_LIB([tinfo], [intrflush],
++                [have_tinfo="yes"])
+ fi
++
+ curses_libs="${LIBS%${brltty_curses_libs_save}}"
+ LIBS="${brltty_curses_libs_save}"
+ AC_SUBST([curses_libs])
+@@ -1882,7 +1885,11 @@ in
+       ;;
+ esac
+ 
+-BRLTTY_SCREEN_DRIVER([fv], [FileViewer], [-ltinfo])
++if test "${have_tinfo}" = "yes"; then
++   BRLTTY_SCREEN_DRIVER([fv], [FileViewer], [-ltinfo])
++else
++   BRLTTY_SCREEN_DRIVER([fv], [FileViewer])
++fi
+ 
+ all_brltty_pty=""
+ install_brltty_pty=""
+-- 
+2.43.0
+
