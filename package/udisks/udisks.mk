@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-UDISKS_VERSION = 2.10.2
+UDISKS_VERSION = 2.11.0
 UDISKS_SOURCE = udisks-$(UDISKS_VERSION).tar.bz2
 UDISKS_SITE = https://github.com/storaged-project/udisks/releases/download/udisks-$(UDISKS_VERSION)
 UDISKS_LICENSE = GPL-2.0+
@@ -43,6 +43,12 @@ ifeq ($(BR2_PACKAGE_UDISKS_FHS_MEDIA),y)
 UDISKS_CONF_OPTS += --enable-fhs-media
 else
 UDISKS_CONF_OPTS += --disable-fhs-media
+endif
+
+ifeq ($(BR2_PACKAGE_LIBBLOCKDEV_SMART),y)
+UDISKS_CONF_OPTS += --enable-smart
+else
+UDISKS_CONF_OPTS += --disable-smart
 endif
 
 $(eval $(autotools-package))
