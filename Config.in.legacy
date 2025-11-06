@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2025.11"
 
+config BR2_PACKAGE_EXPECT
+	bool "expect has been removed"
+	select BR2_LEGACY
+	help
+	  expect is unmaintained and has been removed
+
 config BR2_PACKAGE_BCTOOLBOX
 	bool "bctoolbox has been removed"
 	select BR2_LEGACY
