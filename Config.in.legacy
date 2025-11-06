@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2025.02.9"
 
+config BR2_PACKAGE_ORTP
+	bool "ortp has been removed"
+	select BR2_LEGACY
+	help
+	  This package has been removed as part of the linphone
+	  removal. In addition, newer version of linphone directly
+	  bundle ortp making a separate package unnecessary.
+
 config BR2_PACKAGE_MEDIASTREAMER
 	bool "mediastreamer has been removed"
 	select BR2_LEGACY
