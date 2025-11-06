@@ -1,0 +1,35 @@
+Description: Allow warnings from configure
+ Since 6.03 the original configure script returns non-zero if a
+ warning about configuration options versus detected capabilities
+ has been issued, presumably to increase awareness of the warnings.
+ To allow building on all architectures, while relying on the
+ resulting HAVE_XX flags as usual, return with success at the end
+ of the script.
+Forwarded: not-needed
+Author: Tormod Volden <debian.tormod@gmail.com>
+
+Downloaded from
+https://sources.debian.org/src/xscreensaver/6.09%2Bdfsg1-1/debian/patches/100_configure_allow_warnings.patch
+
+Upstream: not applicable
+
+[Bernd: s/Debian/buildroot]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+
+Index: xscreensaver-git/configure
+===================================================================
+--- xscreensaver-git.orig/configure
++++ xscreensaver-git/configure
+@@ -23273,5 +23273,11 @@ echo "             Extra Fonts:   ${FONT
+ echo "             App Defaults:  ${APPDEFAULTS}/$addir_err"
+ echo ""
+ 
+-exit $CONF_STATUS
++if test "$CONF_STATUS" != 0; then
++	echo ""
++	echo "Warning: Buildroot build will proceed regardless of above warnings"
++	echo ""
++fi
++
++exit 0
+ 
