@@ -27,12 +27,10 @@ AVAHI_CONF_ENV = \
 # explicitly disable support for them, in order to avoid the following
 # circular dependencies:
 #
-#  avahi -> libglade -> libgtk2 -> cups -> avahi
 #  avahi -> libgtk3 -> cups -> avahi
 #
-# Since Gtk2 and Gtk3 in Avahi are only used for some example/demo
-# programs, we decided to disable their support to solve the circular
-# dependency.
+# Since Gtk3 in Avahi is only used for some example/demo programs,
+# we decided to disable their support to solve the circular dependency.
 AVAHI_CONF_OPTS = \
 	--disable-qt3 \
 	--disable-qt4 \
