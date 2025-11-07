@@ -17,13 +17,21 @@ UBOOT_TOOLS_INSTALL_STAGING = YES
 UBOOT_TOOLS_DEPENDENCIES = $(BR2_MAKE_HOST_DEPENDENCY)
 HOST_UBOOT_TOOLS_DEPENDENCIES = $(BR2_MAKE_HOST_DEPENDENCY) host-gnutls
 
+# the available hash algorithms and the way to enable them are the
+# same for host and target
+UBOOT_TOOLS_HASH_ALGOS = CRC16 CRC32 MD5 SHA1 SHA256 SHA384 SHA512
+define UBOOT_TOOLS_ENABLE_HASH_ALGOS
+	$(foreach hash,$(UBOOT_TOOLS_HASH_ALGOS),\
+		echo '#define CONFIG_TOOLS_$(hash) 1' >> $(@D)/include/generated/autoconf.h
+	)
+endef
+
 define UBOOT_TOOLS_CONFIGURE_CMDS
 	mkdir -p $(@D)/include/config
 	echo "#include <linux/kconfig.h>" > $(@D)/include/config.h
 	touch $(@D)/include/config/auto.conf
 	mkdir -p $(@D)/include/generated
-	echo "#define CONFIG_TOOLS_SHA256 1" >> $(@D)/include/generated/autoconf.h
-	echo "#define CONFIG_TOOLS_SHA1 1" >> $(@D)/include/generated/autoconf.h
+	$(if $(BR2_PACKAGE_UBOOT_TOOLS_FIT_SUPPORT),$(UBOOT_TOOLS_ENABLE_HASH_ALGOS))
 	echo $(if $(BR2_PACKAGE_UBOOT_TOOLS_FIT_SIGNATURE_SUPPORT),'#define CONFIG_FIT_SIGNATURE 1') >> $(@D)/include/generated/autoconf.h
 	mkdir -p $(@D)/include/asm
 	touch $(@D)/include/asm/linkage.h
@@ -115,8 +123,7 @@ define HOST_UBOOT_TOOLS_CONFIGURE_CMDS
 	echo "#include <linux/kconfig.h>" > $(@D)/include/config.h
 	touch $(@D)/include/config/auto.conf
 	mkdir -p $(@D)/include/generated
-	echo "#define CONFIG_TOOLS_SHA256 1" >> $(@D)/include/generated/autoconf.h
-	echo "#define CONFIG_TOOLS_SHA1 1" >> $(@D)/include/generated/autoconf.h
+	$(if $(BR2_PACKAGE_HOST_UBOOT_TOOLS_FIT_SUPPORT),$(UBOOT_TOOLS_ENABLE_HASH_ALGOS))
 	echo $(if $(BR2_PACKAGE_HOST_UBOOT_TOOLS_FIT_SIGNATURE_SUPPORT),'#define CONFIG_FIT_SIGNATURE 1') >> $(@D)/include/generated/autoconf.h
 	mkdir -p $(@D)/include/asm
 	touch $(@D)/include/asm/linkage.h
