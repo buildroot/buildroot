@@ -28,6 +28,11 @@ When +BR2_ROOTFS_MERGED_USR+ is enabled, then the overlay must not
   such a situation, should the overlay have any programs or libraries,
   they should be placed in '/usr/bin', '/usr/sbin' and '/usr/lib'.
 +
+Additionally, when +BR2_ROOTFS_MERGED_BIN+ is enabled, then the overlay
+  must not contain the '/usr/sbin' directory, as Buildroot will create
+  it as a symbolic link to '/usr/bin'. In such a situation, should the
+  overlay have any program, they should be placed in '/usr/bin'.
++
 As shown in xref:customize-dir-structure[], the recommended path for
   this overlay is +board/<company>/<boardname>/rootfs-overlay+.
 
