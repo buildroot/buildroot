@@ -1,0 +1,11 @@
+config BR2_PACKAGE_BROOT
+	bool "broot"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  Broot is a fast and powerful file manager written in Rust and
+	  licensed under MIT license. It supports filters, regular
+	  expressions, and real-time "show-as-you-type" search for quick
+	  and easy navigation, even in complex directory structures.
+
+	  https://github.com/Canop/broot
