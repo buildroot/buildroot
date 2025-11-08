@@ -4,14 +4,18 @@
 #
 ################################################################################
 
-COREUTILS_VERSION = 9.5
+COREUTILS_VERSION = 9.8
 COREUTILS_SITE = $(BR2_GNU_MIRROR)/coreutils
 COREUTILS_SOURCE = coreutils-$(COREUTILS_VERSION).tar.xz
 COREUTILS_LICENSE = GPL-3.0+
 COREUTILS_LICENSE_FILES = COPYING
 COREUTILS_CPE_ID_VENDOR = gnu
 
+# --disable-year2038: tells the configure script to not abort if the
+# system is not Y2038 compliant. util-linux-libs will support year2038
+# if the system is compliant even with this option passed
 COREUTILS_CONF_OPTS = --disable-rpath \
+	--disable-year2038 \
 	$(if $(BR2_TOOLCHAIN_USES_MUSL),--with-included-regex)
 
 ifeq ($(BR2_PACKAGE_COREUTILS_INDIVIDUAL_BINARIES),y)
