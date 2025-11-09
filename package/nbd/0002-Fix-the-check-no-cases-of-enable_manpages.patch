@@ -1,0 +1,56 @@
+From f0418b0d8b54c21a1e5b0c6dce3277e938d07e7c Mon Sep 17 00:00:00 2001
+From: Dave Jones <dave.jones@canonical.com>
+Date: Thu, 14 Mar 2024 11:13:05 +0000
+Subject: [PATCH] Fix the check & no cases of enable_manpages
+
+Currently, running "configure --disable-manpages" while docbook2man *is*
+installed results in the error "don't know what to do here" when it
+should disable manpages.
+
+There also appears to be a missing conditional at the start of the line;
+there's closing un-matched ]) at the end of the line. Still, at this
+point the check can be done in pure shell; no need for AC macros. I've
+also removed the confusing m4_divert_text call on the check case. Not
+sure why that was there, but it appears unnecessary.
+
+Upstream: https://github.com/NetworkBlockDevice/nbd/commit/f0418b0d8b54c21a1e5b0c6dce3277e938d07e7c
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.ac | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 5e1b53c..0dccafd 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -328,7 +328,7 @@ AC_MSG_CHECKING([whether man pages are requested])
+ AC_ARG_ENABLE([manpages],
+ 	AS_HELP_STRING([--disable-manpages], [Do not install man pages]),
+ 	[],
+-	[: m4_divert_text([DEFAULTS], [enable_manpages=check])]
++	[enable_manpages=check]
+ )
+ AC_MSG_RESULT([$enable_manpages])
+ 
+@@ -337,9 +337,14 @@ AS_IF([test "x$enable_manpages" != "xno"], [
+ 	])
+ AS_IF([test "x$enable_manpages" = "xyes" -a "x$DB2M" = "x"], [
+        AC_MSG_ERROR([docbook2man not found, but is required to build manpages])
+-	],
+-      [test "x$DB2M" != "x"], [enable_manpages=yes],
+-       [AC_MSG_ERROR([don't know what to do here])])
++	])
++if test "x$enable_manpages" = "xcheck"; then
++	if test "x$DB2M" = "x"; then
++		enable_manpages=no
++	else
++		enable_manpages=yes
++	fi
++fi
+ AC_MSG_CHECKING([whether to build manpages])
+ AC_MSG_RESULT([$enable_manpages])
+ 
+-- 
+2.47.3
+

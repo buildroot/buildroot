@@ -1,0 +1,56 @@
+From f8d7d3dbf1ef2ef84c92fe375ebc8674a79e25c2 Mon Sep 17 00:00:00 2001
+From: Christian Hesse <mail@eworm.de>
+Date: Mon, 4 Mar 2024 11:24:57 +0100
+Subject: [PATCH] fix generation of systemd service
+
+The shell template is no longer required to generate man pages, so more
+it to systemd/ and ship it in tarball.
+
+Signed-off-by: Wouter Verhelst <w@uter.be>
+
+Upstream: https://github.com/NetworkBlockDevice/nbd/commit/f8d7d3dbf1ef2ef84c92fe375ebc8674a79e25c2
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[Bernd: rebased for 3.26.1 tarball which does not contain man/sh.tmpl]
+---
+ systemd/Makefile.am | 6 +++---
+ systemd/sh.tmpl     | 7 +++++++
+ 3 files changed, 10 insertions(+), 10 deletions(-)
+ delete mode 100644 man/sh.tmpl
+ create mode 100644 systemd/sh.tmpl
+
+diff --git a/systemd/Makefile.am b/systemd/Makefile.am
+index f771dce..204f06f 100644
+--- a/systemd/Makefile.am
++++ b/systemd/Makefile.am
+@@ -5,11 +5,11 @@
+ 
+ noinst_DATA = nbd@.service
+ DISTCLEANFILES = nbd@.service
+-EXTRA_DIST=nbd@.service.tmpl
++EXTRA_DIST=nbd@.service.tmpl sh.tmpl
+ 
+ nbd@.service: nbd@.service.sh
+ 	sh nbd@.service.sh > nbd@.service
+ 
+-nbd@.service.sh.in: nbd@.service.tmpl ../man/sh.tmpl
+-	cat ../man/sh.tmpl nbd@.service.tmpl > nbd@.service.sh.in
++nbd@.service.sh.in: nbd@.service.tmpl sh.tmpl
++	cat sh.tmpl nbd@.service.tmpl > nbd@.service.sh.in
+ 	echo EOF >> nbd@.service.sh.in
+diff --git a/systemd/sh.tmpl b/systemd/sh.tmpl
+new file mode 100644
+index 0000000..d97aa3f
+--- /dev/null
++++ b/systemd/sh.tmpl
+@@ -0,0 +1,7 @@
++#!/bin/sh
++
++prefix=@prefix@
++exec_prefix=@exec_prefix@
++sysconfdir=@sysconfdir@
++
++cat <<EOF
+-- 
+2.47.3
+

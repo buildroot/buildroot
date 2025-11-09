@@ -4,11 +4,19 @@
 #
 ################################################################################
 
-NBD_VERSION = 3.25
+NBD_VERSION = 3.26.1
 NBD_SOURCE = nbd-$(NBD_VERSION).tar.xz
 NBD_SITE = https://github.com/NetworkBlockDevice/nbd/releases/download/nbd-$(NBD_VERSION)
 NBD_CONF_OPTS = --enable-lfs
 NBD_DEPENDENCIES = host-bison host-pkgconf libglib2
+
+# 0002-Fix-the-check-no-cases-of-enable_manpages.patch
+# 0003-fix-generation-of-systemd-service.patch
+NBD_AUTORECONF = YES
+# needed for autoreconf
+NBD_DEPENDENCIES += host-autoconf-archive
+NBD_AUTORECONF_OPTS = --include=$(HOST_DIR)/share/autoconf-archive
+
 NBD_LICENSE = GPL-2.0
 NBD_LICENSE_FILES = COPYING
 NBD_CPE_ID_VENDOR = network_block_device_project
