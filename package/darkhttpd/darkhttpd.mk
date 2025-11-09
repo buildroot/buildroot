@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DARKHTTPD_VERSION = 1.15
+DARKHTTPD_VERSION = 1.17
 DARKHTTPD_SITE = $(call github,emikulic,darkhttpd,v$(DARKHTTPD_VERSION))
 DARKHTTPD_LICENSE = ISC
 DARKHTTPD_LICENSE_FILES = COPYING
