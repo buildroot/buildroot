@@ -11,6 +11,8 @@ LIBPNG_SITE = https://downloads.sourceforge.net/project/libpng/libpng$(LIBPNG_SE
 LIBPNG_LICENSE = Libpng-2.0
 LIBPNG_LICENSE_FILES = LICENSE
 LIBPNG_CPE_ID_VENDOR = libpng
+# 0001-riscv-Support-only-RVV-1.0.patch
+LIBPNG_AUTORECONF = YES
 LIBPNG_INSTALL_STAGING = YES
 LIBPNG_DEPENDENCIES = host-pkgconf zlib
 HOST_LIBPNG_DEPENDENCIES = host-pkgconf host-zlib
