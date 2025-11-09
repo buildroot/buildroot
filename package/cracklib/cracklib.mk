@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CRACKLIB_VERSION = 2.9.11
+CRACKLIB_VERSION = 2.10.3
 CRACKLIB_SOURCE = cracklib-$(CRACKLIB_VERSION).tar.xz
 CRACKLIB_SITE = https://github.com/cracklib/cracklib/releases/download/v$(CRACKLIB_VERSION)
 CRACKLIB_LICENSE = LGPL-2.1
