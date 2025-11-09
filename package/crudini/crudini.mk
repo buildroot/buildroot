@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-CRUDINI_VERSION = 0.9.5
-CRUDINI_SITE = https://files.pythonhosted.org/packages/32/67/c4e838930e2f434db08d6a6aadffca3d14e7455d1c2c2332e22003ad453d
+CRUDINI_VERSION = 0.9.6
+CRUDINI_SITE = https://files.pythonhosted.org/packages/54/d1/0a363fbbab0aea9e27dd981a602efaf514c45f4fffceac3906274e0425c7
 CRUDINI_SETUP_TYPE = setuptools
 CRUDINI_DEPENDENCIES = host-python-setuptools-scm
 CRUDINI_LICENSE = GPL-2.0
