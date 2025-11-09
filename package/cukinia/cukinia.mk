@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CUKINIA_VERSION = 0.9.0
+CUKINIA_VERSION = 0.9.1
 CUKINIA_SITE = $(call github,savoirfairelinux,cukinia,v$(CUKINIA_VERSION))
 CUKINIA_LICENSE = Apache-2.0
 CUKINIA_LICENSE_FILES = LICENSE
