@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-VALGRIND_VERSION = 3.25.1
+VALGRIND_VERSION = 3.26.0
 VALGRIND_SITE = https://sourceware.org/pub/valgrind
 VALGRIND_SOURCE = valgrind-$(VALGRIND_VERSION).tar.bz2
-VALGRIND_LICENSE = GPL-2.0, GFDL-1.2
+VALGRIND_LICENSE = GPL-3.0+, GFDL-1.2
 VALGRIND_LICENSE_FILES = COPYING COPYING.DOCS
 VALGRIND_CPE_ID_VENDOR = valgrind
 VALGRIND_CONF_OPTS = \
