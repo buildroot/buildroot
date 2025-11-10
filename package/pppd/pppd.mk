@@ -39,6 +39,12 @@ PPPD_CONF_OPTS += \
 	--without-openssl
 endif
 
+ifeq ($(BR2_PACKAGE_PPPD_CBCP),y)
+PPPD_CONF_OPTS += --enable-cbcp
+else
+PPPD_CONF_OPTS += --disable-cbcp
+endif
+
 ifeq ($(BR2_PACKAGE_PPPD_FILTER),y)
 PPPD_CONF_OPTS += --with-pcap=$(STAGING_DIR)/usr
 PPPD_DEPENDENCIES += libpcap
