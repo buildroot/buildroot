@@ -387,6 +387,39 @@ def test_Indent(testname, filename, string, expected):
     assert warnings == expected
 
 
+NoDefaultN = [
+    ('good example',
+     'any',
+     'config BR2_PACKAGE_FOO\n'
+     '\tdefault y\n',
+     []),
+    ('default n',
+     'any',
+     'config BR2_PACKAGE_FOO\n'
+     '\tdefault n\n',
+     [['any:2: boolean symbols default to \'n\', so \'default n\' is redundant',
+       '\tdefault n\n']]),
+    ('default n with comment',
+     'any',
+     'config BR2_PACKAGE_FOO\n'
+     '\tdefault n # this is a comment\n',
+     [['any:2: boolean symbols default to \'n\', so \'default n\' is redundant',
+       '\tdefault n # this is a comment\n']]),
+    ('default n with trailing whitespace',
+     'any',
+     'config BR2_PACKAGE_FOO\n'
+     '\tdefault n  \t\n',
+     [['any:2: boolean symbols default to \'n\', so \'default n\' is redundant',
+       '\tdefault n  \t\n']])
+    ]
+
+
+@pytest.mark.parametrize('testname,filename,string,expected', NoDefaultN)
+def test_NoDefaultN(testname, filename, string, expected):
+    warnings = util.check_file(m.NoDefaultN, filename, string)
+    assert warnings == expected
+
+
 RedefinedConfig = [
     ('no redefinition',
      'any',
