@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TSLIB_VERSION = 1.23
+TSLIB_VERSION = 1.24
 TSLIB_SITE = https://github.com/libts/tslib/releases/download/$(TSLIB_VERSION)
 TSLIB_SOURCE = tslib-$(TSLIB_VERSION).tar.xz
 TSLIB_LICENSE = GPL-2.0+ (programs), LGPL-2.1+ (libraries)
