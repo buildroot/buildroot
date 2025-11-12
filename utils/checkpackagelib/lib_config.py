@@ -242,6 +242,17 @@ class Indent(_CheckFunction):
                         text]
 
 
+class NoDefaultN(_CheckFunction):
+    DEFAULTN = re.compile(r"^\tdefault n$")
+
+    def check_line(self, lineno, text):
+        text_nocomments = text.split("#")[0].rstrip()
+        if self.DEFAULTN.match(text_nocomments):
+            return ["{}:{}: boolean symbols default to 'n', so 'default n' is redundant"
+                    .format(self.filename, lineno),
+                    text]
+
+
 class RedefinedConfig(_CheckFunction):
     CONFIG = re.compile(r"^\s*(menu|)config\s+(BR2_\w+)\b")
     IF = re.compile(r"^\s*if\s+([^#]*)\b")
