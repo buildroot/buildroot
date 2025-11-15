@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SYSREPO_VERSION = 3.6.11
+SYSREPO_VERSION = 3.7.11
 SYSREPO_SITE = $(call github,sysrepo,sysrepo,v$(SYSREPO_VERSION))
 SYSREPO_INSTALL_STAGING = YES
 SYSREPO_LICENSE = BSD-3-Clause
