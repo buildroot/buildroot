@@ -7,6 +7,8 @@ Add configure option to disable tests.
 Upstream is not likely to accept it, see lttng-tools package.
 
 Signed-off-by: Norbert Lange <nolange79@gmail.com>
+[Bernd: rebased for version 2.14.0]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  Makefile.am  | 5 ++++-
  configure.ac | 6 ++++++
@@ -16,7 +18,7 @@ diff --git a/Makefile.am b/Makefile.am
 index 9ab93ccd..8a1c1dca 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -7,9 +7,12 @@ SUBDIRS = \
+@@ -9,9 +9,12 @@ SUBDIRS = \
  	src \
  	tools \
  	doc \
@@ -34,7 +36,7 @@ diff --git a/configure.ac b/configure.ac
 index b6254228..fe5f2700 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -360,6 +360,11 @@ AE_FEATURE([python-agent],[build the LTTng UST Python agent])
+@@ -371,6 +371,11 @@ AE_FEATURE([python-agent],[build the LTTng UST Python agent])
  AE_FEATURE_DEFAULT_ENABLE
  AE_FEATURE([examples],[Do not build and install examples])
  
@@ -46,13 +48,13 @@ index b6254228..fe5f2700 100644
  # Man pages
  # Enabled by default
  AE_FEATURE_DEFAULT_ENABLE
-@@ -525,6 +530,7 @@ AC_DEFINE([LTTNG_UST_CTL_LIB_SONAME_MAJOR], [ust_ctl_lib_version_current], [Majo
+@@ -565,6 +570,7 @@ AC_DEFINE([LTTNG_UST_CTL_LIB_SONAME_MAJOR], [ust_ctl_lib_version_current], [Majo
  ##                                                                          ##
  
  AM_CONDITIONAL([ENABLE_EXAMPLES], AE_IS_FEATURE_ENABLED([examples]))
 +AM_CONDITIONAL([ENABLE_TESTS], AE_IS_FEATURE_ENABLED([tests]))
  AM_CONDITIONAL([ENABLE_GEN_TP_EXAMPLES], [test "x$PYTHON" != "x"])
- AM_CONDITIONAL([ENABLE_JAVA_AGENT], AE_IS_FEATURE_ENABLED([java-agent-jul]) || AE_IS_FEATURE_ENABLED([java-agent-log4j]))
+ AM_CONDITIONAL([ENABLE_JAVA_AGENT], AE_IS_FEATURE_ENABLED([java-agent-jul]) || AE_IS_FEATURE_ENABLED([java-agent-log4j]) || AE_IS_FEATURE_ENABLED([java-agent-log4j2]))
  AM_CONDITIONAL([ENABLE_JAVA_AGENT_WITH_JUL], AE_IS_FEATURE_ENABLED([java-agent-jul]))
 -- 
 2.34.1
