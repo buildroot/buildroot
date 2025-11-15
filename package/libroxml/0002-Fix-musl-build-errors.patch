@@ -1,0 +1,69 @@
+From abf4404c6c0213666f3fce73cff6e51435eac923 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sat, 15 Nov 2025 12:29:33 +0100
+Subject: [PATCH] Fix musl build errors
+
+src/roxml_cat.c: In function 'display_usage':
+src/roxml_cat.c:21:22: error: implicit declaration of function 'basename'; did you mean 'rename'? [-Wimplicit-function-declaration]
+   21 |         char *name = basename(prgname);
+      |                      ^~~~~~~~
+      |                      rename
+src/roxml_cat.c:21:22: error: initialization of 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+
+src/roxml_mem.c: In function 'roxml_malloc':
+src/roxml_mem.c:138:18: error: assignment to 'long unsigned int' from 'pthread_t' {aka 'struct __pthread *'} makes integer from pointer without a cast [-Wint-conversion]
+  138 |         cell->id = pthread_self();
+
+src/roxml_utils.h:51:16: error: returning 'pthread_t' {aka 'struct __pthread *'} from a function with return type 'long unsigned int' makes integer from pointer without a cast [-Wint-conversion]
+   51 |         return pthread_self();
+
+Upstream: https://github.com/blunderer/libroxml/pull/86
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/roxml_cat.c   | 1 +
+ src/roxml_mem.c   | 2 +-
+ src/roxml_utils.h | 2 +-
+ 3 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/roxml_cat.c b/src/roxml_cat.c
+index 11e42d9..4320efd 100644
+--- a/src/roxml_cat.c
++++ b/src/roxml_cat.c
+@@ -5,6 +5,7 @@
+ #include <getopt.h>
+ #include <string.h>
+ #include <errno.h>
++#include <libgen.h>
+ #include "roxml.h"
+ 
+ static struct option long_options[] =
+diff --git a/src/roxml_mem.c b/src/roxml_mem.c
+index 91b5db2..bf757bb 100644
+--- a/src/roxml_mem.c
++++ b/src/roxml_mem.c
+@@ -135,7 +135,7 @@ ROXML_INT void *roxml_malloc(int size, int num, int type)
+ 	cell->next->prev = cell;
+ 	cell = cell->next;
+ 	cell->type = type;
+-	cell->id = pthread_self();
++	cell->id = (unsigned long)pthread_self();
+ 	cell->occ = size;
+ 	cell->ptr = calloc(num, size);
+ 	head_cell.prev = cell;
+diff --git a/src/roxml_utils.h b/src/roxml_utils.h
+index 3f50976..f5fc582 100644
+--- a/src/roxml_utils.h
++++ b/src/roxml_utils.h
+@@ -48,7 +48,7 @@ ROXML_STATIC_INLINE ROXML_INT int roxml_unlock(node_t *n)
+ #else /* CONFIG_XML_THREAD_SAFE==1 */
+ ROXML_STATIC_INLINE ROXML_INT unsigned long int roxml_thread_id(node_t *n)
+ {
+-	return pthread_self();
++	return (unsigned long)pthread_self();
+ }
+ 
+ ROXML_STATIC_INLINE ROXML_INT int roxml_lock_init(node_t *n)
+-- 
+2.47.3
+
