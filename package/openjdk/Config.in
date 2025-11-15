@@ -29,7 +29,6 @@ config BR2_PACKAGE_OPENJDK
 	depends on BR2_HOST_GCC_AT_LEAST_4_9 # C++14
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	depends on BR2_USE_MMU # cups
-	depends on BR2_PACKAGE_XORG7
 	select BR2_PACKAGE_ALSA_LIB
 	select BR2_PACKAGE_ALSA_LIB_MIXER
 	select BR2_PACKAGE_ALSA_LIB_PCM
@@ -42,10 +41,6 @@ config BR2_PACKAGE_OPENJDK
 	select BR2_PACKAGE_LCMS2
 	select BR2_PACKAGE_LIBPNG
 	select BR2_PACKAGE_LIBUSB
-	select BR2_PACKAGE_XLIB_LIBXRANDR
-	select BR2_PACKAGE_XLIB_LIBXRENDER
-	select BR2_PACKAGE_XLIB_LIBXT
-	select BR2_PACKAGE_XLIB_LIBXTST
 	select BR2_PACKAGE_ZLIB
 	help
 	  OpenJDK is a free and open-source implementation of the
@@ -70,6 +65,17 @@ config BR2_PACKAGE_OPENJDK_VERSION_21
 	bool "OpenJDK 21"
 
 endchoice
+
+config BR2_PACKAGE_OPENJDK_X11
+	bool "Build with AWT head support"
+	depends on BR2_PACKAGE_XORG7
+	select BR2_PACKAGE_XLIB_LIBXRANDR
+	select BR2_PACKAGE_XLIB_LIBXRENDER
+	select BR2_PACKAGE_XLIB_LIBXT
+	select BR2_PACKAGE_XLIB_LIBXTST
+
+comment "openjdk AWT head support needs X.org"
+	depends on !BR2_PACKAGE_XORG7
 
 config BR2_PACKAGE_OPENJDK_FULL_JDK
 	bool "Build the full JDK"
@@ -154,12 +160,6 @@ config BR2_PACKAGE_OPENJDK_JVM_VARIANT_ZERO
 
 endchoice
 endif
-
-comment "openjdk needs X.Org"
-	depends on BR2_PACKAGE_OPENJDK_ARCH_SUPPORTS
-	depends on BR2_PACKAGE_HOST_OPENJDK_BIN_ARCH_SUPPORTS
-	depends on BR2_USE_MMU
-	depends on !BR2_PACKAGE_XORG7
 
 comment "openjdk needs glibc, and a toolchain w/ wchar, dynamic library, threads, C++, gcc >= 4.9, host gcc >= 4.9"
 	depends on BR2_USE_MMU
