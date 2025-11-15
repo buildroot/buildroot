@@ -25,9 +25,8 @@ Fixes build errors with uClibc and gcc-9.3.0:
 
 Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13898
 
-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
-[rebased for 23.2.0]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[rebased for 25.3.0]
 ---
  src/util/compiler.h | 10 ++++++++++
  src/util/macros.h   |  1 +
@@ -59,10 +58,10 @@ diff --git a/src/util/macros.h b/src/util/macros.h
 index 22b18303826..8f73ee72693 100644
 --- a/src/util/macros.h
 +++ b/src/util/macros.h
-@@ -31,6 +31,7 @@
- #include <stddef.h>
+@@ -32,6 +32,7 @@
  #include <stdint.h>
  #include <stdio.h>
+ #include <string.h>
 +#include "util/compiler.h"
  
  #ifdef _GAMING_XBOX

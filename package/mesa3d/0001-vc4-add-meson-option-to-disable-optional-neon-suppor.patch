@@ -10,7 +10,7 @@ to force disabling it at compile time.
 Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4114
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
-[rebased for 20.2.0, 20.3.0, 21.1.0, 23.1.0, 23.2.0, 24.3.0, 25.1.0 & 25.2.0]
+[rebased for 25.3.0]
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 [fix syntax error after previous rebases]
 ---
@@ -23,7 +23,7 @@ diff --git a/meson.options b/meson.options
 index 8e0bf2a..1cf0e07 100644
 --- a/meson.options
 +++ b/meson.options
-@@ -131,6 +131,13 @@ option(
+@@ -123,6 +123,13 @@ option(
    description : 'enable gallium mediafoundation frontend tests.',
  )
  
@@ -50,11 +50,10 @@ index 84da951..7f950de 100644
    libvc4_neon = static_library(
      'vc4_neon',
      'vc4_tiling_lt.c',
-@@ -82,7 +82,7 @@ if host_machine.cpu_family() == 'arm'
+@@ -82,6 +82,7 @@
      c_args : ['-mfpu=neon', '-DV3D_BUILD_NEON'],
      dependencies : vc4_deps,
    )
--  vc4_c_args += '-DUSE_ARM_ASM'
 +  vc4_c_args += '-DVC4_TILING_LT_NEON'
  endif
  
@@ -63,20 +62,20 @@ diff --git a/src/gallium/drivers/vc4/vc4_tiling.h b/src/gallium/drivers/vc4/vc4_
 index 5afe329..919b299 100644
 --- a/src/gallium/drivers/vc4/vc4_tiling.h
 +++ b/src/gallium/drivers/vc4/vc4_tiling.h
-@@ -89,7 +89,7 @@ vc4_load_lt_image(void *dst, uint32_t dst_stride,
+@@ -90,7 +90,7 @@ vc4_load_lt_image(void *dst, uint32_t dst_stride,
                    void *src, uint32_t src_stride,
                    int cpp, const struct pipe_box *box)
  {
--#ifdef USE_ARM_ASM
+-#if DETECT_ARCH_ARM
 +#ifdef VC4_TILING_LT_NEON
          if (util_get_cpu_caps()->has_neon) {
                  vc4_load_lt_image_neon(dst, dst_stride, src, src_stride,
                                         cpp, box);
-@@ -105,7 +105,7 @@ vc4_store_lt_image(void *dst, uint32_t dst_stride,
+@@ -106,7 +106,7 @@ vc4_store_lt_image(void *dst, uint32_t dst_stride,
                     void *src, uint32_t src_stride,
                     int cpp, const struct pipe_box *box)
  {
--#ifdef USE_ARM_ASM
+-#if DETECT_ARCH_ARM
 +#ifdef VC4_TILING_LT_NEON
          if (util_get_cpu_caps()->has_neon) {
                  vc4_store_lt_image_neon(dst, dst_stride, src, src_stride,
