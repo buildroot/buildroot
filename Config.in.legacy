@@ -144,6 +144,14 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2025.02.19"
+
+config BR2_PACKAGE_OLA
+	bool "ola has been removed"
+	select BR2_LEGACY
+	help
+	  ola is incompatible with current versions of protobuf
+
 comment "Legacy options removed in 2025.02.17"
 
 config BR2_PACKAGE_HOSTAPD_DRIVER_HOSTAP
