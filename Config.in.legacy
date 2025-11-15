@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2025.11"
 
+config BR2_PACKAGE_OLA
+	bool "ola has been removed"
+	select BR2_LEGACY
+	help
+	  ola is incompatible with current versions of protobuf
+
 config BR2_PACKAGE_BATMAN_ADV_NC
 	bool "batman-adv removed network coding"
 	select BR2_LEGACY
