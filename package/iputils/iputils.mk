@@ -32,10 +32,12 @@ IPUTILS_CONF_OPTS += -DBUILD_ARPING=true
 # move some binaries to the same location as where Busybox installs
 # the corresponding applets, so that we have a single version of the
 # tools (from iputils)
+ifeq ($(BR2_ROOTFS_MERGED_BIN),)
 define IPUTILS_MOVE_ARPING_BINARY
 	mv $(TARGET_DIR)/usr/bin/arping $(TARGET_DIR)/usr/sbin/arping
 endef
 IPUTILS_POST_INSTALL_TARGET_HOOKS += IPUTILS_MOVE_ARPING_BINARY
+endif
 
 else
 IPUTILS_CONF_OPTS += -DBUILD_ARPING=false
