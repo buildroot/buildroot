@@ -1,0 +1,48 @@
+/dts-v1/;
+
+/ {
+    description = "Test FIT (build only)";
+    #address-cells = <1>;
+
+    images {
+        kernel {
+            description = "This file, pretending to be kernel";
+            data = /incbin/("example.its");
+            type = "kernel";
+            arch = "arm64";
+            os = "linux";
+            compression = "none";
+            load = <0x40400000>;
+            entry = <0x40400000>;
+            hash-1 {
+                algo = "crc16-ccitt";
+            };
+            hash-2 {
+                algo = "crc32";
+            };
+            hash-3 {
+                algo = "md5";
+            };
+            hash-4 {
+                algo = "sha1";
+            };
+            hash-5 {
+                algo = "sha256";
+            };
+            hash-6 {
+                algo = "sha384";
+            };
+            hash-7 {
+                algo = "sha512";
+            };
+        };
+    };
+
+    configurations {
+        default = "config-1";
+        config-1 {
+            description = "Test entry";
+            kernel = "kernel";
+        };
+    };
+};
