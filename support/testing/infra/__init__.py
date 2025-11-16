@@ -60,9 +60,14 @@ def download(dldir, filename):
 def run_cmd_on_host(builddir, cmd):
     """Call subprocess.check_output and return the text output."""
     try:
+        host_bin = os.path.join(builddir, "host", "bin")
+        br_path = host_bin + os.pathsep + os.environ["PATH"]
         out = subprocess.check_output(cmd,
                                       cwd=builddir,
-                                      env={"LANG": "C"},
+                                      env={
+                                          "LANG": "C",
+                                          "PATH": br_path
+                                      },
                                       stderr=subprocess.STDOUT,
                                       text=True,
                                       universal_newlines=True)
