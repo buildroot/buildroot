@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-UUU_VERSION = 1.5.233
+UUU_VERSION = 1.5.239
 UUU_SOURCE = uuu_source-uuu_$(UUU_VERSION).tar.gz
 UUU_SITE = https://github.com/nxp-imx/mfgtools/releases/download/uuu_$(UUU_VERSION)
 UUU_LICENSE = BSD 3-Clause "New" or "Revised" License
