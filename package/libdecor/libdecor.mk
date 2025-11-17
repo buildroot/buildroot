@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-LIBDECOR_VERSION = 0.2.3
-LIBDECOR_SITE = https://gitlab.freedesktop.org/libdecor/libdecor/-/archive/$(LIBDECOR_VERSION)
+LIBDECOR_VERSION = 0.2.4
+LIBDECOR_SOURCE = libdecor-$(LIBDECOR_VERSION).tar.xz
+LIBDECOR_SITE = https://gitlab.freedesktop.org/libdecor/libdecor/-/releases/$(LIBDECOR_VERSION)/downloads
 LIBDECOR_LICENSE = MIT
 LIBDECOR_LICENSE_FILES = LICENSE
 LIBDECOR_INSTALL_STAGING = YES
