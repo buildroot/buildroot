@@ -4,17 +4,27 @@
 #
 ################################################################################
 
-XINETD_VERSION = 2.3.15
-XINETD_SITE = \
-	$(call github,xinetd-org,xinetd,xinetd-$(subst .,-,$(XINETD_VERSION)))
+XINETD_VERSION = 2.3.15.4
+XINETD_SOURCE = xinetd-$(XINETD_VERSION).tar.xz
+XINETD_SITE = https://github.com/openSUSE/xinetd/releases/download/$(XINETD_VERSION)
 XINETD_LICENSE = xinetd license
 XINETD_LICENSE_FILES = COPYRIGHT
 XINETD_CPE_ID_VENDOR = xinetd
 
-# 0005-CVE-2013-4342-xinetd-ignores-user-and-group-directiv.patch
+# From NVD's standpoint, all versions are affected by CVE-2013-4342
+# since the official xinetd upstream never did a release with the
+# fix. However, the openSUSE fork we're using as the fix, in:
+# https://github.com/openSUSE/xinetd/commit/91e2401a219121eae15244a6b25d2e79c1af5864
 XINETD_IGNORE_CVES += CVE-2013-4342
 
 XINETD_CFLAGS = $(TARGET_CFLAGS)
+
+# gcc-15 defaults to -std=gnu23 which introduces build failures.
+# We force "-std=gnu17" for gcc version supporting it. Earlier gcc
+# versions will work, since they are using the older standard.
+ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_8),y)
+XINETD_CFLAGS += -std=gnu17
+endif
 
 # Three cases here:
 #  1. We have libtirpc, use it by passing special flags

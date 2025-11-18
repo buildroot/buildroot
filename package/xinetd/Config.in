@@ -1,8 +1,13 @@
 config BR2_PACKAGE_XINETD
 	bool "xinetd"
 	depends on BR2_USE_MMU # fork()
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC # no ecvt/fcvt
 	help
 	  xinetd is a secure replacement for inetd. It was originally
 	  written by panos@cs.colorado.edu.
 
-	  http://www.xinetd.org
+	  https://github.com/openSUSE/xinetd
+
+comment "xinetd needs a glibc or musl toolchain"
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_USES_UCLIBC
