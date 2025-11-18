@@ -1,0 +1,50 @@
+From 73390332d203f02aa5b9798a7550191d55650d97 Mon Sep 17 00:00:00 2001
+From: Antonio Borneo <borneo.antonio@gmail.com>
+Date: Fri, 27 Sep 2024 22:36:52 +0200
+Subject: [PATCH] openocd: fix build with jimtcl 0.83
+
+In jimtcl 0.82, the include file jim.h included in turn stdio.h
+This made redundant to include the former in openocd source files.
+Since jimtcl 0.83, jim.h drops the include of stdio.h, causing
+openocd build to fail.
+
+Include stdio.h in the files that need it.
+
+Change-Id: Ic81c9b273d7520f4d2d8c32bc3e0a6bcfffb67ed
+Signed-off-by: Antonio Borneo <borneo.antonio@gmail.com>
+Reviewed-on: https://review.openocd.org/c/openocd/+/8512
+Reviewed-by: Jonathan McDowell <noodles-openocd@earth.li>
+Tested-by: jenkins
+
+Upstream: https://github.com/openocd-org/openocd/commit/73390332d203f02aa5b9798a7550191d55650d97
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/helper/configuration.h | 1 +
+ src/helper/jim-nvp.c       | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/src/helper/configuration.h b/src/helper/configuration.h
+index 295ea591d6..d646670eb3 100644
+--- a/src/helper/configuration.h
++++ b/src/helper/configuration.h
+@@ -11,6 +11,7 @@
+ #ifndef OPENOCD_HELPER_CONFIGURATION_H
+ #define OPENOCD_HELPER_CONFIGURATION_H
+ 
++#include <stdio.h>
+ #include <helper/command.h>
+ 
+ int parse_cmdline_args(struct command_context *cmd_ctx,
+diff --git a/src/helper/jim-nvp.c b/src/helper/jim-nvp.c
+index e1ab64ae5b..cdd4d34291 100644
+--- a/src/helper/jim-nvp.c
++++ b/src/helper/jim-nvp.c
+@@ -21,6 +21,7 @@
+ #endif
+ 
+ #include "jim-nvp.h"
++#include <stdio.h>
+ #include <string.h>
+ 
+ int jim_get_nvp(Jim_Interp *interp,

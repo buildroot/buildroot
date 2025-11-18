@@ -1,0 +1,131 @@
+From 95603fae18f81eebdafc5b318e70f9e2cdefab9e Mon Sep 17 00:00:00 2001
+From: Antonio Borneo <borneo.antonio@gmail.com>
+Date: Sun, 18 Dec 2022 19:15:57 +0100
+Subject: [PATCH] openocd: revert workarounds for 'expr' syntax change
+
+With OpenOCD v0.12.0 released, drop the workarounds for 'expr'
+syntax change by reverting:
+- commit 320043c054dc ("openocd: fix for polling during "expr"
+  computation");
+- commit c7eaaf620488 ("openocd: prepare for jimtcl 0.81 'expr'
+  syntax change").
+
+Replace the call to target_call_timer_callbacks_now() with call
+to target_call_timer_callbacks().
+
+Change-Id: Iae5afc50e3f688e11176a52648efc9a6577a9a11
+Signed-off-by: Antonio Borneo <borneo.antonio@gmail.com>
+Reviewed-on: https://review.openocd.org/c/openocd/+/7405
+Tested-by: jenkins
+
+Upstream: https://github.com/openocd-org/openocd/commit/95603fae18f81eebdafc5b318e70f9e2cdefab9e
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/helper/command.c | 14 +----------
+ src/openocd.c        | 60 --------------------------------------------
+ 2 files changed, 1 insertion(+), 73 deletions(-)
+
+diff --git a/src/helper/command.c b/src/helper/command.c
+index 6898e2d7c6..ca66cf7dd1 100644
+--- a/src/helper/command.c
++++ b/src/helper/command.c
+@@ -936,19 +936,7 @@ static int jim_command_dispatch(Jim_Interp *interp, int argc, Jim_Obj * const *a
+ 	if (!command_can_run(cmd_ctx, c, Jim_GetString(argv[0], NULL)))
+ 		return JIM_ERR;
+ 
+-	/*
+-	 * TODO: to be removed after v0.12.0
+-	 * workaround for https://sourceforge.net/p/openocd/tickets/362/
+-	 * After syntax change of "expr" in jimtcl 0.81
+-	 * the replacement of jimtcl "expr" with openocd version in
+-	 * https://review.openocd.org/6510/
+-	 * introduces too many target polling during math expressions with
+-	 * "expr" commands.
+-	 * After v0.12.0 replace the following two lines with
+-	 * target_call_timer_callbacks();
+-	 */
+-	if (strcmp(c->name, "expr"))
+-		target_call_timer_callbacks_now();
++	target_call_timer_callbacks();
+ 
+ 	/*
+ 	 * Black magic of overridden current target:
+diff --git a/src/openocd.c b/src/openocd.c
+index bef084f980..875da5a62c 100644
+--- a/src/openocd.c
++++ b/src/openocd.c
+@@ -230,65 +230,6 @@ static int openocd_register_commands(struct command_context *cmd_ctx)
+ 	return register_commands(cmd_ctx, NULL, openocd_command_handlers);
+ }
+ 
+-/*
+- * TODO: to be removed after v0.12.0
+- * workaround for syntax change of "expr" in jimtcl 0.81
+- * replace "expr" with openocd version that prints the deprecated msg
+- */
+-struct jim_scriptobj {
+-	void *token;
+-	Jim_Obj *filename_obj;
+-	int len;
+-	int subst_flags;
+-	int in_use;
+-	int firstline;
+-	int linenr;
+-	int missing;
+-};
+-
+-static int jim_expr_command(Jim_Interp *interp, int argc, Jim_Obj * const *argv)
+-{
+-	if (argc == 2)
+-		return Jim_EvalExpression(interp, argv[1]);
+-
+-	if (argc > 2) {
+-		Jim_Obj *obj = Jim_ConcatObj(interp, argc - 1, argv + 1);
+-		Jim_IncrRefCount(obj);
+-		const char *s = Jim_String(obj);
+-		struct jim_scriptobj *script = Jim_GetIntRepPtr(interp->currentScriptObj);
+-		if (interp->currentScriptObj == interp->emptyObj ||
+-				strcmp(interp->currentScriptObj->typePtr->name, "script") ||
+-				script->subst_flags ||
+-				script->filename_obj == interp->emptyObj)
+-			LOG_WARNING("DEPRECATED! use 'expr { %s }' not 'expr %s'", s, s);
+-		else
+-			LOG_WARNING("DEPRECATED! (%s:%d) use 'expr { %s }' not 'expr %s'",
+-						Jim_String(script->filename_obj), script->linenr, s, s);
+-		int retcode = Jim_EvalExpression(interp, obj);
+-		Jim_DecrRefCount(interp, obj);
+-		return retcode;
+-	}
+-
+-	Jim_WrongNumArgs(interp, 1, argv, "expression ?...?");
+-	return JIM_ERR;
+-}
+-
+-static const struct command_registration expr_handler[] = {
+-	{
+-		.name = "expr",
+-		.jim_handler = jim_expr_command,
+-		.mode = COMMAND_ANY,
+-		.help = "",
+-		.usage = "",
+-	},
+-	COMMAND_REGISTRATION_DONE
+-};
+-
+-static int workaround_for_jimtcl_expr(struct command_context *cmd_ctx)
+-{
+-	return register_commands(cmd_ctx, NULL, expr_handler);
+-}
+-
+ struct command_context *global_cmd_ctx;
+ 
+ static struct command_context *setup_command_handler(Jim_Interp *interp)
+@@ -301,7 +242,6 @@ static struct command_context *setup_command_handler(Jim_Interp *interp)
+ 	/* register subsystem commands */
+ 	typedef int (*command_registrant_t)(struct command_context *cmd_ctx_value);
+ 	static const command_registrant_t command_registrants[] = {
+-		&workaround_for_jimtcl_expr,
+ 		&openocd_register_commands,
+ 		&server_register_commands,
+ 		&gdb_register_commands,
