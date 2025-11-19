@@ -1,0 +1,21 @@
+config BR2_PACKAGE_KIBI
+	bool "kibi"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  A configurable text editor with UTF-8 support, incremental
+	  search, syntax highlighting, line numbers and more, written
+	  in less than 1024 lines of Rust with minimal dependencies.
+
+	  https://github.com/ilai-deutel/kibi
+
+if BR2_PACKAGE_KIBI
+
+config BR2_PACKAGE_KIBI_SYNTAX_HIGHLIGHTING
+	bool "syntax highlighting"
+	default y
+	help
+	  Install files to enable syntax highlighting. This option adds
+	  200 KB of data to /usr/share/
+
+endif
