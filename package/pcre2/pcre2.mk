@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PCRE2_VERSION = 10.46
+PCRE2_VERSION = 10.47
 PCRE2_SITE = https://github.com/PCRE2Project/pcre2/releases/download/pcre2-$(PCRE2_VERSION)
 PCRE2_SOURCE = pcre2-$(PCRE2_VERSION).tar.bz2
 PCRE2_LICENSE = BSD-3-Clause
@@ -22,6 +22,8 @@ PCRE2_CONF_OPTS += $(if $(BR2_PACKAGE_PCRE2_32),--enable-pcre2-32,--disable-pcre
 
 ifeq ($(BR2_PACKAGE_PCRE2_JIT),y)
 PCRE2_CONF_OPTS += --enable-jit
+PCRE2_LICENSE += BSD-2-Clause
+PCRE2_LICENSE_FILES += deps/sljit/LICENSE
 else
 PCRE2_CONF_OPTS += --disable-jit
 endif
