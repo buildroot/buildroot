@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_SCP
 	bool "python-scp"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-paramiko -> python-cryptography, python-bcrypt
 	select BR2_PACKAGE_PYTHON_PARAMIKO # runtime
 	help
 	  scp module for paramiko.
