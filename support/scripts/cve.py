@@ -144,7 +144,9 @@ class CVE:
         self.nvd_cve = nvd_cve
 
     @staticmethod
-    def download_nvd(nvd_git_dir):
+    def download_nvd(nvd_dir):
+        nvd_git_dir = os.path.join(nvd_dir, "git")
+
         if os.path.exists(nvd_git_dir):
             subprocess.check_call(
                 ["git", "pull"],
@@ -177,7 +179,7 @@ class CVE:
         nvd_dir, a fresh copy will be downloaded, and kept in .json.gz
         """
         nvd_git_dir = os.path.join(nvd_dir, "git")
-        CVE.download_nvd(nvd_git_dir)
+
         for year in range(NVD_START_YEAR, datetime.datetime.now().year + 1):
             for dirpath, _, filenames in os.walk(os.path.join(nvd_git_dir, f"CVE-{year}")):
                 for filename in filenames:
