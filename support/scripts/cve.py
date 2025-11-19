@@ -188,6 +188,29 @@ class CVE:
                     with open(os.path.join(dirpath, filename), "rb") as f:
                         yield cls(json.load(f))
 
+    @classmethod
+    def read_nvd_entry(cls, nvd_dir, cve_id):
+        """
+        Retrieve a single CVE entry contained in NIST Vulnerability Database
+        feeds.
+
+        If the CVE entry doesn't exist 'None' is returned.
+        """
+        nvd_git_dir = os.path.join(nvd_dir, "git")
+
+        _, year, minor = cve_id.split("-")
+
+        cve_subpath = f"CVE-{year}/CVE-{year}-{minor[:-2] + 'xx'}/{cve_id.upper()}.json"
+        path = os.path.join(nvd_git_dir, cve_subpath)
+
+        ret = None
+
+        if os.path.exists(path):
+            with open(path, "rb") as f:
+                ret = cls(json.load(f))
+
+        return ret
+
     def parse_node(self, node):
         """
         Parse the node inside the configurations section to extract the
