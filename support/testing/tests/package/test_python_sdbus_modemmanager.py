@@ -1,7 +1,7 @@
 from tests.package.test_python import TestPythonPackageBase
 
 
-class TestPythonPy3SdbusNetworkmanager(TestPythonPackageBase):
+class TestPythonPy3SdbusModemmanager(TestPythonPackageBase):
     __test__ = True
     config = (
         TestPythonPackageBase.config
