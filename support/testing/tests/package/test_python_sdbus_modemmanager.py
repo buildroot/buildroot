@@ -8,6 +8,7 @@ class TestPythonPy3SdbusModemmanager(TestPythonPackageBase):
         + """
         BR2_PACKAGE_PYTHON3=y
         BR2_INIT_SYSTEMD=y
+        # BR2_PACKAGE_SYSTEMD_VCONSOLE is not set
         BR2_PACKAGE_MODEM_MANAGER=y
         BR2_PACKAGE_PYTHON_SDBUS_MODEMMANAGER=y
         """
