@@ -10,3 +10,14 @@ config BR2_PACKAGE_QUAZIP
 	  archives. It uses the Qt toolkit.
 
 	  http://quazip.sourceforge.net
+
+if BR2_PACKAGE_QUAZIP
+
+config BR2_PACKAGE_QUAZIP_INSTALL_TESTS
+	bool "Build tests"
+	select BR2_PACKAGE_QT6BASE_TEST if BR2_PACKAGE_QT6
+	select BR2_PACKAGE_QT6BASE_NETWORK if BR2_PACKAGE_QT6
+	help
+	  Build and install unit test binaries
+
+endif
