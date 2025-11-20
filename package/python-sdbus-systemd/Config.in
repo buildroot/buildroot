@@ -1,0 +1,11 @@
+config BR2_PACKAGE_PYTHON_SDBUS_SYSTEMD
+	bool "python-sdbus-systemd"
+	depends on BR2_PACKAGE_SYSTEMD
+	select BR2_PACKAGE_PYTHON_SDBUS # runtime
+	help
+	  Systemd bindings for python-sdbus.
+
+	  https://github.com/bernhardkaindl/python-sdbus-systemd
+
+comment "python-sdbus-systemd needs systemd"
+	depends on !BR2_PACKAGE_SYSTEMD
