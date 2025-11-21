@@ -23,9 +23,9 @@
 #                   to /usr/bin)
 #
 # Input:
-#   --type TYPE     the type of root to check: 'skeleton' or 'overlay'
-#   --merged-usr    check for merged /usr
-#   --merged-bin    check for merged /usr/bin
+#   -t TYPE         the type of root to check: 'skeleton' or 'overlay'
+#   -u              check for merged /usr
+#   -b              check for merged /usr/bin
 #   $*:             the root directories (skeleton, overlays) to check
 # Output:
 #   stdout:         the list of non-compliant paths (empty if compliant).
@@ -34,31 +34,16 @@
 #   !0:             if any directory to check is improperly merged
 #
 
-opts="type:,merged-usr,merged-bin"
-ARGS="$(getopt -n check-merged -o "" -l "${opts}" -- "${@}")" || exit 1
-eval set -- "${ARGS}"
-
 type=
 merged_usr=false
 merged_bin=false
-while :; do
-	case "${1}" in
-	(--type)
-		type="${2}"
-		shift 2
-		;;
-	(--merged-usr)
-		merged_usr=true
-		shift
-		;;
-	(--merged-bin)
-		merged_bin=true
-		shift
-		;;
-	(--)
-		shift
-		break
-		;;
+while getopts "t:ub" OPT; do
+	case "${OPT}" in
+	(t)	type="${OPTARG}";;
+	(u)	merged_usr=true;;
+	(b)	merged_bin=true;;
+	(:)	printf "option %s expects a mandatory argument\n" "${OPTARG}"; exit 1;;
+	(\?)	printf "unknown option %s\n" "${OPTARG}"; exit 1;;
 	esac
 done
 

@@ -25,9 +25,9 @@ endif
 
 define SKELETON_CUSTOM_CONFIGURE_CMDS
 	support/scripts/check-merged \
-		--type skeleton \
-		$(if $(BR2_ROOTFS_MERGED_USR),--merged-usr) \
-		$(if $(BR2_ROOTFS_MERGED_BIN),--merged-bin) \
+		-t skeleton \
+		$(if $(BR2_ROOTFS_MERGED_USR),-u) \
+		$(if $(BR2_ROOTFS_MERGED_BIN),-b) \
 		$(SKELETON_CUSTOM_PATH)
 endef
 

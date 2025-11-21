@@ -783,9 +783,9 @@ endif
 # counterparts are appropriately setup as symlinks ones to the others.
 	@$(call MESSAGE,"Sanity check in overlays $(call qstrip,$(BR2_ROOTFS_OVERLAY))")
 	support/scripts/check-merged \
-		--type overlay \
-		$(if $(BR2_ROOTFS_MERGED_USR),--merged-usr) \
-		$(if $(BR2_ROOTFS_MERGED_BIN),--merged-bin) \
+		-t overlay \
+		$(if $(BR2_ROOTFS_MERGED_USR),-u) \
+		$(if $(BR2_ROOTFS_MERGED_BIN),-b) \
 		$(call qstrip,$(BR2_ROOTFS_OVERLAY))
 
 	$(foreach d, $(call qstrip,$(BR2_ROOTFS_OVERLAY)), \
