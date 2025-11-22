@@ -70,6 +70,7 @@ config BR2_PACKAGE_UBOOT_TOOLS_MKEFICAPSULE
 	bool "mkeficapsule"
 	depends on !BR2_STATIC_LIBS # gnutls
 	depends on BR2_USE_WCHAR # gnutls
+	select BR2_PACKAGE_GNUTLS
 	help
 	  Install the mkeficapsule tool on the target system
 
