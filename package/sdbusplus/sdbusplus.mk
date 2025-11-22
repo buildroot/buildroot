@@ -23,7 +23,7 @@ SDBUSPLUS_LICENSE = Apache-2.0
 SDBUSPLUS_LICENSE_FILES = LICENSE
 
 # Autoreconf is missing the m4/ directory, which might actually be missing
-# iff it was the first argument, but unfortunately we are overriding the
+# if it was the first argument, but unfortunately we are overriding the
 # first include directory above. Thus we need that hook here.
 define SDBUSPLUS_CREATE_M4
 	mkdir -p $(@D)/m4
