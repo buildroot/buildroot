@@ -1,0 +1,36 @@
+From 30a95099f4711d7c5a59526a84e2c73701af3c3c Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Tue, 25 Nov 2025 22:57:21 +0100
+Subject: [PATCH] src/bench.h: include string.h
+
+Fixes build error with newer gcc, detected by buildroot autobuilders:
+https://autobuild.buildroot.net/results/189/189219853fbe1b7daf0aaad29279858c6e60507b//build-end.log
+
+lib_unix.c: In function 'unix_server':
+lib_unix.c:29:9: error: implicit declaration of function 'strcpy' [-Wimplicit-function-declaration]
+   29 |         strcpy(s.sun_path, path);
+      |         ^~~~~~
+lib_unix.c:10:1: note: include '<string.h>' or provide a declaration of 'strcpy'
+
+Upstream: https://github.com/intel/lmbench/pull/41
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/bench.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/bench.h b/src/bench.h
+index 3b25a47..f0fd6b7 100644
+--- a/src/bench.h
++++ b/src/bench.h
+@@ -27,6 +27,7 @@ typedef unsigned char bool_t;
+ #ifndef WIN32
+ #include        <strings.h>
+ #endif
++#include        <string.h>
+ #include        <sys/types.h>
+ #ifndef WIN32
+ #include        <sys/mman.h>
+-- 
+2.47.3
+
