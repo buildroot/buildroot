@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-UDPCAST_VERSION = 20230924
-UDPCAST_SITE = http://www.udpcast.linux.lu/download
+UDPCAST_VERSION = 20250223
+UDPCAST_SITE = https://www.udpcast.linux.lu/download
 UDPCAST_DEPENDENCIES = host-m4
 UDPCAST_LICENSE = BSD-2-Clause, GPL-2.0+
 UDPCAST_LICENSE_FILES = COPYING
