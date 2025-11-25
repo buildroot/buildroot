@@ -1,0 +1,51 @@
+From 1675ec9d76b32400f612b1c542be6dbf77dea986 Mon Sep 17 00:00:00 2001
+From: Neal Frager <neal.frager@amd.com>
+Date: Tue, 25 Nov 2025 12:54:48 +0000
+Subject: [PATCH] lms-hash-sigs/hss_param.c: add stdio.h include
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The lms-hash-sigs/hss_param.c is missing an include of stdio.h. Without it,
+the following build error can occur:
+
+hss_param.c: In function ‘hss_get_parameter_set’:
+hss_param.c:157:13: error: implicit declaration of function ‘printf’ [-Wimplicit-function-declaration]
+  157 |             printf("Private key expired\n");
+      |             ^~~~~~
+hss_param.c:7:1: note: include ‘<stdio.h>’ or provide a declaration of ‘printf’
+    6 | #include "lm_common.h"
+  +++ |+#include <stdio.h>
+    7 |
+hss_param.c:157:13: warning: incompatible implicit declaration of built-in function ‘printf’ [-Wbuiltin-declaration-mismatch]
+  157 |             printf("Private key expired\n");
+      |             ^~~~~~
+hss_param.c:157:13: note: include ‘<stdio.h>’ or provide a declaration of ‘printf’
+make[3]: *** [Makefile:38: hss_param.o] Error 1
+make[3]: *** Waiting for unfinished jobs....
+make[2]: *** [Makefile:84: build/bin/bootgen] Error 2
+
+The above error was reported on Debian 13 / gcc 14.2.0.
+
+Reported-by: Peter Korsgaard <peter@korsgaard.com>
+Signed-off-by: Neal Frager <neal.frager@amd.com>
+Upstream: submitted to Xilinx bootgen repo with CR-1256741
+---
+ lms-hash-sigs/hss_param.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lms-hash-sigs/hss_param.c b/lms-hash-sigs/hss_param.c
+index 7a2abd6..6b2b950 100755
+--- a/lms-hash-sigs/hss_param.c
++++ b/lms-hash-sigs/hss_param.c
+@@ -4,6 +4,7 @@
+ #include "endian.h"
+ #include "hss_zeroize.h"
+ #include "lm_common.h"
++#include <stdio.h>
+ 
+ static struct map_structure {
+     param_set_t public;
+-- 
+2.25.1
+
