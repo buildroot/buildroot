@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2025.11"
 
+config BR2_PACKAGE_LIBARGTABLE2
+	bool "libargtable2 has been removed"
+	select BR2_LEGACY
+	help
+	  libargtable2 is unmaintained and has been removed
+
 config BR2_PACKAGE_OLA
 	bool "ola has been removed"
 	select BR2_LEGACY
