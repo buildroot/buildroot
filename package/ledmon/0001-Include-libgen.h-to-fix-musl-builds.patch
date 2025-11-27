@@ -1,0 +1,100 @@
+From 95adecd3cc8e94f9964c34fdf0354c209acce166 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Thu, 27 Nov 2025 21:17:22 +0100
+Subject: [PATCH] Include libgen.h to fix musl builds
+
+Fixes various build errors like
+
+block.c: In function 'block_set_devnode':
+block.c:226:22: error: implicit declaration of function 'basename'
+ [-Wimplicit-function-declaration]
+  226 |         char *name = basename(device->sysfs_path);
+
+Upstream: https://github.com/md-raid-utilities/ledmon/pull/272
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[Bernd: backported upstream PR to v1.1.0]
+---
+ src/ledctl/ledctl.c | 1 +
+ src/ledmon/ledmon.c | 1 +
+ src/lib/block.c     | 1 +
+ src/lib/npem.c      | 1 +
+ src/lib/slot.c      | 1 +
+ src/lib/vmdssd.c    | 1 +
+ 6 files changed, 6 insertions(+)
+
+diff --git a/src/ledctl/ledctl.c b/src/ledctl/ledctl.c
+index 30adc74..af2ea1b 100644
+--- a/src/ledctl/ledctl.c
++++ b/src/ledctl/ledctl.c
+@@ -5,6 +5,7 @@
+ #include <ctype.h>
+ #include <errno.h>
+ #include <getopt.h>
++#include <libgen.h>
+ #include <linux/limits.h>
+ #include <inttypes.h>
+ #include <limits.h>
+diff --git a/src/ledmon/ledmon.c b/src/ledmon/ledmon.c
+index 37ef69a..4644492 100644
+--- a/src/ledmon/ledmon.c
++++ b/src/ledmon/ledmon.c
+@@ -5,6 +5,7 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <getopt.h>
++#include <libgen.h>
+ #include <limits.h>
+ #include <signal.h>
+ #include <stdint.h>
+diff --git a/src/lib/block.c b/src/lib/block.c
+index 23dc34f..afa7d57 100644
+--- a/src/lib/block.c
++++ b/src/lib/block.c
+@@ -3,6 +3,7 @@
+ 
+ #include <dirent.h>
+ #include <fcntl.h>
++#include <libgen.h>
+ #include <limits.h>
+ #include <stdint.h>
+ #include <stdio.h>
+diff --git a/src/lib/npem.c b/src/lib/npem.c
+index bdceee3..f980ba8 100644
+--- a/src/lib/npem.c
++++ b/src/lib/npem.c
+@@ -2,6 +2,7 @@
+ // Copyright (C) 2022 Intel Corporation.
+ 
+ #include <errno.h>
++#include <libgen.h>
+ #include <stdio.h>
+ #include <string.h>
+ #include <pci/pci.h>
+diff --git a/src/lib/slot.c b/src/lib/slot.c
+index 1044ddf..68e3009 100644
+--- a/src/lib/slot.c
++++ b/src/lib/slot.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: LGPL-2.1-or-later
+ // Copyright (C) 2023 Intel Corporation.
+ 
++#include <libgen.h>
+ #include <stdio.h>
+ #include <string.h>
+ 
+diff --git a/src/lib/vmdssd.c b/src/lib/vmdssd.c
+index 8a6e846..0270a7d 100644
+--- a/src/lib/vmdssd.c
++++ b/src/lib/vmdssd.c
+@@ -2,6 +2,7 @@
+ // Copyright (C) 2022 Intel Corporation.
+ 
+ #include <errno.h>
++#include <libgen.h>
+ #include <limits.h>
+ #include <stdlib.h>
+ #include <stdint.h>
+-- 
+2.47.3
+
