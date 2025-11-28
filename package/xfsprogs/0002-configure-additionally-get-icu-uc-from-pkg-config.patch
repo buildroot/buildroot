@@ -1,0 +1,47 @@
+From 0b3e7284c7fa20dd27f8a584f8db417d1d6fa27b Mon Sep 17 00:00:00 2001
+From: Alyssa Ross <hi@alyssa.is>
+Date: Fri, 14 Feb 2025 09:45:10 +0100
+Subject: configure: additionally get icu-uc from pkg-config
+
+Upstream libicu changed its pkgconfig files[0] in version 76 to require
+callers to call out to each .pc file they need for the libraries they
+want to link against.  This apparently reduces overlinking, at a cost of
+needing the world to fix themselves up.
+
+This patch fixes the following build error with icu 76, also seen by
+Fedora[1]:
+
+	    /bin/ld: unicrash.o: undefined reference to symbol 'uiter_setString_76'
+	    /bin/ld: /lib/libicuuc.so.76: error adding symbols: DSO missing from command line
+	    collect2: error: ld returned 1 exit status
+	    make[2]: *** [../include/buildrules:65: xfs_scrub] Error 1
+	    make[1]: *** [include/buildrules:35: scrub] Error 2
+
+Link: https://github.com/unicode-org/icu/commit/199bc827021ffdb43b6579d68e5eecf54c7f6f56 [0]
+Link: https://src.fedoraproject.org/rpms/xfsprogs/c/624b0fdf7b2a31c1a34787b04e791eee47c97340 [1]
+Signed-off-by: Alyssa Ross <hi@alyssa.is>
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+Upstream: https://git.kernel.org/pub/scm/fs/xfs/xfsprogs-dev.git/commit/?id=0b3e7284c7fa20dd27f8a584f8db417d1d6fa27b
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ m4/package_icu.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+(limited to 'm4/package_icu.m4')
+
+diff --git a/m4/package_icu.m4 b/m4/package_icu.m4
+index 3ccbe0cc98..6b89c874f1 100644
+--- a/m4/package_icu.m4
++++ b/m4/package_icu.m4
+@@ -1,5 +1,5 @@
+ AC_DEFUN([AC_HAVE_LIBICU],
+-  [ PKG_CHECK_MODULES([libicu], [icu-i18n], [have_libicu=yes], [have_libicu=no])
++  [ PKG_CHECK_MODULES([libicu], [icu-i18n icu-uc], [have_libicu=yes], [have_libicu=no])
+     AC_SUBST(have_libicu)
+     AC_SUBST(libicu_CFLAGS)
+     AC_SUBST(libicu_LIBS)
+-- 
+cgit 1.2.3-korg
+

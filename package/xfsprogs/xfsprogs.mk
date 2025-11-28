@@ -10,6 +10,15 @@ XFSPROGS_SOURCE = xfsprogs-$(XFSPROGS_VERSION).tar.xz
 XFSPROGS_LICENSE = GPL-2.0, GPL-2.0+, LGPL-2.1 (libhandle, few headers)
 XFSPROGS_LICENSE_FILES = LICENSES/GPL-2.0 LICENSES/LGPL-2.1
 
+# 0002-configure-additionally-get-icu-uc-from-pkg-config.patch
+XFSPROGS_AUTORECONF = YES
+
+# restore upstream install-sh script overwritten by autoreconf
+define XFSPROGS_FIX_INSTALL_SH
+	mv $(@D)/install-sh~ $(@D)/install-sh
+endef
+XFSPROGS_POST_CONFIGURE_HOOKS = XFSPROGS_FIX_INSTALL_SH
+
 XFSPROGS_DEPENDENCIES = inih liburcu util-linux
 
 XFSPROGS_CONF_ENV = ac_cv_header_aio_h=yes ac_cv_lib_rt_lio_listio=yes PLATFORM="linux"
