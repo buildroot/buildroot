@@ -1,0 +1,28 @@
+From f812b8d30456c071ee23e9a02d6ce16036fd3f68 Mon Sep 17 00:00:00 2001
+From: Nicholas Marriott <nicholas.marriott@gmail.com>
+Date: Wed, 29 Oct 2025 08:47:45 +0000
+Subject: [PATCH] Cast to avoid warnings on 32-bit architectures. GitHub issue
+ 4597.
+
+Upstream: https://github.com/tmux/tmux/commit/f812b8d30456c071ee23e9a02d6ce16036fd3f68
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ compat/utf8proc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/compat/utf8proc.c b/compat/utf8proc.c
+index dd4ab27f..147da696 100644
+--- a/compat/utf8proc.c
++++ b/compat/utf8proc.c
+@@ -48,7 +48,7 @@ utf8proc_mbtowc(wchar_t *pwc, const char *s, size_t n)
+ 	 * *pwc == -1 indicates invalid codepoint
+ 	 * slen < 0 indicates an error
+ 	 */
+-	slen = utf8proc_iterate(s, n, pwc);
++	slen = utf8proc_iterate(s, n, (utf8proc_int32_t*)pwc);
+ 	if (*pwc == (wchar_t)-1 || slen < 0)
+ 		return (-1);
+ 	return (slen);
+-- 
+2.47.3
+
