@@ -1,0 +1,40 @@
+From b0acf9f0c0aac93bf6f3e196d7a52c9632ff4475 Mon Sep 17 00:00:00 2001
+From: Tony Jones <tonyj@suse.de>
+Date: Fri, 8 Nov 2024 13:13:30 -0800
+Subject: [PATCH] Fix autoconf detection of perf_events
+
+The autoconf check for the presence of perf_events api began failing
+on recent openSUSE builds.
+
+checking kernel supports perf_events... conftest.c: In function 'main':
+conftest.c:37:39: error: implicit declaration of function 'getpid' [-Wimplicit-function-declaration]
+   37 |                                 pid = getpid();
+      |                                       ^~~~~~
+conftest.c:38:33: error: implicit declaration of function 'syscall' [-Wimplicit-function-declaration]
+   38 |                                 syscall(__NR_perf_event_open, &attr, pid, 0, -1, 0);
+      |                                 ^~~~~~~
+no
+Error: Your kernel does not appear to have the necessary support to run oprofile.
+
+Upstream: https://sourceforge.net/p/oprofile/oprofile/ci/b0acf9f0c0aac93bf6f3e196d7a52c9632ff4475/
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.ac | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/configure.ac b/configure.ac
+index dc447f89..363bd440 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -116,6 +116,7 @@ if test "$kernel_may_have_perf_events_support" = "yes"; then
+ 		rm -f test-for-PERF_EVENT_OPEN
+ 		AC_LANG_CONFTEST(
+ 			[AC_LANG_PROGRAM([[#include <linux/perf_event.h>
++				#include <unistd.h>
+ 				#include <asm/unistd.h>
+ 				#include <sys/types.h>
+ 				#include <string.h>
+-- 
+2.47.3
+
