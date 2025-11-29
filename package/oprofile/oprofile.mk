@@ -13,6 +13,7 @@ OPROFILE_CONF_OPTS = \
 	--disable-account-check \
 	--with-kernel=$(STAGING_DIR)/usr
 # 0002-fix-static-build-with-binutils-2.40.patch
+# 0003-Fix-autoconf-detection-of-perf_events.patch
 OPROFILE_AUTORECONF = YES
 
 define OPROFILE_CREATE_MISSING_FILES
