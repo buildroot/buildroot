@@ -47,6 +47,10 @@ while getopts "t:ub" OPT; do
 	esac
 done
 
+# Remove the options processed by getopts from $@,
+# so that $@ now contains only the root directories to check.
+shift $((OPTIND -1))
+
 if [ "${type}" = "skeleton" ]; then
 	strict=true
 else
