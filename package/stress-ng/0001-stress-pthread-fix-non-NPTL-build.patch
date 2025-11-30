@@ -1,0 +1,42 @@
+From 73d1f5ed2167fca8a1cbfb85f4da123f00e524a1 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 30 Nov 2025 11:36:10 +0100
+Subject: [PATCH] stress-pthread: fix non-NPTL build
+
+https://github.com/ColinIanKing/stress-ng/commit/15b26e33daaf36acd5eeceaaf6fc954f46792a8b
+added the usage of attr without using HAVE_PTHREAD_ATTR_SETSTACK for
+toolchains without NPTL support.
+
+This patch fixes build errors detected by buildroot autobuilders:
+https://autobuild.buildroot.net/results/d4f/d4fadef213455b1776d93e30e51ffe09fb1879c5/build-end.log
+
+stress-pthread.c: In function 'stress_pthread':
+stress-pthread.c:567:81: error: 'attr' undeclared (first use in this function)
+  567 |                         pthreads[i].ret = pthread_create(&pthreads[i].pthread, &attr,
+
+Upstream: https://github.com/ColinIanKing/stress-ng/pull/593
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ stress-pthread.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/stress-pthread.c b/stress-pthread.c
+index aafcf0f0a..8605b7a1d 100644
+--- a/stress-pthread.c
++++ b/stress-pthread.c
+@@ -564,7 +564,11 @@ static int stress_pthread(stress_args_t *args)
+ 
+ 			pthreads[i].t_create = stress_time_now();
+ 			pthreads[i].t_run = pthreads[i].t_create;
++#if defined(HAVE_PTHREAD_ATTR_SETSTACK)
+ 			pthreads[i].ret = pthread_create(&pthreads[i].pthread, &attr,
++#else
++			pthreads[i].ret = pthread_create(&pthreads[i].pthread, NULL,
++#endif
+ 				stress_pthread_func, (void *)&pargs);
+ 			if (UNLIKELY(pthreads[i].ret)) {
+ 				/* Out of resources, don't try any more */
+-- 
+2.47.3
+
