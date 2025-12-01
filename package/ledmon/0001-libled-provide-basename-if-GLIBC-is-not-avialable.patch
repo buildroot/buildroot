@@ -1,0 +1,42 @@
+From 4c0477bdaef56314eb4df4a432be54cc49238be0 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Mon, 1 Dec 2025 19:07:42 +0100
+Subject: [PATCH] libled: provide basename if GLIBC is not avialable
+
+If GNU basename is not avilable, define it. It is safer to use that
+rather than include libgen.h with XPG basename() definition.
+
+Suggested in
+https://github.com/md-raid-utilities/ledmon/pull/272#issuecomment-3596495739
+
+Code copied from
+https://github.com/md-raid-utilities/mdadm/commit/9dbd11e091f84eb0bf9d717283774816c4c4453d
+
+Upstream: https://github.com/md-raid-utilities/ledmon/pull/272
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/lib/libled_internal.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/src/lib/libled_internal.h b/src/lib/libled_internal.h
+index 2355d30..2061fc2 100644
+--- a/src/lib/libled_internal.h
++++ b/src/lib/libled_internal.h
+@@ -70,4 +70,13 @@ led_status_t device_exclude_pattern_add(struct led_ctx *ctx, const char *path);
+  */
+ void lib_log(struct led_ctx *ctx, enum led_log_level_enum loglevel, const char *buf, ...)
+ 				__attribute__ ((format (printf, 3, 4)));
++
++/*
++ * Ensure GNU basename behavior on GLIBC less systems.
++ */
++#ifndef __GLIBC__
++#define basename(path) \
++       (strrchr((path), '/') ? strrchr((path),'/') + 1 : (path))
++#endif
++
+ #endif
+-- 
+2.47.3
+
