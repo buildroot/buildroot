@@ -1,0 +1,38 @@
+Description: Fix FTBFS with GCC 15
+Author: Adrian Bunk <bunk@debian.org>
+Bug-Debian: https://bugs.debian.org/1097548
+
+Downloaded from
+https://sources.debian.org/src/parprouted/0.70-6/debian/patches/gcc-15.patch
+
+Upstream: dead (last update 2008)
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+
+--- parprouted-0.70.orig/parprouted.c
++++ parprouted-0.70/parprouted.c
+@@ -330,7 +330,7 @@ void parseproc()
+     }
+ }
+ 
+-void cleanup() 
++void cleanup(void *arg)
+ {
+     /* FIXME: I think this is a wrong way to do it ... */
+     
+@@ -346,13 +346,13 @@ void cleanup()
+     exit(1);
+ }
+ 
+-void sighandler()
++void sighandler(int sig)
+ {
+     /* FIXME: I think this is a wrong way to do it ... */
+     perform_shutdown=1;
+ }
+ 
+-void *main_thread()
++void *main_thread(void *arg)
+ {
+     time_t last_refresh;
+ 
