@@ -1,0 +1,10 @@
+config BR2_PACKAGE_YQ
+	bool "yq"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_GO
+	help
+	  A lightweight and portable command-line YAML, JSON, INI
+	  and XML processor, yq uses jq (a popular JSON processor)
+	  like syntax.
+
+	  https://mikefarah.gitbook.io/yq/
