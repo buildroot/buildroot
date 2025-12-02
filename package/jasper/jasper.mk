@@ -4,22 +4,29 @@
 #
 ################################################################################
 
-JASPER_VERSION = 2.0.33
+JASPER_VERSION = 4.2.8
 JASPER_SITE = https://github.com/jasper-software/jasper/releases/download/version-$(JASPER_VERSION)
 JASPER_INSTALL_STAGING = YES
 JASPER_LICENSE = JasPer-2.0
-JASPER_LICENSE_FILES = LICENSE
+JASPER_LICENSE_FILES = LICENSE.txt
 JASPER_CPE_ID_VALID = YES
 JASPER_SUPPORTS_IN_SOURCE_BUILD = NO
 JASPER_CONF_OPTS = \
 	-DJAS_ENABLE_DOC=OFF \
 	-DJAS_ENABLE_PROGRAMS=OFF
 
-# 0001-Fixes-367.patch
-JASPER_IGNORE_CVES += CVE-2023-51257
+# Despite using JASPER_SUPPORTS_IN_SOURCE_BUILD = NO jasper detects an
+# in-source-build because a subdirectory inside the source directory
+# is used so we need to force the build.
+JASPER_CONF_OPTS += \
+	-DALLOW_IN_SOURCE_BUILD=ON
 
-# 0002-Fixes-400.patch
-JASPER_IGNORE_CVES += CVE-2025-8835
+# When cross-compiling, we have to feed in the C++ standard to use,
+# upstream doesn't want to auto-detect it:
+# https://github.com/jasper-software/jasper/issues/358
+JASPER_STDC_VERSION="`echo __STDC_VERSION__ | $(TARGET_CROSS)cpp -E -P -`"
+JASPER_CONF_OPTS += \
+	-DJAS_STDC_VERSION=$(JASPER_STDC_VERSION)
 
 ifeq ($(BR2_STATIC_LIBS),y)
 JASPER_CONF_OPTS += -DJAS_ENABLE_SHARED=OFF
