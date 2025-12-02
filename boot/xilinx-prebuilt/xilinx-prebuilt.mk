@@ -26,16 +26,11 @@ XILINX_PREBUILT_BOARD = $(call qstrip,$(BR2_TARGET_XILINX_PREBUILT_BOARD))
 
 XILINX_PREBUILT_BOARD_DIR = $(@D)/$(XILINX_PREBUILT_BOARD)-$(XILINX_PREBUILT_FAMILY)
 
-ifeq ($(BR2_TARGET_XILINX_PREBUILT_VERSAL),y)
+# Common Files for All Versal Families
+ifeq ($(BR2_TARGET_XILINX_PREBUILT_VERSAL)$(BR2_TARGET_XILINX_PREBUILT_VERSAL2),y)
 ifeq ($(BR2_TARGET_XILINX_PREBUILT_VERSAL_XSA),y)
 # Supports either plm.elf or plmfw.elf filenames
 XILINX_PREBUILT_PLM = $(@D)/pdi_files/gen_files/plm*.elf
-# Unlike the psmfw.elf file for Xilinx development boards,
-# AMD Vivado Design Suite currently generates a file named psm_fw.elf.
-# Future versions of AMD Vivado will generate a file named psmfw.elf,
-# so to support current and future AMD Vivado versions, the filename
-# psm*fw.elf is used.
-XILINX_PREBUILT_PSMFW = $(@D)/pdi_files/static_files/psm*fw.elf
 # We need the *.pdi glob, because the file has different names for the
 # different boards, and it has to be named boot.pdi when installed.
 # If Segmented Configuration is used, there will be two pdi files and we need
@@ -63,7 +58,6 @@ endif # BR2_TARGET_XILINX_PREBUILT_VERSAL_PLD_PDI
 else # BR2_TARGET_XILINX_PREBUILT_VERSAL_XSA
 # Supports either plm.elf or plmfw.elf filenames
 XILINX_PREBUILT_PLM = $(XILINX_PREBUILT_BOARD_DIR)/plm*.elf
-XILINX_PREBUILT_PSMFW = $(XILINX_PREBUILT_BOARD_DIR)/psmfw.elf
 # We need the *.pdi glob, because the file has different names for the
 # different boards, and it has to be named boot.pdi when installed.
 # If Segmented Configuration is used, there will be two pdi files and we need
@@ -91,11 +85,27 @@ endif # BR2_TARGET_XILINX_PREBUILT_VERSAL_PLD_PDI
 endif # BR2_TARGET_XILINX_PREBUILT_VERSAL_XSA
 
 ifneq ($(BR2_TARGET_XILINX_EMBEDDEDSW_VERSAL_PLM),y)
+ifneq ($(BR2_TARGET_XILINX_EMBEDDEDSW_VERSAL2_PLM),y)
 define XILINX_PREBUILT_INSTALL_VERSAL_PLM
 	$(INSTALL) -D -m 0755 $(XILINX_PREBUILT_PLM) \
 		$(BINARIES_DIR)/plm.elf
 endef
+endif # !BR2_TARGET_XILINX_EMBEDDEDSW_VERSAL2_PLM
 endif # !BR2_TARGET_XILINX_EMBEDDEDSW_VERSAL_PLM
+endif # BR2_TARGET_XILINX_PREBUILT_VERSAL | BR2_TARGET_XILINX_PREBUILT_VERSAL2
+
+# Files specific to Versal Gen1
+ifeq ($(BR2_TARGET_XILINX_PREBUILT_VERSAL),y)
+ifeq ($(BR2_TARGET_XILINX_PREBUILT_VERSAL_XSA),y)
+# Unlike the psmfw.elf file for Xilinx development boards,
+# AMD Vivado Design Suite currently generates a file named psm_fw.elf.
+# Future versions of AMD Vivado will generate a file named psmfw.elf,
+# so to support current and future AMD Vivado versions, the filename
+# psm*fw.elf is used.
+XILINX_PREBUILT_PSMFW = $(@D)/pdi_files/static_files/psm*fw.elf
+else # BR2_TARGET_XILINX_PREBUILT_VERSAL_XSA
+XILINX_PREBUILT_PSMFW = $(XILINX_PREBUILT_BOARD_DIR)/psmfw.elf
+endif # BR2_TARGET_XILINX_PREBUILT_VERSAL_XSA
 
 ifneq ($(BR2_TARGET_XILINX_EMBEDDEDSW_VERSAL_PSMFW),y)
 define XILINX_PREBUILT_INSTALL_VERSAL_PSMFW
