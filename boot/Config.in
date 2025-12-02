@@ -4,7 +4,7 @@ config BR2_TARGET_XILINX_FIRMWARE_ARCH_SUPPORTS
 	# All Xilinx SoCs using this package are aarch64 only
 	depends on BR2_aarch64
 	# only CPUs with corresponding firmwares:
-	depends on BR2_cortex_a53 || BR2_cortex_a72
+	depends on BR2_cortex_a53 || BR2_cortex_a72 || BR2_cortex_a78
 
 menu "Bootloaders"
 
