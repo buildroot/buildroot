@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBYUV_VERSION = 413a8d8041f1cc5a350a47c0d81cc721e64f9fd0
+LIBYUV_VERSION = 4825d9b29eea4dac24607245db7ec7d4c41c1964
 LIBYUV_SITE = https://chromium.googlesource.com/libyuv/libyuv
 LIBYUV_SITE_METHOD = git
 LIBYUV_LICENSE = BSD-3-Clause
