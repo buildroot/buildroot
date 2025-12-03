@@ -1,0 +1,37 @@
+From 62ccc56af071eaa478bef6ed41fd7a55d3bb2d80 Mon Sep 17 00:00:00 2001
+From: Cristian Le <github@lecris.me>
+Date: Wed, 2 Jul 2025 15:07:37 +0200
+Subject: [PATCH] Cmake improvements (#158)
+
+* Bump CMake policies -- Add higher policy bound (it is not the maximum version of CMake that can build, it's an indication that the lower bound can be bumped up to that version without degradation)
+
+* Use GNUInstallDirs -- This has been the standard install interface since CMake 3.0
+
+* Use more common design for the Config.cmake
+
+* Use `target_include_directories` -- Use target_include_directories to propagate the include directory.  Note: I don't know how the user consumes the package as #include <file.h> or #include <dir/file.h>, it is the latter in this implementation.
+
+[cbbarber] user_eg_r.c uses
+     #include "libqhull_r/qhull_ra.h"
+
+Upstream: https://github.com/qhull/qhull/commit/62ccc56af071eaa478bef6ed41fd7a55d3bb2d80
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[removed other parts of the patch, kept cmake bump, rebased for 8.0.2]
+---
+ CMakeLists.txt        | 105 ++++++++++++++++++++++++------------------
+ 3 files changed, 63 insertions(+), 48 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b2060f49..28714b15 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -68,7 +68,7 @@
+ # $DateTime: 2020/09/03 21:26:22 $$Author: bbarber $
+ 
+ project(qhull)
+-cmake_minimum_required(VERSION 3.0)
++cmake_minimum_required(VERSION 3.5...4.0)
+ 
+ # Define qhull_VERSION in README.txt, Announce.txt, qh-get.htm, CMakeLists.txt
+ #   qhull-zip.sh (twice), qhull-wiki.md, qhull-news.htm, File_id.diz, index.htm
