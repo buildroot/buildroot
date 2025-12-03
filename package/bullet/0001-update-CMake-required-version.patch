@@ -1,0 +1,22 @@
+From d1a4256b3a019117f2bb6cb8c63d6367aaf512e2 Mon Sep 17 00:00:00 2001
+From: Erwin Coumans <erwincoumans@gmail.com>
+Date: Wed, 23 Apr 2025 14:17:20 -0700
+Subject: [PATCH] update CMake required version
+
+Upstream: https://github.com/bulletphysics/bullet3/commit/d1a4256b3a019117f2bb6cb8c63d6367aaf512e2
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a695b71726..e7a58e6d67 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.4.3)
++cmake_minimum_required(VERSION 3.5)
+ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+ cmake_policy(SET CMP0017 NEW)
+ #this line has to appear before 'PROJECT' in order to be able to disable incremental linking
