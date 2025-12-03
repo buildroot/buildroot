@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-HACKRF_VERSION = 2023.01.1
-HACKRF_SITE = https://github.com/greatscottgadgets/hackrf/releases/download/v$(HACKRF_VERSION)
-HACKRF_SOURCE = hackrf-$(HACKRF_VERSION).tar.xz
+HACKRF_VERSION = v2024.02.1-118-g390837715b3741902b1b13c899bfd04a0bb6b0da
+HACKRF_SITE = $(call github,greatscottgadgets,hackrf,$(HACKRF_VERSION))
 HACKRF_LICENSE = GPL-2.0+, BSD-3-Clause
 HACKRF_LICENSE_FILES = COPYING
 HACKRF_DEPENDENCIES = fftw-single libusb
