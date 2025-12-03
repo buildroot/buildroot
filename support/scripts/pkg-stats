@@ -42,6 +42,8 @@ RM_API_STATUS_FOUND_BY_DISTRO = 2
 RM_API_STATUS_FOUND_BY_PATTERN = 3
 RM_API_STATUS_NOT_FOUND = 4
 
+HTTP_HEADERS = {'User-Agent': 'buildroot.org pkg-stats'}
+
 
 class Defconfig:
     def __init__(self, name, path):
@@ -469,7 +471,7 @@ async def check_url_status(session, pkg, npkgs, retry=True, verbose=False):
     global check_url_count
 
     try:
-        async with session.head(pkg.url) as resp:
+        async with session.head(pkg.url, headers=HTTP_HEADERS) as resp:
             if resp.status >= 400:
                 pkg.status['url'] = ("error", "invalid {}".format(resp.status))
                 check_url_count += 1
@@ -526,7 +528,7 @@ def check_package_latest_version_set_status(pkg, status, version, identifier):
 async def check_package_get_latest_version_by_distro(session, pkg, retry=True):
     url = "https://release-monitoring.org/api/project/Buildroot/%s" % pkg.name
     try:
-        async with session.get(url) as resp:
+        async with session.get(url, headers=HTTP_HEADERS) as resp:
             if resp.status != 200:
                 return False
 
@@ -553,7 +555,7 @@ async def check_package_get_latest_version_by_distro(session, pkg, retry=True):
 async def check_package_get_latest_version_by_guess(session, pkg, retry=True):
     url = "https://release-monitoring.org/api/projects/?pattern=%s" % pkg.name
     try:
-        async with session.get(url) as resp:
+        async with session.get(url, headers=HTTP_HEADERS) as resp:
             if resp.status != 200:
                 return False
 
