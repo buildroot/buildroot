@@ -1,0 +1,25 @@
+From 726cc3684b4de08934c2b14f347799fd8c3aac9a Mon Sep 17 00:00:00 2001
+From: Leonid Fedorov <leonid.fedorov@mariadb.com>
+Date: Tue, 30 Aug 2022 22:41:44 +0000
+Subject: [PATCH] Proper external_boost for storage manager, cmake version
+ REQUIRES
+
+Upstream: https://github.com/mariadb-corporation/mariadb-columnstore-engine/commit/726cc3684b4de08934c2b14f347799fd8c3aac9a
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[partial backport for 10.11.15]
+---
+ storage/columnstore/columnstore/CMakeLists.txt |  2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0be025103b..15f0eb0f48 100644
+--- a/storage/columnstore/columnstore/CMakeLists.txt
++++ b/storage/columnstore/columnstore/CMakeLists.txt
+@@ -1,5 +1,5 @@
+ 
+-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
++CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
+ 
+ PROJECT(Columnstore)
+ 
