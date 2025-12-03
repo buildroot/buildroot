@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-UBUS_VERSION = afa57cce0aff82f4a7a0e509d4387ebc23dd3be7
+UBUS_VERSION = 3cc98db1a422dcf560f2d6347fd410f17565a89d
 UBUS_SITE = https://git.openwrt.org/project/ubus.git
 UBUS_SITE_METHOD = git
 
