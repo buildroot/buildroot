@@ -1,0 +1,40 @@
+From 05d507da0d153faff381f44968833ebffdc03447 Mon Sep 17 00:00:00 2001
+From: Eero Aaltonen <eero.aaltonen@vaisala.com>
+Date: Wed, 1 Nov 2023 13:39:42 +0200
+Subject: [PATCH] Increase cmake_minimum_required to 3.5
+
+CMake version 3.27 deprecates compatibility with versions older than
+3.5. Increase the minimum required so that the project can be built
+without warnings.
+
+Upstream: https://github.com/docopt/docopt.cpp/commit/05d507da0d153faff381f44968833ebffdc03447
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ CMakeLists.txt | 2 +-
+ README.rst     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 28da614..246e90e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.1)
++cmake_minimum_required(VERSION 3.5)
+ project(docopt.cpp VERSION 0.6.2)
+ 
+ include(GNUInstallDirs)
+diff --git a/README.rst b/README.rst
+index 5fe8b4f..6d7012d 100644
+--- a/README.rst
++++ b/README.rst
+@@ -87,7 +87,7 @@ Alternatively manual installation is done using (unix)::
+ To link *docopt.cpp*, the simplest is to use CMake. The general structure of your
+ ``CMakeLists.txt`` would be as follows::
+ 
+-    cmake_minimum_required(VERSION 3.1)
++    cmake_minimum_required(VERSION 3.5)
+ 
+     project(example)
+ 
