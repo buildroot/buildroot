@@ -1,0 +1,42 @@
+From d62e39506f4f9b12d58efbd2f1e2667c06b13a19 Mon Sep 17 00:00:00 2001
+From: Andreas Sturmlechner <asturm@gentoo.org>
+Date: Sun, 28 Sep 2025 22:12:39 +0200
+Subject: [PATCH] Raise CMake minimum version to 3.10
+
+Signed-off-by: Andreas Sturmlechner <asturm@gentoo.org>
+
+Downloaded from Gentoo commit
+https://gitweb.gentoo.org/repo/gentoo.git/commit/?id=67d125dc0333e62fccb360f5918b044aa4bdf978
+
+Upstream: https://github.com/lipnitsk/libcue/pull/73
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[backported to 2.3.0]
+---
+ CMakeLists.txt | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c4f9d8e..0d3cb04 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,10 +1,14 @@
++CMAKE_MINIMUM_REQUIRED(VERSION 3.10 FATAL_ERROR)
++
++if (POLICY CMP0145)
++	cmake_policy(SET CMP0145 OLD) # since 3.27
++endif()
++
+ SET(PACKAGE libcue)
+ SET(PACKAGE_NAME libcue)
+ SET(PACKAGE_VERSION 2.3.0)
+ SET(PACKAGE_SOVERSION 2)
+ 
+-CMAKE_MINIMUM_REQUIRED(VERSION 2.8 FATAL_ERROR)
+-
+ PROJECT(libcue C)
+ 
+ include(GNUInstallDirs)
+-- 
+2.47.3
+
