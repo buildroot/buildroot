@@ -5,7 +5,7 @@
 ################################################################################
 
 GO_SRC_VERSION = $(GO_VERSION)
-GO_SRC_SITE = https://storage.googleapis.com/golang
+GO_SRC_SITE = https://go.dev/dl
 GO_SRC_SOURCE = go$(GO_VERSION).src.tar.gz
 GO_SRC_DL_SUBDIR = go
 

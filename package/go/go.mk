@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GO_VERSION = 1.25.3
+GO_VERSION = 1.25.5
 
 HOST_GO_GOPATH = $(HOST_DIR)/share/go-path
 HOST_GO_HOST_CACHE = $(HOST_DIR)/share/host-go-cache
