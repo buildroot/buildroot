@@ -1,0 +1,25 @@
+From 2bdb7ddbfcf6481ed7662d3d4eb5a3dc83d50224 Mon Sep 17 00:00:00 2001
+From: Tom Stellard <tstellar@redhat.com>
+Date: Fri, 28 Oct 2022 05:35:11 +0000
+Subject: [PATCH] Fix -Wdeprecated-non-prototype warning with clang
+
+Upstream: https://github.com/InfrastructureServices/vsftpd/pull/6
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ ssl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ssl.c b/ssl.c
+index d401203..8826b05 100644
+--- a/ssl.c
++++ b/ssl.c
+@@ -36,7 +36,7 @@
+ static char* get_ssl_error();
+ static SSL* get_ssl(struct vsf_session* p_sess, int fd);
+ static int ssl_session_init(struct vsf_session* p_sess);
+-static void setup_bio_callbacks();
++static void setup_bio_callbacks(SSL *p_ssl);
+ static long bio_callback(
+   BIO* p_bio, int oper, const char* p_arg, int argi, long argl, long retval);
+ static int ssl_verify_callback(int verify_ok, X509_STORE_CTX* p_ctx);
