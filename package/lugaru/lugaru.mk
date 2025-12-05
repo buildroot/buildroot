@@ -5,7 +5,7 @@
 ################################################################################
 
 LUGARU_VERSION = 1.2
-LUGARU_SITE = https://bitbucket.org/osslugaru/lugaru/downloads
+LUGARU_SITE = https://github.com/osslugaru/lugaru/releases/download/$(LUGARU_VERSION)
 LUGARU_SOURCE = lugaru-$(LUGARU_VERSION).tar.xz
 
 LUGARU_LICENSE = GPL-2.0+, CC-BY-SA-3.0 (Wolfire and Slib assets), \
