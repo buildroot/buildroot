@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MATCHBOX_LIB_VERSION = 1.12
+MATCHBOX_LIB_VERSION = 1.14
 MATCHBOX_LIB_SOURCE = libmatchbox-$(MATCHBOX_LIB_VERSION).tar.gz
 MATCHBOX_LIB_SITE = http://git.yoctoproject.org/cgit/cgit.cgi/libmatchbox/snapshot
 MATCHBOX_LIB_LICENSE = LGPL-2.1+
