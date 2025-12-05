@@ -41,6 +41,7 @@ After building, you should get a tree like this:
     +-- rootfs.ext4 -> rootfs.ext2
     +-- sdcard.img
     +-- system.dtb -> u-boot.dtb
+    +-- tee-raw.bin
     +-- u-boot.dtb
     `-- u-boot.elf
 
