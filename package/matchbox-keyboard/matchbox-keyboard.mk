@@ -5,7 +5,6 @@
 ################################################################################
 
 MATCHBOX_KEYBOARD_VERSION = 0.1.1
-MATCHBOX_KEYBOARD_SOURCE = matchbox-keyboard-$(MATCHBOX_KEYBOARD_VERSION).tar.bz2
 MATCHBOX_KEYBOARD_SITE = \
 	http://git.yoctoproject.org/cgit/cgit.cgi/matchbox-keyboard/snapshot
 MATCHBOX_KEYBOARD_LICENSE = LGPL-2.1, GPL-2.0+ (applet.c)
