@@ -1,0 +1,29 @@
+config BR2_PACKAGE_SYSREPO_CPP
+	bool "sysrepo-cpp"
+	depends on BR2_USE_MMU # sysrepo
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # sysrepo
+	depends on !BR2_STATIC_LIBS # sysrepo, libyang-cpp
+	depends on BR2_INSTALL_LIBSTDCPP # sysrepo, libyang-cpp
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_10 # libyang-cpp
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libyang-cpp
+	# std::timespec build issue
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC
+	select BR2_PACKAGE_SYSREPO
+	select BR2_PACKAGE_LIBYANG_CPP
+	help
+	  C++20 RAII bindings for the sysrepo YANG datastore library.
+
+	  This library provides modern C++ object-oriented bindings on
+	  top of sysrepo, using RAII for automatic lifetime
+	  management.
+
+	  https://github.com/sysrepo/sysrepo-cpp
+
+comment "sysrepo-cpp needs a glibc or musl toolchain w/ NPTL threads, dynamic libs, C++, gcc >= 10"
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_TOOLCHAIN_HAS_THREADS_NPTL || \
+		   BR2_STATIC_LIBS || \
+		   !BR2_INSTALL_LIBSTDCPP || \
+		   !BR2_TOOLCHAIN_GCC_AT_LEAST_10 || \
+		   BR2_TOOLCHAIN_USES_UCLIBC
