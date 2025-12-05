@@ -1,0 +1,16 @@
+Description: fix FTBFS with stricter GCC flags
+
+Upstream: https://sources.debian.org/src/matchbox-panel/0.9.3%2Bgit20100816-2/debian/patches/fix-build
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+
+Index: matchbox-panel-0.9.3+git20100816/src/msg.h
+===================================================================
+--- matchbox-panel-0.9.3+git20100816.orig/src/msg.h	2020-06-16 16:04:57.000000000 +0100
++++ matchbox-panel-0.9.3+git20100816/src/msg.h	2024-08-09 11:22:54.986036009 +0100
+@@ -17,5 +17,6 @@
+ void msg_handle_events(MBPanel *d, XEvent *e);
+ void msg_handle_timeouts(MBPanel *d);
+ void msg_cancel(MBPanel *d, XClientMessageEvent *e);
++Bool msg_set_timeout (MBPanel *d, struct timeval *tv, struct timeval **tvp);
+ 
+ #endif
