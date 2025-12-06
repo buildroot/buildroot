@@ -1,0 +1,44 @@
+From 787961d52130bd3c6c18b19218219650786e5352 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sat, 6 Dec 2025 12:25:08 +0100
+Subject: [PATCH] ir.c: fix build with gcc-15
+
+ir.c: In function 'ir_init':
+ir.c:273:48: error: passing argument 3 of 'pthread_create' from incompatible pointer type [-Wincompatible-pointer-types]
+  273 |                 pthread_create(&thread, &attr, ir_thread, NULL);
+      |                                                ^~~~~~~~~
+      |                                                |
+      |                                                void * (*)(void)
+In file included from squeezelite.h:300,
+                 from ir.c:36:
+/home/buildroot/br/output/per-package/squeezelite/host/lib/gcc/x86_64-buildroot-linux-gnu/15.2.0/include-fixed/pthread.h:213:36:
+ note: expected 'void * (*)(void *)' but argument is of type 'void * (*)(void)'
+  213 |                            void *(*__start_routine) (void *),
+      |                            ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+ir.c:169:14: note: 'ir_thread' declared here
+  169 | static void *ir_thread() {
+      |              ^~~~~~~~~
+
+Upstream: https://github.com/ralph-irving/squeezelite/commit/1e8fb181366467b6c4046119eedb821e4a5f9adb
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ ir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ir.c b/ir.c
+index 84294b6..aeea23c 100644
+--- a/ir.c
++++ b/ir.c
+@@ -166,7 +166,7 @@ static u32_t ir_key_map(const char *c, const char *r) {
+ 	return 0;
+ }
+ 
+-static void *ir_thread() {
++static void *ir_thread(void *vargp) {
+ 	char *code;
+ 	
+ 	while (fd > 0 && LIRC(i, nextcode, &code) == 0) {
+-- 
+2.47.3
+
