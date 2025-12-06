@@ -1,0 +1,39 @@
+From bf455986557e88cce6a2a85448798e1dc05541f2 Mon Sep 17 00:00:00 2001
+From: Bas Couwenberg <sebastic@debian.org>
+Date: Tue, 23 Sep 2025 15:59:57 -0700
+Subject: [PATCH] Fix build failure with GCC 15 (bool is keyword).
+
+https://gcc.gnu.org/gcc-15/porting_to.html#c23-new-keywords
+
+Upstream: https://github.com/OSGeo/shapelib/commit/bf455986557e88cce6a2a85448798e1dc05541f2
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ dbfadd.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/dbfadd.c b/dbfadd.c
+index b464432..e0a6ef5 100644
+--- a/dbfadd.c
++++ b/dbfadd.c
+@@ -45,7 +45,7 @@ int main(int argc, char **argv)
+     const int iRecord = DBFGetRecordCount(hDBF);
+ 
+     SHPDate date;
+-    char bool;
++    char boolean;
+ 
+     // Loop assigning the new field values.
+     for (int i = 0; i < DBFGetFieldCount(hDBF); i++)
+@@ -64,9 +64,9 @@ int main(int argc, char **argv)
+         }
+         else if (DBFGetFieldInfo(hDBF, i, NULL, NULL, NULL) == FTLogical)
+         {
+-            if (1 == sscanf(argv[i + 2], "%c", &bool))
++            if (1 == sscanf(argv[i + 2], "%c", &boolean))
+             {
+-                DBFWriteLogicalAttribute(hDBF, iRecord, i, bool);
++                DBFWriteLogicalAttribute(hDBF, iRecord, i, boolean);
+             }
+         }
+         else
