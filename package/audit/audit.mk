@@ -5,7 +5,7 @@
 ################################################################################
 
 AUDIT_VERSION = 3.1.5
-AUDIT_SITE = http://people.redhat.com/sgrubb/audit
+AUDIT_SITE = https://people.redhat.com/sgrubb/audit
 AUDIT_LICENSE = GPL-2.0+ (programs), LGPL-2.1+ (libraries)
 AUDIT_LICENSE_FILES = COPYING COPYING.LIB
 AUDIT_CPE_ID_VENDOR = linux_audit_project
