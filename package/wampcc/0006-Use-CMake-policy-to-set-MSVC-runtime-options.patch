@@ -1,0 +1,38 @@
+From 047f8742e721db4d0e91bb6313ec668900975de3 Mon Sep 17 00:00:00 2001
+From: Saman Ghannadzadeh <saman@saman-gh.co.uk>
+Date: Fri, 8 Sep 2023 15:09:23 +0100
+Subject: [PATCH] Use CMake policy to set MSVC runtime options
+
+Currently, we manually set the MSVC flags to set the runtime to be
+static or dynamic. This commit switches to letting CMake automatically do this,
+instead of us manually setting flags.
+
+This should make the CMake recipe more robust.
+
+Upstream: https://github.com/darrenjs/wampcc/commit/047f8742e721db4d0e91bb6313ec668900975de3
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[backported for 1.6]
+---
+ CMakeLists.txt | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 7c261cb..28e1965 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,10 +1,13 @@
+-cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
++cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
+ 
+ set (WAMPCC_VERSION_MAJOR 1)
+ set (WAMPCC_VERSION_MINOR 6)
+ set (WAMPCC_VERSION "${WAMPCC_VERSION_MAJOR}.${WAMPCC_VERSION_MINOR}")
+ project(wampcc VERSION ${WAMPCC_VERSION})
+ 
++# Allows for setting MSVC static runtime
++cmake_policy(SET CMP0091 NEW)
++
+ # Version number
+ # Include extra cmake modules
+ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake")
