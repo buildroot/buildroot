@@ -91,6 +91,15 @@ else
 APACHE_CONF_OPTS += --disable-ssl
 endif
 
+ifeq ($(BR2_PACKAGE_APACHE_MOD_MD),y)
+APACHE_CONF_OPTS += --enable-md
+# BR2_PACKAGE_APACHE_MOD_MD selects BR2_PACKAGE_OPENSSL, so openssl is
+# added above
+APACHE_DEPENDENCIES += jansson libcurl
+else
+APACHE_CONF_OPTS += --disable-md
+endif
+
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 APACHE_DEPENDENCIES += zlib
 APACHE_CONF_OPTS += \

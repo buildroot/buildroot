@@ -41,6 +41,18 @@ config BR2_PACKAGE_APACHE_MPM_WORKER
 
 endchoice
 
+config BR2_PACKAGE_APACHE_MOD_MD
+	bool "mod_md"
+	select BR2_PACKAGE_JANSSON
+	select BR2_PACKAGE_LIBCURL
+	select BR2_PACKAGE_LIBCURL_FORCE_TLS
+	select BR2_PACKAGE_OPENSSL
+	help
+	  Enable mod_md, which handles TLS certificate provisioning
+	  via the ACME protocol, and OCSP stapling.
+
+	  https://httpd.apache.org/docs/current/mod/mod_md.html
+
 endif
 
 comment "apache needs a toolchain w/ dynamic library, threads"
