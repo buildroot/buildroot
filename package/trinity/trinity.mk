@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-TRINITY_VERSION = 1.9
-TRINITY_SITE = http://codemonkey.org.uk/projects/trinity
-TRINITY_SOURCE = trinity-$(TRINITY_VERSION).tar.xz
+TRINITY_VERSION = v1.9-82-g294c46522620afffd7b57af7ef743131ff55a488
+TRINITY_SITE = $(call github,kernelslacker,trinity,$(TRINITY_VERSION))
 TRINITY_LICENSE = GPL-2.0
 TRINITY_LICENSE_FILES = COPYING
 TRINITY_CPE_ID_VALID = YES
