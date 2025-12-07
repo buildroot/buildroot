@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-YAD_VERSION = 0.40.0
+YAD_VERSION = 14.2
 YAD_SOURCE = yad-$(YAD_VERSION).tar.xz
-YAD_SITE = http://sourceforge.net/projects/yad-dialog/files
+YAD_SITE = https://github.com/v1cont/yad/releases/download/v$(YAD_VERSION)
 YAD_LICENSE = GPL-3.0
 YAD_LICENSE_FILES = COPYING
 YAD_DEPENDENCIES = host-intltool host-pkgconf libgtk3 $(TARGET_NLS_DEPENDENCIES)
