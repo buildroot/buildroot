@@ -1,0 +1,26 @@
+From e2fe9dfb91c7de85c410922ee9268c3f526bcc54 Mon Sep 17 00:00:00 2001
+From: Soeren Apel <soeren@apelpie.net>
+Date: Thu, 15 May 2025 18:19:24 +0200
+Subject: [PATCH] CMakeLists.txt: Fix the version for the manual, too
+
+Upstream: https://github.com/sigrokproject/pulseview/commit/e2fe9dfb91c7de85c410922ee9268c3f526bcc54
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[backported to 0.4.2]
+---
+ manual/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/manual/CMakeLists.txt b/manual/CMakeLists.txt
+index 3b881a56..d6c54d61 100644
+--- a/manual/CMakeLists.txt
++++ b/manual/CMakeLists.txt
+@@ -17,7 +17,7 @@
+ ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ##
+ 
+-cmake_minimum_required(VERSION 2.8.12)
++cmake_minimum_required(VERSION 2.8.12...3.31.5)
+ 
+ # External dependencies, required and optional tools.
+ find_program(ASCIIDOCTOR_EXECUTABLE NAMES asciidoctor)

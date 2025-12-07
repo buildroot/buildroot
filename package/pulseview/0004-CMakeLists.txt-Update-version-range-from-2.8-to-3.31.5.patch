@@ -1,0 +1,38 @@
+From c0676b3493fda29d97c271cfeb76267019b35695 Mon Sep 17 00:00:00 2001
+From: Soeren Apel <soeren@apelpie.net>
+Date: Thu, 15 May 2025 16:38:53 +0200
+Subject: [PATCH] CMakeLists.txt: Update version range from 2.8 to 3.31.5 to
+ avoid abort
+
+The error with CMake 4 on the github CI looks like this:
+
+CMake Error at CMakeLists.txt:22 (cmake_minimum_required):
+  Compatibility with CMake < 3.5 has been removed from CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+  Or, add -DCMAKE_POLICY_VERSION_MINIMUM=3.5 to try configuring anyway.
+
+Upstream: http://sigrok.org/gitweb/?p=pulseview.git;a=commit;h=c0676b3493fda29d97c271cfeb76267019b35695
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[backported to 0.4.2]
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ec86073d..8580fa8e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -19,7 +19,7 @@
+ ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ ##
+ 
+-cmake_minimum_required(VERSION 2.8.12)
++cmake_minimum_required(VERSION 2.8.12...3.31.5)
+ 
+ include(GNUInstallDirs)
+ 
