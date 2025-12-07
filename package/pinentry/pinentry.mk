@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PINENTRY_VERSION = 1.3.1
+PINENTRY_VERSION = 1.3.2
 PINENTRY_SOURCE = pinentry-$(PINENTRY_VERSION).tar.bz2
 PINENTRY_SITE = https://www.gnupg.org/ftp/gcrypt/pinentry
 PINENTRY_LICENSE = GPL-2.0+
@@ -62,10 +62,10 @@ endif
 
 # pinentry-qt5 backend
 ifeq ($(BR2_PACKAGE_PINENTRY_QT5),y)
-PINENTRY_CONF_OPTS += --enable-pinentry-qt
+PINENTRY_CONF_OPTS += --enable-pinentry-qt5
 PINENTRY_DEPENDENCIES += qt5base
 else
-PINENTRY_CONF_OPTS += --disable-pinentry-qt
+PINENTRY_CONF_OPTS += --disable-pinentry-qt5
 endif
 
 $(eval $(autotools-package))
