@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-LIBVNCSERVER_VERSION = 0.9.14
-LIBVNCSERVER_SOURCE = LibVNCServer-$(LIBVNCSERVER_VERSION).tar.gz
-LIBVNCSERVER_SITE = https://github.com/LibVNC/libvncserver/archive
+LIBVNCSERVER_VERSION = 0.9.15
+LIBVNCSERVER_SITE = $(call github,LibVNC,libvncserver,LibVNCServer-$(LIBVNCSERVER_VERSION))
 LIBVNCSERVER_LICENSE = GPL-2.0+
 LIBVNCSERVER_LICENSE_FILES = COPYING
 LIBVNCSERVER_CPE_ID_VALID = YES
