@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-LIBTORRENT_VERSION = 0.13.8
-LIBTORRENT_SITE = http://rtorrent.net/downloads
+# When updating the version, please also update rtorrent
+LIBTORRENT_VERSION = 0.15.3
+LIBTORRENT_SITE = https://github.com/rakshasa/rtorrent/releases/download/v$(LIBTORRENT_VERSION)
 LIBTORRENT_DEPENDENCIES = host-pkgconf zlib
 LIBTORRENT_CONF_OPTS = --enable-aligned \
 	--disable-instrumentation \
