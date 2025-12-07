@@ -21,6 +21,11 @@ config BR2_PACKAGE_LIBVNCSERVER_TIGHTPNG
 
 	  http://wiki.qemu.org/VNC_Tight_PNG
 
+config BR2_PACKAGE_LIBVNCSERVER_WEBSOCKETS
+	bool "WebSockets support"
+	help
+	  Enable WebSocket support (e.g. for noVNC)
+
 endif
 
 comment "libvncserver needs a toolchain w/ dynamic library"
