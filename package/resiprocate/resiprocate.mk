@@ -4,45 +4,57 @@
 #
 ################################################################################
 
-RESIPROCATE_VERSION = 1.12.0
-RESIPROCATE_SITE = https://www.resiprocate.org/files/pub/reSIProcate/releases
-# For complete details see https://www.resiprocate.org/License
+RESIPROCATE_VERSION = 1.13.2
+RESIPROCATE_SITE = $(call github,resiprocate,resiprocate,resiprocate-$(RESIPROCATE_VERSION))
 RESIPROCATE_LICENSE = VSL-1.0, BSD-3-Clause
-RESIPROCATE_LICENSE_FILES = COPYING
+RESIPROCATE_LICENSE_FILES = LICENSE.md
 RESIPROCATE_CPE_ID_VENDOR = resiprocate
 RESIPROCATE_INSTALL_STAGING = YES
 
-# Utilize c-ares from buildroot instead built in ARES library
-# NOTE: resiprocate doesn't support --without-<feature> syntax as it will try
-#       to build with package if specified
+RESIPROCATE_CONF_OPTS = -DWITH_C_ARES=ON
 RESIPROCATE_DEPENDENCIES = c-ares
-RESIPROCATE_CONF_OPTS = -with-c-ares \
-	--with-sysroot="$(STAGING_DIR)"
+
+RESIPROCATE_CONF_OPTS += \
+	-DBUILD_QPID_PROTON=OFF \
+	-DBUILD_RECON=OFF \
+	-DBUILD_REFLOW=OFF \
+	-DBUILD_REPRO=OFF \
+	-DBUILD_RETURN=OFF \
+	-DBUILD_TFM=OFF \
+	-DHAVE_CLOCK_GETTIME_MONOTONIC_EXITCODE=0
+
+ifeq ($(BR2_PACKAGE_GEOIP),y)
+RESIPROCATE_CONF_OPTS += -DUSE_MAXMIND_GEOIP=ON
+RESIPROCATE_DEPENDENCIES += geoip
+else
+RESIPROCATE_CONF_OPTS += -DUSE_MAXMIND_GEOIP=OFF
+endif
 
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
+RESIPROCATE_CONF_OPTS += -DWITH_SSL=ON
 RESIPROCATE_DEPENDENCIES += openssl host-pkgconf
-RESIPROCATE_CONF_OPTS += --with-ssl
-# Configure.ac does not include '-lz' when statically linking against openssl
-RESIPROCATE_CONF_ENV += LIBS=`$(PKG_CONFIG_HOST_BINARY) --libs openssl`
+else
+RESIPROCATE_CONF_OPTS += -DWITH_SSL=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_POPT),y)
-RESIPROCATE_CONF_OPTS += --with-popt
+RESIPROCATE_CONF_OPTS += -DUSE_POPT=ON
 RESIPROCATE_DEPENDENCIES += popt
+else
+RESIPROCATE_CONF_OPTS += -DUSE_POPT=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_RESIPROCATE_DTLS_SUPPORT),y)
-RESIPROCATE_CONF_OPTS += --with-dtls
+RESIPROCATE_CONF_OPTS += -DUSE_DTLS=ON
+else
+RESIPROCATE_CONF_OPTS += -DUSE_DTLS=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_RESIPROCATE_REND),y)
-RESIPROCATE_CONF_OPTS += --with-rend
+RESIPROCATE_CONF_OPTS += -DBUILD_REND=ON
 RESIPROCATE_DEPENDENCIES += boost
+else
+RESIPROCATE_CONF_OPTS += -DBUILD_REND=OFF
 endif
 
-ifeq ($(BR2_PACKAGE_RESIPROCATE_APPS),y)
-RESIPROCATE_CONF_OPTS += --with-apps
-RESIPROCATE_DEPENDENCIES += pcre
-endif
-
-$(eval $(autotools-package))
+$(eval $(cmake-package))

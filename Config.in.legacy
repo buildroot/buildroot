@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2026.02"
 
+config BR2_PACKAGE_RESIPROCATE_APPS
+	bool "resiprocate apps support option removed"
+	select BR2_LEGACY
+	help
+	  The build system does not contain an apps-specific option
+	  anymore.
+
 config BR2_PACKAGE_WATCHDOGD_TEST_SUITE
 	bool "The watchdogd test mode option has been removed."
 	select BR2_LEGACY
