@@ -1,0 +1,28 @@
+From dd869e9c5a5e2d306b930b00487a488441131d9a Mon Sep 17 00:00:00 2001
+From: Johann Anhofer <johann.anhofer@meon-medical.com>
+Date: Wed, 26 Feb 2025 15:41:20 +0100
+Subject: [PATCH] Use 3.10 as minimum required cmake version set cmake policy
+ CMP0071 to new (AUTOMOC, AUTOUIC)
+
+Upstream: https://github.com/MEONMedical/Log4Qt/commit/dd869e9c5a5e2d306b930b00487a488441131d9a
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[backported for version 1.5.1]
+---
+ CMakeLists.txt | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index bf99ad8..2a02433 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,5 +1,8 @@
+-cmake_minimum_required(VERSION 3.3.0)
++cmake_minimum_required(VERSION 3.10)
+ project(Log4Qt VERSION 1.5.1)
++if(POLICY CMP0071)
++    cmake_policy(SET CMP0071 NEW)
++endif()
+ 
+ #
+ # in-source builds should be avoided
