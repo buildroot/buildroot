@@ -1,0 +1,17 @@
+Fix build with newer CMake versions
+
+Downloaded from
+https://gitlab.com/liguros/liguros-repo/-/blob/develop/x11-misc/read-edid/files/read-edid-3.0.2-cmake4.patch
+
+Upstream: sent to pyrophobicman@gmail.com
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+
+--- a/CMakeLists.txt	2014-02-05 17:27:26.000000000 +0100
++++ b/CMakeLists.txt	2025-08-27 23:01:08.868613931 +0200
+@@ -1,4 +1,4 @@
+-cmake_minimum_required (VERSION 2.6)
++cmake_minimum_required (VERSION 3.10)
+ project (read-edid C)
+ 
+ option(I2CBUILD "Build I2C get-edid implementation" ON)
