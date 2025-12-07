@@ -1,15 +1,15 @@
 #!/bin/sh
+# shellcheck disable=SC2034 # checkpackage-required variable
+DAEMON="apache"
 
 case "$1" in
-  start|restart|graceful|graceful-stop|stop)
-	apachectl -k $1
-	;;
-  reload)
-	apachectl -k restart
-	;;
-  *)
-	echo "Usage: $0 {start|restart|reload|graceful|graceful-stop|stop}"
-	exit 1
+	start|restart|graceful|graceful-stop|stop)
+		apachectl -k "$1"
+		;;
+	reload)
+		apachectl -k restart
+		;;
+	*)
+		echo "Usage: $0 {start|restart|reload|graceful|graceful-stop|stop}"
+		exit 1
 esac
-
-exit $?
