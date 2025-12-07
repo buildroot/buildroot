@@ -1,0 +1,38 @@
+From cabd67927d8ed565c36cdd0cbf9b9dbd71606009 Mon Sep 17 00:00:00 2001
+From: Jaco Kroon <jaco@uls.co.za>
+Date: Thu, 21 Nov 2024 00:12:29 +0200
+Subject: [PATCH] Fix compiling with C23.
+
+https://bugs.gentoo.org/944070
+Signed-off-by: Jaco Kroon <jaco@uls.co.za>
+
+Upstream: https://github.com/xelerance/xl2tpd/commit/cabd67927d8ed565c36cdd0cbf9b9dbd71606009
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ xl2tpd.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/xl2tpd.c b/xl2tpd.c
+index 791d5a4..4bf15fd 100644
+--- a/xl2tpd.c
++++ b/xl2tpd.c
+@@ -74,7 +74,7 @@ static int control_handle_lac_hangup(FILE* resf, char* bufp);
+ static int control_handle_lac_disconnect(FILE* resf, char* bufp);
+ static int control_handle_lac_add_modify(FILE* resf, char* bufp);
+ static int control_handle_lac_remove(FILE* resf, char* bufp);
+-static int control_handle_lac_status();
++static int control_handle_lac_status(FILE* resf, char* bufp);
+ static int control_handle_lns_remove(FILE* resf, char* bufp);
+ 
+ static struct control_requests_handler control_handlers[] = {
+@@ -1549,7 +1549,8 @@ static int control_handle_lac_remove(FILE* resf, char* bufp){
+     return 1;
+ }
+ 
+-static int control_handle_lac_status(){
++static int control_handle_lac_status(FILE*, char*)
++{
+     show_status ();
+     return 1;
+ }
