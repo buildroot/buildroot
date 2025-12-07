@@ -1,0 +1,60 @@
+From dfb3e868248d86fc0f5553dffbb6f7c367c3c383 Mon Sep 17 00:00:00 2001
+From: Steffen Jaeckel <s@jaeckel.eu>
+Date: Wed, 26 Mar 2025 14:14:19 +0100
+Subject: [PATCH] Use `void*` to store function pointer when compiled as C23.
+
+[0] decided that `rettype (*foo)();` must now be interpreted as
+`rettype (*foo)(void);`. Luckily it also allows now to store function
+pointers in a `void*` (c.f. Ch. J.5.7).
+
+[0]: https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3096.pdf
+
+Signed-off-by: Steffen Jaeckel <s@jaeckel.eu>
+
+Upstream: https://github.com/strophe/libstrophe/commit/dfb3e868248d86fc0f5553dffbb6f7c367c3c383
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/common.h  | 7 ++++++-
+ src/handler.c | 2 --
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/src/common.h b/src/common.h
+index 75134be..c387c0f 100644
+--- a/src/common.h
++++ b/src/common.h
+@@ -30,12 +30,17 @@
+ #include "snprintf.h"
+ 
+ /** handlers **/
++#if (__STDC_VERSION__ >= 202000L)
++typedef void* xmpp_void_handler;
++#else
++typedef int (*xmpp_void_handler)();
++#endif
+ 
+ typedef struct _xmpp_handlist_t xmpp_handlist_t;
+ struct _xmpp_handlist_t {
+     /* common members */
+     int user_handler;
+-    int (*handler)();
++    xmpp_void_handler handler;
+     void *userdata;
+     int enabled; /* handlers are added disabled and enabled after the
+                   * handler chain is processed to prevent stanzas from
+diff --git a/src/handler.c b/src/handler.c
+index 1c9bf9f..0577252 100644
+--- a/src/handler.c
++++ b/src/handler.c
+@@ -25,8 +25,6 @@
+ #include "common.h"
+ #include "ostypes.h"
+ 
+-typedef int (*xmpp_void_handler)();
+-
+ /* Remove item from the list pointed by head, but don't free it.
+  * There can be a situation when user's handler deletes another handler which
+  * is the previous in the list. handler_fire_stanza() and handler_fire_timed()
+-- 
+2.47.3
+
