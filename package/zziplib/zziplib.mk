@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ZZIPLIB_VERSION = 0.13.74
+ZZIPLIB_VERSION = 0.13.80
 ZZIPLIB_SITE = $(call github,gdraheim,zziplib,v$(ZZIPLIB_VERSION))
 ZZIPLIB_LICENSE = LGPL-2.0+ or MPL-1.1
 ZZIPLIB_LICENSE_FILES = docs/COPYING.LIB docs/COPYING.MPL docs/copying.htm.md
