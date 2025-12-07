@@ -1,0 +1,27 @@
+From f7d24ce8486d9229207cca1ff98858fe60ffe583 Mon Sep 17 00:00:00 2001
+From: Anonymous Maarten <anonymous.maarten@gmail.com>
+Date: Thu, 27 Apr 2023 22:39:41 +0200
+Subject: [PATCH] cmake: bump minimum CMake version to 3.5 in anticipation of
+ CMake 3.27
+
+Upstream: https://github.com/icculus/physfs/commit/f7d24ce8486d9229207cca1ff98858fe60ffe583
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[rebased for 3.2.0]
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index dfe127a7..1194449e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -11,7 +11,7 @@
+ 
+ set(PHYSFS_VERSION 3.2.0)
+ 
+-cmake_minimum_required(VERSION 3.0)
++cmake_minimum_required(VERSION 3.5)
+ 
+ project(PhysicsFS VERSION ${PHYSFS_VERSION} LANGUAGES C )
+ 

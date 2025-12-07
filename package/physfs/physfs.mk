@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-PHYSFS_VERSION = 3.0.2
-PHYSFS_SOURCE = physfs-$(PHYSFS_VERSION).tar.bz2
-PHYSFS_SITE = https://icculus.org/physfs/downloads
+PHYSFS_VERSION = 3.2.0
+PHYSFS_SITE = $(call github,icculus,physfs,release-$(PHYSFS_VERSION))
 
 PHYSFS_LICENSE = Zlib
 PHYSFS_LICENSE_FILES = LICENSE.txt
