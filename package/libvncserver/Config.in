@@ -26,6 +26,11 @@ config BR2_PACKAGE_LIBVNCSERVER_WEBSOCKETS
 	help
 	  Enable WebSocket support (e.g. for noVNC)
 
+config BR2_PACKAGE_LIBVNCSERVER_INSTALL_STOREPASSSWD
+	bool "storepasswd tool"
+	help
+	  Install storepasswd tool used to create VNC passwords
+
 endif
 
 comment "libvncserver needs a toolchain w/ dynamic library"
