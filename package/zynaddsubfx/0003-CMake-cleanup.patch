@@ -1,0 +1,39 @@
+From ffe9ca1375168dd86c974dbe7c0264fce393150e Mon Sep 17 00:00:00 2001
+From: Johannes Lorenz <j.git@lorenz-ho.me>
+Date: Sun, 29 Dec 2024 03:22:44 +0100
+Subject: [PATCH] Add -Werror support, CMake cleanup
+
+* Raise CMake minimum version to 3.5 (due to deprecation warnings)
+
+Upstream: https://github.com/zynaddsubfx/zynaddsubfx/commit/ffe9ca1375168dd86c974dbe7c0264fce393150e
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[backported only cmake_minimum_required bump to 3.0.6]
+---
+ .github/workflows/ccpp.yml |  2 +-
+ CMakeLists.txt             |  3 +-
+ rtosc                      |  2 +-
+ src/CMakeLists.txt         | 57 +++++++++++++++++++-------------------
+ src/Misc/MiddleWare.cpp    |  4 ++-
+ src/UI/MasterUI.fl         |  6 ++--
+ src/UI/OscilGenUI.fl       |  4 +--
+ src/UI/PartUI.fl           |  6 ++--
+ src/UI/SUBnoteUI.fl        |  4 +--
+ 9 files changed, 45 insertions(+), 43 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e678d939c..9bae0b40d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,9 +1,10 @@
+-cmake_minimum_required(VERSION 3.0)
++cmake_minimum_required(VERSION 3.5)
+ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+ project(zynaddsubfx)
+ set(VERSION_MAJOR "3")
+ set(VERSION_MINOR "0")
+ set(VERSION_REVISION "6")
++cmake_policy(SET CMP0072 NEW)
+ 
+ #Set data directory, if any
+ if(DEFINED ZYN_DATADIR)
