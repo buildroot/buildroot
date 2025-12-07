@@ -1,0 +1,22 @@
+From 06232810f7c23cc8a91864a504df412255a370b6 Mon Sep 17 00:00:00 2001
+From: Leonid Stryzhevskyi <lganzzzo@gmail.com>
+Date: Tue, 23 Apr 2024 01:20:20 +0300
+Subject: [PATCH] refactor json namespaces
+
+Upstream: https://github.com/oatpp/oatpp/commit/06232810f7c23cc8a91864a504df412255a370b6
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[backported only the cmake bump]
+---
+ CMakeLists.txt                                |  2 +-
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9d41c8b2e..14ab71acf 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
++cmake_minimum_required(VERSION 3.25 FATAL_ERROR)
+ 
+ file(STRINGS "${CMAKE_CURRENT_LIST_DIR}/src/oatpp/core/base/Environment.hpp" OATPP_VERSION_MACRO REGEX "#define OATPP_VERSION \"[0-9]+.[0-9]+.[0-9]+\"$")
+ string(REGEX REPLACE "#define OATPP_VERSION \"([0-9]+.[0-9]+.[0-9]+)\"$" "\\1" oatpp_VERSION "${OATPP_VERSION_MACRO}")
