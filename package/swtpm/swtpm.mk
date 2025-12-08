@@ -10,6 +10,7 @@ SWTPM_LICENSE = BSD-4-Clause
 SWTPM_LICENSE_FILES = LICENSE
 
 HOST_SWTPM_DEPENDENCIES = \
+	host-gmp \
 	host-json-glib \
 	host-libopenssl \
 	host-libtasn1 \
