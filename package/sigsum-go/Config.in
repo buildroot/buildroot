@@ -1,0 +1,32 @@
+config BR2_PACKAGE_SIGSUM_GO
+	bool "sigsum-go"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_GO
+	select BR2_PACKAGE_SIGSUM_GO_VERIFY if \
+		!BR2_PACKAGE_SIGSUM_GO_KEY && \
+		!BR2_PACKAGE_SIGSUM_GO_POLICY && \
+		!BR2_PACKAGE_SIGSUM_GO_SUBMIT && \
+		!BR2_PACKAGE_SIGSUM_GO_TOKEN
+	help
+	  Command-line utilities for interacting with Sigsum logs.
+
+	  https://git.glasklar.is/sigsum/core/sigsum-go/
+
+if BR2_PACKAGE_SIGSUM_GO
+
+config BR2_PACKAGE_SIGSUM_GO_KEY
+	bool "sigsum-key"
+
+config BR2_PACKAGE_SIGSUM_GO_POLICY
+	bool "sigsum-policy"
+
+config BR2_PACKAGE_SIGSUM_GO_SUBMIT
+	bool "sigsum-submit"
+
+config BR2_PACKAGE_SIGSUM_GO_TOKEN
+	bool "sigsum-token"
+
+config BR2_PACKAGE_SIGSUM_GO_VERIFY
+	bool "sigsum-verify"
+
+endif
