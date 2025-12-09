@@ -5,7 +5,7 @@
 ################################################################################
 
 PIGZ_VERSION = 2.8
-PIGZ_SITE = http://zlib.net/pigz
+PIGZ_SITE = https://zlib.net/pigz
 PIGZ_DEPENDENCIES = zlib
 HOST_PIGZ_DEPENDENCIES = host-zlib
 PIGZ_LICENSE = Zlib
