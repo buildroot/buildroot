@@ -9,6 +9,7 @@ config BR2_PACKAGE_GCR
 	select BR2_PACKAGE_GNUPG if !BR2_PACKAGE_GNUPG2_DEPENDS # runtime
 	select BR2_PACKAGE_LIBGCRYPT
 	select BR2_PACKAGE_LIBGLIB2
+	select BR2_PACKAGE_LIBSECRET
 	select BR2_PACKAGE_P11_KIT
 	help
 	  Library for cryptographic UIs and accessing PKCS#11 modules.
