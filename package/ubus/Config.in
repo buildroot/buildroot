@@ -4,7 +4,7 @@ comment "ubus needs a toolchain w/ dynamic library"
 
 config BR2_PACKAGE_UBUS
 	bool "ubus"
-	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # json-c
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # json-c, libubox -> json-c
 	depends on !BR2_STATIC_LIBS # libubox
 	select BR2_PACKAGE_LIBUBOX
 	select BR2_PACKAGE_JSON_C
