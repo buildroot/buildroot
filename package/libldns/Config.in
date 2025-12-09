@@ -8,3 +8,16 @@ config BR2_PACKAGE_LIBLDNS
 	  experimental software for current Internet Drafts.
 
 	  http://www.nlnetlabs.nl/projects/ldns
+
+if BR2_PACKAGE_LIBLDNS
+
+config BR2_PACKAGE_LIBLDNS_DRILL
+	bool "drill binary"
+	depends on !BR2_STATIC_LIBS
+	help
+	  Install the drill binary
+
+comment "drill needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
+
+endif # BR2_PACKAGE_LIBLDNS

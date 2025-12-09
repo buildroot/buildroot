@@ -45,4 +45,11 @@ endif
 # interested in the lib target anyway
 LIBLDNS_MAKE_OPTS = lib
 
+ifeq ($(BR2_PACKAGE_LIBLDNS_DRILL),y)
+LIBLDNS_CONF_OPTS += --with-drill
+LIBLDNS_MAKE_OPTS += drill
+else
+LIBLDNS_CONF_OPTS += --without-drill
+endif
+
 $(eval $(autotools-package))
