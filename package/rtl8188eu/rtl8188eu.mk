@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RTL8188EU_VERSION = 967dbaa7dc0641042b0f103e7679cd83f9bab131
+RTL8188EU_VERSION = 2ef2819d2d3ef7701a739c66525bca4731c6abbf
 RTL8188EU_SITE = $(call github,benetti-engineering,rtl8188eu,$(RTL8188EU_VERSION))
 RTL8188EU_LICENSE = GPL-2.0, proprietary (rtl8188eufw.bin firmware blob)
 RTL8188EU_LICENSE_FILES = COPYING
