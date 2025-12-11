@@ -16,7 +16,7 @@ config BR2_PACKAGE_DHCPCD_ENABLE_PRIVSEP
 	default y
 	depends on BR2_USE_MMU
 	# Audit headers were only added in recent kernels for some arches
-	depends on !(BR2_arceb || BR2_arcle) || \
+	depends on !BR2_arcle || \
 		BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_2
 	depends on !(BR2_microblazeel || BR2_microblazebe) || \
 		BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18

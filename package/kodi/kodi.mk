@@ -146,7 +146,7 @@ KODI_DEPENDENCIES += libiconv
 KODI_EXTRA_LIBS += -liconv
 endif
 
-ifeq ($(BR2_arceb)$(BR2_arcle),y)
+ifeq ($(BR2_arcle),y)
 KODI_CONF_OPTS += -DWITH_ARCH=arc -DWITH_CPU=arc
 else ifeq ($(BR2_armeb),y)
 KODI_CONF_OPTS += -DWITH_ARCH=arm -DWITH_CPU=arm

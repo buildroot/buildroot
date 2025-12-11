@@ -159,6 +159,15 @@ config BR2_BINUTILS_VERSION_2_42_X
 	  binutils 2.42 has been removed, select a newer version
 	  instead.
 
+config BR2_arceb
+	bool "ARC big endian support removed"
+	select BR2_LEGACY
+	help
+	  Synopsys' DesignWare ARC Processor Cores are a family of
+	  32-bit CPUs that can be used from deeply embedded to high
+	  performance host applications. The big endian support was
+	  not used nor maintained, so it was removed.
+
 comment "Legacy options removed in 2025.11"
 
 config BR2_KERNEL_HEADERS_5_4

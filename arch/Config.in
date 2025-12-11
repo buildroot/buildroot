@@ -29,14 +29,6 @@ config BR2_arcle
 	  32-bit CPUs that can be used from deeply embedded to high
 	  performance host applications. Little endian.
 
-config BR2_arceb
-	bool "ARC (big endian)"
-	select BR2_USE_MMU
-	help
-	  Synopsys' DesignWare ARC Processor Cores are a family of
-	  32-bit CPUs that can be used from deeply embedded to high
-	  performance host applications. Big endian.
-
 config BR2_arm
 	bool "ARM (little endian)"
 	# MMU support is set by the subarchitecture file, arch/Config.in.arm
@@ -385,7 +377,7 @@ config BR2_BINFMT_SUPPORTS_SHARED
 config BR2_READELF_ARCH_NAME
 	string
 
-if BR2_arcle || BR2_arceb
+if BR2_arcle
 source "arch/Config.in.arc"
 endif
 

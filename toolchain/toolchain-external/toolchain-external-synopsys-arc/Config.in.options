@@ -33,8 +33,7 @@ config BR2_TOOLCHAIN_EXTERNAL_SYNOPSYS_ARCHS_GLIBC
 endchoice
 
 config BR2_TOOLCHAIN_EXTERNAL_PREFIX
-	default "arc-linux"		 if BR2_arcle
-	default "arceb-linux"		 if BR2_arceb
+	default "arc-linux"
 
 config BR2_PACKAGE_PROVIDES_TOOLCHAIN_EXTERNAL
 	default "toolchain-external-synopsys-arc"
