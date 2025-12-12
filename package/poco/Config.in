@@ -53,6 +53,7 @@ config BR2_PACKAGE_POCO_DATA_MYSQL
 config BR2_PACKAGE_POCO_DATA_PGSQL
 	bool "Data/PostgreSQL"
 	depends on BR2_USE_MMU # postgresql
+	depends on !BR2_sparc
 	depends on BR2_USE_WCHAR # postgresql
 	depends on BR2_ENABLE_LOCALE # postgresql
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # postgresql

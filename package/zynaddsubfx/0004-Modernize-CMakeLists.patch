@@ -1,0 +1,24 @@
+From c00fdb161004e06e52ef46ba921014bd15b1601b Mon Sep 17 00:00:00 2001
+From: fundamental <mark.d.mccurry@gmail.com>
+Date: Sat, 4 Nov 2023 16:32:42 +0100
+Subject: [PATCH] Modernize CMakeLists
+
+Upstream: https://github.com/fundamental/rtosc/commit/c00fdb161004e06e52ef46ba921014bd15b1601b
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[backported only cmake_minimum_required bump]
+---
+ CMakeLists.txt           | 276 +++++++++++++++++----------------------
+ cmake/ColorMessage.cmake |  15 ++-
+ 2 files changed, 131 insertions(+), 160 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e62af32..33d80ac 100644
+--- a/rtosc/CMakeLists.txt
++++ b/rtosc/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.8)
++cmake_minimum_required(VERSION 3.5)
+ project(RTOSC)
+ 
+ set(VERSION_MAJOR 0)

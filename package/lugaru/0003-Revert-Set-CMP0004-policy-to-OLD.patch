@@ -1,0 +1,31 @@
+From 165a34a5ca8a712be405fefffcccdb5845f230e3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?R=C3=A9mi=20Verschelde?= <rverschelde@gmail.com>
+Date: Sat, 7 Jul 2018 11:52:28 +0200
+Subject: [PATCH] Revert "Set CMP0004 policy to OLD"
+
+This reverts commit b461f4a69c17073d5c576d24e48b1b59c0d3c932.
+The workaround is no longer needed with SDL 2.0.5+, which is shipped
+in all distros we support (including Debian Stable and RHEL 7).
+
+Fixes #99.
+
+Upstream: https://github.com/osslugaru/lugaru/commit/165a34a5ca8a712be405fefffcccdb5845f230e3
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ CMakeLists.txt | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 29141271..3973d362 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,7 +1,6 @@
+ project(lugaru)
+ 
+-cmake_minimum_required(VERSION 3.0)
+-cmake_policy(SET CMP0004 OLD)
++cmake_minimum_required(VERSION 3.5)
+ 
+ include(FindPkgConfig)
+ include(GNUInstallDirs)

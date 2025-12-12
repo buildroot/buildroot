@@ -1,0 +1,34 @@
+From 1debd0c8bd46255f8c22b128ec16586ef9154869 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@arm.com>
+Date: Tue, 2 Dec 2025 15:53:23 +0100
+Subject: [PATCH] plat-vexpress: redirect console to uart0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+For consistency with TF-A, U-Boot and Linux.
+
+Upstream: Not applicable. Buildroot specific.
+Signed-off-by: Vincent Stehlé <vincent.stehle@arm.com>
+---
+ core/arch/arm/plat-vexpress/platform_config.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/core/arch/arm/plat-vexpress/platform_config.h b/core/arch/arm/plat-vexpress/platform_config.h
+index 9231f3048..76c7fdb36 100644
+--- a/core/arch/arm/plat-vexpress/platform_config.h
++++ b/core/arch/arm/plat-vexpress/platform_config.h
+@@ -23,8 +23,8 @@
+ 
+ #define IT_UART1		38
+ 
+-#define CONSOLE_UART_BASE	UART1_BASE
+-#define IT_CONSOLE_UART		IT_UART1
++#define CONSOLE_UART_BASE	UART0_BASE
++#undef IT_CONSOLE_UART
+ 
+ #elif defined(PLATFORM_FLAVOR_juno)
+ 
+-- 
+2.51.0
+

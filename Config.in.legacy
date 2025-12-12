@@ -144,6 +144,21 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2026.02"
+
+config BR2_PACKAGE_MESA3D_VDPAU
+	bool "mesa3d Gallium VDPAU state tracker support removed"
+	select BR2_LEGACY
+	help
+	  Mesa3d removed the Gallium VDPAU state tracker.
+
+config BR2_BINUTILS_VERSION_2_42_X
+	bool "binutils 2.42 has been removed"
+	select BR2_LEGACY
+	help
+	  binutils 2.42 has been removed, select a newer version
+	  instead.
+
 comment "Legacy options removed in 2025.11"
 
 config BR2_KERNEL_HEADERS_5_4

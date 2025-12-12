@@ -1,0 +1,27 @@
+From cb4ddac12977fd1abd88a1feacbab090d9ad5ecb Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Wed, 3 Dec 2025 20:06:22 +0100
+Subject: [PATCH] Remove -Werror=deprecated-declarations
+
+Upstream: https://gitlab.gnome.org/GNOME/gupnp-tools/-/issues/29
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ meson.build | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index c92a833..64a0513 100644
+--- a/meson.build
++++ b/meson.build
+@@ -44,7 +44,6 @@ conf.set('HAVE_GTK_SOURCEVIEW', gtksourceview.found())
+ conf.set('GETTEXT_PACKAGE', '"@0@"'.format(meson.project_name()))
+ conf.set('LOCALEDIR', '"@0@"'.format(localedir))
+ cc = meson.get_compiler('c')
+-add_project_arguments(cc.get_supported_arguments('-Werror=deprecated-declarations'), language: 'c')
+ conf.set('GLIB_VERSION_MIN_REQUIRED', 'GLIB_VERSION_@0@'.format(glib_version.underscorify()))
+ conf.set('GLIB_VERSION_MAX_ALLOWED', 'GLIB_VERSION_@0@'.format(glib_version.underscorify()))
+ 
+-- 
+2.47.3
+

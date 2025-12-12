@@ -1,5 +1,6 @@
 comment "xilinx-embeddedsw needs a bare metal toolchain for tuple microblazeel-buildroot-elf"
 	depends on BR2_TOOLCHAIN_BARE_METAL_BUILDROOT_ARCH != "microblazeel-buildroot-elf"
+	depends on BR2_TOOLCHAIN_BARE_METAL_BUILDROOT_ARCH != "microblazeel-buildroot-elf riscv32-buildroot-elf"
 	depends on BR2_TOOLCHAIN_BARE_METAL_BUILDROOT
 
 menuconfig BR2_TARGET_XILINX_EMBEDDEDSW
@@ -21,10 +22,32 @@ if BR2_TARGET_XILINX_EMBEDDEDSW
 
 config BR2_TARGET_XILINX_EMBEDDEDSW_VERSION
 	string "xilinx-embeddedsw version"
-	default "xilinx_v2025.1"
+	default "xilinx_v2025.2"
 	help
 	  Release version of Xilinx/embeddedsw.
 	  Must be xilinx_v2023.1 or newer.
+
+config BR2_TARGET_XILINX_EMBEDDEDSW_VERSAL2_ASUFW
+	bool "versal2 asufw"
+	depends on BR2_cortex_a78
+	help
+	  Build versal2 asufw application from Xilinx/embeddedsw
+	  repo.
+
+	  https://github.com/Xilinx/embeddedsw/tree/master/lib/sw_apps/asufw
+	  Version must be xilinx_v2025.2 or newer.
+
+config BR2_TARGET_XILINX_EMBEDDEDSW_VERSAL2_PLM
+	bool "versal2 plm"
+	depends on BR2_cortex_a78
+	help
+	  Build versal2 plm application from Xilinx/embeddedsw repo.
+	  If selected, the xilinx-prebuilt package will not install
+	  the plm.elf since it will come from the xilinx-embeddedsw
+	  package.
+
+	  https://github.com/Xilinx/embeddedsw/tree/master/lib/sw_apps/versal_plm
+	  Version must be xilinx_v2025.2 or newer.
 
 config BR2_TARGET_XILINX_EMBEDDEDSW_VERSAL_PLM
 	bool "versal plm"

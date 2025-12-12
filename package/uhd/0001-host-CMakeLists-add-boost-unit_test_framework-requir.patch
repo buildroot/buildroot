@@ -13,6 +13,8 @@ Signed-off-by: Gwenhael Goavec-Merou <gwenhael.goavec-merou@trabucayre.com>
 [Fabrice: updated for 4.3.0.0]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 [Upstream status: reverted (https://github.com/EttusResearch/uhd/commit/1a00949b19eaecb84af0f27c370400dc71a9fd84)]
+[Bernd: rebased for version 4.9.0.1]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  host/CMakeLists.txt | 6 +++++-
  1 file changed, 5 insertions(+), 1 deletion(-)
@@ -21,9 +23,9 @@ diff --git a/host/CMakeLists.txt b/host/CMakeLists.txt
 index 8f72ece76..a7731ffbd 100644
 --- a/host/CMakeLists.txt
 +++ b/host/CMakeLists.txt
-@@ -291,9 +291,12 @@ set(UHD_BOOST_REQUIRED_COMPONENTS
-     system
+@@ -323,9 +323,12 @@ set(UHD_BOOST_REQUIRED_COMPONENTS
      serialization
+     #system Boost.System is used, but explicitly listing it causes errors on some systems.
      thread
 -    unit_test_framework
  )
@@ -34,7 +36,7 @@ index 8f72ece76..a7731ffbd 100644
 +
  include(UHDBoost)
  
- include_directories(${Boost_INCLUDE_DIRS})
+ # Include boost headers as system headers to avoid compiler warnings from them.
 -- 
 2.26.2
 

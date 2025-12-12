@@ -1,6 +1,7 @@
 config BR2_PACKAGE_POSTGRESQL
 	bool "postgresql"
 	depends on BR2_USE_MMU # fork()
+	depends on !BR2_sparc # atomic.h
 	depends on BR2_USE_WCHAR
 	depends on BR2_ENABLE_LOCALE # locale_t
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
@@ -36,6 +37,7 @@ endif
 
 comment "postgresql needs a toolchain w/ dynamic library, wchar, locale"
 	depends on BR2_USE_MMU
+	depends on !BR2_sparc
 	depends on !BR2_USE_WCHAR
 	depends on !BR2_ENABLE_LOCALE
 	depends on !BR2_TOOLCHAIN_HAS_THREADS_NPTL

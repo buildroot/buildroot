@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-CUTELYST_VERSION = 2.11.0
+CUTELYST_VERSION = 3.5.0
 CUTELYST_SITE = https://github.com/cutelyst/cutelyst/archive/v$(CUTELYST_VERSION)
 CUTELYST_INSTALL_STAGING = YES
 CUTELYST_SUPPORTS_IN_SOURCE_BUILD = NO
-CUTELYST_LICENSE = LGPL-2.1+
+CUTELYST_LICENSE = BSD-3-Clause
 CUTELYST_LICENSE_FILES = COPYING
 CUTELYST_DEPENDENCIES = qt5base
 

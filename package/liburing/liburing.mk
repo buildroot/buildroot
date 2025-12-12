@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-LIBURING_VERSION = 2.6
-LIBURING_SOURCE = liburing-$(LIBURING_VERSION).tar.bz2
-LIBURING_SITE = https://git.kernel.dk/cgit/liburing/snapshot
+LIBURING_VERSION = liburing-2.12
+LIBURING_SOURCE = $(LIBURING_VERSION).tar.gz
+LIBURING_SITE = $(call github,axboe,liburing,$(LIBURING_VERSION))
 LIBURING_LICENSE = (GPL-2.0 with exceptions and LGPL-2.1+) or MIT
 LIBURING_LICENSE_FILES = COPYING COPYING.GPL LICENSE README
 LIBURING_INSTALL_STAGING = YES

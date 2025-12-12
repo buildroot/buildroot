@@ -1,0 +1,270 @@
+From 89f20096bef51de347ec6f99345f65147359bd7c Mon Sep 17 00:00:00 2001
+From: Ihor Kalnytskyi <ihor@kalnytskyi.com>
+Date: Thu, 8 Aug 2024 22:58:42 +0300
+Subject: [PATCH] Fix CI matrix and CMake deprecations (#76)
+
+Upstream: https://github.com/ikalnytskyi/termcolor/commit/89f20096bef51de347ec6f99345f65147359bd7c
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ .github/workflows/cmake.yml             | 10 +++---
+ .github/workflows/macos.yml             | 12 ++++---
+ .github/workflows/ubuntu.yml            | 46 ++++++++++++++++++-------
+ .github/workflows/windows.yml           |  4 +--
+ CMakeLists.txt                          |  2 +-
+ examples/cmake-external/CMakeLists.txt  |  4 +--
+ examples/cmake-fetch/CMakeLists.txt     | 11 ++----
+ examples/cmake-package/CMakeLists.txt   |  2 +-
+ examples/cmake-submodule/CMakeLists.txt |  2 +-
+ 9 files changed, 55 insertions(+), 38 deletions(-)
+
+diff --git a/.github/workflows/cmake.yml b/.github/workflows/cmake.yml
+index eb61a4f..bdcfc83 100644
+--- a/.github/workflows/cmake.yml
++++ b/.github/workflows/cmake.yml
+@@ -11,7 +11,7 @@ jobs:
+     runs-on: ubuntu-latest
+ 
+     steps:
+-      - uses: actions/checkout@v2
++      - uses: actions/checkout@v4
+       - run: |
+           mkdir -p $GITHUB_WORKSPACE/tmp/termcolor && cd "$_"
+           cmake $GITHUB_WORKSPACE
+@@ -26,18 +26,18 @@ jobs:
+     runs-on: ubuntu-latest
+ 
+     steps:
+-      - uses: actions/checkout@v2
++      - uses: actions/checkout@v4
+       - run: sudo pip install cmake
+       - run: |
+           mkdir -p $GITHUB_WORKSPACE/tmp/example && cd "$_"
+-          /usr/local/bin/cmake $GITHUB_WORKSPACE/examples/cmake-fetch
++          cmake $GITHUB_WORKSPACE/examples/cmake-fetch
+           make && ./example
+ 
+   submodule:
+     runs-on: ubuntu-latest
+     
+     steps:
+-      - uses: actions/checkout@v2
++      - uses: actions/checkout@v4
+       - run: |
+           mkdir -p $GITHUB_WORKSPACE/tmp/example && cd "$_"
+           cmake $GITHUB_WORKSPACE/examples/cmake-submodule
+@@ -47,7 +47,7 @@ jobs:
+     runs-on: ubuntu-latest
+ 
+     steps:
+-      - uses: actions/checkout@v2
++      - uses: actions/checkout@v4
+       - run: |
+           mkdir -p $GITHUB_WORKSPACE/tmp/example && cd "$_"
+           cmake $GITHUB_WORKSPACE/examples/cmake-external
+diff --git a/.github/workflows/macos.yml b/.github/workflows/macos.yml
+index 134f137..ce99070 100644
+--- a/.github/workflows/macos.yml
++++ b/.github/workflows/macos.yml
+@@ -6,21 +6,23 @@ on:
+   pull_request:
+     branches: [master]
+ 
+-jobs:      
++jobs:
+   MacOS:
+     runs-on: macos-latest
+     strategy:
+       matrix:
+         compiler:
+-          - Xcode_10.3
+-          - Xcode_11.7
+-          - Xcode_12.4
++          - Xcode_15.4
++          - Xcode_15.3
++          - Xcode_15.2
++          - Xcode_15.1
++          - Xcode_14.3.1
+ 
+     env:
+       CXXFLAGS: -std=c++11
+ 
+     steps:
+-      - uses: actions/checkout@v2
++      - uses: actions/checkout@v4
+       - run: sudo xcode-select -s /Applications/${{ matrix.compiler }}.app/Contents/Developer
+       - run: cmake -DTERMCOLOR_TESTS=ON .
+       - run: cmake --build .
+diff --git a/.github/workflows/ubuntu.yml b/.github/workflows/ubuntu.yml
+index 21acca5..51ec02b 100644
+--- a/.github/workflows/ubuntu.yml
++++ b/.github/workflows/ubuntu.yml
+@@ -8,23 +8,44 @@ on:
+ 
+ jobs:  
+   Ubuntu-Clang:
+-    runs-on: ubuntu-latest
+     strategy:
+       matrix:
+-        clang-compiler:
+-          - "6.0"
+-          - "7"
+-          - "8"
+-          - "9"
+-          - "10"
+-          - "11"
++        include:
++          - clang-compiler: "6.0"
++            ubuntu-release: ubuntu-20.04
++          - clang-compiler: "7"
++            ubuntu-release: ubuntu-20.04
++          - clang-compiler: "8"
++            ubuntu-release: ubuntu-20.04
++          - clang-compiler: "9"
++            ubuntu-release: ubuntu-20.04
++          - clang-compiler: "10"
++            ubuntu-release: ubuntu-20.04
++          - clang-compiler: "11"
++            ubuntu-release: ubuntu-22.04
++          - clang-compiler: "12"
++            ubuntu-release: ubuntu-22.04
++          - clang-compiler: "13"
++            ubuntu-release: ubuntu-22.04
++          - clang-compiler: "14"
++            ubuntu-release: ubuntu-22.04
++          - clang-compiler: "15"
++            ubuntu-release: ubuntu-22.04
++          - clang-compiler: "16"
++            ubuntu-release: ubuntu-24.04
++          - clang-compiler: "17"
++            ubuntu-release: ubuntu-24.04
++          - clang-compiler: "18"
++            ubuntu-release: ubuntu-24.04
+ 
+     env:
+       CXX: clang++-${{ matrix.clang-compiler }}
+       CXXFLAGS: -std=c++11
+ 
++    runs-on: ${{ matrix.ubuntu-release }}
++
+     steps:
+-      - uses: actions/checkout@v2
++      - uses: actions/checkout@v4
+       - run: sudo apt update
+       - run: sudo apt -y install clang-${{ matrix.clang-compiler }}
+       - run: cmake -DTERMCOLOR_TESTS=ON .
+@@ -36,17 +57,16 @@ jobs:
+     strategy:
+       matrix:
+         gcc-compiler:
+-          - "7"
+-          - "8"
+-          - "9"
+           - "10"
++          - "11"
++          - "12"
+ 
+     env:
+       CXX: g++-${{ matrix.gcc-compiler }}
+       CXXFLAGS: -std=c++11
+ 
+     steps:
+-      - uses: actions/checkout@v2
++      - uses: actions/checkout@v4
+       - run: sudo apt update
+       - run: sudo apt -y install g++-${{ matrix.gcc-compiler }}
+       - run: cmake -DTERMCOLOR_TESTS=ON .
+diff --git a/.github/workflows/windows.yml b/.github/workflows/windows.yml
+index c345782..25ff37f 100644
+--- a/.github/workflows/windows.yml
++++ b/.github/workflows/windows.yml
+@@ -11,7 +11,7 @@ jobs:
+     runs-on: windows-latest
+ 
+     steps:
+-      - uses: actions/checkout@v2
++      - uses: actions/checkout@v4
+       - run: cmake -DTERMCOLOR_TESTS=ON .
+       - run: cmake --build .
+       - run: ./Debug/test_termcolor.exe
+@@ -20,7 +20,7 @@ jobs:
+     runs-on: windows-latest
+ 
+     steps:
+-      - uses: actions/checkout@v2
++      - uses: actions/checkout@v4
+       - run: cmake -DCMAKE_SH="CMAKE_SH-NOTFOUND" -DTERMCOLOR_TESTS=ON -G "MinGW Makefiles" .
+       - run: cmake --build .
+       - run: ./test_termcolor
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e0bfcd6..da4d5d3 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.0)
++cmake_minimum_required(VERSION 3.5)
+ project(termcolor)
+ 
+ #
+diff --git a/examples/cmake-external/CMakeLists.txt b/examples/cmake-external/CMakeLists.txt
+index 525b2a8..077913e 100644
+--- a/examples/cmake-external/CMakeLists.txt
++++ b/examples/cmake-external/CMakeLists.txt
+@@ -1,10 +1,10 @@
+-cmake_minimum_required(VERSION 3.0)
++cmake_minimum_required(VERSION 3.5)
+ project(example)
+ 
+ include(ExternalProject)
+ 
+ ExternalProject_Add(termcolor_project
+-  GIT_REPOSITORY git://github.com/ikalnytskyi/termcolor.git
++  GIT_REPOSITORY https://github.com/ikalnytskyi/termcolor.git
+   GIT_TAG origin/master
+ 
+   # Termcolor is a header-only library which means we need to
+diff --git a/examples/cmake-fetch/CMakeLists.txt b/examples/cmake-fetch/CMakeLists.txt
+index 545184f..f0e7e27 100644
+--- a/examples/cmake-fetch/CMakeLists.txt
++++ b/examples/cmake-fetch/CMakeLists.txt
+@@ -1,17 +1,12 @@
+-cmake_minimum_required(VERSION 3.11)
++cmake_minimum_required(VERSION 3.14)
+ project(example)
+ 
+ include(FetchContent)
+ 
+ FetchContent_Declare(termcolor
+-  GIT_REPOSITORY git://github.com/ikalnytskyi/termcolor.git
++  GIT_REPOSITORY https://github.com/ikalnytskyi/termcolor.git
+   GIT_TAG origin/master)
+-FetchContent_GetProperties(termcolor)
+-
+-if(NOT termcolor_POPULATED)
+-  FetchContent_Populate(termcolor)
+-  add_subdirectory(${termcolor_SOURCE_DIR} ${termcolor_BINARY_DIR} EXCLUDE_FROM_ALL)
+-endif()
++FetchContent_MakeAvailable(termcolor)
+ 
+ add_executable(${CMAKE_PROJECT_NAME} example.cpp)
+ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE termcolor)
+diff --git a/examples/cmake-package/CMakeLists.txt b/examples/cmake-package/CMakeLists.txt
+index 3f78a57..cf3b988 100644
+--- a/examples/cmake-package/CMakeLists.txt
++++ b/examples/cmake-package/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.0)
++cmake_minimum_required(VERSION 3.5)
+ project(example)
+ 
+ find_package(termcolor REQUIRED)
+diff --git a/examples/cmake-submodule/CMakeLists.txt b/examples/cmake-submodule/CMakeLists.txt
+index 5673372..3e7bece 100644
+--- a/examples/cmake-submodule/CMakeLists.txt
++++ b/examples/cmake-submodule/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.0)
++cmake_minimum_required(VERSION 3.5)
+ project(example)
+ 
+ add_subdirectory(../.. ${CMAKE_CURRENT_BINARY_DIR}/termcolor EXCLUDE_FROM_ALL)

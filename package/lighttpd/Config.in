@@ -122,6 +122,7 @@ config BR2_PACKAGE_LIGHTTPD_PCRE
 config BR2_PACKAGE_LIGHTTPD_PGSQL
 	bool "pgsql support"
 	depends on BR2_USE_MMU # postgresql
+	depends on !BR2_sparc # postgresql
 	depends on BR2_USE_WCHAR # postgresql
 	depends on BR2_ENABLE_LOCALE # postgresql
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # postgresql
@@ -133,6 +134,7 @@ config BR2_PACKAGE_LIGHTTPD_PGSQL
 
 comment "pgsql support needs a toolchain w/ wchar"
 	depends on BR2_USE_MMU
+	depends on !BR2_sparc
 	depends on !BR2_USE_WCHAR
 
 comment "pgsql support can't be built with Optimize for fast"

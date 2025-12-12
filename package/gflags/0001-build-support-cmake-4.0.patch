@@ -1,0 +1,53 @@
+From 70c01a642f08734b7bddc9687884844ca117e080 Mon Sep 17 00:00:00 2001
+From: Rui Chen <rui@chenrui.dev>
+Date: Mon, 31 Mar 2025 18:35:49 -0400
+Subject: [PATCH] build: support cmake 4.0 (#367)
+
+Signed-off-by: Rui Chen <rui@chenrui.dev>
+
+Upstream: https://github.com/gflags/gflags/commit/70c01a642f08734b7bddc9687884844ca117e080
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ CMakeLists.txt             | 2 +-
+ test/config/CMakeLists.txt | 2 +-
+ test/nc/CMakeLists.txt     | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4b5db235..a664bb12 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -70,7 +70,7 @@
+ ## - GFLAGS_INSTALL_SHARED_LIBS
+ ## - GFLAGS_INSTALL_STATIC_LIBS
+ 
+-cmake_minimum_required (VERSION 3.0.2 FATAL_ERROR)
++cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
+ 
+ if (POLICY CMP0042)
+   cmake_policy (SET CMP0042 NEW)
+diff --git a/test/config/CMakeLists.txt b/test/config/CMakeLists.txt
+index 6190b253..205121e8 100644
+--- a/test/config/CMakeLists.txt
++++ b/test/config/CMakeLists.txt
+@@ -1,6 +1,6 @@
+ ## gflags package configuration tests
+ 
+-cmake_minimum_required (VERSION 2.8.12 FATAL_ERROR)
++cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
+ 
+ project (gflags_${TEST_NAME})
+ 
+diff --git a/test/nc/CMakeLists.txt b/test/nc/CMakeLists.txt
+index d00b07d0..1b4d511a 100644
+--- a/test/nc/CMakeLists.txt
++++ b/test/nc/CMakeLists.txt
+@@ -1,6 +1,6 @@
+ ## gflags negative compilation tests
+ 
+-cmake_minimum_required (VERSION 2.8.12 FATAL_ERROR)
++cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
+ 
+ if (NOT TEST_NAME)
+   message (FATAL_ERROR "Missing TEST_NAME CMake flag")

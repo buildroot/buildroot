@@ -1,0 +1,35 @@
+From 95cbe3bb3e7cfa32b96356edbd3ce7a8a3bb9018 Mon Sep 17 00:00:00 2001
+From: GHANNADZADEH Saman <saman.ghannadzadeh@oxinst.com>
+Date: Mon, 4 Mar 2019 16:21:40 +0000
+Subject: [PATCH] Make compatible with CMake 3.8.1
+
+This ups the minimum CMake version, and declares th package version in
+the `project(...)` command to be compatible with CMake policy CMP0047.
+
+Upstream: https://github.com/darrenjs/wampcc/commit/95cbe3bb3e7cfa32b96356edbd3ce7a8a3bb9018
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ CMakeLists.txt | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5ae1a370..251e0caa 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,11 +1,11 @@
+-cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
++cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
+ 
+-project(wampcc)
+-
+-# Version number
+ set (WAMPCC_VERSION_MAJOR 1)
+ set (WAMPCC_VERSION_MINOR 6)
+ set (WAMPCC_VERSION "${WAMPCC_VERSION_MAJOR}.${WAMPCC_VERSION_MINOR}")
++project(wampcc VERSION ${WAMPCC_VERSION})
++
++# Version number
+ # Include extra cmake modules
+ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+ 

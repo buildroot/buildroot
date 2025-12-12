@@ -1,0 +1,37 @@
+From ee31ca0647decc493e992eaa3dc5be9d9e1bc871 Mon Sep 17 00:00:00 2001
+From: Adrian Perez de Castro <aperez@igalia.com>
+Date: Sat, 25 Oct 2025 22:19:21 +0300
+Subject: [PATCH] Fix the build with CMake 4
+
+Require CMake 3.5, which is the latest version that CMake 4 is
+backwards-compatible with. The CMake build system does not need
+any change otherwise.
+
+Fixes #183
+
+Upstream: https://github.com/google/woff2/pull/187
+Signed-off-by: Adrian Perez de Castro <aperez@igalia.com>
+---
+ CMakeLists.txt | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ecfbb83..6525747 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -3,11 +3,7 @@
+ # Distributed under MIT license.
+ # See file LICENSE for detail or copy at https://opensource.org/licenses/MIT
+ 
+-# Ubuntu 12.04 LTS has CMake 2.8.7, and is an important target since
+-# several CI services, such as Travis and Drone, use it.  Solaris 11
+-# has 2.8.6, and it's not difficult to support if you already have to
+-# support 2.8.7.
+-cmake_minimum_required(VERSION 2.8.6)
++cmake_minimum_required(VERSION 3.5.0)
+ 
+ project(woff2)
+ 
+-- 
+2.51.1
+

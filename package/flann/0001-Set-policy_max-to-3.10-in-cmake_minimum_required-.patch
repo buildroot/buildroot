@@ -1,0 +1,24 @@
+From a6803c235c0107f3690010c2fc429e3875c4b7c6 Mon Sep 17 00:00:00 2001
+From: Silvio Traversaro <silvio@traversaro.it>
+Date: Thu, 22 May 2025 19:26:16 +0200
+Subject: [PATCH] Set policy_max to 3.10 in cmake_minimum_required to support
+ CMake 4.0
+
+Upstream: https://github.com/flann-lib/flann/pull/526
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[backported to 1.9.2]
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f79d173a..85d5a560 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 2.8.12...3.10)
+ 
+ if(COMMAND cmake_policy)
+     cmake_policy(SET CMP0003 NEW)

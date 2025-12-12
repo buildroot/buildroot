@@ -1,0 +1,30 @@
+From 02ed1852d45fda6994748118bab129e5d2527c0f Mon Sep 17 00:00:00 2001
+From: Dan Cristoloveanu <dcristo@microsoft.com>
+Date: Wed, 27 Jan 2021 21:35:21 -0800
+Subject: [PATCH] Bump cmake version (#189)
+
+* Bump version for cmake
+
+Upstream: https://github.com/Azure/umock-c/commit/02ed1852d45fda6994748118bab129e5d2527c0f
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[backported to LTS_03_2025]
+---
+ deps/umock-c/CMakeLists.txt | 5 ++++-
+ 1 files change, 13 insertions(+), 74 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f1a7a9f4..fc479cac 100644
+--- a/deps/umock-c/CMakeLists.txt
++++ b/deps/umock-c/CMakeLists.txt
+@@ -1,7 +1,9 @@
+ #Copyright (c) Microsoft. All rights reserved.
+ #Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ 
+-cmake_minimum_required(VERSION 2.8.11)
++if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
++    cmake_minimum_required(VERSION 3.18)
++endif()
+ 
+ if(TARGET umock_c)
+     return()

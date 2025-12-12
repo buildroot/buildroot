@@ -24,8 +24,7 @@ http://autobuild.buildroot.net/results/c17/c17bbb12d9deadd64a441b36e324cfbbe8aba
 Signed-off-by: Matthew Weber <matthew.weber@rockwellcollins.com>
 [Updated for 0.57.1 - get_builtin_option() vs. get_option(OptionKey())]
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
-[Bernd: rebased for 1.6.0 & 1.7.0
- for 1.82.0 - get_option -> optstore.get_value_for]
+[Bernd: rebased for 1.10.0]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  mesonbuild/compilers/mixins/clike.py | 3 +++
@@ -43,16 +42,16 @@ index 09ad837b1..b7f6b9f22 100644
  from .. import compilers
  from ..compilers import CompileCheckMode
  from .visualstudio import VisualStudioLikeCompiler
-@@ -1053,6 +1054,9 @@ class CLikeCompiler(Compiler):
+@@ -1045,6 +1046,9 @@ class CLikeCompiler(Compiler):
              # TI C28x compilers can use both extensions for static or dynamic libs.
              stlibext = ['a', 'lib']
              shlibext = ['dll', 'so']
-+        elif env.coredata.optstore.get_value_for(OptionKey('default_library')) == 'static':
++        elif self.environment.coredata.optstore.get_value_for(OptionKey('default_library')) == 'static':
 +            # Linux/BSDs
 +            shlibext = ['a']
-         else:
-             # Linux/BSDs
-             shlibext = ['so']
+         elif self.info.is_os2():
+             stlibext = ['_s.lib', '_s.a', 'lib', 'a']
+             shlibext = ['_dll.lib', '_dll.a', 'lib', 'a', 'dll']
 -- 
 2.25.1
 

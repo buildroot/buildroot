@@ -1,0 +1,34 @@
+From b9bf3936b3778912444eff7f7866db1d66f4c50b Mon Sep 17 00:00:00 2001
+From: Thomas Perale <perale.thomas@gmail.com>
+Date: Sun, 6 Jul 2025 20:14:31 +0200
+Subject: [PATCH] fix: cmake required minimum version
+
+When trying to compile the project with CMake 4 the following error
+shows up:
+
+CMake Error at CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.5 has been removed from CMake.
+
+This commit bump the minimum required cmake version to meet the needs of
+CMake v4.
+
+For more information see:
+  - https://cmake.org/cmake/help/latest/release/4.0.html#deprecated-and-removed-features
+
+Upstream: https://github.com/zhaojh329/libuhttpd/commit/b9bf3936b3778912444eff7f7866db1d66f4c50b
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6719e5f..0392f25 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.0)
++cmake_minimum_required(VERSION 3.5)
+ 
+ project(libuhttpd C)
+ 
