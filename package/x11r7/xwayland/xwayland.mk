@@ -69,15 +69,22 @@ else
 XWAYLAND_CONF_OPTS += -Dxselinux=false
 endif
 
-ifeq ($(BR2_PACKAGE_OPENSSL),y)
-XWAYLAND_CONF_OPTS += -Dsha1=libcrypto
-XWAYLAND_DEPENDENCIES += openssl
+# The order of the preferred SHA1 libraries should match used by meson.build.
+ifeq ($(BR2_PACKAGE_LIBMD),y)
+XWAYLAND_CONF_OPTS += -Dsha1=libmd
+XWAYLAND_DEPENDENCIES += libmd
+else ifeq ($(BR2_PACKAGE_LIBSHA1),y)
+XWAYLAND_CONF_OPTS += -Dsha1=libsha1
+XWAYLAND_DEPENDENCIES += libsha1
+else ifeq ($(BR2_PACKAGE_NETTLE),y)
+XWAYLAND_CONF_OPTS += -Dsha1=libnettle
+XWAYLAND_DEPENDENCIES += nettle
 else ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)
 XWAYLAND_CONF_OPTS += -Dsha1=libgcrypt
 XWAYLAND_DEPENDENCIES += libgcrypt
 else
-XWAYLAND_CONF_OPTS += -Dsha1=libsha1
-XWAYLAND_DEPENDENCIES += libsha1
+XWAYLAND_CONF_OPTS += -Dsha1=libcrypto
+XWAYLAND_DEPENDENCIES += openssl
 endif
 
 ifeq ($(BR2_PACKAGE_LIBUNWIND),y)
