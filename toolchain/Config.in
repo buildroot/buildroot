@@ -141,6 +141,9 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_68485
 	default y if BR2_microblaze
 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81426
+# error: unable to find a register to spill in class ‘R0_REGS’
+# The bug exists at least since gcc 6.x, so we are assuming it affects
+# all GCC versions.
 config BR2_TOOLCHAIN_HAS_GCC_BUG_81426
 	bool
 	default y if BR2_sh
@@ -241,16 +244,6 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_111001
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_13
 	depends on BR2_OPTIMIZE_1 || \
 		   BR2_OPTIMIZE_2 || \
-		   BR2_OPTIMIZE_3
-
-# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=121567
-# error: unable to find a register to spill in class ‘R0_REGS’
-# The bug exists at least since gcc 6.x, so we are assuming it affects
-# all GCC versions.
-config BR2_TOOLCHAIN_HAS_GCC_BUG_121567
-	bool
-	default y if BR2_sh
-	depends on BR2_OPTIMIZE_2 || \
 		   BR2_OPTIMIZE_3
 
 config BR2_TOOLCHAIN_HAS_NATIVE_RPC
