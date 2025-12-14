@@ -4,15 +4,12 @@
 #
 ################################################################################
 
-LTP_TESTSUITE_VERSION = 20250530
+LTP_TESTSUITE_VERSION = 20250930
 LTP_TESTSUITE_SOURCE = ltp-full-$(LTP_TESTSUITE_VERSION).tar.xz
 LTP_TESTSUITE_SITE = https://github.com/linux-test-project/ltp/releases/download/$(LTP_TESTSUITE_VERSION)
 
 LTP_TESTSUITE_LICENSE = GPL-2.0, GPL-2.0+
 LTP_TESTSUITE_LICENSE_FILES = COPYING
-
-# 0001-configure-Fix-build-on-kernel-6.14-headers.patch
-LTP_TESTSUITE_AUTORECONF = YES
 
 LTP_TESTSUITE_CONF_OPTS += --disable-metadata
 
