@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPEN_LLDP_VERSION = 1.1
+OPEN_LLDP_VERSION = 1.1.1
 OPEN_LLDP_SITE = $(call github,intel,openlldp,v$(OPEN_LLDP_VERSION))
 OPEN_LLDP_DEPENDENCIES = readline libnl libconfig host-pkgconf
 OPEN_LLDP_LICENSE = GPL-2.0
