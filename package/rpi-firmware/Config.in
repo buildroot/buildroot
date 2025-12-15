@@ -100,16 +100,4 @@ config BR2_PACKAGE_RPI_FIRMWARE_INSTALL_DTB_OVERLAYS
 	  overlays, to support HATs (Hardware Attached on Top, add-on
 	  modules).
 
-config BR2_PACKAGE_RPI_FIRMWARE_INSTALL_VCDBG
-	bool "vcdbg"
-	depends on BR2_arm # prebuilt arm binary, rpi-userland
-	depends on BR2_TOOLCHAIN_USES_GLIBC
-	depends on BR2_INSTALL_LIBSTDCPP # rpi-userland
-	help
-	  Install vcdbg, to help debug communication with the GPU.
-
-comment "vcdbg needs a glibc toolchain w/ C++"
-	depends on BR2_arm
-	depends on !BR2_TOOLCHAIN_USES_GLIBC || !BR2_INSTALL_LIBSTDCPP
-
 endif # BR2_PACKAGE_RPI_FIRMWARE

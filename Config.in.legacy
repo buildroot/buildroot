@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2025.02.10"
 
+config BR2_PACKAGE_RPI_FIRMWARE_INSTALL_VCDBG
+	bool "rpi-firmware vcdbg option removed"
+	select BR2_LEGACY
+	help
+	  rpi-firmware upstream has dropped the vcdbg tool
+
 config BR2_PACKAGE_OPENCV3_WITH_FFMPEG
 	bool "opencv3 ffmpeg support removed"
 	select BR2_LEGACY
