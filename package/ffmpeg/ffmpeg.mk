@@ -52,7 +52,10 @@ FFMPEG_CONF_OPTS = \
 	--disable-libilbc \
 	--disable-libvo-amrwbenc \
 	--disable-symver \
-	--disable-doc
+	--disable-doc \
+	--disable-mmal \
+	--disable-omx \
+	--disable-omx-rpi
 
 FFMPEG_DEPENDENCIES += host-pkgconf
 
@@ -282,19 +285,6 @@ FFMPEG_CONF_OPTS += --enable-vdpau
 FFMPEG_DEPENDENCIES += libvdpau
 else
 FFMPEG_CONF_OPTS += --disable-vdpau
-endif
-
-ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
-FFMPEG_CONF_OPTS += --enable-omx --enable-omx-rpi \
-	--extra-cflags=-I$(STAGING_DIR)/usr/include/IL
-FFMPEG_DEPENDENCIES += rpi-userland
-ifeq ($(BR2_arm),y)
-FFMPEG_CONF_OPTS += --enable-mmal
-else
-FFMPEG_CONF_OPTS += --disable-mmal
-endif
-else
-FFMPEG_CONF_OPTS += --disable-mmal --disable-omx --disable-omx-rpi
 endif
 
 # To avoid a circular dependency only use opencv if opencv itself does
