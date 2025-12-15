@@ -14,6 +14,8 @@ TVHEADEND_DEPENDENCIES = \
 	host-pngquant \
 	host-python3 \
 	openssl
+TVHEADEND_CONF_OPTS = \
+	--disable-omx
 
 ifeq ($(BR2_PACKAGE_AVAHI),y)
 TVHEADEND_DEPENDENCIES += avahi
@@ -41,12 +43,6 @@ TVHEADEND_DEPENDENCIES += opus
 else
 TVHEADEND_CONF_OPTS += --disable-libopus
 endif
-ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
-TVHEADEND_CONF_OPTS += --enable-omx
-TVHEADEND_DEPENDENCIES += rpi-userland
-else
-TVHEADEND_CONF_OPTS += --disable-omx
-endif
 ifeq ($(BR2_PACKAGE_LIBVPX)$(BR2_INSTALL_LIBSTDCPP),yy)
 TVHEADEND_CONF_OPTS += --enable-libvpx
 TVHEADEND_DEPENDENCIES += libvpx
@@ -63,7 +59,6 @@ else
 TVHEADEND_CONF_OPTS += \
 	--disable-libav \
 	--disable-libopus \
-	--disable-omx \
 	--disable-vaapi \
 	--disable-libvpx \
 	--disable-libx264 \
