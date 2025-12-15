@@ -24,7 +24,8 @@ MPV_CONF_OPTS = \
 	-Dopensles=disabled \
 	-Drubberband=disabled \
 	-Duchardet=disabled \
-	-Dvapoursynth=disabled
+	-Dvapoursynth=disabled \
+	-Drpi=disabled
 
 ifeq ($(BR2_REPRODUCIBLE),y)
 MPV_CONF_OPTS += -Dbuild-date=false
@@ -160,14 +161,6 @@ MPV_CONF_OPTS += -Dsdl2=enabled
 MPV_DEPENDENCIES += sdl2
 else
 MPV_CONF_OPTS += -Dsdl2=disabled
-endif
-
-# Raspberry Pi support
-ifeq ($(BR2_PACKAGE_RPI_USERLAND),y)
-MPV_CONF_OPTS += -Drpi=enabled -Dgl=enabled
-MPV_DEPENDENCIES += rpi-userland
-else
-MPV_CONF_OPTS += -Drpi=disabled
 endif
 
 # va-api support
