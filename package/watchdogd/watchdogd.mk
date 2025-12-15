@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WATCHDOGD_VERSION = 4.0
+WATCHDOGD_VERSION = 4.1
 WATCHDOGD_SITE = https://github.com/troglobit/watchdogd/releases/download/$(WATCHDOGD_VERSION)
 WATCHDOGD_LICENSE = ISC
 WATCHDOGD_LICENSE_FILES = LICENSE
@@ -15,14 +15,7 @@ WATCHDOGD_SELINUX_MODULES = watchdog
 
 WATCHDOGD_CONF_OPTS = \
 	--disable-compat \
-	--disable-examples \
-	--disable-test-mode
-
-ifneq ($(BR2_PACKAGE_WATCHDOGD_TEST_SUITE),y)
-WATCHDOGD_CONF_OPTS += --disable-builtin-tests
-else
-WATCHDOGD_CONF_OPTS += --enable-builtin-tests
-endif
+	--disable-examples
 
 ifneq ($(BR2_PACKAGE_WATCHDOGD_GENERIC),y)
 WATCHDOGD_CONF_OPTS += --without-generic

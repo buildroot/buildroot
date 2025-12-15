@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2026.02"
 
+config BR2_PACKAGE_WATCHDOGD_TEST_SUITE
+	bool "The watchdogd test mode option has been removed."
+	select BR2_LEGACY
+	help
+	  watchdogd v4.1 removes the test mode and test suite.
+
 config BR2_KERNEL_HEADERS_6_17
 	bool "kernel headers version 6.17.x are no longer supported"
 	select BR2_LEGACY

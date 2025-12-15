@@ -20,13 +20,6 @@ config BR2_PACKAGE_WATCHDOGD
 
 if BR2_PACKAGE_WATCHDOGD
 
-config BR2_PACKAGE_WATCHDOGD_TEST_SUITE
-	bool "Enable watchdogctl test cases"
-	help
-	  The watchdogctl program comes with a suite of tests built-in.
-	  They can be used to verify correct operation of watchdogd and
-	  the kernel watchdog driver.
-
 config BR2_PACKAGE_WATCHDOGD_GENERIC
 	bool "Generic script monitor"
 	default y if BR2_PACKAGE_WATCHDOGD_GENERIC_POLL_WRAP # legacy 2024.02
