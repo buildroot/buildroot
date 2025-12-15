@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBINPUT_VERSION = 1.29.0
+LIBINPUT_VERSION = 1.30.1
 LIBINPUT_SOURCE = libinput-$(LIBINPUT_VERSION).tar.bz2
 LIBINPUT_SITE = https://gitlab.freedesktop.org/libinput/libinput/-/archive/$(LIBINPUT_VERSION)
 LIBINPUT_DEPENDENCIES = host-pkgconf libevdev udev
@@ -29,6 +29,13 @@ LIBINPUT_DEPENDENCIES += xlib_libX11
 endif
 else
 LIBINPUT_CONF_OPTS += -Ddebug-gui=false
+endif
+
+ifeq ($(BR2_PACKAGE_LUA_5_4),y)
+LIBINPUT_CONF_OPTS += -Dlua-plugins=enabled
+LIBINPUT_DEPENDENCIES += lua
+else
+LIBINPUT_CONF_OPTS += -Dlua-plugins=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_MTDEV),y)
