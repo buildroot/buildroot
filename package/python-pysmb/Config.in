@@ -1,8 +1,8 @@
 config BR2_PACKAGE_PYTHON_PYSMB
 	bool "python-pysmb"
 	depends on BR2_INSTALL_LIBSTDCPP
-	select BR2_PACKAGE_PYTHON_PYASN1
-	select BR2_PACKAGE_PYTHON_TQDM
+	select BR2_PACKAGE_PYTHON_PYASN1 # runtime
+	select BR2_PACKAGE_PYTHON_TQDM # runtime
 	help
 	  pysmb is an experimental SMB/CIFS library written in Python.
 	  It implements the client-side SMB/CIFS protocol (SMB1 and
@@ -10,7 +10,7 @@ config BR2_PACKAGE_PYTHON_PYSMB
 	  transfer files to/from SMB/CIFS shared folders like your
 	  Windows file sharing and Samba folders.
 
-	  https://miketeo.net/wp/index.php/projects/pysmb
+	  https://miketeo.net/blog/projects/pysmb
 
 comment "python-pysmb needs a toolchain w/ C++"
 	depends on !BR2_INSTALL_LIBSTDCPP
