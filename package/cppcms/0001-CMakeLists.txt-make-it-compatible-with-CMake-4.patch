@@ -1,0 +1,107 @@
+From fb3943378d84a6ced1182502eb839d6fc6e51914 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Tue, 16 Dec 2025 15:31:38 +0100
+Subject: [PATCH] CMakeLists.txt: make it compatible with CMake 4
+
+The build with CMake >= 4 currently fails with:
+
+CMake Error at CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.5 has been removed from CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+  Or, add -DCMAKE_POLICY_VERSION_MINIMUM=3.5 to try configuring anyway.
+
+we simply need to specify that the minimum version is 3.5 to fix the
+build.
+
+Upstream: https://github.com/artyom-beilis/cppcms/pull/106
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ CMakeLists.txt                                          | 2 +-
+ booster/CMakeLists.txt                                  | 2 +-
+ contrib/server_side/sessions/CMakeLists.txt             | 2 +-
+ contrib/server_side/sessions/berkeley_db/CMakeLists.txt | 2 +-
+ contrib/server_side/sessions/cppdb/CMakeLists.txt       | 2 +-
+ contrib/server_side/sessions/sqlite3/CMakeLists.txt     | 2 +-
+ examples/message_board/CMakeLists.txt                   | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a9c601b..826e87f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.5)
+ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
+ 
+ 
+diff --git a/booster/CMakeLists.txt b/booster/CMakeLists.txt
+index 6ec1ffa..8f63254 100644
+--- a/booster/CMakeLists.txt
++++ b/booster/CMakeLists.txt
+@@ -6,7 +6,7 @@
+ #  http://www.boost.org/LICENSE_1_0.txt)
+ #
+ 
+-cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.5)
+ project(booster)
+ include(CheckFunctionExists)
+ include(CheckCXXSourceCompiles)
+diff --git a/contrib/server_side/sessions/CMakeLists.txt b/contrib/server_side/sessions/CMakeLists.txt
+index 0909fa6..e7ae01f 100644
+--- a/contrib/server_side/sessions/CMakeLists.txt
++++ b/contrib/server_side/sessions/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.5)
+ 
+ add_subdirectory(sqlite3)
+ add_subdirectory(cppdb)
+diff --git a/contrib/server_side/sessions/berkeley_db/CMakeLists.txt b/contrib/server_side/sessions/berkeley_db/CMakeLists.txt
+index 6bbac69..534bce2 100644
+--- a/contrib/server_side/sessions/berkeley_db/CMakeLists.txt
++++ b/contrib/server_side/sessions/berkeley_db/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.5)
+ 
+ if(WIN32 OR CYGWIN)
+ 	add_definitions(-DDLL_EXPORT)
+diff --git a/contrib/server_side/sessions/cppdb/CMakeLists.txt b/contrib/server_side/sessions/cppdb/CMakeLists.txt
+index 9781be9..792ec39 100644
+--- a/contrib/server_side/sessions/cppdb/CMakeLists.txt
++++ b/contrib/server_side/sessions/cppdb/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.5)
+ 
+ if(WIN32 OR CYGWIN)
+ 	add_definitions(-DDLL_EXPORT)
+diff --git a/contrib/server_side/sessions/sqlite3/CMakeLists.txt b/contrib/server_side/sessions/sqlite3/CMakeLists.txt
+index 4c236e3..82808f4 100644
+--- a/contrib/server_side/sessions/sqlite3/CMakeLists.txt
++++ b/contrib/server_side/sessions/sqlite3/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.5)
+ if(WIN32 OR CYGWIN)
+ 	add_definitions(-DDLL_EXPORT)
+ endif()
+diff --git a/examples/message_board/CMakeLists.txt b/examples/message_board/CMakeLists.txt
+index 0e5c555..96a56c2 100644
+--- a/examples/message_board/CMakeLists.txt
++++ b/examples/message_board/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.5)
+ project(cppcms)
+ 
+ include_directories(${CMAKE_SOURCE_DIR})
+-- 
+2.52.0
+
