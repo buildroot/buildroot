@@ -68,7 +68,7 @@ else
 PIXMAN_CONF_OPTS += -Dneon=disabled
 endif
 
-ifeq ($(BR2_aarch64)$(BR2_ARM_CPU_HAS_NEON),yy)
+ifeq ($(BR2_aarch64),y)
 PIXMAN_CONF_OPTS += -Da64-neon=enabled
 else
 PIXMAN_CONF_OPTS += -Da64-neon=disabled
