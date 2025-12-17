@@ -1,0 +1,24 @@
+From 27003c60a05dd3921538323a53b1650e289cba8c Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Wed, 17 Dec 2025 22:27:33 +0100
+Subject: [PATCH] CMakeLists.txt: fix compatibility with CMake 4
+
+Upstream: N/A, dead upstream
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5e81b09..32ff3a6 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.5)
+ project(cppdb)
+ 
+ set(CPPDB_MAJOR 0)
+-- 
+2.52.0
+
