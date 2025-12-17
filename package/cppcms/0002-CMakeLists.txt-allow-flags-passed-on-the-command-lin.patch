@@ -1,0 +1,58 @@
+From 58faaa72919076e2c847b595a739469243ac9706 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Tue, 16 Dec 2025 16:02:41 +0100
+Subject: [PATCH] CMakeLists.txt: allow flags passed on the command line to win
+ over built-in flags
+
+CMakeLists.txt and booster/CMakeLists.txt define some flags in
+CXX_FLAGS, and then set CMAKE_CXX_FLAGS in a way that causes the flags
+in CXX_FLAGS to override the ones passed (for example on the command
+line through CMAKE_CXX_FLAGS). This prevents the user from overriding
+those compiler flags in CXX_FLAGS.
+
+A specific example is that CXX_FLAGS sets -std=c++11, but with recent
+version of ICU (such as >= 77-1), -std=c++11 is not enough, passing
+-std=c++17 is needed. Unfortunately, it cannot be passed through
+CMAKE_CXX_FLAGS due to the aforementioned problem.
+
+This commit allows to resolve this by ensuring that CMAKE_CXX_FLAGS
+and CMAKE_C_FLAGS win over CXX_FLAGS/C_FLAGS.
+
+Upstream: https://github.com/artyom-beilis/cppcms/pull/107
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ CMakeLists.txt         | 4 ++--
+ booster/CMakeLists.txt | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 826e87f..86693e2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -141,8 +141,8 @@ elseif(MSVC)
+ 	set(C_FLAGS "/W3")
+ endif()
+ 
+-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_FLAGS}")
+-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_FLAGS}")
++set(CMAKE_CXX_FLAGS "${CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
++set(CMAKE_C_FLAGS "${C_FLAGS} ${CMAKE_C_FLAGS} ")
+ 
+ #############################################################################
+ #
+diff --git a/booster/CMakeLists.txt b/booster/CMakeLists.txt
+index 8f63254..4638f76 100644
+--- a/booster/CMakeLists.txt
++++ b/booster/CMakeLists.txt
+@@ -223,7 +223,7 @@ if(NOT IS_WINDOWS)
+ 	endif()
+ endif()
+ 
+-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_FLAGS}")
++set(CMAKE_CXX_FLAGS "${CXX_FLAGS} ${CMAKE_CXX_FLAGS}")
+ 
+ #############################################################################
+ #
+-- 
+2.52.0
+
