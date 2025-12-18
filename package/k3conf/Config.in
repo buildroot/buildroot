@@ -1,0 +1,14 @@
+config BR2_PACKAGE_K3CONF
+	bool "k3conf"
+	depends on BR2_aarch64
+	help
+	  k3conf is a Linux user-space standalone application designed
+	  to provide a quick'n easy way to dynamically diagnose Texas
+	  Instruments' K3 architecture based processors.
+
+	  k3conf currently supports Texas Instruments AM654, J721E,
+	  J7200, AM64x, AM62x, J721S2, J784S4, J722S, AM62Ax, AM62Px,
+	  and AM62Lx devices. Along with the BeagleBoard variants of
+	  the above mentioned TI SOC's.
+
+	  https://git.ti.com/cgit/k3conf/k3conf
