@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPUS_VERSION = 1.5.2
+OPUS_VERSION = 1.6
 OPUS_SITE = https://downloads.xiph.org/releases/opus
 OPUS_LICENSE = BSD-3-Clause
 OPUS_LICENSE_FILES = COPYING
@@ -39,6 +39,12 @@ endif
 # Thumb-2), disable the usage of assembly as it is not Thumb-ready.
 ifeq ($(BR2_arm)$(BR2_armeb):$(BR2_ARM_CPU_HAS_ARM),y:)
 OPUS_CONF_OPTS += --disable-asm
+endif
+
+# We also disable assembly in case we have a soft-float ABI (opus has
+# NEON instructions which are not available in that case).
+ifeq ($(BR2_ARM_SOFT_FLOAT),y)
+OPUS_CONF_OPTS += --disable-intrinsics
 endif
 
 $(eval $(autotools-package))
