@@ -9,7 +9,7 @@ class TestDdrescue(infra.basetest.BRTest):
     # - A kernel config fragment enables loop blk dev and device
     #   mapper dm-dust, which are used to simulate a failing storage
     #   block device.
-    # - dmraid user space package is needed to configure dm-dust
+    # - lvm2 user space package is needed to configure dm-dust with dmsetup
     config = \
         """
         BR2_aarch64=y
@@ -23,7 +23,7 @@ class TestDdrescue(infra.basetest.BRTest):
         BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES="{}"
         BR2_LINUX_KERNEL_NEEDS_HOST_OPENSSL=y
         BR2_PACKAGE_DDRESCUE=y
-        BR2_PACKAGE_DMRAID=y
+        BR2_PACKAGE_LVM2=y
         BR2_TARGET_ROOTFS_CPIO=y
         BR2_TARGET_ROOTFS_CPIO_GZIP=y
         # BR2_TARGET_ROOTFS_TAR is not set
