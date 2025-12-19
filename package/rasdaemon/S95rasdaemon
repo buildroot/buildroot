@@ -1,0 +1,63 @@
+#!/bin/sh
+#
+# S95rasdaemon	Starts Rasdaemon.
+#
+# shellcheck disable=SC2317 # functions are called via variable
+
+DAEMON="rasdaemon"
+PIDFILE="/var/run/$DAEMON.pid"
+
+start() {
+	printf "Starting %s: " "$DAEMON"
+
+	if ! grep -q debugfs /proc/mounts ; then
+		echo "FAIL : debugfs is missing"
+		return 1
+	fi
+
+	start-stop-daemon --start --pidfile "$PIDFILE" --make-pidfile \
+		--background --exec "/usr/sbin/$DAEMON" -- -f
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+stop() {
+	printf "Stopping %s: " "$DAEMON"
+	start-stop-daemon --stop --pidfile "$PIDFILE" --exec "/usr/sbin/$DAEMON"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+		return "$status"
+	fi
+	while start-stop-daemon --stop --test --quiet --pidfile "$PIDFILE" \
+		--exec "/sbin/$DAEMON"; do
+		sleep 0.1
+	done
+	rm -f "$PIDFILE"
+	return "$status"
+}
+
+restart() {
+	stop
+	start
+}
+
+reload() {
+	restart
+}
+
+case "$1" in
+	start|stop|reload|restart)
+		"$1"
+		;;
+	*)
+		echo "Usage: $0 {start|stop|reload|restart}"
+		exit 1
+esac

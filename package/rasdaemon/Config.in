@@ -1,0 +1,26 @@
+config BR2_PACKAGE_RASDAEMON
+	bool "rasdaemon"
+	depends on !BR2_STATIC_LIBS # libtraceevent
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_PACKAGE_LIBTRACEEVENT
+	select BR2_PACKAGE_ARGP_STANDALONE if BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_MUSL
+	help
+	  rasdaemon is a tool that collects all hardware error events
+	  reported by the Linux Kernel from several sources (EDAC, MCE
+	  PCI, ...) into one common framework.
+
+	  https://github.com/mchehab/rasdaemon
+
+if BR2_PACKAGE_RASDAEMON
+
+config BR2_PACKAGE_RASDAEMON_AER
+	bool "Enable AER support"
+	select BR2_PACKAGE_PCIUTILS
+	help
+	  Enable handling of AER (Advanced Error Reporting) events on
+	  PCIe
+
+endif
+
+comment "rasdaemon needs a toolchain w/ threads, dynamic library"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
