@@ -4,12 +4,10 @@
 #
 ################################################################################
 
-LZLIB_VERSION = 0.4.3
-LZLIB_SITE = $(call github,LuaDist,lzlib,$(LZLIB_VERSION))
-LZLIB_DEPENDENCIES = lua zlib
+LZLIB_VERSION = 0.4.1.53-4
+LZLIB_SUBDIR = lzlib
 LZLIB_LICENSE = MIT
-LZLIB_LICENSE_FILES = lzlib.c
-LZLIB_CONF_OPTS = -DINSTALL_CMOD="/usr/lib/lua/$(LUAINTERPRETER_ABIVER)" \
-	-DINSTALL_LMOD="/usr/share/lua/$(LUAINTERPRETER_ABIVER)"
+LZLIB_LICENSE_FILES = $(LZLIB_SUBDIR)/lzlib.c
+LZLIB_DEPENDENCIES = zlib
 
-$(eval $(cmake-package))
+$(eval $(luarocks-package))
