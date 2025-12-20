@@ -10,11 +10,10 @@ Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 [Jörg: update patch for 1.1.6]
 Signed-off-by: Jörg Krause <joerg.krause@embedded.rocks>
 Upstream: http://mailman.alsa-project.org/pipermail/alsa-devel/2018-November/141376.html
-[Bernd: update patch for 1.2.4 & 1.2.7]
-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Bernd: update patch for 1.2.15.1]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 [Dario: make the patch to be applied with fuzz factor 0]
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-
 ---
  configure.ac         |  2 ++
  src/pcm/pcm_direct.c | 10 +++++++++-
@@ -41,7 +40,7 @@ index e53e59238119..cf94c7c1dbf0 100644
  		close(dmix->server_fd);
  		return ret;
  	}
--	
+-
 +
 +#ifdef HAVE_FORK
  	ret = fork();
