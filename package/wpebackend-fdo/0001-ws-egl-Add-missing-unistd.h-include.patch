@@ -1,0 +1,30 @@
+From 5316ecb0193d8c8cbbbe0921ba711859b36f8ef3 Mon Sep 17 00:00:00 2001
+From: Adrian Perez de Castro <aperez@igalia.com>
+Date: Sat, 20 Dec 2025 15:05:05 +0200
+Subject: [PATCH] ws-egl: Add missing unistd.h include
+
+Fixes #204
+
+(cherry picked from commit 84492327673fa0dedfa4fa0ab9488bed1763a5a8)
+
+Signed-off-by: Adrian Perez de Castro <aperez@igalia.com>
+Upstream: https://github.com/Igalia/WPEBackend-fdo/commit/5316ecb0193d8c8cbbbe0921ba711859b36f8ef3
+---
+ src/ws-egl.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/ws-egl.cpp b/src/ws-egl.cpp
+index 76d6194..cc7a8f2 100644
+--- a/src/ws-egl.cpp
++++ b/src/ws-egl.cpp
+@@ -33,6 +33,7 @@
+ #include <vector>
+ #include <sys/mman.h>
+ #include <sys/stat.h>
++#include <unistd.h>
+ 
+ #ifndef EGL_WL_bind_wayland_display
+ #define EGL_WAYLAND_BUFFER_WL 0x31D5
+-- 
+2.52.0
+
