@@ -5,6 +5,7 @@ config BR2_PACKAGE_TIO
 	depends on BR2_USE_WCHAR # glib2
 	depends on BR2_PACKAGE_HAS_LUAINTERPRETER
 	depends on !BR2_PACKAGE_LUAJIT
+	select BR2_PACKAGE_LIBGLIB2
 	help
 	  "tio" is a simple TTY terminal application which features a
 	  straightforward commandline interface to easily connect to
