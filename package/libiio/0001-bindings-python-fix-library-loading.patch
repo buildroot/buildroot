@@ -1,0 +1,41 @@
+From 4d4d17e2810f793b9f7fd8acad2a3c551dbff2b5 Mon Sep 17 00:00:00 2001
+From: Marcus Hoffmann <marcus.hoffmann@othermo.de>
+Date: Fri, 31 Mar 2023 20:13:07 +0200
+Subject: [PATCH] bindings: python: fix library loading
+
+On Linux the find_library() function requires ld, gcc, objdump
+or ldconfig on the target, which might not be present on a
+buildroot system. [1]
+We do not actually need this function at all, as we know the iio library
+will be referencable in the system under the name "libiio.so".
+So instead of kicking of this complicated cross-platform/cross-distro
+compatible machinery, we just pass in the name of the library we already
+know.
+
+[1] https://docs.python.org/3/library/ctypes.html#finding-shared-libraries
+
+Upstream: N/A, buildroot doesn't have to care about different OS's and
+distro setups, so we can just hardcode the lib name, but we cannot
+submit that upstream.
+
+Signed-off-by: Marcus Hoffmann <buildroot@bubu1.eu>
+---
+ bindings/python/iio.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/bindings/python/iio.py b/bindings/python/iio.py
+index b91260cc..bde17694 100644
+--- a/bindings/python/iio.py
++++ b/bindings/python/iio.py
+@@ -224,7 +224,7 @@ else:
+     # Non-windows, possibly Posix system
+     _iiolib = "iio"
+ 
+-_lib = _cdll(find_library(_iiolib), use_errno=True, use_last_error=True)
++_lib = _cdll("libiio.so", use_errno=True, use_last_error=True)
+ 
+ _get_backends_count = _lib.iio_get_backends_count
+ _get_backends_count.restype = c_uint
+-- 
+2.25.1
+
