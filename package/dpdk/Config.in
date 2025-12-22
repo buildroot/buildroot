@@ -43,6 +43,27 @@ config BR2_PACKAGE_DPDK_EXAMPLES
 config BR2_PACKAGE_DPDK_TESTS
 	bool "Install tests"
 
+config BR2_PACKAGE_DPDK_DRIVERS_LIST
+	string "List of enabled drivers"
+	help
+	  Controls which DPDK drivers are built.
+
+	  Values:
+	   (empty): use DPDK defaults
+	   none   : build no drivers
+	   list   : e.g. "net/virtio,net/intel/ixgbe"
+
+	  To list possible drivers found in the DPDK source tree:
+	    find drivers -mindepth 2 -maxdepth 3 -type d \
+	    ! -printf '%P\n' | sort
+
+	  Note: providing manually a list of dpdk drivers to enable
+	  does not automatically enable its dependencies (internal or
+	  external). It is the user responsiblity to add internal dpdk
+	  dependencies in this list, and/or select the relevant
+	  Buildroot packages for external dependencies. DPDK
+	  configuration will fail in case of missing dependencies.
+
 endif
 
 comment "dpdk needs a glibc toolchain w/ threads, gcc >= 4.9, headers >= 4.19"
