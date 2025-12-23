@@ -1,0 +1,16 @@
+config BR2_PACKAGE_SBCTL
+	bool "sbctl"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_THREADS # pcsc-lite
+	depends on BR2_USE_MMU # pcsc-lite
+	depends on !BR2_STATIC_LIBS # pcsc-lite
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # pcsc-lite
+	select BR2_PACKAGE_HOST_GO
+	select BR2_PACKAGE_PCSC_LITE # yubikey
+	help
+	  sbctl intends to be a user-friendly secure boot key manager
+	  capable of setting up secure boot, offer key management
+	  capabilities, and keep track of files that needs to be
+	  signed in the boot chain.
+
+	  https://github.com/Foxboron/sbctl
