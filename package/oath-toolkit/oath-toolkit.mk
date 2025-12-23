@@ -4,14 +4,10 @@
 #
 ################################################################################
 
-OATH_TOOLKIT_VERSION = 2.6.12
+OATH_TOOLKIT_VERSION = 2.6.13
 OATH_TOOLKIT_SITE = https://download.savannah.nongnu.org/releases/oath-toolkit
 OATH_TOOLKIT_LICENSE = GPL-3.0+ (tools), LGPL-2.1+ (libraries)
-OATH_TOOLKIT_LICENSE_FILES = \
-	COPYING \
-	liboath/COPYING \
-	oathtool/COPYING \
-	pam_oath/COPYING
+OATH_TOOLKIT_LICENSE_FILES = COPYING
 OATH_TOOLKIT_CPE_ID_VENDOR = nongnu
 OATH_TOOLKIT_CPE_ID_PRODUCT = oath_toolkit
 OATH_TOOLKIT_INSTALL_STAGING = YES
