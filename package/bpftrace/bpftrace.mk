@@ -15,6 +15,7 @@ BPFTRACE_DEPENDENCIES = \
 	elfutils \
 	host-bison \
 	host-flex \
+	host-vim \
 	libbpf \
 	llvm \
 	xz
