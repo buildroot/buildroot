@@ -1,0 +1,59 @@
+From 27f9300b55c483a9f2ff482833ee4fae01447c69 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Thu, 25 Dec 2025 21:03:37 +0100
+Subject: [PATCH] CMakeLists.txt: update minimum CMake version to 3.5
+
+This fixes the build with CMake >= 4.
+
+Upstream: N/A, upstream is at freerdp 3.x which already has a much
+more recent cmake_minimum_required() [but the patches are too invasive
+to be backport].
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ CMakeLists.txt       | 2 +-
+ rdtk/CMakeLists.txt  | 2 +-
+ winpr/CMakeLists.txt | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3d4a5e515..0538d026c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -18,7 +18,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-cmake_minimum_required(VERSION 2.8)
++cmake_minimum_required(VERSION 3.5)
+ 
+ project(FreeRDP C CXX)
+ 
+diff --git a/rdtk/CMakeLists.txt b/rdtk/CMakeLists.txt
+index 764a545c2..389ad1db8 100644
+--- a/rdtk/CMakeLists.txt
++++ b/rdtk/CMakeLists.txt
+@@ -15,7 +15,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-cmake_minimum_required(VERSION 2.8)
++cmake_minimum_required(VERSION 3.5)
+ 
+ project(RdTk C)
+ 
+diff --git a/winpr/CMakeLists.txt b/winpr/CMakeLists.txt
+index 77ff23302..f5bffd644 100644
+--- a/winpr/CMakeLists.txt
++++ b/winpr/CMakeLists.txt
+@@ -15,7 +15,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-cmake_minimum_required(VERSION 2.8)
++cmake_minimum_required(VERSION 3.5)
+ 
+ project(WinPR C)
+ 
+-- 
+2.52.0
+
