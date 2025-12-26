@@ -1,0 +1,46 @@
+From 499087df7c0aaa01f0f64aa7aa355d2e543665bc Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Wed, 24 Dec 2025 11:36:20 +0100
+Subject: [PATCH] libs/src/portable: fix build w/ gcc-14
+
+Building xinetd with gcc-14 in Buildroot raises the following error:
+
+cvt.c: In function 'fcvt_r':
+cvt.c:113:9: error: implicit declaration of function 'strx_nprint' [-Wimplicit-function-declaration]
+  113 |     n = strx_nprint (buf, len, "%.*" FLOAT_FMT_FLAG "f", ndigit, value);
+      |         ^~~~~~~~~~~
+
+Including "str.h" header to fix the compiler error would add a
+build-time dependency of libportable on libstr, creating a circular
+dependency chhain:
+
+  libportable -> libstr -> libsio -> libportable
+
+which results in GNU make dropping dependency edges and therefore not
+fixing the original build error.
+
+The commit keeps the existing library layering unchanged while restoring
+successful builds with modern compilers.
+
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://github.com/xinetd-org/xinetd/pull/39
+---
+ libs/src/portable/cvt.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/libs/src/portable/cvt.c b/libs/src/portable/cvt.c
+index 4bd99fc80c26..4badab1cbd42 100644
+--- a/libs/src/portable/cvt.c
++++ b/libs/src/portable/cvt.c
+@@ -64,6 +64,8 @@
+ #endif
+ 
+ #ifndef HAVE_FCVT
++int strx_nprint ( char *buf, int len, const char *fmt, ... );
++
+ int
+ APPEND (FUNC_PREFIX, fcvt_r) (FLOAT_TYPE value, 
+                               int ndigit, 
+-- 
+2.43.0
+
