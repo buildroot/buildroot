@@ -95,6 +95,10 @@ RUN sed -i 's/# \(en_US.UTF-8\)/\1/' /etc/locale.gen && \
 RUN useradd -ms /bin/bash br-user && \
     chown -R br-user:br-user /home/br-user
 
+# Make the br-user home directory not writable, even for br-user
+# itself, to catch builds writing into $HOME
+RUN chmod 555 /home/br-user
+
 USER br-user
 WORKDIR /home/br-user
 ENV HOME=/home/br-user
