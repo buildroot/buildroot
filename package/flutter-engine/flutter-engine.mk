@@ -181,6 +181,7 @@ define FLUTTER_ENGINE_GENERATE_TARBALL
 	PATH=$(HOST_DIR)/share/depot_tools:$(BR_PATH) \
 	PYTHONPATH=$(HOST_DIR)/lib/python$(PYTHON3_VERSION_MAJOR) \
 	PUB_CACHE=$(FLUTTER_SDK_BIN_PUB_CACHE) \
+	XDG_CONFIG_HOME=$(@D)/dl-tmp \
 	$(FLUTTER_ENGINE_PKGDIR)/gen-tarball \
 		--dot-gclient $(TOPDIR)/$(FLUTTER_ENGINE_PKGDIR)/dot-gclient \
 		--jobs $(PARALLEL_JOBS) \
