@@ -1,0 +1,39 @@
+From 69a4897efca9c1c8546872d021b57d9e12764441 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Fri, 26 Dec 2025 18:08:35 +0100
+Subject: [PATCH] CMakeLists.txt: bump CMake minimum required version for CMake
+ 4 compliance
+
+CMake 4 will refuse to build if the cmake_minimum_required() version
+is not at least 3.5:
+
+CMake Error at CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.5 has been removed from CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+  Or, add -DCMAKE_POLICY_VERSION_MINIMUM=3.5 to try configuring anyway.
+
+So bump the required CMake version accordingly.
+
+Upstream: https://github.com/g-truc/gli/pull/196
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6f70f493..b705dbaf 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
++cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+ cmake_policy(SET CMP0054 NEW)
+ 
+ project(gli)
+-- 
+2.52.0
+
