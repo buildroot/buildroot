@@ -1,0 +1,36 @@
+From 7608e4f755b1fb3a99c387c58f79b0c4b6aadfbe Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 27 Dec 2025 23:53:23 +0100
+Subject: [PATCH] applets/mb-applet-launcher.c: add missing <time.h>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes:
+
+mb-applet-launcher.c: In function ‘get_launch_window’:
+mb-applet-launcher.c:269:18: error: implicit declaration of function ‘time’ [-Wimplicit-function-declaration]
+  269 |   time_t stime = time(NULL);
+      |                  ^~~~
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Upstream: N/A, dead
+---
+ applets/mb-applet-launcher.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/applets/mb-applet-launcher.c b/applets/mb-applet-launcher.c
+index 08a6a10..f7685de 100644
+--- a/applets/mb-applet-launcher.c
++++ b/applets/mb-applet-launcher.c
+@@ -26,6 +26,7 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <signal.h>
++#include <time.h>
+ 
+ #ifdef USE_LIBSN
+ #define SN_API_NOT_YET_FROZEN 1
+-- 
+2.52.0
+
