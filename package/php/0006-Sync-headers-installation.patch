@@ -22,9 +22,11 @@ systems by installing only what is intended outside of php-src.
 Closes GH-13210
 Closes GH-13213
 
+Upstream: https://github.com/php/php-src/commit/52dba99d47563f38d8ed5f84690a3cb2c1785475
 [Thomas: minor backporting tweaks]
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Upstream: https://github.com/php/php-src/commit/52dba99d47563f38d8ed5f84690a3cb2c1785475
+[tperale: xxhash include fixed in https://github.com/php/php-src/commit/be8819259417d63b389eb9ea6c00abd6aeb8e1c6]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
 ---
  ext/date/config.w32        |  2 +-
  ext/dom/config.m4          |  2 +-
@@ -190,26 +192,13 @@ index d38b032efd3..bafbd0b9f8d 100644
 -									'php_hash_murmur.h php_hash_xxhash.h');
 +									'php_hash_murmur.h php_hash_xxhash.h php_hash_fnv.h ' +
 +									'php_hash_joaat.h xxhash/xxhash.h');
-diff --git a/ext/hash/php_hash_xxhash.h b/ext/hash/php_hash_xxhash.h
-index a1e8840ce27..ace70deedb0 100644
---- a/ext/hash/php_hash_xxhash.h
-+++ b/ext/hash/php_hash_xxhash.h
-@@ -18,7 +18,7 @@
- #define PHP_HASH_XXHASH_H
- 
- #define XXH_INLINE_ALL 1
--#include "xxhash.h"
-+#include "xxhash/xxhash.h"
- 
- typedef struct {
- 	XXH32_state_t s;
 diff --git a/ext/iconv/config.m4 b/ext/iconv/config.m4
 index 3cf400fe962..63221eddb0b 100644
 --- a/ext/iconv/config.m4
 +++ b/ext/iconv/config.m4
-@@ -149,7 +149,7 @@ int main(void) {
+@@ -163,7 +163,7 @@ int main(void) {
  
-     PHP_NEW_EXTENSION(iconv, iconv.c, $ext_shared,, [-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1])
+     PHP_NEW_EXTENSION(iconv, iconv.c, $ext_shared,, [-DZEND_ENABLE_STATIC_TSRMLS_CACHE=1 -DICONV_CONST=$php_cv_iconv_const])
      PHP_SUBST(ICONV_SHARED_LIBADD)
 -    PHP_INSTALL_HEADERS([ext/iconv/])
 +    PHP_INSTALL_HEADERS([ext/iconv], [php_iconv.h])
