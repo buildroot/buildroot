@@ -1,0 +1,34 @@
+From 312c04b6ba60dca0d6c4a7d1393f0ec816a265e3 Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Mon, 17 Mar 2025 14:16:03 -0700
+Subject: [PATCH] Define correct prototype for hash_empty()
+
+GCC-15 follows C23 standard which does not allow function
+declarations without parameters and types
+
+Fixes
+
+../../git/libmb/hash.c:76:6: error: conflicting types for 'hash_empty'; have 'void(struct hash *)'
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+Signed-off-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+Upstream: https://git.yoctoproject.org/libmatchbox/commit/?id=312c04b6ba60dca0d6c4a7d1393f0ec816a265e3
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ libmb/hash.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libmb/hash.h b/libmb/hash.h
+index 86f18bf..43827b2 100644
+--- a/libmb/hash.h
++++ b/libmb/hash.h
+@@ -38,5 +38,5 @@ struct hash* hash_new(int size);
+ unsigned int hashfunc(struct hash *h, char *s);
+ struct nlist *hash_lookup(struct hash *h, char *s);
+ struct nlist *hash_add(struct hash *h, char *key, char *val);
+-void hash_empty();
++void hash_empty(struct hash *h);
+ void hash_destroy(struct hash *h);
+-- 
+2.52.0
+
