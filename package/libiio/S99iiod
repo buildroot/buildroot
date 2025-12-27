@@ -1,29 +1,55 @@
 #!/bin/sh
 
-# Server-side demuxing by default
-IIOD_OPTS=-D
+DAEMON="iiod"
+PIDFILE="/var/run/$DAEMON.pid"
 
-[ -r /etc/default/iiod ] && . /etc/default/iiod
+# Server-side demuxing by default
+IIOD_OPTS="-D"
+
+# shellcheck source=/dev/null
+[ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
+
+start() {
+	printf 'Starting %s: ' "$DAEMON"
+	# shellcheck disable=SC2086 # we need the word splitting
+	start-stop-daemon --start --background --make-pidfile \
+		--pidfile "$PIDFILE" --exec "/usr/sbin/$DAEMON" \
+		-- $IIOD_OPTS
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+stop() {
+	printf 'Stopping %s: ' "$DAEMON"
+	start-stop-daemon --stop --pidfile "$PIDFILE" --exec "/usr/sbin/$DAEMON"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+		return "$status"
+	fi
+	while start-stop-daemon --stop --test --quiet --pidfile "$PIDFILE" \
+		--exec "/usr/sbin/$DAEMON"; do
+		sleep 0.1
+	done
+	rm -f "$PIDFILE"
+	return "$status"
+}
+
+restart() {
+	stop
+	start
+}
 
 case "$1" in
-	start)
-		echo "Starting IIO Server Daemon"
-		start-stop-daemon -S -b -q -m -p /var/run/iiod.pid -x /usr/sbin/iiod -- $IIOD_OPTS
-		exit $?
-		;;
-
-	stop)
-		echo "Stopping IIO Server Daemon"
-		start-stop-daemon -K -q -p /var/run/iiod.pid 2>/dev/null
-		exit $?
-		;;
-
-	restart)
-		$0 stop
-		sleep 1
-		$0 start
-		;;
-
+	start|stop|restart)
+		"$1";;
 	*)
 		echo "Usage: $0 {start|stop|restart}"
 		exit 1
