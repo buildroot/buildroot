@@ -1,0 +1,67 @@
+From 52ed7a5acc8059c87be88d2a930ddb28e03d6a91 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 28 Dec 2025 21:57:46 +0100
+Subject: [PATCH] CMakeLists.txt: bump minimum CMake required version
+
+Building with CMake >= 4 requires a minimum version of at least 3.5,
+otherwise the build fails with:
+
+CMake Error at CMakeLists.txt:4 (cmake_minimum_required):
+  Compatibility with CMake < 3.5 has been removed from CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+  Or, add -DCMAKE_POLICY_VERSION_MINIMUM=3.5 to try configuring anyway.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Upstream: https://github.com/pothosware/SoapySDR/pull/477
+---
+ CMakeLists.txt               | 2 +-
+ ExampleDriver/CMakeLists.txt | 2 +-
+ python/CMakeLists.txt        | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index fe00bd0..f103daf 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,7 +1,7 @@
+ ########################################################################
+ # Project setup
+ ########################################################################
+-cmake_minimum_required(VERSION 3.1.0)
++cmake_minimum_required(VERSION 3.5)
+ project(SoapySDR)
+ enable_language(CXX)
+ enable_testing()
+diff --git a/ExampleDriver/CMakeLists.txt b/ExampleDriver/CMakeLists.txt
+index 4e83dbe..b907b70 100644
+--- a/ExampleDriver/CMakeLists.txt
++++ b/ExampleDriver/CMakeLists.txt
+@@ -2,7 +2,7 @@
+ # Project setup -- only needed if device support is a stand-alone build
+ # We recommend that the support module be built in-tree with the driver.
+ ########################################################################
+-cmake_minimum_required(VERSION 2.6)
++cmake_minimum_required(VERSION 3.5)
+ project(SoapySDRMyDevice CXX)
+ enable_testing()
+ 
+diff --git a/python/CMakeLists.txt b/python/CMakeLists.txt
+index 8cb1592..0253223 100644
+--- a/python/CMakeLists.txt
++++ b/python/CMakeLists.txt
+@@ -1,7 +1,7 @@
+ ########################################################################
+ # Project setup
+ ########################################################################
+-cmake_minimum_required(VERSION 2.8)
++cmake_minimum_required(VERSION 3.5)
+ project(SoapySDRPython CXX)
+ enable_testing()
+ 
+-- 
+2.52.0
+
