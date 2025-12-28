@@ -1,0 +1,45 @@
+From 286e0280a55949d62b2163d68c827539c141d487 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 28 Dec 2025 18:35:45 +0100
+Subject: [PATCH] Source/WebCore/page/csp/ContentSecurityPolicy.cpp: fix build
+ with gcc >= 14.x
+
+Fixes:
+
+/home/thomas/buildroot/br/output-all/build/qt5webkit-5.212.0-alpha4/Source/WebCore/page/csp/ContentSecurityPolicy.cpp:235:56:   required from here
+  235 |             if ((policy.get()->*allowed)(std::make_pair(algorithm, digest)))
+      |                                          ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+/home/thomas/buildroot/br/output-all/host/opt/ext-toolchain/aarch64-buildroot-linux-gnu/include/c++/14.3.0/type_traits:1246:52: error: non-constant
+condition for static assertion
+ 1246 |       static_assert(std::__is_complete_or_unbounded(__type_identity<_Tp>{}),
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+
+Patch used in Fedora and Arch Linux:
+
+  https://src.fedoraproject.org/rpms/qt5-qtwebkit/raw/rawhide/f/qtwebkit-fix-build-gcc14.patch
+  https://aur.archlinux.org/packages/qt5-webkit
+
+Upstream: dead
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ Source/WebCore/page/csp/ContentSecurityPolicy.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Source/WebCore/page/csp/ContentSecurityPolicy.cpp b/Source/WebCore/page/csp/ContentSecurityPolicy.cpp
+index 9e726d5fe10c..989a59a6122f 100644
+--- a/Source/WebCore/page/csp/ContentSecurityPolicy.cpp
++++ b/Source/WebCore/page/csp/ContentSecurityPolicy.cpp
+@@ -231,8 +231,9 @@ bool isAllowedByAllWithHashFromContent(const CSPDirectiveListVector& policies, c
+         auto cryptoDigest = CryptoDigest::create(toCryptoDigestAlgorithm(algorithm));
+         cryptoDigest->addBytes(contentCString.data(), contentCString.length());
+         Vector<uint8_t> digest = cryptoDigest->computeHash();
++        ContentSecurityPolicyHash hash = std::make_pair(algorithm, digest);
+         for (auto& policy : policies) {
+-            if ((policy.get()->*allowed)(std::make_pair(algorithm, digest)))
++            if ((policy.get()->*allowed)(hash))
+                 return true;
+         }
+     }
+-- 
+2.52.0
+
