@@ -1,5 +1,7 @@
 config BR2_PACKAGE_PYTHON_DAPHNE
 	bool "python-daphne"
+	# python-autobahn -> python-ujson
+	depends on BR2_INSTALL_LIBSTDCPP
 	# python-autobahn -> python-cryptography
 	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
 	select BR2_PACKAGE_PYTHON_ASGIREF # runtime
