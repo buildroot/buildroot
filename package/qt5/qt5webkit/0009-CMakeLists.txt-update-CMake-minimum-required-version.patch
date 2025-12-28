@@ -1,0 +1,92 @@
+From b3e016db4ad62bd3386736ce380e4b1c4601a08c Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 28 Dec 2025 14:44:34 +0100
+Subject: [PATCH] CMakeLists.txt: update CMake minimum required version
+
+Building with CMake >= 4.x requires the cmake_minimum_required()
+version to be at least 3.5, so let's update to that to fix:
+
+CMake Error at CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.5 has been removed from CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+  Or, add -DCMAKE_POLICY_VERSION_MINIMUM=3.5 to try configuring anyway.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Upstream: dead, repository is obsolete
+---
+ CMakeLists.txt                           | 2 +-
+ Source/JavaScriptCore/CMakeLists.txt     | 2 +-
+ Source/WTF/CMakeLists.txt                | 2 +-
+ Source/WebCore/CMakeLists.txt            | 2 +-
+ Source/WebKit/CMakeLists.txt             | 2 +-
+ tests/webkitwidgets/cmake/CMakeLists.txt | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 31a2ea1fd544..a870b490c7fb 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.8.12)
++cmake_minimum_required(VERSION 3.5)
+ project(WebKit)
+ 
+ # This should be removed once we require CMake 3.3.
+diff --git a/Source/JavaScriptCore/CMakeLists.txt b/Source/JavaScriptCore/CMakeLists.txt
+index afd76ca1a184..07fb5ad450dc 100644
+--- a/Source/JavaScriptCore/CMakeLists.txt
++++ b/Source/JavaScriptCore/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.8.12)
++cmake_minimum_required(VERSION 3.5)
+ include(WebKitCommon)
+ 
+ set(JavaScriptCore_INCLUDE_DIRECTORIES
+diff --git a/Source/WTF/CMakeLists.txt b/Source/WTF/CMakeLists.txt
+index 1d41f303acde..efc52e5280e4 100644
+--- a/Source/WTF/CMakeLists.txt
++++ b/Source/WTF/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.8.12)
++cmake_minimum_required(VERSION 3.5)
+ include(WebKitCommon)
+ 
+ add_subdirectory(wtf)
+diff --git a/Source/WebCore/CMakeLists.txt b/Source/WebCore/CMakeLists.txt
+index 3b3a9ed4bd24..c69cf8eae586 100644
+--- a/Source/WebCore/CMakeLists.txt
++++ b/Source/WebCore/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.8.12)
++cmake_minimum_required(VERSION 3.5)
+ include(WebKitCommon)
+ 
+ set(WebCore_INCLUDE_DIRECTORIES
+diff --git a/Source/WebKit/CMakeLists.txt b/Source/WebKit/CMakeLists.txt
+index c845856da6f6..b900d088ded5 100644
+--- a/Source/WebKit/CMakeLists.txt
++++ b/Source/WebKit/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.8.12)
++cmake_minimum_required(VERSION 3.5)
+ include(WebKitCommon)
+ 
+ set(WebKit_SOURCES
+diff --git a/tests/webkitwidgets/cmake/CMakeLists.txt b/tests/webkitwidgets/cmake/CMakeLists.txt
+index 8f266fccb48c..2f5dd261971e 100644
+--- a/tests/webkitwidgets/cmake/CMakeLists.txt
++++ b/tests/webkitwidgets/cmake/CMakeLists.txt
+@@ -1,5 +1,5 @@
+ 
+-cmake_minimum_required(VERSION 2.8)
++cmake_minimum_required(VERSION 3.5)
+ 
+ project(qmake_cmake_files)
+ 
+-- 
+2.52.0
+
