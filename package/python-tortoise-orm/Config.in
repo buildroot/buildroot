@@ -1,6 +1,7 @@
 config BR2_PACKAGE_PYTHON_TORTOISE_ORM
 	bool "python-tortoise-orm"
 	select BR2_PACKAGE_PYTHON_AIOSQLITE # runtime
+	select BR2_PACKAGE_PYTHON_ANYIO # runtime
 	select BR2_PACKAGE_PYTHON_ISO8601 # runtime
 	select BR2_PACKAGE_PYTHON_PYPIKA_TORTOISE # runtime
 	select BR2_PACKAGE_PYTHON_PYTZ # runtime
