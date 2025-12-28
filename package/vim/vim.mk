@@ -55,7 +55,6 @@ VIM_INSTALL_TARGETS += installrtbase installmacros
 endif
 
 define VIM_INSTALL_TARGET_CMDS
-	$(RM) -f $(TARGET_DIR)/usr/bin/{ex,view,rvim,rview,vimdiff}
 	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D)/src DESTDIR=$(TARGET_DIR) \
 		$(VIM_INSTALL_TARGETS)
 	$(RM) -rf $(TARGET_DIR)/usr/share/vim/vim*/doc/
