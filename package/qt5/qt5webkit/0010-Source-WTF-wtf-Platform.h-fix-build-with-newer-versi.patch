@@ -1,0 +1,40 @@
+From 30a9270a3fe9157a532e52458ee47b0f3fcc2f97 Mon Sep 17 00:00:00 2001
+From: Konstantin Tokarev <annulen@yandex.ru>
+Date: Mon, 27 May 2024 23:23:11 +0300
+Subject: [PATCH] Source/WTF/wtf/Platform.h: fix build with newer
+ versions of ICU
+
+Partial backport of r260554 (79fe19caf)
+
+In particular, we need -DU_SHOW_CPLUSPLUS_API=0 to avoid compilation
+errors in C++ parts of ICU headers which we are not using anyway.
+
+Change-Id: Ib45c74e3caad148fbd778d0c07330127f7dab5ec
+Taken from: https://github.com/archlinux/aur/blob/qt5-webkit/qt5-webkit-icu75.patch
+Upstream: part of https://github.com/qtwebkit/qtwebkit/commit/79fe19caf
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ Source/WTF/wtf/Platform.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/Source/WTF/wtf/Platform.h b/Source/WTF/wtf/Platform.h
+index 5717f3ea1664..dfed4a13dd2b 100644
+--- a/Source/WTF/wtf/Platform.h
++++ b/Source/WTF/wtf/Platform.h
+@@ -1125,6 +1125,13 @@
+ #define ENABLE_PLATFORM_FONT_LOOKUP 1
+ #endif
+ 
++/* FIXME: This does not belong in Platform.h and should instead be included in another mechanism (compiler option, prefix header, config.h, etc) */
++/* ICU configuration. Some of these match ICU defaults on some platforms, but we would like them consistently set everywhere we build WebKit. */
++#define U_SHOW_CPLUSPLUS_API 0
++#ifdef __cplusplus
++#define UCHAR_TYPE char16_t
++#endif
++
+ #if COMPILER(MSVC)
+ #undef __STDC_LIMIT_MACROS
+ #define __STDC_LIMIT_MACROS
+-- 
+2.52.0
+
