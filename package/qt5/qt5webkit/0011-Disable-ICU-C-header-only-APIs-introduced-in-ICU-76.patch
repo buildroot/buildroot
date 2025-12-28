@@ -1,0 +1,28 @@
+From bf253b37ebf3fd99fa3cc46bd737a88defa8914e Mon Sep 17 00:00:00 2001
+From: Dmitry Shachnev <mitya57@gmail.com>
+Date: Thu, 9 Jan 2025 14:18:31 +0300
+Subject: [PATCH] Disable ICU C++ header-only APIs, introduced in ICU 76
+
+They require C++17 which we do not have, but we do not need them anyway.
+
+Upstream: https://github.com/qtwebkit/qtwebkit/pull/1107
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ Source/WTF/wtf/Platform.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Source/WTF/wtf/Platform.h b/Source/WTF/wtf/Platform.h
+index dfed4a13dd2b..6ba6c3972aee 100644
+--- a/Source/WTF/wtf/Platform.h
++++ b/Source/WTF/wtf/Platform.h
+@@ -1128,6 +1128,7 @@
+ /* FIXME: This does not belong in Platform.h and should instead be included in another mechanism (compiler option, prefix header, config.h, etc) */
+ /* ICU configuration. Some of these match ICU defaults on some platforms, but we would like them consistently set everywhere we build WebKit. */
+ #define U_SHOW_CPLUSPLUS_API 0
++#define U_SHOW_CPLUSPLUS_HEADER_API 0
+ #ifdef __cplusplus
+ #define UCHAR_TYPE char16_t
+ #endif
+-- 
+2.52.0
+
