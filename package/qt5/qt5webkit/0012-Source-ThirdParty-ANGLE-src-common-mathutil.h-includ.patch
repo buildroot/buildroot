@@ -1,0 +1,45 @@
+From 05c5aec722ebd750ec3404444f945154c266b62d Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sun, 28 Dec 2025 15:51:26 +0100
+Subject: [PATCH] Source/ThirdParty/ANGLE/src/common/mathutil.h: include
+ missing header
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes:
+
+/home/thomas/buildroot/br/output-all/build/qt5webkit-5.212.0-alpha4/Source/ThirdParty/ANGLE/src/common/mathutil.h:575:8: error: ‘uint32_t’ does not name a type
+  575 | inline uint32_t RotL(uint32_t x, int8_t r)
+      |        ^~~~~~~~
+/home/thomas/buildroot/br/output-all/build/qt5webkit-5.212.0-alpha4/Source/ThirdParty/ANGLE/src/common/mathutil.h:19:1: note: ‘uint32_t’ is defined in header ‘<cstdint>’; this is probably fixable by adding ‘#include <cstdint>’
+   18 | #include <stdlib.h>
+  +++ |+#include <cstdint>
+   19 |
+
+Taken from Fedora, also used on Arch Linux:
+
+  https://src.fedoraproject.org/rpms/qt5-qtwebkit/raw/rawhide/f/qtwebkit-cstdint.patch
+  https://aur.archlinux.org/packages/qt5-webkit
+
+Upstream: dead, N/A
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ Source/ThirdParty/ANGLE/src/common/mathutil.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Source/ThirdParty/ANGLE/src/common/mathutil.h b/Source/ThirdParty/ANGLE/src/common/mathutil.h
+index 7959da8bdcbc..c86afd61e103 100644
+--- a/Source/ThirdParty/ANGLE/src/common/mathutil.h
++++ b/Source/ThirdParty/ANGLE/src/common/mathutil.h
+@@ -16,6 +16,7 @@
+ #include <algorithm>
+ #include <string.h>
+ #include <stdlib.h>
++#include <cstdint>
+ 
+ namespace gl
+ {
+-- 
+2.52.0
+
