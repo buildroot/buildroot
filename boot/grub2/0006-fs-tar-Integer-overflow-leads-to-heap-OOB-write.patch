@@ -9,7 +9,7 @@ number parsed by read_number(). Later direct arithmetic calculation like
 grub_size_t leading to heap OOB write. This patch fixes the issue by
 using grub_add() and checking for an overflow.
 
-Fixes: CVE-2024-45780
+CVE: CVE-2024-45780
 
 Reported-by: Nils Langius <nils@langius.de>
 Signed-off-by: Lidong Chen <lidong.chen@oracle.com>
