@@ -1,0 +1,33 @@
+From b3b045a762ee35fab0e13d1837b9b407da47e59e Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Mon, 29 Dec 2025 13:31:43 +0100
+Subject: [PATCH] CMake: Disable c++
+
+https://cmake.org/cmake/help/latest/command/project.html
+"By default C and CXX are enabled if no language options are given."
+
+libid3tag only contains C code. This fix allows the build with
+toolchains containing no c++ compiler like some buildroot toolchains:
+https://autobuild.buildroot.net/results/02d/02db8c1a1b461fa3b5b5932e5b48c77be50b68af/build-end.log
+
+Upstream: https://codeberg.org/tenacityteam/libid3tag/pulls/26
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f71b245..0c2f13e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,5 +1,5 @@
+ cmake_minimum_required(VERSION 3.10)
+-project(id3tag VERSION 0.16.3)
++project(id3tag VERSION 0.16.3 LANGUAGES C)
+ 
+ option(BUILD_SHARED_LIBS "Build dynamic library" ON)
+ 
+-- 
+2.47.3
+
