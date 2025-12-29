@@ -8,8 +8,8 @@ by two non-zero bytes. In case of malformed input (0xef should be
 the start byte of a three byte character) this leads to an infinite
 loop. (CVE-2021-42260)
 
-[Retrieved (and backported) from:
-https://sourceforge.net/p/tinyxml/git/merge-requests/1]
+CVE: CVE-2021-42260
+Upstream: https://sourceforge.net/p/tinyxml/git/merge-requests/1
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 ---
  tinyxmlparser.cpp | 6 ++++++
