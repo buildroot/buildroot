@@ -12,6 +12,7 @@ Fixed by moving mechanisms and username_filter from struct passdb_module
 to struct auth_passdb, which is where they should have been in the first
 place.
 
+CVE: CVE-2022-30550
 Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
 ---
  src/auth/auth-request.c |  6 +++---
