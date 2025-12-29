@@ -8,6 +8,7 @@ then return `EPIPE`.
 This fixes a potential infinite draining loop when trying to trying to
 `:shutdown()` a stream.
 
+CVE: CVE-2023-4540
 Upstream: https://github.com/daurnimator/lua-http/commit/ddab2835c583d45dec62680ca8d3cbde55e0bae6
 Signed-off-by: Francois Perrad <francois.perrad@gadz.org>
 ---
