@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CMOCKA_VERSION = 2.0.0
+CMOCKA_VERSION = 2.0.1
 CMOCKA_SOURCE = cmocka-$(CMOCKA_VERSION).tar.xz
 CMOCKA_SITE = https://cmocka.org/files/2.0
 CMOCKA_LICENSE = Apache-2.0
