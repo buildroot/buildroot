@@ -399,7 +399,7 @@ config BR2_TARGET_GENERIC_ROOT_PASSWD
 
 choice
 	bool "/bin/sh"
-	default BR2_SYSTEM_BIN_SH_DASH if !BR2_PACKAGE_BUSYBOX
+	default BR2_SYSTEM_BIN_SH_BASH if !BR2_PACKAGE_BUSYBOX
 	help
 	  Select which shell will provide /bin/sh.
 
@@ -418,6 +418,7 @@ config BR2_SYSTEM_BIN_SH_DASH
 	bool "dash"
 	depends on BR2_USE_MMU # dash
 	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
+	depends on BR2_USE_WCHAR # dash
 	select BR2_PACKAGE_DASH
 
 config BR2_SYSTEM_BIN_SH_MKSH

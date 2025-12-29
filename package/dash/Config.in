@@ -2,6 +2,7 @@ config BR2_PACKAGE_DASH
 	bool "dash"
 	depends on BR2_USE_MMU # fork()
 	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
+	depends on BR2_USE_WCHAR
 	help
 	  DASH is a POSIX-compliant implementation of /bin/sh that
 	  aims to be as small as possible. It does this without
@@ -10,3 +11,8 @@ config BR2_PACKAGE_DASH
 	  for most tasks.
 
 	  http://gondor.apana.org.au/~herbert/dash
+
+comment "dash needs a toolchain w/ wchar"
+	depends on BR2_USE_MMU
+	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
+	depends on !BR2_USE_WCHAR
