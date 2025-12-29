@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBCDIO_VERSION = 2.2.0
+LIBCDIO_VERSION = 2.3.0
 LIBCDIO_SOURCE = libcdio-$(LIBCDIO_VERSION).tar.bz2
 LIBCDIO_SITE = https://github.com/libcdio/libcdio/releases/download/$(LIBCDIO_VERSION)
 LIBCDIO_INSTALL_STAGING = YES
