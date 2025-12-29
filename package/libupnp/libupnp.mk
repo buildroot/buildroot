@@ -17,6 +17,7 @@ LIBUPNP_DEPENDENCIES = host-pkgconf
 
 # Bind the internal miniserver socket with reuseaddr to allow clean restarts.
 LIBUPNP_CONF_OPTS += \
+	--disable-blocking-tcp-connections \
 	--disable-samples \
 	--enable-reuseaddr
 
