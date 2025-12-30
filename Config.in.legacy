@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2026.02"
 
+config BR2_PACKAGE_OPENPOWERLINK
+	bool "openpowerlink has been removed"
+	select BR2_LEGACY
+	help
+	  openpowerlink is unmaintained and has been removed
+
 config BR2_PACKAGE_ALURE
 	bool "alure has been removed"
 	select BR2_LEGACY
@@ -6016,8 +6022,6 @@ config BR2_PACKAGE_OPENPOWERLINK_KERNEL_MODULE
 	help
 	  openpowerlink kernel modules are built if the
 	  kernel stack library is selected.
-# Note: BR2_PACKAGE_OPENPOWERLINK_KERNEL_MODULE is still referenced from
-# package/openpowerlink/Config.in
 
 config BR2_PACKAGE_OPENPOWERLINK_LIBPCAP
 	bool "openpowerlink package has been updated"
@@ -6026,8 +6030,6 @@ config BR2_PACKAGE_OPENPOWERLINK_LIBPCAP
 	  The user space support has been split in two part:
 	  - a monolithic user space library
 	  - a user space daemon driver
-# Note: BR2_PACKAGE_OPENPOWERLINK_LIBPCAP is still referenced from
-# package/openpowerlink/Config.in
 
 config BR2_LINUX_KERNEL_SAME_AS_HEADERS
 	bool "using the linux headers version for the kernel has been removed"
