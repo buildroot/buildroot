@@ -25,12 +25,6 @@ GLIBC_CPE_ID_VENDOR = gnu
 # allow proper matching with the CPE database.
 GLIBC_CPE_ID_VERSION = $(word 1, $(subst -,$(space),$(GLIBC_VERSION)))
 
-# Fixed by glibc-2.41-57-g84bdbf8a6f2fdafd3661489dbb7f79835a52da82
-GLIBC_IGNORE_CVES += CVE-2025-5745
-
-# Fixed by glibc-2.41-60-g0c76c951620f9e12df2a89b2c684878b55bb6795
-GLIBC_IGNORE_CVES += CVE-2025-5702
-
 # Fixed by glibc-2.41-64-g1e16d0096d80a6e12d5bfa8e0aafdd13c47efd65
 GLIBC_IGNORE_CVES += CVE-2025-8058
 
