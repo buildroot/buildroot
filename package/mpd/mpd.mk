@@ -19,6 +19,7 @@ MPD_SELINUX_MODULES = mpd
 MPD_CONF_OPTS = \
 	-Daudiofile=disabled \
 	-Ddocumentation=disabled \
+	-Dmpcdec=disabled \
 	-Dopenmpt=disabled \
 	-Dpipewire=disabled \
 	-Dsnapcast=false
@@ -224,13 +225,6 @@ MPD_DEPENDENCIES += mpg123
 MPD_CONF_OPTS += -Dmpg123=enabled
 else
 MPD_CONF_OPTS += -Dmpg123=disabled
-endif
-
-ifeq ($(BR2_PACKAGE_MPD_MUSEPACK),y)
-MPD_DEPENDENCIES += musepack
-MPD_CONF_OPTS += -Dmpcdec=enabled
-else
-MPD_CONF_OPTS += -Dmpcdec=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_MPD_NEIGHBOR_DISCOVERY_SUPPORT),y)

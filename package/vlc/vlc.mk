@@ -70,6 +70,7 @@ VLC_CONF_OPTS += \
 	--disable-microdns \
 	--disable-mmal \
 	--disable-mtp \
+	--disable-mpc \
 	--disable-notify \
 	--disable-projectm \
 	--disable-schroedinger \
@@ -460,13 +461,6 @@ VLC_CONF_OPTS += --enable-mpg123
 VLC_DEPENDENCIES += mpg123
 else
 VLC_CONF_OPTS += --disable-mpg123
-endif
-
-ifeq ($(BR2_PACKAGE_MUSEPACK),y)
-VLC_CONF_OPTS += --enable-mpc
-VLC_DEPENDENCIES += musepack
-else
-VLC_CONF_OPTS += --disable-mpc
 endif
 
 ifeq ($(BR2_PACKAGE_NCURSES_WCHAR),y)

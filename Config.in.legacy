@@ -146,6 +146,24 @@ endif
 
 comment "Legacy options removed in 2026.02"
 
+config BR2_PACKAGE_MPD_MUSEPACK
+	bool "musepack support in mpd has been removed"
+	select BR2_LEGACY
+	help
+	  musepack package is unmaintained and has been removed
+
+config BR2_PACKAGE_GST1_PLUGINS_BAD_PLUGIN_MUSEPACK
+	bool "musepack support in gst1-plugins-bad has been removed"
+	select BR2_LEGACY
+	help
+	  musepack package is unmaintained and has been removed
+
+config BR2_PACKAGE_MUSEPACK
+	bool "musepack has been removed"
+	select BR2_LEGACY
+	help
+	  musepack is unmaintained and has been removed
+
 config BR2_PACKAGE_RACEHOUND
 	bool "racehound has been removed"
 	select BR2_LEGACY
