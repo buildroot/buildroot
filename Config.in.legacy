@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2026.02"
 
+config BR2_PACKAGE_TASKD
+	bool "taskd has been removed"
+	select BR2_LEGACY
+	help
+	  taskd was deprecated upstream and has been removed
+
 config BR2_PACKAGE_SCONESERVER
 	bool "sconeserver has been removed"
 	select BR2_LEGACY
