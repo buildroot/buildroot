@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2026.02"
 
+config BR2_PACKAGE_CPPDB
+	bool "cppdb has been removed"
+	select BR2_LEGACY
+	help
+	  cppdb was no longer maintained upstream, and therefore was
+	  removed.
+
 config BR2_PACKAGE_PYTHON_AIOREDIS
 	bool "python-aioredis has been removed"
 	select BR2_LEGACY
