@@ -12,7 +12,6 @@
 
 # Create needed directories.
 [ -d /run/dbus ] || mkdir -p /run/dbus
-[ -d /var/lock/subsys ] || mkdir -p /var/lock/subsys
 [ -d /tmp/dbus ] || mkdir -p /tmp/dbus
 
 RETVAL=0
@@ -24,20 +23,14 @@ start() {
     dbus-daemon --system
     RETVAL=$?
     echo "done"
-    [ $RETVAL -eq 0 ] && touch /var/lock/subsys/dbus-daemon
 }
 
 stop() {
     printf "Stopping system message bus: "
-
-    ## we don't want to kill all the per-user $processname, we want
-    ## to use the pid file *only*; because we use the fake nonexistent 
-    ## program name "$servicename" that should be safe-ish
     killall dbus-daemon
     RETVAL=$?
     echo "done"
     if [ $RETVAL -eq 0 ]; then
-        rm -f /var/lock/subsys/dbus-daemon
         rm -f /run/messagebus.pid
     fi
 }
@@ -54,18 +47,12 @@ case "$1" in
         stop
         start
         ;;
-    condrestart)
-        if [ -f /var/lock/subsys/$servicename ]; then
-            stop
-            start
-        fi
-        ;;
     reload)
         echo "Message bus can't reload its configuration, you have to restart it"
         RETVAL=$?
         ;;
     *)
-        echo "Usage: $0 {start|stop|restart|condrestart|reload}"
+        echo "Usage: $0 {start|stop|restart|reload}"
         ;;
 esac
 exit $RETVAL
