@@ -72,6 +72,7 @@ VLC_CONF_OPTS += \
 	--disable-mtp \
 	--disable-mpc \
 	--disable-notify \
+	--disable-opencv \
 	--disable-projectm \
 	--disable-schroedinger \
 	--disable-shine \
@@ -209,13 +210,6 @@ VLC_CONF_OPTS += --enable-gles2
 VLC_DEPENDENCIES += libgles
 else
 VLC_CONF_OPTS += --disable-gles2
-endif
-
-ifeq ($(BR2_PACKAGE_OPENCV3),y)
-VLC_CONF_OPTS += --enable-opencv
-VLC_DEPENDENCIES += opencv3
-else
-VLC_CONF_OPTS += --disable-opencv
 endif
 
 ifeq ($(BR2_PACKAGE_OPUS),y)

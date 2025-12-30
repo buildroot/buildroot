@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2026.02"
 
+config BR2_PACKAGE_VLC_OPENCV3_BACKEND
+	bool "opencv3 support in vlc has been removed"
+	select BR2_LEGACY
+	help
+	  OpenCV3 support in VLC has been reported, as OpenCV has been
+	  removed.
+
 config BR2_PACKAGE_CPPDB
 	bool "cppdb has been removed"
 	select BR2_LEGACY
