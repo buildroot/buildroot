@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2026.02"
 
+config BR2_PACKAGE_LIBCUEFILE
+	bool "libcuefile has been removed"
+	select BR2_LEGACY
+	help
+	  libcuefile is unmaintained and has been removed
+
 config BR2_PACKAGE_MPD_MUSEPACK
 	bool "musepack support in mpd has been removed"
 	select BR2_LEGACY
