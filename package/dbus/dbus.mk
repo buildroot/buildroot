@@ -93,8 +93,8 @@ endef
 DBUS_POST_INSTALL_TARGET_HOOKS += DBUS_REMOVE_DEVFILES
 
 define DBUS_INSTALL_INIT_SYSV
-	$(INSTALL) -m 0755 -D package/dbus/S30dbus \
-		$(TARGET_DIR)/etc/init.d/S30dbus
+	$(INSTALL) -m 0755 -D package/dbus/S30dbus-daemon \
+		$(TARGET_DIR)/etc/init.d/S30dbus-daemon
 
 	mkdir -p $(TARGET_DIR)/var/lib
 	rm -rf $(TARGET_DIR)/var/lib/dbus
