@@ -33,7 +33,7 @@ DBUS_CONF_OPTS = \
 	--disable-xml-docs \
 	--disable-doxygen-docs \
 	--with-system-socket=/run/dbus/system_bus_socket \
-	--with-system-pid-file=/run/messagebus.pid \
+	--with-system-pid-file=/run/dbus-daemon.pid \
 	--with-session-socket-dir=/tmp \
 	--runstatedir=/run
 

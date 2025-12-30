@@ -1,8 +1,7 @@
 #!/bin/sh
 
 DAEMON="dbus-daemon"
-# check-package lib_sysv.Variables
-PIDFILE="/run/messagebus.pid"
+PIDFILE="/var/run/$DAEMON.pid"
 
 start() {
 	printf 'Starting system %s: ' "$DAEMON"
