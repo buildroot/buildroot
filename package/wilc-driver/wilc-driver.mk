@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-WILC_DRIVER_VERSION = linux4microchip-2021.10-1
-WILC_DRIVER_SITE = $(call github,embeddedTS,wilc3000-external-module,$(WILC_DRIVER_VERSION))
+WILC_DRIVER_VERSION = 2fe5db970acc0c0df1cfd6a49087ee87dfdd01f8
+WILC_DRIVER_SITE = $(call github,benetti-engineering,wilc3000-external-module,$(WILC_DRIVER_VERSION))
 
 WILC_DRIVER_LICENSE = GPL-2.0
 WILC_DRIVER_LICENSE_FILES = LICENSE
