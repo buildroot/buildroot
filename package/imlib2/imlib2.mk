@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-IMLIB2_VERSION = 1.7.3
-IMLIB2_SOURCE = imlib2-$(IMLIB2_VERSION).tar.bz2
+IMLIB2_VERSION = 1.12.5
+IMLIB2_SOURCE = imlib2-$(IMLIB2_VERSION).tar.xz
 IMLIB2_SITE = http://downloads.sourceforge.net/project/enlightenment/imlib2-src/$(IMLIB2_VERSION)
 IMLIB2_LICENSE = Imlib2
 IMLIB2_LICENSE_FILES = COPYING COPYING-PLAIN
@@ -14,7 +14,6 @@ IMLIB2_CPE_ID_VENDOR = enlightenment
 IMLIB2_INSTALL_STAGING = YES
 IMLIB2_DEPENDENCIES = host-pkgconf freetype
 IMLIB2_CONF_OPTS = --with-freetype-config=$(STAGING_DIR)/usr/bin/freetype-config
-IMLIB2_CONFIG_SCRIPTS = imlib2-config
 
 ifeq ($(BR2_PACKAGE_IMLIB2_X),y)
 IMLIB2_CONF_OPTS += --with-x
@@ -57,12 +56,5 @@ IMLIB2_DEPENDENCIES += libid3tag
 else
 IMLIB2_CONF_OPTS += --without-id3
 endif
-
-# drop -L<dir> from linker flags
-define IMLIB2_FIXUP_IMLIB2_CONFIG
-	$(SED) 's/-L[^ ]*//g' $(STAGING_DIR)/usr/bin/imlib2-config
-endef
-
-IMLIB2_POST_INSTALL_STAGING_HOOKS += IMLIB2_FIXUP_IMLIB2_CONFIG
 
 $(eval $(autotools-package))
