@@ -1,0 +1,24 @@
+From 8e779493cd1597b8a9c50ff48f97d4e5d10f96d6 Mon Sep 17 00:00:00 2001
+From: Tobias Wellnitz <tobias@dh1tw.de>
+Date: Sat, 27 Sep 2025 23:51:48 +0200
+Subject: [PATCH] bumped cmake_minimum_required to Version 3.5
+
+Modern Cmake versions require cmake_mininum_required to be at least Version 3.5
+
+Upstream: https://github.com/quiet/libcorrect/pull/50
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 2e8e07e..67ea044 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required(VERSION 2.8)
++cmake_minimum_required(VERSION 3.5)
+ project(Correct C)
+ include(CheckLibraryExists)
+ include(CheckIncludeFiles)
