@@ -1,6 +1,8 @@
 config BR2_PACKAGE_PYTHON_LOGBOOK
 	bool "python-logbook"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
 	select BR2_PACKAGE_PYTHON3_ZLIB
+	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime
 	help
 	  A logging replacement for Python.
 
