@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBHEIF_VERSION = 1.20.2
+LIBHEIF_VERSION = 1.21.1
 LIBHEIF_SITE = https://github.com/strukturag/libheif/releases/download/v$(LIBHEIF_VERSION)
 LIBHEIF_LICENSE = LGPL-3.0+
 LIBHEIF_LICENSE_FILES = COPYING
@@ -22,9 +22,6 @@ LIBHEIF_CONF_OPTS = \
 	-DWITH_RAV1E=OFF \
 	-DWITH_REDUCED_VISIBILITY=ON \
 	-DWITH_SvtEnc=OFF
-
-# 0001-fix-wrong-copy-width-in-overlay-images.patch
-LIBHEIF_IGNORE_CVES += CVE-2025-68431
 
 ifeq ($(BR2_PACKAGE_DAV1D),y)
 LIBHEIF_CONF_OPTS += -DWITH_DAV1D=ON
