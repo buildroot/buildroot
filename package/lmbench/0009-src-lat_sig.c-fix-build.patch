@@ -1,0 +1,49 @@
+From 868256b43ee7ab597319982645ca1e5e00502224 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Fri, 5 Dec 2025 17:59:00 +0100
+Subject: [PATCH] src/lat_sig.c: fix build
+
+lat_sig.c:42:31: error: assignment to '__sighandler_t' {aka 'void (*)(int)'} from incompatible pointer type 'void (*)(void)' [-Wincompatible-pointer-types]
+   42 |                 sa.sa_handler = handler;
+      |                               ^
+lat_sig.c:23:9: note: 'handler' declared here
+   23 | void    handler() { }
+
+lat_sig.c:95:23: error: assignment to '__sighandler_t' {aka 'void (*)(int)'} from incompatible pointer type 'void (*)(void)' [-Wincompatible-pointer-types]
+   95 |         sa.sa_handler = prot;
+      |                       ^
+lat_sig.c:72:1: note: 'prot' declared here
+   72 | prot() {
+
+Upstream: https://github.com/intel/lmbench/pull/43
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/lat_sig.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/lat_sig.c b/src/lat_sig.c
+index 46aef0e..5913c48 100644
+--- a/src/lat_sig.c
++++ b/src/lat_sig.c
+@@ -20,7 +20,7 @@ char	*id = "$Id$\n";
+ 
+ uint64	caught, n;
+ double	adj;
+-void	handler() { }
++void	handler(int) { }
+ jmp_buf	prot_env;
+ 
+ void
+@@ -69,7 +69,7 @@ struct _state {
+ };
+ 
+ void
+-prot() {
++prot(int) {
+ 	if (++caught == n) {
+ 		caught = 0;
+ 		n = benchmp_interval(benchmp_getstate());
+-- 
+2.47.3
+

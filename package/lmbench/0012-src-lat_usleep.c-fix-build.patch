@@ -1,0 +1,34 @@
+From 3a57a2d54631df15d876147cf738d4ea033645a8 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Fri, 5 Dec 2025 18:04:07 +0100
+Subject: [PATCH] src/lat_usleep.c: fix build
+
+lat_usleep.c:125:19: error: assignment to '__sighandler_t' {aka 'void (*)(int)'} from incompatible pointer type 'void (*)(void)' [-Wincompatible-pointer-types]
+  125 |     sa.sa_handler = interval;
+      |                   ^
+lat_usleep.c:102:1: note: 'interval' declared here
+  102 | interval()
+
+Upstream: https://github.com/intel/lmbench/pull/43
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/lat_usleep.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/lat_usleep.c b/src/lat_usleep.c
+index d18d0c8..842ad06 100755
+--- a/src/lat_usleep.c
++++ b/src/lat_usleep.c
+@@ -99,7 +99,7 @@ bench_pselect(iter_t iterations, void *cookie)
+ #endif /* _POSIX_SELECT */
+ 
+ void
+-interval()
++interval(int)
+ {
+     if (++caught == n) {
+ 	caught = 0;
+-- 
+2.47.3
+

@@ -1,0 +1,34 @@
+From 7dad44effa3e3456bede6c5c2325bfdf4dec94d3 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Fri, 5 Dec 2025 18:01:15 +0100
+Subject: [PATCH] src/memsize.c: fix build
+
+memsize.c:167:23: error: assignment to '__sighandler_t' {aka 'void (*)(int)'} from incompatible pointer type 'void (*)(void)' [-Wincompatible-pointer-types]
+  167 |         sa.sa_handler = gotalarm;
+      |                       ^
+memsize.c:154:1: note: 'gotalarm' declared here
+  154 | gotalarm()
+
+Upstream: https://github.com/intel/lmbench/pull/43
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/memsize.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/memsize.c b/src/memsize.c
+index e1d05be..902132a 100644
+--- a/src/memsize.c
++++ b/src/memsize.c
+@@ -151,7 +151,7 @@ test_malloc(size_t size)
+ }
+ 
+ void
+-gotalarm()
++gotalarm(int)
+ {
+ 	alarm_triggered = 1;
+ }
+-- 
+2.47.3
+

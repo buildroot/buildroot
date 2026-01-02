@@ -6,7 +6,8 @@ Subject: [PATCH] scripts/build: make it possible to set LDLIBS
 LDLIBS is currently unconditionnally set to '-lm', but doesn't allow
 the user to provide additional libraries to link with.
 
-Upstream: dead, last release in 2006
+Upstream: https://github.com/intel/lmbench/pull/44
+
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 ---
  scripts/build | 2 +-
@@ -20,7 +21,7 @@ index 60b755c..4820d80 100755
  
  trap 'rm -f ${BASE}$$.s ${BASE}$$.c ${BASE}$$.o ${BASE}$$; exit 1' 1 2 15
  
--LDLIBS=-lm
+-LDLIBS="-lm"
 +LDLIBS="${LDLIBS} -lm"
  
  # check for HP-UX's ANSI compiler

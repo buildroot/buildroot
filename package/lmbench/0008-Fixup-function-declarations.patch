@@ -5,7 +5,8 @@ Subject: [PATCH] Fixup function declarations
 
 GCC-15 requires function declarations to be properly typed.
 
-Upstream: dead
+Upstream: https://github.com/intel/lmbench/pull/43
+
 Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 ---
  src/bench.h   |  4 ++--
@@ -17,7 +18,7 @@ diff --git a/src/bench.h b/src/bench.h
 index 597d068..b1624c5 100644
 --- a/src/bench.h
 +++ b/src/bench.h
-@@ -345,7 +345,7 @@ extern int sched_pin(int cpu);
+@@ -325,8 +325,8 @@ extern int handle_scheduler(int childno, int benchproc, int nbenchprocs);
  #define XACT_VERS ((u_long)1)
  #define RPC_XACT ((u_long)1)
  #define RPC_EXIT ((u_long)2)
@@ -26,7 +27,8 @@ index 597d068..b1624c5 100644
 +extern char *rpc_xact_1(char *msg, register SVCXPRT *transp);
 +extern char *client_rpc_xact_1(char *argp, CLIENT *clnt);
  
- #endif /* _BENCH_H */
+ void lmbench_usage(int argc, char *argv[], char* usage);
+ 
 diff --git a/src/lat_rpc.c b/src/lat_rpc.c
 index ff4380f..dcc24df 100644
 --- a/src/lat_rpc.c
