@@ -11,12 +11,14 @@ Upstream: N/A
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 [ Vincent Fazio: ported to Python 3.13.2 ]
 Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+[ Bernd Kuhls: ported to Python 3.14.2]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  configure.ac | 13 ++++++-------
  1 file changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index d5dac4bf8bc..6635aaa134d 100644
+index 5395e82384b..ec9a24c5311 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -95,6 +95,12 @@ AC_DEFUN([PY_CHECK_EMSCRIPTEN_PORT], [
@@ -32,9 +34,9 @@ index d5dac4bf8bc..6635aaa134d 100644
  AC_SUBST([BASECPPFLAGS])
  if test "$srcdir" != . -a "$srcdir" != "$(pwd)"; then
      # If we're building out-of-tree, we need to make sure the following
-@@ -7595,13 +7601,6 @@ AS_VAR_IF([ac_cv_libatomic_needed], [yes],
-            LIBATOMIC=${LIBATOMIC-"-latomic"}])
- _RESTORE_VAR([CPPFLAGS])
+@@ -7701,13 +7707,6 @@ if test -n "$_PYTHREAD_NAME_MAXLEN"; then
+ fi
+ AC_SUBST([_PYTHREAD_NAME_MAXLEN])
  
 -
 -# stdlib
@@ -47,5 +49,5 @@ index d5dac4bf8bc..6635aaa134d 100644
  dnl Modules that are not available on some platforms
  AS_CASE([$ac_sys_system],
 -- 
-2.50.1
+2.47.3
 

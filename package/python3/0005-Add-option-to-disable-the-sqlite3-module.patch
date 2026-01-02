@@ -14,24 +14,26 @@ Signed-off-by: Adam Duskett <aduskett@gmail.com>
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 [ Vincent Fazio: ported to Python 3.13.2 ]
 Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+[ Bernd Kuhls: ported to Python 3.14.2]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  Makefile.pre.in | 5 ++++-
  configure.ac    | 7 +++++++
  2 files changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 2d067730633..a45a76cce45 100644
+index 2197bb18434..c8f7ab1e6a9 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2336,7 +2336,6 @@ LIBSUBDIRS=	asyncio \
+@@ -2569,7 +2569,6 @@ LIBSUBDIRS=	asyncio \
  		pathlib \
  		re \
  		site-packages \
 -		sqlite3 \
+ 		string \
  		sysconfig \
  		tkinter \
- 		tomllib \
-@@ -2500,6 +2499,10 @@ ifeq (@IDLE@,yes)
+@@ -2741,6 +2740,10 @@ ifeq (@IDLE@,yes)
  LIBSUBDIRS += idlelib idlelib/Icons
  endif
  
@@ -43,10 +45,10 @@ index 2d067730633..a45a76cce45 100644
  
  .PHONY: libinstall
 diff --git a/configure.ac b/configure.ac
-index 6635aaa134d..8153b738b2f 100644
+index ec9a24c5311..e8e201206bc 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4755,6 +4755,13 @@ AS_VAR_IF([posix_threads], [stub], [
+@@ -4795,6 +4795,13 @@ AS_VAR_IF([posix_threads], [stub], [
    AC_DEFINE([HAVE_PTHREAD_STUBS], [1], [Define if platform requires stubbed pthreads support])
  ])
  
@@ -61,5 +63,5 @@ index 6635aaa134d..8153b738b2f 100644
  
  AC_ARG_ENABLE(pydoc,
 -- 
-2.50.1
+2.47.3
 

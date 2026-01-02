@@ -11,8 +11,8 @@ Signed-off-by: Samuel Martin <s.martin49@gmail.com>
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 [ Adam Duskett: ported to Python 3.10.0 ]
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
-[ Bernd Kuhls: ported to Python 3.11.4]
-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[ Bernd Kuhls: ported to Python 3.14.2]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 [ Adam Duskett: ported to Python 3.12.1 ]
 Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
 [ Vincent Fazio: ported to Python 3.13.2 ]
@@ -25,34 +25,34 @@ Signed-off-by: Vincent Fazio <vfazio@xes-inc.com>
  2 files changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index a45a76cce45..76d67ce7185 100644
+index c8f7ab1e6a9..2c91d0dda71 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2337,7 +2337,6 @@ LIBSUBDIRS=	asyncio \
- 		re \
+@@ -2571,7 +2571,6 @@ LIBSUBDIRS=	asyncio \
  		site-packages \
+ 		string \
  		sysconfig \
 -		tkinter \
  		tomllib \
  		turtledemo \
  		unittest \
-@@ -2445,7 +2444,6 @@ TESTSUBDIRS=	idlelib/idle_test \
- 		test/test_pydoc \
+@@ -2681,7 +2680,6 @@ TESTSUBDIRS=	idlelib/idle_test \
  		test/test_pyrepl \
+ 		test/test_string \
  		test/test_sqlite3 \
 -		test/test_tkinter \
  		test/test_tomllib \
  		test/test_tomllib/data \
  		test/test_tomllib/data/invalid \
-@@ -2467,7 +2465,6 @@ TESTSUBDIRS=	idlelib/idle_test \
+@@ -2703,7 +2701,6 @@ TESTSUBDIRS=	idlelib/idle_test \
  		test/test_tools \
  		test/test_tools/i18n_data \
  		test/test_tools/msgfmt_data \
 -		test/test_ttk \
  		test/test_unittest \
- 		test/test_unittest/testmock \
- 		test/test_warnings \
-@@ -2489,6 +2486,11 @@ TESTSUBDIRS=	idlelib/idle_test \
+ 		test/test_unittest/namespace_test_pkg \
+ 		test/test_unittest/namespace_test_pkg/bar \
+@@ -2730,6 +2727,11 @@ TESTSUBDIRS=	idlelib/idle_test \
  		test/xmltestdata/c14n-20 \
  		test/zipimport_data
  
@@ -65,10 +65,10 @@ index a45a76cce45..76d67ce7185 100644
  
  ifeq (@PYDOC@,yes)
 diff --git a/configure.ac b/configure.ac
-index 8153b738b2f..0cf06a50c71 100644
+index e8e201206bc..840976ec1bd 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4768,6 +4768,13 @@ AC_ARG_ENABLE(pydoc,
+@@ -4808,6 +4808,13 @@ AC_ARG_ENABLE(pydoc,
  	AS_HELP_STRING([--disable-pydoc], [disable pydoc]),
  	[ PYDOC="${enableval}" ], [ PYDOC=yes ])
  
@@ -83,5 +83,5 @@ index 8153b738b2f..0cf06a50c71 100644
  AH_TEMPLATE([ENABLE_IPV6], [Define if --enable-ipv6 is specified])
  AC_MSG_CHECKING([if --enable-ipv6 is specified])
 -- 
-2.50.1
+2.47.3
 

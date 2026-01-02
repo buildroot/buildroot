@@ -13,24 +13,26 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 [ Vincent Fazio: ported to Python 3.13.2 ]
 Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+[ Bernd Kuhls: ported to Python 3.14.2]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  Makefile.pre.in | 5 ++++-
  configure.ac    | 7 +++++++
  2 files changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 76d67ce7185..bfb6cb65354 100644
+index 2c91d0dda71..fb11e416731 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2322,7 +2322,6 @@ LIBSUBDIRS=	asyncio \
- 		concurrent concurrent/futures \
+@@ -2555,7 +2555,6 @@ LIBSUBDIRS=	asyncio \
+ 		concurrent concurrent/futures concurrent/interpreters \
  		csv \
  		ctypes ctypes/macholib \
 -		curses \
  		dbm \
  		email email/mime \
  		encodings \
-@@ -2491,6 +2490,10 @@ LIBSUBDIRS += tkinter
+@@ -2732,6 +2731,10 @@ LIBSUBDIRS += tkinter
  TESTSUBDIRS += test/test_tkinter test/test_ttk
  endif
  
@@ -42,10 +44,10 @@ index 76d67ce7185..bfb6cb65354 100644
  
  ifeq (@PYDOC@,yes)
 diff --git a/configure.ac b/configure.ac
-index 0cf06a50c71..0895dc57808 100644
+index 840976ec1bd..1d7ba91ccc9 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4762,6 +4762,13 @@ AC_ARG_ENABLE(sqlite3,
+@@ -4802,6 +4802,13 @@ AC_ARG_ENABLE(sqlite3,
  AS_IF([test "$SQLITE3" = "no"],
        [PY_STDLIB_MOD_SET_NA([_sqlite3])])
  
@@ -60,5 +62,5 @@ index 0cf06a50c71..0895dc57808 100644
  
  AC_ARG_ENABLE(pydoc,
 -- 
-2.50.1
+2.47.3
 

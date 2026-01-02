@@ -19,16 +19,18 @@ Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 [ Vincent Fazio: ported to Python 3.13.2 ]
 Signed-off-by: Vincent Fazio <vfazio@gmail.com>
+[ Bernd Kuhls: ported to Python 3.14.2]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  Makefile.pre.in |  5 ++++-
  configure.ac    | 24 +++++++++++++-----------
  2 files changed, 17 insertions(+), 12 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index bfb6cb65354..7a662ea4b32 100644
+index fb11e416731..c261b3f9cd7 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2342,7 +2342,6 @@ LIBSUBDIRS=	asyncio \
+@@ -2576,7 +2576,6 @@ LIBSUBDIRS=	asyncio \
  		urllib \
  		venv venv/scripts venv/scripts/common venv/scripts/posix \
  		wsgiref \
@@ -36,7 +38,7 @@ index bfb6cb65354..7a662ea4b32 100644
  		xmlrpc \
  		zipfile zipfile/_path \
  		zoneinfo \
-@@ -2508,6 +2507,10 @@ ifeq (@SQLITE3@,yes)
+@@ -2749,6 +2748,10 @@ ifeq (@SQLITE3@,yes)
  LIBSUBDIRS += sqlite3
  endif
  
@@ -48,10 +50,10 @@ index bfb6cb65354..7a662ea4b32 100644
  
  .PHONY: libinstall
 diff --git a/configure.ac b/configure.ac
-index 0895dc57808..34e4d5dd244 100644
+index 1d7ba91ccc9..3980548b253 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4058,17 +4058,19 @@ LIBS="$withval $LIBS"
+@@ -4065,17 +4065,19 @@ LIBS="$withval $LIBS"
  [AC_MSG_RESULT([no])])
  
  # Check for use of the system expat library
@@ -83,5 +85,5 @@ index 0895dc57808..34e4d5dd244 100644
    LIBEXPAT_LDFLAGS=${LIBEXPAT_LDFLAGS-"-lexpat"}
    LIBEXPAT_INTERNAL=
 -- 
-2.50.1
+2.47.3
 
