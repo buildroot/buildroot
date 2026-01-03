@@ -6,6 +6,10 @@ config BR2_PACKAGE_BITCOIN_ARCH_SUPPORTS
 	# support. BR2_TOOLCHAIN_HAS_ATOMIC does not provide a
 	# size-level granularity to express this dependency.
 	depends on !(BR2_arm || BR2_armeb) || BR2_USE_MMU
+	# error: static assertion failed: Units of size ELEM_SIZE_ALIGN
+	# need to be able to store a ListNode
+	# note: the comparison reduces to ‘(4 <= 2)’
+	depends on !BR2_m68k
 
 config BR2_PACKAGE_BITCOIN
 	bool "bitcoin"
