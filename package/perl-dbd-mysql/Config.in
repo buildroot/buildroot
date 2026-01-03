@@ -1,9 +1,9 @@
 config BR2_PACKAGE_PERL_DBD_MYSQL
 	bool "perl-dbd-mysql"
 	depends on !BR2_STATIC_LIBS
-	depends on BR2_INSTALL_LIBSTDCPP # mysql
-	depends on BR2_USE_MMU # mysql
-	depends on BR2_TOOLCHAIN_HAS_THREADS # mysql
+	depends on BR2_INSTALL_LIBSTDCPP # mariadb
+	depends on BR2_USE_MMU # mariadb
+	depends on BR2_TOOLCHAIN_HAS_THREADS # mariadb
 	select BR2_PACKAGE_MARIADB
 	select BR2_PACKAGE_PERL_DBI # runtime
 	help
