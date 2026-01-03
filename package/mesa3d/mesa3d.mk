@@ -297,6 +297,7 @@ HOST_MESA3D_CONF_OPTS = \
 	-Dgallium-drivers=$(subst $(space),$(comma),$(HOST_MESA3D_GALLIUM_DRIVERS-y)) \
 	-Dtools=$(subst $(space),$(comma),$(HOST_MESA3D_TOOLS)) \
 	-Dinstall-mesa-clc=true \
+	-Dllvm=enabled \
 	-Dmesa-clc=enabled \
 	-Dplatforms= \
 	-Dprecomp-compiler=enabled \
@@ -306,6 +307,7 @@ HOST_MESA3D_CONF_OPTS = \
 HOST_MESA3D_DEPENDENCIES = \
 	host-libclc \
 	host-libdrm \
+	host-llvm \
 	host-python-mako \
 	host-python-pyyaml \
 	host-spirv-tools
