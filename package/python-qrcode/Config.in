@@ -13,6 +13,10 @@ config BR2_PACKAGE_PYTHON_QRCODE_SVG
 
 config BR2_PACKAGE_PYTHON_QRCODE_PIL
 	bool "PIL support"
+	depends on BR2_INSTALL_LIBSTDCPP # python-pillow
 	select BR2_PACKAGE_PYTHON_PILLOW
+
+comment "PIL support needs a toolchain w/ C++"
+	depends on !BR2_INSTALL_LIBSTDCPP
 
 endif
