@@ -1,0 +1,116 @@
+From 239bf2f6a80bbfb6ef92418ceb5402d1fb256a2b Mon Sep 17 00:00:00 2001
+From: Steve Underwood <steveu@coppice.org>
+Date: Fri, 18 Aug 2023 01:24:21 +0100
+Subject: [PATCH] Changes to address V.17 fixed point issue.
+
+Upstream: https://github.com/freeswitch/spandsp/commit/239bf2f6a80bbfb6ef92418ceb5402d1fb256a2b
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/spandsp/private/v17rx.h |  2 +-
+ src/v17rx.c                 | 30 +++++++++++++++++++-----------
+ 2 files changed, 20 insertions(+), 12 deletions(-)
+
+diff --git a/src/spandsp/private/v17rx.h b/src/spandsp/private/v17rx.h
+index 8ea7a9fe..8613b5a5 100644
+--- a/src/spandsp/private/v17rx.h
++++ b/src/spandsp/private/v17rx.h
+@@ -97,7 +97,7 @@ struct v17_rx_state_s
+ 
+     /*! \brief A measure of how much mismatch there is between the real constellation,
+         and the decoded symbol positions. */
+-    int32_t training_error;
++    int64_t training_error;
+ 
+     /*! \brief The proportional part of the carrier tracking filter. */
+     int32_t carrier_track_p;
+diff --git a/src/v17rx.c b/src/v17rx.c
+index a823dad2..295d26a9 100644
+--- a/src/v17rx.c
++++ b/src/v17rx.c
+@@ -64,6 +64,10 @@
+ #include "spandsp/dds.h"
+ #include "spandsp/complex_filters.h"
+ 
++#if defined(SPANDSP_USE_FIXED_POINT)
++#define SPANDSP_USE_FIXED_POINTx
++#endif
++
+ #include "spandsp/v29rx.h"
+ #include "spandsp/v17tx.h"
+ #include "spandsp/v17rx.h"
+@@ -389,7 +393,7 @@ static __inline__ void put_bit(v17_rx_state_t *s, int bit)
+ /*- End of function --------------------------------------------------------*/
+ 
+ #if defined(SPANDSP_USE_FIXED_POINTx)
+-static __inline__ uint32_t dist_sq(const complexi16_t *x, const complexi16_t *y)
++static __inline__ uint32_t dist_sq(const complexi32_t *x, const complexi32_t *y)
+ {
+     return (int32_t) (x->re - y->re)*(x->re - y->re) + (int32_t) (x->im - y->im)*(x->im - y->im);
+ }
+@@ -954,11 +958,12 @@ static void process_half_baud(v17_rx_state_t *s, const complexf_t *sample)
+         else if (s->training_count >= V17_TRAINING_SEG_2_LEN)
+         {
+ #if defined(SPANDSP_USE_FIXED_POINTx)
+-            span_log(&s->logging, SPAN_LOG_FLOW, "Long training error %d\n", s->training_error);
++            span_log(&s->logging, SPAN_LOG_FLOW, "Long training error %ld\n", s->training_error);
++            if (s->training_error < (int64_t) FP_SCALE(20.0f)*FP_SCALE(1.414f)*constellation_spacing[s->space_map])
+ #else
+             span_log(&s->logging, SPAN_LOG_FLOW, "Long training error %f\n", s->training_error);
+-#endif
+             if (s->training_error < FP_SCALE(20.0f)*FP_SCALE(1.414f)*constellation_spacing[s->space_map])
++#endif
+             {
+                 s->training_error = FP_SCALE(0.0f);
+                 s->training_count = 0;
+@@ -1055,19 +1060,20 @@ static void process_half_baud(v17_rx_state_t *s, const complexf_t *sample)
+         /*endif*/
+         if (++s->training_count >= V17_TRAINING_SHORT_SEG_2_LEN)
+         {
++            /* TODO: This was increased by a factor of 10 after studying real world failures.
++                     However, it is not clear why this is an improvement, If something gives
++                     a huge training error, surely it shouldn't decode too well? */
+ #if defined(SPANDSP_USE_FIXED_POINTx)
+             span_log(&s->logging, SPAN_LOG_FLOW, "Short training error %d\n", s->training_error);
+             s->carrier_track_i = 100;
+             s->carrier_track_p = 500000;
++            if (s->training_error < (int64_t) (V17_TRAINING_SHORT_SEG_2_LEN - 8)*FP_SCALE(4.0f)*FP_SCALE(1.0f)*constellation_spacing[s->space_map])
+ #else
+             span_log(&s->logging, SPAN_LOG_FLOW, "Short training error %f\n", s->training_error);
+             s->carrier_track_i = 100.0f;
+             s->carrier_track_p = 500000.0f;
+-#endif
+-            /* TODO: This was increased by a factor of 10 after studying real world failures.
+-                     However, it is not clear why this is an improvement, If something gives
+-                     a huge training error, surely it shouldn't decode too well? */
+             if (s->training_error < (V17_TRAINING_SHORT_SEG_2_LEN - 8)*FP_SCALE(4.0f)*FP_SCALE(1.0f)*constellation_spacing[s->space_map])
++#endif
+             {
+                 s->training_count = 0;
+                 if (s->bits_per_symbol == 2)
+@@ -1136,11 +1142,13 @@ static void process_half_baud(v17_rx_state_t *s, const complexf_t *sample)
+ #endif
+         if (++s->training_count >= V17_TRAINING_SEG_4_LEN)
+         {
+-            if (s->training_error < V17_TRAINING_SEG_4_LEN*FP_SCALE(1.0f)*FP_SCALE(1.0f)*constellation_spacing[s->space_map])
+-            {
+ #if defined(SPANDSP_USE_FIXED_POINTx)
+-                span_log(&s->logging, SPAN_LOG_FLOW, "Training succeeded at %dbps (constellation mismatch %d)\n", s->bit_rate, s->training_error);
++            if (s->training_error < (int64_t) V17_TRAINING_SEG_4_LEN*FP_SCALE(1.0f)*FP_SCALE(1.0f)*constellation_spacing[s->space_map])
++            {
++                span_log(&s->logging, SPAN_LOG_FLOW, "Training succeeded at %dbps (constellation mismatch %ld)\n", s->bit_rate, s->training_error);
+ #else
++            if (s->training_error < V17_TRAINING_SEG_4_LEN*FP_SCALE(1.0f)*FP_SCALE(1.0f)*constellation_spacing[s->space_map])
++            {
+                 span_log(&s->logging, SPAN_LOG_FLOW, "Training succeeded at %dbps (constellation mismatch %f)\n", s->bit_rate, s->training_error);
+ #endif
+                 /* We are up and running */
+@@ -1157,7 +1165,7 @@ static void process_half_baud(v17_rx_state_t *s, const complexf_t *sample)
+             {
+                 /* Training has failed. Park this modem. */
+ #if defined(SPANDSP_USE_FIXED_POINTx)
+-                span_log(&s->logging, SPAN_LOG_FLOW, "Training failed (constellation mismatch %d)\n", s->training_error);
++                span_log(&s->logging, SPAN_LOG_FLOW, "Training failed (constellation mismatch %ld)\n", s->training_error);
+ #else
+                 span_log(&s->logging, SPAN_LOG_FLOW, "Training failed (constellation mismatch %f)\n", s->training_error);
+ #endif
