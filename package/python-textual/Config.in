@@ -1,6 +1,7 @@
 config BR2_PACKAGE_PYTHON_TEXTUAL
 	bool "python-textual"
 	select BR2_PACKAGE_PYTHON_MARKDOWN_IT_PY # runtime
+	select BR2_PACKAGE_PYTHON_MDIT_PY_PLUGINS # runtime
 	select BR2_PACKAGE_PYTHON_PLATFORMDIRS # runtime
 	select BR2_PACKAGE_PYTHON_PYGMENTS # runtime
 	select BR2_PACKAGE_PYTHON_RICH # runtime
