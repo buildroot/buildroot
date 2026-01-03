@@ -11,6 +11,7 @@ config BR2_PACKAGE_PYTHON_GRPCIO
 	bool "python-grpcio"
 	depends on BR2_PACKAGE_PYTHON_GRPCIO_ARCH_SUPPORTS
 	depends on BR2_INSTALL_LIBSTDCPP
+	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime
 	help
 	  HTTP/2-based RPC framework.
 
