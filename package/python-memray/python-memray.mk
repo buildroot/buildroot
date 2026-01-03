@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-PYTHON_MEMRAY_VERSION = 1.17.2
+PYTHON_MEMRAY_VERSION = 1.19.1
 PYTHON_MEMRAY_SOURCE = memray-$(PYTHON_MEMRAY_VERSION).tar.gz
-PYTHON_MEMRAY_SITE = https://files.pythonhosted.org/packages/df/40/66e6ae86c0a22b8b998779fa8d6c0ab9ee63f0943198adcf714934286cbf
+PYTHON_MEMRAY_SITE = https://files.pythonhosted.org/packages/36/18/5df5995a7b142e12ab194f4b2fd1473efd51f4f622dfe47f3c013c3c11f7
 PYTHON_MEMRAY_SETUP_TYPE = setuptools
 PYTHON_MEMRAY_LICENSE = Apache-2.0
 PYTHON_MEMRAY_LICENSE_FILES = LICENSE src/vendor/libbacktrace/LICENSE
