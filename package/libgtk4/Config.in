@@ -87,12 +87,16 @@ config BR2_PACKAGE_LIBGTK4_X11
 
 config BR2_PACKAGE_LIBGTK4_GSTREAMER
 	bool "gstreamer support"
+	depends on BR2_PACKAGE_HAS_LIBGL || BR2_PACKAGE_HAS_LIBGLES
 	select BR2_PACKAGE_GSTREAMER1
 	select BR2_PACKAGE_GST1_PLUGINS_BASE
 	select BR2_PACKAGE_GST1_PLUGINS_BASE_LIB_OPENGL
 	select BR2_PACKAGE_GST1_PLUGINS_BAD
 	help
 	  Enable gstreamer support.
+
+comment "gstreamer support needs an OpenGL or OpenGL ES backend"
+	depends on !BR2_PACKAGE_HAS_LIBGL && !BR2_PACKAGE_HAS_LIBGLES
 
 config BR2_PACKAGE_LIBGTK4_DEMO
 	bool "Install libgtk4 demo/example programs"
