@@ -1,0 +1,150 @@
+From 76458fafc5a9cd0eebe94455ed39f41eac986c67 Mon Sep 17 00:00:00 2001
+From: Patrice Fournier <patrice.fournier@t38fax.com>
+Date: Tue, 4 Feb 2025 15:54:26 -0500
+Subject: [PATCH] [mod_spandsp] Fix compilation against >=2023/06/02 spandsp
+
+* [mod_spandsp] Fix compilation against >=2023/06/02 spandsp
+
+spandsp, beginning with commit d9681c37 and coinciding with the
+SPANDSP_RELEASE_DATE of 20230620, introduced the following changes to
+its V.18 protocol API, which FreeSWITCH is not able to compile against:
+- Certain V.18 constants were renamed.
+- The v18_init function now requires passing a third function, handling
+the V.18 modem's status changes.
+
+This patch allows FreeSWITCH to build against current versions of
+spandsp by:
+- Using the new V.18 constant names.
+- Implementing a simple status reporter callback function and passing it
+as the third function to v18_init.
+
+Additionally, it retains backward compatibility with prior versions of
+spandp through #if conditions checking the value of
+SPANDSP_RELEASE_DATE.
+
+Signed-off-by: Patrice Fournier <patrice.fournier@t38fax.com>
+
+* [mod_spandsp] Pass session to handle_v18_status.
+
+---------
+
+Signed-off-by: Patrice Fournier <patrice.fournier@t38fax.com>
+Co-authored-by: Morgan Scarafiotti <morgan.scarafiotti@t38fax.com>
+Co-authored-by: Andrey Volk <andywolk@gmail.com>
+
+Upstream: https://github.com/signalwire/freeswitch/commit/76458fafc5a9cd0eebe94455ed39f41eac986c67
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ .../applications/mod_spandsp/mod_spandsp.c    |  1 -
+ .../applications/mod_spandsp/mod_spandsp.h    |  6 ++++
+ .../mod_spandsp/mod_spandsp_dsp.c             | 32 ++++++++++++++++---
+ 3 files changed, 34 insertions(+), 5 deletions(-)
+
+diff --git a/src/mod/applications/mod_spandsp/mod_spandsp.c b/src/mod/applications/mod_spandsp/mod_spandsp.c
+index 3f69b9746a..50d03f93a3 100644
+--- a/src/mod/applications/mod_spandsp/mod_spandsp.c
++++ b/src/mod/applications/mod_spandsp/mod_spandsp.c
+@@ -37,7 +37,6 @@
+ 
+ 
+ #include "mod_spandsp.h"
+-#include <spandsp/version.h>
+ #include "mod_spandsp_modem.h"
+ 
+ /* **************************************************************************
+diff --git a/src/mod/applications/mod_spandsp/mod_spandsp.h b/src/mod/applications/mod_spandsp/mod_spandsp.h
+index 01f79e254d..6a936eee18 100644
+--- a/src/mod/applications/mod_spandsp/mod_spandsp.h
++++ b/src/mod/applications/mod_spandsp/mod_spandsp.h
+@@ -58,6 +58,12 @@ typedef int zap_socket_t;
+ #define SPANDSP_EVENT_TXFAXNEGOCIATERESULT "spandsp::txfaxnegociateresult"
+ #define SPANDSP_EVENT_RXFAXNEGOCIATERESULT "spandsp::rxfaxnegociateresult"
+ 
++#include <spandsp/version.h>
++
++#if SPANDSP_RELEASE_DATE < 20230620
++#define V18_MODE_WEITBRECHT_5BIT_4545 V18_MODE_5BIT_4545
++#define V18_MODE_WEITBRECHT_5BIT_50   V18_MODE_5BIT_50
++#endif
+ 
+ 
+ /* The global stuff */
+diff --git a/src/mod/applications/mod_spandsp/mod_spandsp_dsp.c b/src/mod/applications/mod_spandsp/mod_spandsp_dsp.c
+index 836808a48d..51ac2a0e63 100644
+--- a/src/mod/applications/mod_spandsp/mod_spandsp_dsp.c
++++ b/src/mod/applications/mod_spandsp/mod_spandsp_dsp.c
+@@ -152,17 +152,27 @@ static void put_text_msg(void *user_data, const uint8_t *msg, int len)
+ 
+ }
+ 
++#if SPANDSP_RELEASE_DATE >= 20230620
++static void handle_v18_status(void *user_data, int status)
++{
++	switch_core_session_t *session = (switch_core_session_t *) user_data;
++	switch_channel_t *channel = switch_core_session_get_channel(session);
++
++	switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_INFO, "%s detected V.18 modem: %s\n", switch_channel_get_name(channel), v18_status_to_str(status));
++}
++#endif
++
+ static int get_v18_mode(switch_core_session_t *session)
+ {
+ 	switch_channel_t *channel = switch_core_session_get_channel(session);
+ 	const char *var;
+-	int r = V18_MODE_5BIT_4545;
++	int r = V18_MODE_WEITBRECHT_5BIT_4545;
+ 
+ 	if ((var = switch_channel_get_variable(channel, "v18_mode"))) {
+ 		if (!strcasecmp(var, "5BIT_45") || !strcasecmp(var, "baudot")) {
+-			r = V18_MODE_5BIT_4545;
++			r = V18_MODE_WEITBRECHT_5BIT_4545;
+ 		} else if (!strcasecmp(var, "5BIT_50")) {
+-			r = V18_MODE_5BIT_50;
++			r = V18_MODE_WEITBRECHT_5BIT_50;
+ 		} else if (!strcasecmp(var, "DTMF")) {
+ 			r = V18_MODE_DTMF;
+ 		} else if (!strcasecmp(var, "EDT")) {
+@@ -213,8 +223,11 @@ switch_status_t spandsp_tdd_send_session(switch_core_session_t *session, const c
+ 		return SWITCH_STATUS_FALSE;
+ 	}
+ 
++#if SPANDSP_RELEASE_DATE >= 20230620
++	tdd_state = v18_init(NULL, TRUE, get_v18_mode(session), V18_AUTOMODING_GLOBAL, put_text_msg, NULL, handle_v18_status, session);
++#else
+ 	tdd_state = v18_init(NULL, TRUE, get_v18_mode(session), V18_AUTOMODING_GLOBAL, put_text_msg, NULL);
+-
++#endif
+ 
+ 	v18_put(tdd_state, text, -1);
+ 
+@@ -260,7 +273,13 @@ switch_status_t spandsp_tdd_encode_session(switch_core_session_t *session, const
+ 	}
+ 
+ 	pvt->session = session;
++
++#if SPANDSP_RELEASE_DATE >= 20230620
++	pvt->tdd_state = v18_init(NULL, TRUE, get_v18_mode(session), V18_AUTOMODING_GLOBAL, put_text_msg, NULL, handle_v18_status, session);
++#else
+ 	pvt->tdd_state = v18_init(NULL, TRUE, get_v18_mode(session), V18_AUTOMODING_GLOBAL, put_text_msg, NULL);
++#endif
++
+ 	pvt->head_lead = TDD_LEAD;
+ 
+ 	v18_put(pvt->tdd_state, text, -1);
+@@ -338,7 +357,12 @@ switch_status_t spandsp_tdd_decode_session(switch_core_session_t *session)
+ 	}
+ 
+ 	pvt->session = session;
++
++#if SPANDSP_RELEASE_DATE >= 20230620
++	pvt->tdd_state = v18_init(NULL, FALSE, get_v18_mode(session), V18_AUTOMODING_GLOBAL, put_text_msg, pvt, handle_v18_status, session);
++#else
+ 	pvt->tdd_state = v18_init(NULL, FALSE, get_v18_mode(session), V18_AUTOMODING_GLOBAL, put_text_msg, pvt);
++#endif
+ 
+ 	if ((status = switch_core_media_bug_add(session, "spandsp_tdd_decode", NULL,
+ 						tdd_decode_callback, pvt, 0, SMBF_READ_REPLACE | SMBF_NO_PAUSE, &bug)) != SWITCH_STATUS_SUCCESS) {
+-- 
+2.47.3
+
