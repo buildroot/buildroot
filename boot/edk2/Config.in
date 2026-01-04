@@ -130,6 +130,21 @@ config BR2_TARGET_EDK2_OVMF_DEBUG_ON_SERIAL
 	  See OVMF README:
 	  https://github.com/tianocore/edk2/blob/master/OvmfPkg/README
 
+config BR2_TARGET_EDK2_EXTRA_BUILD_OPTS
+	string "Extra build options"
+	help
+	  EDK2 build may include extra options. Those are usually in
+	  the form of "-D SOMEFLAG_ENABLE" and might be specific for a
+	  processor architecture or a platform. For example: "-D
+	  NETWORK_HTTP_BOOT_ENABLE", "-D NETWORK_TLS_ENABLE", ...
+
+	  Those options are generally documented in their respective
+	  packages. See for example:
+	  https://github.com/tianocore/edk2/blob/master/OvmfPkg/README
+
+	  This configuration is an arbitrary string that will be
+	  passed to the build command.
+
 config BR2_TARGET_EDK2_FD_NAME
 	string
 	default "OVMF" if BR2_TARGET_EDK2_PLATFORM_OVMF_I386
