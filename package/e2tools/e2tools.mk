@@ -4,11 +4,9 @@
 #
 ################################################################################
 
-E2TOOLS_VERSION = 0.0.16.4
-E2TOOLS_SITE = $(call github,ndim,e2tools,v$(E2TOOLS_VERSION))
+E2TOOLS_VERSION = 0.1.2
+E2TOOLS_SITE = https://github.com/e2tools/e2tools/releases/download/v$(E2TOOLS_VERSION)
 
-# Source coming from GitHub, no configure included.
-E2TOOLS_AUTORECONF = YES
 E2TOOLS_LICENSE = GPL-2.0
 E2TOOLS_LICENSE_FILES = COPYING
 E2TOOLS_DEPENDENCIES = e2fsprogs
