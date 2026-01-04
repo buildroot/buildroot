@@ -40,6 +40,7 @@ BRLTTY_CONF_OPTS = \
 # Autoreconf is needed because we're patching configure.ac in
 # 0001-Fix-linking-error-on-mips64el and
 # 0002-configure.ac-link-fv-driver-with-ltinfo-only-if-avai.
+# 0004-check-for-functions-inb-outb.patch
 # However, a plain autoreconf doesn't work, because this package
 # is only autoconf-based.
 define BRLTTY_AUTOCONF
