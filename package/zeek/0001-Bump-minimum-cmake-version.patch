@@ -1,0 +1,42 @@
+From bab553abf0dddc9e8fe90baf4c3b0b7ac5e5bfdd Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 4 Jan 2026 13:24:31 +0100
+Subject: [PATCH] Bump minimum cmake version
+
+This commit fixes buildroot errors after cmake was bumped to 4.x.
+
+This upstream commit removed CMP0063:
+https://github.com/zeek/libkqueue/commit/34cc1fea01e2f1d49238e1c58997c09bfa241568
+
+This upstream commit bumped cmake_minimum_required to 3.8.0:
+https://github.com/zeek/libkqueue/commit/a947dee39c70d151b1efff2b5bfc7fa46499e619
+
+Upstream: https://github.com/zeek/libkqueue/commit/a947dee39c70d151b1efff2b5bfc7fa46499e619
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ CMakeLists.txt | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 835e211..7b3dadf 100644
+--- a/auxil/libkqueue/CMakeLists.txt
++++ b/auxil/libkqueue/CMakeLists.txt
+@@ -16,13 +16,7 @@
+ 
+ set(PROJECT_VERSION 2.4.0)
+ 
+-cmake_minimum_required(VERSION 3.0)
+-
+-# This policy doesn't exist until version 3.3
+-if (${CMAKE_VERSION} VERSION_EQUAL "3.3" OR
+-    ${CMAKE_VERSION} VERSION_GREATER "3.3")
+-  cmake_policy(SET CMP0063 OLD)
+-endif()
++cmake_minimum_required(VERSION 3.8.0)
+ 
+ # Both variables used in include/sys/libkqueue_version.h.in
+ string(TIMESTAMP PROJECT_VERSION_DATE "%b %d %Y at %H:%M:%S")
+-- 
+2.47.3
+
