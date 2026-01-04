@@ -1,0 +1,40 @@
+From c41f1c24f6ed2a5441b231b17e1889580bbbc01c Mon Sep 17 00:00:00 2001
+From: Dominik Charousset <dominik@charousset.de>
+Date: Wed, 29 Mar 2023 17:01:37 +0200
+Subject: [PATCH] Add missing includes, fix build with GCC 13
+
+(cherry picked from commit c2ee99c38989deba848cc4c4ec9a230fa71162f7)
+
+Upstream: https://github.com/zeek/actor-framework/commit/c41f1c24f6ed2a5441b231b17e1889580bbbc01c
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ libcaf_core/caf/detail/ripemd_160.hpp     | 1 +
+ libcaf_core/caf/telemetry/metric_type.hpp | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/libcaf_core/caf/detail/ripemd_160.hpp b/libcaf_core/caf/detail/ripemd_160.hpp
+index ea9f44cec3..ec2482ecfa 100644
+--- a/auxil/broker/caf/libcaf_core/caf/detail/ripemd_160.hpp
++++ b/auxil/broker/caf/libcaf_core/caf/detail/ripemd_160.hpp
+@@ -42,6 +42,7 @@
+ 
+ #include <array>
+ #include <string>
++#include <cstdint>
+ 
+ #include "caf/detail/core_export.hpp"
+ 
+diff --git a/libcaf_core/caf/telemetry/metric_type.hpp b/libcaf_core/caf/telemetry/metric_type.hpp
+index 0525dd1da7..2047b5f6cc 100644
+--- a/auxil/broker/caf/libcaf_core/caf/telemetry/metric_type.hpp
++++ b/auxil/broker/caf/libcaf_core/caf/telemetry/metric_type.hpp
+@@ -4,6 +4,8 @@
+ 
+ #pragma once
+ 
++#include <cstdint>
++
+ namespace caf::telemetry {
+ 
+ enum class metric_type : uint8_t {

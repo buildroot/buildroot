@@ -1,0 +1,48 @@
+From 1f87382302896876df0838d83f0d107aae4b89d3 Mon Sep 17 00:00:00 2001
+From: Tim Wojtulewicz <tim@corelight.com>
+Date: Thu, 10 Jul 2025 16:28:40 -0700
+Subject: [PATCH] Fix some missing #includes resulting from removal of
+ ghc::filesystem
+
+Upstream: https://github.com/zeek/zeek/commit/1f87382302896876df0838d83f0d107aae4b89d3
+
+[Bernd:
+- backported only UDP.cc change from upstream commit
+- added similar change to src/script_opt/CPP/GenFunc.cc, no upstream
+  commit due to switch to from transform to std::ranges::transform:
+  https://github.com/zeek/zeek/commit/72c79006ac028558004a259081fa8e02de3ebe85
+  to fix build error:
+
+  /home/bernd/buildroot/output/build/zeek-4.1.1/src/script_opt/CPP/GenFunc.cc:
+   In member function ‘std::string zeek::detail::CPPCompile::BodyName(const zeek::detail::FuncInfo&)’:
+  /home/bernd/buildroot/output/build/zeek-4.1.1/src/script_opt/CPP/GenFunc.cc:214:17:
+   error: ‘transform’ was not declared in this scope
+    214 |                 transform(fns.begin(), fns.end(), fns.begin(), canonicalize);]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/packet_analysis/protocol/udp/UDP.cc      | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/packet_analysis/protocol/udp/UDP.cc b/src/packet_analysis/protocol/udp/UDP.cc
+index bebfabd3fbb..bf114f5518b 100644
+--- a/src/packet_analysis/protocol/udp/UDP.cc
++++ b/src/packet_analysis/protocol/udp/UDP.cc
+@@ -1,6 +1,9 @@
+ // See the file "COPYING" in the main distribution directory for copyright.
+ 
+ #include "zeek/packet_analysis/protocol/udp/UDP.h"
++
++#include <algorithm>
++
+ #include "zeek/RunState.h"
+ #include "zeek/Conn.h"
+ #include "zeek/session/Manager.h"
+--- a/src/script_opt/CPP/GenFunc.cc
++++ b/src/script_opt/CPP/GenFunc.cc
+@@ -1,5 +1,6 @@
+ // See the file "COPYING" in the main distribution directory for copyright.
+ 
++#include <algorithm>
+ #include <errno.h>
+ #include <unistd.h>
+ #include <sys/stat.h>
