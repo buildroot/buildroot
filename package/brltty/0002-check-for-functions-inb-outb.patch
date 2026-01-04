@@ -1,0 +1,98 @@
+From 876bdd3153c791a51422a43403143ff10acb6e82 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sat, 3 Jan 2026 15:35:48 +0100
+Subject: [PATCH] check for functions inb & outb
+
+Musl C library provides sys/io.h but inb and outb are missing on some
+archs. This patch adds a configure check ported from sane-backends:
+https://github.com/solanoalves/sane-backend/blob/059b97962ecb1b1ab068f524988d16c5b55bbd29/configure.ac#L314
+to fix build errors detected by buildroot autobuilders:
+https://autobuild.buildroot.net/results/76d/76d18437241d1281566b76ed1cec2ba99c3532da//build-end.log
+
+./ports_glibc.c: In function 'readPort1':
+./ports_glibc.c:54:10: error: implicit declaration of function 'inb' [-Wimplicit-function-declaration]
+   54 |   return inb(port);
+      |          ^~~
+./ports_glibc.c: In function 'writePort1':
+./ports_glibc.c:63:3: error: implicit declaration of function 'outb' [-Wimplicit-function-declaration]
+   63 |   outb(value, port);
+      |   ^~~~
+
+Upstream: https://github.com/brltty/brltty/commit/85cadac951cda709ce53d49923114595c16a8f16
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ Programs/ports_glibc.c |  4 ++--
+ config.h.in            |  3 +++
+ configure.ac           | 19 +++++++++++++++++++
+ 3 files changed, 24 insertions(+), 2 deletions(-)
+
+diff --git a/Programs/ports_glibc.c b/Programs/ports_glibc.c
+index 4233f9ea0..4a57f626d 100644
+--- a/Programs/ports_glibc.c
++++ b/Programs/ports_glibc.c
+@@ -50,7 +50,7 @@ disablePorts (unsigned short int base, unsigned short int count) {
+ 
+ unsigned char
+ readPort1 (unsigned short int port) {
+-#ifdef HAVE_SYS_IO_H
++#ifdef BRLTTY_HAVE_SYS_IO_H_WITH_INB_OUTB
+   return inb(port);
+ #else /* HAVE_SYS_IO_H */
+   return 0;
+@@ -59,7 +59,7 @@ readPort1 (unsigned short int port) {
+ 
+ void
+ writePort1 (unsigned short int port, unsigned char value) {
+-#ifdef HAVE_SYS_IO_H
++#ifdef BRLTTY_HAVE_SYS_IO_H_WITH_INB_OUTB
+   outb(value, port);
+ #endif /* HAVE_SYS_IO_H */
+ }
+diff --git a/config.h.in b/config.h.in
+index 537d3af92..edea70cea 100644
+--- a/config.h.in
++++ b/config.h.in
+@@ -331,6 +331,9 @@ extern "C" {
+ /* Define this if the header file sys/io.h exists. */
+ #undef HAVE_SYS_IO_H
+ 
++/* Define to 1 if you have the <sys/io.h> providing inb,outb. */
++#undef BRLTTY_HAVE_SYS_IO_H_WITH_INB_OUTB
++
+ /* Define this if the header file sys/modem.h exists. */
+ #undef HAVE_SYS_MODEM_H
+ 
+diff --git a/configure.ac b/configure.ac
+index b78d482f6..0a2a70dd0 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -961,6 +961,25 @@ AC_CHECK_FUNCS([shmget shm_open])
+ AC_CHECK_FUNCS([getpeereid getpeerucred getzoneid])
+ AC_CHECK_FUNCS([mempcpy wmempcpy])
+ 
++dnl sys/io.h might provide ioperm but not inb,outb (like for
++dnl non i386/x32/x86_64 with musl libc)
++if test "${ac_cv_header_sys_io_h}" = "yes"; then
++  AC_MSG_CHECKING([for inb,outb (provided by sys/io.h)])
++  AC_LINK_IFELSE(
++    [AC_LANG_PROGRAM([[#include <sys/io.h>]],
++      [[inb(0);outb(0,0);]])],
++    [AC_MSG_RESULT([yes])
++      brltty_cv_have_sys_io_h_with_inb_outb="yes"],
++    [AC_MSG_RESULT([no])
++      brltty_cv_have_sys_io_h_with_inb_outb="no"
++      AC_MSG_WARN([sys/io.h does not provide inb,outb (non i386/x32/x86_64 arch?)])])
++  if test "$brltty_cv_have_sys_io_h_with_inb_outb" = "yes"; then
++    AC_DEFINE(BRLTTY_HAVE_SYS_IO_H_WITH_INB_OUTB, 1, [Define to 1 if you have the <sys/io.h> providing inb,outb.])
++  fi
++else
++  brltty_cv_have_sys_io_h_with_inb_outb="no"
++fi
++
+ case "${host_os}"
+ in
+    cygwin*|mingw*)
+-- 
+2.47.3
+
