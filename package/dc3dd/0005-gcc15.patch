@@ -1,0 +1,39 @@
+Description: Fix FTBFS with GCC-15
+Origin: backport, https://build.opensuse.org/projects/security:forensics/packages/dc3dd/files/dc3dd-gcc15.patch
+Bug: https://sourceforge.net/p/dc3dd/bugs/24/
+Bug-Debian: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1096508
+Forwarded: not-needed
+Reviewed-by: Sven Geuer <sge@debian.org>
+Last-Update: 2025-09-25
+
+Upstream: https://sourceforge.net/p/dc3dd/bugs/24/
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+Index: dc3dd-7.3.1/lib/posixtm.c
+===================================================================
+--- dc3dd-7.3.1.orig/lib/posixtm.c
++++ dc3dd-7.3.1/lib/posixtm.c
+@@ -41,7 +41,7 @@
+    of `digit' even when the host does not conform to POSIX.  */
+ #define ISDIGIT(c) ((unsigned int) (c) - '0' <= 9)
+ 
+-time_t mktime ();
++time_t mktime (struct tm *tm);
+ 
+ /*
+   POSIX requires:
+Index: dc3dd-7.3.1/m4/jm-macros.m4
+===================================================================
+--- dc3dd-7.3.1.orig/m4/jm-macros.m4
++++ dc3dd-7.3.1/m4/jm-macros.m4
+@@ -38,7 +38,7 @@ AC_DEFUN([coreutils_MACROS],
+   # By default, argmatch should fail calling usage (1).
+   AC_DEFINE(ARGMATCH_DIE, [usage (1)],
+ 	    [Define to the function xargmatch calls on failures.])
+-  AC_DEFINE(ARGMATCH_DIE_DECL, [void usage ()],
++  AC_DEFINE(ARGMATCH_DIE_DECL, [void usage (int)],
+ 	    [Define to the declaration of the xargmatch failure function.])
+ 
+   # used by ls
