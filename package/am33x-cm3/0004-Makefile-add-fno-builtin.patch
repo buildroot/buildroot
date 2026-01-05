@@ -1,6 +1,6 @@
-From 25fc567ba8a0cd199e48bfa82863247d953784ea Mon Sep 17 00:00:00 2001
+From bce00a9036fb0fc4d7735cd2c386b4932b915d97 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
-Date: Sun, 30 Aug 2020 20:59:29 +0200
+Date: Tue, 16 Dec 2025 15:09:15 +0100
 Subject: [PATCH] Makefile: add -fno-builtin
 
 Build with gcc 10 fails on:
@@ -18,24 +18,27 @@ To fix this build failure, add -fno-builtin
 Fixes:
  - http://autobuild.buildroot.org/results/a991e6efa012df518ff1bb35017ad2c96c8feedc
 
+Upstream: N/A Buildroot specific
+
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 ---
  Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/Makefile b/Makefile
-index fe3d844..fa24d4b 100644
+index 9146a8b6a7da..b4869c494593 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -17,7 +17,7 @@ CFLAGS =-march=armv7-m -mcpu=cortex-m3 -mthumb -nostdlib -Wall -Wundef \
+@@ -17,7 +17,7 @@ CFLAGS =-march=armv7-m -mcpu=cortex-m3 -mthumb -nostdlib -ffreestanding -Wall -W
  	-Werror-implicit-function-declaration -Wstrict-prototypes \
  	-Wdeclaration-after-statement -fno-delete-null-pointer-checks \
  	-Wempty-body -fno-strict-overflow -fno-stack-protector \
--	-fno-pie -g -I$(INCLUDES) -O2
-+	-fno-pie -fno-builtin -g -I$(INCLUDES) -O2
+-	-fno-pie -g -I$(INCLUDES) -O2 -MD
++	-fno-pie -fno-builtin -g -I$(INCLUDES) -O2 -MD
  LDFLAGS =-nostartfiles -fno-exceptions -Tfirmware.ld
  
  EXECUTABLE=am335x-pm-firmware.elf
 -- 
-2.28.0
+2.43.0
 
