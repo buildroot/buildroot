@@ -5,6 +5,7 @@ config BR2_PACKAGE_PYTHON_MEMRAY
 	depends on BR2_TOOLCHAIN_HAS_THREADS # elfutils
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # elfutils/libdebuginfod
 	depends on BR2_PACKAGE_LIBUNWIND_ARCH_SUPPORTS
+	depends on BR2_INSTALL_LIBSTDCPP
 	select BR2_PACKAGE_ELFUTILS
 	select BR2_PACKAGE_ELFUTILS_LIBDEBUGINFOD
 	select BR2_PACKAGE_LIBUNWIND
@@ -18,7 +19,8 @@ config BR2_PACKAGE_PYTHON_MEMRAY
 
 	  https://github.com/bloomberg/memray
 
-comment "python-memray needs a toolchain w/ dynamic library, threads, wchar"
+comment "python-memray needs a toolchain w/ C++, dynamic library, threads, wchar"
 	depends on BR2_PACKAGE_LIBUNWIND_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
-	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS
+	depends on !BR2_INSTALL_LIBSTDCPP || BR2_STATIC_LIBS || \
+		!BR2_TOOLCHAIN_HAS_THREADS
