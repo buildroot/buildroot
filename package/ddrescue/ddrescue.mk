@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DDRESCUE_VERSION = 1.29.1
+DDRESCUE_VERSION = 1.30
 DDRESCUE_SOURCE = ddrescue-$(DDRESCUE_VERSION).tar.lz
 DDRESCUE_SITE = $(BR2_GNU_MIRROR)/ddrescue
 DDRESCUE_LICENSE = GPL-2.0+
