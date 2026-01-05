@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_RICH
 	bool "python-rich"
+	select BR2_PACKAGE_PYTHON3_ZLIB
 	select BR2_PACKAGE_PYTHON_MARKDOWN_IT_PY # runtime
 	select BR2_PACKAGE_PYTHON_PYGMENTS # runtime
 	help
