@@ -1,0 +1,11 @@
+# see https://github.com/sigoden/aichat/blob/main/config.example.yaml
+
+model: llama-server:ggml-org/gemma-3-270m-it-GGUF
+stream: false
+highlight: false
+clients:
+- type: openai-compatible
+  name: llama-server
+  api_base: http://127.0.0.1:8080/v1
+  models:
+  - name: ggml-org/gemma-3-270m-it-GGUF
