@@ -144,6 +144,16 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2025.11.2"
+
+config BR2_PACKAGE_LIBSVG_CAIRO
+	bool "libsvg-cairo package removed"
+	select BR2_LEGACY
+	help
+	  The libsvg-cairo package has been removed. Its latest
+	  upstream release was from 2005, and it wasn't used by any
+	  other Buildroot package.
+
 comment "Legacy options removed in 2025.11.1"
 
 config BR2_PACKAGE_RPI_FIRMWARE_INSTALL_VCDBG
