@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2025.02.11"
 
+config BR2_PACKAGE_CRIU
+	bool "criu has been removed"
+	select BR2_LEGACY
+	help
+	  criu was removed from Buildroot as it was insufficiently
+	  maintained. It can be re-added if someone volunteers to
+	  maintain it.
+
 config BR2_PACKAGE_GCONF
 	bool "gconf package removed"
 	select BR2_LEGACY
