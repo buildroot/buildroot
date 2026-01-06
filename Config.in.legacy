@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2025.11.2"
 
+config BR2_PACKAGE_LOCKDEV
+	bool "lockdev removed"
+	select BR2_LEGACY
+	help
+	  lockdev was no longer maintained upstream, so it has been
+	  dropped.
+
 config BR2_PACKAGE_DBUS_TRIGGERD
 	bool "dbus-triggerd removed"
 	select BR2_LEGACY
