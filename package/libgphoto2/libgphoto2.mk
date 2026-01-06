@@ -53,8 +53,4 @@ else
 LIBGPHOTO2_CONF_OPTS += --with-gdlib=no
 endif
 
-ifeq ($(BR2_PACKAGE_LOCKDEV),y)
-LIBGPHOTO2_DEPENDENCIES += lockdev
-endif
-
 $(eval $(autotools-package))
