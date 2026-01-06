@@ -1,0 +1,31 @@
+From 9360089dfbcb6ee97a6b8f40c85f61e4108c80e4 Mon Sep 17 00:00:00 2001
+From: endlesseden <endlesseden@users.noreply.github.com>
+Date: Tue, 29 Apr 2025 16:11:03 +1000
+Subject: [PATCH] FF_PROFILE Depreciation Fix
+
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/af45cb37e3b2d81a11637c4b2dfe82e8947c41ea
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ libfreerdp/codec/dsp_ffmpeg.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/libfreerdp/codec/dsp_ffmpeg.c b/libfreerdp/codec/dsp_ffmpeg.c
+index 5c89af6b1..8955e894d 100644
+--- a/libfreerdp/codec/dsp_ffmpeg.c
++++ b/libfreerdp/codec/dsp_ffmpeg.c
+@@ -262,7 +262,11 @@ static BOOL ffmpeg_open_context(FREERDP_DSP_CONTEXT* context)
+ 			break;
+ 
+ 		case AV_CODEC_ID_AAC:
++#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(60, 31, 102)
+ 			context->context->profile = FF_PROFILE_AAC_MAIN;
++#else
++			context->context->profile = AV_PROFILE_AAC_MAIN;
++#endif
+ 			break;
+ 
+ 		default:
+-- 
+2.47.3
+

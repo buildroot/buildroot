@@ -1,0 +1,44 @@
+From dcc8f415866e348ae86cfe85fde3c2d9285a7208 Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Tue, 28 Jan 2025 20:25:17 +0100
+Subject: [PATCH] ignore EAGAIN for FFMPEG
+
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/726add2a982bfdf4cffef3cc95395c9a4b49385b
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[partially backported to stable-2.0 branch]
+---
+ libfreerdp/codec/h264_ffmpeg.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libfreerdp/codec/h264_ffmpeg.c b/libfreerdp/codec/h264_ffmpeg.c
+index 9c445b825..da6bed08e 100644
+--- a/libfreerdp/codec/h264_ffmpeg.c
++++ b/libfreerdp/codec/h264_ffmpeg.c
+@@ -100,10 +100,10 @@ static void libavcodec_destroy_encoder(H264_CONTEXT* h264)
+ 
+ 	if (sys->codecEncoderContext)
+ 	{
+-		avcodec_close(sys->codecEncoderContext);
+ #if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(55, 69, 100)
+ 		avcodec_free_context(&sys->codecEncoderContext);
+ #else
++		avcodec_close(sys->codecEncoderContext);
+ 		av_free(sys->codecEncoderContext);
+ #endif
+ 	}
+@@ -430,10 +430,10 @@ static void libavcodec_uninit(H264_CONTEXT* h264)
+ 
+ 	if (sys->codecDecoderContext)
+ 	{
+-		avcodec_close(sys->codecDecoderContext);
+ #if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(55, 69, 100)
+ 		avcodec_free_context(&sys->codecDecoderContext);
+ #else
++		avcodec_close(sys->codecDecoderContext);
+ 		av_free(sys->codecDecoderContext);
+ #endif
+ 	}
+-- 
+2.47.3
+

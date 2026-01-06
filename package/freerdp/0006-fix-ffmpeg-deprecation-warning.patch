@@ -1,0 +1,34 @@
+From 83ba6817093ad1546053878c2e720d13f29f9126 Mon Sep 17 00:00:00 2001
+From: Armin Novak <anovak@thincast.com>
+Date: Fri, 24 Nov 2023 19:40:52 +0100
+Subject: [PATCH] fix ffmpeg deprecation warning
+
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/1ef7b9e3e06ef69e5145c6f11cc330078abaa9ea
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ libfreerdp/codec/dsp_ffmpeg.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/libfreerdp/codec/dsp_ffmpeg.c b/libfreerdp/codec/dsp_ffmpeg.c
+index 22d6ce215..5c89af6b1 100644
+--- a/libfreerdp/codec/dsp_ffmpeg.c
++++ b/libfreerdp/codec/dsp_ffmpeg.c
+@@ -436,7 +436,13 @@ static BOOL ffmpeg_encode_frame(AVCodecContext* context, AVFrame* in, AVPacket*
+ 	if (in->format == AV_SAMPLE_FMT_FLTP)
+ 	{
+ 		uint8_t** pp = in->extended_data;
+-		for (int y = 0; y < in->channels; y++)
++#if LIBAVUTIL_VERSION_INT < AV_VERSION_INT(57, 28, 100)
++		const int nr_channels = in->channels;
++#else
++		const int nr_channels = in->ch_layout.nb_channels;
++#endif
++
++		for (int y = 0; y < nr_channels; y++)
+ 		{
+ 			float* data = (float*)pp[y];
+ 			for (int x = 0; x < in->nb_samples; x++)
+-- 
+2.47.3
+
