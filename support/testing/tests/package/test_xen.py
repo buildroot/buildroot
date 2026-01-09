@@ -6,27 +6,28 @@ import infra.basetest
 class TestXenBase(infra.basetest.BRTest):
     """A class to test Xen for multiple architectures."""
 
-    # We run only in the initramfs; this allows to use a single ramdisk image
-    # for both the host and the guest.
+    # We use the same rootfs contents for both the host and the guest.
     base_config = \
         """
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_ROOTFS_POST_BUILD_SCRIPT="support/testing/tests/package/test_xen/common/post-build.sh"
         BR2_LINUX_KERNEL=y
         BR2_LINUX_KERNEL_CUSTOM_VERSION=y
-        BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="6.17.1"
+        BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="6.18.4"
         BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG=y
         BR2_LINUX_KERNEL_NEEDS_HOST_OPENSSL=y
         BR2_PACKAGE_BRIDGE_UTILS=y
         BR2_PACKAGE_XEN=y
         BR2_PACKAGE_XEN_HYPERVISOR=y
         BR2_PACKAGE_XEN_TOOLS=y
-        BR2_TARGET_ROOTFS_CPIO=y
+        BR2_TARGET_ROOTFS_EXT2=y
+        BR2_TARGET_ROOTFS_EXT2_4=y
+        BR2_TARGET_ROOTFS_EXT2_SIZE="128M"
         # BR2_TARGET_ROOTFS_TAR is not set
         BR2_TARGET_UBOOT=y
         BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG=y
         BR2_TARGET_UBOOT_CUSTOM_VERSION=y
-        BR2_TARGET_UBOOT_CUSTOM_VERSION_VALUE="2025.07"
+        BR2_TARGET_UBOOT_CUSTOM_VERSION_VALUE="2026.01"
         BR2_TARGET_UBOOT_NEEDS_OPENSSL=y
         BR2_TARGET_UBOOT_NEEDS_GNUTLS=y
         BR2_PACKAGE_HOST_DOSFSTOOLS=y
@@ -66,6 +67,15 @@ class TestXenBase(infra.basetest.BRTest):
         There is a stability issue for Armv7 with Qemu < 9.1, which makes the
         dom1 -> gw connection unreliable. As a workaround, we interact only with
         dom0 from dom1 (hence the fixed IP addresses).
+
+        Here is the disk setup we use in the test:
+
+        Image/part.  Dom0        Dom1     Description
+        -----------  ----------  -------  -----------
+           disk.img  vda
+           +-- boot  vda1, /mnt           Contains Xen and kernel
+           +-- root  vda2, /              Dom0 rootfs
+           `- guest  vda3        xvda, /  Dom1 rootfs
         """
 
         # Boot the emulator.
@@ -105,6 +115,11 @@ class TestXenBase(infra.basetest.BRTest):
         uuid = self.get_dom_uuid()
         self.assertNotEqual(uuid, dom0_uuid, "Unexpected dom0 UUID")
 
+        # Verify dom1 block device.
+        # (This is a bit redundant, as if the test runs this far we already know
+        # that dom1 found its rootfs.)
+        self.assertRunOk("ls -laF /sys/class/block/xvda")
+
         # Bring up the network in the dom1.
         self.assertRunOk("ifconfig eth0 10.0.2.43")
         self.assertRunOk("ifconfig -a")
@@ -126,6 +141,9 @@ class TestXenBase(infra.basetest.BRTest):
 
         # Check that we have two VMs running.
         self.assertNumVM(2)
+
+        # Print the block setup for debugging.
+        self.assertRunOk("xl block-list dom1")
 
         # Print the bridge setup for debugging.
         self.assertRunOk("brctl show")
@@ -178,6 +196,12 @@ class TestXenArmv7(TestXenBase):
     # We use U-Boot and a script to load the Dom0 images and amend the
     # Devicetree for Xen dynamically.
     # We have a custom kernel config to reduce build time.
+    # We need to build host-qemu to workaround an issue with Xen guest block
+    # devices on 32b Arm.
+    # This was fixed by commit 7175a562f157 ("hw/intc/arm_gic: Fix deactivation
+    # of SPI lines") and the fix is present in Qemu versions >= 9.1.0.
+    # When the CI docker image will have a recent-enough Qemu version with the
+    # fix, we can remove the host-qemu package from the test configuration.
     config = TestXenBase.base_config + \
         """
         BR2_arm=y
@@ -191,6 +215,8 @@ class TestXenArmv7(TestXenBase):
         BR2_PACKAGE_HOST_UBOOT_TOOLS=y
         BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT=y
         BR2_PACKAGE_HOST_UBOOT_TOOLS_BOOT_SCRIPT_SOURCE="support/testing/tests/package/test_xen/arm/boot.cmd"
+        BR2_PACKAGE_HOST_QEMU=y
+        BR2_PACKAGE_HOST_QEMU_SYSTEM_MODE=y
         """
 
     def test_run(self):
