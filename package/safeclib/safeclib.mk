@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SAFECLIB_VERSION = 3.7.1
+SAFECLIB_VERSION = 3.9.1
 SAFECLIB_SITE = \
 	https://github.com/rurban/safeclib/releases/download/v$(SAFECLIB_VERSION)
 SAFECLIB_SOURCE = safeclib-$(SAFECLIB_VERSION).tar.xz
