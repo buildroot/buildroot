@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-SQLITE_VERSION = 3.51.1
-SQLITE_TAR_VERSION = 3510100
+SQLITE_VERSION = 3.51.2
+SQLITE_TAR_VERSION = 3510200
 SQLITE_SOURCE = sqlite-autoconf-$(SQLITE_TAR_VERSION).tar.gz
-SQLITE_SITE = https://www.sqlite.org/2025
+SQLITE_SITE = https://www.sqlite.org/2026
 SQLITE_LICENSE = blessing
 SQLITE_LICENSE_FILES = tea/license.terms
 SQLITE_CPE_ID_VENDOR = sqlite
