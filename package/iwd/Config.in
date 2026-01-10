@@ -1,6 +1,6 @@
 config BR2_PACKAGE_IWD
 	bool "iwd"
-	depends on BR2_USE_MMU # dbus
+	depends on BR2_USE_MMU # dbus, ell
 	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # ell
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12 # ell
