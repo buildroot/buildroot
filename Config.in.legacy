@@ -146,6 +146,14 @@ endif
 
 comment "Legacy options removed in 2026.02"
 
+config BR2_PACKAGE_XDRIVER_XF86_INPUT_MOUSE
+	bool "xf86-input-mouse removed"
+	select BR2_LEGACY
+	help
+	  Linux support was removed upstream in version
+	  2.0.0. Upstream recommends to switch to xf86-input-evdev or
+	  xf86-input-libinput.
+
 config BR2_PACKAGE_HOST_JSMIN
 	bool "host-jsmin has been removed"
 	select BR2_LEGACY
