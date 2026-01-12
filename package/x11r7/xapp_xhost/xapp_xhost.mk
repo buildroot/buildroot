@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XAPP_XHOST_VERSION = 1.0.9
+XAPP_XHOST_VERSION = 1.0.10
 XAPP_XHOST_SOURCE = xhost-$(XAPP_XHOST_VERSION).tar.xz
 XAPP_XHOST_SITE = https://xorg.freedesktop.org/archive/individual/app
 XAPP_XHOST_LICENSE = MIT
