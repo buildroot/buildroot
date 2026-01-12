@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XAPP_XCOMPMGR_VERSION = 1.1.9
+XAPP_XCOMPMGR_VERSION = 1.1.10
 XAPP_XCOMPMGR_SOURCE = xcompmgr-$(XAPP_XCOMPMGR_VERSION).tar.xz
 XAPP_XCOMPMGR_SITE = https://xorg.freedesktop.org/archive/individual/app
 XAPP_XCOMPMGR_LICENSE = MIT
