@@ -4,8 +4,10 @@
 #
 ################################################################################
 
-PICO_SDK_VERSION = 1.5.1
-PICO_SDK_SITE = $(call github,raspberrypi,pico-sdk,$(PICO_SDK_VERSION))
+PICO_SDK_VERSION = 2.2.0
+PICO_SDK_SITE = https://github.com/raspberrypi/pico-sdk.git
+PICO_SDK_SITE_METHOD = git
+PICO_SDK_GIT_SUBMODULES = YES
 PICO_SDK_LICENSE = BSD-3-Clause
 PICO_SDK_LICENSE_FILES = LICENSE.TXT
 PICO_SDK_INSTALL_STAGING = YES

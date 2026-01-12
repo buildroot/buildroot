@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PICOTOOL_VERSION = 1.1.2
+PICOTOOL_VERSION = 2.2.0-a4
 PICOTOOL_SITE = $(call github,raspberrypi,picotool,$(PICOTOOL_VERSION))
 PICOTOOL_CONF_OPTS = -DPICO_SDK_PATH=$(STAGING_DIR)/usr/share/pico-sdk
 PICOTOOL_DEPENDENCIES = libusb pico-sdk
