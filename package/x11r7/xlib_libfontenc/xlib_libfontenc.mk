@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XLIB_LIBFONTENC_VERSION = 1.1.7
+XLIB_LIBFONTENC_VERSION = 1.1.8
 XLIB_LIBFONTENC_SOURCE = libfontenc-$(XLIB_LIBFONTENC_VERSION).tar.xz
-XLIB_LIBFONTENC_SITE = http://xorg.freedesktop.org/releases/individual/lib
+XLIB_LIBFONTENC_SITE = https://xorg.freedesktop.org/archive/individual/lib
 XLIB_LIBFONTENC_LICENSE = MIT
 XLIB_LIBFONTENC_LICENSE_FILES = COPYING
 XLIB_LIBFONTENC_INSTALL_STAGING = YES
