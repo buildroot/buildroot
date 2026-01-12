@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XAPP_XGC_VERSION = 1.0.6
+XAPP_XGC_VERSION = 1.0.7
 XAPP_XGC_SOURCE = xgc-$(XAPP_XGC_VERSION).tar.xz
 XAPP_XGC_SITE = https://xorg.freedesktop.org/archive/individual/app
 XAPP_XGC_LICENSE = MIT
