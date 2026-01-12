@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XAPP_XEDIT_VERSION = 1.2.3
+XAPP_XEDIT_VERSION = 1.2.4
 XAPP_XEDIT_SOURCE = xedit-$(XAPP_XEDIT_VERSION).tar.xz
-XAPP_XEDIT_SITE = http://xorg.freedesktop.org/releases/individual/app
+XAPP_XEDIT_SITE = https://xorg.freedesktop.org/archive/individual/app
 XAPP_XEDIT_LICENSE = MIT
 XAPP_XEDIT_LICENSE_FILES = COPYING
 XAPP_XEDIT_DEPENDENCIES = xlib_libXaw
