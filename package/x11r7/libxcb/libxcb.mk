@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-LIBXCB_VERSION = 1.15
+LIBXCB_VERSION = 1.17.0
 LIBXCB_SOURCE = libxcb-$(LIBXCB_VERSION).tar.xz
-LIBXCB_SITE = http://xcb.freedesktop.org/dist
+LIBXCB_SITE = https://xorg.freedesktop.org/archive/individual/lib
 LIBXCB_LICENSE = MIT
 LIBXCB_LICENSE_FILES = COPYING
 LIBXCB_CPE_ID_VENDOR = x
