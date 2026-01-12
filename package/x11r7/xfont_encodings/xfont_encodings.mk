@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XFONT_ENCODINGS_VERSION = 1.0.7
+XFONT_ENCODINGS_VERSION = 1.1.0
 XFONT_ENCODINGS_SOURCE = encodings-$(XFONT_ENCODINGS_VERSION).tar.xz
 XFONT_ENCODINGS_SITE = https://xorg.freedesktop.org/archive/individual/font
 XFONT_ENCODINGS_LICENSE = Public Domain
