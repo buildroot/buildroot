@@ -11,6 +11,8 @@ appended in the target:
 Other drivers (e.g. keyboard) got rid of sdkdir. Do the same.
 
 Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
+[Bernd: rebased for version 1.10.0]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  Makefile.am          | 1 -
  configure.ac         | 9 ---------
@@ -34,9 +36,9 @@ diff --git a/configure.ac b/configure.ac
 index 970dd5f..574353b 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -55,11 +55,6 @@ XORG_DRIVER_CHECK_EXT(RANDR, randrproto)
+@@ -60,11 +60,6 @@ XORG_DRIVER_CHECK_EXT(RANDR, randrproto)
  # Obtain compiler/linker options for the Synaptics driver dependencies
- PKG_CHECK_MODULES(XORG, [inputproto >= 2.1.99.3] [xorg-server >= 1.12] xproto inputproto $REQUIRED_MODULES)
+ PKG_CHECK_MODULES(XORG, [inputproto >= 2.1.99.3] [xorg-server >= 1.18] xproto inputproto $REQUIRED_MODULES)
  
 -# X Server SDK location is required to install Synaptics header files
 -# This location is also relayed in the xorg-synaptics.pc file
@@ -46,7 +48,7 @@ index 970dd5f..574353b 100644
  # -----------------------------------------------------------------------------
  #			Configuration options
  # -----------------------------------------------------------------------------
-@@ -154,10 +149,6 @@ if test "x$have_libxtst" = "xyes" ; then
+@@ -159,10 +154,6 @@ if test "x$have_libxtst" = "xyes" ; then
  fi
  # -----------------------------------------------------------------------------
  
