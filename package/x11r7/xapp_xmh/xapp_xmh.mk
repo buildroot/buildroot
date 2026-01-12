@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XAPP_XMH_VERSION = 1.0.4
+XAPP_XMH_VERSION = 1.0.5
 XAPP_XMH_SOURCE = xmh-$(XAPP_XMH_VERSION).tar.xz
 XAPP_XMH_SITE = https://xorg.freedesktop.org/archive/individual/app
 XAPP_XMH_LICENSE = MIT
