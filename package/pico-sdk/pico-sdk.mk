@@ -19,4 +19,10 @@ define PICO_SDK_INSTALL_STAGING_CMDS
 	cp -r $(@D)/* $(STAGING_DIR)/usr/share/pico-sdk
 endef
 
+define HOST_PICO_SDK_INSTALL_CMDS
+	mkdir -p $(HOST_DIR)/usr/share/pico-sdk
+	cp -r $(@D)/* $(HOST_DIR)/usr/share/pico-sdk
+endef
+
 $(eval $(generic-package))
+$(eval $(host-generic-package))
