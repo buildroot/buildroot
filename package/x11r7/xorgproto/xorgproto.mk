@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XORGPROTO_VERSION = 2024.1
+XORGPROTO_VERSION = 2025.1
 XORGPROTO_SOURCE = xorgproto-$(XORGPROTO_VERSION).tar.xz
 XORGPROTO_SITE = https://xorg.freedesktop.org/archive/individual/proto
 XORGPROTO_LICENSE = MIT
@@ -50,6 +50,8 @@ XORGPROTO_INSTALL_STAGING = YES
 XORGPROTO_INSTALL_TARGET = NO
 # xproxymngproto is needed by xfindproxy
 XORGPROTO_CONF_OPTS += --enable-legacy
+XORGPROTO_DEPENDENCIES = host-pkgconf
+HOST_XORGPROTO_DEPENDENCIES = host-pkgconf
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
