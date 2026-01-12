@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XAPP_BDFTOPCF_VERSION = 1.1.1
+XAPP_BDFTOPCF_VERSION = 1.1.2
 XAPP_BDFTOPCF_SOURCE = bdftopcf-$(XAPP_BDFTOPCF_VERSION).tar.xz
 XAPP_BDFTOPCF_SITE = https://xorg.freedesktop.org/archive/individual/util
 XAPP_BDFTOPCF_LICENSE = MIT
