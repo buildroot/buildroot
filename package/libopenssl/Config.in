@@ -229,4 +229,12 @@ config BR2_PACKAGE_LIBOPENSSL_ENABLE_SSL_TRACE
 	  Build with SSL Trace support. Disabling this option may
 	  provide a small reduction in libssl binary size.
 
+config BR2_PACKAGE_LIBOPENSSL_ENABLE_TLS_DEPRECATED_EC
+	bool "enable legacy TLS EC groups"
+	default y
+	help
+	  Build with support for legacy TLS EC groups that were
+	  deprecated in RFC8422. Enabling this option risks to
+	  accidentally use the deprecated curves.
+
 endif # BR2_PACKAGE_LIBOPENSSL
