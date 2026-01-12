@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XLIB_LIBXCURSOR_VERSION = 1.2.1
+XLIB_LIBXCURSOR_VERSION = 1.2.3
 XLIB_LIBXCURSOR_SOURCE = libXcursor-$(XLIB_LIBXCURSOR_VERSION).tar.xz
-XLIB_LIBXCURSOR_SITE = http://xorg.freedesktop.org/releases/individual/lib
+XLIB_LIBXCURSOR_SITE = https://xorg.freedesktop.org/archive/individual/lib
 XLIB_LIBXCURSOR_LICENSE = MIT
 XLIB_LIBXCURSOR_LICENSE_FILES = COPYING
 XLIB_LIBXCURSOR_INSTALL_STAGING = YES
