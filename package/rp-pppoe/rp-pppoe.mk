@@ -5,7 +5,8 @@
 ################################################################################
 
 RP_PPPOE_VERSION = 4.0
-RP_PPPOE_SITE = $(call github,dfskoll,rp-pppoe,$(RP_PPPOE_VERSION))
+RP_PPPOE_SITE = https://codeberg.org/dskoll/rp-pppoe/archive
+RP_PPPOE_SOURCE = $(RP_PPPOE_VERSION).tar.gz
 RP_PPPOE_LICENSE = GPL-2.0
 RP_PPPOE_LICENSE_FILES = doc/LICENSE
 RP_PPPOE_CPE_ID_VALID = YES
