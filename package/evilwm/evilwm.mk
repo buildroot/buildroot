@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EVILWM_VERSION = 1.4.3
+EVILWM_VERSION = 1.5
 EVILWM_SITE = https://www.6809.org.uk/evilwm/dl
 EVILWM_LICENSE = evilwm license
 EVILWM_LICENSE_FILES = README
