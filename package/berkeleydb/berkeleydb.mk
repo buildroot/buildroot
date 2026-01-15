@@ -45,6 +45,7 @@ define BERKELEYDB_CONFIGURE_CMDS
 		--with-pic \
 		--enable-o_direct \
 		$(if $(BR2_TOOLCHAIN_HAS_THREADS),--enable-mutexsupport,--disable-mutexsupport) \
+		$(if $(BR2_TOOLCHAIN_HAS_THREADS),--enable-replication,--disable-replication) \
 	)
 endef
 
