@@ -10,11 +10,11 @@ Signed-off-by: Martin Bark <martin@barkynet.com>
  1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/src/os/unix/ngx_linux_config.h b/src/os/unix/ngx_linux_config.h
-index 2f6129d..4244086 100644
+index d99358c93..612935524 100644
 --- a/src/os/unix/ngx_linux_config.h
 +++ b/src/os/unix/ngx_linux_config.h
-@@ -55,10 +55,12 @@
- #include <crypt.h>
+@@ -54,10 +54,12 @@
+ #include <sys/ioctl.h>
  #include <sys/utsname.h>        /* uname() */
  
 -#include <dlfcn.h>
@@ -27,7 +27,4 @@ index 2f6129d..4244086 100644
 +#endif
  
  
- #if (NGX_HAVE_POSIX_SEM)
--- 
-2.8.2
-
+ #if (NGX_HAVE_CRYPT_H)
