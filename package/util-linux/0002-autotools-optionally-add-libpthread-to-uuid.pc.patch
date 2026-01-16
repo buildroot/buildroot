@@ -1,0 +1,42 @@
+From a06adacd1009174b7ca35f529a2db165f6c1f3aa Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Fri, 16 Jan 2026 23:33:34 +0100
+Subject: [PATCH] autotools: optionally add libpthread to uuid.pc
+
+Fixes https://github.com/util-linux/util-linux/issues/3210#issuecomment-3477915953
+
+Upstream: https://github.com/util-linux/util-linux/commit/d88a62e4cd385e07b3cb8fb309bbb03981ea2970
+
+[Bernd: backported to 2.41.3]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ Makefile.am        | 1 +
+ libuuid/uuid.pc.in | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 01e99701d..cd1d157ce 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -189,6 +189,7 @@ edit_cmd = sed \
+ 	 -e 's|@usrbin_execdir[@]|$(usrbin_execdir)|g' \
+ 	 -e 's|@usrsbin_execdir[@]|$(usrsbin_execdir)|g' \
+ 	 -e 's|@SOCKET_LIBS[@]|$(SOCKET_LIBS)|g' \
++	 -e 's|@PTHREAD_LIBS[@]|$(PTHREAD_LIBS)|g' \
+ 	 -e 's|@VERSION[@]|$(VERSION)|g' \
+ 	 -e 's|@ADJTIME_PATH[@]|$(ADJTIME_PATH)|g' \
+ 	 -e 's|@LIBUUID_VERSION[@]|$(LIBUUID_VERSION)|g' \
+diff --git a/libuuid/uuid.pc.in b/libuuid/uuid.pc.in
+index 51929fe80..a40dc6644 100644
+--- a/libuuid/uuid.pc.in
++++ b/libuuid/uuid.pc.in
+@@ -7,5 +7,5 @@ Name: uuid
+ Description: Universally unique id library
+ Version: @LIBUUID_VERSION@
+ Cflags: -I${includedir}/uuid
+-Libs.private: @SOCKET_LIBS@ -lpthread
++Libs.private: @SOCKET_LIBS@ @PTHREAD_LIBS@
+ Libs: -L${libdir} -luuid
+-- 
+2.47.3
+
