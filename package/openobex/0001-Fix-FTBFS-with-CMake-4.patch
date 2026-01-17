@@ -1,0 +1,29 @@
+From bfd33e3ebf1fe253542b9ea2b6e034c8ce30866d Mon Sep 17 00:00:00 2001
+From: Adrian Bunk <bunk@debian.org>
+Date: Sat, 17 Jan 2026 11:14:15 +0100
+Subject: [PATCH] Fix FTBFS with CMake 4
+
+Bug-Debian: https://bugs.debian.org/1113178
+
+Downloaded from https://sources.debian.org/src/libopenobex/1.7.2-2.3/debian/patches/cmake-4.patch
+
+Upstream: https://gitlab.com/openobex/mainline/-/merge_requests/3
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 813f900..b237f93 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,4 +1,4 @@
+-cmake_minimum_required ( VERSION 3.1 FATAL_ERROR )
++cmake_minimum_required ( VERSION 3.5 FATAL_ERROR )
+ 
+ project ( openobex
+   LANGUAGES C
+-- 
+2.47.3
+
