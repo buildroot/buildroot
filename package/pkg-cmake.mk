@@ -287,6 +287,8 @@ define TOOLCHAIN_CMAKE_INSTALL_FILES
 		> $(HOST_DIR)/share/buildroot/toolchainfile.cmake
 	$(Q)$(INSTALL) -D -m 0644 support/misc/Buildroot.cmake \
 		$(HOST_DIR)/share/buildroot/Platform/Buildroot.cmake
+	$(Q)$(INSTALL) -D -m 0644 support/misc/Buildroot-Initialize.cmake \
+		$(HOST_DIR)/share/buildroot/Platform/Buildroot-Initialize.cmake
 endef
 
 TOOLCHAIN_POST_INSTALL_STAGING_HOOKS += TOOLCHAIN_CMAKE_INSTALL_FILES
