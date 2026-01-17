@@ -1,0 +1,14 @@
+config BR2_PACKAGE_FTXUI
+	bool "ftxui"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_USE_WCHAR # std::wstring()
+	help
+	  FTXUI is a simple cross-platform C++ library
+	  for terminal based user interfaces
+
+	  https://arthursonzogni.github.io/FTXUI/
+
+comment "ftxui needs a toolchain w/ C++, wchar and threads"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_USE_WCHAR
