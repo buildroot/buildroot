@@ -10,9 +10,9 @@
 # development version, unless it is absolutely needed (for example:
 # incompatibility with another library and no maintenance stable
 # version is available).
-WINE_VERSION = 10.0
+WINE_VERSION = 11.0
 WINE_SOURCE = wine-$(WINE_VERSION).tar.xz
-WINE_SITE = https://dl.winehq.org/wine/source/10.0
+WINE_SITE = https://dl.winehq.org/wine/source/11.0
 WINE_LICENSE = LGPL-2.1+
 WINE_LICENSE_FILES = COPYING.LIB LICENSE
 WINE_CPE_ID_VENDOR = winehq
@@ -25,6 +25,7 @@ WINE_CONF_OPTS = \
 	--with-wine-tools=../host-wine-$(WINE_VERSION) \
 	--disable-tests \
 	--disable-win64 \
+	--enable-tools \
 	--without-capi \
 	--without-coreaudio \
 	--without-gettext \
@@ -33,8 +34,7 @@ WINE_CONF_OPTS = \
 	--without-mingw \
 	--without-opencl \
 	--without-oss \
-	--without-vulkan \
-	--without-osmesa  # BR2_PACKAGE_MESA3D_OSMESA_GALLIUM removed in mesa 25.1
+	--without-vulkan
 
 # Wine uses a wrapper around gcc, and uses the value of --host to
 # construct the filename of the gcc to call.  But for external
