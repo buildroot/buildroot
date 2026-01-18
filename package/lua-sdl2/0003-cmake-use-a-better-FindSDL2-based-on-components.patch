@@ -1,0 +1,29 @@
+From 8bb1cbb2b346502d6285a40e25e52d3e41551afb Mon Sep 17 00:00:00 2001
+From: David Demelier <markand@malikania.fr>
+Date: Sun, 24 Jan 2021 14:28:15 +0100
+Subject: [PATCH] cmake: use a better FindSDL2 based on components
+
+Upstream: https://github.com/Tangent128/luasdl2/commit/feb49bb1eea77aa953313f2a641576e515f0ec3b
+
+[Bernd: Partially backported to fix build error with cmake 4]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f5b59de..cc28bdf 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -17,7 +17,7 @@
+ # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ #
+ 
+-cmake_minimum_required(VERSION 2.8)
++cmake_minimum_required(VERSION 3.10)
+ project(Lua-SDL2 C)
+ 
+ # Project information
+-- 
+2.47.3
+
