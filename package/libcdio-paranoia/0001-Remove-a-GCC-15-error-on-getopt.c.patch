@@ -1,0 +1,65 @@
+From c12e48edc5660c70509142349f4020d3f9e36218 Mon Sep 17 00:00:00 2001
+From: "R. Bernstein" <rocky@gnu.org>
+Date: Wed, 1 Oct 2025 15:32:52 -0400
+Subject: [PATCH] Remove a GCC-15 error on getopt.c
+
+Fixes Issue #54
+
+Upstream: https://github.com/libcdio/libcdio-paranoia/commit/c12e48edc5660c70509142349f4020d3f9e36218
+
+[Bernd: backported to 10.2+2.0.1]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/getopt.c |  4 ++--
+ src/getopt.h | 11 +++++++++--
+ 2 files changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/src/getopt.c b/src/getopt.c
+index e51c35b..dce7144 100644
+--- a/src/getopt.c
++++ b/src/getopt.c
+@@ -2,7 +2,7 @@
+    NOTE: getopt is part of the C library, so if you don't know what
+    "Keep this file name-space clean" means, talk to drepper@gnu.org
+    before changing it!
+-   Copyright (C) 1987-2014 Free Software Foundation, Inc.
++   Copyright (C) 1987-2015 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -145,7 +145,7 @@ static struct _getopt_data getopt_data;
+    whose names are inconsistent.  */
+ 
+ #ifndef getenv
+-extern char *getenv ();
++extern char *getenv (const char *);
+ #endif
+ 
+ #endif /* not __GNU_LIBRARY__ */
+diff --git a/src/getopt.h b/src/getopt.h
+index 7cc9167..0a6c1b3 100644
+--- a/src/getopt.h
++++ b/src/getopt.h
+@@ -1,5 +1,5 @@
+ /* Declarations for getopt.
+-   Copyright (C) 1989-2014 Free Software Foundation, Inc.
++   Copyright (C) 1989-2015 Free Software Foundation, Inc.
+    This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -141,7 +141,14 @@ struct option {
+    arguments to the option '\0'.  This behavior is specific to the GNU
+    `getopt'.  */
+ 
+-#ifdef __GNU_LIBRARY__
++/* Check for musl C library (<bits/alltypes.h> is musl specific).  */
++#if !defined __GLIBC__ && __has_include(<bits/alltypes.h>)
++# ifndef __MUSL__
++#   define __MUSL__ 1
++# endif
++#endif
++
++#if defined __GLIBC__ || defined __MUSL__
+ /* Many other libraries have conflicting prototypes for getopt, with
+    differences in the consts, in stdlib.h.  To avoid compilation
+    errors, only prototype getopt for the GNU C library.  */
