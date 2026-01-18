@@ -1,0 +1,43 @@
+From c17897deb52daab300c585a6a6c2456d062d80cf Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Sat, 11 May 2024 22:50:19 -0700
+Subject: [PATCH] server: Correct prameter type for connect() API
+
+connect() function expects the second argument to be point to sockaddr
+as per man sockaddr
+
+int connect (int, const struct sockaddr *, socklen_t);
+
+Fixes build failures with -Wincompatible-pointer-types when using GCC-14
+and musl
+
+Fixes
+| server.c: In function 'server_ping':
+| server.c:308:33: error: passing argument 2 of 'connect' from incompatible pointer type [-Wincompatible-pointer-types]
+|   308 |                 if (connect(fd, un, sizeof(struct sockaddr_un)) < 0)
+|       |                                 ^~
+|       |                                 |
+|       |                                 struct sockaddr_un *
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+
+Upstream: https://git.kernel.org/pub/scm/utils/cpu/mce/mcelog.git/commit/?id=c17897deb52daab300c585a6a6c2456d062d80cf
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ server.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/server.c b/server.c
+index 54c7d57..51b7d3a 100644
+--- a/server.c
++++ b/server.c
+@@ -305,7 +305,7 @@ static int server_ping(struct sockaddr_un *un)
+ 	if (sigsetjmp(ping_timeout_ctx, 1) == 0) {
+ 		ret = -1;
+ 		alarm(initial_ping_timeout);
+-		if (connect(fd, un, sizeof(struct sockaddr_un)) < 0)
++		if (connect(fd, (const struct sockaddr *)un, sizeof(struct sockaddr_un)) < 0)
+ 			goto cleanup;
+ 		if (write(fd, PAIR("ping\n")) < 0)
+ 			goto cleanup;
