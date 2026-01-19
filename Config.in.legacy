@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2026.02"
 
+config BR2_PACKAGE_PHP_ZMQ
+	bool "php-zmq removed"
+	select BR2_LEGACY
+	help
+	  php-zmq was no longer maintained upstream, broken with php
+	  8.5, so it has been dropped.
+
 config BR2_PACKAGE_LOCKDEV
 	bool "lockdev removed"
 	select BR2_LEGACY
