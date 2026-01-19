@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FWTS_VERSION = 25.09.00
+FWTS_VERSION = 25.11.00
 FWTS_SOURCE = fwts-V$(FWTS_VERSION).tar.gz
 FWTS_SITE = https://fwts.ubuntu.com/release
 FWTS_LICENSE = GPL-2.0, LGPL-2.1, Custom
