@@ -16,7 +16,7 @@ Signed-off-by: Gustavo Zacarias <gustavo@zacarias.com.ar>
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 [aduskett@gmail.com: Update for 8.0.7]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
-[Bernd: rebased for 8.4.13]
+[Bernd: rebased for 8.5.2]
 ---
  build/php.m4 | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
@@ -25,12 +25,12 @@ diff --git a/build/php.m4 b/build/php.m4
 index 9586c490..8b3d47ed 100644
 --- a/build/php.m4
 +++ b/build/php.m4
-@@ -1839,7 +1839,7 @@
+@@ -1806,7 +1806,7 @@
+       php_brew_prefix=$($BREW --prefix 2> /dev/null)
+     fi
  
-   dnl Check external libs for iconv funcs.
-   AS_VAR_IF([found_iconv], [no], [
--    for i in $PHP_ICONV /usr/local /usr; do
-+    for i in $PHP_ICONV; do
+-    for i in $PHP_ICONV $php_brew_prefix/opt/libiconv /usr/local /usr; do
++    for i in $PHP_ICONV $php_brew_prefix/opt/libiconv; do
        if test -r $i/include/gnu-libiconv/iconv.h; then
          ICONV_DIR=$i
          ICONV_INCLUDE_DIR=$i/include/gnu-libiconv

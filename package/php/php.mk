@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PHP_VERSION = 8.4.17
+PHP_VERSION = 8.5.2
 PHP_SITE = https://www.php.net/distributions
 PHP_SOURCE = php-$(PHP_VERSION).tar.xz
 PHP_INSTALL_STAGING = YES
@@ -26,9 +26,11 @@ PHP_CONF_OPTS = \
 	--with-external-pcre \
 	--without-pear \
 	--with-config-file-path=/etc \
+	--disable-opcache-jit \
 	--disable-phpdbg \
 	--disable-rpath
 PHP_CONF_ENV = \
+	ac_cv_func_mprotect=yes \
 	EXTRA_LIBS="$(PHP_EXTRA_LIBS)"
 
 ifeq ($(BR2_STATIC_LIBS),y)
@@ -78,16 +80,12 @@ PHP_CXXFLAGS = $(TARGET_CXXFLAGS)
 
 # The OPcache extension isn't cross-compile friendly
 # Throw some defines here to avoid patching heavily
-ifeq ($(BR2_PACKAGE_PHP_EXT_OPCACHE),y)
-PHP_CONF_OPTS += --enable-opcache --disable-opcache-jit
-PHP_CONF_ENV += ac_cv_func_mprotect=yes
 PHP_CFLAGS += \
 	-DHAVE_SHM_IPC \
 	-DHAVE_SHM_MMAP_ANON \
 	-DHAVE_SHM_MMAP_ZERO \
 	-DHAVE_SHM_MMAP_POSIX \
 	-DHAVE_SHM_MMAP_FILE
-endif
 
 # We need to force dl "detection"
 ifeq ($(BR2_STATIC_LIBS),)
@@ -358,9 +356,8 @@ define PHP_INSTALL_FIXUP
 		$(TARGET_DIR)/etc/php.ini
 	$(SED) 's%;date.timezone =.*%date.timezone = $(PHP_LOCALTIME)%' \
 		$(TARGET_DIR)/etc/php.ini
-	$(if $(BR2_PACKAGE_PHP_EXT_OPCACHE),
-		$(SED) '/;extension=php_xsl.dll/azend_extension=opcache.so' \
-		$(TARGET_DIR)/etc/php.ini)
+	$(SED) '/;extension=php_xsl.dll/azend_extension=opcache.so' \
+		$(TARGET_DIR)/etc/php.ini
 endef
 
 PHP_POST_INSTALL_TARGET_HOOKS += PHP_INSTALL_FIXUP
