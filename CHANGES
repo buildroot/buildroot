@@ -1,3 +1,83 @@
+2025.11.1, released January 20, 2026
+
+	Important / security related fixes:
+
+	apache: CVE-2025-55753, CVE-2025-58098, CVE-2025-59775, CVE-2025-65082,
+	  CVE-2025-66200
+	cryptsetup
+	dropbear: CVE-2025-14282, CVE-2019-6111
+	exim: CVE-2025-67896
+	gnupg2
+	imagemagick: CVE-2025-66628
+	libarchive
+	libcoap: CVE-2025-59391, CVE-2025-65493, CVE-2025-65494
+	  CVE-2025-65495, CVE-2025-65496, CVE-2025-65497, CVE-2025-65498,
+	  CVE-2025-65499, CVE-2025-65500, CVE-2025-65501
+	libcurl: CVE-2025-13034, CVE-2025-14017, CVE-2025-14524,
+	  CVE-2025-14819, CVE-2025-15079, CVE-2025-15224
+	libfcgi: CVE-2025-23016.
+	libfreeimage: CVE-2019-12211, CVE-2019-12213, CVE-2020-24292,
+	  CVE-2020-24293, CVE-2020-24295, CVE-2021-33367, CVE-2021-40263,
+	  CVE-2021-40266, CVE-2023-47995, CVE-2023-47997
+	libpng: CVE-2025-66293
+	liburiparser: CVE-2025-67899
+	libxslt: CVE-2025-7424, CVE-2025-9714, CVE-2025-11731
+	linenoise: CVE-2025-9810
+	perl: CVE-2025-40909
+	php: CVE-2025-14177, CVE-2025-14178, CVE-2025-14180
+	python-django: CVE-2025-13372, CVE-2025-64460
+	python-filelock: CVE-2025-68146
+	python-fonttools: CVE-2025-66034
+	python-urllib3: CVE-2025-66471, CVE-2025-66418
+	unbound: CVE-2025-11411
+	vlc
+	xserver_xorg-server: CVE-2025-62229, CVE-2025-62230,
+	  CVE-2025-62231
+	xwayland: CVE-2025-62229, CVE-2025-62230, CVE-2025-62231
+
+	Infrastructure updates/fixes:
+
+	- pkg-stats use HEAD request & unique HTTP user-agent
+	- cve-check: don't fail with unknown CVE
+	- generate-cyclonedx: support 'resolved_with_pedigree'
+	- testing: add host bin dir to PATH
+	- testing: add tests for FIT hash support in package/uboot-tools
+	- testing: add libiio python bindings runtime test
+	- testing: ddrescue: use dmsetup from lvm2
+	- testing: ddrescue: use f-string for test config
+	- testing: add tio runtime test
+	- add 'CVE:' trailer in various patches
+	- add md5 hash and update tarball url to various python packages
+	- testing: ltp-testsuite: replace runltp by kirk
+	- testing: new kvmtool runtime test
+	- gitignore: ignore utils/brmake log output named `br.log`
+	- testing: add opus-tools runtime test
+	- testing: add flac runtime test
+	- testing: test_xen: add block
+
+	Updated / fixed packages: apache, arm-trusted-firmware, atf, audit,
+	bitcoin, boost, busybox, cage, cmake, collectl, cppcms, cpulimit,
+	cryptsetup, dbus, dmraid, dropbear, efl, embiggen-disk, evilwm, exim,
+	ficl, fio, fluent-bit, fontconfig, glibc, gnupg2, grpc, gvfs, icu,
+	imagemagick, irqbalance, iwd, kvmtool, ledmon, libarchive, libcoap,
+	libconfig, libcpprestsdk, libcurl, libdill, libdnet, libfcgi, libfreeimage,
+	libgit2, libgtk3, libgtk4, libiio, libmbus, libpng, libselinux, libtirpc,
+	libupnp, liburiparser, libvncserver, libxslt, linenoise, linux-tools,
+	lttng-modules, lugaru, matchbox-fakekey, matchbox-keyboard, matchbox-lib,
+	matchbox-panel, mender-update-modules, mesa3d, mosh, nfs-utils, open-lldp,
+	opencv4, opencv4-contrib, openjdk, perl, perl-dbd-mysql, perl-mozilla-ca,
+	php, pigz, pixman, python-brotli, python-can, python-certifi, python-django,
+	python-filelock, python-fonttools, python-pyqt5, python-urllib3, python3,
+	qt5enginio, qt5webkit, qt6base, racehound, rdesktop, rpcbind, rpi-firmware,
+	rtl8192eu, rtl8723bu, rtl8723ds, rtl8821au, rtl8821cu, rtl8822cs, samba4,
+	skopeo, softether, softhsm2, spice, ssdp-responder, sway, tio, trinity,
+	tzdata, uboot, uboot-tools, uclibc, unbound, utfcpp, v4l2loopback, vim, vlc,
+	xdriver_xf86-video-intel, xen, xinetd, xlib_libxshmfence,
+	xserver_xorg-server, xvkbd, xwayland, zic, zxing-cpp
+
+	Removed packages: opencv3 'protobuf', opencv3 'ffmpeg',
+	   libdnet 'python', rpi-firmware 'vcdbg'
+
 2025.11, released December 11th, 2025
 
 	Fixes all over the tree.
