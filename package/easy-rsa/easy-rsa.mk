@@ -10,6 +10,8 @@ EASY_RSA_SITE = https://github.com/OpenVPN/easy-rsa/releases/download/v$(EASY_RS
 EASY_RSA_LICENSE = GPL-2.0
 EASY_RSA_LICENSE_FILES = COPYING.md gpl-2.0.txt
 
+EASY_RSA_CPE_ID_VENDOR = openvpn
+
 # shell script, so no build step
 
 define EASY_RSA_INSTALL_TARGET_CMDS
