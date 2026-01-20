@@ -12,6 +12,8 @@ MP4V2_INSTALL_STAGING = YES
 MP4V2_LICENSE = MPL-1.1
 MP4V2_LICENSE_FILES = COPYING
 
+MP4V2_CPE_ID_VENDOR = mp4v2
+
 # help2man expects to be able to run utilities on the build machine to
 # grab --help output which doesn't work when cross compiling, so
 # disable it
