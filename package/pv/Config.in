@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PV
 	bool "pv"
+	depends on BR2_USE_MMU # fork()
 	help
 	  Pipe Viewer - is a terminal-based tool for
 	  monitoring the progress of data through a

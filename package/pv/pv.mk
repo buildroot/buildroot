@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PV_VERSION = 1.9.0
+PV_VERSION = 1.10.3
 PV_SITE = https://www.ivarch.com/programs/sources
 PV_LICENSE = GPL-3.0+
 PV_LICENSE_FILES = docs/COPYING
