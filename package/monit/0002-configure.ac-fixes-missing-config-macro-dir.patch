@@ -1,4 +1,4 @@
-From 99b466f5448951a83a0d763e633906b28c30fc0a Mon Sep 17 00:00:00 2001
+From 347e94149e3caa038d66ee34d79bdb312d36cc49 Mon Sep 17 00:00:00 2001
 From: Jens Maus <mail@jens-maus.de>
 Date: Fri, 22 Sep 2023 21:32:18 +0200
 Subject: [PATCH] configure.ac: fixes missing config macro dir
@@ -12,18 +12,20 @@ Signed-off-by: Jens Maus <mail@jens-maus.de>
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 [Bernd: rebased against 5.34.2]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[Daniel: rebased against 5.35.2]
+Signed-off-by: Daniel Crowe <daniel.crowe@maxmine.com.au>
 ---
  configure.ac          | 2 +-
  libmonit/configure.ac | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index b4f2a14c..41a8c1a5 100644
+index 3a6cf4e6..477cdbaa 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -8,7 +8,7 @@ AC_PREREQ([2.53])
  # Example: 5.0_beta2
- AC_INIT([monit], [5.34.3], [monit-general@nongnu.org])
+ AC_INIT([monit], [5.35.2], [monit-general@nongnu.org])
  AC_CONFIG_AUX_DIR(config)
 -AC_CONFIG_MACRO_DIR([m4])
 +AC_CONFIG_MACRO_DIRS([m4 config])
@@ -31,7 +33,7 @@ index b4f2a14c..41a8c1a5 100644
  AC_CONFIG_SRCDIR([src/monit.c])
  AC_CONFIG_SUBDIRS([libmonit])
 diff --git a/libmonit/configure.ac b/libmonit/configure.ac
-index 800ebf83..03101a6b 100644
+index 84c1217c..c9d10fe2 100644
 --- a/libmonit/configure.ac
 +++ b/libmonit/configure.ac
 @@ -4,7 +4,7 @@ AC_PREREQ([2.53])
@@ -44,5 +46,5 @@ index 800ebf83..03101a6b 100644
  AC_CONFIG_SRCDIR([src])
  
 -- 
-2.47.0
+2.43.0
 
