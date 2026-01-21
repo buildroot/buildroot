@@ -1,4 +1,4 @@
-From 5448ca9d92f7fa197060323a82a5f060ce7c31e7 Mon Sep 17 00:00:00 2001
+From 5ccdd0f15ca3fc1c57b517bf325d572a5398e3cd Mon Sep 17 00:00:00 2001
 From: Pierre-Jean Texier <pjtexier@koncepto.io>
 Date: Wed, 22 May 2019 10:26:27 +0200
 Subject: [PATCH] src/CMakeLists.txt: do not force the build of a shared
@@ -26,10 +26,10 @@ Signed-off-by: Pierre-Jean Texier <pjtexier@koncepto.io>
  1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
-index 4b71bc5..0b515f4 100644
+index 3370232..efa9840 100644
 --- a/src/CMakeLists.txt
 +++ b/src/CMakeLists.txt
-@@ -15,17 +15,15 @@ SET(include_HEADERS
+@@ -19,11 +19,9 @@ SET(include_HEADERS
  
  include(GNUInstallDirs) # for the CMAKE_INSTALL_LIBDIR variable
  
@@ -40,7 +40,9 @@ index 4b71bc5..0b515f4 100644
 -ADD_LIBRARY(ubootenv_static STATIC ${libubootenv_SOURCES} ${include_HEADERS})
 -SET_TARGET_PROPERTIES(ubootenv_static PROPERTIES OUTPUT_NAME ubootenv)
  add_executable(fw_printenv fw_printenv.c)
- target_link_libraries(ubootenv z yaml)
+ target_link_libraries(ubootenv z)
+ if (NOT NO_YML_SUPPORT)
+@@ -33,7 +31,7 @@ endif(NOT NO_YML_SUPPORT)
  target_link_libraries(fw_printenv ubootenv)
  add_custom_target(fw_setenv ALL ${CMAKE_COMMAND} -E create_symlink fw_printenv fw_setenv)
  
@@ -50,5 +52,5 @@ index 4b71bc5..0b515f4 100644
  install (TARGETS fw_printenv DESTINATION ${CMAKE_INSTALL_BINDIR})
  install (PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/fw_setenv DESTINATION ${CMAKE_INSTALL_BINDIR})
 -- 
-2.30.2
+2.43.0
 
