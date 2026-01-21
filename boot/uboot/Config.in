@@ -685,7 +685,7 @@ config BR2_TARGET_UBOOT_ZYNQMP_PSU_INIT_FILE
 	string "Custom psu_init_gpl file"
 	depends on BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG
 	help
-	  On ZynqMP the booloader is responsible for some basic
+	  On ZynqMP the bootloader is responsible for some basic
 	  initializations, such as enabling peripherals and
 	  configuring pinmuxes. The psu_init_gpl.c file (and,
 	  optionally, psu_init_gpl.h) contains the code for such
@@ -722,7 +722,7 @@ config BR2_TARGET_UBOOT_ZYNQ_PS7_INIT_FILE
 	depends on BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG
 	depends on BR2_TARGET_UBOOT_ZYNQ
 	help
-	  On Zynq the booloader is responsible for some basic
+	  On Zynq the bootloader is responsible for some basic
 	  initializations, such as enabling peripherals and
 	  configuring pinmuxes. The ps7_init_gpl.c file (and,
 	  optionally, ps7_init_gpl.h) contains the code for such
