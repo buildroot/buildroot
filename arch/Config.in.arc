@@ -31,7 +31,7 @@ config BR2_archs38_full
 	bool "ARC HS38 with Quad MAC & FPU"
 	help
 	  Fully featured ARC HS with additional support for
-	   - Dual- and quad multiply and MC oprations
+	   - Dual- and quad multiply and MC operations
 	   - Double-precision FPU
 
 	  It corresponds to "hs38_slc_full" ARC HS template in
