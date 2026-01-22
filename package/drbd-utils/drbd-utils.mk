@@ -20,7 +20,7 @@ else
 DRBD_UTILS_CONF_OPTS += --with-initscripttype=sysv
 endif
 
-ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
+ifeq ($(BR2_TOOLCHAIN_HAS_THREADS)$(BR2_TOOLCHAIN_HAS_SYNC_1),yy)
 DRBD_UTILS_CONF_OPTS += --with-drbdmon
 else
 DRBD_UTILS_CONF_OPTS += --without-drbdmon
