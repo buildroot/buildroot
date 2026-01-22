@@ -353,6 +353,14 @@ endef
 
 PHP_POST_INSTALL_TARGET_HOOKS += PHP_INSTALL_FIXUP
 
+ifeq ($(BR2_PACKAGE_CA_CERTIFICATES),y)
+define PHP_CERTIFICATES_FIXUP
+	$(SED) 's%;openssl.cafile=%openssl.cafile=/etc/ssl/certs/ca-certificates.crt%' \
+		$(TARGET_DIR)/etc/php.ini
+endef
+PHP_POST_INSTALL_TARGET_HOOKS += PHP_CERTIFICATES_FIXUP
+endif
+
 PHP_CONF_ENV += CFLAGS="$(PHP_CFLAGS)" CXXFLAGS="$(PHP_CXXFLAGS)"
 
 HOST_PHP_CONF_OPTS = \
