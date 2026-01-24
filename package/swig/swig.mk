@@ -15,6 +15,21 @@ HOST_SWIG_CONF_OPTS = \
 SWIG_LICENSE = GPL-3.0+, BSD-2-Clause, BSD-3-Clause
 SWIG_LICENSE_FILES = LICENSE LICENSE-GPL LICENSE-UNIVERSITIES
 
+# Swig has a compiled in absolute path to its data files, so it does
+# not work when copied somewhere else for the SDK. Issue was reported
+# upstream but rejected in https://github.com/swig/swig/issues/253 so
+# instead add a wrapper to work around this
+
+define HOST_SWIG_INSTALL_WRAPPER
+	mv -f $(HOST_DIR)/bin/swig $(HOST_DIR)/bin/swig.br_real
+	$(INSTALL) -m 0755 -D package/swig/swig-wrapper.in \
+		$(HOST_DIR)/bin/swig
+	$(SED) 's,@SWIG_VERSION@,$(SWIG_VERSION),g' \
+		$(HOST_DIR)/bin/swig
+endef
+
+HOST_SWIG_POST_INSTALL_HOOKS += HOST_SWIG_INSTALL_WRAPPER
+
 # CMake looks first at swig3.0, then swig2.0 and then swig. However,
 # when doing the search, it will look into the PATH for swig2.0 first,
 # and then for swig.
