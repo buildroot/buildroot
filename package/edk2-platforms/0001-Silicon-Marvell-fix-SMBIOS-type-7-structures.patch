@@ -1,0 +1,80 @@
+From cb5129ba29c1851b452d54d5312bd6b3a27a1f34 Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Fri, 23 Jan 2026 19:02:45 +0100
+Subject: [PATCH] Silicon/Marvell: fix SMBIOS type 7 structures
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Commit [1] updated the uses of SMBIOS type 4 and 7 structures for
+Silicon/Marvell but forgot to actually use SMBIOS_CACHE_SIZE_2
+structures (introduced in commit [2]).
+
+Compiling this platform fails with error:
+
+    edk2-platforms/Silicon/Marvell/Drivers/SmbiosPlatformDxe/SmbiosPlatformDxe.c:231:3: error: unsigned conversion from ‘int’ to ‘unsigned char:1’ changes value from ‘48’ to ‘0’ [-Werror=overflow]
+      231 |   48,    //48k installed
+          |   ^~
+
+This commit fixes this issue.
+
+[1] https://github.com/tianocore/edk2-platforms/commit/8390e51f56c416465a1ebb81e320a89b539cca30
+[2] https://github.com/tianocore/edk2/commit/dfac150bdfc059e486f14072c5249d4d7c200c38
+
+Upstream: https://github.com/tianocore/edk2-platforms/pull/935
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ .../SmbiosPlatformDxe/SmbiosPlatformDxe.c        | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/Silicon/Marvell/Drivers/SmbiosPlatformDxe/SmbiosPlatformDxe.c b/Silicon/Marvell/Drivers/SmbiosPlatformDxe/SmbiosPlatformDxe.c
+index 16fe05a46c..d348bbb458 100644
+--- a/Silicon/Marvell/Drivers/SmbiosPlatformDxe/SmbiosPlatformDxe.c
++++ b/Silicon/Marvell/Drivers/SmbiosPlatformDxe/SmbiosPlatformDxe.c
+@@ -227,8 +227,8 @@ STATIC SMBIOS_TABLE_TYPE7 mArmadaDefaultType7_a72_l1i = {
+   CacheTypeInstruction,    //instruction cache
+   CacheAssociativityOther, //three way
+   // SMBIOS 3.1.0 fields
+-  48,    //48k I-cache max
+-  48,    //48k installed
++  {48,0},//48k I-cache max
++  {48,0},//48k installed
+ };
+ 
+ STATIC SMBIOS_TABLE_TYPE7 mArmadaDefaultType7_a72_l1d = {
+@@ -248,8 +248,8 @@ STATIC SMBIOS_TABLE_TYPE7 mArmadaDefaultType7_a72_l1d = {
+   CacheTypeData,           //data cache
+   CacheAssociativity2Way,  //two way
+   // SMBIOS 3.1.0 fields
+-  32,    //32k D-cache max
+-  32,    //32k installed
++  {32,0},//32k D-cache max
++  {32,0},//32k installed
+ };
+ 
+ STATIC SMBIOS_TABLE_TYPE7 mArmadaDefaultType7_a72_l2 = {
+@@ -269,8 +269,8 @@ STATIC SMBIOS_TABLE_TYPE7 mArmadaDefaultType7_a72_l2 = {
+   CacheTypeUnified,        //instruction cache
+   CacheAssociativity16Way, //16 way associative
+   // SMBIOS 3.1.0 fields
+-  512,   //512k D-cache max
+-  512,   //512k installed
++  {512,0},//512k D-cache max
++  {512,0},//512k installed
+ };
+ 
+ STATIC SMBIOS_TABLE_TYPE7 mArmadaDefaultType7_l3 = {
+@@ -290,8 +290,8 @@ STATIC SMBIOS_TABLE_TYPE7 mArmadaDefaultType7_l3 = {
+   CacheTypeUnified,        //instruction cache
+   CacheAssociativity8Way,  //8 way associative
+   // SMBIOS 3.1.0 fields
+-  1024,  //1M cache max
+-  1024,  //1M installed
++  {1024,0},//1M cache max
++  {1024,0},//1M installed
+ };
+ 
+ STATIC CONST CHAR8 *mArmadaDefaultType7Strings[] = {
+-- 
+2.52.0
+

@@ -5,7 +5,7 @@
 ################################################################################
 
 # Keep in sync with latest commit as of the release date for boot/edk2
-EDK2_NON_OSI_VERSION = ea2040c2d4e2200557e87b9f9fbd4f8fb7a2b6e8
+EDK2_NON_OSI_VERSION = 94d048981116e2e3eda52dad1a89958ee404098d
 EDK2_NON_OSI_SITE = $(call github,tianocore,edk2-non-osi,$(EDK2_NON_OSI_VERSION))
 EDK2_NON_OSI_INSTALL_TARGET = NO
 EDK2_NON_OSI_INSTALL_STAGING = YES
