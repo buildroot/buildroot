@@ -1,0 +1,8 @@
+#!/bin/sh
+# wrapper to make swig relocatable
+
+if [ -z "${SWIG_LIB}" ]; then
+    export SWIG_LIB="${0%/*}/../share/swig/@SWIG_VERSION@"
+fi
+
+exec "${0}.br_real" "$@"
