@@ -1,4 +1,5 @@
 #!/bin/sh
+set -eu
 
 # Busybox is built without network support
 sed -i '/hostname/d' ${TARGET_DIR}/etc/inittab
