@@ -1,4 +1,6 @@
 #!/bin/sh
+set -eu
+
 BOARD_DIR="$(dirname $0)"
 PARTUUID="$($HOST_DIR/bin/uuidgen)"
 
