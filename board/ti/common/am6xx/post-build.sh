@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 # genimage will need to find the extlinux.conf
 # in the binaries directory
