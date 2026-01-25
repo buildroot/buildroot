@@ -6,6 +6,7 @@ import infra.basetest
 class TestNetdata(infra.basetest.BRTest):
     config = infra.basetest.BASIC_TOOLCHAIN_CONFIG + \
         """
+        BR2_INSTALL_LIBSTDCPP=y
         BR2_PACKAGE_NETDATA=y
         BR2_TARGET_ROOTFS_CPIO=y
         # BR2_TARGET_ROOTFS_TAR is not set
