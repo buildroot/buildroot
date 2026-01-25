@@ -1,0 +1,30 @@
+From 1b93cb5890d502ab3fd7623306a7feaa09c4d8ff Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 25 Jan 2026 13:07:29 +0100
+Subject: [PATCH] Revert "grpc: fix C++ standard lib linkage"
+
+This partially reverts commit 163c894563c9f5536c5e91222c9efda64031b08c.
+
+Upstream: https://github.com/syslog-ng/syslog-ng/issues/5040#issuecomment-3796535385
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ modules/examples/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/modules/examples/Makefile.am b/modules/examples/Makefile.am
+index fe1a08feb..5914e5273 100644
+--- a/modules/examples/Makefile.am
++++ b/modules/examples/Makefile.am
+@@ -35,7 +35,7 @@ EXTRA_modules_examples_libexamples_la_DEPENDENCIES = $(MODULE_DEPS_LIBS) $(EXAMP
+ modules_examples_libexamples_la_LDFLAGS = $(MODULE_LDFLAGS)
+ 
+ if ENABLE_CPP
+-nodist_EXTRA_modules_examples_libexamples_la_SOURCES = force-cpp-linker-with-default-stdlib.cpp
++modules_examples_libexamples_la_LIBADD += -lstdc++
+ endif
+ 
+ EXTRA_DIST += modules/examples/CMakeLists.txt
+-- 
+2.47.3
+
