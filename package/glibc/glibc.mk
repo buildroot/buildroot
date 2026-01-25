@@ -34,6 +34,15 @@ GLIBC_IGNORE_CVES += CVE-2025-5702
 # Fixed by glibc-2.41-64-g1e16d0096d80a6e12d5bfa8e0aafdd13c47efd65
 GLIBC_IGNORE_CVES += CVE-2025-8058
 
+# Fixed by glibc-2.41-121-g1e2c1ea4307197ccece0cda574bcfebf9080894c
+GLIBC_IGNORE_CVES += CVE-2026-0861
+
+# Fixed by glibc-2.41-122-g15c9839a0b853f552b4ed9047841b6223f3c104d
+GLIBC_IGNORE_CVES += CVE-2026-0915
+
+# Fixed by glibc-2.41-123-gfb4db64a04ad6c96cd1fbb7e02eb59323b1f2ac2
+GLIBC_IGNORE_CVES += CVE-2025-15281
+
 # This CVE is considered as not being security issues by
 # upstream glibc:
 #  https://security-tracker.debian.org/tracker/CVE-2010-4756
