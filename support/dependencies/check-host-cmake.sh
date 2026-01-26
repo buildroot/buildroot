@@ -6,6 +6,9 @@
 major_min="${1%.*}"
 minor_min="${1#*.}"
 
+major_max="4"
+minor_max="0"
+
 shift
 
 for candidate; do
@@ -31,6 +34,12 @@ for candidate; do
 
     major="${version%.*}"
     minor="${version#*.}"
+
+    if [ ${major} -gt ${major_max} ]; then
+        continue
+    elif [ ${major} -eq ${major_max} -a ${minor} -ge ${minor_max} ]; then
+        continue
+    fi
 
     if [ ${major} -gt ${major_min} ]; then
         echo "${cmake}"
