@@ -25,6 +25,9 @@ LINUX_PAM_LIBS = $(TARGET_NLS_LIBS)
 LINUX_PAM_MAKE_OPTS += LIBS="$(LINUX_PAM_LIBS)"
 LINUX_PAM_CPE_ID_VENDOR = linux-pam
 
+# 0002-pam_access-rework-resolving-of-tokens-as-hostname.patch
+LINUX_PAM_IGNORE_CVES += CVE-2024-10963
+
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 LINUX_PAM_LIBS += -latomic
 endif
