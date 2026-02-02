@@ -170,6 +170,12 @@ else
 PYTHON3_CONF_ENV += py_cv_module_zlib=n/a
 endif
 
+ifeq ($(BR2_PACKAGE_PYTHON3_ZSTD),y)
+PYTHON3_DEPENDENCIES += zstd
+else
+PYTHON3_CONF_ENV += py_cv_module__zstd=n/a
+endif
+
 ifneq ($(BR2_PACKAGE_PYTHON3_OSSAUDIODEV),y)
 PYTHON3_CONF_ENV += py_cv_module_ossaudiodev=n/a
 endif

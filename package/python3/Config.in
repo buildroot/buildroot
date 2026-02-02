@@ -127,6 +127,12 @@ config BR2_PACKAGE_PYTHON3_ZLIB
 	help
 	  zlib support in Python3
 
+config BR2_PACKAGE_PYTHON3_ZSTD
+	bool "zstd module"
+	select BR2_PACKAGE_ZSTD
+	help
+	  zstd support in Python3
+
 endmenu
 
 endif
