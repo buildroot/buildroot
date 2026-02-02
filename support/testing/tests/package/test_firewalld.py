@@ -23,19 +23,21 @@ class TestFirewalldSystemd(infra.basetest.BRTest):
         BR2_TARGET_GENERIC_GETTY_PORT="ttyAMA0"
         BR2_PACKAGE_PYTHON3=y
         BR2_PACKAGE_FIREWALLD=y
-        BR2_TARGET_ROOTFS_CPIO=y
+        BR2_TARGET_ROOTFS_EXT2=y
+        BR2_TARGET_ROOTFS_EXT2_SIZE="512M"
         # BR2_TARGET_ROOTFS_TAR is not set
         """
 
     def test_run(self):
-        cpio_file = os.path.join(self.builddir, "images", "rootfs.cpio")
+        ext2_file = os.path.join(self.builddir, "images", "rootfs.ext2")
         kernel_file = os.path.join(self.builddir, "images", "zImage")
         dtb_file = os.path.join(self.builddir, "images", "vexpress-v2p-ca9.dtb")
         self.emulator.boot(arch="armv7",
                            kernel=kernel_file,
-                           kernel_cmdline=["console=ttyAMA0,115200"],
+                           kernel_cmdline=["console=ttyAMA0,115200",
+                                           "rootwait", "root=/dev/mmcblk0"],
                            options=[
-                               "-initrd", cpio_file,
+                               '-drive', f'file={ext2_file},if=sd,format=raw',
                                "-dtb", dtb_file,
                                "-M", "vexpress-a9"
                            ])
@@ -78,19 +80,21 @@ class TestFirewalldSysVInit(infra.basetest.BRTest):
         BR2_TARGET_GENERIC_GETTY_PORT="ttyAMA0"
         BR2_PACKAGE_PYTHON3=y
         BR2_PACKAGE_FIREWALLD=y
-        BR2_TARGET_ROOTFS_CPIO=y
+        BR2_TARGET_ROOTFS_EXT2=y
+        BR2_TARGET_ROOTFS_EXT2_SIZE="512M"
         # BR2_TARGET_ROOTFS_TAR is not set
         """
 
     def test_run(self):
-        cpio_file = os.path.join(self.builddir, "images", "rootfs.cpio")
+        ext2_file = os.path.join(self.builddir, "images", "rootfs.ext2")
         kernel_file = os.path.join(self.builddir, "images", "zImage")
         dtb_file = os.path.join(self.builddir, "images", "vexpress-v2p-ca9.dtb")
         self.emulator.boot(arch="armv7",
                            kernel=kernel_file,
-                           kernel_cmdline=["console=ttyAMA0,115200"],
+                           kernel_cmdline=["console=ttyAMA0,115200",
+                                           "rootwait", "root=/dev/mmcblk0"],
                            options=[
-                               "-initrd", cpio_file,
+                               '-drive', f'file={ext2_file},if=sd,format=raw',
                                "-dtb", dtb_file,
                                "-M", "vexpress-a9"
                            ])
