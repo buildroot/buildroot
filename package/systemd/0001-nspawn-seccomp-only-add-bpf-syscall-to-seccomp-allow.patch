@@ -1,0 +1,46 @@
+From e6ab723c96b91e7c4c495fcef0654102fac26570 Mon Sep 17 00:00:00 2001
+From: Marcus Hoffmann <bubu@bubu1.eu>
+Date: Mon, 2 Feb 2026 18:26:19 +0100
+Subject: [PATCH] nspawn-seccomp: only add bpf syscall to seccomp allowlist if
+ headers define CAP_BPF
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When building systemd with kernel headers < 5.8 (which added CAP_BPF) it fails with:
+
+  ../src/nspawn/nspawn-seccomp.c: In function ‘add_syscall_filters’:
+  ../src/nspawn/nspawn-seccomp.c:114:19: error: ‘CAP_BPF’ undeclared (first use in this function)
+    114 |                 { CAP_BPF,            "bpf",                         },
+        |                   ^~~~~~~
+  ../src/nspawn/nspawn-seccomp.c:114:19: note: each undeclared identifier is reported only once for each function it appears in
+
+If the kernel headers don't define CAP_BPF, it's likely that the running
+kernel doesn't know about this capability either, so we can assume that
+we'd never allow this syscall anyway.
+
+So if CAP_BPF isn't defined, just skip this allow_list entry entirely.
+
+Signed-off-by: Marcus Hoffmann <bubu@bubu1.eu>
+Upstream: N/A - fixed in systemd >= 258 by introducing vendored kernel headers for this use-casea
+---
+ src/nspawn/nspawn-seccomp.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/nspawn/nspawn-seccomp.c b/src/nspawn/nspawn-seccomp.c
+index 6956689ab5..aaac6085b6 100644
+--- a/src/nspawn/nspawn-seccomp.c
++++ b/src/nspawn/nspawn-seccomp.c
+@@ -108,7 +108,9 @@ static int add_syscall_filters(
+                 { CAP_SYS_BOOT,       "reboot"                       },
+                 { CAP_SYSLOG,         "syslog"                       },
+                 { CAP_SYS_TTY_CONFIG, "vhangup"                      },
++#ifdef CAP_BPF
+                 { CAP_BPF,            "bpf",                         },
++# endif
+ 
+                 /*
+                  * The following syscalls and groups are knowingly excluded:
+-- 
+2.52.0
+
