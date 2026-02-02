@@ -1,0 +1,34 @@
+From 2c8b642b70edf5b0602b10a25d3f04874e175276 Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@smile.fr>
+Date: Mon, 2 Feb 2026 22:12:48 +0100
+Subject: [PATCH] add support for php >= 8.5
+
+php removed zend_exception_get_default() and replaced by zend_ce_exception.
+
+[1] https://github.com/php/php-src/commit/a812a74c2e60a0ba080057067a7634e4da3f2b9b
+
+Upstream: upstream dead, custom patch
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ lua.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/lua.c b/lua.c
+index 5889bc7..62f8f0a 100755
+--- a/lua.c
++++ b/lua.c
+@@ -871,7 +871,11 @@ PHP_MINIT_FUNCTION(lua) {
+ 
+ 	INIT_CLASS_ENTRY(ce, "LuaException", NULL);
+ 
++#if ((PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 5)) || (PHP_MAJOR_VERSION < 5)
+ 	lua_exception_ce = zend_register_internal_class_ex(&ce, zend_exception_get_default());
++#else
++	lua_exception_ce = zend_register_internal_class_ex(&ce, zend_ce_exception);
++#endif
+ 
+ 	return SUCCESS;
+ }
+-- 
+2.52.0
+
