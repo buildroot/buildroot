@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HDDTEMP_VERSION = 0.4.3
+HDDTEMP_VERSION = 0.4.4
 HDDTEMP_SITE = $(call github,vitlav,hddtemp,v$(HDDTEMP_VERSION))
 HDDTEMP_LICENSE = GPLv2
 HDDTEMP_LICENSE_FILES = GPL-2
