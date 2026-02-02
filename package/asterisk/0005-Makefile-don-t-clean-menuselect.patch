@@ -1,0 +1,26 @@
+From 844c1cddf38fd91e15a93eef96c67a5834fc9a78 Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Sat, 10 Jan 2026 12:25:30 +0100
+Subject: [PATCH] Makefile: don't clean menuselect
+
+Upstream: not applicable
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+---
+ Makefile | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index b57f77477f..80035a09e7 100644
+--- a/Makefile
++++ b/Makefile
+@@ -436,7 +436,6 @@ _clean:
+ 	rm -f doxygen.log
+ 	rm -rf latex
+ 	rm -f rest-api-templates/*.pyc
+-	@$(MAKE) -C menuselect clean
+ 	cp -f .cleancount .lastclean
+ 
+ dist-clean: distclean
+-- 
+2.47.3
+
