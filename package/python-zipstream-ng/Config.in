@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_ZIPSTREAM_NG
 	bool "python-zipstream-ng"
+	select BR2_PACKAGE_PYTHON3_ZSTD # runtime
 	help
 	  A modern and easy to use streamable zip file generator.
 
