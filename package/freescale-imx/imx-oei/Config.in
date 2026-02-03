@@ -1,0 +1,24 @@
+config BR2_PACKAGE_IMX_OEI
+	bool "imx-oei"
+	depends on BR2_PACKAGE_HOST_ARM_GNU_TOOLCHAIN_SUPPORTS
+	help
+	  imx-oei contains the source code for the Optional Executable
+	  Image (OEI), which is a piece of code executed by the boot CPU
+	  that initializes various aspects of the hardware
+	  (i.e. DDR, TCM).
+
+	  https://github.com/nxp-imx/imx-oei
+
+if BR2_PACKAGE_IMX_OEI
+
+config BR2_PACKAGE_IMX_OEI_TARGET_BOARD
+	string "Target board"
+	default "mx95lp5"
+	help
+	  Which board to build the OEI for.
+
+config BR2_PACKAGE_IMX_OEI_TARGET_REV
+	string
+	default "b0" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX95B0
+
+endif
