@@ -14,6 +14,12 @@ GPSD_INSTALL_STAGING = YES
 
 GPSD_DEPENDENCIES = host-scons host-pkgconf
 
+# 0005-drivers-driver_nmea2000.c-Fix-issue-356-skyview-buff.patch
+GPSD_IGNORE_CVES += CVE-2025-67268
+
+# 0006-gpsd-packet.c-Fix-integer-underflow-is-malicious-Nav.patch
+GPSD_IGNORE_CVES += CVE-2025-67269
+
 GPSD_LDFLAGS = $(TARGET_LDFLAGS)
 GPSD_CFLAGS = $(TARGET_CFLAGS)
 GPSD_CXXFLAGS = $(TARGET_CXXFLAGS)
