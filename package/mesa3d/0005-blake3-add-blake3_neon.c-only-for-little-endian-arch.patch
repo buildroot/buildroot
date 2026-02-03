@@ -1,0 +1,47 @@
+From c4292cc5af3278b294c2baa5464c9985228205fe Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Tue, 3 Feb 2026 20:13:49 +0100
+Subject: [PATCH] blake3: add blake3_neon.c only for little endian archs
+
+Fixes build error on big endian archs:
+
+Build machine cpu family: x86_64
+Build machine cpu: x86_64
+Host machine cpu family: aarch64
+Host machine cpu: cortex-a53
+Target machine cpu family: aarch64
+Target machine cpu: cortex-a53
+[...]
+../src/util/blake3/blake3_neon.c:6:2: error: #error "This implementation only supports little-endian ARM."
+    6 | #error "This implementation only supports little-endian ARM."
+
+as detected by buildroot autobuilders:
+https://autobuild.buildroot.net/results/efd/efd07d97df4e0c1ceb07fc26e17898afef5435b9/build-end.log
+
+For reference:
+$ grep -i endian output/build/mesa3d-25.3.4/buildroot-build/cross-compilation.conf
+endian = 'big'
+
+Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/39681
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/util/blake3/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/util/blake3/meson.build b/src/util/blake3/meson.build
+index bd51cfb68c3..767da2c6ec3 100644
+--- a/src/util/blake3/meson.build
++++ b/src/util/blake3/meson.build
+@@ -35,7 +35,7 @@ elif cpu_family == 'x86'
+   # There are no assembly versions for 32-bit x86. Compiling the C versions require a different compilation flag per
+   # file, which is not well supported by Meson. Leave SIMD support out for now.
+   blake3_defs += blake3_x86_no_simd_defs
+-elif cpu_family == 'aarch64'
++elif cpu_family == 'aarch64' and target_machine.endian() == 'little'
+   files_blake3 += ['blake3_neon.c']
+ endif
+ 
+-- 
+2.47.3
+
