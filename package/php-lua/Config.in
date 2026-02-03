@@ -6,3 +6,6 @@ config BR2_PACKAGE_PHP_LUA
 	  OO-API to lua variables and functions.
 
 	  https://pecl.php.net/package/lua
+
+comment "php-lua needs the lua interpreter"
+	depends on !BR2_PACKAGE_HAS_LUAINTERPRETER
