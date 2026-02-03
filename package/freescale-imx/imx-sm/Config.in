@@ -1,0 +1,18 @@
+config BR2_PACKAGE_IMX_SM
+	bool "imx-sm"
+	depends on BR2_PACKAGE_HOST_ARM_GNU_TOOLCHAIN_SUPPORTS
+	help
+	  imx-sm contains the source code for the System Manager (SM)
+	  firmware used on NXP SoCs such as MX95 and MX943.
+
+	  https://github.com/nxp-imx/imx-sm
+
+if BR2_PACKAGE_IMX_SM
+
+config BR2_PACKAGE_IMX_SM_CFG
+	string "Target configuration"
+	default "mx95evk"
+	help
+	  Which configuration to use in the build process.
+
+endif
