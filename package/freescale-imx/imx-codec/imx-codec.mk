@@ -4,9 +4,10 @@
 #
 ################################################################################
 
-IMX_CODEC_VERSION = 4.9.0
+IMX_CODEC_VERSION = 4.10.0
+IMX_CODEC_REVISION = 464e9d8
 IMX_CODEC_SITE = $(FREESCALE_IMX_SITE)
-IMX_CODEC_SOURCE = imx-codec-$(IMX_CODEC_VERSION).bin
+IMX_CODEC_SOURCE = imx-codec-$(IMX_CODEC_VERSION)-$(IMX_CODEC_REVISION).bin
 IMX_CODEC_INSTALL_STAGING = YES
 
 IMX_CODEC_LICENSE = NXP Semiconductor Software License Agreement, BSD-3-Clause (flac, ogg headers)
