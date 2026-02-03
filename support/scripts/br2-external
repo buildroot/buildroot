@@ -34,6 +34,9 @@ main() {
         error "Cannot create output directory '%s'\n" "${outputdir}"
     fi
 
+    # Historically, BR2_EXTERNAL could also be colon-separated, so for
+    # backward compatibility, keep splitting on colons (in addition to
+    # spaces).
     # shellcheck disable=SC2068  # We do want to split on spaces
     do_validate "${outputdir}" ${@//:/ }
     do_mk "${outputdir}"
