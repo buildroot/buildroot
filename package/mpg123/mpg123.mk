@@ -64,10 +64,10 @@ MPG123_DEPENDENCIES += portaudio
 MPG123_CONF_ENV += LIBS="`$(PKG_CONFIG_HOST_BINARY) --libs portaudio-2.0`"
 endif
 
-ifeq ($(BR2_PACKAGE_SDL),y)
+ifneq ($(BR2_PACKAGE_SDL)$(BR2_PACKAGE_SDL2),)
 MPG123_AUDIO += sdl
 MPG123_CONF_OPTS += --with-default-audio=sdl
-MPG123_DEPENDENCIES += sdl
+MPG123_DEPENDENCIES += $(if $(BR2_PACKAGE_SDL2),sdl2,sdl)
 endif
 
 ifeq ($(BR2_PACKAGE_ALSA_LIB),y)
