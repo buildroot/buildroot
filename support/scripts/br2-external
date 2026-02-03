@@ -30,10 +30,10 @@ main() {
         error "no output directory specified (-d)\n"
     fi
 
-    # Trap any unexpected error to generate a meaningful error message
-    trap "error 'unexpected error while generating ${ofile}\n'" ERR
+    if ! mkdir -p "${outputdir}"; then
+        error "Cannot create output directory '%s'\n" "${outputdir}"
+    fi
 
-    mkdir -p "${outputdir}"
     do_validate "${outputdir}" ${@//:/ }
     do_mk "${outputdir}"
     do_kconfig "${outputdir}"
