@@ -70,6 +70,9 @@ config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX91
 config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93
 	bool "imx93"
 
+config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX95
+	bool "imx95"
+
 endchoice
 
 choice
@@ -126,6 +129,21 @@ config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93A1
 
 endchoice
 
+choice
+	prompt "i.MX95 Silicon Revision"
+	default BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX95B0
+	depends on BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX95
+	help
+	  Some packages related to the selected i.MX platform need to
+	  know the silicon revision of the platform they will run on.
+
+	  Note - mismatches may result in a failure to boot!
+
+config BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX95B0
+	bool "imx95b0"
+
+endchoice
+
 config BR2_PACKAGE_FREESCALE_IMX_PLATFORM
 	string
 	default "IMX25_3STACK" if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX25_3STACK
@@ -178,7 +196,8 @@ config BR2_PACKAGE_FREESCALE_IMX_HAS_ELE
 	bool
 	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULP || \
 		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX91 || \
-		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93
+		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX93 || \
+		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX95
 
 config BR2_PACKAGE_FREESCALE_IMX_HAS_UPOWER
 	bool
