@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-IMX_GPU_VIV_REVISION = c600d03
+IMX_GPU_VIV_REVISION = 846e12e
 ifeq ($(BR2_aarch64),y)
-IMX_GPU_VIV_VERSION = 6.4.11.p3.0-aarch64
+IMX_GPU_VIV_VERSION = 6.4.11.p4.2-aarch64
 else
-IMX_GPU_VIV_VERSION = 6.4.11.p3.0-aarch32
+IMX_GPU_VIV_VERSION = 6.4.11.p4.2-aarch32
 endif
 IMX_GPU_VIV_SITE = $(FREESCALE_IMX_SITE)
 IMX_GPU_VIV_SOURCE = imx-gpu-viv-$(IMX_GPU_VIV_VERSION)-$(IMX_GPU_VIV_REVISION).bin
