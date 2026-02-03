@@ -210,6 +210,7 @@ class TestInitSystemSystemdRwFull(InitSystemSystemdBase):
         BR2_PACKAGE_SYSTEMD_SYSUSERS=y
         BR2_PACKAGE_SYSTEMD_VCONSOLE=y
         BR2_TARGET_ROOTFS_EXT2=y
+        BR2_TARGET_ROOTFS_EXT2_SIZE="120M"
         """
 
     def test_run(self):

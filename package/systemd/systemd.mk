@@ -19,7 +19,7 @@
 # - Diff sysusers.d with the previous version
 # - Diff factory/etc/nsswitch.conf with the previous version
 #   (details are often sprinkled around in README and manpages)
-SYSTEMD_VERSION = 257.10
+SYSTEMD_VERSION = 258.3
 SYSTEMD_SITE = $(call github,systemd,systemd,v$(SYSTEMD_VERSION))
 SYSTEMD_LICENSE = \
 	LGPL-2.1+, \
@@ -107,7 +107,8 @@ SYSTEMD_CONF_OPTS += \
 	-Dbpf-framework=disabled \
 	-Dvmlinux-h=disabled \
 	-Dumount-path=/usr/bin/umount \
-	-Dxenctrl=disabled
+	-Dxenctrl=disabled \
+	-Dlibmount=enabled
 
 SYSTEMD_CFLAGS = $(TARGET_CFLAGS)
 ifeq ($(BR2_OPTIMIZE_FAST),y)
@@ -265,13 +266,6 @@ SYSTEMD_DEPENDENCIES += libcurl
 SYSTEMD_CONF_OPTS += -Dlibcurl=enabled
 else
 SYSTEMD_CONF_OPTS += -Dlibcurl=disabled
-endif
-
-ifeq ($(BR2_PACKAGE_LIBGCRYPT),y)
-SYSTEMD_DEPENDENCIES += libgcrypt
-SYSTEMD_CONF_OPTS += -Dgcrypt=enabled
-else
-SYSTEMD_CONF_OPTS += -Dgcrypt=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_P11_KIT),y)
@@ -567,6 +561,12 @@ else
 SYSTEMD_CONF_OPTS += -Dsysupdate=disabled
 endif
 
+ifeq ($(BR2_PACKAGE_SYSTEMD_NSPAWN),y)
+SYSTEMD_CONF_OPTS += -Dnspawn=enabled
+else
+SYSTEMD_CONF_OPTS += -Dnspawn=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_SYSTEMD_NETWORKD),y)
 SYSTEMD_CONF_OPTS += -Dnetworkd=true
 SYSTEMD_NETWORKD_USER = systemd-network -1 systemd-network -1 * - - - systemd Network Management
@@ -595,22 +595,11 @@ endif
 
 ifeq ($(BR2_PACKAGE_LIBOPENSSL),y)
 SYSTEMD_CONF_OPTS += \
-	-Dgnutls=disabled \
-	-Dopenssl=enabled \
 	-Ddns-over-tls=openssl \
 	-Ddefault-dns-over-tls=opportunistic
 SYSTEMD_DEPENDENCIES += openssl
-else ifeq ($(BR2_PACKAGE_GNUTLS),y)
-SYSTEMD_CONF_OPTS += \
-	-Dgnutls=enabled \
-	-Dopenssl=disabled \
-	-Ddns-over-tls=gnutls \
-	-Ddefault-dns-over-tls=opportunistic
-SYSTEMD_DEPENDENCIES += gnutls
 else
 SYSTEMD_CONF_OPTS += \
-	-Dgnutls=disabled \
-	-Dopenssl=disabled \
 	-Ddns-over-tls=false \
 	-Ddefault-dns-over-tls=no
 endif
@@ -1015,7 +1004,9 @@ HOST_SYSTEMD_CONF_OPTS = \
 	-Dp11kit=disabled \
 	-Dlibfido2=disabled \
 	-Dpcre2=disabled \
-	-Dsysupdated=disabled
+	-Dsysupdated=disabled \
+	-Dnspawn=disabled \
+	-Dlibmount=enabled
 
 HOST_SYSTEMD_DEPENDENCIES = \
 	$(BR2_COREUTILS_HOST_DEPENDENCY) \

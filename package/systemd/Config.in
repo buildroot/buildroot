@@ -21,7 +21,7 @@ menuconfig BR2_PACKAGE_SYSTEMD
 	depends on !BR2_STATIC_LIBS # kmod
 	depends on BR2_TOOLCHAIN_USES_GLIBC
 	depends on BR2_TOOLCHAIN_HAS_SSP
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_15
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_4
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_8
 	depends on BR2_HOST_GCC_AT_LEAST_8 # host-systemd
 	select BR2_ROOTFS_MERGED_USR
@@ -54,13 +54,11 @@ menuconfig BR2_PACKAGE_SYSTEMD
 	  an elaborate transactional dependency-based service control
 	  logic.  It can work as a drop-in replacement for sysvinit.
 
-	  Kernel versions below 5.4 ("recommended baseline") have
+	  Kernel versions below 5.7 ("recommended baseline") have
 	  significant gaps in functionality and are not recommended
-	  for use with this version of systemd. (e.g. lack race-free
-	  process tracking by pidfd, systemd-networkd, and new mount
-	  API support).
+	  for use with this version of systemd.
 
-	  Systemd requires a Linux kernel >= 3.15 with the following
+	  Systemd requires a Linux kernel >= 5.4 with the following
 	  options enabled:
 
 	  - CONFIG_DEVTMPFS
@@ -94,10 +92,10 @@ menuconfig BR2_PACKAGE_SYSTEMD
 	  The selection of other packages will enable some features:
 
 	  - acl package will add support for multi-seat.
-	  - xz and/or l4 packages will add compression support in
-	    journal and coredump.
+	  - bzip, lz4, xz,and/or zstd packages will add compression
+	    support in journal and coredump.
 	  - libcurl package will add support for systemd-journal-upload.
-	  - libgcrypt package will add support for journal sealing and
+	  - openssl package will add support for journal sealing and
 	    DNSSEC verification in resolved.
 
 	  Notice that systemd selects the fsck wrapper from util-linux
@@ -246,7 +244,6 @@ config BR2_PACKAGE_SYSTEMD_HOMED
 	depends on BR2_USE_MMU # cryptsetup -> lvm2
 	depends on !BR2_STATIC_LIBS # cryptsetup -> lvm2
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # cryptsetup -> json-c
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12 # fscrypt_key
 	select BR2_PACKAGE_CRYPTSETUP
 	select BR2_PACKAGE_OPENSSL
 	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL
@@ -257,11 +254,11 @@ config BR2_PACKAGE_SYSTEMD_HOMED
 
 	  https://www.freedesktop.org/software/systemd/man/systemd-homed.service.html
 
-comment "homed support needs a toolchain w/ threads, dynamic library, kernel headers >= 4.12"
+comment "homed support needs a toolchain w/ threads, dynamic library"
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
-		BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_12
+		BR2_STATIC_LIBS
 
 config BR2_PACKAGE_SYSTEMD_HOSTNAMED
 	bool "enable hostname daemon"
@@ -285,9 +282,8 @@ config BR2_PACKAGE_SYSTEMD_HWDB
 
 config BR2_PACKAGE_SYSTEMD_IMPORTD
 	bool "enable import daemon"
-	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS # libgcrypt
 	select BR2_PACKAGE_LIBCURL
-	select BR2_PACKAGE_LIBGCRYPT
+	select BR2_PACKAGE_OPENSSL
 	select BR2_PACKAGE_XZ
 	select BR2_PACKAGE_ZLIB
 	help
@@ -336,6 +332,14 @@ config BR2_PACKAGE_SYSTEMD_MACHINED
 
 	  https://www.freedesktop.org/software/systemd/man/systemd-machined.service.html
 
+config BR2_PACKAGE_SYSTEMD_NSPAWN
+	bool "enable nspawn"
+	help
+	  systemd-nspawn is a tool to spawn a command or OS in
+	  a lightweight container.
+
+	  https://www.freedesktop.org/software/systemd/man/latest/systemd-nspawn.html
+
 config BR2_PACKAGE_SYSTEMD_NSRESOURCED
 	bool "enable nsresourced"
 	help
@@ -358,8 +362,7 @@ config BR2_PACKAGE_SYSTEMD_MYHOSTNAME
 
 config BR2_PACKAGE_SYSTEMD_NETWORKD
 	bool "enable network manager"
-	default y if BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_4
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_4
+	default y
 	help
 	  systemd-networkd is a system service that manages networks.
 	  It detects and configures network devices as they appear, as
@@ -369,9 +372,6 @@ config BR2_PACKAGE_SYSTEMD_NETWORKD
 	  to dhcpcd or ISC dhcp.
 
 	  https://www.freedesktop.org/software/systemd/man/systemd-networkd.html
-
-comment "systemd-networkd needs a toolchain with kernel headers >= 5.4"
-	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_4
 
 config BR2_PACKAGE_SYSTEMD_OOMD
 	bool "enable out-of-memory killer"
@@ -480,8 +480,6 @@ config BR2_PACKAGE_SYSTEMD_SMACK_SUPPORT
 	  Enable support for SMACK, the Simple Mandatory Access
 	  Control Kernel, a minimal approach to Access Control
 	  implemented as a kernel LSM.
-
-	  This feature requires a kernel >= 3.8.
 
 	  When this feature is enabled, Systemd mounts smackfs and
 	  manages security labels for sockets.
