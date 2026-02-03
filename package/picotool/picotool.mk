@@ -12,7 +12,7 @@ PICOTOOL_LICENSE_FILES = LICENSE.TXT
 PICOTOOL_CONF_OPTS = -DPICO_SDK_PATH=$(STAGING_DIR)/usr/share/pico-sdk
 PICOTOOL_DEPENDENCIES = libusb pico-sdk
 
-HOST_PICOTOOL_CONF_OPTS = -DPICO_SDK_PATH=$(HOST_DIR)/usr/share/pico-sdk
+HOST_PICOTOOL_CONF_OPTS = -DPICO_SDK_PATH=$(HOST_DIR)/share/pico-sdk
 HOST_PICOTOOL_DEPENDENCIES = host-libusb host-pico-sdk
 
 $(eval $(cmake-package))
