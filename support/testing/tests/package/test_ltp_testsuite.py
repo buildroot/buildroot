@@ -30,8 +30,6 @@ class TestLtpTestsuite(infra.basetest.BRTest):
         # fast execution. See "kirk --help" for option details.
         cmd = f"LTPROOT={ltp_root}"
         cmd += f" {ltp_root}/kirk"
-        cmd += " --sut host"
-        cmd += " --framework ltp"
         cmd += " --run-suite syscalls"
         cmd += " --run-pattern '^read0[0-9]*'"
         cmd += f" --json-report {report_file}"
