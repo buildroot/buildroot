@@ -1,0 +1,88 @@
+From 5ce5a4aa22e90301816bd1f24c24be64592dc01c Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Wed, 4 Feb 2026 11:54:30 +0100
+Subject: [PATCH] configure.ac: add support for uClibc-ng
+
+The proposed support is based on the comment at
+https://gitlab.freedesktop.org/libbsd/libbsd/-/merge_requests/32#note_3252386,
+with the following changes:
+
+- Assume explicit_bzero() is available, since it's been available
+  since uClibc-ng 1.0.47, which has been released years ago.
+
+- Assume reallocarry() is NOT available, because its availability
+  depends on the exact malloc() implementation configured in
+  uClibc-ng. See
+  https://gogs.waldemar-brodkorb.de/oss/uclibc-ng/commit/77c8c358b52e875c8f4568ecf6c327b95dddbd05
+  for details.
+
+Upstream: https://gitlab.freedesktop.org/libbsd/libbsd/-/merge_requests/33
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ configure.ac | 50 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index 2a15d72..d131861 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -214,6 +214,56 @@ AS_CASE([$host_os],
+     abi_vis=yes
+     abi_wcsl=yes
+   ],
++  [*-uclibc*], [
++    api_time_macros=no
++    abi_accmode=yes
++    abi_arc4random=yes
++    abi_arc4random_stir=yes
++    abi_asprintf=no
++    abi_bsd_getopt=yes
++    abi_closefrom=yes
++    abi_consttime_memequal=yes
++    abi_err=no
++    abi_errc=yes
++    abi_expand_number=yes
++    # Available since uClibc-ng 1.0.47
++    abi_explicit_bzero=yes
++    abi_explicit_memset=yes
++    abi_fgetln=yes
++    abi_flopen=yes
++    abi_fmtcheck=yes
++    abi_fpurge=yes
++    abi_freezero=yes
++    abi_funopen=yes
++    abi_getbsize=yes
++    abi_getpeereid=yes
++    abi_humanize_number=yes
++    abi_id_from_name=yes
++    abi_inet_net_pton=no
++    abi_md5=no
++    abi_name_from_id=yes
++    abi_nlist=yes
++    abi_pidfile=yes
++    abi_proctitle=yes
++    abi_progname=yes
++    abi_readpassphrase=yes
++    # Depending on the uClibc-ng configuration, reallocarray() may or
++    # may not be available so assume it isn't.
++    abi_reallocarray=no
++    abi_reallocf=ues
++    abi_recallocarray=yes
++    abi_stringlist=yes
++    abi_sort=yes
++    abi_strl=no
++    abi_strmode=yes
++    abi_strnstr=yes
++    abi_strtonum=yes
++    abi_strtox=yes
++    abi_timeconv=yes
++    abi_transparent_libmd=no
++    abi_vis=yes
++    abi_wcsl=yes
++  ],
+   [darwin*], [
+     api_time_macros=no
+ 
+-- 
+2.52.0
+
