@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2026.02"
 
+config BR2_PACKAGE_DVDRW_TOOLS
+	bool "dvdrw-tools removed"
+	select BR2_LEGACY
+	help
+	  dvdrw-tools was no longer maintained upstream, so it has
+	  been dropped.
+
 config BR2_PACKAGE_PHP_ZMQ
 	bool "php-zmq removed"
 	select BR2_LEGACY
