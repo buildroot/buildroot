@@ -1,1 +1,1 @@
-include(Platform/Linux-Initialize)
+include(Platform/Linux-Initialize OPTIONAL)
