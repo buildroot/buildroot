@@ -12,6 +12,12 @@ LIBMAD_INSTALL_STAGING = YES
 LIBMAD_LICENSE = GPL-2.0+
 LIBMAD_LICENSE_FILES = COPYING
 
+# 0004-md_size.patch
+LIBMAD_IGNORE_CVES += CVE-2017-8372 CVE-2017-8373
+
+# 0005-length-check.patch
+LIBMAD_IGNORE_CVES += CVE-2017-8374
+
 # Force autoreconf to be able to use a more recent libtool script, that
 # is able to properly behave in the face of a missing C++ compiler.
 LIBMAD_AUTORECONF = YES
