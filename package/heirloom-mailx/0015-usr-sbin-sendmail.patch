@@ -1,0 +1,36 @@
+Description: Sendmail is at /usr/sbin/sendmail
+ As per Debian Policy §11.6
+Author: Ryan Kavanagh <rak@debian.org>
+Origin: Debian
+Forwarded: no
+
+Upstream: https://sources.debian.org/patches/heirloom-mailx/12.5-4/0015-usr-sbin-sendmail.patch/
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+Index: heirloom-mailx-12.5/Makefile
+===================================================================
+--- heirloom-mailx-12.5.orig/Makefile	2011-04-26 17:23:22.000000000 -0400
++++ heirloom-mailx-12.5/Makefile	2015-01-27 13:20:04.733542801 -0500
+@@ -13,7 +13,7 @@
+ 
+ MAILRC		= $(SYSCONFDIR)/nail.rc
+ MAILSPOOL	= /var/mail
+-SENDMAIL	= /usr/lib/sendmail
++SENDMAIL	= /usr/sbin/sendmail
+ 
+ DESTDIR		=
+ 
+Index: heirloom-mailx-12.5/mailx.1
+===================================================================
+--- heirloom-mailx-12.5.orig/mailx.1	2015-01-27 13:18:49.000000000 -0500
++++ heirloom-mailx-12.5/mailx.1	2015-01-27 13:20:32.382336867 -0500
+@@ -4922,7 +4922,7 @@
+ which just acts as a proxy.
+ .PP
+ \fIMailx\fR immediately contacts the SMTP server (or
+-.IR \%/usr/lib/sendmail )
++.IR \%/usr/sbin/sendmail )
+ even when operating in
+ .I disconnected
+ mode.

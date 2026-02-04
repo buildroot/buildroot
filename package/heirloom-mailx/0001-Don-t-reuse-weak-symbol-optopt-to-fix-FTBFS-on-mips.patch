@@ -1,0 +1,57 @@
+From: Luk Claes <luk@debian.org>
+Date: Sat, 4 Jul 2009 10:54:53 +0200
+Subject: Don't reuse weak symbol optopt to fix FTBFS on mips*
+
+Upstream: https://sources.debian.org/patches/heirloom-mailx/12.5-4/0001-Don-t-reuse-weak-symbol-optopt-to-fix-FTBFS-on-mips.patch/
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ getopt.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/getopt.c b/getopt.c
+index 83ce628..82e983c 100644
+--- a/getopt.c
++++ b/getopt.c
+@@ -43,7 +43,7 @@ typedef	int	ssize_t;
+ char	*optarg;
+ int	optind = 1;
+ int	opterr = 1;
+-int	optopt;
++int	optoptc;
+ 
+ static void
+ error(const char *s, int c)
+@@ -69,7 +69,7 @@ error(const char *s, int c)
+ 		*bp++ = *s++;
+ 	while (*msg)
+ 		*bp++ = *msg++;
+-	*bp++ = optopt;
++	*bp++ = optoptc;
+ 	*bp++ = '\n';
+ 	write(2, buf, bp - buf);
+ 	ac_free(buf);
+@@ -101,13 +101,13 @@ getopt(int argc, char *const argv[], const char *optstring)
+ 		}
+ 		curp = &argv[optind][1];
+ 	}
+-	optopt = curp[0] & 0377;
++	optoptc = curp[0] & 0377;
+ 	while (optstring[0]) {
+ 		if (optstring[0] == ':') {
+ 			optstring++;
+ 			continue;
+ 		}
+-		if ((optstring[0] & 0377) == optopt) {
++		if ((optstring[0] & 0377) == optoptc) {
+ 			if (optstring[1] == ':') {
+ 				if (curp[1] != '\0') {
+ 					optarg = (char *)&curp[1];
+@@ -127,7 +127,7 @@ getopt(int argc, char *const argv[], const char *optstring)
+ 					optind++;
+ 				optarg = 0;
+ 			}
+-			return optopt;
++			return optoptc;
+ 		}
+ 		optstring++;
+ 	}
