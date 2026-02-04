@@ -1,0 +1,20 @@
+From: Vincent Lefevre <vincent@vinc17.net>
+Subject: Do not escape shell-special characters in "pat"
+Bug-Debian: https://bugs.debian.org/1054628
+X-Debian-version: 6.0-29
+
+Upstream: https://sources.debian.org/src/unzip/6.0-29/debian/patches/31-fix-zipgrep.patch
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+--- a/unix/zipgrep
++++ b/unix/zipgrep
+@@ -49,10 +49,6 @@
+ IFS='
+ '
+ 
+-# Escape shell-special characters in "pat".
+-pat=` echo "$pat" | \
+- sed -e 's/\\\\/\\\\\\\\/g' -e 's/|/\\\|/g' -e 's/&/\\\&/g' `
+-
+ # Use "unzip -Z1" to get a listing of the specified members from the
+ # specified archive.  Escape any backslashes in a file name.
+ for i in `unzip -Z1 "$zipfile" ${1+"$@"} | sed -e 's/\\\\/\\\\\\\\/g' `; do

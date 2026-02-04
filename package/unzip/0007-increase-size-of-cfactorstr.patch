@@ -1,0 +1,19 @@
+From: "Steven M. Schweda" <sms@antinode.info>
+Subject: Increase size of cfactorstr array to avoid buffer overflow
+Bug-Debian: https://bugs.debian.org/741384
+X-Debian-version: 6.0-11
+CVE: CVE-2018-18384
+Upstream: https://sources.debian.org/src/unzip/6.0-29/debian/patches/07-increase-size-of-cfactorstr.patch
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+
+--- a/list.c
++++ b/list.c
+@@ -97,7 +97,7 @@
+ {
+     int do_this_file=FALSE, cfactor, error, error_in_archive=PK_COOL;
+ #ifndef WINDLL
+-    char sgn, cfactorstr[10];
++    char sgn, cfactorstr[12];
+     int longhdr=(uO.vflag>1);
+ #endif
+     int date_format;

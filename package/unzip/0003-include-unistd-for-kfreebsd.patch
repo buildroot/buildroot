@@ -1,0 +1,17 @@
+From: Aurelien Jarno <aurel32@debian.org>
+Subject: #include <unistd.h> for kFreeBSD
+Bug-Debian: https://bugs.debian.org/340693
+X-Debian-version: 5.52-8
+Upstream: https://sources.debian.org/src/unzip/6.0-29/debian/patches/03-include-unistd-for-kfreebsd.patch
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+
+--- a/unix/unxcfg.h
++++ b/unix/unxcfg.h
+@@ -52,6 +52,7 @@
+ 
+ #include <sys/types.h>          /* off_t, time_t, dev_t, ... */
+ #include <sys/stat.h>
++#include <unistd.h>
+ 
+ #ifdef NO_OFF_T
+   typedef long zoff_t;

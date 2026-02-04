@@ -1,0 +1,17 @@
+From: Kevin Locke <kevin@kevinlocke.name>
+Subject: zipgrep: Avoid test errors when no members present
+Bug-Debian: https://bugs.debian.org/972233
+X-Debian-version: 6.0-26
+
+Upstream: https://sources.debian.org/src/unzip/6.0-29/debian/patches/27-zipgrep-avoid-test-errors.patch
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+--- a/unix/zipgrep
++++ b/unix/zipgrep
+@@ -44,6 +44,7 @@
+   opt="-$opt"
+ fi
+ 
++sts=0
+ status_grep_global=1
+ IFS='
+ '
