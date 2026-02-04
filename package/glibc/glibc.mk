@@ -8,14 +8,8 @@
 #   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master | cut -d '-' -f 2-
 # When updating the version, please also update localedef
 GLIBC_VERSION = 2.41-123-gfb4db64a04ad6c96cd1fbb7e02eb59323b1f2ac2
-
-# Upstream doesn't officially provide an https download link.
-# There is one (https://sourceware.org/git/glibc.git) but it's not reliable,
-# sometimes the connection times out. So use an unofficial github mirror.
-# When updating the version, check it on the official repository;
-# *NEVER* decide on a version string by looking at the mirror.
-# Then check that the mirror has been synced already (happens once a day.)
-GLIBC_SITE = $(call github,bminor,glibc,$(GLIBC_VERSION))
+GLIBC_SITE = https://sourceware.org/git/glibc.git
+GLIBC_SITE_METHOD = git
 
 GLIBC_LICENSE = GPL-2.0+ (programs), LGPL-2.1+, BSD-3-Clause, MIT (library)
 GLIBC_LICENSE_FILES = COPYING COPYING.LIB LICENSES
