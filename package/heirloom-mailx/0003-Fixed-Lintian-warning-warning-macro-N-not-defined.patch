@@ -1,0 +1,23 @@
+From: Hilko Bengen <bengen@debian.org>
+Date: Sat, 14 Apr 2012 20:22:43 +0200
+Subject: Fixed Lintian warning (warning: macro `N' not defined)
+
+Upstream: https://sources.debian.org/patches/heirloom-mailx/12.5-4/0003-Fixed-Lintian-warning-warning-macro-N-not-defined.patch/
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ mailx.1 |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mailx.1 b/mailx.1
+index a02e430..b0723bd 100644
+--- a/mailx.1
++++ b/mailx.1
+@@ -3781,7 +3781,7 @@ you could examine the first message by giving the command:
+ .sp
+ .fi
+ which might cause
+-.N mailx
++.I mailx
+ to respond with, for example:
+ .nf
+ .sp
