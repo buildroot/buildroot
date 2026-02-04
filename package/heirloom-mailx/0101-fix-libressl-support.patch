@@ -10,6 +10,7 @@ heirloom-mailx has two small issues when compiling against LibreSSL:
   - SSLv3_client_method function is used (LibreSSL does not support SSLv3)
     Solution: "Guard" the code with #ifndef OPENSSL_NO_SSL3
 
+Upstream: N/A
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
 ---
  openssl.c | 7 +++++++
