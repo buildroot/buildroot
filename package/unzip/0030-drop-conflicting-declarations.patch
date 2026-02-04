@@ -1,0 +1,18 @@
+From: Santiago Vila <sanvila@debian.org>
+Subject: Drop conflicting declarations of gmtime() and localtime()
+Bug-Debian: https://bugs.debian.org/1098043
+X-Debian-version: 6.0-29
+
+Upstream: https://sources.debian.org/src/unzip/6.0-29/debian/patches/30-drop-conflicting-declarations.patch
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+--- a/unix/unxcfg.h
++++ b/unix/unxcfg.h
+@@ -118,7 +118,7 @@
+ #  endif
+ #else
+ #  include <time.h>
+-   struct tm *gmtime(), *localtime();
++/*   struct tm *gmtime(), *localtime(); */
+ #endif
+ 
+ #if (defined(BSD4_4) || (defined(SYSV) && defined(MODERN)))

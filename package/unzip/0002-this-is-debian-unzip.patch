@@ -1,0 +1,18 @@
+From: Santiago Vila <sanvila@debian.org>
+Subject: "Branding patch": UnZip by Debian. Original by Info-ZIP.
+X-Debian-version: 5.52-5
+Upstream: https://sources.debian.org/src/unzip/6.0-29/debian/patches/02-this-is-debian-unzip.patch
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+
+--- a/unzip.c
++++ b/unzip.c
+@@ -570,8 +570,7 @@
+ #else /* !VMS */
+ # ifdef COPYRIGHT_CLEAN
+    static ZCONST char Far UnzipUsageLine1[] = "\
+-UnZip %d.%d%d%s of %s, by Info-ZIP.  Maintained by C. Spieler.  Send\n\
+-bug reports using http://www.info-zip.org/zip-bug.html; see README for details.\
++UnZip %d.%d%d%s of %s, by Debian. Original by Info-ZIP.\
+ \n\n";
+ # else
+    static ZCONST char Far UnzipUsageLine1[] = "\
