@@ -463,7 +463,7 @@ endef
 
 # STATIC has no ld* tools, only getconf
 ifeq ($(BR2_STATIC_LIBS),)
-define UCLIBC_INSTALL_UTILS_STAGING
+define UCLIBC_INSTALL_HOST_UTILS
 	$(INSTALL) -D -m 0755 $(@D)/utils/ldd.host $(HOST_DIR)/bin/ldd
 	ln -sf ldd $(HOST_DIR)/bin/$(GNU_TARGET_NAME)-ldd
 	$(INSTALL) -D -m 0755 $(@D)/utils/ldconfig.host $(HOST_DIR)/bin/ldconfig
@@ -478,7 +478,7 @@ define UCLIBC_INSTALL_STAGING_CMDS
 		DEVEL_PREFIX=/usr/ \
 		RUNTIME_PREFIX=/ \
 		install_runtime install_dev
-	$(UCLIBC_INSTALL_UTILS_STAGING)
+	$(UCLIBC_INSTALL_HOST_UTILS)
 endef
 
 # Checks to give errors that the user can understand
