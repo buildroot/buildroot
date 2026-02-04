@@ -1,0 +1,21 @@
+From: Roy Tam
+Subject: Handle Microsoft ZIP64 files by ignoring invalid "Total number of disks" field
+Origin: https://sourceforge.net/p/infozip/bugs/42/
+Bug: https://sourceforge.net/p/infozip/bugs/42/
+Bug-Debian: https://bugs.debian.org/1064000
+Bug-Ubuntu: https://bugs.launchpad.net/ubuntu/+source/unzip/+bug/2051952
+X-Debian-version: 6.0-29
+
+Upstream: https://sources.debian.org/src/unzip/6.0-29/debian/patches/29-handle-windows-zip64-files.patch
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+--- a/process.c
++++ b/process.c
+@@ -1281,7 +1281,7 @@
+     fprintf(stdout,"\nnumber of disks (ECR) %u, (ECLOC64) %lu\n",
+             G.ecrec.number_this_disk, ecloc64_total_disks); fflush(stdout);
+ #endif
+-    if ((G.ecrec.number_this_disk != 0xFFFF) &&
++    if ((G.ecrec.number_this_disk != 0xFFFF) && ecloc64_total_disks &&
+         (G.ecrec.number_this_disk != ecloc64_total_disks - 1)) {
+       /* Note: For some unknown reason, the developers at PKWARE decided to
+          store the "zip64 total disks" value as a counter starting from 1,

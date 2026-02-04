@@ -1,0 +1,297 @@
+From: Santiago Vila <sanvila@debian.org>
+Subject: In Debian, manpages are in section 1, not in section 1L
+X-Debian-version: 5.52-3
+Upstream: https://sources.debian.org/src/unzip/6.0-29/debian/patches/01-manpages-in-section-1-not-in-section-1l.patch
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+
+--- a/man/funzip.1
++++ b/man/funzip.1
+@@ -20,7 +20,7 @@
+ .in -4n
+ ..
+ .\" =========================================================================
+-.TH FUNZIP 1L "20 April 2009 (v3.95)" "Info-ZIP"
++.TH FUNZIP 1 "20 April 2009 (v3.95)" "Info-ZIP"
+ .SH NAME
+ funzip \- filter for extracting from a ZIP archive in a pipe
+ .PD
+@@ -78,7 +78,7 @@
+ .EE
+ .PP
+ To use \fIzip\fP and \fIfunzip\fP in place of \fIcompress\fP(1) and
+-\fIzcat\fP(1) (or \fIgzip\fP(1L) and \fIgzcat\fP(1L)) for tape backups:
++\fIzcat\fP(1) (or \fIgzip\fP(1) and \fIgzcat\fP(1)) for tape backups:
+ .PP
+ .EX
+ tar cf \- . | zip \-7 | dd of=/dev/nrst0 obs=8k
+@@ -108,8 +108,8 @@
+ .PD
+ .\" =========================================================================
+ .SH "SEE ALSO"
+-\fIgzip\fP(1L), \fIunzip\fP(1L), \fIunzipsfx\fP(1L), \fIzip\fP(1L),
+-\fIzipcloak\fP(1L), \fIzipinfo\fP(1L), \fIzipnote\fP(1L), \fIzipsplit\fP(1L)
++\fIgzip\fP(1), \fIunzip\fP(1), \fIunzipsfx\fP(1), \fIzip\fP(1),
++\fIzipcloak\fP(1), \fIzipinfo\fP(1), \fIzipnote\fP(1), \fIzipsplit\fP(1)
+ .PD
+ .\" =========================================================================
+ .SH URL
+--- a/man/unzip.1
++++ b/man/unzip.1
+@@ -20,7 +20,7 @@
+ .in -4n
+ ..
+ .\" =========================================================================
+-.TH UNZIP 1L "20 April 2009 (v6.0)" "Info-ZIP"
++.TH UNZIP 1 "20 April 2009 (v6.0)" "Info-ZIP"
+ .SH NAME
+ unzip \- list, test and extract compressed files in a ZIP archive
+ .PD
+@@ -34,7 +34,7 @@
+ \fIunzip\fP will list, test, or extract files from a ZIP archive, commonly
+ found on MS-DOS systems.  The default behavior (with no options) is to extract
+ into the current directory (and subdirectories below it) all files from the
+-specified ZIP archive.  A companion program, \fIzip\fP(1L), creates ZIP
++specified ZIP archive.  A companion program, \fIzip\fP(1), creates ZIP
+ archives; both programs are compatible with archives created by PKWARE's
+ \fIPKZIP\fP and \fIPKUNZIP\fP for MS-DOS, but in many cases the program
+ options or default behaviors differ.
+@@ -105,8 +105,8 @@
+ list of all possible flags.  The exhaustive list follows:
+ .TP
+ .B \-Z
+-\fIzipinfo\fP(1L) mode.  If the first option on the command line is \fB\-Z\fP,
+-the remaining options are taken to be \fIzipinfo\fP(1L) options.  See the
++\fIzipinfo\fP(1) mode.  If the first option on the command line is \fB\-Z\fP,
++the remaining options are taken to be \fIzipinfo\fP(1) options.  See the
+ appropriate manual page for a description of these options.
+ .TP
+ .B \-A
+@@ -178,7 +178,7 @@
+ compressed size and compression ratio figures are independent of the entry's
+ encryption status and show the correct compression performance.  (The complete
+ size of the encrypted compressed data stream for zipfile entries is reported
+-by the more verbose \fIzipinfo\fP(1L) reports, see the separate manual.)
++by the more verbose \fIzipinfo\fP(1) reports, see the separate manual.)
+ When no zipfile is specified (that is, the complete command is simply
+ ``\fCunzip \-v\fR''), a diagnostic screen is printed.  In addition to
+ the normal header with release date and version, \fIunzip\fP lists the
+@@ -379,8 +379,8 @@
+ .TP
+ .B \-N
+ [Amiga] extract file comments as Amiga filenotes.  File comments are created
+-with the \-c option of \fIzip\fP(1L), or with the \-N option of the Amiga port
+-of \fIzip\fP(1L), which stores filenotes as comments.
++with the \-c option of \fIzip\fP(1), or with the \-N option of the Amiga port
++of \fIzip\fP(1), which stores filenotes as comments.
+ .TP
+ .B \-o
+ overwrite existing files without prompting.  This is a dangerous option, so
+@@ -598,7 +598,7 @@
+ As suggested by the examples above, the default variable names are UNZIP_OPTS
+ for VMS (where the symbol used to install \fIunzip\fP as a foreign command
+ would otherwise be confused with the environment variable), and UNZIP
+-for all other operating systems.  For compatibility with \fIzip\fP(1L),
++for all other operating systems.  For compatibility with \fIzip\fP(1),
+ UNZIPOPT is also accepted (don't ask).  If both UNZIP and UNZIPOPT
+ are defined, however, UNZIP takes precedence.  \fIunzip\fP's diagnostic
+ option (\fB\-v\fP with no zipfile name) can be used to check the values
+@@ -648,8 +648,8 @@
+ a password is not known, entering a null password (that is, just a carriage
+ return or ``Enter'') is taken as a signal to skip all further prompting.
+ Only unencrypted files in the archive(s) will thereafter be extracted.  (In
+-fact, that's not quite true; older versions of \fIzip\fP(1L) and
+-\fIzipcloak\fP(1L) allowed null passwords, so \fIunzip\fP checks each encrypted
++fact, that's not quite true; older versions of \fIzip\fP(1) and
++\fIzipcloak\fP(1) allowed null passwords, so \fIunzip\fP checks each encrypted
+ file to see if the null password works.  This may result in ``false positives''
+ and extraction errors, as noted above.)
+ .PP
+@@ -943,8 +943,8 @@
+ .PD
+ .\" =========================================================================
+ .SH "SEE ALSO"
+-\fIfunzip\fP(1L), \fIzip\fP(1L), \fIzipcloak\fP(1L), \fIzipgrep\fP(1L),
+-\fIzipinfo\fP(1L), \fIzipnote\fP(1L), \fIzipsplit\fP(1L)
++\fIfunzip\fP(1), \fIzip\fP(1), \fIzipcloak\fP(1), \fIzipgrep\fP(1),
++\fIzipinfo\fP(1), \fIzipnote\fP(1), \fIzipsplit\fP(1)
+ .PD
+ .\" =========================================================================
+ .SH URL
+--- a/man/unzipsfx.1
++++ b/man/unzipsfx.1
+@@ -20,7 +20,7 @@
+ .in -4n
+ ..
+ .\" =========================================================================
+-.TH UNZIPSFX 1L "20 April 2009 (v6.0)" "Info-ZIP"
++.TH UNZIPSFX 1 "20 April 2009 (v6.0)" "Info-ZIP"
+ .SH NAME
+ unzipsfx \- self-extracting stub for prepending to ZIP archives
+ .PD
+@@ -30,7 +30,7 @@
+ .PD
+ .\" =========================================================================
+ .SH DESCRIPTION
+-\fIunzipsfx\fP is a modified version of \fIunzip\fP(1L) designed to be
++\fIunzipsfx\fP is a modified version of \fIunzip\fP(1) designed to be
+ prepended to existing ZIP archives in order to form self-extracting archives.
+ Instead of taking its first non-flag argument to be the zipfile(s) to be
+ extracted, \fIunzipsfx\fP seeks itself under the name by which it was invoked
+@@ -109,7 +109,7 @@
+ .PD
+ .\" =========================================================================
+ .SH OPTIONS
+-\fIunzipsfx\fP supports the following \fIunzip\fP(1L) options:  \fB\-c\fP
++\fIunzipsfx\fP supports the following \fIunzip\fP(1) options:  \fB\-c\fP
+ and \fB\-p\fP (extract to standard output/screen), \fB\-f\fP and \fB\-u\fP
+ (freshen and update existing files upon extraction), \fB\-t\fP (test
+ archive) and \fB\-z\fP (print archive comment).  All normal listing options
+@@ -118,11 +118,11 @@
+ those creating self-extracting archives may wish to include a short listing
+ in the zipfile comment.
+ .PP
+-See \fIunzip\fP(1L) for a more complete description of these options.
++See \fIunzip\fP(1) for a more complete description of these options.
+ .PD
+ .\" =========================================================================
+ .SH MODIFIERS
+-\fIunzipsfx\fP currently supports all \fIunzip\fP(1L) modifiers:  \fB\-a\fP
++\fIunzipsfx\fP currently supports all \fIunzip\fP(1) modifiers:  \fB\-a\fP
+ (convert text files), \fB\-n\fP (never overwrite), \fB\-o\fP (overwrite
+ without prompting), \fB\-q\fP (operate quietly), \fB\-C\fP (match names
+ case-insensitively), \fB\-L\fP (convert uppercase-OS names to lowercase),
+@@ -137,18 +137,18 @@
+ of course continue to be supported since the zipfile format implies ASCII
+ storage of text files.)
+ .PP
+-See \fIunzip\fP(1L) for a more complete description of these modifiers.
++See \fIunzip\fP(1) for a more complete description of these modifiers.
+ .PD
+ .\" =========================================================================
+ .SH "ENVIRONMENT OPTIONS"
+-\fIunzipsfx\fP uses the same environment variables as \fIunzip\fP(1L) does,
++\fIunzipsfx\fP uses the same environment variables as \fIunzip\fP(1) does,
+ although this is likely to be an issue only for the person creating and
+-testing the self-extracting archive.  See \fIunzip\fP(1L) for details.
++testing the self-extracting archive.  See \fIunzip\fP(1) for details.
+ .PD
+ .\" =========================================================================
+ .SH DECRYPTION
+-Decryption is supported exactly as in \fIunzip\fP(1L); that is, interactively
+-with a non-echoing prompt for the password(s).  See \fIunzip\fP(1L) for
++Decryption is supported exactly as in \fIunzip\fP(1); that is, interactively
++with a non-echoing prompt for the password(s).  See \fIunzip\fP(1) for
+ details.  Once again, note that if the archive has no encrypted files there
+ is no reason to use a version of \fIunzipsfx\fP with decryption support;
+ that only adds to the size of the archive.
+@@ -286,7 +286,7 @@
+ from anywhere in the user's path.  The situation is not known for AmigaDOS,
+ Atari TOS, MacOS, etc.
+ .PP
+-As noted above, a number of the normal \fIunzip\fP(1L) functions have
++As noted above, a number of the normal \fIunzip\fP(1) functions have
+ been removed in order to make \fIunzipsfx\fP smaller:  usage and diagnostic
+ info, listing functions and extraction to other directories.  Also, only
+ stored and deflated files are supported.  The latter limitation is mainly
+@@ -303,17 +303,17 @@
+ defined as a ``debug hunk.'')  There may be compatibility problems between
+ the ROM levels of older Amigas and newer ones.
+ .PP
+-All current bugs in \fIunzip\fP(1L) exist in \fIunzipsfx\fP as well.
++All current bugs in \fIunzip\fP(1) exist in \fIunzipsfx\fP as well.
+ .PD
+ .\" =========================================================================
+ .SH DIAGNOSTICS
+ \fIunzipsfx\fP's exit status (error level) is identical to that of
+-\fIunzip\fP(1L); see the corresponding man page.
++\fIunzip\fP(1); see the corresponding man page.
+ .PD
+ .\" =========================================================================
+ .SH "SEE ALSO"
+-\fIfunzip\fP(1L), \fIunzip\fP(1L), \fIzip\fP(1L), \fIzipcloak\fP(1L),
+-\fIzipgrep\fP(1L), \fIzipinfo\fP(1L), \fIzipnote\fP(1L), \fIzipsplit\fP(1L)
++\fIfunzip\fP(1), \fIunzip\fP(1), \fIzip\fP(1), \fIzipcloak\fP(1),
++\fIzipgrep\fP(1), \fIzipinfo\fP(1), \fIzipnote\fP(1), \fIzipsplit\fP(1)
+ .PD
+ .PD
+ .\" =========================================================================
+@@ -330,7 +330,7 @@
+ .\" =========================================================================
+ .SH AUTHORS
+ Greg Roelofs was responsible for the basic modifications to UnZip necessary
+-to create UnZipSFX.  See \fIunzip\fP(1L) for the current list of Zip-Bugs
++to create UnZipSFX.  See \fIunzip\fP(1) for the current list of Zip-Bugs
+ authors, or the file CONTRIBS in the UnZip source distribution for the
+ full list of Info-ZIP contributors.
+ .PD
+--- a/man/zipgrep.1
++++ b/man/zipgrep.1
+@@ -8,7 +8,7 @@
+ .\" zipgrep.1 by Greg Roelofs.
+ .\"
+ .\" =========================================================================
+-.TH ZIPGREP 1L "20 April 2009" "Info-ZIP"
++.TH ZIPGREP 1 "20 April 2009" "Info-ZIP"
+ .SH NAME
+ zipgrep \- search files in a ZIP archive for lines matching a pattern
+ .PD
+@@ -21,7 +21,7 @@
+ .SH DESCRIPTION
+ \fIzipgrep\fP will search files within a ZIP archive for lines matching
+ the given string or pattern.  \fIzipgrep\fP is a shell script and requires
+-\fIegrep\fP(1) and \fIunzip\fP(1L) to function.  Its output is identical to
++\fIegrep\fP(1) and \fIunzip\fP(1) to function.  Its output is identical to
+ that of \fIegrep\fP(1).
+ .PD
+ .\" =========================================================================
+@@ -69,8 +69,8 @@
+ .PD
+ .\" =========================================================================
+ .SH "SEE ALSO"
+-\fIegrep\fP(1), \fIunzip\fP(1L), \fIzip\fP(1L), \fIfunzip\fP(1L),
+-\fIzipcloak\fP(1L), \fIzipinfo\fP(1L), \fIzipnote\fP(1L), \fIzipsplit\fP(1L)
++\fIegrep\fP(1), \fIunzip\fP(1), \fIzip\fP(1), \fIfunzip\fP(1),
++\fIzipcloak\fP(1), \fIzipinfo\fP(1), \fIzipnote\fP(1), \fIzipsplit\fP(1)
+ .PD
+ .\" =========================================================================
+ .SH URL
+--- a/man/zipinfo.1
++++ b/man/zipinfo.1
+@@ -34,7 +34,7 @@
+ .in -4n
+ ..
+ .\" =========================================================================
+-.TH ZIPINFO 1L "20 April 2009 (v3.0)" "Info-ZIP"
++.TH ZIPINFO 1 "20 April 2009 (v3.0)" "Info-ZIP"
+ .SH NAME
+ zipinfo \- list detailed information about a ZIP archive
+ .PD
+@@ -272,7 +272,7 @@
+ Note that because of limitations in the MS-DOS format used to store file
+ times, the seconds field is always rounded to the nearest even second.
+ For Unix files this is expected to change in the next major releases of
+-\fIzip\fP(1L) and \fIunzip\fP.
++\fIzip\fP(1) and \fIunzip\fP.
+ .PP
+ In addition to individual file information, a default zipfile listing
+ also includes header and trailer lines:
+@@ -361,7 +361,7 @@
+ As suggested above, the default variable names are ZIPINFO_OPTS for VMS
+ (where the symbol used to install \fIzipinfo\fP as a foreign command
+ would otherwise be confused with the environment variable), and ZIPINFO
+-for all other operating systems.  For compatibility with \fIzip\fP(1L),
++for all other operating systems.  For compatibility with \fIzip\fP(1),
+ ZIPINFOOPT is also accepted (don't ask).  If both ZIPINFO and ZIPINFOOPT
+ are defined, however, ZIPINFO takes precedence.  \fIunzip\fP's diagnostic
+ option (\fB\-v\fP with no zipfile name) can be used to check the values
+@@ -496,8 +496,8 @@
+ .PP
+ .\" =========================================================================
+ .SH "SEE ALSO"
+-\fIls\fP(1), \fIfunzip\fP(1L), \fIunzip\fP(1L), \fIunzipsfx\fP(1L),
+-\fIzip\fP(1L), \fIzipcloak\fP(1L), \fIzipnote\fP(1L), \fIzipsplit\fP(1L)
++\fIls\fP(1), \fIfunzip\fP(1), \fIunzip\fP(1), \fIunzipsfx\fP(1),
++\fIzip\fP(1), \fIzipcloak\fP(1), \fIzipnote\fP(1), \fIzipsplit\fP(1)
+ .PD
+ .\" =========================================================================
+ .SH URL
