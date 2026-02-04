@@ -449,6 +449,14 @@ define UCLIBC_INSTALL_UTILS_TARGET
 		PREFIX=$(TARGET_DIR) \
 		utils install_utils
 endef
+
+define UCLIBC_INSTALL_UTILS_STAGING
+	$(MAKE1) -C $(@D) \
+		CC="$(TARGET_CC)" CPP="$(TARGET_CPP)" LD="$(TARGET_LD)" \
+		ARCH="$(UCLIBC_TARGET_ARCH)" \
+		PREFIX=$(STAGING_DIR) \
+		utils install_utils
+endef
 endif
 
 define UCLIBC_INSTALL_TARGET_CMDS
@@ -479,6 +487,7 @@ define UCLIBC_INSTALL_STAGING_CMDS
 		RUNTIME_PREFIX=/ \
 		install_runtime install_dev
 	$(UCLIBC_INSTALL_HOST_UTILS)
+	$(UCLIBC_INSTALL_UTILS_STAGING)
 endef
 
 # Checks to give errors that the user can understand
