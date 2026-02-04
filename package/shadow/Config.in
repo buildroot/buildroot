@@ -3,6 +3,9 @@ menuconfig BR2_PACKAGE_SHADOW
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14
 	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
+	select BR2_PACKAGE_SHADOW_SHA_CRYPT if \
+	       (BR2_TARGET_GENERIC_PASSWD_SHA256 || \
+	        BR2_TARGET_GENERIC_PASSWD_SHA512)
 	help
 	  Utilities to deal with user accounts.
 
