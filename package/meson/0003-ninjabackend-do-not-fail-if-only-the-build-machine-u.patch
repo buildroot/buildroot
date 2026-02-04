@@ -1,0 +1,45 @@
+From c1db93be859b360b64fe20d49a286278b56df64e Mon Sep 17 00:00:00 2001
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 3 Feb 2026 12:56:36 +0100
+Subject: [PATCH] ninjabackend: do not fail if only the build machine uses C++
+
+This is caused by the introduction of the cpp_importstd option; while
+target_uses_import_std() tries to protect from the option not existing,
+this does not work if cpp_importstd exists but build.cpp_importstd does
+not, and get_option_for_target() wants to look at the latter.
+
+Just return false on a KeyError for simplicity.
+
+Fixes: #15497
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+
+Upstream: https://github.com/mesonbuild/meson/commit/c1db93be859b360b64fe20d49a286278b56df64e
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ mesonbuild/backend/ninjabackend.py | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/mesonbuild/backend/ninjabackend.py b/mesonbuild/backend/ninjabackend.py
+index 42f24d47d..e0aaa39c4 100644
+--- a/mesonbuild/backend/ninjabackend.py
++++ b/mesonbuild/backend/ninjabackend.py
+@@ -3297,11 +3297,11 @@ https://gcc.gnu.org/bugzilla/show_bug.cgi?id=47485'''))
+     def target_uses_import_std(self, target: build.BuildTarget) -> bool:
+         if 'cpp' not in target.compilers:
+             return False
+-        if 'cpp_importstd' not in self.environment.coredata.optstore:
+-            return False
+-        if self.environment.coredata.get_option_for_target(target, 'cpp_importstd') == 'false':
++        try:
++            if self.environment.coredata.get_option_for_target(target, 'cpp_importstd') == 'true':
++                return True
++        except KeyError:
+             return False
+-        return True
+ 
+     def handle_cpp_import_std(self, target: build.BuildTarget, compiler):
+         istd_args = []
+-- 
+2.47.3
+
