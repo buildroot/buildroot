@@ -8,6 +8,7 @@ Subject: [PATCH] gh-139275: Fix compilation of
 Upstream: https://github.com/python/cpython/commit/1963e701001839389cfb1b11d803b0743f4705d7
 
 [ Bernd Kuhls: ported to Python 3.14.2]
+[ Vincent Fazio: update to apply cleanly to 3.14.3 ]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  .../2025-09-24-17-32-52.gh-issue-139275.novrqf.rst              | 2 ++
@@ -41,7 +42,7 @@ diff --git a/Python/remote_debug.h b/Python/remote_debug.h
 index 8f9b6cd4c49..b7d17a0f345 100644
 --- a/Python/remote_debug.h
 +++ b/Python/remote_debug.h
-@@ -881,7 +881,7 @@ _Py_RemoteDebug_GetPyRuntimeAddress(proc_handle_t* handle)
+@@ -886,7 +886,7 @@ _Py_RemoteDebug_GetPyRuntimeAddress(proc_handle_t* handle)
              handle->pid);
          _PyErr_ChainExceptions1(exc);
      }
