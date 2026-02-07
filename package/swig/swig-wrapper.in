@@ -5,4 +5,4 @@ if [ -z "${SWIG_LIB}" ]; then
     export SWIG_LIB="${0%/*}/../share/swig/@SWIG_VERSION@"
 fi
 
-exec "${0}.br_real" "$@"
+exec "$(realpath "${0}").br_real" "$@"
