@@ -35,11 +35,7 @@ LIBSELINUX_DEPENDENCIES += \
 	python3 \
 	python-setuptools \
 	host-python-pip \
-	host-python-setuptools \
 	host-swig
-
-LIBSELINUX_MAKE_ENV += \
-	$(PKG_PYTHON_SETUPTOOLS_ENV)
 
 LIBSELINUX_MAKE_OPTS += \
 	$(PKG_PYTHON_SETUPTOOLS_ENV) \
