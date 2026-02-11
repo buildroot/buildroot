@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-I2PD_VERSION = 2.58.0
+I2PD_VERSION = 2.59.0
 I2PD_SITE = $(call github,PurpleI2P,i2pd,$(I2PD_VERSION))
 I2PD_LICENSE = BSD-3-Clause
 I2PD_LICENSE_FILES = LICENSE
@@ -14,8 +14,6 @@ I2PD_DEPENDENCIES = \
 	boost \
 	openssl \
 	zlib
-
-I2PD_CONF_OPTS += -DWITH_GUI=OFF
 
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 I2PD_CONF_OPTS += \
