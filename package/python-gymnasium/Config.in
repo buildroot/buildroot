@@ -1,0 +1,11 @@
+config BR2_PACKAGE_PYTHON_GYMNASIUM
+	bool "python-gymnasium"
+	select BR2_PACKAGE_PYTHON_CLOUDPICKLE # runtime
+	select BR2_PACKAGE_PYTHON_FARAMA_NOTIFICATIONS # runtime
+	select BR2_PACKAGE_PYTHON_NUMPY # runtime
+	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime
+	help
+	  A standard API for reinforcement learning and a diverse set
+	  of reference environments (formerly Gym).
+
+	  https://farama.org
