@@ -10,8 +10,8 @@ LIBXMLSEC1_SITE = https://github.com/lsh123/xmlsec/releases/download/$(LIBXMLSEC
 LIBXMLSEC1_LICENSE = MIT
 LIBXMLSEC1_LICENSE_FILES = Copyright
 LIBXMLSEC1_INSTALL_STAGING = YES
-LIBXMLSEC1_DEPENDENCIES = libxml2 libxslt openssl
-HOST_LIBXMLSEC1_DEPENDENCIES = host-libxml2 host-libxslt host-openssl
+LIBXMLSEC1_DEPENDENCIES = libxml2 openssl
+HOST_LIBXMLSEC1_DEPENDENCIES = host-libxml2 host-openssl
 LIBXMLSEC1_AUTORECONF = YES
 
 LIBXMLSEC1_CONF_OPTS = \
@@ -26,7 +26,15 @@ HOST_LIBXMLSEC1_CONF_OPTS = \
 	--with-openssl \
 	--without-gnutls \
 	--without-gcrypt \
-	--without-nss
+	--without-nss \
+	--without-libxslt
+
+ifeq ($(BR2_PACKAGE_LIBXSLT),y)
+LIBXMLSEC1_DEPENDENCIES += libxslt
+LIBXMLSEC1_CONF_OPTS += --with-libxslt
+else
+LIBXMLSEC1_CONF_OPTS += --without-libxslt
+endif
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
