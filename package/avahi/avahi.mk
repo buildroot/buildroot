@@ -12,12 +12,53 @@ AVAHI_CPE_ID_VENDOR = avahi
 AVAHI_SELINUX_MODULES = avahi
 AVAHI_INSTALL_STAGING = YES
 
+# 0011-properly-randomize-query-id-of-DNS-packets.patch
+AVAHI_AUTORECONF = YES
+
 # CVE-2021-26720 is an issue in avahi-daemon-check-dns.sh, which is
 # part of the Debian packaging and not part of upstream avahi
 AVAHI_IGNORE_CVES += CVE-2021-26720
 
 # 0001-Fix-NULL-pointer-crashes-from-175.patch
 AVAHI_IGNORE_CVES += CVE-2021-36217
+
+# 0003-avoid-infinite-loop-in-avahi-daemon-by-handling-hup-event-in-client-work.patch
+AVAHI_IGNORE_CVES += CVE-2021-3468
+
+# 0004-core-reject-overly-long-txt-resource-records.patch
+AVAHI_IGNORE_CVES += CVE-2023-38469
+
+# 0005-ensure-each-label-is-at-least-one-byte-long.patch
+# 0006-common-bail-out-when-escaped-labels-can-t-fit-into-ret.patch
+AVAHI_IGNORE_CVES += CVE-2023-38470
+
+# 0007-core-extract-host-name-using-avahi-unescape-label.patch
+# 0008-core-return-errors-from-avahi-server-set-host-name-properly.patch
+AVAHI_IGNORE_CVES += CVE-2023-38471
+
+# 0009-core-make-sure-there-is-rdata-to-process-before-parsing-it.patch
+AVAHI_IGNORE_CVES += CVE-2023-38472
+
+# 0010-common-derive-alternative-host-name-from-its-unescaped-version.patch
+AVAHI_IGNORE_CVES += CVE-2023-38473
+
+# 0011-properly-randomize-query-id-of-DNS-packets.patch
+AVAHI_IGNORE_CVES += CVE-2024-52616
+
+# 0012-core-wide-area-fix-for-CVE-2024-52615.patch
+AVAHI_IGNORE_CVES += CVE-2024-52615
+
+# 0013-core-refuse-to-create-wide-area-record-browsers-when-wide-area-is-off.patch
+AVAHI_IGNORE_CVES += CVE-2025-68276
+
+# 0014-core-fix-DoS-bug-by-removing-incorrect-assertion.patch
+AVAHI_IGNORE_CVES += CVE-2025-68468
+
+# 0015-core-fix-DoS-bug-by-changing-assert-to-return.patch
+AVAHI_IGNORE_CVES += CVE-2025-68471
+
+# 0016-core-fix-uncontrolled-recursion-bug-using-a-simple-loop-detection-algorithm.patch
+AVAHI_IGNORE_CVES += CVE-2026-24401
 
 AVAHI_CONF_ENV = \
 	avahi_cv_sys_cxx_works=yes \
