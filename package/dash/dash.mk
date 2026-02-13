@@ -11,6 +11,8 @@ DASH_LICENSE_FILES = COPYING
 # We're patching configure.ac
 DASH_AUTORECONF = YES
 
+DASH_CPE_ID_VENDOR = dash
+
 # dash does not build in parallel
 DASH_MAKE = $(MAKE1)
 
