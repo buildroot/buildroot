@@ -30,8 +30,7 @@ GVFS_CONF_OPTS = \
 	-Dgoogle=false \
 	-Donedrive=false \
 	-Dmtp=false \
-	-Dsftp=false \
-	-Dudisks2=false
+	-Dsftp=false
 
 ifeq ($(BR2_PACKAGE_AVAHI),y)
 GVFS_DEPENDENCIES += avahi
@@ -155,6 +154,13 @@ GVFS_CONF_OPTS += \
 	-Dlogind=false \
 	-Dsystemduserunitdir=no \
 	-Dtmpfilesdir=no
+endif
+
+ifeq ($(BR2_PACKAGE_UDISKS),y)
+GVFS_DEPENDENCIES += udisks
+GVFS_CONF_OPTS += -Dudisks2=true
+else
+GVFS_CONF_OPTS += -Dudisks2=false
 endif
 
 $(eval $(meson-package))
