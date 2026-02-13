@@ -20,8 +20,8 @@ FRR_LICENSE_FILES = \
 # tools/gcc-plugins/frr-format.[ch] is not enabled by frr's ./configure, so gcc's
 # GPLv3 does not apply
 #	doc/licenses/GPL-3.0
-FRR_CPE_ID_VENDOR = linuxfoundation
-FRR_CPE_ID_PRODUCT = free_range_routing
+FRR_CPE_ID_VENDOR = frrouting
+FRR_CPE_ID_PRODUCT = frrouting
 FRR_AUTORECONF = YES
 FRR_INSTALL_STAGING = YES
 
