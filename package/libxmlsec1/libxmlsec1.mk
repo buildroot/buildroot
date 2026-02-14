@@ -19,7 +19,8 @@ LIBXMLSEC1_CONF_OPTS = \
 	--with-openssl \
 	--without-gnutls \
 	--without-gcrypt \
-	--without-nss
+	--without-nss \
+	--disable-des
 
 HOST_LIBXMLSEC1_CONF_OPTS = \
 	--enable-crypto-dl=no \
@@ -27,7 +28,8 @@ HOST_LIBXMLSEC1_CONF_OPTS = \
 	--without-gnutls \
 	--without-gcrypt \
 	--without-nss \
-	--without-libxslt
+	--without-libxslt \
+	--disable-des
 
 ifeq ($(BR2_PACKAGE_LIBXSLT),y)
 LIBXMLSEC1_DEPENDENCIES += libxslt
