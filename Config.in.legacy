@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2026.02"
 
+config BR2_BINUTILS_VERSION_2_43_X
+	bool "binutils 2.43 has been removed"
+	select BR2_LEGACY
+	help
+	  binutils 2.43 has been removed, select a newer version
+	  instead.
+
 config BR2_PACKAGE_DVDRW_TOOLS
 	bool "dvdrw-tools removed"
 	select BR2_LEGACY
