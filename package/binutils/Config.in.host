@@ -25,6 +25,9 @@ config BR2_BINUTILS_VERSION_2_44_X
 config BR2_BINUTILS_VERSION_2_45_X
 	bool "binutils 2.45.1"
 
+config BR2_BINUTILS_VERSION_2_46_X
+	bool "binutils 2.46.0"
+
 endchoice
 
 config BR2_BINUTILS_VERSION
@@ -33,6 +36,7 @@ config BR2_BINUTILS_VERSION
 	default "2.43.1"	if BR2_BINUTILS_VERSION_2_43_X
 	default "2.44"		if BR2_BINUTILS_VERSION_2_44_X
 	default "2.45.1"	if BR2_BINUTILS_VERSION_2_45_X
+	default "2.46.0"	if BR2_BINUTILS_VERSION_2_46_X
 
 config BR2_BINUTILS_GPROFNG
 	bool "gprofng support"
