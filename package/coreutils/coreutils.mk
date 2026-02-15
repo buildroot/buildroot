@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-COREUTILS_VERSION = 9.8
+COREUTILS_VERSION = 9.10
 COREUTILS_SITE = $(BR2_GNU_MIRROR)/coreutils
 COREUTILS_SOURCE = coreutils-$(COREUTILS_VERSION).tar.xz
 COREUTILS_LICENSE = GPL-3.0+
@@ -16,6 +16,7 @@ COREUTILS_CPE_ID_VENDOR = gnu
 # if the system is compliant even with this option passed
 COREUTILS_CONF_OPTS = --disable-rpath \
 	--disable-year2038 \
+	--enable-install-program=kill,uptime \
 	$(if $(BR2_TOOLCHAIN_USES_MUSL),--with-included-regex)
 
 ifeq ($(BR2_PACKAGE_COREUTILS_INDIVIDUAL_BINARIES),y)
@@ -57,7 +58,7 @@ COREUTILS_CONF_ENV = ac_cv_c_restrict=no \
 
 COREUTILS_BIN_PROGS = base64 cat chgrp chmod chown cp date dd df dir echo false \
 	kill link ln ls mkdir mknod mktemp mv nice printenv pwd rm rmdir \
-	vdir sleep stty sync touch true uname join
+	vdir sleep stty sync touch true uname uptime join
 
 ifeq ($(BR2_PACKAGE_ACL),y)
 COREUTILS_DEPENDENCIES += acl
