@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-NETWORK_MANAGER_VERSION_MAJOR = 1.52
-NETWORK_MANAGER_VERSION = $(NETWORK_MANAGER_VERSION_MAJOR).2
+NETWORK_MANAGER_VERSION_MAJOR = 1.56
+NETWORK_MANAGER_VERSION = $(NETWORK_MANAGER_VERSION_MAJOR).0
 NETWORK_MANAGER_SOURCE = NetworkManager-$(NETWORK_MANAGER_VERSION).tar.xz
 NETWORK_MANAGER_SITE = https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/releases/$(NETWORK_MANAGER_VERSION)/downloads
 NETWORK_MANAGER_INSTALL_STAGING = YES
@@ -26,6 +26,7 @@ NETWORK_MANAGER_DEPENDENCIES = \
 
 NETWORK_MANAGER_CONF_OPTS = \
 	-Ddocs=false \
+	-Dman=false \
 	-Dtests=no \
 	-Dqt=false \
 	-Diptables=/usr/sbin/iptables \
@@ -164,6 +165,13 @@ NETWORK_MANAGER_DEPENDENCIES += polkit
 NETWORK_MANAGER_CONF_OPTS += -Dpolkit=true
 else
 NETWORK_MANAGER_CONF_OPTS += -Dpolkit=false
+endif
+
+ifeq ($(BR2_PACKAGE_LIBNVME),y)
+NETWORK_MANAGER_DEPENDENCIES += libnvme
+NETWORK_MANAGER_CONF_OPTS += -Dnbft=true
+else
+NETWORK_MANAGER_CONF_OPTS += -Dnbft=false
 endif
 
 ifeq ($(BR2_PACKAGE_NETWORK_MANAGER_CLI),y)
