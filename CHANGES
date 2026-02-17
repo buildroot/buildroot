@@ -1,3 +1,76 @@
+2026.02-rc1, released February 17th, 2026
+
+	Fixes all over the tree and new features.
+
+	Arch:
+	- Add HPPA architecture support
+	- Drop ARC big-endian support
+
+	Toolchain:
+	- Kernel headers: use 6.19.x by default, removed 6.17.x, added
+	  6.19.x support.
+
+	- Binutils: use 2.44 by default, removed 2.42.x, added 2.45.x series.
+
+	Misc:
+	- Various tweaks to utils/generate-cyclonedx for better SBOM
+	  compatibility and more detailed annotations for CVEs fixed
+	  by patches in Buildroot.
+
+	New defconfigs: AMD Versal2 VEK385, HP-9000, QEMU HPPA B160L,
+	STM32h747i-disco
+
+	Removed defconfigs: Raspberrypi3 qt5we
+
+	New packages: adsp-ldr, aichat, k3conf, kibi, libplacebo,
+	libxmlsec1, libyang-cpp, nqptp, openscap,
+	python-annotated-doc, python-base58, python-coherent-licensed,
+	python-diskcache, python-gpiod,
+	python-ipython-pygments-lexers, python-librt,
+	python-markdown-it-py, python-mdit-py-plugins, python-mdurl,
+	python-memray, python-platformdirs, python-rich,
+	python-sdbus-systemd, python-textual, python-varlink,
+	qoriq-restool, rasdaemon, sigsum-go, sysrepo-cpp, yq, zellij
+
+	Removed packages: alure, bootstrap, chartjs, connman-gtk,
+	cppdb, criu, cvs, datatables-buttons, datatables-fixedcolumns,
+	datatables-responsive, datatables, dbus-triggerd, dmraid,
+	dvdrw-tools, explorercanvas, flot, forge, gconf, hawktracer,
+	jquery-datetimepicker, jquery-keyboard, jquery-mobile,
+	jquery-sidebar, jquery-sparkline, jquery-ui-themes, jquery-ui,
+	jquery-validation, jquery, jsmin, json-javascript, jszip,
+	let-me-create, libcgi, libcuefile, libfreeimage, libiqrf,
+	libmhash, libnids, libsvg-cairo, libsvg, libuwsc, lockdev,
+	musepack, opencv3, openlayers, openpowerlink, opentracing-cpp,
+	php-zmq, python-aioredis, qjson, racehound, rpi-userland,
+	sconeserver, softether, taskd, vis-network, vuejs-router,
+	vuejs, xdriver_xf86-input-mouse
+
+	Issues resolved:
+	- GNU GRUB (BIOS) with f2fs filesystem failed
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/61
+
+	- The shadow package does not correctly configure the ENCRYPT_METHOD..
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/134
+
+	- EGL not found when building libWPE from buildroot base folder
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/144
+
+	- Awkward error message: "Fix you path"
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/151
+
+	- Detected presence of version control tool artifacts
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/154
+
+	- run-tests tool broken with Python 3.14
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/156
+
+	- Moving away from bminor Github mirrors
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/160
+
+	- How can I make the 'en_US' locale by default?
+	  https://gitlab.com/buildroot.org/buildroot/-/issues/161
+
 2025.11.1, released January 20, 2026
 
 	Important / security related fixes:
