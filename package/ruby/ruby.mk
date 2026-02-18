@@ -26,10 +26,12 @@ RUBY_CONF_OPTS = \
 	--disable-install-doc \
 	--disable-rpath \
 	--disable-rubygems \
-	--disable-yjit
+	--disable-yjit \
+	--disable-zjit
 HOST_RUBY_CONF_OPTS = \
 	--disable-install-doc \
 	--disable-yjit \
+	--disable-zjit \
 	--with-out-ext=curses,readline \
 	--without-gmp
 
