@@ -50,6 +50,12 @@ comment "llvm support needs a toolchain not affected by GCC bug 64735"
 	depends on BR2_PACKAGE_LLVM_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_HAS_GCC_BUG_64735
 
+config BR2_PACKAGE_MESA3D_LEGACY_BIND_WAYLAND_DISPLAY
+	bool "Legacy Wayland EGL_WL_bind_wayland_display support"
+	depends on BR2_PACKAGE_WAYLAND
+	help
+	  Legacy Wayland EGL_WL_bind_wayland_display support.
+
 menuconfig BR2_PACKAGE_MESA3D_OPENCL
 	bool "OpenCL support"
 	depends on BR2_PACKAGE_MESA3D_LLVM
