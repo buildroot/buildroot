@@ -1,0 +1,33 @@
+From 6917e00fb6c99a97dacdae7040e5c4c53752b10f Mon Sep 17 00:00:00 2001
+From: Vincent Cruz <mooz@blockos.org>
+Date: Tue, 17 Feb 2026 14:14:06 +0100
+Subject: [PATCH] cmake UPDATE use sr_cond_futex only if SYS_futex syscall
+ is available
+
+Some architectures (for ex. riscv32) may not support SYS_futex system
+call, even though linux/futex.h include file is present.
+
+Upstream: https://github.com/sysrepo/sysrepo/commit/a0661b7e6a7b2f784fe3222048066c31187c6f92
+
+Signed-off-by: Vincent Cruz <mooz@blockos.org>
+---
+ CMakeLists.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 9b36de44..e1b39c8c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -163,7 +163,8 @@ set(NACM_SRMON_DATA_PERM "600" CACHE STRING "NACM modules ietf-netconf-acm and s
+ # sr_cond implementation
+ if(NOT SR_COND_IMPL)
+     check_include_file("linux/futex.h" HAS_FUTEX)
+-    if(HAS_FUTEX)
++    check_symbol_exists(SYS_futex "sys/syscall.h" HAS_SYS_FUTEX)
++    if(HAS_FUTEX AND HAS_SYS_FUTEX)
+         set(SR_COND_IMPL "sr_cond_futex")
+     else()
+         set(SR_COND_IMPL "sr_cond_pthread")
+-- 
+2.51.0
+
