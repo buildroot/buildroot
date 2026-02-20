@@ -71,6 +71,75 @@
 	- How can I make the 'en_US' locale by default?
 	  https://gitlab.com/buildroot.org/buildroot/-/issues/161
 
+2025.11.2, released February xx, 2026
+
+	avahi: CVE-2021-3468, CVE-2023-38469, CVE-2023-38470, CVE-2023-38471,
+	  CVE-2023-38472, CVE-2023-38473, CVE-2024-52615, CVE-2024-52616,
+	  CVE-2025-68276, CVE-2025-68468, CVE-2025-68471, CVE-2026-24401
+	bind: CVE-2025-13878
+	busybox: CVE-2025-46394, CVE-2025-60876
+	expat: CVE-2026-24515, CVE-2026-25210
+	glibc: CVE-2025-15281, CVE-2026-0861, CVE-2026-0915
+	gnutls: CVE-2025-14831, CVE-2026-1584
+	go: CVE-2025-61732, CVE-2025-68121, CVE-2025-61728, CVE-2025-61726,
+	  CVE-2025-68121, CVE-2025-61731, CVE-2025-61730
+	gpsd: CVE-2025-67268, CVE-2025-67268
+	haproxy: CVE-2025-11230
+	intel-microcode: CVE-2024-24853, CVE-2025-31648
+	libopenssl: CVE-2025-11187, CVE-2025-15467, CVE-2025-15468,
+	  CVE-2025-66199, CVE-2025-68160, CVE-2025-69418, CVE-2025-69419,
+	  CVE-2025-69420, CVE-2025-69421, CVE-2026-22795, CVE-2026-22796
+	libpng: CVE-2026-22695, CVE-2026-22801, CVE-2026-25646
+	libtasn1: CVE-2025-13151
+	libvpx
+	linux-pam: CVE-2024-10963
+	nginx: CVE-2025-53859
+	nodejs: CVE-2025-27210, CVE-2025-55130, CVE-2025-55131, CVE-2025-55132,
+	  CVE-2025-59465, CVE-2025-59466, CVE-2026-21637
+	python3: gh-144125, gh-143935, gh-143925, gh-143919, gh-143916
+	python-django: CVE-2025-13473, CVE-2025-14550, CVE-2026-1207,
+	  CVE-2026-1285, CVE-2026-1287, CVE-2026-1312
+	python-urllib3: CVE-2026-21441
+	strongswan: CVE-2025-62291
+	tor: TROVE-2025-016
+	vim: CVE-2025-66476
+	webkitgtk
+
+	Infrastructure updates/fixes:
+
+	arm-trusted-firmware, at91bootstrap3, barebox, linux, opensbi, optee-os,
+	  uboot: Add support for custom license files
+	config-fragments/autobuild: drop a number of duplicated toolchains
+	generate-cyclonedx: fix dependencies
+	Makefile: add check-package-external target
+	pkg-stats: add -N/--needs-update option
+	pkg-stats: fix RuntimeError with python 3.14 asyncio
+	relocate-sdk.sh: pre-calculate files in need of relocation
+	system/Config.in: do not reference md5 for sha256 option
+	testing/run-tests: specify multiprocessing method
+	testing: fix SdbusModemmanager/SdbusNetworkmanager duplicate test name
+	testing: python-requests: new runtime test
+	testing: test_python.py: disable interpreter colors
+	testing: test_python_sdbus_modemmanager: remove unneeded systemd vconsole
+	testing/tests/package/test_firewalld: use ext2 instead of cpio
+
+	Updated / fixed packages: aardvark-dns, asterisk, at91bootstrap3, avahi,
+	berkeleydb, bind, bitcoin, blake3, brltty, brotli, busybox cryptsetup,
+	dash, dc3dd, docker-engine, easy-rsa, efl, ell, expat, frr, glibc,
+	gnutls, go, gpsd, grub2, haproxy, igmpproxy, intel-microcode,
+	kvm-unit-tests, libcec, libbsd, libcdio-paranoia, libcurl, libgphoto2,
+	libgpiod2, libite, libopenssl, libpng, libtasn1, libucl, libvpx,
+	libwebsockets, linux, linux-headers, linux-pam, localedef, lockdev,
+	m4, manual, mcelog, mesa3d, mp4v2, mpg123, mpir, mupdf, netdata,
+	netsniff-ng, nginx, nodejs, parprouted, php, php-lua, pkg-utils, podman,
+	python3, python-django, python-jinja2, python-urllib3, qemu, rp-pppoe,
+	rust-bindgen, safeclib, samba4, sane-airscan, screen, shadow, shapelib,
+	spandsp, squeezelite, strongswan, swig, syslog-ng, systemd, tor, uboot,
+	uclibc, uftp, util-linux, vim, vsftpd, webkitgtk, wireless-regdb,
+	xmlstarlet, zeek
+
+	Removed packages: criu, cvs, dbus-triggerd, dvdrw-tools, libsvg, libsvg-cairo, lockdev, gconf,
+
 2025.11.1, released January 20, 2026
 
 	Important / security related fixes:
