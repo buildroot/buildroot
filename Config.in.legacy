@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2026.02"
 
+config BR2_PACKAGE_QEMU_TARGET_CRIS
+	bool "qemu cris support has been removed"
+	select BR2_LEGACY
+	help
+	  CRIS support has been removed since Qemu 9.2.0.
+
 config BR2_PACKAGE_DVDRW_TOOLS
 	bool "dvdrw-tools removed"
 	select BR2_LEGACY
