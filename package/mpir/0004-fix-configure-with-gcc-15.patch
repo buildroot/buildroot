@@ -1,0 +1,41 @@
+From da003143cc6f217dcf474517d54b3aee06c9c18f Mon Sep 17 00:00:00 2001
+From: Leon White <l.white@interstellarlab.earth>
+Date: Mon, 25 Aug 2025 17:24:55 +0200
+Subject: [PATCH] fix configure with gcc-15
+
+Added to Alpine Linux with commit
+https://gitlab.alpinelinux.org/alpine/aports/-/commit/ded83e23c95b2560d2d77c0e61a6425872aa273b
+
+Fixes compile error
+
+conftest.c: In function 'f':
+conftest.c:14:48: error: too many arguments to function 'g'; expected 0, have 6
+   14 | for(i=0;i<1;i++){if(e(got,got,9,d[i].n)==0)h();g(i,d[i].src,d[i].n,got,d[i].want,9);if(d[i].n)h();}}
+      |                                                ^ ~
+conftest.c:13:17: note: declared here
+   13 | void h(){} void g(){}
+      |                 ^
+
+Upstream: https://github.com/wbhart/mpir/pull/300
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ acinclude.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/acinclude.m4 b/acinclude.m4
+index cd917567..53b9ef9c 100644
+--- a/acinclude.m4
++++ b/acinclude.m4
+@@ -590,7 +590,7 @@ extern
+ __inline__ t1 e(t2 rp,t2 up,int n,t1 v0)
+ {t1 c,x,r;int i;if(v0){c=1;for(i=1;i<n;i++){x=up[i];r=x+1;rp[i]=r;}}return c;}
+ void f(){static const struct{t1 n;t1 src[9];t1 want[9];}d[]={{1,{0},{1}},};t1 got[9];int i;
+-void h(){} void g(){}
++void h(){} void g(int, t1 *, t1, t1 *, t1 *, int) {}
+ for(i=0;i<1;i++){if(e(got,got,9,d[i].n)==0)h();g(i,d[i].src,d[i].n,got,d[i].want,9);if(d[i].n)h();}}
+ #else
+ int dummy;
+-- 
+2.47.3
+
