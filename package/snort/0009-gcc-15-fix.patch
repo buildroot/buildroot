@@ -1,0 +1,36 @@
+Fix build with gcc-15.x
+
+Adapted from: https://lists.openembedded.org/g/openembedded-devel/topic/meta_oe_patch_2_8_snort/112466576
+
+Upstream-Status: Backport [resolved in snort3 https://github.com/snort3/snort3/commit/c3cc27355ac302bd24ee3e9d613166898ec2be64]
+
+Signed-off-by: Martin Jansa <martin.jansa@gmail.com>
+
+Downloaded from
+https://gitweb.gentoo.org/repo/gentoo.git/tree/net-analyzer/snort/files/snort-2.9.20-gcc-15-fix.patch?id=410cb3ac09ab3d55e96876634c4d58005d9ead89
+
+Upstream: https://github.com/snort3/snort3/commit/c3cc27355ac302bd24ee3e9d613166898ec2be64
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+
+--- a/src/dynamic-preprocessors/dcerpc2/spp_dce2.c
++++ b/src/dynamic-preprocessors/dcerpc2/spp_dce2.c
+@@ -160,7 +160,7 @@ static void DCE2_ReloadSwapFree(void *);
+ static void DCE2_AddPortsToPaf(struct _SnortConfig *, DCE2_Config *, tSfPolicyId);
+ static void DCE2_ScAddPortsToPaf(struct _SnortConfig *, void *);
+ static uint32_t max(uint32_t a, uint32_t b);
+-static uint32_t DCE2_GetReloadSafeMemcap();
++static uint32_t DCE2_GetReloadSafeMemcap(tSfPolicyUserContextId pConfig);
+ 
+ static bool dce2_file_cache_is_enabled = false;
+ static bool dce2_file_cache_was_enabled = false;
+--- a/src/preprocessors/HttpInspect/include/file_decomp_PDF.h
++++ b/src/preprocessors/HttpInspect/include/file_decomp_PDF.h
+@@ -80,6 +80,6 @@ fd_status_t File_Decomp_Init_PDF( fd_session_p_t SessionPtr );
+ 
+ fd_status_t File_Decomp_End_PDF( fd_session_p_t SessionPtr );
+ 
+-fd_status_t File_Decomp_PDF();
++fd_status_t File_Decomp_PDF( fd_session_p_t SessionPtr );
+ 
+ #endif /* FILE_DECOMP_PDF_H */
