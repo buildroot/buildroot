@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-BDWGC_VERSION = 8.2.10
+BDWGC_VERSION = 8.2.12
 BDWGC_SOURCE = gc-$(BDWGC_VERSION).tar.gz
-BDWGC_SITE = https://github.com/ivmai/bdwgc/releases/download/v$(BDWGC_VERSION)
+BDWGC_SITE = https://github.com/bdwgc/bdwgc/releases/download/v$(BDWGC_VERSION)
 BDWGC_INSTALL_STAGING = YES
 BDWGC_LICENSE = bdwgc license
 BDWGC_LICENSE_FILES = README.QUICK
