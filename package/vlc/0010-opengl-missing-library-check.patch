@@ -1,4 +1,4 @@
-From 4ab41404cb85684125d73977cadebf83bbc246f5 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?R=C3=A9mi=20Denis-Courmont?= <remi@remlab.net>
 Date: Sat, 22 Jan 2022 11:34:38 +0200
 Subject: [PATCH] opengl: missing library check
@@ -12,19 +12,19 @@ is platform-dependent. It is common for the header to be present while
 the library is absent with "multilib" installations (i.e. Linux
 installation with multiple architectures).
 
-Downloaded from upstream commit:
-https://code.videolan.org/videolan/vlc/-/commit/4ab41404cb85684125d73977cadebf83bbc246f5
+Upstream: https://code.videolan.org/videolan/vlc/-/commit/4ab41404cb85684125d73977cadebf83bbc246f5
 
-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Bernd: rebased for 3.0.23]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  configure.ac | 9 ++++++---
  1 file changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 2f50808d597..0d57fadbf8b 100644
+index 67316b589b..7196a69017 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -3169,7 +3169,6 @@ have_gl="no"
+@@ -3138,7 +3138,6 @@ have_gl="no"
  PKG_CHECK_MODULES([GL], [gl], [
    have_gl="yes"
  ], [
@@ -32,7 +32,7 @@ index 2f50808d597..0d57fadbf8b 100644
    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
  #ifdef _WIN32
  # include <GL/glew.h>
-@@ -3179,13 +3178,17 @@ PKG_CHECK_MODULES([GL], [gl], [
+@@ -3148,13 +3147,17 @@ PKG_CHECK_MODULES([GL], [gl], [
      [int t0 = GL_TEXTURE0;]])
    ], [
      GL_CFLAGS=""
@@ -53,5 +53,5 @@ index 2f50808d597..0d57fadbf8b 100644
  ])
  AM_CONDITIONAL([HAVE_GL], [test "${have_gl}" = "yes"])
 -- 
-GitLab
+2.47.3
 
