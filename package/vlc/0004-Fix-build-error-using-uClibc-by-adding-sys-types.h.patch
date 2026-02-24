@@ -1,4 +1,4 @@
-From bbb15b9cbf9353423619f2c40abdf95d861e66ba Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Bernd Kuhls <bernd.kuhls@t-online.de>
 Date: Sat, 2 Apr 2016 16:49:54 +0200
 Subject: [PATCH] Fix build error using uClibc by adding sys/types.h
@@ -19,15 +19,15 @@ https://trac.videolan.org/vlc/ticket/16768
 
 This patch was suggested by courmisch in the trac ticket.
 
-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
-[Patch sent upstream:
- https://mailman.videolan.org/pipermail/vlc-devel/2016-April/106952.html]
+Upstream: https://mailman.videolan.org/pipermail/vlc-devel/2016-April/106952.html
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  include/vlc/libvlc_media.h | 2 ++
  1 file changed, 2 insertions(+)
 
 diff --git a/include/vlc/libvlc_media.h b/include/vlc/libvlc_media.h
-index 383f366b69..1cbf00c3e3 100644
+index 01950493e9..9b84aa4835 100644
 --- a/include/vlc/libvlc_media.h
 +++ b/include/vlc/libvlc_media.h
 @@ -26,6 +26,8 @@
@@ -40,5 +40,5 @@ index 383f366b69..1cbf00c3e3 100644
  extern "C" {
  # endif
 -- 
-2.14.4
+2.47.3
 

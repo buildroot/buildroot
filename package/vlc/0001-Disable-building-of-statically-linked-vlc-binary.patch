@@ -1,19 +1,20 @@
-From 7c2b3343a30ee53a1cded2ca5e712d8cd7d50f5f Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Bernd Kuhls <bernd.kuhls@t-online.de>
 Date: Tue, 1 May 2018 22:27:21 +0200
 Subject: [PATCH] Disable building of statically linked vlc binary
 
-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Bernd: rebased for 3.0.23]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  Makefile.am     | 2 +-
  bin/Makefile.am | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Makefile.am b/Makefile.am
-index 3ac82623ad..637504a3f5 100644
+index 5846e6d701..c72ceddaf2 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -108,7 +108,7 @@ libvlc: libvlccore
+@@ -106,7 +106,7 @@ libvlc: libvlccore
  	cd lib && $(MAKE) $(AM_MAKEFLAGS) libvlc.la
  
  core: libvlc vlc$(EXEEXT)
@@ -23,7 +24,7 @@ index 3ac82623ad..637504a3f5 100644
  doc:
  	cd doc && $(MAKE) $(AM_MAKEFLAGS) doc
 diff --git a/bin/Makefile.am b/bin/Makefile.am
-index 2877e8b0ea..bef4160e8b 100644
+index 4de299d394..2ba28ad806 100644
 --- a/bin/Makefile.am
 +++ b/bin/Makefile.am
 @@ -6,7 +6,7 @@ bin_PROGRAMS = vlc-osx
@@ -36,5 +37,5 @@ index 2877e8b0ea..bef4160e8b 100644
  endif
  EXTRA_DIST = vlc_win32_rc.rc.in
 -- 
-2.14.4
+2.47.3
 

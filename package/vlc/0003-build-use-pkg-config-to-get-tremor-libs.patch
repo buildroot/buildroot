@@ -1,4 +1,4 @@
-From fb257e1e204c30436b3509ea3fa9f7c5fe131dc1 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Tue, 16 Oct 2018 14:25:20 +0200
 Subject: [PATCH] build: use pkg-config to get tremor libs
@@ -7,16 +7,18 @@ Use PKG_ENABLE_MODULES_VLC to enable tremor based on availability of
 ogg and vorbisidec
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Bernd: rebased for 3.0.23]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  configure.ac              | 9 +--------
  modules/codec/Makefile.am | 2 +-
  2 files changed, 2 insertions(+), 9 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 0d3222e00f..b506d735f2 100644
+index 49fc9dbb27..9d5d532133 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -2710,14 +2710,7 @@ PKG_ENABLE_MODULES_VLC([VORBIS], [], [ogg vorbis >= 1.1 vorbisenc >= 1.1], [Vorb
+@@ -2862,14 +2862,7 @@ PKG_ENABLE_MODULES_VLC([VORBIS], [], [ogg vorbis >= 1.1 vorbisenc >= 1.1], [Vorb
  dnl
  dnl  Tremor plugin
  dnl
@@ -33,10 +35,10 @@ index 0d3222e00f..b506d735f2 100644
  dnl
  dnl  Speex plugins
 diff --git a/modules/codec/Makefile.am b/modules/codec/Makefile.am
-index 075ee2a0e9..637b1d45a6 100644
+index dd04391c1b..bdbd94880e 100644
 --- a/modules/codec/Makefile.am
 +++ b/modules/codec/Makefile.am
-@@ -318,7 +318,7 @@ codec_LTLIBRARIES += $(LTLIBdaala)
+@@ -324,7 +324,7 @@ codec_LTLIBRARIES += $(LTLIBdaala)
  libtremor_plugin_la_SOURCES = codec/vorbis.c
  libtremor_plugin_la_CPPFLAGS = $(AM_CPPFLAGS) -DMODULE_NAME_IS_tremor
  libtremor_plugin_la_LDFLAGS = $(AM_LDFLAGS) -rpath '$(codecdir)'
@@ -46,5 +48,5 @@ index 075ee2a0e9..637b1d45a6 100644
  codec_LTLIBRARIES += $(LTLIBtremor)
  
 -- 
-2.17.1
+2.47.3
 
