@@ -146,6 +146,15 @@ endif
 
 comment "Legacy options removed in 2026.05"
 
+config BR2_PACKAGE_LLAMA_CPP_SERVER
+	bool "llama-cpp option removed"
+	select BR2_PACKAGE_LLAMA_CPP_TOOLS
+	select BR2_LEGACY
+	help
+	  Several tools (server, cli) now require building both
+	  tools and server, so enable both with the same config
+	  BR2_PACKAGE_LLAMA_CPP_TOOLS
+
 config BR2_PACKAGE_PYTHON3_OSSAUDIODEV
 	bool "python3 ossaudiodev module removed"
 	select BR2_LEGACY

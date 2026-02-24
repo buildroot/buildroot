@@ -23,7 +23,6 @@ class TestAiChat(infra.basetest.BRTest):
         BR2_PACKAGE_LIBCURL=y
         BR2_PACKAGE_LIBCURL_CURL=y
         BR2_PACKAGE_LLAMA_CPP=y
-        BR2_PACKAGE_LLAMA_CPP_SERVER=y
         BR2_PACKAGE_LLAMA_CPP_TOOLS=y
         BR2_PACKAGE_OPENSSL=y
         BR2_ROOTFS_OVERLAY="{rootfs_overlay}"
