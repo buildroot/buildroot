@@ -1,4 +1,4 @@
-From 57b1e723b73da4c8d42c20d4e28040ec4c0edd85 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Fri, 28 Feb 2020 14:29:47 +0100
 Subject: [PATCH] modules/video_filter/opencv_example.cpp: fix build with
@@ -18,17 +18,20 @@ Indeed, CV_RGB is defined as cv::Scalar instead of cvScalar since
 version 3.4.2 and
 https://github.com/opencv/opencv/commit/7f9253ea0a9fe2635926379420002dbf0c3fce0f
 
+Upstream: https://patches.videolan.org/patch/26655
+
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
-[Upstream status: https://patches.videolan.org/patch/26655]
+[Bernd: rebased for 3.0.23]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  modules/video_filter/opencv_example.cpp | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/modules/video_filter/opencv_example.cpp b/modules/video_filter/opencv_example.cpp
-index 1334cd4c36..1a8d574f7a 100644
+index a7a0bd7821..23483f0974 100644
 --- a/modules/video_filter/opencv_example.cpp
 +++ b/modules/video_filter/opencv_example.cpp
-@@ -202,7 +202,7 @@ static picture_t *Filter( filter_t *p_filter, picture_t *p_pic )
+@@ -197,7 +197,7 @@ static picture_t *Filter( filter_t *p_filter, picture_t *p_pic )
              pt2.x = (r->x+r->width)*scale;
              pt1.y = r->y*scale;
              pt2.y = (r->y+r->height)*scale;
@@ -38,5 +41,5 @@ index 1334cd4c36..1a8d574f7a 100644
              *(CvRect*)(&(p_sys->event_info.p_region[i])) = *r;
              p_sys->event_info.p_region[i].i_id = p_sys->i_id++;
 -- 
-2.25.0
+2.47.3
 
