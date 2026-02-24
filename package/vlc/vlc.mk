@@ -527,6 +527,7 @@ VLC_CONF_OPTS += --disable-udev
 endif
 
 ifeq ($(BR2_PACKAGE_WAYLAND)$(BR2_PACKAGE_WAYLAND_PROTOCOLS),yy)
+VLC_CONF_ENV += WAYLAND_SCANNER=$(HOST_DIR)/bin/wayland-scanner
 VLC_CONF_OPTS += --enable-wayland
 VLC_DEPENDENCIES += wayland wayland-protocols
 else
