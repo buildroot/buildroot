@@ -11,4 +11,7 @@ TINYPROXY_LICENSE = GPL-2.0+
 TINYPROXY_LICENSE_FILES = COPYING
 TINYPROXY_CPE_ID_VALID = YES
 
+# 0001-reqs-fix-integer-overflow-in-port-number-processing.patch
+TINYPROXY_IGNORE_CVES += CVE-2025-63938
+
 $(eval $(autotools-package))
