@@ -23,6 +23,12 @@ PATCH_IGNORE_CVES += CVE-2018-20969 CVE-2019-13638
 # 0005-Don-t-follow-symlinks-unless--follow-symlinks-is-given.patch
 PATCH_IGNORE_CVES += CVE-2019-13636
 
+# 0006-Fix-swapping-fake-lines-in-pch-swap.patch
+PATCH_IGNORE_CVES += CVE-2018-6952
+
+# 0007-Avoid-invalid-memory-access-in-context-format-diffs.patch
+PATCH_IGNORE_CVES += CVE-2019-20633
+
 ifeq ($(BR2_PACKAGE_ATTR),y)
 PATCH_CONF_OPTS += --enable-xattr
 PATCH_DEPENDENCIES += attr
