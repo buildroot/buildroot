@@ -24,6 +24,30 @@ config BR2_PACKAGE_MOSQUITTO
 
 if BR2_PACKAGE_MOSQUITTO
 
+choice
+	prompt "Websockets support"
+	help
+	  Choose what websocket implementation to use. Note that
+	  the mosquitto_{sub,pub,rr} clients (above) only support
+	  websockets with the builtin implementation, while the
+	  broker supports websockets with either libwebsockets
+	  or the builtin implementation.
+
+config BR2_PACKAGE_MOSQUITTO_WS_NONE
+	bool "none"
+
+config BR2_PACKAGE_MOSQUITTO_WS_LIBWS
+	bool "with libwebsockets"
+	select BR2_PACKAGE_OPENSSL
+	select BR2_PACKAGE_LIBWEBSOCKETS
+	select BR2_PACKAGE_LIBWEBSOCKETS_EXT_POLL
+
+config BR2_PACKAGE_MOSQUITTO_WS_BUILTIN
+	bool "with builtin implementation"
+	select BR2_PACKAGE_OPENSSL
+
+endchoice
+
 config BR2_PACKAGE_MOSQUITTO_CLIENTS
 	bool "install clients"
 	default y  # Backward compatibility
@@ -52,7 +76,6 @@ config BR2_PACKAGE_MOSQUITTO_APPS
 config BR2_PACKAGE_MOSQUITTO_BROKER
 	bool "install the mosquitto broker"
 	default y
-	select BR2_PACKAGE_LIBWEBSOCKETS_EXT_POLL if BR2_PACKAGE_LIBWEBSOCKETS
 	help
 	  Build and install the mosquitto broker onto target.
 
