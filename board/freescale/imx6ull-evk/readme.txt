@@ -3,7 +3,7 @@ Freescale i.MX6ULL EVK board
 ****************************
 
 This file documents the Buildroot support for the Freescale i.MX6ULL EVK board
-using Vendor U-Boot and Linux.
+using Upstream U-Boot and Linux.
 
 Build
 =====
@@ -12,7 +12,7 @@ First, configure Buildroot for your i.MX6ULL EVK board:
 
 In order to do so issue:
 
-  make freescale_imx6ullevk_defconfig
+  make imx6ullevk_defconfig
 
 Build all components:
 
@@ -26,7 +26,7 @@ You will find in output/images/ the following files:
   - rootfs.tar
   - sdcard.img
   - u-boot.bin
-  - u-boot.imx
+  - u-boot-dtb.imx
   - zImage
 
 Create a bootable SD card
@@ -61,4 +61,4 @@ Enjoy!
 
 References
 ==========
-[1] https://www.nxp.com/files-static/32bit/doc/brochure/IMX6ULLQSG.pdf
+[1] https://www.nxp.com/webapp/Download?colCode=IMX6ULLQSG
