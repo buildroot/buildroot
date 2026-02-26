@@ -101,6 +101,13 @@ config BR2_PACKAGE_MOSQUITTO_BROKER_SYS
 	  Enable the $SYS/# tree structure, to export broker status as
 	  MQTT topics.
 
+config BR2_PACKAGE_MOSQUITTO_BROKER_CONTROL
+	bool "$CONTROL tree support"
+	default y  # legacy
+	help
+	  Enable the $CONTROL/# tree structure, to control the broker
+	  via messages posted to, or retrieved from, MQTT topics.
+
 config BR2_PACKAGE_MOSQUITTO_BROKER_PLUGIN_STATIC_PASSWD
 	bool "static password file plugin"
 	default y
