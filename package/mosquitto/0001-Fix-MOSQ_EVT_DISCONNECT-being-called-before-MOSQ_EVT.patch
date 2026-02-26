@@ -1,0 +1,40 @@
+From 7ee523213c30b86ff723c192462f55b84d7714b9 Mon Sep 17 00:00:00 2001
+From: "Roger A. Light" <roger@atchoo.org>
+Date: Tue, 10 Feb 2026 18:42:36 +0000
+Subject: [PATCH] Fix MOSQ_EVT_DISCONNECT being called before
+ MOSQ_EVT_ACL_CHECK
+
+This occurs for the will of that client.
+
+Closes #3487. Thanks to ChrisBFX.
+
+Upstream: https://github.com/eclipse-mosquitto/mosquitto/commit/5f2a45d96a52e1e0135b48aec281d612aa1ecdea
+[yann.morin@orange.com: drop the Changelog.txt entry]
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+---
+ src/context.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/context.c b/src/context.c
+index ca4784d9..6b397d47 100644
+--- a/src/context.c
++++ b/src/context.c
+@@ -269,13 +269,14 @@ void context__disconnect(struct mosquitto *context, int reason)
+ 		}
+ 	}
+ 
++	context__send_will(context);
++
+ 	if(context->session_expiry_interval == MQTT_SESSION_EXPIRY_IMMEDIATE){
+ 		plugin__handle_disconnect(context, reason);
+ 	}else{
+ 		plugin__handle_client_offline(context, reason);
+ 	}
+ 
+-	context__send_will(context);
+ 	net__socket_close(context);
+ #ifdef WITH_BRIDGE
+ 	if(context->bridge == NULL)
+-- 
+2.34.1
+

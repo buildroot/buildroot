@@ -1,0 +1,33 @@
+From 6834ff7b8304f74c044b8399f23fe69455bfeda8 Mon Sep 17 00:00:00 2001
+From: "Roger A. Light" <roger@atchoo.org>
+Date: Fri, 13 Feb 2026 00:36:47 +0000
+Subject: [PATCH] Fix potential crash if group id has no group name.
+
+This can occur if reading a file in restricted mode and the group id
+does not have an entry in /etc/groups.
+
+Closes #3498. Thanks to Stefan Kranich.
+
+Upstream: https://github.com/eclipse-mosquitto/mosquitto/commit/7958a85bae06c22c3beff2942b8c1ac04f6a6353
+[yann.morin@orange.com: drop the Changelog.txt entry]
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+---
+ libcommon/file_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libcommon/file_common.c b/libcommon/file_common.c
+index 1998e6d0..8bde3009 100644
+--- a/libcommon/file_common.c
++++ b/libcommon/file_common.c
+@@ -235,7 +235,7 @@ FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
+ 			char buf[4096];
+ 			struct group grp, *result;
+ 
+-			if(getgrgid_r(getgid(), &grp, buf, sizeof(buf), &result) == 0){
++			if(getgrgid_r(getgid(), &grp, buf, sizeof(buf), &result) == 0 && result){
+ 				libcommon_printf(
+ 						"Warning: File %s group is not %s. Future versions will refuse to load this file.\n",
+ 						path, result->gr_name);
+-- 
+2.34.1
+

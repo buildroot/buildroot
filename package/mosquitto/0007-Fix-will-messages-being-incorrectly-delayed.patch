@@ -1,0 +1,212 @@
+From 910971ffe895ea96862857b94a26c92d3a24f4f6 Mon Sep 17 00:00:00 2001
+From: "Roger A. Light" <roger@atchoo.org>
+Date: Mon, 16 Feb 2026 00:11:20 +0000
+Subject: [PATCH] Fix will messages being incorrectly delayed.
+
+This occured if a client set session-expiry-interval=0 when using
+will-delay-interval>0.
+
+Closes #3505. Thanks to Julian Graf.
+
+Upstream: https://github.com/eclipse-mosquitto/mosquitto/commit/d0152406e32afc6a014097de0714fbb371c2b902
+[yann.morin@orange.com: drop the Changelog.txt entry]
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+---
+ src/context.c                                 |  2 +-
+ test/broker/07-will-delay-reconnect.py        |  9 +++--
+ test/broker/07-will-delay-recover.py          | 11 +++++-
+ ...y.py => 07-will-delay-session-expiry-0.py} | 37 +++++++++----------
+ test/broker/07-will-delay.py                  |  5 ++-
+ test/broker/Makefile                          |  1 +
+ test/broker/test.py                           |  1 +
+ 7 files changed, 37 insertions(+), 29 deletions(-)
+ copy test/broker/{07-will-delay.py => 07-will-delay-session-expiry-0.py} (51%)
+
+diff --git a/src/context.c b/src/context.c
+index 6b397d47..bb3dae96 100644
+--- a/src/context.c
++++ b/src/context.c
+@@ -216,7 +216,7 @@ void context__cleanup(struct mosquitto *context, bool force_free)
+ void context__send_will(struct mosquitto *ctxt)
+ {
+ 	if(ctxt->state != mosq_cs_disconnecting && ctxt->will){
+-		if(ctxt->will_delay_interval > 0){
++		if(ctxt->session_expiry_interval > 0 && ctxt->will_delay_interval > 0){
+ 			will_delay__add(ctxt);
+ 			return;
+ 		}
+diff --git a/test/broker/07-will-delay-reconnect.py b/test/broker/07-will-delay-reconnect.py
+index e0355a48..504c074e 100755
+--- a/test/broker/07-will-delay-reconnect.py
++++ b/test/broker/07-will-delay-reconnect.py
+@@ -14,12 +14,13 @@ def do_test(start_broker):
+     connect1_packet = mosq_test.gen_connect("will-delay-reconnect-test", proto_ver=5)
+     connack1_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
+ 
+-    props = mqtt5_props.gen_uint32_prop(mqtt5_props.WILL_DELAY_INTERVAL, 3)
+-    connect2a_packet = mosq_test.gen_connect("will-delay-reconnect-helper", proto_ver=5, will_topic="will/delay/reconnect/test", will_payload=b"will delay", will_properties=props, clean_session=False)
++    props = mqtt5_props.gen_uint32_prop(mqtt5_props.SESSION_EXPIRY_INTERVAL, 60)
++    will_props = mqtt5_props.gen_uint32_prop(mqtt5_props.WILL_DELAY_INTERVAL, 3)
++    connect2a_packet = mosq_test.gen_connect("will-delay-reconnect-helper", proto_ver=5, will_topic="will/delay/reconnect/test", will_payload=b"will delay", will_properties=will_props, clean_session=False, properties=props)
+     connack2a_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
+ 
+-    connect2b_packet = mosq_test.gen_connect("will-delay-reconnect-helper", proto_ver=5, clean_session=True)
+-    connack2b_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
++    connect2b_packet = mosq_test.gen_connect("will-delay-reconnect-helper", proto_ver=5, clean_session=False)
++    connack2b_packet = mosq_test.gen_connack(rc=0, flags=1, proto_ver=5)
+ 
+     subscribe_packet = mosq_test.gen_subscribe(mid, "will/delay/reconnect/test", 0, proto_ver=5)
+     suback_packet = mosq_test.gen_suback(mid, 0, proto_ver=5)
+diff --git a/test/broker/07-will-delay-recover.py b/test/broker/07-will-delay-recover.py
+index ffdb9612..7e5c196d 100755
+--- a/test/broker/07-will-delay-recover.py
++++ b/test/broker/07-will-delay-recover.py
+@@ -27,6 +27,8 @@ def do_test(start_broker, clean_session):
+ 
+     connect2_packet_clear = mosq_test.gen_connect("will-delay-recovery-helper", proto_ver=5)
+ 
++    will_packet = mosq_test.gen_publish(topic="will/delay/recovery/test", payload="will delay", qos=0, proto_ver=5)
++
+     port = mosq_test.get_port()
+     if start_broker:
+         broker = mosq_test.start_broker(filename=os.path.basename(__file__), port=port)
+@@ -43,8 +45,13 @@ def do_test(start_broker, clean_session):
+         time.sleep(3)
+ 
+         # The client2 has reconnected within the will delay interval, which has now
+-        # passed. We should not have received the will at this point.
+-        mosq_test.do_ping(sock1)
++        # passed.
++        if clean_session:
++            # The old session has ended, so we should receive the will
++            mosq_test.expect_packet(sock1, "will", will_packet)
++        else:
++            # We should not have received the will at this point.
++            mosq_test.do_ping(sock1)
+         rc = 0
+ 
+         sock1.close()
+diff --git a/test/broker/07-will-delay.py b/test/broker/07-will-delay-session-expiry-0.py
+similarity index 51%
+copy from test/broker/07-will-delay.py
+copy to test/broker/07-will-delay-session-expiry-0.py
+index d1e39828..eded4be9 100755
+--- a/test/broker/07-will-delay.py
++++ b/test/broker/07-will-delay-session-expiry-0.py
+@@ -1,42 +1,45 @@
+ #!/usr/bin/env python3
+ 
+-# Test whether a client will is transmitted with a delay correctly.
++# Test whether a client that connects with a will delay that is longer than
++# their session expiry interval has their will published.
+ # MQTT 5
++# https://github.com/eclipse/mosquitto/issues/1401
+ 
+ from mosq_test_helper import *
+ 
+-def do_test(start_broker, clean_session):
++def do_test(start_broker):
+     rc = 1
+ 
+     mid = 1
+-    connect1_packet = mosq_test.gen_connect("will-delay-test", proto_ver=5)
++    connect1_packet = mosq_test.gen_connect("will-session-exp", proto_ver=5)
+     connack1_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
+ 
+-    props = mqtt5_props.gen_uint32_prop(mqtt5_props.WILL_DELAY_INTERVAL, 3)
+-    connect2_packet = mosq_test.gen_connect("will-delay-helper", proto_ver=5, will_topic="will/delay/test", will_payload=b"will delay", will_qos=2, will_properties=props, clean_session=clean_session)
++    will_props = mqtt5_props.gen_uint32_prop(mqtt5_props.WILL_DELAY_INTERVAL, 60)
++    connect_props = mqtt5_props.gen_uint32_prop(mqtt5_props.SESSION_EXPIRY_INTERVAL, 0)
++
++    connect2_packet = mosq_test.gen_connect("will-session-exp-helper", proto_ver=5, properties=connect_props, will_topic="will/session-expiry/test", will_payload=b"will delay", will_qos=2, will_properties=will_props)
+     connack2_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
+ 
+-    subscribe_packet = mosq_test.gen_subscribe(mid, "will/delay/test", 0, proto_ver=5)
++    subscribe_packet = mosq_test.gen_subscribe(mid, "will/session-expiry/test", 0, proto_ver=5)
+     suback_packet = mosq_test.gen_suback(mid, 0, proto_ver=5)
+ 
+-    publish_packet = mosq_test.gen_publish("will/delay/test", qos=0, payload="will delay", proto_ver=5)
++    publish_packet = mosq_test.gen_publish("will/session-expiry/test", qos=0, payload="will delay", proto_ver=5)
+ 
+     port = mosq_test.get_port()
+     if start_broker:
+         broker = mosq_test.start_broker(filename=os.path.basename(__file__), port=port)
+ 
+     try:
+-        sock1 = mosq_test.do_client_connect(connect1_packet, connack1_packet, timeout=30, port=port)
++        sock1 = mosq_test.do_client_connect(connect1_packet, connack1_packet, timeout=5, port=port, connack_error="connack1")
+         mosq_test.do_send_receive(sock1, subscribe_packet, suback_packet, "suback")
+ 
+-        sock2 = mosq_test.do_client_connect(connect2_packet, connack2_packet, timeout=30, port=port)
++        sock2 = mosq_test.do_client_connect(connect2_packet, connack2_packet, timeout=5, port=port, connack_error="connack2")
++        time.sleep(1)
+         sock2.close()
+ 
+-        t_start = time.time()
++        # Will should be sent immediately due to session-expiry-interval=0. If not, the read will timeout
+         mosq_test.expect_packet(sock1, "publish", publish_packet)
+-        t_finish = time.time()
+-        if t_finish - t_start > 2 and t_finish - t_start < 5:
+-            rc = 0
++        rc = 0
+ 
+         sock1.close()
+     except mosq_test.TestError:
+@@ -56,13 +59,7 @@ def do_test(start_broker, clean_session):
+ 
+ 
+ def all_tests(start_broker=False):
+-    rc = do_test(start_broker, clean_session=True)
+-    if rc:
+-        return rc
+-    rc = do_test(start_broker, clean_session=False)
+-    if rc:
+-        return rc
+-    return 0
++    return do_test(start_broker)
+ 
+ if __name__ == '__main__':
+     all_tests(True)
+diff --git a/test/broker/07-will-delay.py b/test/broker/07-will-delay.py
+index d1e39828..e148ea1e 100755
+--- a/test/broker/07-will-delay.py
++++ b/test/broker/07-will-delay.py
+@@ -12,8 +12,9 @@ def do_test(start_broker, clean_session):
+     connect1_packet = mosq_test.gen_connect("will-delay-test", proto_ver=5)
+     connack1_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
+ 
+-    props = mqtt5_props.gen_uint32_prop(mqtt5_props.WILL_DELAY_INTERVAL, 3)
+-    connect2_packet = mosq_test.gen_connect("will-delay-helper", proto_ver=5, will_topic="will/delay/test", will_payload=b"will delay", will_qos=2, will_properties=props, clean_session=clean_session)
++    props = mqtt5_props.gen_uint32_prop(mqtt5_props.SESSION_EXPIRY_INTERVAL, 60)
++    will_props = mqtt5_props.gen_uint32_prop(mqtt5_props.WILL_DELAY_INTERVAL, 3)
++    connect2_packet = mosq_test.gen_connect("will-delay-helper", proto_ver=5, properties=props, will_topic="will/delay/test", will_payload=b"will delay", will_qos=2, will_properties=will_props, clean_session=clean_session)
+     connack2_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
+ 
+     subscribe_packet = mosq_test.gen_subscribe(mid, "will/delay/test", 0, proto_ver=5)
+diff --git a/test/broker/Makefile b/test/broker/Makefile
+index f2a6fb7c..fb6eef22 100644
+--- a/test/broker/Makefile
++++ b/test/broker/Makefile
+@@ -148,6 +148,7 @@ msg_sequence_test:
+ 	./07-will-delay-invalid-573191.py
+ 	./07-will-delay-reconnect.py
+ 	./07-will-delay-recover.py
++	./07-will-delay-session-expiry-0.py
+ 	./07-will-delay-session-expiry.py
+ 	./07-will-delay-session-expiry2.py
+ 	./07-will-delay.py
+diff --git a/test/broker/test.py b/test/broker/test.py
+index 02bcae26..4c8003d5 100755
+--- a/test/broker/test.py
++++ b/test/broker/test.py
+@@ -125,6 +125,7 @@ tests = [
+     (1, './07-will-delay-invalid-573191.py'),
+     (1, './07-will-delay-reconnect.py'),
+     (1, './07-will-delay-recover.py'),
++    (1, './07-will-delay-session-expiry-0.py'),
+     (1, './07-will-delay-session-expiry.py'),
+     (1, './07-will-delay-session-expiry2.py'),
+     (1, './07-will-delay.py'),
+-- 
+2.34.1
+

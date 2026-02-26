@@ -1,0 +1,152 @@
+From ea6d1c5847f16b3fe8877ff4e90cc33b36b0b511 Mon Sep 17 00:00:00 2001
+From: "Roger A. Light" <roger@atchoo.org>
+Date: Sun, 15 Feb 2026 21:39:51 +0000
+Subject: [PATCH] Fix outgoing maximum-packet-size limit check.
+
+Closes #3503. Thanks to Julian Graf.
+
+Upstream: https://github.com/eclipse-mosquitto/mosquitto/commit/3a0f46aa209c4b2d15b36f866b23e9a0df696810
+[yann.morin@orange.com: drop the Changelog.txt entry]
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+---
+ lib/packet_mosq.c                              |  2 +-
+ ...12-prop-maximum-packet-size-publish-qos1.py | 18 +++++++++++++-----
+ ...12-prop-maximum-packet-size-publish-qos2.py |  4 ++--
+ test/lib/11-prop-oversize-packet.py            |  4 ++--
+ test/lib/c/11-prop-oversize-packet.c           |  4 ++--
+ test/lib/cpp/11-prop-oversize-packet.cpp       |  4 ++--
+ 6 files changed, 22 insertions(+), 14 deletions(-)
+
+diff --git a/lib/packet_mosq.c b/lib/packet_mosq.c
+index d1379d3d..48b0efbd 100644
+--- a/lib/packet_mosq.c
++++ b/lib/packet_mosq.c
+@@ -238,7 +238,7 @@ int packet__check_oversize(struct mosquitto *mosq, uint32_t remaining_length)
+ 		return MOSQ_ERR_SUCCESS;
+ 	}
+ 
+-	len = remaining_length + mosquitto_varint_bytes(remaining_length);
++	len = 1 + remaining_length + mosquitto_varint_bytes(remaining_length);
+ 	if(len > mosq->maximum_packet_size){
+ 		return MOSQ_ERR_OVERSIZE_PACKET;
+ 	}else{
+diff --git a/test/broker/12-prop-maximum-packet-size-publish-qos1.py b/test/broker/12-prop-maximum-packet-size-publish-qos1.py
+index 2900c3c7..2530a377 100755
+--- a/test/broker/12-prop-maximum-packet-size-publish-qos1.py
++++ b/test/broker/12-prop-maximum-packet-size-publish-qos1.py
+@@ -17,13 +17,18 @@ def do_test(start_broker):
+     suback_packet = mosq_test.gen_suback(mid, 1, proto_ver=5)
+ 
+     mid=1
+-    publish1_packet = mosq_test.gen_publish(topic="12/max/publish/qos1/test/topic", mid=mid, qos=1, payload="12345678901234567890", proto_ver=5)
++    publish1_packet = mosq_test.gen_publish(topic="12/max/publish/qos1/test/topic", mid=mid, qos=1, payload="1234", proto_ver=5)
+     puback1_packet = mosq_test.gen_puback(mid, proto_ver=5)
+ 
+     mid=2
+-    publish2_packet = mosq_test.gen_publish(topic="12/max/publish/qos1/test/topic", mid=mid, qos=1, payload="7890", proto_ver=5)
++    props = mqtt5_props.gen_byte_prop(mqtt5_props.PAYLOAD_FORMAT_INDICATOR, 1)
++    publish2_packet = mosq_test.gen_publish(topic="12/max/publish/qos1/test/topic", mid=mid, qos=1, payload="56", proto_ver=5, properties=props)
+     puback2_packet = mosq_test.gen_puback(mid, proto_ver=5)
+ 
++    mid=3
++    publish3_packet = mosq_test.gen_publish(topic="12/max/publish/qos1/test/topic", mid=mid, qos=1, payload="789", proto_ver=5)
++    puback3_packet = mosq_test.gen_puback(mid, proto_ver=5)
++
+     port = mosq_test.get_port()
+     if start_broker:
+         broker = mosq_test.start_broker(filename=os.path.basename(__file__), port=port)
+@@ -33,12 +38,15 @@ def do_test(start_broker):
+         mosq_test.do_send_receive(sock, subscribe_packet, suback_packet)
+ 
+         mosq_test.do_send_receive(sock, publish1_packet, puback1_packet, "puback 1")
+-
+         # We shouldn't receive the publish here because it is > MAXIMUM_PACKET_SIZE
+         mosq_test.do_ping(sock)
+ 
+-        sock.send(publish2_packet)
+-        mosq_test.receive_unordered(sock, puback2_packet, publish2_packet, "puback 2/publish2")
++        mosq_test.do_send_receive(sock, publish2_packet, puback2_packet, "puback 2")
++        # We shouldn't receive the publish here because it is > MAXIMUM_PACKET_SIZE
++        mosq_test.do_ping(sock)
++
++        sock.send(publish3_packet)
++        mosq_test.receive_unordered(sock, puback3_packet, publish3_packet, "puback 3/publish3")
+         rc = 0
+     except mosq_test.TestError:
+         pass
+diff --git a/test/broker/12-prop-maximum-packet-size-publish-qos2.py b/test/broker/12-prop-maximum-packet-size-publish-qos2.py
+index e0ad9343..7256d254 100755
+--- a/test/broker/12-prop-maximum-packet-size-publish-qos2.py
++++ b/test/broker/12-prop-maximum-packet-size-publish-qos2.py
+@@ -17,13 +17,13 @@ def do_test(start_broker):
+     suback_packet = mosq_test.gen_suback(mid, 2, proto_ver=5)
+ 
+     mid=1
+-    publish1_packet = mosq_test.gen_publish(topic="12/max/publish/qos2/test/topic", mid=mid, qos=2, payload="12345678901234567890", proto_ver=5)
++    publish1_packet = mosq_test.gen_publish(topic="12/max/publish/qos2/test/topic", mid=mid, qos=2, payload="1234", proto_ver=5)
+     pubrec1_packet = mosq_test.gen_pubrec(mid, proto_ver=5)
+     pubrel1_packet = mosq_test.gen_pubrel(mid, proto_ver=5)
+     pubcomp1_packet = mosq_test.gen_pubcomp(mid, proto_ver=5)
+ 
+     mid=2
+-    publish2_packet = mosq_test.gen_publish(topic="12/max/publish/qos2/test/topic", mid=mid, qos=2, payload="7890", proto_ver=5)
++    publish2_packet = mosq_test.gen_publish(topic="12/max/publish/qos2/test/topic", mid=mid, qos=2, payload="789", proto_ver=5)
+     pubrec2_packet = mosq_test.gen_pubrec(mid, proto_ver=5)
+     pubrel2_packet = mosq_test.gen_pubrel(mid, proto_ver=5)
+     pubcomp2_packet = mosq_test.gen_pubcomp(mid, proto_ver=5)
+diff --git a/test/lib/11-prop-oversize-packet.py b/test/lib/11-prop-oversize-packet.py
+index f8f56697..e537eef3 100755
+--- a/test/lib/11-prop-oversize-packet.py
++++ b/test/lib/11-prop-oversize-packet.py
+@@ -13,8 +13,8 @@ def do_test(conn, data):
+     props += mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 20)
+     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props, property_helper=False)
+ 
+-    bad_publish_packet = mosq_test.gen_publish("pub/test", qos=0, payload="0123456789012345678", proto_ver=5)
+-    publish_packet = mosq_test.gen_publish("pub/test", qos=0, payload="012345678901234567", proto_ver=5)
++    bad_publish_packet = mosq_test.gen_publish("pub/test", qos=0, payload="123456789012345678", proto_ver=5)
++    publish_packet = mosq_test.gen_publish("pub/test", qos=0, payload="12345678901234567", proto_ver=5)
+ 
+     disconnect_packet = mosq_test.gen_disconnect()
+ 
+diff --git a/test/lib/c/11-prop-oversize-packet.c b/test/lib/c/11-prop-oversize-packet.c
+index 6f9624a8..a857e936 100644
+--- a/test/lib/c/11-prop-oversize-packet.c
++++ b/test/lib/c/11-prop-oversize-packet.c
+@@ -27,12 +27,12 @@ static void on_connect(struct mosquitto *mosq, void *obj, int rc)
+ 			exit(1);
+ 		}
+ 
+-		rc = mosquitto_publish(mosq, &sent_mid, "pub/test", strlen("0123456789012345678"), "0123456789012345678", 0, false);
++		rc = mosquitto_publish(mosq, &sent_mid, "pub/test", strlen("123456789012345678"), "123456789012345678", 0, false);
+ 		if(rc != MOSQ_ERR_OVERSIZE_PACKET){
+ 			printf("Fail on publish 1\n");
+ 			exit(1);
+ 		}
+-		rc = mosquitto_publish(mosq, &sent_mid, "pub/test", strlen("012345678901234567"), "012345678901234567", 0, false);
++		rc = mosquitto_publish(mosq, &sent_mid, "pub/test", strlen("12345678901234567"), "12345678901234567", 0, false);
+ 		if(rc != MOSQ_ERR_SUCCESS){
+ 			printf("Fail on publish 2\n");
+ 			exit(1);
+diff --git a/test/lib/cpp/11-prop-oversize-packet.cpp b/test/lib/cpp/11-prop-oversize-packet.cpp
+index 880df48e..abd76186 100644
+--- a/test/lib/cpp/11-prop-oversize-packet.cpp
++++ b/test/lib/cpp/11-prop-oversize-packet.cpp
+@@ -36,12 +36,12 @@ void mosquittopp_test::on_connect(int rc)
+ 			exit(1);
+ 		}
+ 
+-		rc = publish(&sent_mid, "pub/test", strlen("0123456789012345678"), "0123456789012345678", 0, false);
++		rc = publish(&sent_mid, "pub/test", strlen("123456789012345678"), "123456789012345678", 0, false);
+ 		if(rc != MOSQ_ERR_OVERSIZE_PACKET){
+ 			printf("Fail on publish 1\n");
+ 			exit(1);
+ 		}
+-		rc = publish(&sent_mid, "pub/test", strlen("012345678901234567"), "012345678901234567", 0, false);
++		rc = publish(&sent_mid, "pub/test", strlen("12345678901234567"), "12345678901234567", 0, false);
+ 		if(rc != MOSQ_ERR_SUCCESS){
+ 			printf("Fail on publish 2\n");
+ 			exit(1);
+-- 
+2.34.1
+

@@ -1,0 +1,90 @@
+From a1d0c56984f8a65d5ffb7fbde7f200b36b5ddae5 Mon Sep 17 00:00:00 2001
+From: "Yann E. MORIN" <yann.morin@orange.com>
+Date: Tue, 10 Feb 2026 12:01:32 +0100
+Subject: [PATCH] libcommon: check for getrandom()
+
+Not all C libraries are glibc, or impersonating it; for example, musl
+does not pretend to be any version of glibc. Thus, building on musl
+fails when openssl is disabled, because no random-providing function is
+detected, although musl does provide getrandom().
+
+uClibc-ng on the other hand, can impersonate glibc, but availability of
+getrandom() is not guatranteed there: getrandom() can be compiled out of
+uClinbc-ng, or uClibc-ng can be too old to have it.
+
+Add a configure-time check that getrandom() is available, as a fallback
+when TLS is not enabled (and thus openssl is not used), and when not on
+Win32 (where getting random numbers is always possible, at least from a
+build perspective).
+
+However, building with the plain Makefiles should keep working, so
+slightly rework the defines checks in the code to account for the fact
+that HAVE_GETRANDOM may already be defined at configure time.
+
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+Upstream: https://github.com/eclipse-mosquitto/mosquitto/commit/a487cd4f8f56a9352eec1b6e05592a73794b162b)
+---
+ libcommon/CMakeLists.txt  |  8 ++++++++
+ libcommon/random_common.c | 14 +++++++-------
+ 2 files changed, 15 insertions(+), 7 deletions(-)
+
+diff --git a/libcommon/CMakeLists.txt b/libcommon/CMakeLists.txt
+index 8f3474a0..7b9118bc 100644
+--- a/libcommon/CMakeLists.txt
++++ b/libcommon/CMakeLists.txt
+@@ -57,6 +57,14 @@ if (WITH_TLS)
+ 		PUBLIC
+ 			OpenSSL::SSL
+ 	)
++elseif(NOT WIN32)
++	include(CheckSymbolExists)
++	check_symbol_exists(getrandom "sys/random.h" GETRANDOM_FOUND)
++	if(GETRANDOM_FOUND)
++		add_definitions("-DHAVE_GETRANDOM")
++	else()
++		message(FATAL_ERROR "C library does not provide getrandom(); enable WITH_TLS instead")
++	endif()
+ endif()
+ 
+ if(INC_MEMTRACK)
+diff --git a/libcommon/random_common.c b/libcommon/random_common.c
+index 555bd801..e2c8d23a 100644
+--- a/libcommon/random_common.c
++++ b/libcommon/random_common.c
+@@ -26,18 +26,18 @@ Contributors:
+ #  include <lmcons.h>
+ #endif
+ 
+-#if !defined(WITH_TLS) && defined(__linux__) && defined(__GLIBC__)
++#ifdef WITH_TLS
++#  include <openssl/bn.h>
++#  include <openssl/rand.h>
++#elif defined(HAVE_GETRANDOM)  /* From CMakeLists.txt */
++# include <sys/random.h>
++#elif defined(__linux__) && defined(__GLIBC__) /* For legacy Makefiles */
+ #  if __GLIBC_PREREQ(2, 25)
+ #    include <sys/random.h>
+ #    define HAVE_GETRANDOM 1
+ #  endif
+ #endif
+ 
+-#ifdef WITH_TLS
+-#  include <openssl/bn.h>
+-#  include <openssl/rand.h>
+-#endif
+-
+ #include "mosquitto.h"
+ 
+ 
+@@ -65,7 +65,7 @@ int mosquitto_getrandom(void *bytes, int count)
+ 	}
+ 
+ 	CryptReleaseContext(provider, 0);
+-#else
++#else /* For legacy Makefiles */
+ #  error "No suitable random function found."
+ #endif
+ 	return rc;
+-- 
+2.34.1
+

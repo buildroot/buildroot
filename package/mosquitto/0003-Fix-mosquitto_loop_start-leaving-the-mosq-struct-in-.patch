@@ -1,0 +1,59 @@
+From cf74866a6d707d7bd2d76831f60af789e4f3ce77 Mon Sep 17 00:00:00 2001
+From: "Roger A. Light" <roger@atchoo.org>
+Date: Fri, 13 Feb 2026 08:33:32 +0000
+Subject: [PATCH] Fix mosquitto_loop_start() leaving the mosq struct in an
+ invalid state
+
+This occurs if thread creation fails.
+
+Closes #3496. Thanks to ehoffman2.
+
+Upstream: https://github.com/eclipse-mosquitto/mosquitto/commit/da7d02690b4c998ec4b842ae066fa642f59eb509
+[yann.morin@orange.com: drop the Changelog.txt entry]
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+---
+ ChangeLog.txt     | 4 ++--
+ lib/thread_mosq.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/ChangeLog.txt b/ChangeLog.txt
+index 7d6a92cf..a76fc6e1 100644
+--- a/ChangeLog.txt
++++ b/ChangeLog.txt
+@@ -1,11 +1,11 @@
+ 2.1.2 - 2026-02-09
+ ==================
+ 
+-Broker:
++# Broker
+ - Forbid running with `persistence true` and with a persistence plugin at the
+   same time.
+ 
+-Build:
++# Build
+ - Build fixes for OpenBSD. Closes #3474.
+ - Add missing libedit to docker builds. Closes #3476.
+ - Fix static/shared linking of libwebsockets under cmake.
+diff --git a/lib/thread_mosq.c b/lib/thread_mosq.c
+index 931bf9eb..62ddadb7 100644
+--- a/lib/thread_mosq.c
++++ b/lib/thread_mosq.c
+@@ -48,7 +48,6 @@ int mosquitto_loop_start(struct mosquitto *mosq)
+ 		return MOSQ_ERR_INVAL;
+ 	}
+ 
+-	mosq->threaded = mosq_ts_self;
+ 	if(!COMPAT_pthread_create(&mosq->thread_id, NULL, mosquitto__thread_main, mosq)){
+ #if defined(__linux__)
+ 		pthread_setname_np(mosq->thread_id, "mosquitto loop");
+@@ -57,6 +56,7 @@ int mosquitto_loop_start(struct mosquitto *mosq)
+ #elif defined(__FreeBSD__) || defined(__OpenBSD__)
+ 		pthread_set_name_np(mosq->thread_id, "mosquitto loop");
+ #endif
++		mosq->threaded = mosq_ts_self;
+ 		return MOSQ_ERR_SUCCESS;
+ 	}else{
+ 		return MOSQ_ERR_ERRNO;
+-- 
+2.34.1
+

@@ -1,0 +1,35 @@
+From bc830cffee22a3498700f9038a4ceea47efe45de Mon Sep 17 00:00:00 2001
+From: "Yann E. MORIN" <yann.morin@orange.com>
+Date: Tue, 10 Feb 2026 09:21:11 +0100
+Subject: [PATCH] broker: properly check for getaddrinfo_a()
+
+getaddrinfo_a( is protected by _GNU_SOURCE.
+
+This is properly accounted for in the source code, in lib/net_mosq.c,
+but the check in the CmakeList is missing that define, which causes
+the check to actually fail.
+
+Add that define when checking; this fixes builds on various C libraries,
+like uClibc-ng, musl, or newer/older glibc.
+
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+Upstream: https://github.com/eclipse-mosquitto/mosquitto/commit/8c3bc32689346d7b86e2dad954ff482b5ad7aef1
+---
+ src/CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 8ac47d87..8576fea9 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -184,6 +184,7 @@ endif()
+ if(WITH_ADNS)
+ 	cmake_push_check_state()
+ 	set(ANL_CODE "
++		#define _GNU_SOURCE
+ 		#include <stdlib.h>
+ 		#include <netdb.h>
+ 		int main(){
+-- 
+2.34.1
+

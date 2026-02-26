@@ -1,5 +1,8 @@
 config BR2_PACKAGE_MOSQUITTO
 	bool "mosquitto"
+	depends on BR2_USE_MMU  # lib peeks in malloc() internals; broker fork()s
+	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_CJSON
 	help
 	  Eclipse Mosquitto is an open source (EPL/EDL licensed) message
 	  broker that implements the MQTT protocol versions 5.0, 3.1.1
@@ -19,12 +22,11 @@ config BR2_PACKAGE_MOSQUITTO
 
 	  https://mosquitto.org/
 
+if BR2_PACKAGE_MOSQUITTO
+
 config BR2_PACKAGE_MOSQUITTO_BROKER
 	bool "install the mosquitto broker"
 	default y
-	depends on BR2_USE_MMU # fork()
-	depends on !BR2_STATIC_LIBS # include <dlfcn.h>
-	depends on BR2_PACKAGE_MOSQUITTO
 	select BR2_PACKAGE_LIBWEBSOCKETS_EXT_POLL if BR2_PACKAGE_LIBWEBSOCKETS
 	help
 	  Build and install the mosquitto broker onto target.
@@ -32,13 +34,13 @@ config BR2_PACKAGE_MOSQUITTO_BROKER
 config BR2_PACKAGE_MOSQUITTO_BROKER_DYNAMIC_SECURITY_PLUGIN
 	bool "dynamic security plugin"
 	depends on BR2_PACKAGE_MOSQUITTO_BROKER
-	select BR2_PACKAGE_CJSON
 	select BR2_PACKAGE_OPENSSL
 	help
 	  Build and install the dynamic security plugin for
 	  mosquitto broker onto target.
 
-comment "mosquitto broker needs a toolchain w/ dynamic library"
+endif
+
+comment "mosquitto needs a toolchain w/ dynamic library"
 	depends on BR2_USE_MMU
 	depends on BR2_STATIC_LIBS
-	depends on BR2_PACKAGE_MOSQUITTO

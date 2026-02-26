@@ -1,0 +1,116 @@
+From bb023cc9f6aceddbb77cd854659eac0a200ab017 Mon Sep 17 00:00:00 2001
+From: "Roger A. Light" <roger@atchoo.org>
+Date: Mon, 23 Feb 2026 18:45:34 +0000
+Subject: [PATCH] Fix incorrect maximum-packet-size restriction for incoming
+ packets.
+
+Closes #3515. Thanks to Julian Graf.
+
+Upstream: https://github.com/eclipse-mosquitto/mosquitto/commit/7a1905006a629f264d3657abf335d09cb5555980
+[yann.morin@orange.com: drop the Changelog.txt entry]
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+---
+ lib/packet_mosq.c                                 | 14 ++++++++------
+ test/broker/12-prop-maximum-packet-size-broker.py | 11 +++++++----
+ 2 files changed, 15 insertions(+), 10 deletions(-)
+
+diff --git a/lib/packet_mosq.c b/lib/packet_mosq.c
+index 48b0efbd..64651b73 100644
+--- a/lib/packet_mosq.c
++++ b/lib/packet_mosq.c
+@@ -399,9 +399,11 @@ static int read_header(struct mosquitto *mosq, ssize_t (*func_read)(struct mosqu
+ 
+ static int packet__check_in_packet_oversize(struct mosquitto *mosq)
+ {
++	uint32_t packet_length = 1 + mosquitto_varint_bytes(mosq->in_packet.remaining_length) + mosq->in_packet.remaining_length;
++
+ 	switch(mosq->in_packet.command & 0xF0){
+ 		case CMD_CONNECT:
+-			if(mosq->in_packet.remaining_length > db.config->packet_max_connect){
++			if(packet_length > db.config->packet_max_connect){
+ 				return MOSQ_ERR_OVERSIZE_PACKET;
+ 			}
+ 			break;
+@@ -412,7 +414,7 @@ static int packet__check_in_packet_oversize(struct mosquitto *mosq)
+ 		case CMD_PUBCOMP:
+ 		case CMD_UNSUBACK:
+ 			if(mosq->protocol == mosq_p_mqtt5){
+-				if(mosq->in_packet.remaining_length > db.config->packet_max_simple){
++				if(packet_length > db.config->packet_max_simple){
+ 					return MOSQ_ERR_OVERSIZE_PACKET;
+ 				}
+ 			}else{
+@@ -431,7 +433,7 @@ static int packet__check_in_packet_oversize(struct mosquitto *mosq)
+ 
+ 		case CMD_DISCONNECT:
+ 			if(mosq->protocol == mosq_p_mqtt5){
+-				if(mosq->in_packet.remaining_length > db.config->packet_max_simple){
++				if(packet_length > db.config->packet_max_simple){
+ 					return MOSQ_ERR_OVERSIZE_PACKET;
+ 				}
+ 			}else{
+@@ -443,20 +445,20 @@ static int packet__check_in_packet_oversize(struct mosquitto *mosq)
+ 
+ 		case CMD_SUBSCRIBE:
+ 		case CMD_UNSUBSCRIBE:
+-			if(mosq->protocol == mosq_p_mqtt5 && mosq->in_packet.remaining_length > db.config->packet_max_sub){
++			if(mosq->protocol == mosq_p_mqtt5 && packet_length > db.config->packet_max_sub){
+ 				return MOSQ_ERR_OVERSIZE_PACKET;
+ 			}
+ 			break;
+ 
+ 		case CMD_AUTH:
+-			if(mosq->in_packet.remaining_length > db.config->packet_max_auth){
++			if(packet_length > db.config->packet_max_auth){
+ 				return MOSQ_ERR_OVERSIZE_PACKET;
+ 			}
+ 			break;
+ 
+ 	}
+ 
+-	if(db.config->max_packet_size > 0 && mosq->in_packet.remaining_length+1 > db.config->max_packet_size){
++	if(db.config->max_packet_size > 0 && packet_length > db.config->max_packet_size){
+ 		if(mosq->protocol == mosq_p_mqtt5){
+ 			send__disconnect(mosq, MQTT_RC_PACKET_TOO_LARGE, NULL);
+ 		}
+diff --git a/test/broker/12-prop-maximum-packet-size-broker.py b/test/broker/12-prop-maximum-packet-size-broker.py
+index 9df91b68..73be989c 100755
+--- a/test/broker/12-prop-maximum-packet-size-broker.py
++++ b/test/broker/12-prop-maximum-packet-size-broker.py
+@@ -8,7 +8,7 @@ def write_config(filename, port):
+     with open(filename, 'w') as f:
+         f.write("listener %d\n" % (port))
+         f.write("allow_anonymous true\n")
+-        f.write("max_packet_size 40\n")
++        f.write("max_packet_size 50\n")
+ 
+ port = mosq_test.get_port()
+ conf_file = os.path.basename(__file__).replace('.py', '.conf')
+@@ -18,18 +18,21 @@ rc = 1
+ 
+ connect_packet = mosq_test.gen_connect("12-max-packet-broker", proto_ver=5)
+ props = mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS_MAXIMUM, 10)
+-props += mqtt5_props.gen_uint32_prop(mqtt5_props.MAXIMUM_PACKET_SIZE, 40)
++props += mqtt5_props.gen_uint32_prop(mqtt5_props.MAXIMUM_PACKET_SIZE, 50)
+ props += mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 20)
+ connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props, property_helper=False)
+ 
+-publish_packet = mosq_test.gen_publish("12/max/packet/size/broker/test/topic", qos=0, payload="0123456789012345678901234567890", proto_ver=5)
++publish_packet_ok = mosq_test.gen_publish("12/max/packet/size/broker/test/topic", qos=0, payload="012345678", proto_ver=5)
++publish_packet_bad = mosq_test.gen_publish("12/max/packet/size/broker/test/topic", qos=0, payload="0123456789", proto_ver=5)
+ disconnect_packet = mosq_test.gen_disconnect(reason_code=149, proto_ver=5)
+ 
+ broker = mosq_test.start_broker(filename=os.path.basename(__file__), port=port, use_conf=True)
+ 
+ try:
+     sock = mosq_test.do_client_connect(connect_packet, connack_packet, port=port)
+-    mosq_test.do_send_receive(sock, publish_packet, disconnect_packet, "disconnect")
++    sock.send(publish_packet_ok)
++    mosq_test.do_ping(sock)
++    mosq_test.do_send_receive(sock, publish_packet_bad, disconnect_packet, "disconnect")
+     rc = 0
+ except mosq_test.TestError:
+     pass
+-- 
+2.34.1
+

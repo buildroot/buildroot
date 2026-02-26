@@ -1,0 +1,27 @@
+From 5ff7991df2743afaa7777822b7b4ffa471cf9b97 Mon Sep 17 00:00:00 2001
+From: "Roger A. Light" <roger@atchoo.org>
+Date: Wed, 18 Feb 2026 09:05:44 +0000
+Subject: [PATCH] Fix incorrect parsing of unix socket address in proxy v2
+
+Upstream: https://github.com/eclipse-mosquitto/mosquitto/commit/b21c9f2c9af97ac4bc90efea388ca27ce7f6e73a
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+---
+ src/proxy_v2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/proxy_v2.c b/src/proxy_v2.c
+index 97932ad3..47adb302 100644
+--- a/src/proxy_v2.c
++++ b/src/proxy_v2.c
+@@ -280,7 +280,7 @@ int proxy_v2__read(struct mosquitto *context)
+ 			union proxy_addr *addr = (union proxy_addr *)context->proxy.buf;
+ 			context->address = mosquitto_strndup((char *)addr->unix_addr.src_addr, sizeof(addr->unix_addr.src_addr));
+ 			context->remote_port = 0;
+-			context->proxy.pos = (uint16_t)(strlen(context->address) + 1);
++			context->proxy.pos = (uint16_t)(sizeof(addr->unix_addr.src_addr) + 1);
+ 		}else{
+ 			/* Must be LOCAL */
+ 			/* Ignore address */
+-- 
+2.34.1
+

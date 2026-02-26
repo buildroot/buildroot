@@ -1,0 +1,56 @@
+From 8db331b93053debfb2c0e42982847eeacd571aee Mon Sep 17 00:00:00 2001
+From: "Roger A. Light" <roger@atchoo.org>
+Date: Tue, 24 Feb 2026 10:26:50 +0000
+Subject: [PATCH] cmake: Only include C++ support when required
+
+Thanks to Yann Morin
+
+Upstream: https://github.com/eclipse-mosquitto/mosquitto/commit/ae19460c132ec7b2b62c0703e1fafd3a0a3527aa)
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+---
+ CMakeLists.txt     | 8 +++++++-
+ lib/CMakeLists.txt | 1 -
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6c68bb9c..b3e28300 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -10,7 +10,7 @@ set (VERSION 2.1.2)
+ project(mosquitto
+ 	VERSION ${VERSION}
+ 	DESCRIPTION "Eclipse Mosquitto"
+-	LANGUAGES C CXX
++	LANGUAGES C
+ )
+ 
+ set(CMAKE_C_STANDARD 99)
+@@ -46,10 +46,16 @@ include(CMakePushCheckState)
+ include(CheckSourceCompiles)
+ 
+ option(WITH_BUNDLED_DEPS "Build with bundled dependencies?" ON)
++option(WITH_LIB_CPP "Build C++ library?" ON)
+ option(WITH_TLS "Include SSL/TLS support?" ON)
+ option(WITH_TLS_PSK "Include TLS-PSK support (requires WITH_TLS)?" ON)
+ option(WITH_TESTS "Enable tests" ON)
+ option(INC_MEMTRACK "Include memory tracking support?" ON)
++
++if (WITH_LIB_CPP OR WITH_TESTS)
++	ENABLE_LANGUAGE(CXX)
++endif()
++
+ if (WITH_TLS)
+ 	find_package(OpenSSL REQUIRED)
+ 	add_definitions("-DWITH_TLS")
+diff --git a/lib/CMakeLists.txt b/lib/CMakeLists.txt
+index 4585a51a..d8bb3d8b 100644
+--- a/lib/CMakeLists.txt
++++ b/lib/CMakeLists.txt
+@@ -1,4 +1,3 @@
+-option(WITH_LIB_CPP "Build C++ library?" ON)
+ if(WITH_LIB_CPP)
+ 	add_subdirectory(cpp)
+ endif()
+-- 
+2.34.1
+
