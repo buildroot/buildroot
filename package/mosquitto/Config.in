@@ -88,6 +88,20 @@ config BR2_PACKAGE_MOSQUITTO_BROKER_HTTP_API
 	  Add support for simple webserver as a listener to serve
 	  some of the HTTP API.
 
+config BR2_PACKAGE_MOSQUITTO_BROKER_PLUGIN_STATIC_PASSWD
+	bool "static password file plugin"
+	default y
+	help
+	  Add support for authentication based on static files. using
+	  a plugin rather than the legacy builtin support.
+
+config BR2_PACKAGE_MOSQUITTO_BROKER_PLUGIN_STATIC_ACL
+	bool "static ACL file plugin"
+	default y
+	help
+	  Add support for authorization (ACL) based on static files,
+	  using a plugin rather than the legacy builtin support.
+
 config BR2_PACKAGE_MOSQUITTO_BROKER_DYNAMIC_SECURITY_PLUGIN
 	bool "dynamic security plugin"
 	select BR2_PACKAGE_OPENSSL
