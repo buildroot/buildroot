@@ -13,4 +13,7 @@ IGMPPROXY_LICENSE_FILES = COPYING GPL.txt Stanford.txt
 
 IGMPPROXY_CPE_ID_VENDOR = pali
 
+# 0001-Fix-Buffer-Overflow.patch
+IGMPPROXY_IGNORE_CVES += CVE-2025-50681
+
 $(eval $(autotools-package))
