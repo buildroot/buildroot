@@ -1,0 +1,37 @@
+From 89a795fee97a3da348c28dbd58500100a13dcec0 Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Sun, 25 Jan 2026 08:30:43 +0000
+Subject: [PATCH] Do not edit const and use const qualifier from pointer target
+ type
+
+Fixes:
+    ../../lib/libnfs.c: In function 'nfs_set_context_args':
+    ../../lib/libnfs.c:301:30: error: initialization discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+      301 |                 char *strp = strchr(val, ',');
+          |                              ^~~~~~
+
+Upstream: https://github.com/sahlberg/libnfs/commit/89a795fee97a3da348c28dbd58500100a13dcec0
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ lib/libnfs.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/lib/libnfs.c b/lib/libnfs.c
+index bbe6666..162492b 100755
+--- a/lib/libnfs.c
++++ b/lib/libnfs.c
+@@ -316,9 +316,8 @@ nfs_set_context_args(struct nfs_context *nfs, const char *arg, const char *val)
+ 	} else if (!strcmp(arg, "wsize")) {
+ 		nfs_set_writemax(nfs, atoi(val));
+ 	} else if (!strcmp(arg, "readdir-buffer")) {
+-		char *strp = strchr(val, ',');
++		const char *strp = strchr(val, ',');
+ 		if (strp) {
+-			*strp = 0;
+ 			strp++;
+ 			nfs_set_readdir_max_buffer_size(nfs, atoi(val), atoi(strp));
+ 		} else {
+-- 
+2.47.3
+
