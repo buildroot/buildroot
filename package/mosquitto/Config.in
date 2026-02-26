@@ -94,6 +94,13 @@ config BR2_PACKAGE_MOSQUITTO_BROKER_BRIDGE
 	help
 	  Include bridge support for connecting to other brokers
 
+config BR2_PACKAGE_MOSQUITTO_BROKER_SYS
+	bool "$SYS tree support"
+	default y  # legacy
+	help
+	  Enable the $SYS/# tree structure, to export broker status as
+	  MQTT topics.
+
 config BR2_PACKAGE_MOSQUITTO_BROKER_PLUGIN_STATIC_PASSWD
 	bool "static password file plugin"
 	default y
