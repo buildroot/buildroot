@@ -33,6 +33,22 @@ config BR2_PACKAGE_MOSQUITTO_CLIENTS
 	    mosquitto_sub
 	    mosquitto_rr
 
+config BR2_PACKAGE_MOSQUITTO_APPS
+	bool "install apps"
+	default y if BR2_PACKAGE_MOSQUITTO_BROKER  # Backward compatibility
+	depends on BR2_USE_WCHAR  # libedit
+	# For mosquitto_ctrl shell feature, mandatorily enabled:
+	select BR2_PACKAGE_READLINE if !BR2_PACKAGE_LIBEDIT
+	help
+	  Those apps can be used to interact with the broker:
+	    mosquitto_db_dump
+	    mosquitto_signal
+
+	  Additionally, when openssl is enabled, the following apps are
+	  also installed:
+	    mosquitto_ctrl
+	    mosquitto_passwd
+
 config BR2_PACKAGE_MOSQUITTO_BROKER
 	bool "install the mosquitto broker"
 	default y
