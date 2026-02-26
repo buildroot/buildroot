@@ -79,14 +79,23 @@ config BR2_PACKAGE_MOSQUITTO_BROKER
 	help
 	  Build and install the mosquitto broker onto target.
 
+if BR2_PACKAGE_MOSQUITTO_BROKER
+
+config BR2_PACKAGE_MOSQUITTO_BROKER_HTTP_API
+	bool "http_api"
+	select BR2_PACKAGE_LIBMICROHTTPD
+	help
+	  Add support for simple webserver as a listener to serve
+	  some of the HTTP API.
+
 config BR2_PACKAGE_MOSQUITTO_BROKER_DYNAMIC_SECURITY_PLUGIN
 	bool "dynamic security plugin"
-	depends on BR2_PACKAGE_MOSQUITTO_BROKER
 	select BR2_PACKAGE_OPENSSL
 	help
 	  Build and install the dynamic security plugin for
 	  mosquitto broker onto target.
 
+endif
 endif
 
 comment "mosquitto needs a toolchain w/ dynamic library"
