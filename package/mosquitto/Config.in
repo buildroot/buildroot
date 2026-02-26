@@ -24,6 +24,15 @@ config BR2_PACKAGE_MOSQUITTO
 
 if BR2_PACKAGE_MOSQUITTO
 
+config BR2_PACKAGE_MOSQUITTO_CLIENTS
+	bool "install clients"
+	default y  # Backward compatibility
+	help
+	  Install CLI tools to publish/subscribe to the broker:
+	    mosquitto_pub
+	    mosquitto_sub
+	    mosquitto_rr
+
 config BR2_PACKAGE_MOSQUITTO_BROKER
 	bool "install the mosquitto broker"
 	default y
