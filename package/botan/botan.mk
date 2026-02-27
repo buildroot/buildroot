@@ -11,6 +11,9 @@ BOTAN_LICENSE = BSD-2-Clause
 BOTAN_LICENSE_FILES = license.txt
 BOTAN_CPE_ID_VALID = YES
 
+# 0001-Add-more-value-barriers-to-avoid-compiler-induced-side-channels.patch
+BOTAN_IGNORE_CVES += CVE-2024-50382 CVE-2024-50383
+
 BOTAN_INSTALL_STAGING = YES
 
 BOTAN_DEPENDENCIES = host-python3
