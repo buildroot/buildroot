@@ -1,0 +1,51 @@
+From c1452d88114710f5772662b1d8efb9c71edaa34c Mon Sep 17 00:00:00 2001
+From: Aleksei Bavshin <alebastr89@gmail.com>
+Date: Sat, 7 Feb 2026 17:48:16 -0800
+Subject: [PATCH] backend/libinput: fix build with libinput 1.31
+
+Upstream: https://gitlab.freedesktop.org/wlroots/wlroots/-/commit/c1452d88114710f5772662b1d8efb9c71edaa34c
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ backend/libinput/meson.build | 4 ++++
+ backend/libinput/switch.c    | 5 +++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/backend/libinput/meson.build b/backend/libinput/meson.build
+index c244eb77a..091b0e0eb 100644
+--- a/backend/libinput/meson.build
++++ b/backend/libinput/meson.build
+@@ -29,3 +29,7 @@ features += { 'libinput-backend': true }
+ wlr_deps += libinput
+ 
+ internal_config.set10('HAVE_LIBINPUT_BUSTYPE', libinput.version().version_compare('>=1.26.0'))
++internal_config.set10(
++	'HAVE_LIBINPUT_SWITCH_KEYPAD_SLIDE',
++	libinput.version().version_compare('>=1.30.901')
++)
+diff --git a/backend/libinput/switch.c b/backend/libinput/switch.c
+index abeec86d7..9dde3c9cb 100644
+--- a/backend/libinput/switch.c
++++ b/backend/libinput/switch.c
+@@ -2,6 +2,7 @@
+ #include <libinput.h>
+ #include <wlr/interfaces/wlr_switch.h>
+ #include "backend/libinput.h"
++#include "config.h"
+ 
+ const struct wlr_switch_impl libinput_switch_impl = {
+ 	.name = "libinput-switch",
+@@ -36,6 +37,10 @@ void handle_switch_toggle(struct libinput_event *event,
+ 	case LIBINPUT_SWITCH_TABLET_MODE:
+ 		wlr_event.switch_type = WLR_SWITCH_TYPE_TABLET_MODE;
+ 		break;
++#if HAVE_LIBINPUT_SWITCH_KEYPAD_SLIDE
++	case LIBINPUT_SWITCH_KEYPAD_SLIDE:
++		return;
++#endif
+ 	}
+ 	switch (libinput_event_switch_get_switch_state(sevent)) {
+ 	case LIBINPUT_SWITCH_STATE_OFF:
+-- 
+GitLab
+
