@@ -1,0 +1,51 @@
+From c4665d282072df2ed8ab6ae1d5fa0de41e5db02f Mon Sep 17 00:00:00 2001
+From: Luca Boccassi <luca.boccassi@gmail.com>
+Date: Tue, 6 Jan 2026 11:48:13 +0100
+Subject: [PATCH] Fix build with binutils 2.46
+
+With the new binutils which is in development and in Fedora Rawhide:
+
+objcopy -D -j .text -j .sdata -j .data -j .data.ident \
+        -j .dynamic -j .rodata -j .rel* \
+        -j .rela* -j .dyn -j .reloc -j .eh_frame \
+        -j .vendor_cert -j .sbat -j .sbatlevel \
+        --file-alignment 0x1000 \
+        --target efi-app-x86_64 fbx64.so fbx64.efi
+objcopy: fbx64.so: file format not recognized
+
+It seems it was an intentional compat break, according to the upstream
+commit:
+
+https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;a=commit;h=5e83077d552ed6f81dbc092eb3ccf827a43de42c
+
+* Internal changes to plugin support, and stricter target checking may result
+  in some errors being exposed in user options passed to the various binutils.
+  For example objcopy --target=TARGET now will only work if the input file is
+  for TARGET whereas prior versions of objcopy accepted other target input
+  files and produced a TARGET output.  If you do in fact want the old
+  behaviour the correct usage is objcopy --output-target=TARGET.
+
+Switch from --taget to --output-target as suggested.
+
+Signed-off-by: Luca Boccassi <luca.boccassi@gmail.com>
+
+Upstream: https://github.com/rhboot/shim/commit/c4665d282072df2ed8ab6ae1d5fa0de41e5db02f
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ Make.defaults | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Make.defaults b/Make.defaults
+index c5fa32bec..9b40b7f4a 100644
+--- a/Make.defaults
++++ b/Make.defaults
+@@ -155,7 +155,7 @@ endif
+ 
+ LIB_GCC		= $(shell $(CC) $(ARCH_CFLAGS) -print-libgcc-file-name)
+ EFI_LIBS	= -lefi -lgnuefi --start-group Cryptlib/libcryptlib.a Cryptlib/OpenSSL/libopenssl.a --end-group $(LIB_GCC)
+-FORMAT		?= --target efi-app-$(ARCH)
++FORMAT		?= --output-target efi-app-$(ARCH)
+ LOCAL_EFI_PATH	= gnu-efi/$(ARCH_GNUEFI)/gnuefi
+ LIBDIR		= gnu-efi/$(ARCH_GNUEFI)/lib
+ 
