@@ -142,5 +142,15 @@ def main():
 
 
 if __name__ == "__main__":
-    multiprocessing.set_start_method("fork")
+    # python 3.14 changed default start method from fork to
+    # fork-server, which is not compatible with the nose2 setup
+    if multiprocessing.get_start_method(allow_none=True) != "fork":
+        multiprocessing.set_start_method("fork", force=True)
+        # set_start_method throws a RuntimeError if called more than
+        # once.
+        # Debian python3-nose2 0.15.1-2 includes a patch adding
+        # another set_start_method() call, so monkey patch it out to
+        # get rid of this
+        multiprocessing.set_start_method = lambda *args: None
+
     sys.exit(main())
