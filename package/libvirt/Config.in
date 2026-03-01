@@ -89,12 +89,14 @@ comment "qemu needs a toolchain with gcc >= 8"
 config BR2_PACKAGE_LIBVIRT_LXC
 	bool "lxc"
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_7 # lxc
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC # lxc
 	select BR2_PACKAGE_LXC
 	help
 	  Linux Container support
 
-comment "lxc needs a toolchain w/ gcc >= 4.7"
-	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_7
+comment "lxc needs a glibc or musl toolchain w/ gcc >= 4.7"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_7 \
+		|| BR2_TOOLCHAIN_USES_UCLIBC
 
 endif
 
