@@ -1,0 +1,24 @@
+From 414f701464929c217f2509bcbd6d2c1f00f7ed73 Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Mon, 26 Jan 2026 11:07:25 +0100
+Subject: [PATCH] [channels,urbdrc] cancel all usb transfers on channel close
+
+CVE: CVE-2026-24681
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/414f701464929c217f2509bcbd6d2c1f00f7ed73
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ channels/urbdrc/client/libusb/libusb_udevice.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/channels/urbdrc/client/libusb/libusb_udevice.c b/channels/urbdrc/client/libusb/libusb_udevice.c
+index 5341248ec64f..9e2d3ec5a193 100644
+--- a/channels/urbdrc/client/libusb/libusb_udevice.c
++++ b/channels/urbdrc/client/libusb/libusb_udevice.c
+@@ -1116,6 +1116,7 @@ static void libusb_udev_mark_channel_closed(IUDEVICE* idev)
+ 		const uint8_t devNr = idev->get_dev_number(idev);
+ 
+ 		pdev->status |= URBDRC_DEVICE_CHANNEL_CLOSED;
++		pdev->iface.cancel_all_transfer_request(&pdev->iface);
+ 		urbdrc->udevman->unregister_udevice(urbdrc->udevman, busNr, devNr);
+ 	}
+ }

@@ -1,0 +1,55 @@
+From 4d44e3c097656a8b9ec696353647b0888ca45860 Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Mon, 19 Jan 2026 20:11:24 +0100
+Subject: [PATCH] [core,info] fix missing NULL check
+
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/4d44e3c097656a8b9ec696353647b0888ca45860
+CVE: CVE-2026-23948
+[thomas: backport https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/freerdp2/2.6.1+dfsg1-3ubuntu2.10/freerdp2_2.6.1+dfsg1-3ubuntu2.10.debian.tar.xz]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ libfreerdp/core/info.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/libfreerdp/core/info.c b/libfreerdp/core/info.c
+index 0b17b75d9f64..cc54aee7baef 100644
+--- a/libfreerdp/core/info.c
++++ b/libfreerdp/core/info.c
+@@ -1372,7 +1372,7 @@ static BOOL rdp_write_logon_info_v1(wStr
+ 	return TRUE;
+ }
+ 
+-static BOOL rdp_write_logon_info_v2(wStream* s, logon_info* info)
++static BOOL rdp_write_logon_info_v2(wStream* s, const logon_info* info)
+ {
+ 	UINT32 Size = 2 + 4 + 4 + 4 + 4 + 558;
+ 	size_t domainLen, usernameLen;
+@@ -1385,11 +1385,13 @@ static BOOL rdp_write_logon_info_v2(wStr
+ 	Stream_Write_UINT16(s, SAVE_SESSION_PDU_VERSION_ONE);
+ 	Stream_Write_UINT32(s, Size);
+ 	Stream_Write_UINT32(s, info->sessionId);
+-	domainLen = strlen(info->domain);
++	if (info->domain)
++		domainLen = strlen(info->domain);
+ 	if (domainLen > UINT32_MAX)
+ 		return FALSE;
+ 	Stream_Write_UINT32(s, (UINT32)(domainLen + 1) * 2);
+-	usernameLen = strlen(info->username);
++	if (info->username)
++		usernameLen = strlen(info->username);
+ 	if (usernameLen > UINT32_MAX)
+ 		return FALSE;
+ 	Stream_Write_UINT32(s, (UINT32)(usernameLen + 1) * 2);
+@@ -1466,10 +1468,10 @@ static BOOL rdp_write_logon_info_ex(wStr
+ 
+ BOOL rdp_send_save_session_info(rdpContext* context, UINT32 type, void* data)
+ {
+-	wStream* s;
+ 	BOOL status;
++	WINPR_ASSERT(context);
+ 	rdpRdp* rdp = context->rdp;
+-	s = rdp_data_pdu_init(rdp);
++	wStream* s = rdp_data_pdu_init(rdp);
+ 
+ 	if (!s)
+ 		return FALSE;

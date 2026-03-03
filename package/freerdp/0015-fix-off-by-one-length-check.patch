@@ -1,0 +1,33 @@
+From f8688b57f6cfad9a0b05475a6afbde355ffab720 Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Thu, 15 Jan 2026 12:19:53 +0100
+Subject: [PATCH] [codec,clear] fix off by one length check
+
+CVE: CVE-2026-23534
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/f8688b57f6cfad9a0b05475a6afbde355ffab720
+[thomas: backport https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/freerdp2/2.6.1+dfsg1-3ubuntu2.10/freerdp2_2.6.1+dfsg1-3ubuntu2.10.debian.tar.xz]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ libfreerdp/codec/clear.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libfreerdp/codec/clear.c b/libfreerdp/codec/clear.c
+index 4a67a8ed692b..0efa89f8d06c 100644
+--- a/libfreerdp/codec/clear.c
++++ b/libfreerdp/codec/clear.c
+@@ -881,11 +881,14 @@ static BOOL clear_decompress_bands_data(
+ 				if (count > nHeight)
+ 					count = nHeight;
+ 
+-				if (nXDstRel + i > nDstWidth)
++				if (nXDstRel + i >= nDstWidth)
+ 					return FALSE;
+ 
+ 				for (UINT32 y = 0; y < count; y++)
+ 				{
++					if (nYDstRel + y >= nDstHeight)
++						return FALSE;
++
+ 					BYTE* pDstPixel8 = &pDstData[((nYDstRel + y) * nDstStep) +
+ 					                             ((nXDstRel + i) * GetBytesPerPixel(DstFormat))];
+ 					UINT32 color = ReadColor(cpSrcPixel, clear->format);

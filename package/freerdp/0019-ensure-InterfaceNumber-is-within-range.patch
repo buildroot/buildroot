@@ -1,0 +1,43 @@
+From 2d563a50be17c1b407ca448b1321378c0726dd31 Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Mon, 26 Jan 2026 10:59:39 +0100
+Subject: [PATCH] [channels,urbdrc] ensure InterfaceNumber is within range
+
+CVE: CVE-2026-24679
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/2d563a50be17c1b407ca448b1321378c0726dd31
+[thomas: backport https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/freerdp2/2.6.1+dfsg1-3ubuntu2.10/freerdp2_2.6.1+dfsg1-3ubuntu2.10.debian.tar.xz]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ channels/urbdrc/client/libusb/libusb_udevice.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/channels/urbdrc/client/libusb/libusb_udevice.c b/channels/urbdrc/client/libusb/libusb_udevice.c
+index 6c2376f74fd6..5341248ec64f 100644
+--- a/channels/urbdrc/client/libusb/libusb_udevice.c
++++ b/channels/urbdrc/client/libusb/libusb_udevice.c
+@@ -528,19 +528,19 @@ static int libusb_udev_select_interface(
+ {
+ 	int error = 0, diff = 0;
+ 	UDEVICE* pdev = (UDEVICE*)idev;
+-	URBDRC_PLUGIN* urbdrc;
+-	MSUSB_CONFIG_DESCRIPTOR* MsConfig;
+-	MSUSB_INTERFACE_DESCRIPTOR** MsInterfaces;
+ 
+ 	if (!pdev || !pdev->urbdrc)
+ 		return -1;
+ 
+-	urbdrc = pdev->urbdrc;
+-	MsConfig = pdev->MsConfig;
++	URBDRC_PLUGIN* urbdrc = pdev->urbdrc;
++	MSUSB_CONFIG_DESCRIPTOR* MsConfig = pdev->MsConfig;
+ 
+ 	if (MsConfig)
+ 	{
+-		MsInterfaces = MsConfig->MsInterfaces;
++		if (InterfaceNumber >= MsConfig->NumInterfaces)
++			return -2;
++
++		MSUSB_INTERFACE_DESCRIPTOR** MsInterfaces = MsConfig->MsInterfaces;
+ 		if (MsInterfaces)
+ 		{
+ 			WLog_Print(urbdrc->log, WLOG_INFO,

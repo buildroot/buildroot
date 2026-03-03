@@ -1,0 +1,58 @@
+From c4391827d7facfc874ca7f61a92afb82232a5748 Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Thu, 15 Jan 2026 12:11:57 +0100
+Subject: [PATCH] [codec,clear] fix clear_resize_buffer checks
+
+CVE: CVE-2026-23533
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/c4391827d7facfc874ca7f61a92afb82232a5748
+[thomas: backport https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/freerdp2/2.6.1+dfsg1-3ubuntu2.10/freerdp2_2.6.1+dfsg1-3ubuntu2.10.debian.tar.xz]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ libfreerdp/codec/clear.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/libfreerdp/codec/clear.c b/libfreerdp/codec/clear.c
+index ad57529093e3..aa36baa9b305 100644
+--- a/libfreerdp/codec/clear.c
++++ b/libfreerdp/codec/clear.c
+@@ -62,7 +62,7 @@ struct S_CLEAR_CONTEXT
+ 	NSC_CONTEXT* nsc;
+ 	UINT32 seqNumber;
+ 	BYTE* TempBuffer;
+-	UINT32 TempSize;
++	size_t TempSize;
+ 	UINT32 nTempStep;
+ 	UINT32 TempFormat;
+ 	UINT32 format;
+@@ -313,16 +313,17 @@ static BOOL clear_decompress_subcode_rlex(wStream* WINPR_RESTRICT s, UINT32 bitm
+ 
+ static BOOL clear_resize_buffer(CLEAR_CONTEXT* clear, UINT32 width, UINT32 height)
+ {
+-	UINT32 size;
+-
+ 	if (!clear)
+ 		return FALSE;
+ 
+-	size = ((width + 16) * (height + 16) * GetBytesPerPixel(clear->format));
++	const UINT64 size = 1ull * (width + 16ull) * (height + 16ull);
++	const size_t bpp = GetBytesPerPixel(clear->format);
++	if (size > UINT32_MAX / bpp)
++		return FALSE;
+ 
+-	if (size > clear->TempSize)
++	if (size > clear->TempSize / bpp)
+ 	{
+-		BYTE* tmp = (BYTE*)realloc(clear->TempBuffer, size);
++		BYTE* tmp = (BYTE*)realloc(clear->TempBuffer, size * bpp);
+ 
+ 		if (!tmp)
+ 		{
+@@ -330,7 +331,7 @@ static BOOL clear_resize_buffer(CLEAR_CONTEXT* WINPR_RESTRICT clear, UINT32 widt
+ 			return FALSE;
+ 		}
+ 
+-		clear->TempSize = size;
++		clear->TempSize = size * bpp;
+ 		clear->TempBuffer = tmp;
+ 	}
+ 

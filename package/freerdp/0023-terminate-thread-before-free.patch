@@ -1,0 +1,64 @@
+From 622bb7b4402491ca003f47472d0e478132673696 Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Mon, 26 Jan 2026 10:48:14 +0100
+Subject: [PATCH] [channels,rdpsnd] terminate thread before free
+
+Ensure that the optional rdpsnd thread is terminated and the message
+queue freed up before releasing the channel context memory
+
+CVE: CVE-2026-24684
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/622bb7b4402491ca003f47472d0e478132673696
+[thomas: backport https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/freerdp2/2.6.1+dfsg1-3ubuntu2.10/freerdp2_2.6.1+dfsg1-3ubuntu2.10.debian.tar.xz]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ channels/rdpsnd/client/rdpsnd_main.c | 28 +++++++++++++++++++---------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
+
+diff --git a/channels/rdpsnd/client/rdpsnd_main.c b/channels/rdpsnd/client/rdpsnd_main.c
+index 49c763a87e9b..61a29ec40aa8 100644
+--- a/channels/rdpsnd/client/rdpsnd_main.c
++++ b/channels/rdpsnd/client/rdpsnd_main.c
+@@ -1244,11 +1244,27 @@ fail:
+ 	return CHANNEL_RC_NO_MEMORY;
+ }
+ 
++static void rdpsnd_terminate_thread(rdpsndPlugin* rdpsnd)
++{
++	WINPR_ASSERT(rdpsnd);
++	if (rdpsnd->queue)
++		MessageQueue_PostQuit(rdpsnd->queue, 0);
++	if (rdpsnd->thread)
++	{
++		WaitForSingleObject(rdpsnd->thread, INFINITE);
++		CloseHandle(rdpsnd->thread);
++	}
++	MessageQueue_Free(rdpsnd->queue);
++	rdpsnd->thread = NULL;
++	rdpsnd->queue = NULL;
++}
++
+ static void cleanup_internals(rdpsndPlugin* rdpsnd)
+ {
+ 	if (!rdpsnd)
+ 		return;
+ 
++	rdpsnd_terminate_thread(rdpsnd);
+ 	if (rdpsnd->pool)
+ 		StreamPool_Return(rdpsnd->pool, rdpsnd->data_in);
+ 
+@@ -1396,14 +1412,7 @@ void rdpsnd_virtual_channel_event_termin
+ {
+ 	if (rdpsnd)
+ 	{
+-		if (rdpsnd->queue)
+-			MessageQueue_PostQuit(rdpsnd->queue, 0);
+-		if (rdpsnd->thread)
+-		{
+-			WaitForSingleObject(rdpsnd->thread, INFINITE);
+-			CloseHandle(rdpsnd->thread);
+-		}
+-		MessageQueue_Free(rdpsnd->queue);
++		rdpsnd_terminate_thread(rdpsnd);
+ 
+ 		free_internals(rdpsnd);
+ 		audio_formats_free(rdpsnd->fixed_format, 1);

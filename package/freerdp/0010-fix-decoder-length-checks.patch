@@ -1,0 +1,29 @@
+From 1bab198a2edd0d0e6e1627d21a433151ea190500 Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Thu, 15 Jan 2026 12:02:02 +0100
+Subject: [PATCH] [codec,planar] fix decoder length checks
+
+CVE: CVE-2026-23530
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/1bab198a2edd0d0e6e1627d21a433151ea190500
+[thomas: backport https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/freerdp2/2.6.1+dfsg1-3ubuntu2.10/freerdp2_2.6.1+dfsg1-3ubuntu2.10.debian.tar.xz]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ libfreerdp/codec/planar.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/libfreerdp/codec/planar.c b/libfreerdp/codec/planar.c
+index 1a06e36edb0c..94a640a551d1 100644
+--- a/libfreerdp/codec/planar.c
++++ b/libfreerdp/codec/planar.c
+@@ -616,6 +616,11 @@ BOOL freerdp_bitmap_decompress_planar(BITMAP_PLANAR_CONTEXT* WINPR_RESTRICT plan
+ 	WINPR_ASSERT(planar);
+ 	WINPR_ASSERT(prims);
+ 
++	if (planar->maxWidth < nSrcWidth)
++		return FALSE;
++	if (planar->maxHeight < nSrcHeight)
++		return FALSE;
++
+ 	if (nDstStep <= 0)
+ 		nDstStep = nDstWidth * GetBytesPerPixel(DstFormat);
+ 

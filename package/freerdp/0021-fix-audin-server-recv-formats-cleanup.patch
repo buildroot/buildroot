@@ -1,0 +1,26 @@
+From 1c5c74223179d425a1ce6dbbb6a3dd2a958b7aee Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Mon, 26 Jan 2026 10:14:08 +0100
+Subject: [PATCH] [channels,audin] fix audin_server_recv_formats cleanup
+
+CVE: CVE-2026-24682
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/1c5c74223179d425a1ce6dbbb6a3dd2a958b7aee
+[thomas: backport https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/freerdp2/2.6.1+dfsg1-3ubuntu2.10/freerdp2_2.6.1+dfsg1-3ubuntu2.10.debian.tar.xz]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ channels/audin/server/audin.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/channels/audin/server/audin.c b/channels/audin/server/audin.c
+index 5046a7d6f27c..17077efa6652 100644
+--- a/channels/audin/server/audin.c
++++ b/channels/audin/server/audin.c
+@@ -215,7 +215,7 @@ static UINT audin_server_recv_formats(au
+ 
+ 		if (!audio_format_read(s, format))
+ 		{
+-			audio_formats_free(audin->context.client_formats, i);
++			audio_formats_free(audin->context.client_formats, audin->context.num_client_formats);
+ 			audin->context.client_formats = NULL;
+ 			WLog_ERR(TAG, "expected length at least 18, but got %" PRIu32 "", length);
+ 			return ERROR_INVALID_DATA;
