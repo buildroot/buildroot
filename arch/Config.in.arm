@@ -524,6 +524,12 @@ config BR2_neoverse_n2
 	select BR2_ARM_CPU_HAS_FP_ARMV8
 	select BR2_ARM_CPU_ARMV9A
 	select BR2_ARCH_NEEDS_GCC_AT_LEAST_11
+config BR2_neoverse_v2
+	bool "neoverse-V2 (aka demeter)"
+	depends on BR2_ARCH_IS_64
+	select BR2_ARM_CPU_HAS_FP_ARMV8
+	select BR2_ARM_CPU_ARMV9A
+	select BR2_ARCH_NEEDS_GCC_AT_LEAST_13
 
 comment "armv9.2a cores"
 config BR2_cortex_a720
@@ -929,6 +935,7 @@ config BR2_GCC_TARGET_CPU
 	# armv9.0a
 	default "cortex-a710"	if BR2_cortex_a710
 	default "neoverse-n2"	if BR2_neoverse_n2
+	default "neoverse-v2"	if BR2_neoverse_v2
 	# armv9.2a
 	default "cortex-a720"	if BR2_cortex_a720
 
