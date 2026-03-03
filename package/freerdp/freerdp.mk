@@ -17,6 +17,10 @@ FREERDP_CPE_ID_VENDOR = freerdp
 # https://security-tracker.debian.org/tracker/CVE-2024-32662
 FREERDP_IGNORE_CVES += CVE-2024-32662
 
+# Windows only
+# https://security-tracker.debian.org/tracker/CVE-2025-68118
+FREERDP_IGNORE_CVES += CVE-2025-68118
+
 FREERDP_INSTALL_STAGING = YES
 
 FREERDP_CONF_OPTS = -DWITH_MANPAGES=OFF -Wno-dev -DWITH_GSTREAMER_0_10=OFF
