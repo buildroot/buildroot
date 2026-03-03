@@ -1,0 +1,31 @@
+From 25102b432fb37916a1a553d7ef8fd940c6e52c3f Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Thu, 15 Jan 2026 12:17:33 +0100
+Subject: [PATCH] [codec,clear] fix missing length checks
+
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/25102b432fb37916a1a553d7ef8fd940c6e52c3f.patch
+CVE: CVE-2026-23531
+[thomas: backport https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/freerdp2/2.6.1+dfsg1-3ubuntu2.10/freerdp2_2.6.1+dfsg1-3ubuntu2.10.debian.tar.xz]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ libfreerdp/codec/clear.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/libfreerdp/codec/clear.c b/libfreerdp/codec/clear.c
+index aa36baa9b305..4a67a8ed692b 100644
+--- a/libfreerdp/codec/clear.c
++++ b/libfreerdp/codec/clear.c
+@@ -1141,8 +1141,11 @@ INT32 clear_decompress(CLEAR_CONTEXT* cl
+ 
+ 	if (glyphData)
+ 	{
+-		if (!freerdp_image_copy(glyphData, clear->format, 0, 0, 0, nWidth, nHeight, pDstData,
+-		                        DstFormat, nDstStep, nXDst, nYDst, palette, FREERDP_FLIP_NONE))
++		const uint32_t w = MIN(nWidth, nDstWidth);
++		const uint32_t h = MIN(nHeight, nDstHeight);
++		if (!freerdp_image_copy_no_overlap(glyphData, clear->format, 0, 0, 0, w, h, pDstData,
++		                                   DstFormat, nDstStep, nXDst, nYDst, palette,
++		                                   FREERDP_FLIP_NONE))
+ 			goto fail;
+ 	}
+ 

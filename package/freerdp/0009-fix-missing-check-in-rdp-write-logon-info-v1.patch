@@ -1,0 +1,29 @@
+From 71e463e31b4d69f4022d36bfc814592f56600793 Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Sun, 21 Apr 2024 13:56:13 +0200
+Subject: [PATCH] [core,info] fix missing check in rdp_write_logon_info_v1
+
+CVE: CVE-2024-32661
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/71e463e31b4d69f4022d36bfc814592f56600793
+[thomas: backport https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/freerdp2/2.6.1+dfsg1-3ubuntu2.10/freerdp2_2.6.1+dfsg1-3ubuntu2.10.debian.tar.xz]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ libfreerdp/core/info.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/libfreerdp/core/info.c b/libfreerdp/core/info.c
+index 7d6eec13782d..3395e4d2e04c 100644
+--- a/libfreerdp/core/info.c
++++ b/libfreerdp/core/info.c
+@@ -1327,6 +1327,10 @@ static BOOL rdp_write_logon_info_v1(wStream* s, logon_info* info)
+ 		return FALSE;
+ 
+ 	/* domain */
++	WINPR_ASSERT(info);
++	if (!info->domain || !info->username)
++		return FALSE;
++
+ 	ilen = ConvertToUnicode(CP_UTF8, 0, info->domain, -1, &wString, 0);
+
+ 	if (ilen < 0)
+
