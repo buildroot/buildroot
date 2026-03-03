@@ -1,0 +1,109 @@
+From d9ca272dce7a776ab475e9b1a8e8c3d2968c8486 Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Mon, 26 Jan 2026 12:08:48 +0100
+Subject: [PATCH] [channels,ainput] lock context when updating listener
+
+CVE: CVE-2026-24683
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/d9ca272dce7a776ab475e9b1a8e8c3d2968c8486
+[thomas: backport https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/freerdp2/2.6.1+dfsg1-3ubuntu2.10/freerdp2_2.6.1+dfsg1-3ubuntu2.10.debian.tar.xz]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ channels/ainput/client/ainput_main.c | 36 ++++++++++++++++++++--------
+ 1 file changed, 26 insertions(+), 10 deletions(-)
+
+diff --git a/channels/ainput/client/ainput_main.c b/channels/ainput/client/ainput_main.c
+index c291bd727285..5545753600a1 100644
+--- a/channels/ainput/client/ainput_main.c
++++ b/channels/ainput/client/ainput_main.c
+@@ -69,6 +69,7 @@ struct AINPUT_PLUGIN_
+ 	UINT32 MajorVersion;
+ 	UINT32 MinorVersion;
+ 	BOOL initialized;
++	CRITICAL_SECTION lock;
+ };
+ 
+ /**
+@@ -109,10 +110,7 @@ static UINT ainput_on_data_received(IWTS
+ 
+ static UINT ainput_send_input_event(AInputClientContext* context, UINT64 flags, INT32 x, INT32 y)
+ {
+-	AINPUT_PLUGIN* ainput;
+-	AINPUT_CHANNEL_CALLBACK* callback;
+ 	BYTE buffer[32] = { 0 };
+-	UINT64 time;
+ 	wStream sbuffer = { 0 };
+ 	wStream* s = &sbuffer;
+ 
+@@ -121,8 +119,8 @@ static UINT ainput_send_input_event(AInp
+ 	WINPR_ASSERT(s);
+ 	WINPR_ASSERT(context);
+ 
+-	time = GetTickCount64();
+-	ainput = (AINPUT_PLUGIN*)context->handle;
++	const UINT64 time = GetTickCount64();
++	AINPUT_PLUGIN* ainput = (AINPUT_PLUGIN*)context->handle;
+ 	WINPR_ASSERT(ainput);
+ 	WINPR_ASSERT(ainput->listener_callback);
+ 
+@@ -132,8 +130,6 @@ static UINT ainput_send_input_event(AInp
+ 		          ainput->MajorVersion, ainput->MinorVersion);
+ 		return CHANNEL_RC_UNSUPPORTED_VERSION;
+ 	}
+-	callback = ainput->listener_callback->channel_callback;
+-	WINPR_ASSERT(callback);
+ 
+ 	{
+ 		char buffer[128] = { 0 };
+@@ -152,10 +148,15 @@ static UINT ainput_send_input_event(AInp
+ 	Stream_SealLength(s);
+ 
+ 	/* ainput back what we have received. AINPUT does not have any message IDs. */
++	EnterCriticalSection(&ainput->lock);
++	AINPUT_CHANNEL_CALLBACK* callback = ainput->listener_callback->channel_callback;
++	WINPR_ASSERT(callback);
+ 	WINPR_ASSERT(callback->channel);
+ 	WINPR_ASSERT(callback->channel->Write);
+-	return callback->channel->Write(callback->channel, (ULONG)Stream_Length(s), Stream_Buffer(s),
++	const UINT rc = callback->channel->Write(callback->channel, (ULONG)Stream_Length(s), Stream_Buffer(s),
+ 	                                NULL);
++	LeaveCriticalSection(&ainput->lock);
++	return rc;
+ }
+ 
+ /**
+@@ -167,7 +168,14 @@ static UINT ainput_on_close(IWTSVirtualC
+ {
+ 	AINPUT_CHANNEL_CALLBACK* callback = (AINPUT_CHANNEL_CALLBACK*)pChannelCallback;
+ 
+-	free(callback);
++	if (callback)
++	{
++		AINPUT_PLUGIN* ainput = (AINPUT_PLUGIN*)callback->plugin;
++		WINPR_ASSERT(ainput);
++		EnterCriticalSection(&ainput->lock);
++		free(callback);
++		LeaveCriticalSection(&ainput->lock);
++	}
+ 
+ 	return CHANNEL_RC_OK;
+ }
+@@ -242,7 +250,10 @@ static UINT ainput_plugin_initialize(IWT
+ 	status = pChannelMgr->CreateListener(pChannelMgr, AINPUT_DVC_CHANNEL_NAME, 0,
+ 	                                     &ainput->listener_callback->iface, &ainput->listener);
+ 
++	InitializeCriticalSection(&ainput->lock);
++	EnterCriticalSection(&ainput->lock);
+ 	ainput->listener->pInterface = ainput->iface.pInterface;
++	LeaveCriticalSection(&ainput->lock);
+ 	ainput->initialized = status == CHANNEL_RC_OK;
+ 	return status;
+ }
+@@ -255,6 +266,8 @@ static UINT ainput_plugin_initialize(IWT
+ static UINT ainput_plugin_terminated(IWTSPlugin* pPlugin)
+ {
+ 	AINPUT_PLUGIN* ainput = (AINPUT_PLUGIN*)pPlugin;
++	WINPR_ASSERT(ainput);
++	DeleteCriticalSection(&ainput->lock);
+ 	if (ainput && ainput->listener_callback)
+ 	{
+ 		IWTSVirtualChannelManager* mgr = ainput->listener_callback->channel_mgr;

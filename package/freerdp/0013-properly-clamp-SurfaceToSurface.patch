@@ -1,0 +1,48 @@
+From c4a7c371342edf0d307cea728f56d3302f0ab38c Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Thu, 15 Jan 2026 12:04:36 +0100
+Subject: [PATCH] [gdi,gfx] properly clamp SurfaceToSurface
+
+CVE: CVE-2026-23532
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/c4a7c371342edf0d307cea728f56d3302f0ab38c
+[thomas: backport https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/freerdp2/2.6.1+dfsg1-3ubuntu2.10/freerdp2_2.6.1+dfsg1-3ubuntu2.10.debian.tar.xz]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ libfreerdp/gdi/gfx.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/libfreerdp/gdi/gfx.c b/libfreerdp/gdi/gfx.c
+index 56e6ff9ed50b..96ce1007025c 100644
+--- a/libfreerdp/gdi/gfx.c
++++ b/libfreerdp/gdi/gfx.c
+@@ -1175,7 +1175,6 @@ static UINT gdi_SurfaceToSurface(RdpgfxC
+ 	UINT status = ERROR_INTERNAL_ERROR;
+ 	UINT16 index;
+ 	BOOL sameSurface;
+-	UINT32 nWidth, nHeight;
+ 	const RECTANGLE_16* rectSrc;
+ 	RECTANGLE_16 invalidRect;
+ 	gdiGfxSurface* surfaceSrc;
+@@ -1199,8 +1198,8 @@ static UINT gdi_SurfaceToSurface(RdpgfxC
+ 	if (!is_rect_valid(rectSrc, surfaceSrc->width, surfaceSrc->height))
+ 		goto fail;
+ 
+-	nWidth = rectSrc->right - rectSrc->left;
+-	nHeight = rectSrc->bottom - rectSrc->top;
++	const UINT32 nWidth = rectSrc->right - rectSrc->left;
++	const UINT32 nHeight = rectSrc->bottom - rectSrc->top;
+ 
+ 	for (index = 0; index < surfaceToSurface->destPtsCount; index++)
+ 	{
+@@ -1209,8 +1208,10 @@ static UINT gdi_SurfaceToSurface(RdpgfxC
+ 		if (!is_rect_valid(&rect, surfaceDst->width, surfaceDst->height))
+ 			goto fail;
+ 
++		const UINT32 rwidth = rect.right - rect.left;
++		const UINT32 rheight = rect.bottom - rect.top;
+ 		if (!freerdp_image_copy(surfaceDst->data, surfaceDst->format, surfaceDst->scanline,
+-		                        destPt->x, destPt->y, nWidth, nHeight, surfaceSrc->data,
++		                        destPt->x, destPt->y, rwidth, rheight, surfaceSrc->data,
+ 		                        surfaceSrc->format, surfaceSrc->scanline, rectSrc->left,
+ 		                        rectSrc->top, NULL, FREERDP_FLIP_NONE))
+ 			goto fail;

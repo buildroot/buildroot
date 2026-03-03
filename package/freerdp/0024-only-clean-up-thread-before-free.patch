@@ -1,0 +1,116 @@
+From afa6851dc80835d3101e40fcef51b6c5c0f43ea5 Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Wed, 28 Jan 2026 09:31:06 +0100
+Subject: [PATCH] [channel,rdpsnd] only clean up thread before free
+
+rdpsnd channel usually has multiple instances (static, dynamic, ...) so
+ensure only to terminate the handler thread when the channel is actually
+closed for good.
+
+CVE: CVE-2026-24684
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/afa6851dc80835d3101e40fcef51b6c5c0f43ea5
+[thomas: backport https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/freerdp2/2.6.1+dfsg1-3ubuntu2.10/freerdp2_2.6.1+dfsg1-3ubuntu2.10.debian.tar.xz]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ channels/rdpsnd/client/rdpsnd_main.c | 43 ++++++++++++++++------------
+ 1 file changed, 25 insertions(+), 18 deletions(-)
+
+diff --git a/channels/rdpsnd/client/rdpsnd_main.c b/channels/rdpsnd/client/rdpsnd_main.c
+index 61a29ec40aa8..5a1edaea62c6 100644
+--- a/channels/rdpsnd/client/rdpsnd_main.c
++++ b/channels/rdpsnd/client/rdpsnd_main.c
+@@ -132,6 +132,8 @@ struct rdpsnd_plugin
+ 	BOOL applyVolume;
+ };
+ 
++static DWORD WINAPI play_thread(LPVOID arg);
++
+ static const char* rdpsnd_is_dyn_str(BOOL dynamic)
+ {
+ 	if (dynamic)
+@@ -1264,7 +1266,6 @@ static void cleanup_internals(rdpsndPlug
+ 	if (!rdpsnd)
+ 		return;
+ 
+-	rdpsnd_terminate_thread(rdpsnd);
+ 	if (rdpsnd->pool)
+ 		StreamPool_Return(rdpsnd->pool, rdpsnd->data_in);
+ 
+@@ -1328,6 +1329,7 @@ static void free_internals(rdpsndPlugin*
+ 	if (!rdpsnd)
+ 		return;
+ 
++	rdpsnd_terminate_thread(rdpsnd);
+ 	freerdp_dsp_context_free(rdpsnd->dsp_context);
+ 	StreamPool_Free(rdpsnd->pool);
+ 	rdpsnd->pool = NULL;
+@@ -1349,6 +1351,21 @@ static BOOL allocate_internals(rdpsndPlu
+ 		if (!rdpsnd->dsp_context)
+ 			return FALSE;
+ 	}
++	if (!rdpsnd->queue)
++	{
++		wObject obj = { 0 };
++
++		obj.fnObjectFree = _queue_free;
++		rdpsnd->queue = MessageQueue_New(&obj);
++		if (!rdpsnd->queue)
++			return CHANNEL_RC_NO_MEMORY;
++	}
++	if (!rdpsnd->thread)
++	{
++		rdpsnd->thread = CreateThread(NULL, 0, play_thread, rdpsnd, 0, NULL);
++		if (!rdpsnd->thread)
++			return CHANNEL_RC_INITIALIZATION_ERROR;
++	}
+ 
+ 	return TRUE;
+ }
+@@ -1388,23 +1405,12 @@ static DWORD WINAPI play_thread(LPVOID a
+ 
+ static UINT rdpsnd_virtual_channel_event_initialized(rdpsndPlugin* rdpsnd)
+ {
+-	wObject obj = { 0 };
+-
+ 	if (!rdpsnd)
+ 		return ERROR_INVALID_PARAMETER;
+ 
+-	obj.fnObjectFree = _queue_free;
+-	rdpsnd->queue = MessageQueue_New(&obj);
+-	if (!rdpsnd->queue)
+-		return CHANNEL_RC_NO_MEMORY;
+-
+ 	if (!allocate_internals(rdpsnd))
+ 		return CHANNEL_RC_NO_MEMORY;
+ 
+-	rdpsnd->thread = CreateThread(NULL, 0, play_thread, rdpsnd, 0, NULL);
+-	if (!rdpsnd->thread)
+-		return CHANNEL_RC_INITIALIZATION_ERROR;
+-
+ 	return CHANNEL_RC_OK;
+ }
+ 
+@@ -1412,8 +1418,6 @@ void rdpsnd_virtual_channel_event_termin
+ {
+ 	if (rdpsnd)
+ 	{
+-		rdpsnd_terminate_thread(rdpsnd);
+-
+ 		free_internals(rdpsnd);
+ 		audio_formats_free(rdpsnd->fixed_format, 1);
+ 		free(rdpsnd->subsystem);
+@@ -1602,13 +1606,13 @@ static UINT rdpsnd_on_close(IWTSVirtualC
+ 
+ 	cleanup_internals(rdpsnd);
+ 
++	free_internals(rdpsnd);
+ 	if (rdpsnd->device)
+ 	{
+ 		IFCALL(rdpsnd->device->Free, rdpsnd->device);
+ 		rdpsnd->device = NULL;
+ 	}
+ 
+-	free_internals(rdpsnd);
+ 	free(pChannelCallback);
+ 	return CHANNEL_RC_OK;
+ }

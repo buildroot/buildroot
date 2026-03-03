@@ -1,0 +1,35 @@
+From 026b81ae5831ac1598d8f7371e0d0996fac7db00 Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Mon, 26 Jan 2026 10:20:23 +0100
+Subject: [PATCH] [channels,audin] reset audin->format
+
+Whenever the underlying structure changes reset the pointer to NULL
+
+CVE: CVE-2026-24676
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/026b81ae5831ac1598d8f7371e0d0996fac7db00
+[thomas: backport https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/freerdp2/2.6.1+dfsg1-3ubuntu2.10/freerdp2_2.6.1+dfsg1-3ubuntu2.10.debian.tar.xz]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ channels/audin/client/audin_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/channels/audin/client/audin_main.c b/channels/audin/client/audin_main.c
+index c57c65a62d4e..76d87bb9c1ed 100644
+--- a/channels/audin/client/audin_main.c
++++ b/channels/audin/client/audin_main.c
+@@ -219,6 +219,7 @@ static UINT audin_process_formats(AUDIN_
+ 	}
+ 
+ 	Stream_Seek_UINT32(s); /* cbSizeFormatsPacket */
++	audin->format = NULL;
+ 	callback->formats = audio_formats_new(NumFormats);
+ 
+ 	if (!callback->formats)
+@@ -293,6 +294,7 @@ out:
+ 
+ 	if (error != CHANNEL_RC_OK)
+ 	{
++		audin->format = NULL;
+ 		audio_formats_free(callback->formats, NumFormats);
+ 		callback->formats = NULL;
+ 	}

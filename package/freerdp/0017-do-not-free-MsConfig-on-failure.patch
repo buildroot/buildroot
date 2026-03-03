@@ -1,0 +1,31 @@
+From d676518809c319eec15911c705c13536036af2ae Mon Sep 17 00:00:00 2001
+From: akallabeth <akallabeth@posteo.net>
+Date: Mon, 26 Jan 2026 11:54:56 +0100
+Subject: [PATCH] [channels,urbdrc] do not free MsConfig on failure
+
+let the channel handle it later.
+
+CVE: CVE-2026-24675
+Upstream: https://github.com/FreeRDP/FreeRDP/commit/d676518809c319eec15911c705c13536036af2ae
+[thomas: backport https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/freerdp2/2.6.1+dfsg1-3ubuntu2.10/freerdp2_2.6.1+dfsg1-3ubuntu2.10.debian.tar.xz]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ channels/urbdrc/client/data_transfer.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/channels/urbdrc/client/data_transfer.c b/channels/urbdrc/client/data_transfer.c
+index af4b9fb5f641..c4042107d4ee 100644
+--- a/channels/urbdrc/client/data_transfer.c
++++ b/channels/urbdrc/client/data_transfer.c
+@@ -570,10 +570,8 @@ static UINT urb_select_interface(IUDEVICE* pdev, GENERIC_CHANNEL_CALLBACK* callb
+ 	MsConfig = pdev->get_MsConfig(pdev);
+ 	InterfaceNumber = MsInterface->InterfaceNumber;
+ 	if (!msusb_msinterface_replace(MsConfig, InterfaceNumber, MsInterface))
+-	{
+-		msusb_msconfig_free(MsConfig);
+ 		return ERROR_BAD_CONFIGURATION;
+-	}
++
+ 	/* complete configuration setup */
+ 	if (!pdev->complete_msconfig_setup(pdev, MsConfig))
+ 	{
