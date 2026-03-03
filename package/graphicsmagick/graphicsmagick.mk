@@ -26,6 +26,9 @@ GRAPHICSMAGICK_IGNORE_CVES += CVE-2025-27795
 # 0002-ReadJXLImage-pixel_format-num_channels-needs-to-be.patch
 GRAPHICSMAGICK_IGNORE_CVES += CVE-2025-32460
 
+# 0003-Assure-that-palette-buffer-is-allocated-and-the-current-size.patch
+GRAPHICSMAGICK_IGNORE_CVES += CVE-2025-27796
+
 GRAPHICSMAGICK_INSTALL_STAGING = YES
 GRAPHICSMAGICK_CONFIG_SCRIPTS = GraphicsMagick-config GraphicsMagickWand-config
 
