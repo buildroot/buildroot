@@ -544,6 +544,12 @@ config BR2_neoverse_v3
 	select BR2_ARM_CPU_HAS_FP_ARMV8
 	select BR2_ARM_CPU_ARMV9A
 	select BR2_ARCH_NEEDS_GCC_AT_LEAST_15
+config BR2_neoverse_v3ae
+	bool "neoverse-V3AE (aka poseidon)"
+	depends on BR2_ARCH_IS_64
+	select BR2_ARM_CPU_HAS_FP_ARMV8
+	select BR2_ARM_CPU_ARMV9A
+	select BR2_ARCH_NEEDS_GCC_AT_LEAST_15
 endchoice
 
 config BR2_ARM_ENABLE_NEON
@@ -945,6 +951,7 @@ config BR2_GCC_TARGET_CPU
 	# armv9.2a
 	default "cortex-a720"	if BR2_cortex_a720
 	default "neoverse-v3"	if BR2_neoverse_v3
+	default "neoverse-v3ae"	if BR2_neoverse_v3ae
 
 config BR2_GCC_TARGET_ABI
 	default "aapcs-linux"	if BR2_arm || BR2_armeb
