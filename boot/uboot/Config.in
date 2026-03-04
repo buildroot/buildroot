@@ -314,6 +314,18 @@ config BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE_BIN
 
 	  Binary format must be used for OP-TEE versions since 3.8.0.
 
+config BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE_RAW_BIN
+	bool "tee-raw.bin"
+	help
+	  Raw binary suitable to copy into physical memory where OP-TEE
+	  be can executed from.
+
+	  OP-TEE since 3.21 suggests to use tee-raw.bin instead of (the
+	  still identical) tee-pager_v2.bin.
+
+	  Texas Instrument’s K3 family of SoCs embed tee-raw.bin in
+	  U-Boot (using Binman tool) to support their boot flow.
+
 endchoice
 
 config BR2_TARGET_UBOOT_NEEDS_OPENSBI
