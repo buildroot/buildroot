@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2025.11.3"
 
+config BR2_PACKAGE_PYTHON3_OSSAUDIODEV
+	bool "python3 ossaudiodev module removed"
+	select BR2_LEGACY
+	help
+	  The ossaudiodev module was removed in Python 3.13.
+
 config BR2_PACKAGE_QEMU_TARGET_CRIS
 	bool "qemu cris support has been removed"
 	select BR2_LEGACY
