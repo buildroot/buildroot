@@ -295,15 +295,23 @@ choice
 	  Since this version, the TEE in binary format must be used as
 	  it contains important meta-data.
 
+	  https://optee.readthedocs.io/en/4.9.0/architecture/porting_guidelines.html#binaries
+
 config BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE_ELF
 	bool "tee.elf"
 	help
+	  The main OP-TEE ELF file. All other OP-TEE binaries are
+	  created with this as input.
+
 	  ELF format may be used only for OP-TEE versions before
 	  3.8.0.
 
 config BR2_TARGET_UBOOT_NEEDS_OPTEE_TEE_BIN
 	bool "tee.bin"
 	help
+	  The original OP-TEE binary with a header (v1) and combined
+	  init, paged, and unpaged parts.
+
 	  Binary format must be used for OP-TEE versions since 3.8.0.
 
 endchoice
