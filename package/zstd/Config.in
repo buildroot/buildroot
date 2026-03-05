@@ -10,3 +10,18 @@ config BR2_PACKAGE_ZSTD
 	  compression formats
 
 	  https://facebook.github.io/zstd
+
+if BR2_PACKAGE_ZSTD
+
+config BR2_PACKAGE_ZSTD_PZSTD
+	bool "pzstd"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	help
+	  PZstandard, or pzstd, is a multi-threaded implementation
+	  of the Zstandard (zstd) compression algorithm.
+
+comment "pzstd needs a toolchain w/ C++, threads"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS
+
+endif
