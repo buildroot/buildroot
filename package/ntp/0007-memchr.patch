@@ -1,0 +1,42 @@
+Fix build with glibc 2.43
+
+sntp/crypto.c includes sntp/config.h, then sntp/crypto.h which includes
+ntp_stdlib.h which in turn includes l_stdlib.h that contains
+
+  #ifndef HAVE_MEMCHR
+  extern void *memchr(const void *s, int c, size_t n);
+  #endif
+
+and breaks the build with glibc 2.43:
+
+./../include/l_stdlib.h:225:14: error: expected identifier or '(' before '_Generic'
+  225 | extern void *memchr(const void *s, int c, size_t n);
+
+sntp/config.h does not contain any information about memchr() while the
+top-level config.h does but this top-level config.h is not included
+because sntp/Makefile lacks -I$(top_builddir) so sntp/config.h gets
+included which does not define HAVE_MEMCHR although glibc does provide
+memchr() but sntp/configure lacks a check for memchr().
+
+This was not a problem with previous glibc versions but due to recent
+C23 changes in glibc the ntp build is now broken.
+
+To fix the problem we add a configure check for memchr() to
+sntp/configure so HAVE_MEMCHR gets defined in sntp/config.h.
+
+Upstream: https://bugs.ntp.org/show_bug.cgi?id=4015
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+
+diff -uNr ntp-4.2.8p18/sntp/m4/ntp_libntp.m4 ntp-4.2.8p18/sntp/m4/ntp_libntp.m4
+--- ntp-4.2.8p18/sntp/m4/ntp_libntp.m4	2024-05-07 13:21:13.000000000 +0200
++++ ntp-4.2.8p18/sntp/m4/ntp_libntp.m4	2026-02-19 21:50:37.291724180 +0100
+@@ -77,7 +77,7 @@
+     ;;
+ esac
+ 
+-AC_CHECK_FUNCS([getclock stime timegm strlcpy strlcat])
++AC_CHECK_FUNCS([getclock memchr stime timegm strlcpy strlcat])
+ 
+ # Bug 2713
+ LDADD_LIBUTIL=
