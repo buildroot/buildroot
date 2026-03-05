@@ -1,0 +1,84 @@
+From 767b3e519e85095dfee3a47d15a373a403fe3dab Mon Sep 17 00:00:00 2001
+From: Li Wang <liwang@redhat.com>
+Date: Tue, 3 Feb 2026 10:43:19 +0800
+Subject: [PATCH] openat2: define _GNU_SOURCE and include <fcntl.h>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On Fedora Rawhide (glibc 2.43+), libc exposes openat2() and struct open_how,
+so our configure script defines HAVE_OPENAT2 and the fallback definition in
+lapi/openat2.h gets skipped. But openat20*.c never included <fcntl.h> (and
+lacked _GNU_SOURCE), so the libc-provided prototype and struct stayed hidden,
+so compilation failed:
+
+  # uname -r
+  6.18.0-65.fc44.x86_64
+
+  # rpm -qf /usr/include/fcntl.h
+  glibc-devel-2.43-1.fc44.x86_64
+
+  # nm -D /usr/lib64/libc.so.6 | grep -w openat2
+  00000000000eb890 W openat2@@GLIBC_2.43
+
+  # make -C testcase/kernel/syscalls/openat2
+  openat201.c:27:62: error: invalid application of ‘sizeof’ to incomplete type ‘struct open_how’
+    27 |         {&dir_fd, TEST_FILE, O_RDWR, S_IRWXU, 0, &how, sizeof(*how)},
+
+Define _GNU_SOURCE and include <fcntl.h> in openat2 tests to make the
+prototype available and fix the build.
+
+Signed-off-by: Li Wang <liwang@redhat.com>
+Reviewed-by: Petr Vorel <pvorel@suse.cz>
+
+Upstream: https://github.com/linux-test-project/ltp/commit/767b3e519e85095dfee3a47d15a373a403fe3dab
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ testcases/kernel/syscalls/openat2/openat201.c | 3 +++
+ testcases/kernel/syscalls/openat2/openat202.c | 3 +++
+ testcases/kernel/syscalls/openat2/openat203.c | 3 +++
+ 3 files changed, 9 insertions(+)
+
+diff --git a/testcases/kernel/syscalls/openat2/openat201.c b/testcases/kernel/syscalls/openat2/openat201.c
+index ecd63b150e4..40ac2f6d9ad 100644
+--- a/testcases/kernel/syscalls/openat2/openat201.c
++++ b/testcases/kernel/syscalls/openat2/openat201.c
+@@ -4,6 +4,9 @@
+  *
+  * Basic openat2() test.
+  */
++#define _GNU_SOURCE
++#include <fcntl.h>
++
+ #include "tst_test.h"
+ #include "lapi/openat2.h"
+ 
+diff --git a/testcases/kernel/syscalls/openat2/openat202.c b/testcases/kernel/syscalls/openat2/openat202.c
+index 6d1b5a67c7d..329c6a4a5cb 100644
+--- a/testcases/kernel/syscalls/openat2/openat202.c
++++ b/testcases/kernel/syscalls/openat2/openat202.c
+@@ -4,6 +4,9 @@
+  *
+  * openat2() tests with various resolve flags.
+  */
++#define _GNU_SOURCE
++#include <fcntl.h>
++
+ #include "tst_test.h"
+ #include "lapi/openat2.h"
+ 
+diff --git a/testcases/kernel/syscalls/openat2/openat203.c b/testcases/kernel/syscalls/openat2/openat203.c
+index 6ac49ef4c9e..cd0c00d7523 100644
+--- a/testcases/kernel/syscalls/openat2/openat203.c
++++ b/testcases/kernel/syscalls/openat2/openat203.c
+@@ -4,6 +4,9 @@
+  *
+  * Basic openat2() test to check various failures.
+  */
++#define _GNU_SOURCE
++#include <fcntl.h>
++
+ #include "tst_test.h"
+ #include "lapi/openat2.h"
+ 
