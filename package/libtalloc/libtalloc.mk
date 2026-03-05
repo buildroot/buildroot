@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-LIBTALLOC_VERSION = 2.4.2
+LIBTALLOC_VERSION = 2.4.4
 LIBTALLOC_SOURCE = talloc-$(LIBTALLOC_VERSION).tar.gz
 LIBTALLOC_SITE = https://www.samba.org/ftp/talloc
 LIBTALLOC_LICENSE = LGPL-3.0+
-LIBTALLOC_LICENSE_FILES = talloc.h
+LIBTALLOC_LICENSE_FILES = LICENSE
 LIBTALLOC_INSTALL_STAGING = YES
 
 # libtalloc is extracted from the samba source tree, and that has a workaround

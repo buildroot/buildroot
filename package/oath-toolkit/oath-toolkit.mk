@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OATH_TOOLKIT_VERSION = 2.6.13
+OATH_TOOLKIT_VERSION = 2.6.14
 OATH_TOOLKIT_SITE = https://download.savannah.nongnu.org/releases/oath-toolkit
 OATH_TOOLKIT_LICENSE = GPL-3.0+ (tools), LGPL-2.1+ (libraries)
 OATH_TOOLKIT_LICENSE_FILES = COPYING

@@ -1,0 +1,117 @@
+From 6a06cb6dba0065705179329729cca2f95a842a63 Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Sun, 25 Jan 2026 08:42:18 +0000
+Subject: [PATCH] use const qualifier from pointer target type
+
+Fixes:
+    ../../lib/nfs_v3.c: In function 'nfs3_mknod_async':
+    ../../lib/nfs_v3.c:3260:13: error: assignment discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+     3260 |         ptr = strrchr(path, '/');
+          |             ^
+    ../../lib/nfs_v3.c: In function 'nfs3_unlink_async':
+    ../../lib/nfs_v3.c:3361:13: error: assignment discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+     3361 |         ptr = strrchr(path, '/');
+          |             ^
+    ../../lib/nfs_v3.c: In function 'nfs3_rmdir_async':
+    ../../lib/nfs_v3.c:3472:13: error: assignment discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+     3472 |         ptr = strrchr(path, '/');
+          |             ^
+    ../../lib/nfs_v3.c: In function 'nfs3_mkdir2_async':
+    ../../lib/nfs_v3.c:3574:13: error: assignment discards 'const' qualifier from pointer target type [-Werror=discarded-qualifiers]
+     3574 |         ptr = strrchr(path, '/');
+          |             ^
+
+Upstream: https://github.com/sahlberg/libnfs/commit/6a06cb6dba0065705179329729cca2f95a842a63
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ lib/nfs_v3.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/lib/nfs_v3.c b/lib/nfs_v3.c
+index addd0ae..2c32fff 100644
+--- a/lib/nfs_v3.c
++++ b/lib/nfs_v3.c
+@@ -3244,7 +3244,7 @@ int
+ nfs3_mknod_async(struct nfs_context *nfs, const char *path, int mode, int dev,
+                  nfs_cb cb, void *private_data)
+ {
+-	char *ptr;
++	const char *ptr;
+ 	struct mknod_cb_data *cb_data;
+ 
+ 	cb_data = malloc(sizeof(struct mknod_cb_data));
+@@ -3262,8 +3262,8 @@ nfs3_mknod_async(struct nfs_context *nfs, const char *path, int mode, int dev,
+                                       "buffer for mknod path");
+                         return -1;
+                 }
+-                ptr = strrchr(cb_data->path, '/');
+-                *ptr = 0;
++                char *ptr2 = strrchr(cb_data->path, '/');
++                *ptr2 = 0;
+         } else {
+                 cb_data->path = malloc(strlen(path) + 2);
+                 if (cb_data->path == NULL) {
+@@ -3353,7 +3353,7 @@ nfs3_unlink_async(struct nfs_context *nfs, const char *path, nfs_cb cb,
+                   void *private_data)
+ {
+ 	char *new_path;
+-	char *ptr;
++	const char *ptr;
+ 
+         ptr = strrchr(path, '/');
+         if (ptr) {
+@@ -3363,8 +3363,8 @@ nfs3_unlink_async(struct nfs_context *nfs, const char *path, nfs_cb cb,
+                                       "buffer for unlink path");
+                         return -1;
+                 }
+-                ptr = strrchr(new_path, '/');
+-                *ptr = 0;
++                char *ptr2 = strrchr(new_path, '/');
++                *ptr2 = 0;
+         } else {
+                 new_path = malloc(strlen(path) + 2);
+                 if (new_path == NULL) {
+@@ -3464,7 +3464,7 @@ nfs3_rmdir_async(struct nfs_context *nfs, const char *path, nfs_cb cb,
+                  void *private_data)
+ {
+ 	char *new_path;
+-	char *ptr;
++	const char *ptr;
+ 
+         ptr = strrchr(path, '/');
+         if (ptr) {
+@@ -3474,8 +3474,8 @@ nfs3_rmdir_async(struct nfs_context *nfs, const char *path, nfs_cb cb,
+                                       "buffer for rmdir path");
+                         return -1;
+                 }
+-                ptr = strrchr(new_path, '/');
+-                *ptr = 0;
++                char *ptr2 = strrchr(new_path, '/');
++                *ptr2 = 0;
+         } else {
+                 new_path = malloc(strlen(path) + 2);
+                 if (new_path == NULL) {
+@@ -3566,7 +3566,7 @@ nfs3_mkdir2_async(struct nfs_context *nfs, const char *path, int mode,
+                  nfs_cb cb, void *private_data)
+ {
+ 	char *new_path;
+-	char *ptr;
++	const char *ptr;
+ 
+         ptr = strrchr(path, '/');
+         if (ptr) {
+@@ -3576,8 +3576,8 @@ nfs3_mkdir2_async(struct nfs_context *nfs, const char *path, int mode,
+                                       "buffer for mkdir path");
+                         return -1;
+                 }
+-                ptr = strrchr(new_path, '/');
+-                *ptr = 0;
++                char *ptr2 = strrchr(new_path, '/');
++                *ptr2 = 0;
+         } else {
+                 new_path = malloc(strlen(path) + 2);
+                 if (new_path == NULL) {
+-- 
+2.47.3
+

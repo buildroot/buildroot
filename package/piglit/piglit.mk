@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PIGLIT_VERSION = 62d499d63d2b8b29a67efd9d93ed9b6a94d4950e
+PIGLIT_VERSION = 3051e13ae12e1c927c7baace3138a8bebec7018a
 PIGLIT_SITE = https://gitlab.freedesktop.org/mesa/piglit.git
 PIGLIT_SITE_METHOD = git
 PIGLIT_LICENSE = MIT (code), \

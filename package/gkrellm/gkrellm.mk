@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-GKRELLM_VERSION = 2.5.0
-GKRELLM_SITE = http://gkrellm.srcbox.net/releases
+GKRELLM_VERSION = 2.5.1
+GKRELLM_SITE = https://gkrellm.srcbox.net/releases
 GKRELLM_SOURCE = gkrellm-$(GKRELLM_VERSION).tar.bz2
 GKRELLM_LICENSE = GPL-3.0+
 GKRELLM_LICENSE_FILES = COPYING COPYRIGHT

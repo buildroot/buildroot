@@ -1,0 +1,30 @@
+From d2374930c45ecf117b08df0ffa5c1611867f6d92 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 22 Feb 2026 15:26:22 +0100
+Subject: [PATCH] cmake: patch EABase to fix build with cmake 4+
+
+FetchContent_Declare overwrites extracted source files during configure.
+
+Upstream: Not applicable (Buildroot specific)
+(sent PR for version bump: https://github.com/electronicarts/EABase/pull/18)
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0124dc7..f76df69 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -75,6 +75,7 @@ FetchContent_Declare(
+   GIT_REPOSITORY https://github.com/electronicarts/EABase.git
+   GIT_TAG        0699a15efdfd20b6cecf02153bfa5663decb653c
+   GIT_SUBMODULES "" # This should be temporary until we update the cyclic submodule dependencies in EABase.
++  PATCH_COMMAND sed -i "s/make_minimum_required(VERSION 3.1)/make_minimum_required(VERSION 3.5)/" "${CMAKE_CURRENT_SOURCE_DIR}/_deps/eabase-src/CMakeLists.txt"
+ )
+ 
+ FetchContent_MakeAvailable(EABase)
+-- 
+2.47.3
+

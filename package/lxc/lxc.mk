@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LXC_VERSION = 5.0.3
+LXC_VERSION = 6.0.5
 LXC_SITE = https://linuxcontainers.org/downloads/lxc
 LXC_LICENSE = GPL-2.0 (some tools), LGPL-2.1+
 LXC_LICENSE_FILES = LICENSE.GPL2 LICENSE.LGPL2.1
@@ -69,11 +69,11 @@ else
 LXC_CONF_OPTS += -Dopenssl=false
 endif
 
-ifeq ($(BR2_PACKAGE_SYSTEMD),y)
-LXC_CONF_OPTS += -Dsd-bus=enabled
-LXC_DEPENDENCIES += systemd
+ifeq ($(BR2_PACKAGE_DBUS),y)
+LXC_CONF_OPTS += -Ddbus=true
+LXC_DEPENDENCIES += dbus
 else
-LXC_CONF_OPTS += -Dsd-bus=disabled
+LXC_CONF_OPTS += -Ddbus=false
 endif
 
 ifeq ($(BR2_INIT_SYSTEMD),y)
