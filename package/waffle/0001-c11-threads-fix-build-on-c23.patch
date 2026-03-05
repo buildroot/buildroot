@@ -1,0 +1,57 @@
+From 6b3c46483844faba4dfe7dd90dc2b0cd06e67158 Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Mon, 10 Nov 2025 19:20:22 -0800
+Subject: [PATCH] c11/threads: fix build on c23
+
+C23/glibc is now including once_init in stdlib.h
+
+https://patchwork.sourceware.org/project/glibc/patch/78061085-f04a-0c45-107b-5a8a15521083@redhat.com/#213088
+
+Conditionally check if glibc already provided c23 definition via stdlib.h
+
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+
+Upstream: https://gitlab.freedesktop.org/mesa/waffle/-/merge_requests/158
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ third_party/threads/threads.h       | 3 ++-
+ third_party/threads/threads_posix.c | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/third_party/threads/threads.h b/third_party/threads/threads.h
+index b4db50c..cdc7bea 100644
+--- a/third_party/threads/threads.h
++++ b/third_party/threads/threads.h
+@@ -102,8 +102,9 @@ typedef pthread_cond_t  cnd_t;
+ typedef pthread_t       thrd_t;
+ typedef pthread_key_t   tss_t;
+ typedef pthread_mutex_t mtx_t;
++#ifndef __once_flag_defined
+ typedef pthread_once_t  once_flag;
+-
++#endif
+ #else
+ #error Not supported on this platform.
+ #endif
+diff --git a/third_party/threads/threads_posix.c b/third_party/threads/threads_posix.c
+index bc50825..d93013b 100644
+--- a/third_party/threads/threads_posix.c
++++ b/third_party/threads/threads_posix.c
+@@ -75,11 +75,12 @@ static void *impl_thrd_routine(void *p)
+ 
+ /*--------------- 7.25.2 Initialization functions ---------------*/
+ // 7.25.2.1
++#ifndef __once_flag_defined
+ void call_once(once_flag *flag, void (*func)(void))
+ {
+     pthread_once(flag, func);
+ }
+-
++#endif
+ 
+ /*------------- 7.25.3 Condition variable functions -------------*/
+ // 7.25.3.1
+-- 
+GitLab
+
