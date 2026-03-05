@@ -1,0 +1,33 @@
+From abb4dfad9e446e77396de9e93003af5be7aa18da Mon Sep 17 00:00:00 2001
+From: Kleis Auke Wolthuizen <github@kleisauke.nl>
+Date: Sun, 18 Jan 2026 12:15:33 +0100
+Subject: [PATCH] memory: fix `VIPS_FREEF` for expression-like macros (#4836)
+
+Ensure the macro works correctly when F expands to an expression,
+such as `g_free()` using `free_sized()` (as available in the
+upcoming glibc 2.43).
+
+Resolves: #4835.
+
+Upstream: https://github.com/libvips/libvips/commit/abb4dfad9e446e77396de9e93003af5be7aa18da
+
+[Bernd: dropped ChangeLog from patch]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ ChangeLog                     | 1 +
+ libvips/include/vips/memory.h | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/libvips/include/vips/memory.h b/libvips/include/vips/memory.h
+index 93e669340b..7073d1ea6a 100644
+--- a/libvips/include/vips/memory.h
++++ b/libvips/include/vips/memory.h
+@@ -41,7 +41,7 @@ extern "C" {
+ 	G_STMT_START \
+ 	{ \
+ 		if (S) { \
+-			(void) F((S)); \
++			(void) (F((S))); \
+ 			(S) = 0; \
+ 		} \
+ 	} \
