@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SQUASHFS_VERSION = 4.6.1
+SQUASHFS_VERSION = 4.7.5
 SQUASHFS_SOURCE = squashfs-tools-$(SQUASHFS_VERSION).tar.gz
 SQUASHFS_SITE = https://github.com/plougher/squashfs-tools/releases/download/$(SQUASHFS_VERSION)
 SQUASHFS_LICENSE = GPL-2.0+
