@@ -30,17 +30,17 @@ config BR2_PACKAGE_MEMTEST86
 	  line:
 
 	  menuentry "Start Memtest86+ (USB keyboards)" {
-	      linux16 /boot/memtest.bin keyboard=both
+	      linux16 /boot/mt86plus keyboard=both
 	  }
 	  menuentry "Start Memtest86+ (serial line)" {
-	      linux16 /boot/memtest.bin console=ttyS0,115200
+	      linux16 /boot/mt86plus console=ttyS0,115200
 	  }
 
 	  Or for UEFI BIOS using the Linux 32-bit or 64-bit boot
 	  protocols, using USB keyboard:
 
 	  menuentry "Start Memtest86+ (USB keyboards)" {
-	      linux /EFI/BOOT/memtest.efi keyboard=both
+	      linux /EFI/BOOT/mt86plus keyboard=both
 	  }
 
 	  Other boot loaders will have similar requirements.
