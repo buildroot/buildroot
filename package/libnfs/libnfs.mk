@@ -16,6 +16,13 @@ ifeq ($(BR2_PACKAGE_GNUTLS),y)
 LIBNFS_DEPENDENCIES += gnutls
 endif
 
+ifeq ($(BR2_PACKAGE_LIBKRB5),y)
+LIBNFS_CONF_OPTS += --with-libkrb5
+LIBNFS_DEPENDENCIES += libkrb5
+else
+LIBNFS_CONF_OPTS += --without-libkrb5
+endif
+
 ifeq ($(BR2_PACKAGE_LIBTIRPC),y)
 LIBNFS_DEPENDENCIES += libtirpc
 endif
