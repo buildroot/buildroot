@@ -6,7 +6,7 @@ import sys
 
 import nose2
 
-from infra.basetest import BRConfigTest
+from infra.basetest import BRTestSettings
 
 import infra
 
@@ -44,9 +44,6 @@ def main():
     script_path = os.path.realpath(__file__)
     test_dir = os.path.dirname(script_path)
 
-    if args.stdout:
-        BRConfigTest.logtofile = False
-
     if args.list:
         print("List of tests")
         nose2_args = [
@@ -69,7 +66,7 @@ def main():
             parser.print_help()
             return 1
 
-    BRConfigTest.downloaddir = os.path.abspath(args.download)
+    args.download = os.path.abspath(args.download)
 
     if args.prepare_only:
         emulator_builtin_binaries = ["kernel-vexpress-5.10.202",
@@ -78,7 +75,7 @@ def main():
                                      "versatile-pb-5.10.202.dtb"]
         print("Downloading emulator builtin binaries")
         for binary in emulator_builtin_binaries:
-            infra.download(BRConfigTest.downloaddir, binary)
+            infra.download(args.download, binary)
         return 0
 
     if args.output is None:
@@ -90,15 +87,13 @@ def main():
     if not os.path.exists(args.output):
         os.mkdir(args.output)
 
-    BRConfigTest.outputdir = os.path.abspath(args.output)
-
     if args.all is False and not args.testname:
         print("No test selected")
         print("")
         parser.print_help()
         return 1
 
-    BRConfigTest.keepbuilds = args.keep
+    jlevel = 0
 
     if args.testcases != 1:
         if args.testcases < 1:
@@ -109,7 +104,7 @@ def main():
         # same default BR2_JLEVEL as package/Makefile.in
         br2_jlevel = 1 + multiprocessing.cpu_count()
         each_testcase = int((br2_jlevel + args.testcases) / args.testcases)
-        BRConfigTest.jlevel = each_testcase
+        jlevel = each_testcase
 
     if args.jlevel:
         if args.jlevel < 0:
@@ -118,14 +113,22 @@ def main():
             parser.print_help()
             return 1
         # the user can override the auto calculated value
-        BRConfigTest.jlevel = args.jlevel
+        jlevel = args.jlevel
 
     if args.timeout_multiplier < 1:
         print("Invalid multiplier for timeout values")
         print("")
         parser.print_help()
         return 1
-    BRConfigTest.timeout_multiplier = args.timeout_multiplier
+
+    BRTestSettings(
+        logtofile=not args.stdout,
+        downloaddir=args.download,
+        outputdir=os.path.abspath(args.output),
+        keepbuilds=args.keep,
+        jlevel=jlevel,
+        timeout_multiplier=args.timeout_multiplier
+    ).to_env()
 
     nose2_args = ["-v",
                   "-N", str(args.testcases),
@@ -142,15 +145,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # python 3.14 changed default start method from fork to
-    # fork-server, which is not compatible with the nose2 setup
-    if multiprocessing.get_start_method(allow_none=True) != "fork":
-        multiprocessing.set_start_method("fork", force=True)
-        # set_start_method throws a RuntimeError if called more than
-        # once.
-        # Debian python3-nose2 0.15.1-2 includes a patch adding
-        # another set_start_method() call, so monkey patch it out to
-        # get rid of this
-        multiprocessing.set_start_method = lambda *args: None
-
     sys.exit(main())
