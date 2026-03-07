@@ -1,0 +1,62 @@
+From 34e68bbb6631320bf2b64a00467fb5e59065bd43 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Fri, 6 Mar 2026 20:59:28 +0100
+Subject: [PATCH] HACK: use TIME_[MONOTONIC|ACTIVE|THREAD_ACTIVE] without
+ _ISOC23_SOURCE to build localedef with glibc < 2.40
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The Buildroot host-localdef package is built when
+BR2_GENERATE_LOCALE has a value defined.
+
+localdef is a tool from the glibc package, and is normally
+meant to be built with the glibc version it is included in.
+
+When Buildroot builds host-localedef, it will use the host glibc.
+When the host glibc version is < 2.40, the compilation fails with
+error:
+
+    ../include/time.h:545:11: error: ‘TIME_MONOTONIC’ undeclared
+     (first use in this function); did you mean ‘CLOCK_MONOTONIC’?
+    ../include/time.h:546:11: error: ‘TIME_ACTIVE’ undeclared
+     (first use in this function); did you mean ‘TIMER_ABSTIME’?
+    ../include/time.h:547:11: error: ‘TIME_THREAD_ACTIVE’ undeclared
+     (first use in this function)
+
+This error happen for example in the Buildroot Docker image
+(which is a Debian 12, glibc 2.36).
+
+This is because glibc < 2.40 does not define _ISOC23_SOURCE, which
+was added in upstream commit [1], and the previous Buildroot localedef
+package patch which also removes the _ISOC23_SOURCE definition.
+
+This patch workaround the situation by removing the condition around
+the missing definitions.
+
+[1] https://sourceware.org/git/?p=glibc.git;a=commit;h=42cc619dfbc44e263239c2de870bae11ad65810a
+
+Upstream: Not applicable
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[Julien: add extra info in commit log]
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ time/time.h | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/time/time.h b/time/time.h
+index ae7beccb72..0a2e8e741f 100644
+--- a/time/time.h
++++ b/time/time.h
+@@ -67,8 +67,6 @@ typedef __pid_t pid_t;
+ #ifdef __USE_ISOC11
+ /* Time base values for timespec_get.  */
+ # define TIME_UTC 1
+-#endif
+-#if __GLIBC_USE (ISOC23)
+ # define TIME_MONOTONIC          2
+ # define TIME_ACTIVE             3
+ # define TIME_THREAD_ACTIVE      4
+-- 
+2.53.0
+

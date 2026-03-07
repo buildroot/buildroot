@@ -14,15 +14,17 @@ Signed-off-by: Romain Naour <romain.naour@gmail.com>
 [Thomas: adapted to glibc 2.40, which required the logic to be changed
 to _ISOC23_SOURCE]
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+[Bernd: rebase for 2.43]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  include/features.h | 2 --
  1 file changed, 2 deletions(-)
 
 diff --git a/include/features.h b/include/features.h
-index 8515b06b36..9abd65af93 100644
+index c080ad4260..230fd2539a 100644
 --- a/include/features.h
 +++ b/include/features.h
-@@ -217,9 +217,7 @@
+@@ -223,9 +223,7 @@
  # undef  _ISOC11_SOURCE
  # define _ISOC11_SOURCE	1
  # undef  _ISOC23_SOURCE
