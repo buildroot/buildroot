@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XSCREENSAVER_VERSION = 6.12
+XSCREENSAVER_VERSION = 6.14
 XSCREENSAVER_SITE = https://www.jwz.org/xscreensaver
 
 # N.B. GPL-2.0+ code (in the hacks/glx subdirectory) is not currently built.
@@ -78,6 +78,6 @@ else
 XSCREENSAVER_CONF_OPTS += --with-xf86vmode-ext=no
 endif
 
-XSCREENSAVER_INSTALL_TARGET_OPTS = install_prefix="$(TARGET_DIR)" install
+XSCREENSAVER_INSTALL_TARGET_OPTS = DESTDIR="$(TARGET_DIR)" install
 
 $(eval $(autotools-package))
