@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-E2FSPROGS_VERSION = 1.47.3
+E2FSPROGS_VERSION = 1.47.4
 E2FSPROGS_SOURCE = e2fsprogs-$(E2FSPROGS_VERSION).tar.xz
 E2FSPROGS_SITE = $(BR2_KERNEL_MIRROR)/linux/kernel/people/tytso/e2fsprogs/v$(E2FSPROGS_VERSION)
 E2FSPROGS_LICENSE = GPL-2.0, MIT-like with advertising clause (libss and libet)
@@ -17,13 +17,6 @@ E2FSPROGS_INSTALL_STAGING = YES
 # problems for other packages.
 E2FSPROGS_DEPENDENCIES = host-pkgconf util-linux
 HOST_E2FSPROGS_DEPENDENCIES = host-pkgconf host-util-linux
-
-# 0001-configure.ac-check-for-FS_IOC_READ_VERITY_METADATA-a.patch
-# the additional dependencies are only needed for autoreconf
-E2FSPROGS_AUTORECONF = YES
-E2FSPROGS_AUTORECONF_OPTS = --include=$(HOST_DIR)/share/autoconf-archive
-E2FSPROGS_DEPENDENCIES += host-gettext host-autoconf-archive
-HOST_E2FSPROGS_DEPENDENCIES += host-gettext host-autoconf-archive
 
 E2FSPROGS_SELINUX_MODULES = fstools
 
