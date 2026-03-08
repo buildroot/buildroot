@@ -1,0 +1,15 @@
+config BR2_PACKAGE_LIBRDKAFKA
+	bool "librdkafka"
+	depends on !BR2_m68k_cf # assembler "out of range" error
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_PACKAGE_LZ4
+	help
+	  librdkafka is a C library implementation of the
+	  Apache Kafka protocol, providing Producer, Consumer
+	  and Admin clients.
+
+	  https://github.com/confluentinc/librdkafka
+
+comment "librdkafka needs a toolchain w/ threads"
+	depends on !BR2_m68k_cf
+	depends on !BR2_TOOLCHAIN_HAS_THREADS

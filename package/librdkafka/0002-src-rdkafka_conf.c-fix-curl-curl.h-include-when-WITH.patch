@@ -1,0 +1,32 @@
+From 5061a5b33dce11ada740e2a34137dce6934b731a Mon Sep 17 00:00:00 2001
+From: Thomas Devoogdt <thomas@devoogdt.com>
+Date: Sun, 15 Feb 2026 18:37:16 +0100
+Subject: [PATCH] src/rdkafka_conf.c: fix curl/curl.h include when
+ WITH_CURL=OFF
+
+Change #ifdef to #if for WITH_OAUTHBEARER_OIDC preprocessor check.
+When using CMake's cmakedefine01, the macro is always defined (as 0 or 1),
+so #ifdef always evaluates to true. Using #if correctly checks the value.
+
+Upstream: https://github.com/confluentinc/librdkafka/pull/5309
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+---
+ src/rdkafka_conf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/rdkafka_conf.c b/src/rdkafka_conf.c
+index 0e346e74..f8f0d0ca 100644
+--- a/src/rdkafka_conf.c
++++ b/src/rdkafka_conf.c
+@@ -56,7 +56,7 @@
+ #include <windows.h>
+ #endif
+ 
+-#ifdef WITH_OAUTHBEARER_OIDC
++#if WITH_OAUTHBEARER_OIDC
+ #include <curl/curl.h>
+ #endif
+ 
+-- 
+2.43.0
+
