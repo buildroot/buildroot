@@ -3,7 +3,7 @@
 # By default U-Boot loads DTB from a file named "system.dtb", and
 # with versal2, the Linux DTB is the same as the U-Boot DTB, so
 # let's use a symlink since the DTB is the same.
-ln -fs "${BINARIES_DIR}/u-boot.dtb" "${BINARIES_DIR}/system.dtb"
+ln -fs "u-boot.dtb" "${BINARIES_DIR}/system.dtb"
 
 BOARD_DIR="$(dirname "$0")"
 
