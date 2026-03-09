@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBICONV_VERSION = 1.18
+LIBICONV_VERSION = 1.19
 LIBICONV_SITE = $(BR2_GNU_MIRROR)/libiconv
 LIBICONV_INSTALL_STAGING = YES
 LIBICONV_LICENSE = GPL-3.0+ (iconv program), LGPL-2.1+ (library)
