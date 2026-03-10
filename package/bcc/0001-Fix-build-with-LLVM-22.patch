@@ -1,0 +1,64 @@
+From 4c7be1ec6ab74e973f8d18a9011fa349c3d9dd58 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Holger=20Hoffst=C3=A4tte?= <holger@applied-asynchrony.com>
+Date: Mon, 2 Mar 2026 10:03:15 +0100
+Subject: [PATCH] Fix build with LLVM-22
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+LLVM-22 changed the signatures of various createDiagnostics() calls [1].
+Introduce a new version macro guard and adapt the code to the changed API.
+
+Fixes #5483
+
+[1] https://github.com/llvm/llvm-project/commit/30633f30894129919050f24fdd1f8f6bc46beae0
+
+Signed-off-by: Holger Hoffstätte <holger@applied-asynchrony.com>
+
+Upstream: https://github.com/iovisor/bcc/commit/4c7be1ec6ab74e973f8d18a9011fa349c3d9dd58
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/cc/frontends/clang/loader.cc | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/src/cc/frontends/clang/loader.cc b/src/cc/frontends/clang/loader.cc
+index 6f8387aaf017..1f706344724d 100644
+--- a/src/cc/frontends/clang/loader.cc
++++ b/src/cc/frontends/clang/loader.cc
+@@ -464,7 +464,10 @@ int ClangLoader::do_compile(
+   }
+   invocation0.getFrontendOpts().DisableFree = false;
+ 
+-#if LLVM_VERSION_MAJOR >= 20
++#if LLVM_VERSION_MAJOR >= 22
++  compiler0.setVirtualFileSystem(llvm::vfs::getRealFileSystem());
++  compiler0.createDiagnostics(new IgnoringDiagConsumer());
++#elif LLVM_VERSION_MAJOR >= 20
+   compiler0.createDiagnostics(*llvm::vfs::getRealFileSystem(), new IgnoringDiagConsumer());
+ #else
+   compiler0.createDiagnostics(new IgnoringDiagConsumer());
+@@ -487,7 +490,10 @@ int ClangLoader::do_compile(
+   add_main_input(invocation1, main_path, &*out_buf);
+   invocation1.getFrontendOpts().DisableFree = false;
+ 
+-#if LLVM_VERSION_MAJOR >= 20
++#if LLVM_VERSION_MAJOR >= 22
++  compiler1.setVirtualFileSystem(llvm::vfs::getRealFileSystem());
++  compiler1.createDiagnostics();
++#elif LLVM_VERSION_MAJOR >= 20
+   compiler1.createDiagnostics(*llvm::vfs::getRealFileSystem());
+ #else
+   compiler1.createDiagnostics();
+@@ -517,7 +523,10 @@ int ClangLoader::do_compile(
+   invocation2.getCodeGenOpts().setInlining(CodeGenOptions::NormalInlining);
+   // suppress warnings in the 2nd pass, but bail out on errors (our fault)
+   invocation2.getDiagnosticOpts().IgnoreWarnings = true;
+-#if LLVM_VERSION_MAJOR >= 20
++#if LLVM_VERSION_MAJOR >= 22
++  compiler2.setVirtualFileSystem(llvm::vfs::getRealFileSystem());
++  compiler2.createDiagnostics();
++#elif LLVM_VERSION_MAJOR >= 20
+   compiler2.createDiagnostics(*llvm::vfs::getRealFileSystem());
+ #else
+   compiler2.createDiagnostics();
