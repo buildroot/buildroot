@@ -1,0 +1,70 @@
+From 4e1af872f819782bd233ab21953ab92cf36ff9c3 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Mon, 9 Mar 2026 19:07:10 +0100
+Subject: [PATCH] [libc] Fix detection of cfloat128
+
+Building compiler-rt with aarch64-buildroot-linux-gnu-gcc 15.2 causes a
+build error:
+
+compiler-rt-22.1.0/cmake/Modules/../../libc/src/__support/CPP/type_traits/is_complex.h:44:31:
+ error: 'cfloat128' was not declared in this scope; did you mean 'float128'? [-Wtemplate-body]
+
+According to https://gcc.gnu.org/onlinedocs/gcc-15.2.0/gcc/Floating-Types.html
+__float128 is not available on aarch64.
+
+Analyzing the gcc defines for aarch64 seems to prove it:
+
+$ aarch64-buildroot-linux-gnu-gcc -v
+Target: aarch64-buildroot-linux-gnu
+gcc version 15.2.0 (Buildroot 2026.02-114-gdadec9da56)
+
+$ echo | aarch64-buildroot-linux-gnu-gcc -dM -E - | grep __GCC_IEC_559_COMPLEX
+  #define __GCC_IEC_559_COMPLEX 2
+
+$ echo | aarch64-buildroot-linux-gnu-gcc -dM -E - | grep __STDC_IEC_60559_COMPLEX__
+  #define __STDC_IEC_60559_COMPLEX__ 201404L
+
+$ echo | aarch64-buildroot-linux-gnu-gcc -dM -E - | grep -i float128
+$
+
+In contrast gcc for x86_64:
+
+$ x86_64-buildroot-linux-gnu-gcc -v
+Target: x86_64-buildroot-linux-gnu
+gcc version 15.2.0 (Buildroot 2026.02-112-gd12ac02486)
+
+$ echo | x86_64-buildroot-linux-gnu-gcc -dM -E - | grep __GCC_IEC_559_COMPLEX
+  #define __GCC_IEC_559_COMPLEX 2
+
+$ echo | x86_64-buildroot-linux-gnu-gcc -dM -E - | grep __STDC_IEC_60559_COMPLEX__
+  #define __STDC_IEC_60559_COMPLEX__ 201404L
+
+$ echo | x86_64-buildroot-linux-gnu-gcc -dM -E - | grep -i float128
+  #define __SIZEOF_FLOAT128__ 16
+
+This patch changes the or-condition to an and-condition for
+__STDC_IEC_60559_COMPLEX__ and __SIZEOF_FLOAT128__.
+
+Upstream: https://github.com/llvm/llvm-project/pull/185486
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ libc/include/llvm-libc-macros/cfloat128-macros.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libc/include/llvm-libc-macros/cfloat128-macros.h b/libc/include/llvm-libc-macros/cfloat128-macros.h
+index 5f28cfa21aae..ff4aa530685d 100644
+--- a/libc/include/llvm-libc-macros/cfloat128-macros.h
++++ b/libc/include/llvm-libc-macros/cfloat128-macros.h
+@@ -27,7 +27,7 @@
+ #define LIBC_TYPES_HAS_CFLOAT128
+ #endif
+ #elif defined(__GNUC__)
+-#if (defined(__STDC_IEC_60559_COMPLEX__) || defined(__SIZEOF_FLOAT128__)) &&   \
++#if (defined(__STDC_IEC_60559_COMPLEX__) && defined(__SIZEOF_FLOAT128__)) &&   \
+     (__GNUC__ >= 13 || (!defined(__cplusplus)))
+ #define LIBC_TYPES_HAS_CFLOAT128
+ #endif
+-- 
+2.47.3
+

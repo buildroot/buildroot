@@ -7,10 +7,12 @@
 CLANG_VERSION_MAJOR = $(LLVM_PROJECT_VERSION_MAJOR)
 CLANG_VERSION = $(LLVM_PROJECT_VERSION)
 CLANG_SITE = $(LLVM_PROJECT_SITE)
-CLANG_SOURCE = clang-$(CLANG_VERSION).src.tar.xz
+CLANG_SOURCE = $(LLVM_PROJECT_SOURCE)
+CLANG_DL_SUBDIR = llvm-project
 CLANG_LICENSE = Apache-2.0 with exceptions
 CLANG_LICENSE_FILES = LICENSE.TXT
 CLANG_CPE_ID_VENDOR = llvm
+CLANG_SUBDIR = clang
 CLANG_SUPPORTS_IN_SOURCE_BUILD = NO
 CLANG_INSTALL_STAGING = YES
 
@@ -142,11 +144,11 @@ define HOST_CLANG_TOOLCHAIN_WRAPPER_BUILD
 	$(HOSTCC) $(HOST_CFLAGS) $(TOOLCHAIN_WRAPPER_ARGS) \
 		-s -Wl,--hash-style=$(TOOLCHAIN_WRAPPER_HASH_STYLE) \
 		toolchain/toolchain-wrapper.c \
-		-o $(@D)/toolchain-wrapper-clang
+		-o $(@D)/clang/toolchain-wrapper-clang
 endef
 
 define HOST_CLANG_TOOLCHAIN_WRAPPER_INSTALL
-	$(INSTALL) -D -m 0755 $(@D)/toolchain-wrapper-clang \
+	$(INSTALL) -D -m 0755 $(@D)/clang/toolchain-wrapper-clang \
 		$(HOST_DIR)/bin/toolchain-wrapper-clang
 endef
 
