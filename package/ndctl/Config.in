@@ -1,0 +1,25 @@
+config BR2_PACKAGE_NDCTL
+	bool "ndctl"
+	depends on BR2_PACKAGE_HAS_UDEV
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10 # __struct_group()
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_USE_MMU
+	select BR2_PACKAGE_INIPARSER
+	select BR2_PACKAGE_JSON_C
+	select BR2_PACKAGE_KEYUTILS
+	select BR2_PACKAGE_KMOD
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBS
+	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
+	help
+	  A "device memory" enabling project encompassing tools and
+	  libraries for CXL, NVDIMMs, DAX, memory tiering and other
+	  platform memory device topics.
+
+	  https://github.com/pmem/ndctl
+
+comment "ndctl needs udev /dev management, a toolchain headers >= 5.10"
+	depends on BR2_USE_MMU
+	depends on !BR2_PACKAGE_HAS_UDEV \
+		|| !BR2_TOOLCHAIN_HAS_THREADS \
+		|| !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10
