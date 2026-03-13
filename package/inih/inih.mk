@@ -18,3 +18,4 @@ INIH_CONF_OPTS += -Dwith_INIReader=false
 endif
 
 $(eval $(meson-package))
+$(eval $(host-meson-package))
