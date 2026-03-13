@@ -1,7 +1,8 @@
-comment "xfsprogs needs a toolchain w/ threads, C++"
+comment "xfsprogs needs a toolchain w/ threads, headers >= 5.9, C++"
 	depends on BR2_PACKAGE_LIBURCU_ARCH_SUPPORTS
 	depends on BR2_USE_MMU
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_9 || \
 		!BR2_INSTALL_LIBSTDCPP
 
 config BR2_PACKAGE_XFSPROGS
@@ -10,6 +11,7 @@ config BR2_PACKAGE_XFSPROGS
 	depends on BR2_USE_MMU # fork()
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_INSTALL_LIBSTDCPP # liburcu
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_9 # blkzoned.h (capacity)
 	select BR2_PACKAGE_INIH
 	select BR2_PACKAGE_LIBURCU
 	select BR2_PACKAGE_UTIL_LINUX
