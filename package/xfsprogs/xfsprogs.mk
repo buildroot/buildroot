@@ -20,6 +20,13 @@ XFSPROGS_CONF_OPTS = \
 	INSTALL_GROUP=root \
 	--enable-static
 
+HOST_XFSPROGS_DEPENDENCIES = host-inih host-liburcu host-util-linux
+HOST_XFSPROGS_CONF_OPTS = \
+	--enable-gettext=no \
+	--enable-lib64=no \
+	--enable-libicu=no \
+	--enable-static
+
 ifeq ($(BR2_PACKAGE_ICU),y)
 XFSPROGS_DEPENDENCIES += icu
 XFSPROGS_CONF_OPTS += --enable-libicu
@@ -34,3 +41,4 @@ endif
 XFSPROGS_INSTALL_TARGET_OPTS = DIST_ROOT=$(TARGET_DIR) install
 
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))
