@@ -21,3 +21,4 @@ LIBURCU_INSTALL_STAGING = YES
 LIBURCU_CONF_ENV = ac_cv_prog_cc_c99=-std=gnu99
 
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))
