@@ -8,6 +8,7 @@ This reverts commit 75dde50b20215a2a3a445b62f36a67c8ed337cab.
 
 Upstream: https://gitlab.gnome.org/GNOME/libxml2/-/issues/898#note_2452864
 
+[Bernd: rebased for 2.15.2]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  configure.ac            | 11 -----------
@@ -19,7 +20,7 @@ diff --git a/configure.ac b/configure.ac
 index 4eb629bb..150e06eb 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1006,17 +1006,6 @@ AC_SUBST(XML_PRIVATE_LIBS)
+@@ -1008,17 +1008,6 @@ AC_SUBST(XML_PRIVATE_LIBS)
  AC_SUBST(XML_PRIVATE_CFLAGS)
  AC_SUBST(XML_INCLUDEDIR)
  
@@ -70,7 +71,7 @@ diff --git a/meson.build b/meson.build
 index 31c73b62..8728852c 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -577,9 +577,6 @@ config_cmake = configuration_data()
+@@ -590,9 +590,6 @@ config_cmake = configuration_data()
  config_cmake.set('LIBXML_MAJOR_VERSION', v_maj)
  config_cmake.set('LIBXML_MINOR_VERSION', v_min)
  config_cmake.set('LIBXML_MICRO_VERSION', v_mic)
