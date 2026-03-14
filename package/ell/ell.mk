@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ELL_VERSION = 0.81
+ELL_VERSION = 0.83
 ELL_SOURCE = ell-$(ELL_VERSION).tar.xz
 ELL_SITE = $(BR2_KERNEL_MIRROR)/linux/libs/ell
 ELL_LICENSE = LGPL-2.1+
