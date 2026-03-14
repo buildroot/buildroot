@@ -204,6 +204,7 @@ config BR2_PACKAGE_MPD_CDIO_PARANOIA
 
 config BR2_PACKAGE_MPD_CURL
 	bool "curl"
+	select BR2_PACKAGE_MPD_TCP
 	select BR2_PACKAGE_LIBCURL
 	help
 	  Enable curl streaming (http) support.
@@ -258,6 +259,7 @@ config BR2_PACKAGE_MPD_AO
 
 config BR2_PACKAGE_MPD_HTTPD_OUTPUT
 	bool "httpd output"
+	select BR2_PACKAGE_MPD_TCP
 	help
 	  Enable httpd output support.
 
@@ -341,6 +343,7 @@ comment "io_uring support needs a toolchain w/ headers >= 5.1"
 
 config BR2_PACKAGE_MPD_LIBMPDCLIENT
 	bool "libmpdclient"
+	select BR2_PACKAGE_MPD_TCP
 	select BR2_PACKAGE_LIBMPDCLIENT
 	help
 	  Enable libmpdclient support.
