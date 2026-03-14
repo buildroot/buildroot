@@ -26,14 +26,6 @@ MPD_CONF_OPTS = \
 	-Dpipewire=disabled \
 	-Dsnapcast=false
 
-# Zeroconf support depends on libdns_sd from avahi.
-ifeq ($(BR2_PACKAGE_MPD_AVAHI_SUPPORT),y)
-MPD_DEPENDENCIES += avahi
-MPD_CONF_OPTS += -Dzeroconf=avahi
-else
-MPD_CONF_OPTS += -Dzeroconf=disabled
-endif
-
 ifeq ($(BR2_PACKAGE_EXPAT),y)
 MPD_DEPENDENCIES += expat
 MPD_CONF_OPTS += -Dexpat=enabled
@@ -49,6 +41,14 @@ else
 MPD_CONF_OPTS += -Dicu=disabled
 endif
 
+# uClibc w/o locales
+ifeq ($(BR2_PACKAGE_LIBICONV),y)
+MPD_DEPENDENCIES += libiconv
+MPD_CONF_OPTS += -Diconv=enabled
+else
+MPD_CONF_OPTS += -Diconv=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_JSON_FOR_MODERN_CPP),y)
 MPD_DEPENDENCIES += json-for-modern-cpp
 MPD_CONF_OPTS += -Dnlohmann_json=enabled
@@ -61,6 +61,14 @@ MPD_DEPENDENCIES += alsa-lib
 MPD_CONF_OPTS += -Dalsa=enabled
 else
 MPD_CONF_OPTS += -Dalsa=disabled
+endif
+
+# Zeroconf support depends on libdns_sd from avahi.
+ifeq ($(BR2_PACKAGE_MPD_AVAHI_SUPPORT),y)
+MPD_DEPENDENCIES += avahi
+MPD_CONF_OPTS += -Dzeroconf=avahi
+else
+MPD_CONF_OPTS += -Dzeroconf=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_MPD_AO),y)
