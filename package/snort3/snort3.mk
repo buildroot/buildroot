@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-SNORT3_VERSION = 3.1.40.0
+SNORT3_VERSION = 3.11.1.0
 SNORT3_SITE = $(call github,snort3,snort3,$(SNORT3_VERSION))
 SNORT3_LICENSE = GPL-2.0
 SNORT3_LICENSE_FILES = COPYING LICENSE
 
 SNORT3_DEPENDENCIES = \
-	host-pkgconf daq3 flex hwloc libdnet libpcap luajit openssl pcre zlib
+	host-pkgconf daq3 flex hwloc libdnet libpcap luajit openssl pcre2 zlib
 
 SNORT3_CONF_OPTS = \
 	-DENABLE_GDB=OFF \
