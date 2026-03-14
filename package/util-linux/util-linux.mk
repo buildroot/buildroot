@@ -57,7 +57,8 @@ UTIL_LINUX_CONF_OPTS += \
 	--disable-makeinstall-chown \
 	--disable-poman \
 	--disable-rpath \
-	--disable-year2038
+	--disable-year2038 \
+	--enable-fs-paths-default=/sbin:/usr/sbin
 
 UTIL_LINUX_LINK_LIBS = $(TARGET_NLS_LIBS)
 
