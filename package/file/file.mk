@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FILE_VERSION = 5.46
+FILE_VERSION = 5.47
 FILE_SITE = https://astron.com/pub/file
 FILE_LICENSE = BSD-2-Clause, BSD-3-Clause (vasprintf.c)
 FILE_LICENSE_FILES = COPYING src/vasprintf.c
