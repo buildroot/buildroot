@@ -1,0 +1,37 @@
+From f17facc866cb36bc889f873beb36e7991fa5e71c Mon Sep 17 00:00:00 2001
+From: Christian Stewart <christian@aperture.us>
+Date: Sat, 14 Mar 2026 14:53:48 -0700
+Subject: [PATCH] Fix build for kernel 6.19
+
+With kernel 6.19 and CONFIG_X86_KERNEL_IBT or CONFIG_KLP_BUILD enabled,
+objtool runs on the linked module object (delayed objtool via --link).
+The module Makefile passes --strip-all to ld -r, which strips local
+function symbols. Without these symbols, objtool cannot determine
+function boundaries and reports errors like:
+
+  88XXau.o: warning: objtool: rtw_mp_cmd+0xf8: unannotated intra-function call
+
+Replace --strip-all with --strip-debug to preserve function symbols
+while still stripping debug information, allowing objtool to properly
+validate the linked module object.
+
+Upstream: https://github.com/aircrack-ng/rtl8812au/commit/f17facc866cb36bc889f873beb36e7991fa5e71c
+Signed-off-by: Christian Stewart <christian@aperture.us>
+---
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+--- a/Makefile
++++ b/Makefile
+@@ -22,7 +22,7 @@
+
+ ccflags-y += -I$(src)/include -I$(srctree)/$(src)/include
+ ccflags-y += -I$(src)/hal/phydm -I$(srctree)/$(src)/hal/phydm
+-ldflags-y += --strip-all -O3
++ldflags-y += --strip-debug -O3
+
+ ########################## WIFI IC ############################
+ CONFIG_RTL8812A = y
+--
+2.50.1 (Apple Git-155)
