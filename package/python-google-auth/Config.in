@@ -1,8 +1,8 @@
 config BR2_PACKAGE_PYTHON_GOOGLE_AUTH
 	bool "python-google-auth"
-	select BR2_PACKAGE_PYTHON_CACHETOOLS # runtime
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-cryptography
+	select BR2_PACKAGE_PYTHON_CRYPTOGRAPHY # runtime
 	select BR2_PACKAGE_PYTHON_PYASN1_MODULES # runtime
-	select BR2_PACKAGE_PYTHON_RSA # runtime
 	help
 	  Google Authentication Library.
 
