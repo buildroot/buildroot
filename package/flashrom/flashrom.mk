@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-FLASHROM_VERSION = 1.5.1
+FLASHROM_VERSION = 1.7.0
 FLASHROM_SITE = $(call github,flashrom,flashrom,v$(FLASHROM_VERSION))
 FLASHROM_LICENSE = GPL-2.0+
-FLASHROM_LICENSE_FILES = COPYING
+FLASHROM_LICENSE_FILES = COPYING.rst
 FLASHROM_INSTALL_STAGING = YES
 FLASHROM_CONF_OPTS = \
 	-Dclassic_cli=enabled \
