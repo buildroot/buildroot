@@ -1,0 +1,71 @@
+From 29492cbd20d4c90a9c00a30ab525d4d0e81a968b Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Sun, 15 Mar 2026 11:38:16 +0000
+Subject: [PATCH] TexturePacker: allow build with giflib 6.x
+
+Current #if clauses are written with a maximum of giflib 5 written in,
+update the to >= to allow for newer versiosn of the giflib api.
+
+Signed-off-by: Rudi Heitbaum <rudi@heitbaum.com>
+
+Upstream: https://github.com/xbmc/xbmc/pull/28016
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ .../native/TexturePacker/src/decoder/GifHelper.cpp        | 8 ++++----
+ .../depends/native/TexturePacker/src/decoder/GifHelper.h  | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/tools/depends/native/TexturePacker/src/decoder/GifHelper.cpp b/tools/depends/native/TexturePacker/src/decoder/GifHelper.cpp
+index eb513134b3eb8..b216ecbcef7fa 100644
+--- a/tools/depends/native/TexturePacker/src/decoder/GifHelper.cpp
++++ b/tools/depends/native/TexturePacker/src/decoder/GifHelper.cpp
+@@ -52,7 +52,7 @@ GifHelper::~GifHelper()
+ bool GifHelper::Open(GifFileType*& gif, void *dataPtr, InputFunc readFunc)
+ {
+   int err = 0;
+-#if GIFLIB_MAJOR == 5
++#if GIFLIB_MAJOR >= 5
+   gif = DGifOpen(dataPtr, readFunc, &err);
+ #else
+   gif = DGifOpen(dataPtr, readFunc);
+@@ -73,7 +73,7 @@ void GifHelper::Close(GifFileType* gif)
+ {
+   int err = 0;
+   int reason = 0;
+-#if GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1
++#if (GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1) || GIFLIB_MAJOR >= 6
+   err = DGifCloseFile(gif, &reason);
+ #else
+   err = DGifCloseFile(gif);
+@@ -181,7 +181,7 @@ bool GifHelper::Slurp(GifFileType* gif)
+   if (DGifSlurp(gif) == GIF_ERROR)
+   {
+     int reason = 0;
+-#if GIFLIB_MAJOR == 5
++#if GIFLIB_MAJOR >= 5
+     reason = gif->Error;
+ #else
+     reason = GifLastError();
+@@ -246,7 +246,7 @@ bool GifHelper::GcbToFrame(GifFrame &frame, unsigned int imgIdx)
+ 
+   if (m_gif->ImageCount > 0)
+   {
+-#if GIFLIB_MAJOR == 5
++#if GIFLIB_MAJOR >= 5
+     GraphicsControlBlock gcb;
+     if (DGifSavedExtensionToGCB(m_gif, imgIdx, &gcb))
+     {
+diff --git a/tools/depends/native/TexturePacker/src/decoder/GifHelper.h b/tools/depends/native/TexturePacker/src/decoder/GifHelper.h
+index 6124b69e46296..ce5dca3394b41 100644
+--- a/tools/depends/native/TexturePacker/src/decoder/GifHelper.h
++++ b/tools/depends/native/TexturePacker/src/decoder/GifHelper.h
+@@ -128,7 +128,7 @@ class GifHelper
+   bool PrepareTemplate(GifFrame &frame);
+   void Release();
+ 
+-#if GIFLIB_MAJOR != 5
++#if GIFLIB_MAJOR < 5
+   /*
+   taken from giflib 5.1.0
+   */
