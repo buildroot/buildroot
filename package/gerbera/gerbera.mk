@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-GERBERA_VERSION = 2.6.1
+GERBERA_VERSION = 3.2.0
 GERBERA_SITE = $(call github,gerbera,gerbera,v$(GERBERA_VERSION))
 GERBERA_LICENSE = GPL-2.0
 GERBERA_LICENSE_FILES = LICENSE.md
 GERBERA_DEPENDENCIES = \
+	cxxopts \
 	fmt \
 	icu \
 	jsoncpp \
@@ -91,6 +92,13 @@ GERBERA_DEPENDENCIES += libupnp
 GERBERA_CONF_OPTS += -DWITH_NPUPNP=OFF
 endif
 
+ifeq ($(BR2_PACKAGE_LIBPQXX),y)
+GERBERA_DEPENDENCIES += libpqxx
+GERBERA_CONF_OPTS += -DWITH_PGSQL=ON
+else
+GERBERA_CONF_OPTS += -DWITH_PGSQL=OFF
+endif
+
 ifeq ($(BR2_PACKAGE_MARIADB),y)
 GERBERA_DEPENDENCIES += mariadb
 GERBERA_CONF_OPTS += -DWITH_MYSQL=ON
@@ -110,6 +118,13 @@ GERBERA_DEPENDENCIES += taglib
 GERBERA_CONF_OPTS += -DWITH_TAGLIB=ON
 else
 GERBERA_CONF_OPTS += -DWITH_TAGLIB=OFF
+endif
+
+ifeq ($(BR2_PACKAGE_LIBZIPPP),y)
+GERBERA_DEPENDENCIES += libzip libzippp
+GERBERA_CONF_OPTS += -DWITH_ZIP=ON
+else
+GERBERA_CONF_OPTS += -DWITH_ZIP=OFF
 endif
 
 # gerbera does not provide a default configuration file, it can be
