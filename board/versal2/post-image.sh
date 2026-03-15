@@ -1,9 +1,17 @@
 #!/bin/sh
 
-# By default U-Boot loads DTB from a file named "system.dtb", and
-# with versal2, the Linux DTB is the same as the U-Boot DTB, so
-# let's use a symlink since the DTB is the same.
-ln -fs "u-boot.dtb" "${BINARIES_DIR}/system.dtb"
+# By default U-Boot loads DTB from a file named "system.dtb".
+# With versal2, there is no default dts in the Linux kernel tree
+# because the default is the same as the u-boot.dtb. This means
+# it is necessary to cover two cases, a custom dts or the default.
+# The BR2_LINUX_KERNEL_DTS_SUPPORT will only be set for custom dts
+# files, so it can be used for checking which case is configured.
+if grep -Eq "^BR2_LINUX_KERNEL_DTS_SUPPORT=y$" "${BR2_CONFIG}"; then
+	LINUX_DTBS="$(make --no-print-directory VARS=LINUX_DTBS printvars)"
+	ln -fs "$(basename "${LINUX_DTBS%% *}")" "${BINARIES_DIR}/system.dtb"
+else
+	ln -fs "u-boot.dtb" "${BINARIES_DIR}/system.dtb"
+fi
 
 BOARD_DIR="$(dirname "$0")"
 
