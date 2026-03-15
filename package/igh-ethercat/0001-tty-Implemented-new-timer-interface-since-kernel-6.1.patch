@@ -1,0 +1,63 @@
+From e32e99f8b8ec02a340ad3b93cc8abd36781ff568 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 15 Mar 2026 20:06:42 +0100
+Subject: [PATCH] tty: Implemented new timer interface since kernel 6.15
+
+Upstream: https://gitlab.com/etherlab.org/ethercat/-/merge_requests/187
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ examples/tty/tty.c | 4 ++++
+ tty/module.c       | 8 ++++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/examples/tty/tty.c b/examples/tty/tty.c
+index 4d47a49..e5b4d52 100644
+--- a/examples/tty/tty.c
++++ b/examples/tty/tty.c
+@@ -233,7 +233,11 @@ static void __exit cleanup_mini_module(void)
+ {
+     printk(KERN_INFO PFX "Stopping...\n");
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
++    timer_delete_sync(&timer);
++#else
+     del_timer_sync(&timer);
++#endif
+ 
+     free_serial_devices();
+ 
+diff --git a/tty/module.c b/tty/module.c
+index 2b7b22b..12ad1e7 100644
+--- a/tty/module.c
++++ b/tty/module.c
+@@ -292,7 +292,11 @@ static int ec_tty_init(ec_tty_t *t, int minor,
+ 
+ static void ec_tty_clear(ec_tty_t *tty)
+ {
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
++    timer_delete_sync(&tty->timer);
++#else
+     del_timer_sync(&tty->timer);
++#endif
+     tty_unregister_device(tty_driver, tty->minor);
+ }
+ 
+@@ -367,10 +371,14 @@ static void ec_tty_wakeup(struct timer_list *t)
+ static void ec_tty_wakeup(unsigned long data)
+ #endif
+ {
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
++    ec_tty_t *tty = timer_container_of(tty, t, timer);
++#else
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 15, 0)
+     ec_tty_t *tty = from_timer(tty, t, timer);
+ #else
+     ec_tty_t *tty = (ec_tty_t *) data;
++#endif
+ #endif
+     size_t to_recv;
+ 
+-- 
+2.47.3
+
