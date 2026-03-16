@@ -1,0 +1,49 @@
+From d363aafe0a773cd55890a385694cf05cb6225c5a Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Sun, 15 Mar 2026 13:18:07 +0100
+Subject: [PATCH] tests/zfs-tests/cmd/statx.c: avoid statx() conflicts
+
+With some libc, such as uclibc >= 1.0.57, the libc defines the statx()
+function, while also internally including <sys/stat.h> (from <fcntl.h>
+from example), which results to a compilation error due to conflicting
+types.
+
+This commit fixes the issue by only defining the statx() prototype only
+if the libc was detected not to have a working statx() wrapper, and
+explicitly include the <sys/stat.h> otherwise.
+
+Upstream: Discussed in: https://github.com/openzfs/zfs/pull/18316#issuecomment-4062904581
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ tests/zfs-tests/cmd/statx.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/tests/zfs-tests/cmd/statx.c b/tests/zfs-tests/cmd/statx.c
+index 1acc7e58c..c292fdbdf 100644
+--- a/tests/zfs-tests/cmd/statx.c
++++ b/tests/zfs-tests/cmd/statx.c
+@@ -34,6 +34,9 @@
+  * statx() may be available in the kernel, but not in the libc, so we build
+  * our own wrapper if we can't link one.
+  */
++#ifdef HAVE_STATX
++#include <sys/stat.h>
++#endif
+ 
+ #ifndef __NR_statx
+ #if defined(__x86_64__)
+@@ -54,9 +57,11 @@
+ #endif /* __NR_statx */
+ 
+ 
++#ifndef HAVE_STATX
+ int
+ statx(int, const char *, int, unsigned int, void *)
+     __attribute__((weak));
++#endif
+ 
+ static inline int
+ _statx(int fd, const char *path, int flags, unsigned int mask, void *stx)
+-- 
+2.53.0
+
