@@ -22,10 +22,12 @@ define TAILSCALE_INSTALL_INIT_SYSTEMD
 		$(TARGET_DIR)/usr/lib/systemd/system/tailscaled.service
 endef
 
+ifeq ($(BR2_ROOTFS_MERGED_BIN),)
 define TAILSCALE_INSTALL_SYMLINK
 	ln -f -s ../bin/tailscaled $(TARGET_DIR)/usr/sbin/tailscaled
 endef
 TAILSCALE_POST_INSTALL_TARGET_HOOKS += TAILSCALE_INSTALL_SYMLINK
+endif
 
 define TAILSCALE_LINUX_CONFIG_FIXUPS
 	$(call KCONFIG_ENABLE_OPT,CONFIG_IPV6)
