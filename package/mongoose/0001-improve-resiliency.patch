@@ -1,0 +1,37 @@
+From 64abf061bf018fd78f31c200a57a3fb04f9f3ef2 Mon Sep 17 00:00:00 2001
+From: "Sergio R. Caprile" <scaprile@cesanta.com>
+Date: Mon, 13 Oct 2025 10:43:45 -0300
+Subject: [PATCH] improve resiliency
+
+CVE: CVE-2025-65502
+Upstream: https://github.com/cesanta/mongoose/commit/64abf061bf018fd78f31c200a57a3fb04f9f3ef2
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ mongoose.c        | 1 +
+ src/tls_openssl.c | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/mongoose.c b/mongoose.c
+index 4c72be8201..f860ab3b07 100644
+--- a/mongoose.c
++++ b/mongoose.c
+@@ -14581,6 +14581,7 @@ static STACK_OF(X509_INFO) * load_ca_certs(struct mg_str ca) {
+ static bool add_ca_certs(SSL_CTX *ctx, STACK_OF(X509_INFO) * certs) {
+   int i;
+   X509_STORE *cert_store = SSL_CTX_get_cert_store(ctx);
++  if (cert_store == NULL) return false;
+   for (i = 0; i < sk_X509_INFO_num(certs); i++) {
+     X509_INFO *cert_info = sk_X509_INFO_value(certs, i);
+     if (cert_info->x509 && !X509_STORE_add_cert(cert_store, cert_info->x509))
+diff --git a/src/tls_openssl.c b/src/tls_openssl.c
+index 37838d95ba..f51d6dd8b7 100644
+--- a/src/tls_openssl.c
++++ b/src/tls_openssl.c
+@@ -39,6 +39,7 @@ static STACK_OF(X509_INFO) * load_ca_certs(struct mg_str ca) {
+ static bool add_ca_certs(SSL_CTX *ctx, STACK_OF(X509_INFO) * certs) {
+   int i;
+   X509_STORE *cert_store = SSL_CTX_get_cert_store(ctx);
++  if (cert_store == NULL) return false;
+   for (i = 0; i < sk_X509_INFO_num(certs); i++) {
+     X509_INFO *cert_info = sk_X509_INFO_value(certs, i);
+     if (cert_info->x509 && !X509_STORE_add_cert(cert_store, cert_info->x509))
