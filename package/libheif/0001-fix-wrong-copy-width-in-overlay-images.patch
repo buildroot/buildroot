@@ -1,0 +1,26 @@
+From b8c12a7b70f46c9516711a988483bed377b78d46 Mon Sep 17 00:00:00 2001
+From: Dirk Farin <dirk.farin@gmail.com>
+Date: Tue, 11 Nov 2025 19:47:50 +0100
+Subject: [PATCH] fix wrong copy width in overlay images (thanks to Aldo
+ Ristori for reporting this)
+
+CVE: CVE-2025-68431
+Upstream: https://github.com/strukturag/libheif/commit/b8c12a7b70f46c9516711a988483bed377b78d46
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ libheif/pixelimage.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libheif/pixelimage.cc b/libheif/pixelimage.cc
+index f202c61049..84a8dd739e 100644
+--- a/libheif/pixelimage.cc
++++ b/libheif/pixelimage.cc
+@@ -1508,7 +1508,7 @@ Error HeifPixelImage::overlay(std::shared_ptr<HeifPixelImage>& overlay, int32_t
+       if (!has_alpha) {
+         memcpy(out_p + out_x0 + (out_y0 + y - in_y0) * out_stride,
+                in_p + in_x0 + y * in_stride,
+-               in_w - in_x0);
++               in_w);
+       }
+       else {
+         for (uint32_t x = in_x0; x < in_w; x++) {
