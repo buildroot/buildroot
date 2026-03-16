@@ -16,4 +16,10 @@ PYTHON_TORNADO_SETUP_TYPE = setuptools
 # 0001-httputil-raise-errors-instead-of-logging-in.patch
 PYTHON_TORNADO_IGNORE_CVES += CVE-2025-47287
 
+# 0002-web-Harden-against-invalid-HTTP-reason-phrases.patch
+PYTHON_TORNADO_IGNORE_CVES += CVE-2025-67724
+
+# 0003-httputil-Fix-quadratic-behavior-in-parseparam.patch
+PYTHON_TORNADO_IGNORE_CVES += CVE-2025-67725 CVE-2025-67726
+
 $(eval $(python-package))
