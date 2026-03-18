@@ -1,0 +1,76 @@
+From dfe45e10791a171c3c79699257d3d3a978ec30eb Mon Sep 17 00:00:00 2001
+From: Neal Frager <neal.frager@amd.com>
+Date: Wed, 18 Mar 2026 09:51:58 +0000
+Subject: [PATCH] flexlexer: use embedded win_include/flexlexer.h
+
+bootgen embeds an old version of flex. If the host machine has a newer version
+of flex, the bootgen binary that is built will have errors such as the
+following, if the wrong version of flexlexer.h is used.
+
+$ output/host/bin/bootgen
+
+****** Bootgen v2025.1-Merged
+  **** Build date : Mar 18 2026-07:08:01
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+
+ERROR: syntax error
+-h
+
+Running the bootgen binary should print the help menu by default and should
+not have a syntax error.
+
+Correct the path to the flexlexer.h header files, such that no host version
+of these files can cause a silent build failure.
+
+Upstream: CR to AMD jira
+
+Signed-off-by: Neal Frager <neal.frager@amd.com>
+---
+ common/include/bifscanner.h        | 2 +-
+ common/include/cmdoptionsscanner.h | 2 +-
+ common/include/reginitscanner.h    | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/common/include/bifscanner.h b/common/include/bifscanner.h
+index 9683416..9aa72a5 100755
+--- a/common/include/bifscanner.h
++++ b/common/include/bifscanner.h
+@@ -29,7 +29,7 @@
+ #if ! defined(yyFlexLexerOnce)
+ #undef yyFlexLexer
+ #define yyFlexLexer bifFlexLexer
+-#include "FlexLexer.h"
++#include "../../win_include/FlexLexer.h"
+ #endif
+ 
+ // Override the interface for yylex since we namespaced it
+diff --git a/common/include/cmdoptionsscanner.h b/common/include/cmdoptionsscanner.h
+index aa2f474..78fa7cf 100755
+--- a/common/include/cmdoptionsscanner.h
++++ b/common/include/cmdoptionsscanner.h
+@@ -30,7 +30,7 @@
+ 
+ #undef yyFlexLexer
+ #define yyFlexLexer reginitFlexLexer
+-#include "FlexLexer.h"
++#include "../../win_include/FlexLexer.h"
+ #endif
+ 
+ // Override the interface for yylex since we namespaced it
+diff --git a/common/include/reginitscanner.h b/common/include/reginitscanner.h
+index 74463e6..d8152a6 100755
+--- a/common/include/reginitscanner.h
++++ b/common/include/reginitscanner.h
+@@ -30,7 +30,7 @@
+ 
+ #undef yyFlexLexer
+ #define yyFlexLexer reginitFlexLexer
+-#include "FlexLexer.h"
++#include "../../win_include/FlexLexer.h"
+ #endif
+ 
+ // Override the interface for yylex since we namespaced it
+-- 
+2.25.1
+
