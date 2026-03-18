@@ -1,0 +1,46 @@
+From d12666d74dc742bb06c30b96d6b874a3e14c6b46 Mon Sep 17 00:00:00 2001
+From: Jan Beulich <jbeulich@suse.com>
+Date: Tue, 26 Aug 2025 08:41:18 +0200
+Subject: [PATCH] Arm/platforms: fix build with gcc15
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+For two of the headers gcc15 complains "header guard ... followed by
+'#define' of a different macro". Misra certainly wouldn't have liked
+this either, if these headers were covered by a scan.
+
+Signed-off-by: Jan Beulich <jbeulich@suse.com>
+Acked-by: Michal Orzel <michal.orzel@amd.com>
+Upstream: https://xenbits.xen.org/gitweb/?p=xen.git;a=commitdiff;h=39f95089e2ba15c5438ce904c0cbbd8d79d3e6e7
+Signed-off-by: Vincent Stehlé <vincent.stehle@arm.com>
+---
+ xen/include/asm-arm/platforms/midway.h | 2 +-
+ xen/include/asm-arm/platforms/omap5.h  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/xen/include/asm-arm/platforms/midway.h b/xen/include/asm-arm/platforms/midway.h
+index 099e435..6914393 100644
+--- a/xen/include/asm-arm/platforms/midway.h
++++ b/xen/include/asm-arm/platforms/midway.h
+@@ -1,5 +1,5 @@
+ #ifndef __ASM_ARM_PLATFORMS_MIDWAY_H
+-#define __ASM_ASM_PLATFORMS_MIDWAY_H
++#define __ASM_ARM_PLATFORMS_MIDWAY_H
+ 
+ /* addresses of SREG registers for resetting the SoC */
+ #define MW_SREG_PWR_REQ             0xfff3cf00
+diff --git a/xen/include/asm-arm/platforms/omap5.h b/xen/include/asm-arm/platforms/omap5.h
+index c559c84..8867b45 100644
+--- a/xen/include/asm-arm/platforms/omap5.h
++++ b/xen/include/asm-arm/platforms/omap5.h
+@@ -1,5 +1,5 @@
+ #ifndef __ASM_ARM_PLATFORMS_OMAP5_H
+-#define __ASM_ASM_PLATFORMS_OMAP5_H
++#define __ASM_ARM_PLATFORMS_OMAP5_H
+ 
+ #define REALTIME_COUNTER_BASE                   0x48243200
+ #define INCREMENTER_NUMERATOR_OFFSET            0x10
+-- 
+2.53.0
+
