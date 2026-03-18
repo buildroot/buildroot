@@ -70,6 +70,8 @@ class TestAiChat(infra.basetest.BRTest):
         llama_opts = "--log-file /tmp/llama-server.log"
         # We set a fixed seed, to reduce variability of the test
         llama_opts += " --seed 123456789"
+        # We disable prompt caching to reduce RAM usage
+        llama_opts += " --cache-ram 0"
         llama_opts += f" --hf-repo {hf_model}"
 
         # We start a llama-server in background, which will expose an
@@ -91,9 +93,12 @@ class TestAiChat(infra.basetest.BRTest):
             if ret == 0:
                 models_json = "".join(out)
                 models = json.loads(models_json)
-                model_name = models['models'][0]['name']
-                if model_name == hf_model:
-                    break
+                try:
+                    model_name = models['models'][0]['name']
+                    if model_name == hf_model:
+                        break
+                except KeyError:
+                    pass
         else:
             self.fail("Timeout while waiting for llama-server.")
 
