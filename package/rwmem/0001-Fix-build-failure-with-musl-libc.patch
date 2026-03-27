@@ -1,0 +1,50 @@
+From 3730c3028a494536571c30d4d44df347e0886651 Mon Sep 17 00:00:00 2001
+From: Vincent Cruz <mooz@blockos.org>
+Date: Fri, 27 Mar 2026 11:16:36 +0100
+Subject: [PATCH] Fix build failure with musl libc.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes the following build failure when using musl libc:
+
+../tests/test_data_generator.cpp: In lambda function:
+../tests/test_data_generator.cpp:104:27: error: ‘htobe32’ was not declared in this scope; did you mean ‘htobe’?
+  104 |         uint32_t be_val = htobe32(val);
+      |                           ^~~~~~~
+      |                           htobe
+../tests/test_data_generator.cpp: In lambda function:
+../tests/test_data_generator.cpp:109:27: error: ‘htobe64’ was not declared in this scope; did you mean ‘htobe’?
+  109 |         uint64_t be_val = htobe64(val);
+      |                           ^~~~~~~
+      |                           htobe
+
+Upstream: N/A. The impacted file removed upstream in https://github.com/tomba/rwmem/commit/f9e0bffacd7520ee8975c4a36a9d47292d145ae9
+
+Signed-off-by: Vincent Cruz <mooz@blockos.org>
+---
+ tests/test_data_generator.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/tests/test_data_generator.cpp b/tests/test_data_generator.cpp
+index 39e1322..3676f19 100644
+--- a/tests/test_data_generator.cpp
++++ b/tests/test_data_generator.cpp
+@@ -2,6 +2,7 @@
+ 
+ #include <algorithm>
+ #include <cstring>
++#include <endian.h>
+ 
+ // Constants from regfiledata.h
+ static const uint32_t RWMEM_MAGIC = 0x00e11554;
+@@ -169,4 +170,4 @@ std::vector<uint8_t> TestRegisterFileBuilder::build() {
+     }
+ 
+     return data;
+-}
+\ No newline at end of file
++}
+-- 
+2.51.0
+
