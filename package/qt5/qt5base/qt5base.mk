@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-QT5BASE_VERSION = 2b9835f5c9bcfe3105b60a8dd33c1db7d8611378
+QT5BASE_VERSION = bebdfd54917e25d1c100e6bd9f5dd53c2e645fd8
 QT5BASE_SITE = $(QT5_SITE)/qtbase
 QT5BASE_SITE_METHOD = git
 QT5BASE_CPE_ID_VENDOR = qt
 QT5BASE_CPE_ID_PRODUCT = qt
 # Closest upstream version
-QT5BASE_CPE_ID_VERSION = 5.15.14
+QT5BASE_CPE_ID_VERSION = 5.15.18
 
 QT5BASE_DEPENDENCIES = host-pkgconf pcre2 zlib
 QT5BASE_INSTALL_STAGING = YES

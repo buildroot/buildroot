@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5SERIALPORT_VERSION = 34c19c6441cd440dc65b59ae7670eadf099d51f8
+QT5SERIALPORT_VERSION = b64a7eeda9b6a65b5ed01b1b40b07177f0aa4c0f
 QT5SERIALPORT_SITE = $(QT5_SITE)/qtserialport/-/archive/$(QT5SERIALPORT_VERSION)
 QT5SERIALPORT_SOURCE = qtserialport-$(QT5SERIALPORT_VERSION).tar.bz2
 QT5SERIALPORT_INSTALL_STAGING = YES
