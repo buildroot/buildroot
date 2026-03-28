@@ -6,21 +6,28 @@ Subject: [PATCH] fix static linking with icu-uc
 During static linking with a C application and libicuuc.a,
 -lstdc++ is required.
 
-Add -lstdc++ in Libs.private of icu-uc.pc.
+Add -lstdc++ in icu-uc.pc. When building a static library only (ENABLE_SHARED is
+false) add it to Libs, else add it to Libs.private.
 
 Fixes:
 http://autobuild.buildroot.net/results/210/2107f9dfb39eeb6559fb4271c7af8b39aef521ca/
 
+Upstream: Not submitted (old patch)
 Signed-off-by: Romain Naour <romain.naour@openwide.fr>
+Signed-off-by: Shubham Chakraborty <chakrabortyshubham66@gmail.com>
 ---
- source/Makefile.in | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ source/Makefile.in | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff -git icu.orig/source/Makefile.in icu/source/Makefile.in
 --- icu.orig/source/Makefile.in	2025-03-13 19:31:23.000000000 +0100
 +++ icu/source/Makefile.in	2025-09-22 08:56:36.791792784 +0200
-@@ -279,7 +279,7 @@
- 	@echo "Libs:" '-L$${libdir}' "${ICULIBS_UC}" "${ICULIBS_DT}" '$${baselibs}' >> $@
+@@ -276,10 +276,10 @@
+ 	@echo "Description: $(PACKAGE_ICU_DESCRIPTION): Common and Data libraries" >> $@
+ 	@echo "Name: $(PACKAGE)-uc" >> $@
+ ifeq ($(ENABLE_SHARED),)
+-	@echo "Libs:" '-L$${libdir}' "${ICULIBS_UC}" "${ICULIBS_DT}" '$${baselibs}' >> $@
++	@echo "Libs:" '-L$${libdir}' "${ICULIBS_UC}" "${ICULIBS_DT}" '$${baselibs}' -lstdc++ >> $@
  else
  	@echo "Libs:" '-L$${libdir}' "${ICULIBS_UC}" >> $@
 -	@echo "Libs.private:" "${ICULIBS_DT}" '$${baselibs}' >> $@
