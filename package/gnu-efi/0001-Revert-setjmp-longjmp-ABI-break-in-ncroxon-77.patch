@@ -1,0 +1,250 @@
+From 2e3092703698657703e0af9d463c289d78c3c195 Mon Sep 17 00:00:00 2001
+From: lzcunt <lzcunt@rawr.fun>
+Date: Tue, 9 Dec 2025 15:37:03 +0300
+Subject: [PATCH] Revert setjmp/longjmp ABI break in #77
+
+aa27c28 introduced an ABI break in a minor version which broke syslinux.
+syslinux externs the setjmp/longjmp implementation of GNU-EFI, therefore
+depends on the symbol name.
+
+Let's alias base_setjmp and base_longjmp to setjmp and longjmp
+respectively so syslinux builds again.
+
+Signed-off-by: lzcunt <lzcunt@rawr.fun>
+
+Upstream: https://github.com/ncroxon/gnu-efi/pull/77#ref-commit-2e30927
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ lib/aarch64/setjmp.S     |  6 ++++++
+ lib/arm/setjmp.S         |  6 ++++++
+ lib/ia32/setjmp.S        | 14 +++++++++++---
+ lib/ia64/setjmp.S        |  6 ++++++
+ lib/loongarch64/setjmp.S |  7 ++++++-
+ lib/mips64el/setjmp.S    |  6 ++++++
+ lib/riscv64/setjmp.S     |  6 ++++++
+ lib/x86_64/setjmp.S      |  8 ++++++++
+ 8 files changed, 55 insertions(+), 4 deletions(-)
+
+diff --git a/lib/aarch64/setjmp.S b/lib/aarch64/setjmp.S
+index a83eb88e..27acce71 100644
+--- a/lib/aarch64/setjmp.S
++++ b/lib/aarch64/setjmp.S
+@@ -33,6 +33,9 @@ BASIS,
+ #define REG_PAIR(REG1, REG2, OFFS)      stp REG1, REG2, [x0, OFFS]
+ #define REG_ONE(REG1, OFFS)             str REG1, [x0, OFFS]
+ 
++	.globl	setjmp
++	.type	setjmp, @function
++setjmp:
+ 	.globl	base_setjmp
+ 	.type	base_setjmp, @function
+ base_setjmp:
+@@ -48,6 +51,9 @@ base_setjmp:
+ #define REG_PAIR(REG1, REG2, OFFS)      ldp REG1, REG2, [x0, OFFS]
+ #define REG_ONE(REG1, OFFS)             ldr REG1, [x0, OFFS]
+ 
++	.globl	longjmp
++	.type	longjmp, @function
++longjmp:
+ 	.globl	base_longjmp
+ 	.type	base_longjmp, @function
+ base_longjmp:
+diff --git a/lib/arm/setjmp.S b/lib/arm/setjmp.S
+index 2f0b9543..8fe3a439 100644
+--- a/lib/arm/setjmp.S
++++ b/lib/arm/setjmp.S
+@@ -11,6 +11,9 @@
+  */
+ 	.text
+ 	.arm
++	.globl	setjmp
++	.type	setjmp, %function
++setjmp:
+ 	.globl	base_setjmp
+ 	.type	base_setjmp, %function
+ base_setjmp:
+@@ -19,6 +22,9 @@ base_setjmp:
+ 	eor	r0, r0, r0
+ 	bx	lr
+ 
++	.globl	longjmp
++	.type	longjmp, %function
++longjmp:
+ 	.globl	base_longjmp
+ 	.type	base_longjmp, %function
+ base_longjmp:
+diff --git a/lib/ia32/setjmp.S b/lib/ia32/setjmp.S
+index b59e7391..2708d1a7 100644
+--- a/lib/ia32/setjmp.S
++++ b/lib/ia32/setjmp.S
+@@ -13,12 +13,16 @@ BASIS,
+  * IMPLIED.
+  */
+ 	.text
++	.globl	setjmp
+ 	.globl	base_setjmp
+ #ifndef __MINGW32__
+-	.type base_setjmp, @function
++	.type	setjmp, @function
++	.type	base_setjmp, @function
+ #else
+-	.def base_setjmp; .scl 2; .type 32; .endef
++	.def	setjmp; .scl 2; .type 32; .endef
++	.def	base_setjmp; .scl 2; .type 32; .endef
+ #endif
++setjmp:
+ base_setjmp:
+ 	pop	%ecx
+ 	movl	(%esp), %edx
+@@ -30,12 +34,16 @@ base_setjmp:
+ 	xorl	%eax, %eax
+ 	jmp	*%ecx
+ 
++	.globl	longjmp
+ 	.globl	base_longjmp
+ #ifndef __MINGW32__
++	.type	longjmp, @function
+ 	.type	base_longjmp, @function
+ #else
+-	.def base_longjmp; .scl 2; .type 32; .endef
++	.def	longjmp; .scl 2; .type 32; .endef
++	.def	base_longjmp; .scl 2; .type 32; .endef
+ #endif
++longjmp:
+ base_longjmp:
+ 	pop	%eax
+ 	pop	%edx
+diff --git a/lib/ia64/setjmp.S b/lib/ia64/setjmp.S
+index 3ab9a153..26d35530 100644
+--- a/lib/ia64/setjmp.S
++++ b/lib/ia64/setjmp.S
+@@ -13,6 +13,9 @@ BASIS,
+  * IMPLIED.
+  */
+ 	.text
++	.globl	setjmp
++	.type	setjmp, @function
++setjmp:
+ 	.globl	base_setjmp
+ 	.type	base_setjmp, @function
+ base_setjmp:
+@@ -96,6 +99,9 @@ base_setjmp:
+ 	br.ret.sptk	b0
+ 	;;
+ 
++	.globl	longjmp
++	.type	longjmp, @function
++longjmp:
+ 	.globl	base_longjmp
+ 	.type	base_longjmp, @function
+ 	.regstk 2, 0, 0, 0
+diff --git a/lib/loongarch64/setjmp.S b/lib/loongarch64/setjmp.S
+index 42f411e0..9f043593 100644
+--- a/lib/loongarch64/setjmp.S
++++ b/lib/loongarch64/setjmp.S
+@@ -20,7 +20,9 @@
+ 	.text
+ 	.p2align 3
+ 
+-
++	.globl	setjmp
++	.type	setjmp, @function
++setjmp:
+ 	.globl	base_setjmp
+ 	.type	base_setjmp, @function
+ base_setjmp:
+@@ -40,6 +42,9 @@ base_setjmp:
+ 	move $a0, $zero
+ 	jr   $ra
+ 
++	.globl	longjmp
++	.type	longjmp, @function
++longjmp:
+ 	.globl	base_longjmp
+ 	.type	base_longjmp, @function
+ base_longjmp:
+diff --git a/lib/mips64el/setjmp.S b/lib/mips64el/setjmp.S
+index c07e239d..5bbbed5f 100644
+--- a/lib/mips64el/setjmp.S
++++ b/lib/mips64el/setjmp.S
+@@ -18,6 +18,9 @@ BASIS,
+ 	.text
+ 	.p2align 3
+ 
++	.globl	setjmp
++	.type	setjmp, @function
++setjmp:
+ 	.globl	base_setjmp
+ 	.type	base_setjmp, @function
+ base_setjmp:
+@@ -54,6 +57,9 @@ base_setjmp:
+ 	move	$v0, $zero
+ 	jr	$ra
+ 
++	.globl	longjmp
++	.type	longjmp, @function
++longjmp:
+ 	.globl	base_longjmp
+ 	.type	base_longjmp, @function
+ base_longjmp:
+diff --git a/lib/riscv64/setjmp.S b/lib/riscv64/setjmp.S
+index 2f96e18d..f9552b55 100644
+--- a/lib/riscv64/setjmp.S
++++ b/lib/riscv64/setjmp.S
+@@ -39,6 +39,9 @@
+ #define REG_ONE(R, P) sd R, P(a0)
+ #define FREG_ONE(R, P) fsd R, P(a0)
+ 
++	.globl	setjmp
++	.type	setjmp, @function
++setjmp:
+ 	.globl base_setjmp
+ 	.type base_setjmp, @function
+ 
+@@ -56,6 +59,9 @@ base_setjmp:
+ #define REG_ONE(R, P) ld R, P(a0)
+ #define FREG_ONE(R, P) fld R, P(a0)
+ 
++	.globl	longjmp
++	.type	lobgjmp, @function
++longjmp:
+ 	.globl base_longjmp
+ 	.type base_longjmp, @function
+ 
+diff --git a/lib/x86_64/setjmp.S b/lib/x86_64/setjmp.S
+index 719b0219..bf320c83 100644
+--- a/lib/x86_64/setjmp.S
++++ b/lib/x86_64/setjmp.S
+@@ -1,10 +1,14 @@
+ 	.text
++	.globl	setjmp
+ 	.globl	base_setjmp
+ #ifndef __MINGW32__
++	.type	setjmp, @function
+ 	.type base_setjmp, @function
+ #else
+ 	.def base_setjmp; .scl 2; .type 32; .endef
++	.def setjmp; .scl 2; .type 32; .endef
+ #endif
++setjmp:
+ base_setjmp:
+ 	pop	%rsi
+ 	movq	%rbx,0x00(%rdi)
+@@ -19,12 +23,16 @@ base_setjmp:
+ 	xor	%rax,%rax
+ 	ret
+ 
++	.globl	longjmp
+ 	.globl	base_longjmp
+ #ifndef __MINGW32__
++	.type	longjmp, @function
+ 	.type	base_longjmp, @function
+ #else
++	.def longjmp; .scl 2; .type 32; .endef
+ 	.def base_longjmp; .scl 2; .type 32; .endef
+ #endif
++longjmp:
+ base_longjmp:
+ 	movl	%esi, %eax
+ 	movq	0x00(%rdi), %rbx

@@ -4,11 +4,22 @@
 #
 ################################################################################
 
-GNU_EFI_VERSION = 4.0.0
+GNU_EFI_VERSION = 4.0.4
 GNU_EFI_SITE = $(call github,ncroxon,gnu-efi,$(GNU_EFI_VERSION))
 GNU_EFI_INSTALL_STAGING = YES
-GNU_EFI_LICENSE = BSD-3-Clause and/or GPL-2.0+ (gnuefi), BSD-3-Clause (efilib), BSD-2-Clause-Patent (EDK2 routines)
-GNU_EFI_LICENSE_FILES = LICENSE licenses/LICENSE.edk2 licenses/LICENSE.efilib
+
+GNU_EFI_LICENSE = \
+	BSD-3-Clause and/or GPL-2.0+ (gnuefi), \
+	BSD-3-Clause (efilib), \
+	BSD-2-Clause-Patent (EDK2 routines)
+GNU_EFI_LICENSE_FILES = \
+	LICENSE \
+	licenses/LICENSE.BSD-3-Clause \
+	licenses/LICENSE.edk2 \
+	licenses/LICENSE.efilib \
+	licenses/LICENSE.GPL-2.0-or-later \
+	licenses/LICENSE.GPL-3.0-or-later \
+	licenses/LICENSE.LGPL-3.0-or-later
 
 # gnu-efi is a set of library and header files used to build
 # standalone EFI applications such as bootloaders. There is no point
