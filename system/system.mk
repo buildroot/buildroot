@@ -60,7 +60,7 @@ endef
 endif
 
 # This function rsyncs the skeleton directory in $(1) to the destination
-# in $(2), which should be either $(TARTGET_DIR) or $(STAGING_DIR)
+# in $(2), which should be either $(TARGET_DIR) or $(STAGING_DIR)
 define SYSTEM_RSYNC
 	rsync -a --ignore-times $(RSYNC_VCS_EXCLUSIONS) \
 		--chmod=u=rwX,go=rX --exclude .empty --exclude '*~' \
