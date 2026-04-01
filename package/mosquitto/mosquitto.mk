@@ -158,6 +158,7 @@ HOST_MOSQUITTO_CONF_OPTS = \
 	-DWITH_PLUGINS=OFF \
 	-DWITH_TESTS=OFF \
 	-DWITH_APPS=ON \
+	-DWITH_CTRL_SHELL=OFF \
 	-DWITH_TLS=ON
 
 # Manually install just the one tool we need
