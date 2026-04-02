@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-JANSSON_VERSION = 2.14
+JANSSON_VERSION = 2.15.0
 JANSSON_SOURCE = jansson-$(JANSSON_VERSION).tar.bz2
 JANSSON_SITE = \
 	https://github.com/akheron/jansson/releases/download/v$(JANSSON_VERSION)
