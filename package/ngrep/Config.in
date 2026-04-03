@@ -1,8 +1,12 @@
 config BR2_PACKAGE_NGREP
 	bool "ngrep"
+	depends on BR2_USE_WCHAR
 	select BR2_PACKAGE_LIBPCAP
-	select BR2_PACKAGE_PCRE
+	select BR2_PACKAGE_PCRE2
 	help
 	  Network grep.
 
 	  https://github.com/jpr5/ngrep/
+
+comment "ngrep needs a toolchain w/ wchar"
+	depends on !BR2_USE_WCHAR
