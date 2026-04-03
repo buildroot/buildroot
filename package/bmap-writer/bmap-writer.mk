@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BMAP_WRITER_VERSION = 1.0.2
+BMAP_WRITER_VERSION = 1.0.4
 BMAP_WRITER_SITE = $(call github,embetrix,bmap-writer,$(BMAP_WRITER_VERSION))
 BMAP_WRITER_LICENSE = GPL-3.0
 BMAP_WRITER_LICENSE_FILES = LICENSE
