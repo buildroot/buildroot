@@ -1,4 +1,4 @@
-From a742647efd215b682e4cd26b15ac3e580c10ef9f Mon Sep 17 00:00:00 2001
+From d2fa8df126b533317b4b863758cf579fff3a2b45 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>
 Date: Mon, 16 Feb 2026 13:50:48 +0100
 Subject: [PATCH] Set project as C project in CMakeLists.txt
@@ -53,15 +53,15 @@ test C++ features on the used toolchain.
 [1] https://buildroot.org/
 [2] https://autobuild.buildroot.org/results/1fe550ffa79f0a083a450ae03fe067a8ab7336be/build-end.log
 
-Upstream: https://github.com/OpenSCAP/openscap/pull/2312
-[patch slightly adapted to be applicable on v1.3.12]
+Upstream: https://github.com/OpenSCAP/openscap/commit/bbfb2d7b00cbb8e08d999546734d3ba6ae150736
+[patch slightly adapted to be applicable on v1.4.3]
 Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
 ---
  CMakeLists.txt | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index cb13debb47cf..05b054327951 100644
+index c561116d826c..570812667036 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -8,7 +8,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -71,8 +71,8 @@ index cb13debb47cf..05b054327951 100644
 -project("openscap")
 +project("openscap" C)
  set(OPENSCAP_VERSION_MAJOR "1")
- set(OPENSCAP_VERSION_MINOR "3")
- set(OPENSCAP_VERSION_PATCH "12")
+ set(OPENSCAP_VERSION_MINOR "4")
+ set(OPENSCAP_VERSION_PATCH "3")
 -- 
 2.53.0
 

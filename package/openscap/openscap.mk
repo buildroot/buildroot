@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPENSCAP_VERSION = 1.3.12
+OPENSCAP_VERSION = 1.4.3
 OPENSCAP_SITE = https://github.com/OpenSCAP/openscap/releases/download/$(OPENSCAP_VERSION)
 OPENSCAP_LICENSE = LGPL-2.1+
 OPENSCAP_LICENSE_FILES = COPYING
@@ -17,7 +17,7 @@ OPENSCAP_DEPENDENCIES = \
 	libxml2 \
 	libxmlsec1 \
 	libxslt \
-	pcre
+	pcre2
 
 HOST_OPENSCAP_DEPENDENCIES = \
 	host-pkgconf \
@@ -26,7 +26,7 @@ HOST_OPENSCAP_DEPENDENCIES = \
 	host-libxml2 \
 	host-libxmlsec1 \
 	host-libxslt \
-	host-pcre
+	host-pcre2
 
 OPENSCAP_CONF_OPTS = \
 	-DENABLE_OSCAP_UTIL=ON \
