@@ -14,6 +14,9 @@ NGHTTP2_CPE_ID_VENDOR = nghttp2
 NGHTTP2_DEPENDENCIES = host-pkgconf
 NGHTTP2_CONF_OPTS = --enable-lib-only
 
+# 0001-Fix-missing-iframe-state-validations-to-avoid-assertion-failure.patch
+NGHTTP2_IGNORE_CVES += CVE-2026-27135
+
 define NGHTTP2_INSTALL_CLEAN_HOOK
 	# Remove fetch-ocsp-response script unused by library
 	$(Q)$(RM) -rf $(TARGET_DIR)/usr/share/nghttp2
