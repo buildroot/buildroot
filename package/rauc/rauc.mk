@@ -13,6 +13,9 @@ RAUC_CPE_ID_VENDOR = pengutronix
 RAUC_DEPENDENCIES = host-pkgconf openssl libglib2
 RAUC_CONF_OPTS += -Dtests=false
 
+# 0001-fix-cve-2026-34155.patch
+RAUC_IGNORE_CVES += CVE-2026-34155
+
 ifeq ($(BR2_PACKAGE_RAUC_DBUS),y)
 RAUC_CONF_OPTS += -Dservice=true
 RAUC_DEPENDENCIES += dbus
