@@ -1,0 +1,29 @@
+From 4594ed03e4ced04cb914c8fccad1ffab41cc4ee5 Mon Sep 17 00:00:00 2001
+From: Laurent Bercot <ska-skaware@skarnet.org>
+Date: Wed, 18 Mar 2026 15:45:17 +0000
+Subject:  Some libcs have a char const *strchr()? need to investigate
+
+Upstream: https://git.skarnet.org/cgi-bin/cgit.cgi/mdevd/commit/?id=4594ed03e4ced04cb914c8fccad1ffab41cc4ee5
+
+[Bernd: removed non-related content of the upstream commit]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/mdevd/mdevd.c |  2 +-
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/mdevd/mdevd.c b/src/mdevd/mdevd.c
+index aecd5a7..7df3aaf 100644
+--- a/src/mdevd/mdevd.c
++++ b/src/mdevd/mdevd.c
+@@ -794,7 +794,7 @@ static inline int act_on_event (struct uevent_s const *event, unsigned int actio
+       if (ud->devname)
+       {
+         ud->devname += 9 ;
+-        *strchr(ud->devname, '\n') = 0 ;
++        *(char *)strchr(ud->devname, '\n') = 0 ;
+       }
+     }
+     if (!ud->devname) ud->devname = basename(ud->sysdevpath) ;
+-- 
+cgit v1.2.3-70-g09d2
+
