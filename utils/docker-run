@@ -97,6 +97,17 @@ if [ "${BR2_DL_DIR}" ]; then
     docker_opts+=( --env BR2_DL_DIR )
 fi
 
+# Testing the existence of the variable instead of a non-empty value
+# allows passing an empty BR2_EXTERNAL variable to disable currently
+# set external trees.
+if [ "${BR2_EXTERNAL+set}" ]; then
+    docker_opts+=( --env BR2_EXTERNAL )
+    for br2_ext in ${BR2_EXTERNAL//:/ }; do
+        # bind volume source paths must be absolute
+        mountpoints+=( "$(cd "${br2_ext}" && pwd)" )
+    done
+fi
+
 # shellcheck disable=SC2013 # can't use while-read because of the assignment
 for dir in $(printf '%s\n' "${mountpoints[@]}" |LC_ALL=C sort -u); do
     docker_opts+=( --mount "type=bind,src=${dir},dst=${dir}" )
