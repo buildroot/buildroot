@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SERD_VERSION = 0.30.14
+SERD_VERSION = 0.32.8
 SERD_SITE = https://download.drobilla.net
 SERD_SOURCE = serd-$(SERD_VERSION).tar.xz
 SERD_LICENSE = ISC
