@@ -21,6 +21,8 @@ Fixes:
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Upstream: https://redmine.openinfosecfoundation.org/issues/7008
+[Bernd: rebased for version 8.0.4]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  configure.ac | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
@@ -29,24 +31,23 @@ diff --git a/configure.ac b/configure.ac
 index 232ee9bed..6277cb9b6 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -1219,6 +1219,8 @@
+@ -1263,6 +1263,8 @@
          fi
      fi
  
-+    PKG_CHECK_MODULES([PCAP],libpcap,[CPPFLAGS="${CPPFLAGS} ${PCAP_CFLAGS}" LIBS="${LIBS} ${PCAP_LIBS}"],[:])
++    PKG_CHECK_MODULES([PCAP],libpcap,[CPPFLAGS="${CPPFLAGS} ${PCAP_CFLAGS}" LIBS="${LIBS} ${PCAP_LIBS}" with_pkgconfig_pcap=yes],[with_pkgconfig_pcap=no])
 +
      if test "$have_wpcap" != "yes"; then
          AC_CHECK_LIB(pcap, pcap_open_dead, [], [
              echo
-@@ -1234,8 +1236,6 @@
+@@ -1278,7 +1280,6 @@
          PCAP_LIB_NAME="pcap"
      fi
  
--    PKG_CHECK_MODULES([PCAP],libpcap,[CPPFLAGS="${CPPFLAGS} ${PCAP_CFLAGS}" LIBS="${LIBS} ${PCAP_LIBS}"],[:])
--
-     AC_PATH_PROG(HAVE_PCAP_CONFIG, pcap-config, "no")
-     if test "$HAVE_PCAP_CONFIG" = "no" -o "$cross_compiling" = "yes"; then
-         AC_MSG_RESULT(no pcap-config is use)
+-    PKG_CHECK_MODULES([PCAP],libpcap,[CPPFLAGS="${CPPFLAGS} ${PCAP_CFLAGS}" LIBS="${LIBS} ${PCAP_LIBS}" with_pkgconfig_pcap=yes],[with_pkgconfig_pcap=no])
+     if test "$with_pkgconfig_pcap" != "yes"; then
+         AC_PATH_PROG(HAVE_PCAP_CONFIG, pcap-config, "no")
+         if test "$HAVE_PCAP_CONFIG" = "no" -o "x$cross_compiling" = "xyes"; then
 -- 
 2.43.0
 

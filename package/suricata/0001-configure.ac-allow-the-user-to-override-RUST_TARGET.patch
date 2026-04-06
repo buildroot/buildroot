@@ -8,6 +8,8 @@ When cross-compiling, RUST_TARGET is not always equal to host_triplet
 through RUST_TARGET environment variable
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Bernd: rebased for version 8.0.4]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  configure.ac | 7 ++++++-
  1 file changed, 6 insertions(+), 1 deletion(-)
@@ -16,7 +18,7 @@ diff --git a/configure.ac b/configure.ac
 index 32c230209..7d7c9373f 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -2489,7 +2489,12 @@ fi
+@@ -2146,7 +2146,12 @@ fi
      have_rust_vendor="no"
  
      if test "x$cross_compiling" = "xyes"; then

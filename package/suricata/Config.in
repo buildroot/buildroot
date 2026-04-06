@@ -9,7 +9,7 @@ config BR2_PACKAGE_SURICATA
 	select BR2_PACKAGE_LIBHTP
 	select BR2_PACKAGE_LIBPCAP
 	select BR2_PACKAGE_LIBYAML
-	select BR2_PACKAGE_PCRE
+	select BR2_PACKAGE_PCRE2
 	help
 	  Suricata is a free and open source, mature, fast and robust
 	  network threat detection engine.
@@ -18,7 +18,7 @@ config BR2_PACKAGE_SURICATA
 	  detection (IDS), inline intrusion prevention (IPS), network
 	  security monitoring (NSM) and offline pcap processing.
 
-	  https://suricata-ids.org
+	  https://suricata.io
 
 comment "suricata needs a toolchain w/ wchar, threads"
 	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
