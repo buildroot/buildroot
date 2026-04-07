@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2026.05"
 
+config BR2_PACKAGE_SNORT
+	bool "snort removed"
+	select BR2_LEGACY
+	help
+	  snort was no longer maintained upstream, so it has been
+	  dropped. Look at snort3 for an alternative.
+
 config BR2_PACKAGE_CEGUI
 	bool "cegui"
 	select BR2_LEGACY
