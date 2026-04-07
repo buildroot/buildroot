@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2026.05"
 
+config BR2_PACKAGE_RUBIX
+	bool "rubix removed"
+	select BR2_LEGACY
+	help
+	  Rubix was no longer maintained upstream, so it has
+	  been dropped.
+
 config BR2_PACKAGE_LLAMA_CPP_SERVER
 	bool "llama-cpp option removed"
 	select BR2_PACKAGE_LLAMA_CPP_TOOLS
