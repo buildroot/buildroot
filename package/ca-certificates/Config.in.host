@@ -1,0 +1,12 @@
+config BR2_PACKAGE_HOST_CA_CERTIFICATES
+	bool "Host CA Certificates"
+	help
+	  This package includes PEM files of CA certificates to allow
+	  SSL-based applications to check for the authenticity of SSL
+	  connections on the host.
+
+	  It includes, among others, certificate authorities used by the
+	  Debian infrastructure and those shipped with Mozilla's
+	  browsers.
+
+	  https://salsa.debian.org/debian/ca-certificates
