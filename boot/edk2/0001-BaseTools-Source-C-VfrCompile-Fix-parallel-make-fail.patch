@@ -1,0 +1,48 @@
+From 3d3af4812d29c5527e5a701d2cb7aff671fdc182 Mon Sep 17 00:00:00 2001
+From: Michael D Kinney <michael.d.kinney@intel.com>
+Date: Tue, 24 Feb 2026 21:50:20 -0800
+Subject: [PATCH] BaseTools/Source/C/VfrCompile: Fix parallel make failures
+
+Update makefile rules to run antlr and dlg to completion
+before compiling any of the generated cpp files.
+
+Without this change, parallel make may start compiling some
+of the cpp files before both antlr and dlg have finished
+which produces syntax errors from compilation with partially
+generated files.
+
+Also use &: so the targets are treated as a group and the
+rule is only executed once for the entire group. Without
+this change, parallel make may run the rule actions more
+than once and modify the output while it is being used by
+another rule.
+
+Upstream: https://github.com/tianocore/edk2/commit/9fc0aca51e83afda703963ea177feeb78a125cbc
+Signed-off-by: Michael D Kinney <michael.d.kinney@intel.com>
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ BaseTools/Source/C/VfrCompile/GNUmakefile | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/BaseTools/Source/C/VfrCompile/GNUmakefile b/BaseTools/Source/C/VfrCompile/GNUmakefile
+index b469bd3f30..4f10b1d933 100644
+--- a/BaseTools/Source/C/VfrCompile/GNUmakefile
++++ b/BaseTools/Source/C/VfrCompile/GNUmakefile
+@@ -54,10 +54,11 @@ VfrCompiler.o: ../Include/Common/BuildVersion.h
+ 
+ include $(MAKEROOT)/Makefiles/footer.makefile
+ 
+-VfrSyntax.cpp EfiVfrParser.cpp EfiVfrParser.h VfrParser.dlg VfrTokens.h: Pccts/antlr/antlr VfrSyntax.g
+-	Pccts/antlr/antlr -CC -e3 -ck 3 -k 2 -fl VfrParser.dlg -ft VfrTokens.h -o . VfrSyntax.g
++ANTLR_GEN = VfrSyntax.cpp EfiVfrParser.cpp EfiVfrParser.h VfrParser.dlg VfrTokens.h
++DLG_GEN = VfrLexer.cpp VfrLexer.h
+ 
+-VfrLexer.cpp VfrLexer.h: Pccts/dlg/dlg VfrParser.dlg
++$(ANTLR_GEN) $(DLG_GEN) &: Pccts/antlr/antlr Pccts/dlg/dlg VfrSyntax.g
++	Pccts/antlr/antlr -CC -e3 -ck 3 -k 2 -fl VfrParser.dlg -ft VfrTokens.h -o . VfrSyntax.g
+ 	Pccts/dlg/dlg -C2 -i -CC -cl VfrLexer -o . VfrParser.dlg
+ 
+ Pccts/antlr/antlr:
+-- 
+2.53.0
+
