@@ -1,0 +1,77 @@
+From 218e1b572123f527bd92c17ebb7ac00c2a7e6c01 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Tue, 7 Apr 2026 17:47:40 +0200
+Subject: [PATCH] Introduce compat.h file to deal with old Linux api and fix
+ build failure due to missing NETLINK_EXT_ACK
+
+In compat.h check if NETLINK_EXT_ACK exists, otherwise define it to fix
+build failure and where at the moment <linux/netlink.h> is included
+let's include "compat.h"
+
+Upstream: https://lore.kernel.org/linux-nfs/20260408173535.3992116-2-giulio.benetti@benettiengineering.com/T/#u
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ support/export/cache.c       |  2 +-
+ support/export/cache_flush.c |  2 ++
+ support/include/compat.h     | 10 ++++++++++
+ utils/nfsdctl/nfsdctl.c      |  1 +
+ 4 files changed, 14 insertions(+), 1 deletion(-)
+ create mode 100644 support/include/compat.h
+
+diff --git a/support/export/cache.c b/support/export/cache.c
+index 2f128d7d..65008f51 100644
+--- a/support/export/cache.c
++++ b/support/export/cache.c
+@@ -40,7 +40,7 @@
+ #include <netlink/genl/ctrl.h>
+ #include <netlink/msg.h>
+ #include <netlink/attr.h>
+-#include <linux/netlink.h>
++#include "compat.h"
+ 
+ #ifdef USE_SYSTEM_NFSD_NETLINK_H
+ #include <linux/nfsd_netlink.h>
+diff --git a/support/export/cache_flush.c b/support/export/cache_flush.c
+index ed7b964f..2a24dec7 100644
+--- a/support/export/cache_flush.c
++++ b/support/export/cache_flush.c
+@@ -38,6 +38,8 @@ extern int no_netlink;
+ #include "sunrpc_netlink.h"
+ #endif
+ 
++#include "compat.h"
++
+ static int nl_send_flush(struct nl_sock *sock, int family, int cmd)
+ {
+ 	struct nl_msg *msg;
+diff --git a/support/include/compat.h b/support/include/compat.h
+new file mode 100644
+index 00000000..83229b65
+--- /dev/null
++++ b/support/include/compat.h
+@@ -0,0 +1,10 @@
++#ifndef COMPAT_H
++#define COMPAT_H
++
++#include <linux/netlink.h>
++
++#ifndef NETLINK_EXT_ACK
++#define NETLINK_EXT_ACK 11
++#endif
++
++#endif /* COMPAT_H */
+diff --git a/utils/nfsdctl/nfsdctl.c b/utils/nfsdctl/nfsdctl.c
+index 016dd2eb..c7126748 100644
+--- a/utils/nfsdctl/nfsdctl.c
++++ b/utils/nfsdctl/nfsdctl.c
+@@ -26,6 +26,7 @@
+ #include <netlink/msg.h>
+ #include <netlink/attr.h>
+ #include <linux/netlink.h>
++#include "compat.h"
+ 
+ #include <readline/readline.h>
+ #include <readline/history.h>
+-- 
+2.47.3
+

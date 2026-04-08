@@ -1,0 +1,30 @@
+From dbd44e7d6d4140e5e9d01f0a6daf6f3e45e5acbc Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Wed, 8 Apr 2026 14:28:28 +0200
+Subject: [PATCH] support/backend_sqlite.c: fix getrandom() fallback
+
+In old Linux/Glibc versions __NR_getrandom is defined in <sys/random.h>
+so let's add it to fix build failure.
+
+Upstream: https://lore.kernel.org/linux-nfs/20260408173535.3992116-3-giulio.benetti@benettiengineering.com/T/#u
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ support/reexport/backend_sqlite.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/support/reexport/backend_sqlite.c b/support/reexport/backend_sqlite.c
+index 0eb5ea37..a1e981e4 100644
+--- a/support/reexport/backend_sqlite.c
++++ b/support/reexport/backend_sqlite.c
+@@ -9,6 +9,8 @@
+ #include <string.h>
+ #include <unistd.h>
+ 
++#include <sys/syscall.h>
++
+ #ifdef HAVE_GETRANDOM
+ # include <sys/random.h>
+ # if !defined(SYS_getrandom) && defined(__NR_getrandom)
+-- 
+2.47.3
+

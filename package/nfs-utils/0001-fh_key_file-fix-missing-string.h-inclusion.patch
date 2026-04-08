@@ -1,0 +1,28 @@
+From 2d99ff0aa8a3b4d20558bce742edaaed9d24b3cb Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Tue, 7 Apr 2026 17:23:13 +0200
+Subject: [PATCH] fh_key_file: fix missing string.h inclusion
+
+Add #include <string.h> to fix build failure.
+
+Upstream: https://lore.kernel.org/linux-nfs/20260408173535.3992116-1-giulio.benetti@benettiengineering.com/T/#t
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ support/nfs/fh_key_file.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/support/nfs/fh_key_file.c b/support/nfs/fh_key_file.c
+index 5f5eafc1..81ea1500 100644
+--- a/support/nfs/fh_key_file.c
++++ b/support/nfs/fh_key_file.c
+@@ -26,6 +26,7 @@
+ #include <sys/types.h>
+ #include <unistd.h>
+ #include <errno.h>
++#include <string.h>
+ #include <uuid/uuid.h>
+ 
+ #include "nfslib.h"
+-- 
+2.47.3
+
