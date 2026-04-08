@@ -1,6 +1,7 @@
 config BR2_PACKAGE_EIGEN
 	bool "eigen"
 	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_6 # C++14
 	help
 	  Eigen is a C++ template library for linear algebra: vectors,
 	  matrices, and related algorithms. It is versatile, fast,
@@ -11,7 +12,7 @@ config BR2_PACKAGE_EIGEN
 	  right away. There is no binary to link to. Eigen is a pure
 	  template library defined in the headers.
 
-	  http://eigen.tuxfamily.org/
+	  https://gitlab.com/libeigen/eigen
 
-comment "eigen needs a toolchain w/ C++"
-	depends on !BR2_INSTALL_LIBSTDCPP
+comment "eigen needs a toolchain w/ C++, gcc >= 6"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_GCC_AT_LEAST_6
