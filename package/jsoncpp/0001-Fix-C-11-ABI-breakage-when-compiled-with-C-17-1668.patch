@@ -1,0 +1,192 @@
+From e9e752beacba6ee0fcb7819109229541c8b5a1e2 Mon Sep 17 00:00:00 2001
+From: Jordan Bayles <jophba@chromium.org>
+Date: Tue, 7 Apr 2026 21:58:40 -0700
+Subject: [PATCH] Fix C++11 ABI breakage when compiled with C++17 (#1668)
+
+When JSONCPP_HAS_STRING_VIEW was defined, the library dropped the
+`const char*` and `const String&` overloads for `operator[]`, `get`,
+`removeMember`, and `isMember`, breaking ABI compatibility for projects
+consuming the library with C++11.
+
+This change unconditionally declares and defines the legacy overloads
+so they are always exported, restoring compatibility.
+
+Upstream: https://github.com/open-source-parsers/jsoncpp/pull/1675
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ include/json/value.h        | 15 +++++----------
+ src/lib_json/json_value.cpp | 15 +++++----------
+ 2 files changed, 10 insertions(+), 20 deletions(-)
+
+diff --git a/include/json/value.h b/include/json/value.h
+index f32f456..1369f92 100644
+--- a/include/json/value.h
++++ b/include/json/value.h
+@@ -501,7 +501,7 @@ public:
+   /// that name.
+   /// \param key may contain embedded nulls.
+   const Value& operator[](std::string_view key) const;
+-#else
++#endif
+   /// Access an object value by name, create a null member if it does not exist.
+   /// \note Because of our implementation, keys are limited to 2^30 -1 chars.
+   /// Exceeding that will cause an exception.
+@@ -516,7 +516,6 @@ public:
+   /// that name.
+   /// \param key may contain embedded nulls.
+   const Value& operator[](const String& key) const;
+-#endif
+   /** \brief Access an object value by name, create a null member if it does not
+    * exist.
+    *
+@@ -534,7 +533,7 @@ public:
+   /// Return the member named key if it exist, defaultValue otherwise.
+   /// \note deep copy
+   Value get(std::string_view key, const Value& defaultValue) const;
+-#else
++#endif
+   /// Return the member named key if it exist, defaultValue otherwise.
+   /// \note deep copy
+   Value get(const char* key, const Value& defaultValue) const;
+@@ -542,7 +541,6 @@ public:
+   /// \note deep copy
+   /// \param key may contain embedded nulls.
+   Value get(const String& key, const Value& defaultValue) const;
+-#endif
+   /// Return the member named key if it exist, defaultValue otherwise.
+   /// \note deep copy
+   /// \note key may contain embedded nulls.
+@@ -589,12 +587,11 @@ public:
+   /// \post type() is unchanged
+ #if JSONCPP_HAS_STRING_VIEW
+   void removeMember(std::string_view key);
+-#else
++#endif
+   void removeMember(const char* key);
+   /// Same as removeMember(const char*)
+   /// \param key may contain embedded nulls.
+   void removeMember(const String& key);
+-#endif
+   /** \brief Remove the named map member.
+    *
+    *  Update 'removed' iff removed.
+@@ -603,12 +600,11 @@ public:
+    */
+ #if JSONCPP_HAS_STRING_VIEW
+   bool removeMember(std::string_view key, Value* removed);
+-#else
++#endif
+   bool removeMember(String const& key, Value* removed);
+   /// Same as removeMember(const char* begin, const char* end, Value* removed),
+   /// but 'key' is null-terminated.
+   bool removeMember(const char* key, Value* removed);
+-#endif
+   /// Same as removeMember(String const& key, Value* removed)
+   bool removeMember(const char* begin, const char* end, Value* removed);
+   /** \brief Remove the indexed array element.
+@@ -623,14 +619,13 @@ public:
+   /// Return true if the object has a member named key.
+   /// \param key may contain embedded nulls.
+   bool isMember(std::string_view key) const;
+-#else
++#endif
+   /// Return true if the object has a member named key.
+   /// \note 'key' must be null-terminated.
+   bool isMember(const char* key) const;
+   /// Return true if the object has a member named key.
+   /// \param key may contain embedded nulls.
+   bool isMember(const String& key) const;
+-#endif
+   /// Same as isMember(String const& key)const
+   bool isMember(const char* begin, const char* end) const;
+ 
+diff --git a/src/lib_json/json_value.cpp b/src/lib_json/json_value.cpp
+index 74f7789..953d58e 100644
+--- a/src/lib_json/json_value.cpp
++++ b/src/lib_json/json_value.cpp
+@@ -1200,7 +1200,7 @@ const Value& Value::operator[](std::string_view key) const {
+ Value& Value::operator[](std::string_view key) {
+   return resolveReference(key.data(), key.data() + key.length());
+ }
+-#else
++#endif
+ const Value& Value::operator[](const char* key) const {
+   Value const* found = find(key, key + strlen(key));
+   if (!found)
+@@ -1221,7 +1221,6 @@ Value& Value::operator[](const char* key) {
+ Value& Value::operator[](const String& key) {
+   return resolveReference(key.data(), key.data() + key.length());
+ }
+-#endif
+ 
+ Value& Value::operator[](const StaticString& key) {
+   return resolveReference(key.c_str());
+@@ -1265,14 +1264,13 @@ Value Value::get(char const* begin, char const* end,
+ Value Value::get(std::string_view key, const Value& defaultValue) const {
+   return get(key.data(), key.data() + key.length(), defaultValue);
+ }
+-#else
++#endif
+ Value Value::get(char const* key, Value const& defaultValue) const {
+   return get(key, key + strlen(key), defaultValue);
+ }
+ Value Value::get(String const& key, Value const& defaultValue) const {
+   return get(key.data(), key.data() + key.length(), defaultValue);
+ }
+-#endif
+ 
+ bool Value::removeMember(const char* begin, const char* end, Value* removed) {
+   if (type() != objectValue) {
+@@ -1292,14 +1290,13 @@ bool Value::removeMember(const char* begin, const char* end, Value* removed) {
+ bool Value::removeMember(std::string_view key, Value* removed) {
+   return removeMember(key.data(), key.data() + key.length(), removed);
+ }
+-#else
++#endif
+ bool Value::removeMember(const char* key, Value* removed) {
+   return removeMember(key, key + strlen(key), removed);
+ }
+ bool Value::removeMember(String const& key, Value* removed) {
+   return removeMember(key.data(), key.data() + key.length(), removed);
+ }
+-#endif
+ 
+ #ifdef JSONCPP_HAS_STRING_VIEW
+ void Value::removeMember(std::string_view key) {
+@@ -1312,7 +1309,7 @@ void Value::removeMember(std::string_view key) {
+                      CZString::noDuplication);
+   value_.map_->erase(actualKey);
+ }
+-#else
++#endif
+ void Value::removeMember(const char* key) {
+   JSON_ASSERT_MESSAGE(type() == nullValue || type() == objectValue,
+                       "in Json::Value::removeMember(): requires objectValue");
+@@ -1323,7 +1320,6 @@ void Value::removeMember(const char* key) {
+   value_.map_->erase(actualKey);
+ }
+ void Value::removeMember(const String& key) { removeMember(key.c_str()); }
+-#endif
+ 
+ bool Value::removeIndex(ArrayIndex index, Value* removed) {
+   if (type() != arrayValue) {
+@@ -1357,14 +1353,13 @@ bool Value::isMember(char const* begin, char const* end) const {
+ bool Value::isMember(std::string_view key) const {
+   return isMember(key.data(), key.data() + key.length());
+ }
+-#else
++#endif
+ bool Value::isMember(char const* key) const {
+   return isMember(key, key + strlen(key));
+ }
+ bool Value::isMember(String const& key) const {
+   return isMember(key.data(), key.data() + key.length());
+ }
+-#endif
+ 
+ Value::Members Value::getMemberNames() const {
+   JSON_ASSERT_MESSAGE(
+-- 
+2.47.3
+
