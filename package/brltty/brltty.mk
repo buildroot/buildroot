@@ -95,9 +95,6 @@ endif
 ifeq ($(BR2_PACKAGE_PCRE2_32),y)
 BRLTTY_DEPENDENCIES += pcre2
 BRLTTY_CONF_OPTS += --with-rgx-package
-else ifeq ($(BR2_PACKAGE_PCRE_32),y)
-BRLTTY_DEPENDENCIES += pcre
-BRLTTY_CONF_OPTS += --with-rgx-package
 else
 BRLTTY_CONF_OPTS += --without-rgx-package
 endif
