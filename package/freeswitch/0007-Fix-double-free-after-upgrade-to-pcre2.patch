@@ -1,0 +1,27 @@
+From 02549c10d9155d0f71f36289aeeddc9c73a4d46e Mon Sep 17 00:00:00 2001
+From: Andrey Volk <andywolk@gmail.com>
+Date: Thu, 13 Nov 2025 17:42:04 +0300
+Subject: [PATCH] [mod_dialplan_xml] Fix double free after upgrade to pcre2.
+ (#2946)
+
+Upstream: https://github.com/signalwire/freeswitch/commit/02549c10d9155d0f71f36289aeeddc9c73a4d46e
+
+[backported only second part of upstream commit, the first part is
+ already included in patch 0006]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/mod/dialplans/mod_dialplan_xml/mod_dialplan_xml.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/mod/dialplans/mod_dialplan_xml/mod_dialplan_xml.c b/src/mod/dialplans/mod_dialplan_xml/mod_dialplan_xml.c
+index 3d3fdfd8a93..cab522887c4 100644
+--- a/src/mod/dialplans/mod_dialplan_xml/mod_dialplan_xml.c
++++ b/src/mod/dialplans/mod_dialplan_xml/mod_dialplan_xml.c
+@@ -357,6 +357,7 @@ static int parse_exten(switch_core_session_t *session, switch_caller_profile_t *
+ 					save_proceed = proceed;
+ 
+ 					re = NULL;
++					match_data = NULL;
+ 				}
+ 
+ 				switch_regex_and_match_data_safe_free(re, match_data);
