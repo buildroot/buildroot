@@ -325,6 +325,7 @@ def cyclonedx_external_refs(comp):
         dict: External reference information in CycloneDX format, or empty dict
     """
     SOURCE_DIST_SCHEMES = {"http", "https"}
+    VCS_SCHEMES = {"git", "svn", "cvs", "hg", "bzr"}
 
     refs = []
     for download in comp.get("downloads", []):
@@ -334,6 +335,13 @@ def cyclonedx_external_refs(comp):
                 refs.append({
                     "type": "source-distribution",
                     "url": f"{uri}/{source}",
+                    **cyclonedx_source_hashes(comp, source),
+                })
+            elif set(schemes) & VCS_SCHEMES:
+                refs.append({
+                    "type": "vcs",
+                    "url": uri,
+                    "comment": f"{schemes[0]} repository",
                     **cyclonedx_source_hashes(comp, source),
                 })
     if refs:
