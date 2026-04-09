@@ -147,6 +147,8 @@ class TestGenerateCycloneDX(unittest.TestCase):
             {
                 "source": "foo-1.2.tar.gz",
                 "uris": [
+                    "git+git://git.example.org/foo",
+                    "svn+https://svn.example.org/foo",
                     "https+https://sources.buildroot.net/foo",
                     "http|https+https://mirror.example.org/foo",
                 ],
@@ -161,9 +163,19 @@ class TestGenerateCycloneDX(unittest.TestCase):
             foo["externalReferences"],
             [
                 {
+                    "type": "vcs",
+                    "url": "git://git.example.org/foo",
+                    "comment": "git repository",
+                },
+                {
+                    "type": "vcs",
+                    "url": "https://svn.example.org/foo",
+                    "comment": "svn repository",
+                },
+                {
                     "type": "source-distribution",
                     "url": "https://mirror.example.org/foo/foo-1.2.tar.gz",
-                },
+                }
             ],
         )
 
@@ -183,6 +195,7 @@ class TestGenerateCycloneDX(unittest.TestCase):
                 {
                     "source": "foo-1.2.tar.gz",
                     "uris": [
+                        "git+git://git.example.org/foo",
                         "http|https+https://mirror.example.org/foo",
                     ],
                 },
@@ -194,6 +207,21 @@ class TestGenerateCycloneDX(unittest.TestCase):
         self.assertEqual(
             foo["externalReferences"],
             [
+                {
+                    "type": "vcs",
+                    "url": "git://git.example.org/foo",
+                    "comment": "git repository",
+                    "hashes": [
+                        {
+                            "alg": "SHA-256",
+                            "content": "1111111111111111111111111111111111111111111111111111111111111111",
+                        },
+                        {
+                            "alg": "SHA-1",
+                            "content": "2222222222222222222222222222222222222222",
+                        },
+                    ]
+                },
                 {
                     "type": "source-distribution",
                     "url": "https://mirror.example.org/foo/foo-1.2.tar.gz",
