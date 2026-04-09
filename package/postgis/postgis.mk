@@ -33,8 +33,8 @@ else
 POSTGIS_CONF_OPTS += --without-raster
 endif
 
-ifeq ($(BR2_PACKAGE_PCRE),y)
-POSTGIS_DEPENDENCIES += pcre
+ifeq ($(BR2_PACKAGE_PCRE2),y)
+POSTGIS_DEPENDENCIES += pcre2
 endif
 
 ifeq ($(BR2_PACKAGE_PROTOBUF_C),y)
