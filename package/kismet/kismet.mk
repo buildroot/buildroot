@@ -74,9 +74,6 @@ endif
 ifeq ($(BR2_PACKAGE_PCRE2),y)
 KISMET_DEPENDENCIES += pcre2
 KISMET_CONF_OPTS += --enable-pcre --enable-require-pcre2
-else ifeq ($(BR2_PACKAGE_PCRE),y)
-KISMET_DEPENDENCIES += pcre
-KISMET_CONF_OPTS += --enable-pcre --disable-require-pcre2
 else
 KISMET_CONF_OPTS += --disable-pcre
 endif
