@@ -14,6 +14,8 @@ ZSH_LICENSE = MIT-like
 ZSH_LICENSE_FILES = LICENCE
 ZSH_CPE_ID_VENDOR = zsh
 # 0001-52383-Avoid-incompatible-pointer-types-in-terminfo-global-variable.patch
+# 0003-51723-migrate-pcre-module-to-pcre2.patch
+# 0004-51877-do-not-build-pcre-module-if-pcre2-config-is-no.patch
 ZSH_AUTORECONF = YES
 
 # zsh uses TRY_RUN to determine these
@@ -38,10 +40,10 @@ else
 ZSH_CONF_OPTS += --disable-cap
 endif
 
-ifeq ($(BR2_PACKAGE_PCRE),y)
+ifeq ($(BR2_PACKAGE_PCRE2),y)
 ZSH_CONF_OPTS += --enable-pcre
-ZSH_CONF_ENV += ac_cv_prog_PCRECONF=$(STAGING_DIR)/usr/bin/pcre-config
-ZSH_DEPENDENCIES += pcre
+ZSH_CONF_ENV += ac_cv_prog_PCRE_CONFIG=$(STAGING_DIR)/usr/bin/pcre2-config
+ZSH_DEPENDENCIES += pcre2
 else
 ZSH_CONF_OPTS += --disable-pcre
 endif
