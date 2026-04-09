@@ -7,6 +7,8 @@ Subject: [PATCH] Required fixes to compile and run under cygwin
 https://github.com/c-icap/c-icap-server/commit/1631a6c1f50e152b8a45d8279c96086e5636795b,
 which has the side effect of fixing the build with the musl C library]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[Bernd: rebased for 0.5.14]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  Makefile.am                 |  2 +-
  configure.ac                | 10 +++++++---
@@ -26,13 +28,13 @@ index 4c34033..ab80f4f 100644
 --- a/Makefile.am
 +++ b/Makefile.am
 @@ -53,7 +53,7 @@ c_icap_SOURCES = aserver.c request.c cfg_param.c \
- libicapapi_la_CFLAGS= $(INVISIBILITY_CFLAG) -I$(srcdir)/include/ -Iinclude/ @ZLIB_ADD_FLAG@ @OPENSSL_ADD_FLAG@ @BZLIB_ADD_FLAG@ @BROTLI_ADD_FLAG@ @PCRE_ADD_FLAG@ -DCI_BUILD_LIB
+ libicapapi_la_CFLAGS= $(INVISIBILITY_CFLAG) -I$(srcdir)/include/ -Iinclude/ @ZLIB_ADD_FLAG@ @OPENSSL_ADD_FLAG@ @BZLIB_ADD_FLAG@ @BROTLI_ADD_FLAG@ @ZSTD_ADD_FLAG@ @PCRE_ADD_FLAG@ -DCI_BUILD_LIB
  
- libicapapi_la_LIBADD = @ZLIB_ADD_LDADD@ @BZLIB_ADD_LDADD@ @BROTLI_ADD_LDADD@ @PCRE_ADD_LDADD@ @DL_ADD_FLAG@ @THREADS_LDADD@ @OPENSSL_ADD_LDADD@
+ libicapapi_la_LIBADD = @ZLIB_ADD_LDADD@ @BZLIB_ADD_LDADD@ @BROTLI_ADD_LDADD@ @ZSTD_ADD_LDADD@ @PCRE_ADD_LDADD@ @DL_ADD_FLAG@ @THREADS_LDADD@ @OPENSSL_ADD_LDADD@
 -libicapapi_la_LDFLAGS= -shared -version-info @CICAPLIB_VERSION@ @THREADS_LDFLAGS@
 +libicapapi_la_LDFLAGS= -shared -version-info @CICAPLIB_VERSION@ @LIBS_LDFLAGS@ @THREADS_LDFLAGS@
  
- export EXT_PROGRAMS_MKLIB = @ZLIB_LNDIR_LDADD@ @BZLIB_LNDIR_LDADD@ @BROTLI_LNDIR_LDADD@ @PCRE_LNDIR_LDADD@ @OPENSSL_LNDIR_LDADD@
+ export EXT_PROGRAMS_MKLIB = @ZLIB_LNDIR_LDADD@ @BZLIB_LNDIR_LDADD@ @BROTLI_LNDIR_LDADD@ @ZSTD_LNDIR_LDADD@ @PCRE_LNDIR_LDADD@ @OPENSSL_LNDIR_LDADD@
  
 diff --git a/configure.ac b/configure.ac
 index 405571b..8059cb7 100644

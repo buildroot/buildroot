@@ -11,10 +11,11 @@ Reported with PR#72 at github:
 
 Upstream: 48a221b0197727b26f90c00544fa19c67d0f5d47
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+[Bernd: rebased for 0.5.14]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  http_auth.c      | 2 +-
- include/module.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/http_auth.c b/http_auth.c
 index 1883b55..b831bb1 100644
@@ -29,19 +30,6 @@ index 1883b55..b831bb1 100644
      int len, res;
  
      if (ALLOW_REMOTE_PROXY_USERS && !use_method) {
-diff --git a/include/module.h b/include/module.h
-index 286ef72..0e57586 100644
---- a/include/module.h
-+++ b/include/module.h
-@@ -96,7 +96,7 @@ typedef struct http_auth_method {
-     void *(*create_auth_data)(const char *authorization_header,const char **username);
-     void (*release_auth_data)(void *data);
-     char *(*authentication_header)();
--    void (*release_authentication_header)();
-+    void (*release_authentication_header)(char *);
-     struct ci_conf_entry *conf_table;
- } http_auth_method_t;
- 
 -- 
 2.51.0
 
