@@ -10,7 +10,7 @@ SLANG_SITE = http://www.jedsoft.org/releases/slang
 SLANG_LICENSE = GPL-2.0+
 SLANG_LICENSE_FILES = COPYING
 SLANG_INSTALL_STAGING = YES
-SLANG_CONF_OPTS = --with-onig=no
+SLANG_CONF_OPTS = --with-onig=no --with-pcre=no
 SLANG_MAKE = $(MAKE1)
 
 # Racy and we don't have/do libtermcap
@@ -25,12 +25,6 @@ SLANG_CONF_OPTS += --with-png=$(STAGING_DIR)/usr
 SLANG_DEPENDENCIES += libpng
 else
 SLANG_CONF_OPTS += --with-png=no
-endif
-ifeq ($(BR2_PACKAGE_PCRE),y)
-SLANG_CONF_OPTS += --with-pcre=$(STAGING_DIR)/usr
-SLANG_DEPENDENCIES += pcre
-else
-SLANG_CONF_OPTS += --with-pcre=no
 endif
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 SLANG_CONF_OPTS += --with-z=$(STAGING_DIR)/usr
