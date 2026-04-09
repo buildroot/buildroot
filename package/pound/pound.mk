@@ -19,9 +19,6 @@ POUND_CONF_OPTS += --enable-pcre=2
 POUND_CONF_ENV += \
 	ac_cv_path_PCRE2_CONFIG=$(STAGING_DIR)/usr/bin/pcre2-config
 POUND_DEPENDENCIES += pcre2
-else ifeq ($(BR2_PACKAGE_PCRE),y)
-POUND_CONF_OPTS += --enable-pcre=1
-POUND_DEPENDENCIES += pcre
 else
 POUND_CONF_OPTS += --disable-pcre
 endif
