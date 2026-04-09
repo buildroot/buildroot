@@ -59,11 +59,6 @@ HAPROXY_DEPENDENCIES += pcre2
 HAPROXY_MAKE_OPTS += \
 	PCRE2_CONFIG=$(STAGING_DIR)/usr/bin/pcre2-config \
 	USE_PCRE2=1
-else ifeq ($(BR2_PACKAGE_PCRE),y)
-HAPROXY_DEPENDENCIES += pcre
-HAPROXY_MAKE_OPTS += \
-	PCRE_CONFIG=$(STAGING_DIR)/usr/bin/pcre-config \
-	USE_PCRE=1
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
