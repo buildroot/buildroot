@@ -13,7 +13,7 @@ AIRCRACK_NG_DEPENDENCIES = \
 	$(if $(BR2_PACKAGE_CMOCKA),cmocka) \
 	$(if $(BR2_PACKAGE_LIBNL),libnl) \
 	$(if $(BR2_PACKAGE_OPENSSL),openssl) \
-	$(if $(BR2_PACKAGE_PCRE),pcre) \
+	$(if $(BR2_PACKAGE_PCRE2),pcre2) \
 	$(if $(BR2_PACKAGE_ZLIB),zlib) \
 	host-pkgconf
 AIRCRACK_NG_AUTORECONF = YES
