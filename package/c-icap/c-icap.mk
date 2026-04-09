@@ -13,6 +13,7 @@ C_ICAP_CPE_ID_VALID = YES
 C_ICAP_INSTALL_STAGING = YES
 C_ICAP_CONFIG_SCRIPTS = c-icap-config c-icap-libicapapi-config
 C_ICAP_CONF_OPTS = \
+	--without-pcre \
 	--without-perl \
 	--without-zstd \
 	--enable-large-files \
@@ -63,11 +64,11 @@ else
 C_ICAP_CONF_OPTS += --without-openssl
 endif
 
-ifeq ($(BR2_PACKAGE_PCRE),y)
-C_ICAP_CONF_OPTS += --with-pcre
-C_ICAP_DEPENDENCIES += pcre
+ifeq ($(BR2_PACKAGE_PCRE2),y)
+C_ICAP_CONF_OPTS += --with-pcre2
+C_ICAP_DEPENDENCIES += pcre2
 else
-C_ICAP_CONF_OPTS += --without-pcre
+C_ICAP_CONF_OPTS += --without-pcre2
 endif
 
 ifeq ($(BR2_PACKAGE_ZLIB),y)

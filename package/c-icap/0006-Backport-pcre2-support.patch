@@ -1,0 +1,569 @@
+From: Boyuan Yang <byang@debian.org>
+Date: Sat, 29 Jul 2023 19:13:16 -0400
+Subject: Backport pcre2 support
+
+Bug-Debian: https://bugs.debian.org/1000077
+Upstream: https://github.com/c-icap/c-icap-server/commit/888a98ff382d782729f000876b4e81f08d9046d3
+
+Downloaded from
+https://sources.debian.org/src/c-icap/1%3A0.5.10-7/debian/patches/0005-Backport-pcre2-support.patch
+
+[Bernd: rebased for 0.5.14]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ Makefile.am        |  16 +++-
+ aserver.c          |   2 +
+ configure.ac       |  51 ++++++++++++-
+ include/ci_regex.h |  43 ++++++++++-
+ regex.c            | 210 ++++++++++++++++++++++++++++++++++++++++++++++++-----
+ types_ops.c        |   4 +-
+ 6 files changed, 296 insertions(+), 30 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index acfa0d0..ebdf51c 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -22,11 +22,23 @@ bin_PROGRAMS = c-icap
+ 
+ bin_SCRIPTS = c-icap-config c-icap-libicapapi-config
+ 
++UTIL_FLAGS=
++UTIL_LDADD=
+ UTIL_LIB_SOURCES=net_io.c util.c os/unix/net_io.c os/unix/proc_mutex.c os/unix/shared_mem.c os/unix/threads.c os/unix/utilfunc.c os/unix/dlib.c
+ if USE_OPENSSL
+ UTIL_LIB_SOURCES += openssl/net_io_ssl.c
+ endif
++
+ if USE_REGEX
++if USE_PCRE2
++UTIL_FLAGS += @PCRE2_ADD_FLAG@
++UTIL_LDADD += @PCRE2_ADD_LDADD@
++endif
++if USE_PCRE
++UTIL_FLAGS += @PCRE_ADD_FLAG@
++UTIL_LDADD += @PCRE_ADD_LDADD@
++endif
++
+ UTIL_LIB_SOURCES += regex.c
+ endif
+ UTIL_SOURCES=os/unix/proc_utils.c
+@@ -50,9 +62,9 @@ c_icap_SOURCES = aserver.c request.c cfg_param.c \
+ 
+ 
+ # libicapapi ......
+-libicapapi_la_CFLAGS= $(INVISIBILITY_CFLAG) -I$(srcdir)/include/ -Iinclude/ @ZLIB_ADD_FLAG@ @OPENSSL_ADD_FLAG@ @BZLIB_ADD_FLAG@ @BROTLI_ADD_FLAG@ @ZSTD_ADD_FLAG@ @PCRE_ADD_FLAG@ -DCI_BUILD_LIB
++libicapapi_la_CFLAGS= $(INVISIBILITY_CFLAG) -I$(srcdir)/include/ -Iinclude/ @ZLIB_ADD_FLAG@ @OPENSSL_ADD_FLAG@ @BZLIB_ADD_FLAG@ @BROTLI_ADD_FLAG@ @ZSTD_ADD_FLAG@ $(UTIL_FLAG) -DCI_BUILD_LIB
+ 
+-libicapapi_la_LIBADD = @ZLIB_ADD_LDADD@ @BZLIB_ADD_LDADD@ @BROTLI_ADD_LDADD@ @ZSTD_ADD_LDADD@ @PCRE_ADD_LDADD@ @DL_ADD_FLAG@ @THREADS_LDADD@ @OPENSSL_ADD_LDADD@
++libicapapi_la_LIBADD = @ZLIB_ADD_LDADD@ @BZLIB_ADD_LDADD@ @BROTLI_ADD_LDADD@ @ZSTD_ADD_LDADD@ $(UTIL_LDADD) @DL_ADD_FLAG@ @THREADS_LDADD@ @OPENSSL_ADD_LDADD@
+ libicapapi_la_LDFLAGS= -shared -version-info @CICAPLIB_VERSION@ @LIBS_LDFLAGS@ @THREADS_LDFLAGS@
+ 
+ export EXT_PROGRAMS_MKLIB = @ZLIB_LNDIR_LDADD@ @BZLIB_LNDIR_LDADD@ @BROTLI_LNDIR_LDADD@ @ZSTD_LNDIR_LDADD@ @PCRE_LNDIR_LDADD@ @OPENSSL_LNDIR_LDADD@
+diff --git a/aserver.c b/aserver.c
+index 9eaa609..990be9d 100644
+--- a/aserver.c
++++ b/aserver.c
+@@ -29,6 +29,7 @@
+ #endif
+ #include "txtTemplate.h"
+ #include "commands.h"
++#include "ci_regex.h"
+ 
+ /*
+ extern char *PIDFILE;
+@@ -142,6 +143,7 @@ int main(int argc, char **argv)
+     }
+     ci_txt_template_init();
+     ci_txt_template_set_dir(DATADIR"templates");
++    ci_regex_memory_init();
+     commands_init();
+ 
+     if (!(CI_CONF.MAGIC_DB = ci_magic_db_load(CI_CONF.magics_file))) {
+diff --git a/configure.ac b/configure.ac
+index 2144011..08a937f 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -246,6 +246,7 @@ AC_ARG_ENABLE(rpath,
+ #Routines used for checking libraries
+ AC_DEFUN([ICFG_STATE_SAVE],[
+ #save state
++ICFG_OLD_CPPFLAGS=$CPPFLAGS
+ ICFG_OLD_CFLAGS=$CFLAGS
+ ICFG_OLD_LDFLAGS=$LDFLAGS
+ ICFG_OLD_LIBS=$LIBS
+@@ -253,7 +254,8 @@ ICFG_OLD_LIBS=$LIBS
+ 
+ #Routines used for checking libraries
+ AC_DEFUN([ICFG_STATE_ROLLBACK],[
+-#save state
++#rollback saved state
++CPPFLAGS=$ICFG_OLD_CPPFLAGS
+ CFLAGS=$ICFG_OLD_CFLAGS
+ LDFLAGS=$ICFG_OLD_LDFLAGS
+ LIBS=$ICFG_OLD_LIBS
+@@ -650,6 +652,45 @@ if test a"$libmemcached" != "ano"; then
+     ICFG_STATE_ROLLBACK
+ fi
+ 
++# Check for PCRE2 regex library
++AC_ARG_WITH(pcre2,
++[       --with-pcre2     Path to PCRE2 library],
++[
++case "$withval" in
++     yes)
++        pcre2=yes;
++     ;;
++     no)
++        pcre2=no;
++     ;;
++     *)
++        pcre2=yes;
++        pcre2path=$withval;
++     ;;
++     esac
++],
++[ pcre2=yes]
++)
++
++if test a"$pcre2" != "ano"; then
++   ICFG_STATE_SAVE(PCRE2)
++   CPPFLAGS="$CPPFLAGS -DPCRE2_CODE_UNIT_WIDTH=8"
++   if test "a$pcre2path" != "a"; then
++       CFLAGS="$CFLAGS -I$pcre2path/include"
++       LDFLAGS="$LDFLAGS -L$pcre2path/lib"
++   fi
++   AC_CHECK_HEADERS(pcre2.h,
++                    AC_CHECK_LIB(pcre2-8, pcre2_match_8,[pcre2=yes],[pcre2=no]),
++                    [pcre2=no]
++   )
++
++   if test "a$pcre2" = "ayes"; then
++       AC_DEFINE(HAVE_PCRE2,1,[Define HAVE_PCRE2 if pcre2 installed])
++       ICFG_BUILD_FLAGS(PCRE2, "$pcre2path", "-lpcre2-8")
++   fi
++   ICFG_STATE_ROLLBACK
++fi
++
+ # Check for PCRE regex library
+ AC_ARG_WITH(pcre,
+ [       --with-pcre     Path to PCRE library],
+@@ -670,7 +711,7 @@ case "$withval" in
+ [ pcre=yes]
+ )
+ 
+-if test a"$pcre" != "ano"; then
++if test a"$pcre" != "ano" -a a"$pcre2" != "ayes"; then
+    ICFG_STATE_SAVE(PCRE)
+    if test "a$pcrepath" != "a"; then
+        CFLAGS="$CFLAGS -I$pcrepath/include"
+@@ -714,7 +755,7 @@ AC_CHECK_HEADERS(regex.h,
+   )
+ 
+ USE_REGEX=0
+-if test "a$pcre" = "ayes" -o "a$posix_regex" = "ayes"; then
++if test "a$pcre2" = "ayes" -o "a$pcre" = "ayes" -o "a$posix_regex" = "ayes"; then
+    USE_REGEX=1
+ fi
+ AC_SUBST(USE_REGEX)
+@@ -1001,7 +1042,9 @@ AM_CONDITIONAL(ISCYGWIN,[test a"$iscygwin" != a])
+ # Now determine which modules will going to build .....
+ 
+ AM_CONDITIONAL(USE_OPENSSL, [test a"$openssl" != "ano"])
+-AM_CONDITIONAL(USE_REGEX, [test a"$pcre" = "ayes" -o a"$posix_regex" = "ayes"])
++AM_CONDITIONAL(USE_PCRE2, [test a"$pcre2" = "ayes"])
++AM_CONDITIONAL(USE_PCRE, [test a"$pcre" = "ayes"])
++AM_CONDITIONAL(USE_REGEX, [test a"$pcre2" = "ayes" -o a"$pcre" = "ayes" -o a"$posix_regex" = "ayes"])
+ AM_CONDITIONAL(USEPERL,[test a"$perlcore" != a])
+ AM_CONDITIONAL(USEBDB,   [test a"$libdb" != ano])
+ AM_CONDITIONAL(USELDAP, [test a"$libldap" != ano])
+diff --git a/include/ci_regex.h b/include/ci_regex.h
+index 27afc9c..df7b77a 100644
+--- a/include/ci_regex.h
++++ b/include/ci_regex.h
+@@ -33,18 +33,57 @@ struct ci_regex_match {
+     size_t s;
+     size_t e;
+ };
+-typedef struct ci_regex_match ci_regex_matches_t[10];
++#define CI_REGEX_SUBMATCHES 10
++typedef struct ci_regex_match ci_regex_matches_t[CI_REGEX_SUBMATCHES];
+ typedef struct ci_regex_replace_part {
+     const void *user_data;
+     ci_regex_matches_t matches;
+ } ci_regex_replace_part_t;
+ 
+-#define ci_regex_create_match_list() ci_list_create(32768, sizeof(ci_regex_replace_part_t))
++/**
++ \brief Builds a regex match list to store regex matches.
++ * The regex match list is a ci_list_t object which stores ci_regex_replace_part
++ * objects as items.
++ \ingroup UTILITY
++ */
++#define ci_regex_create_match_list() ci_list_create(1024, sizeof(ci_regex_replace_part_t))
++
++/**
++  \brief Parses a regex expresion having the form /regex/flags
++  \ingroup UTILITY
++  *
++ */
+ CI_DECLARE_FUNC(char *) ci_regex_parse(const char *str, int *flags, int *recursive);
++
++/**
++  \brief Compiles a regex expresion into an internal form.
++  \param regex_str The regex string normally returned by ci_regex_parse function
++  \param regex_flags The regex flags built using the ci_regex_parse
++  \ingroup UTILITY
++ */
+ CI_DECLARE_FUNC(ci_regex_t) ci_regex_build(const char *regex_str, int regex_flags);
++
++/**
++ * Releases objects built using the ci_regex_build
++ \ingroup UTILITY
++ */
+ CI_DECLARE_FUNC(void) ci_regex_free(ci_regex_t regex);
++
++/**
++ * Matchs a compiled regex expresion of type ci_regex_t  against the given string.
++ \param regex The compiled regex expresion
++ \param str The string to match against
++ \param len The str string length. For '\0' terminated strings set it to -1
++ \param recurs If it is not NULL matches recursivelly
++ \param matches The regex match list to store matches. It can be NULL
++ \param user_data pointer to user data to store with matches in rege match list.
++ \ingroup UTILITY
++ */
+ CI_DECLARE_FUNC(int) ci_regex_apply(const ci_regex_t regex, const char *str, int len, int recurs, ci_list_t *matches, const void *user_data);
+ 
++
++CI_DECLARE_FUNC(void) ci_regex_memory_init();
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff --git a/regex.c b/regex.c
+index 82277df..de9b387 100644
+--- a/regex.c
++++ b/regex.c
+@@ -1,14 +1,107 @@
+ #include "common.h"
+ #include "debug.h"
+ #include "array.h"
++#include "mem.h"
+ #include "ci_regex.h"
+ 
+-#ifdef HAVE_PCRE
++#if defined(HAVE_PCRE2)
++#define PCRE2_CODE_UNIT_WIDTH 8 // TODO: make it configurable via configure
++#include <pcre2.h>
++#elif defined(HAVE_PCRE)
+ #include <pcre.h>
+ #else
+ #include <regex.h>
+ #endif
+ 
++#if defined(HAVE_PCRE2)
++pcre2_general_context *pcre2GenContext = NULL;
++pcre2_match_context *pcre2MatchContext = NULL;
++
++void *pcre2_malloc(PCRE2_SIZE size, void *udata)
++{
++    void *p = ci_buffer_alloc(size);
++    return p;
++}
++
++void pcre2_free(void *p, void *udata)
++{
++    ci_buffer_free(p);
++}
++
++struct {
++    char *name;
++    uint32_t flag;
++} pcre2_flags[] = {
++    {"ANCHORED", 0x80000000u},
++    {"NO_UTF_CHECK", 0x40000000u},
++    {"ENDANCHORED", 0x20000000u},
++    {"ALLOW_EMPTY_CLASS", 0x00000001u},
++    {"ALT_BSUX", 0x00000002u},
++    {"AUTO_CALLOUT", 0x00000004u},
++    {"CASELESS", 0x00000008u},
++    {"DOLLAR_ENDONLY", 0x00000010u},
++    {"DOTALL", 0x00000020u},
++    {"DUPNAMES", 0x00000040u},
++    {"EXTENDED", 0x00000080u},
++    {"FIRSTLINE", 0x00000100u},
++    {"MATCH_UNSET_BACKREF", 0x00000200u},
++    {"MULTILINE", 0x00000400u},
++    {"NEVER_UCP", 0x00000800u},
++    {"NEVER_UTF", 0x00001000u},
++    {"NO_AUTO_CAPTURE", 0x00002000u},
++    {"NO_AUTO_POSSESS", 0x00004000u},
++    {"NO_DOTSTAR_ANCHOR", 0x00008000u},
++    {"NO_START_OPTIMIZE", 0x00010000u},
++    {"UCP", 0x00020000u},
++    {"UNGREEDY", 0x00040000u},
++    {"UTF", 0x00080000u},
++    {"NEVER_BACKSLASH_C", 0x00100000u},
++    {"ALT_CIRCUMFLEX", 0x00200000u},
++    {"ALT_VERBNAMES", 0x00400000u},
++    {"USE_OFFSET_LIMIT", 0x00800000u},
++    {"EXTENDED_MORE", 0x01000000u},
++    {"LITERAL", 0x02000000u},
++    {"MATCH_INVALID_UTF", 0x04000000u},
++    {NULL, 0}
++};
++
++int pcre2_flag_parse(const char **f)
++{
++    const char *s = (*f);
++    if (*s != '<')
++        return 0;
++    s++;
++    const char *e = strchr(s, '>');
++    if (e)
++        *f = e;
++    else {
++        e = s + strlen(s);
++        *f = e - 1;
++    }
++    size_t len = e - s;
++    e--;
++    if (!len)
++        return 0;
++
++    int i;
++    for (i = 0; pcre2_flags[i].name != NULL; i++) {
++        if (strncmp(pcre2_flags[i].name, s, len) == 0)
++            return pcre2_flags[i].flag;
++    }
++    return 0;
++}
++
++#endif
++
++void ci_regex_memory_init()
++{
++#if defined(HAVE_PCRE2)
++    pcre2GenContext = pcre2_general_context_create(pcre2_malloc, pcre2_free,  NULL);
++    pcre2MatchContext = pcre2_match_context_create(pcre2GenContext);
++#endif
++}
++
++
+ 
+ char *ci_regex_parse(const char *str, int *flags, int *recursive)
+ {
+@@ -29,7 +122,10 @@ char *ci_regex_parse(const char *str, int *flags, int *recursive)
+     s[slen] = '\0';
+ 
+     *flags = 0;
+-#ifdef HAVE_PCRE
++#if defined(HAVE_PCRE2)
++    *flags |= PCRE2_NEWLINE_ANY;
++    *flags |= PCRE2_NEWLINE_ANYCRLF;
++#elif defined(HAVE_PCRE)
+     *flags |= PCRE_NEWLINE_ANY;
+     *flags |= PCRE_NEWLINE_ANYCRLF;
+ #else
+@@ -38,7 +134,27 @@ char *ci_regex_parse(const char *str, int *flags, int *recursive)
+ #endif
+ 
+     while (*e != '\0') {
+-#ifdef HAVE_PCRE
++#if defined(HAVE_PCRE2)
++        if (*e == 'i')
++            *flags = *flags | PCRE2_CASELESS;
++        else if (*e == 'm')
++            *flags |= PCRE2_MULTILINE;
++        else if (*e == 's')
++            *flags |= PCRE2_DOTALL;
++        else if (*e == 'x')
++            *flags |= PCRE2_EXTENDED;
++        else if (*e == 'A')
++            *flags |= PCRE2_ANCHORED;
++        else if (*e == 'D')
++            *flags |= PCRE2_DOLLAR_ENDONLY;
++        else if (*e == 'U')
++            *flags |= PCRE2_UNGREEDY;
++        else if (*e == 'u')
++            *flags |= PCRE2_UTF | PCRE2_UCP;
++        else if (*e == '<') {
++            *flags |= pcre2_flag_parse(&e);
++        }
++#elif defined(HAVE_PCRE)
+         if (*e == 'i')
+             *flags = *flags | PCRE_CASELESS;
+         else if (*e == 'm')
+@@ -74,7 +190,19 @@ char *ci_regex_parse(const char *str, int *flags, int *recursive)
+ 
+ ci_regex_t ci_regex_build(const char *regex_str, int regex_flags)
+ {
+-#ifdef HAVE_PCRE
++#if defined(HAVE_PCRE2)
++    pcre2_code *re;
++    int errcode;
++    PCRE2_SIZE erroffset;
++    re =  pcre2_compile((PCRE2_SPTR)regex_str, PCRE2_ZERO_TERMINATED, (uint32_t)regex_flags, &errcode, &erroffset, NULL);
++    if (re == NULL) {
++        PCRE2_UCHAR errbuf[256];
++        pcre2_get_error_message(errcode, errbuf, sizeof(errbuf));
++        ci_debug_printf(2, "PCRE2 compilation of '%s' failed at offset %d: %s\n", regex_str, (int)erroffset, errbuf);
++        return NULL;
++    }
++    return (ci_regex_t)re;
++#elif defined(HAVE_PCRE)
+     pcre *re;
+     const char *error;
+     int erroffset;
+@@ -103,7 +231,9 @@ ci_regex_t ci_regex_build(const char *regex_str, int regex_flags)
+ 
+ void ci_regex_free(ci_regex_t regex)
+ {
+-#ifdef HAVE_PCRE
++#if defined(HAVE_PCRE2)
++    pcre2_code_free((pcre2_code *)regex);
++#elif defined(HAVE_PCRE)
+     pcre_free((pcre *)regex);
+ #else
+     regfree((regex_t *)regex);
+@@ -112,7 +242,7 @@ void ci_regex_free(ci_regex_t regex)
+ }
+ 
+ #ifdef HAVE_PCRE
+-#define OVECCOUNT 30    /* should be a multiple of 3 */
++#define OVECCOUNT (3*CI_REGEX_SUBMATCHES)    /* should be a multiple of 3 */
+ #endif
+ 
+ int ci_regex_apply(const ci_regex_t regex, const char *str, int len, int recurs, ci_list_t *matches, const void *user_data)
+@@ -120,14 +250,42 @@ int ci_regex_apply(const ci_regex_t regex, const char *str, int len, int recurs,
+     int count = 0, i;
+     ci_regex_replace_part_t parts;
+ 
+-    if (!str)
++    if (!str || len == 0)
+         return 0;
+ 
+-#ifdef HAVE_PCRE
++#if defined(HAVE_PCRE2)
++    PCRE2_SIZE offset = 0;
++    pcre2_match_data *match_data = pcre2_match_data_create_from_pattern(regex, pcre2GenContext);
++    do {
++        int str_length = len > 0 ? len : PCRE2_ZERO_TERMINATED;
++        int rcaptures = pcre2_match(regex, (PCRE2_SPTR)str, str_length, offset, 0, match_data, pcre2MatchContext);
++        if (rcaptures >= 0)
++            count++;
++        if (rcaptures > 0 && matches) {
++            PCRE2_SIZE *ovector = pcre2_get_ovector_pointer(match_data);
++            for (i = 0; i < rcaptures && i < CI_REGEX_SUBMATCHES; i++) {
++                _CI_ASSERT(ovector[2*i+1] >= ovector[2*i]);
++                if (matches) {
++                    parts.user_data = user_data;
++                    memset(parts.matches, 0, sizeof(ci_regex_matches_t));
++                    ci_debug_printf(9, "\t sub-match pattern (pos:%d-%d): '%.*s'\n", (int)ovector[2*i], (int)ovector[2*i+1], (int)(ovector[2*i + 1] - ovector[2*i]), str+ovector[2*i]);
++                    parts.matches[i].s = ovector[2*i];
++                    parts.matches[i].e = ovector[2*i+1];
++                }
++                ci_list_push_back(matches, (void *)&parts);
++            }
++            offset = ovector[1]; /*Assert that it is less than strlen(str)?*/
++        } else if (rcaptures < 0) {
++            /* maybe check and report the exact error?*/
++            offset = 0;
++        } /* the rcaptures==0 not possible for our case, but maybe check and warn?*/
++    } while (recurs && offset > 0);
++    pcre2_match_data_free(match_data);
++#elif defined(HAVE_PCRE)
+     int ovector[OVECCOUNT];
+     int rc;
+     int offset = 0;
+-    int str_length = len >=0 ? len : strlen(str);
++    int str_length = len > 0 ? len : strlen(str);
+     do {
+         memset(ovector, 0, sizeof(ovector));
+         rc = pcre_exec(regex, NULL, str, str_length, offset, 0, ovector, OVECCOUNT);
+@@ -139,7 +297,7 @@ int ci_regex_apply(const ci_regex_t regex, const char *str, int len, int recurs,
+             if (matches) {
+                 parts.user_data = user_data;
+                 memset(parts.matches, 0, sizeof(ci_regex_matches_t));
+-                for (i = 0; i < 10 && ovector[2*i+1] > ovector[2*i]; ++i) {
++                for (i = 0; i < CI_REGEX_SUBMATCHES && ovector[2*i+1] > ovector[2*i]; ++i) {
+                     ci_debug_printf(9, "\t sub-match pattern (pos:%d-%d): '%.*s'\n", ovector[2*i], ovector[2*i+1], ovector[2*i + 1] - ovector[2*i], str+ovector[2*i]);
+                     parts.matches[i].s = ovector[2*i];
+                     parts.matches[i].e = ovector[2*i+1];
+@@ -151,17 +309,27 @@ int ci_regex_apply(const ci_regex_t regex, const char *str, int len, int recurs,
+ 
+ #else
+     int retcode;
+-    regmatch_t pmatch[10];
++    regmatch_t pmatch[CI_REGEX_SUBMATCHES];
++    char *tmpS = NULL;
++    const char *s;
++    if (len > 0 && len < strlen(str)) {
++        tmpS = ci_buffer_alloc(len + 1);
++        _CI_ASSERT(tmpS);
++        memcpy(tmpS, str, len);
++        tmpS[len] = '\0';
++        s = tmpS;
++    } else
++        s = str;
+     do {
+-        if ((retcode = regexec(regex, str, 10, pmatch, 0)) == 0) {
++        if ((retcode = regexec(regex, s, CI_REGEX_SUBMATCHES, pmatch, 0)) == 0) {
+             ++count;
+-            ci_debug_printf(9, "Match pattern (pos:%d-%d): '%.*s'\n", pmatch[0].rm_so, pmatch[0].rm_eo, pmatch[0].rm_eo - pmatch[0].rm_so, str+pmatch[0].rm_so);
++            ci_debug_printf(9, "Match pattern (pos:%d-%d): '%.*s'\n", pmatch[0].rm_so, pmatch[0].rm_eo, pmatch[0].rm_eo - pmatch[0].rm_so, s+pmatch[0].rm_so);
+ 
+             if (matches) {
+                 parts.user_data = user_data;
+                 memset(parts.matches, 0, sizeof(ci_regex_matches_t));
+-                for (i = 0; i < 10 && pmatch[i].rm_eo > pmatch[i].rm_so; ++i) {
+-                    ci_debug_printf(9, "\t sub-match pattern (pos:%d-%d): '%.*s'\n", pmatch[i].rm_so, pmatch[i].rm_eo, pmatch[i].rm_eo - pmatch[i].rm_so, str+pmatch[i].rm_so);
++                for (i = 0; i < CI_REGEX_SUBMATCHES && pmatch[i].rm_eo > pmatch[i].rm_so; ++i) {
++                    ci_debug_printf(9, "\t sub-match pattern (pos:%d-%d): '%.*s'\n", pmatch[i].rm_so, pmatch[i].rm_eo, pmatch[i].rm_eo - pmatch[i].rm_so, s+pmatch[i].rm_so);
+                     parts.matches[i].s = pmatch[i].rm_so;
+                     parts.matches[i].e = pmatch[i].rm_eo;
+                 }
+@@ -169,14 +337,16 @@ int ci_regex_apply(const ci_regex_t regex, const char *str, int len, int recurs,
+             }
+ 
+             if (pmatch[0].rm_so >= 0 && pmatch[0].rm_eo >= 0 && pmatch[0].rm_so != pmatch[0].rm_eo) {
+-                str += pmatch[0].rm_eo;
+-                ci_debug_printf(8, "I will check again starting from: %s\n", str);
++                s += pmatch[0].rm_eo;
++                ci_debug_printf(8, "I will check again starting from: %s\n", s);
+             } else /*stop here*/
+-                str = NULL;
++                s = NULL;
+         }
+-    } while (recurs && str && *str != '\0' && retcode == 0);
++    } while (recurs && s && *s != '\0' && retcode == 0);
++    if (tmpS)
++        ci_buffer_free(tmpS);
+ #endif
+ 
+-    ci_debug_printf(5, "ci_regex_apply matches count: %d\n", count);
++    ci_debug_printf(5, "ci_regex_apply string '%s' matches count: %d\n", str, count);
+     return count;
+ }
+diff --git a/types_ops.c b/types_ops.c
+index 78798c6..1310d4b 100644
+--- a/types_ops.c
++++ b/types_ops.c
+@@ -273,7 +273,7 @@ int regex_cmp(const void *key1, const void *key2)
+     struct ci_acl_regex *reg = (struct ci_acl_regex *)key1;
+     if (!key2)
+         return -1;
+-    return (ci_regex_apply(reg->preg, (const char *)key2, strlen(key2), 0, NULL, NULL) == 0 ? 1 : 0);
++    return (ci_regex_apply(reg->preg, (const char *)key2, -1, 0, NULL, NULL) == 0 ? 1 : 0);
+ }
+ 
+ int regex_equal(const void *key1, const void *key2)
+@@ -281,7 +281,7 @@ int regex_equal(const void *key1, const void *key2)
+     struct ci_acl_regex *reg = (struct ci_acl_regex *)key1;
+     if (!key2)
+         return 0;
+-    return ci_regex_apply(reg->preg, (const char *)key2, strlen(key2), 0, NULL, NULL) != 0;
++    return ci_regex_apply(reg->preg, (const char *)key2, -1, 0, NULL, NULL) != 0;
+ }
+ 
+ size_t regex_len(const void *key)

@@ -1,0 +1,50 @@
+From: Boyuan Yang <byang@debian.org>
+Date: Sat, 29 Jul 2023 19:34:51 -0400
+Subject: Add missing _CI_ASSERT macro for pcre2 patch
+
+Upstream: https://github.com/c-icap/c-icap-server/commit/9d4b75b2a044669cbe4570f95f0f8f00f09b0d21
+
+Downloaded from
+https://sources.debian.org/src/c-icap/1%3A0.5.10-7/debian/patches/0007-Add-missing-_CI_ASSERT-macro-for-pcre2-patch.patch
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ debug.c         | 10 ++++++++++
+ include/debug.h |  3 +++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/debug.c b/debug.c
+index 8a3bf6d..4f34a87 100644
+--- a/debug.c
++++ b/debug.c
+@@ -47,6 +47,16 @@ void __ldebug_printf(int i, const char *format, ...)
+ }
+ #endif
+ 
++void ci_debug_abort(const char *file, int line, const char *function, const char *mesg)
++{
++    ci_debug_printf(1, "Abort at %s, %d, %s: \'%s\'\n", file, line, function, mesg);
++    fflush(stderr);
++    fflush(stdout);
++    abort();
++}
++
++void (*__ci_debug_abort)(const char *file, int line, const char *function, const char *mesg) = ci_debug_abort;
++
+ /*
+ void debug_print_request(ci_request_t *req){
+      int i,j;
+diff --git a/include/debug.h b/include/debug.h
+index 9373ec9..990cce7 100644
+--- a/include/debug.h
++++ b/include/debug.h
+@@ -44,6 +44,9 @@ CI_DECLARE_DATA extern void (*__log_error)(void *req, const char *format,... );
+ #define ci_debug_printf(i, args...) if(i<=CI_DEBUG_LEVEL){ if(__log_error) (*__log_error)(NULL,args); if(CI_DEBUG_STDOUT) printf(args);}
+ #endif
+ 
++CI_DECLARE_DATA extern void (*__ci_debug_abort)(const char *file, int line, const char *function, const char *mesg);
++#define _CI_ASSERT(expression) {if (!(expression)) (*__ci_debug_abort)(__FILE__, __LINE__, __func__, #expression);}
++
+ #ifdef __cplusplus
+ }
+ #endif
