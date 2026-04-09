@@ -4,11 +4,12 @@ config BR2_PACKAGE_SHADOWSOCKS_LIBEV
 	depends on BR2_TOOLCHAIN_HAS_SYNC_8 || !BR2_ARCH_IS_64 # for libcork
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_USE_MMU # fork()
+	depends on !BR2_STATIC_LIBS
 	select BR2_PACKAGE_C_ARES
 	select BR2_PACKAGE_LIBEV
 	select BR2_PACKAGE_LIBSODIUM
 	select BR2_PACKAGE_MBEDTLS
-	select BR2_PACKAGE_PCRE
+	select BR2_PACKAGE_PCRE2
 	help
 	  Shadowsocks-libev is a lightweight secured SOCKS5 proxy for
 	  embedded devices and low-end boxes.
@@ -27,8 +28,8 @@ config BR2_PACKAGE_SHADOWSOCKS_LIBEV_CONNMARKTOS
 
 	  If unsure, don't enable this option
 
-comment "shadowsocks-libev needs a toolchain w/ threads"
+comment "shadowsocks-libev needs a toolchain w/ threads, dynamic library"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_TOOLCHAIN_HAS_SYNC_8 || !BR2_ARCH_IS_64
 	depends on BR2_USE_MMU
-	depends on !BR2_TOOLCHAIN_HAS_THREADS
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS

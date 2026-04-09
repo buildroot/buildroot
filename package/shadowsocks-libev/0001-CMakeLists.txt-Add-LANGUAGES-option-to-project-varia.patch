@@ -1,0 +1,29 @@
+From cfff08f2ebc0edc89801c6dea97ca9b47d593608 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sat, 4 Apr 2026 09:25:07 +0200
+Subject: [PATCH] CMakeLists.txt: Add LANGUAGES option to project variable
+
+Fixes build with toolchains without c++.
+
+Upstream: https://github.com/shadowsocks/shadowsocks-libev/pull/3033
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 52ff13e..0d9528f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,6 +1,6 @@
+ cmake_minimum_required(VERSION 3.5)
+ 
+-set(PROJECT_NAME shadowsocks-libev)
++set(PROJECT_NAME shadowsocks-libev LANGUAGES C)
+ set(RELEASE_DATE 2026-02-09)
+ set(PROJECT_VERSION "3.3.6")
+ set(PROJECT_DESC "a lightweight secured socks5 proxy")
+-- 
+2.47.3
+
