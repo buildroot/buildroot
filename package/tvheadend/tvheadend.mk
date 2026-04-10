@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-TVHEADEND_VERSION = 5abbcda4d8c82d2d4889452a7056a7bfcd728fc6
+TVHEADEND_VERSION = 37453bc3fe5f9e10f3428ebb1abdc613f8b07186
 TVHEADEND_SITE = $(call github,tvheadend,tvheadend,$(TVHEADEND_VERSION))
 TVHEADEND_LICENSE = GPL-3.0+
 TVHEADEND_LICENSE_FILES = LICENSE.md
 TVHEADEND_DEPENDENCIES = \
+	dtv-scan-tables \
 	host-gettext \
 	host-pkgconf \
 	host-pngquant \
@@ -136,8 +137,6 @@ endif
 ifeq ($(BR2_TOOLCHAIN_SUPPORTS_PIE),)
 TVHEADEND_CONF_OPTS += --disable-pie
 endif
-
-TVHEADEND_DEPENDENCIES += dtv-scan-tables
 
 # The tvheadend build system expects the transponder data to be present inside
 # its source tree. To prevent a download initiated by the build system just
