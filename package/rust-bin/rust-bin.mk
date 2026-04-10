@@ -6,7 +6,7 @@
 
 # When updating this version, check whether support/download/cargo-post-process
 # still generates the same archives.
-RUST_BIN_VERSION = 1.88.0
+RUST_BIN_VERSION = 1.94.1
 RUST_BIN_SITE = https://static.rust-lang.org/dist
 RUST_BIN_LICENSE = Apache-2.0 or MIT
 RUST_BIN_LICENSE_FILES = LICENSE-APACHE LICENSE-MIT
@@ -28,8 +28,8 @@ define HOST_RUST_BIN_LIBSTD_EXTRACT
 			$(TAR) -C $(@D)/std $(TAR_OPTIONS) -
 	)
 	mkdir -p $(@D)/rustc/lib/rustlib/$(RUSTC_HOST_NAME)/lib
-	cd $(@D)/rustc/lib/rustlib/$(RUSTC_HOST_NAME)/lib; \
-		ln -sf ../../../../../$(HOST_RUST_BIN_LIBSTD_HOST_PREFIX)/lib/rustlib/$(RUSTC_HOST_NAME)/lib/* .
+	cp -al $(@D)/$(HOST_RUST_BIN_LIBSTD_HOST_PREFIX)/lib/rustlib/$(RUSTC_HOST_NAME)/lib/* \
+		$(@D)/rustc/lib/rustlib/$(RUSTC_HOST_NAME)/lib/
 endef
 
 HOST_RUST_BIN_POST_EXTRACT_HOOKS += HOST_RUST_BIN_LIBSTD_EXTRACT

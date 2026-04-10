@@ -6,7 +6,7 @@
 
 # When updating this version, check whether support/download/cargo-post-process
 # still generates the same archives.
-RUST_VERSION = 1.88.0
+RUST_VERSION = 1.94.1
 RUST_SOURCE = rustc-$(RUST_VERSION)-src.tar.xz
 RUST_SITE = https://static.rust-lang.org/dist
 RUST_LICENSE = Apache-2.0 or MIT
@@ -40,6 +40,7 @@ define HOST_RUST_CONFIGURE_CMDS
 		echo 'compiler-docs = false'; \
 		echo 'docs = false'; \
 		echo 'verbose = $(HOST_RUST_VERBOSITY)'; \
+		echo 'local-rebuild = true'; \
 		echo '[install]'; \
 		echo 'prefix = "$(HOST_DIR)"'; \
 		echo 'sysconfdir = "$(HOST_DIR)/etc"'; \
