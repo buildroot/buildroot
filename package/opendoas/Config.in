@@ -1,0 +1,9 @@
+config BR2_PACKAGE_OPENDOAS
+	bool "opendoas"
+	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
+	help
+	  OpenDoas: a portable version of OpenBSD's doas command.
+	  doas is a minimal replacement for the venerable sudo.
+
+	  https://github.com/Duncaen/OpenDoas
