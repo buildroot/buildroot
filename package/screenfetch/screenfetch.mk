@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SCREENFETCH_VERSION = 3.9.1
+SCREENFETCH_VERSION = 3.9.9
 SCREENFETCH_SITE = $(call github,KittyKatt,screenFetch,v$(SCREENFETCH_VERSION))
 SCREENFETCH_LICENSE = GPL-3.0+
 SCREENFETCH_LICENSE_FILES = COPYING
