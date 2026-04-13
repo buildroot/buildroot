@@ -1,0 +1,1126 @@
+From 33b950714a966bde816a1f1e75c127c3d3ae53cd Mon Sep 17 00:00:00 2001
+From: "Dmitry V. Levin" <ldv@strace.io>
+Date: Mon, 9 Mar 2026 08:00:00 +0000
+Subject: [PATCH] bundled: update linux UAPI headers to v7.0-rc3
+
+The update of linux/io_uring.h is delayed because the change in
+struct io_uring_zcrx_ifq_reg requires a synchronous update of
+the header, the parser and the test.
+
+The update of linux/io_uring/query.h is delayed because the change in
+struct io_uring_query_zcrx requires a synchronous update of the header,
+the parser and the test.
+
+* bundled/linux/include/uapi/linux/typelimits.h: New file.
+* bundled/Makefile.am (EXTRA_DIST): Add
+linux/include/uapi/linux/typelimits.h.
+* bundled/linux/include/uapi/linux/blkzoned.h: Update to
+headers_install'ed Linux kernel v7.0-rc3.
+* bundled/linux/include/uapi/linux/btrfs.h: Likewise.
+* bundled/linux/include/uapi/linux/btrfs_tree.h: Likewise.
+* bundled/linux/include/uapi/linux/ethtool.h: Likewise.
+* bundled/linux/include/uapi/linux/fs.h: Likewise.
+* bundled/linux/include/uapi/linux/if_alg.h: Likewise.
+* bundled/linux/include/uapi/linux/if_link.h: Likewise.
+* bundled/linux/include/uapi/linux/landlock.h: Likewise.
+* bundled/linux/include/uapi/linux/mount.h: Likewise.
+* bundled/linux/include/uapi/linux/mptcp_pm.h: Likewise.
+* bundled/linux/include/uapi/linux/nl80211.h: Likewise.
+* bundled/linux/include/uapi/linux/perf_event.h: Likewise.
+* bundled/linux/include/uapi/linux/pkt_sched.h: Likewise.
+* bundled/linux/include/uapi/linux/prctl.h: Likewise.
+* bundled/linux/include/uapi/linux/taskstats.h: Likewise.
+* bundled/linux/include/uapi/linux/tcp.h: Likewise.
+* bundled/linux/include/uapi/linux/v4l2-controls.h: Likewise.
+* bundled/linux/include/uapi/linux/version.h: Likewise.
+* bundled/linux/include/uapi/linux/videodev2.h: Likewise.
+
+Upstream: https://github.com/strace/strace/commit/33b950714a966bde816a1f1e75c127c3d3ae53cd
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ bundled/Makefile.am                           |   1 +
+ bundled/linux/include/uapi/linux/blkzoned.h   |   6 +-
+ bundled/linux/include/uapi/linux/btrfs.h      |   1 +
+ bundled/linux/include/uapi/linux/btrfs_tree.h |  34 +++++-
+ bundled/linux/include/uapi/linux/ethtool.h    |  26 +++-
+ bundled/linux/include/uapi/linux/fs.h         |   1 +
+ bundled/linux/include/uapi/linux/if_alg.h     |   2 +-
+ bundled/linux/include/uapi/linux/if_link.h    |   1 +
+ bundled/linux/include/uapi/linux/landlock.h   |  67 ++++++-----
+ bundled/linux/include/uapi/linux/mount.h      |  13 +-
+ bundled/linux/include/uapi/linux/mptcp_pm.h   |   2 +-
+ bundled/linux/include/uapi/linux/nl80211.h    | 112 +++++++++++++++++-
+ bundled/linux/include/uapi/linux/perf_event.h |  29 ++++-
+ bundled/linux/include/uapi/linux/pkt_sched.h  |   1 +
+ bundled/linux/include/uapi/linux/prctl.h      |  37 ++++++
+ bundled/linux/include/uapi/linux/taskstats.h  |  13 +-
+ bundled/linux/include/uapi/linux/tcp.h        |  26 +++-
+ bundled/linux/include/uapi/linux/typelimits.h |   8 ++
+ .../linux/include/uapi/linux/v4l2-controls.h  |  63 ++++++++++
+ bundled/linux/include/uapi/linux/version.h    |   6 +-
+ bundled/linux/include/uapi/linux/videodev2.h  |   3 +
+ 21 files changed, 395 insertions(+), 57 deletions(-)
+ create mode 100644 bundled/linux/include/uapi/linux/typelimits.h
+
+diff --git a/bundled/Makefile.am b/bundled/Makefile.am
+index 9140ccbbe..f1644002f 100644
+--- a/bundled/Makefile.am
++++ b/bundled/Makefile.am
+@@ -135,6 +135,7 @@ EXTRA_DIST = \
+ 	linux/include/uapi/linux/thermal.h \
+ 	linux/include/uapi/linux/tipc.h \
+ 	linux/include/uapi/linux/tls.h \
++	linux/include/uapi/linux/typelimits.h \
+ 	linux/include/uapi/linux/types.h \
+ 	linux/include/uapi/linux/unix_diag.h \
+ 	linux/include/uapi/linux/userfaultfd.h \
+diff --git a/bundled/linux/include/uapi/linux/blkzoned.h b/bundled/linux/include/uapi/linux/blkzoned.h
+index 44d5cbe5c..7ca3da613 100644
+--- a/bundled/linux/include/uapi/linux/blkzoned.h
++++ b/bundled/linux/include/uapi/linux/blkzoned.h
+@@ -81,7 +81,8 @@ enum blk_zone_cond {
+ 	BLK_ZONE_COND_FULL	= 0xE,
+ 	BLK_ZONE_COND_OFFLINE	= 0xF,
+ 
+-	BLK_ZONE_COND_ACTIVE	= 0xFF,
++	BLK_ZONE_COND_ACTIVE	= 0xFF, /* added in Linux 6.19 */
++#define BLK_ZONE_COND_ACTIVE	BLK_ZONE_COND_ACTIVE
+ };
+ 
+ /**
+@@ -100,7 +101,8 @@ enum blk_zone_report_flags {
+ 	BLK_ZONE_REP_CAPACITY	= (1U << 0),
+ 
+ 	/* Input flags */
+-	BLK_ZONE_REP_CACHED	= (1U << 31),
++	BLK_ZONE_REP_CACHED	= (1U << 31), /* added in Linux 6.19 */
++#define BLK_ZONE_REP_CACHED	BLK_ZONE_REP_CACHED
+ };
+ 
+ /**
+diff --git a/bundled/linux/include/uapi/linux/btrfs.h b/bundled/linux/include/uapi/linux/btrfs.h
+index df4b2f88f..2988d1b29 100644
+--- a/bundled/linux/include/uapi/linux/btrfs.h
++++ b/bundled/linux/include/uapi/linux/btrfs.h
+@@ -334,6 +334,7 @@ struct btrfs_ioctl_fs_info_args {
+ #define BTRFS_FEATURE_INCOMPAT_EXTENT_TREE_V2	(1ULL << 13)
+ #define BTRFS_FEATURE_INCOMPAT_RAID_STRIPE_TREE	(1ULL << 14)
+ #define BTRFS_FEATURE_INCOMPAT_SIMPLE_QUOTA	(1ULL << 16)
++#define BTRFS_FEATURE_INCOMPAT_REMAP_TREE	(1ULL << 17)
+ 
+ struct btrfs_ioctl_feature_flags {
+ 	__u64 compat_flags;
+diff --git a/bundled/linux/include/uapi/linux/btrfs_tree.h b/bundled/linux/include/uapi/linux/btrfs_tree.h
+index 86242120a..0507f9309 100644
+--- a/bundled/linux/include/uapi/linux/btrfs_tree.h
++++ b/bundled/linux/include/uapi/linux/btrfs_tree.h
+@@ -72,6 +72,9 @@
+ /* Tracks RAID stripes in block groups. */
+ #define BTRFS_RAID_STRIPE_TREE_OBJECTID 12ULL
+ 
++/* Holds details of remapped addresses after relocation. */
++#define BTRFS_REMAP_TREE_OBJECTID 13ULL
++
+ /* device stats in the device tree */
+ #define BTRFS_DEV_STATS_OBJECTID 0ULL
+ 
+@@ -278,6 +281,10 @@
+ 
+ #define BTRFS_RAID_STRIPE_KEY	230
+ 
++#define BTRFS_IDENTITY_REMAP_KEY 	234
++#define BTRFS_REMAP_KEY		 	235
++#define BTRFS_REMAP_BACKREF_KEY	 	236
++
+ /*
+  * Records the overall state of the qgroups.
+  * There's only one instance of this key present,
+@@ -710,9 +717,12 @@ struct btrfs_super_block {
+ 	__u8 metadata_uuid[BTRFS_FSID_SIZE];
+ 
+ 	__u64 nr_global_roots;
++	__le64 remap_root;
++	__le64 remap_root_generation;
++	__u8 remap_root_level;
+ 
+ 	/* Future expansion */
+-	__le64 reserved[27];
++	__u8 reserved[199];
+ 	__u8 sys_chunk_array[BTRFS_SYSTEM_CHUNK_ARRAY_SIZE];
+ 	struct btrfs_root_backup super_roots[BTRFS_NUM_BACKUP_ROOTS];
+ 
+@@ -1157,12 +1167,15 @@ struct btrfs_dev_replace_item {
+ #define BTRFS_BLOCK_GROUP_RAID6         (1ULL << 8)
+ #define BTRFS_BLOCK_GROUP_RAID1C3       (1ULL << 9)
+ #define BTRFS_BLOCK_GROUP_RAID1C4       (1ULL << 10)
++#define BTRFS_BLOCK_GROUP_REMAPPED      (1ULL << 11)
++#define BTRFS_BLOCK_GROUP_METADATA_REMAP (1ULL << 12)
+ #define BTRFS_BLOCK_GROUP_RESERVED	(BTRFS_AVAIL_ALLOC_BIT_SINGLE | \
+ 					 BTRFS_SPACE_INFO_GLOBAL_RSV)
+ 
+ #define BTRFS_BLOCK_GROUP_TYPE_MASK	(BTRFS_BLOCK_GROUP_DATA |    \
+ 					 BTRFS_BLOCK_GROUP_SYSTEM |  \
+-					 BTRFS_BLOCK_GROUP_METADATA)
++					 BTRFS_BLOCK_GROUP_METADATA | \
++					 BTRFS_BLOCK_GROUP_METADATA_REMAP)
+ 
+ #define BTRFS_BLOCK_GROUP_PROFILE_MASK	(BTRFS_BLOCK_GROUP_RAID0 |   \
+ 					 BTRFS_BLOCK_GROUP_RAID1 |   \
+@@ -1215,6 +1228,14 @@ struct btrfs_block_group_item {
+ 	__le64 flags;
+ } __attribute__ ((__packed__));
+ 
++struct btrfs_block_group_item_v2 {
++	__le64 used;
++	__le64 chunk_objectid;
++	__le64 flags;
++	__le64 remap_bytes;
++	__le32 identity_remap_count;
++} __attribute__ ((__packed__));
++
+ struct btrfs_free_space_info {
+ 	__le32 extent_count;
+ 	__le32 flags;
+@@ -1319,4 +1340,13 @@ struct btrfs_verity_descriptor_item {
+ 	__u8 encryption;
+ } __attribute__ ((__packed__));
+ 
++/*
++ * For a range identified by a BTRFS_REMAP_KEY item in the remap tree, gives
++ * the address that the start of the range will get remapped to.  This
++ * structure is also shared by BTRFS_REMAP_BACKREF_KEY.
++ */
++struct btrfs_remap_item {
++	__le64 address;
++} __attribute__ ((__packed__));
++
+ #endif /* _BTRFS_CTREE_H_ */
+diff --git a/bundled/linux/include/uapi/linux/ethtool.h b/bundled/linux/include/uapi/linux/ethtool.h
+index 046eb223f..7a13192e7 100644
+--- a/bundled/linux/include/uapi/linux/ethtool.h
++++ b/bundled/linux/include/uapi/linux/ethtool.h
+@@ -15,11 +15,10 @@
+ #define _LINUX_ETHTOOL_H
+ 
+ #include <linux/const.h>
++#include <linux/typelimits.h>
+ #include <linux/types.h>
+ #include <linux/if_ether.h>
+ 
+-#include <limits.h> /* for INT_MAX */
+-
+ /* All structures exposed to userland should be defined such that they
+  * have the same layout for 32-bit and 64-bit userland.
+  */
+@@ -601,6 +600,8 @@ enum ethtool_link_ext_state {
+ 	ETHTOOL_LINK_EXT_STATE_POWER_BUDGET_EXCEEDED,
+ 	ETHTOOL_LINK_EXT_STATE_OVERHEAT,
+ 	ETHTOOL_LINK_EXT_STATE_MODULE,
++	ETHTOOL_LINK_EXT_STATE_OTP_SPEED_VIOLATION,
++	ETHTOOL_LINK_EXT_STATE_BMC_REQUEST_DOWN,
+ };
+ 
+ /* More information in addition to ETHTOOL_LINK_EXT_STATE_AUTONEG. */
+@@ -1092,13 +1093,20 @@ enum ethtool_module_fw_flash_status {
+  * struct ethtool_gstrings - string set for data tagging
+  * @cmd: Command number = %ETHTOOL_GSTRINGS
+  * @string_set: String set ID; one of &enum ethtool_stringset
+- * @len: On return, the number of strings in the string set
++ * @len: Number of strings in the string set
+  * @data: Buffer for strings.  Each string is null-padded to a size of
+  *	%ETH_GSTRING_LEN.
+  *
+  * Users must use %ETHTOOL_GSSET_INFO to find the number of strings in
+  * the string set.  They must allocate a buffer of the appropriate
+  * size immediately following this structure.
++ *
++ * Setting @len on input is optional (though preferred), but must be zeroed
++ * otherwise.
++ * When set, @len will return the requested count if it matches the actual
++ * count; otherwise, it will be zero.
++ * This prevents issues when the number of strings is different than the
++ * userspace allocation.
+  */
+ struct ethtool_gstrings {
+ 	__u32	cmd;
+@@ -1175,13 +1183,20 @@ struct ethtool_test {
+ /**
+  * struct ethtool_stats - device-specific statistics
+  * @cmd: Command number = %ETHTOOL_GSTATS
+- * @n_stats: On return, the number of statistics
++ * @n_stats: Number of statistics
+  * @data: Array of statistics
+  *
+  * Users must use %ETHTOOL_GSSET_INFO or %ETHTOOL_GDRVINFO to find the
+  * number of statistics that will be returned.  They must allocate a
+  * buffer of the appropriate size (8 * number of statistics)
+  * immediately following this structure.
++ *
++ * Setting @n_stats on input is optional (though preferred), but must be zeroed
++ * otherwise.
++ * When set, @n_stats will return the requested count if it matches the actual
++ * count; otherwise, it will be zero.
++ * This prevents issues when the number of stats is different than the
++ * userspace allocation.
+  */
+ struct ethtool_stats {
+ 	__u32	cmd;
+@@ -2188,6 +2203,7 @@ enum ethtool_link_mode_bit_indices {
+ #define SPEED_40000		40000
+ #define SPEED_50000		50000
+ #define SPEED_56000		56000
++#define SPEED_80000		80000
+ #define SPEED_100000		100000
+ #define SPEED_200000		200000
+ #define SPEED_400000		400000
+@@ -2198,7 +2214,7 @@ enum ethtool_link_mode_bit_indices {
+ 
+ static __inline__ int ethtool_validate_speed(__u32 speed)
+ {
+-	return speed <= INT_MAX || speed == (__u32)SPEED_UNKNOWN;
++	return speed <= __KERNEL_INT_MAX || speed == (__u32)SPEED_UNKNOWN;
+ }
+ 
+ /* Duplex, half or full. */
+diff --git a/bundled/linux/include/uapi/linux/fs.h b/bundled/linux/include/uapi/linux/fs.h
+index 59af514fe..1f54423d3 100644
+--- a/bundled/linux/include/uapi/linux/fs.h
++++ b/bundled/linux/include/uapi/linux/fs.h
+@@ -249,6 +249,7 @@ struct file_attr {
+ #define FS_XFLAG_FILESTREAM	0x00004000	/* use filestream allocator */
+ #define FS_XFLAG_DAX		0x00008000	/* use DAX for IO */
+ #define FS_XFLAG_COWEXTSIZE	0x00010000	/* CoW extent size allocator hint */
++#define FS_XFLAG_VERITY		0x00020000	/* fs-verity enabled */
+ #define FS_XFLAG_HASATTR	0x80000000	/* no DIFLAG for this	*/
+ 
+ /* the read-only stuff doesn't really belong here, but any other place is
+diff --git a/bundled/linux/include/uapi/linux/if_alg.h b/bundled/linux/include/uapi/linux/if_alg.h
+index 0824fbc02..79fd8956c 100644
+--- a/bundled/linux/include/uapi/linux/if_alg.h
++++ b/bundled/linux/include/uapi/linux/if_alg.h
+@@ -42,7 +42,7 @@ struct sockaddr_alg_new {
+ 
+ struct af_alg_iv {
+ 	__u32	ivlen;
+-	__u8	iv[];
++	__u8	iv[] __counted_by(ivlen);
+ };
+ 
+ /* Socket options */
+diff --git a/bundled/linux/include/uapi/linux/if_link.h b/bundled/linux/include/uapi/linux/if_link.h
+index d05f5cc75..2037afbc4 100644
+--- a/bundled/linux/include/uapi/linux/if_link.h
++++ b/bundled/linux/include/uapi/linux/if_link.h
+@@ -1441,6 +1441,7 @@ enum {
+ 	IFLA_GENEVE_DF,
+ 	IFLA_GENEVE_INNER_PROTO_INHERIT,
+ 	IFLA_GENEVE_PORT_RANGE,
++	IFLA_GENEVE_GRO_HINT,
+ 	__IFLA_GENEVE_MAX
+ };
+ #define IFLA_GENEVE_MAX	(__IFLA_GENEVE_MAX - 1)
+diff --git a/bundled/linux/include/uapi/linux/landlock.h b/bundled/linux/include/uapi/linux/landlock.h
+index fde9a3e7f..f729a3333 100644
+--- a/bundled/linux/include/uapi/linux/landlock.h
++++ b/bundled/linux/include/uapi/linux/landlock.h
+@@ -117,11 +117,24 @@ struct landlock_ruleset_attr {
+  *     future nested domains, not the one being created. It can also be used
+  *     with a @ruleset_fd value of -1 to mute subdomain logs without creating a
+  *     domain.
++ *
++ * The following flag supports policy enforcement in multithreaded processes:
++ *
++ * %LANDLOCK_RESTRICT_SELF_TSYNC
++ *     Applies the new Landlock configuration atomically to all threads of the
++ *     current process, including the Landlock domain and logging
++ *     configuration. This overrides the Landlock configuration of sibling
++ *     threads, irrespective of previously established Landlock domains and
++ *     logging configurations on these threads.
++ *
++ *     If the calling thread is running with no_new_privs, this operation
++ *     enables no_new_privs on the sibling threads as well.
+  */
+ /* clang-format off */
+ #define LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF		(1U << 0)
+ #define LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON			(1U << 1)
+ #define LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF		(1U << 2)
++#define LANDLOCK_RESTRICT_SELF_TSYNC				(1U << 3)
+ /* clang-format on */
+ 
+ /**
+@@ -182,11 +195,13 @@ struct landlock_net_port_attr {
+ 	 * It should be noted that port 0 passed to :manpage:`bind(2)` will bind
+ 	 * to an available port from the ephemeral port range.  This can be
+ 	 * configured with the ``/proc/sys/net/ipv4/ip_local_port_range`` sysctl
+-	 * (also used for IPv6).
++	 * (also used for IPv6), and within that range, on a per-socket basis
++	 * with ``setsockopt(IP_LOCAL_PORT_RANGE)``.
+ 	 *
+-	 * A Landlock rule with port 0 and the ``LANDLOCK_ACCESS_NET_BIND_TCP``
++	 * A Landlock rule with port 0 and the %LANDLOCK_ACCESS_NET_BIND_TCP
+ 	 * right means that requesting to bind on port 0 is allowed and it will
+-	 * automatically translate to binding on the related port range.
++	 * automatically translate to binding on a kernel-assigned ephemeral
++	 * port.
+ 	 */
+ 	__u64 port;
+ };
+@@ -216,6 +231,23 @@ struct landlock_net_port_attr {
+  *   :manpage:`ftruncate(2)`, :manpage:`creat(2)`, or :manpage:`open(2)` with
+  *   ``O_TRUNC``.  This access right is available since the third version of the
+  *   Landlock ABI.
++ * - %LANDLOCK_ACCESS_FS_IOCTL_DEV: Invoke :manpage:`ioctl(2)` commands on an opened
++ *   character or block device.
++ *
++ *   This access right applies to all `ioctl(2)` commands implemented by device
++ *   drivers.  However, the following common IOCTL commands continue to be
++ *   invokable independent of the %LANDLOCK_ACCESS_FS_IOCTL_DEV right:
++ *
++ *   * IOCTL commands targeting file descriptors (``FIOCLEX``, ``FIONCLEX``),
++ *   * IOCTL commands targeting file descriptions (``FIONBIO``, ``FIOASYNC``),
++ *   * IOCTL commands targeting file systems (``FIFREEZE``, ``FITHAW``,
++ *     ``FIGETBSZ``, ``FS_IOC_GETFSUUID``, ``FS_IOC_GETFSSYSFSPATH``)
++ *   * Some IOCTL commands which do not make sense when used with devices, but
++ *     whose implementations are safe and return the right error codes
++ *     (``FS_IOC_FIEMAP``, ``FICLONE``, ``FICLONERANGE``, ``FIDEDUPERANGE``)
++ *
++ *   This access right is available since the fifth version of the Landlock
++ *   ABI.
+  *
+  * Whether an opened file can be truncated with :manpage:`ftruncate(2)` or used
+  * with `ioctl(2)` is determined during :manpage:`open(2)`, in the same way as
+@@ -275,26 +307,6 @@ struct landlock_net_port_attr {
+  *   If multiple requirements are not met, the ``EACCES`` error code takes
+  *   precedence over ``EXDEV``.
+  *
+- * The following access right applies both to files and directories:
+- *
+- * - %LANDLOCK_ACCESS_FS_IOCTL_DEV: Invoke :manpage:`ioctl(2)` commands on an opened
+- *   character or block device.
+- *
+- *   This access right applies to all `ioctl(2)` commands implemented by device
+- *   drivers.  However, the following common IOCTL commands continue to be
+- *   invokable independent of the %LANDLOCK_ACCESS_FS_IOCTL_DEV right:
+- *
+- *   * IOCTL commands targeting file descriptors (``FIOCLEX``, ``FIONCLEX``),
+- *   * IOCTL commands targeting file descriptions (``FIONBIO``, ``FIOASYNC``),
+- *   * IOCTL commands targeting file systems (``FIFREEZE``, ``FITHAW``,
+- *     ``FIGETBSZ``, ``FS_IOC_GETFSUUID``, ``FS_IOC_GETFSSYSFSPATH``)
+- *   * Some IOCTL commands which do not make sense when used with devices, but
+- *     whose implementations are safe and return the right error codes
+- *     (``FS_IOC_FIEMAP``, ``FICLONE``, ``FICLONERANGE``, ``FIDEDUPERANGE``)
+- *
+- *   This access right is available since the fifth version of the Landlock
+- *   ABI.
+- *
+  * .. warning::
+  *
+  *   It is currently not possible to restrict some file-related actions
+@@ -332,13 +344,12 @@ struct landlock_net_port_attr {
+  * These flags enable to restrict a sandboxed process to a set of network
+  * actions.
+  *
+- * This is supported since Landlock ABI version 4.
+- *
+  * The following access rights apply to TCP port numbers:
+  *
+- * - %LANDLOCK_ACCESS_NET_BIND_TCP: Bind a TCP socket to a local port.
+- * - %LANDLOCK_ACCESS_NET_CONNECT_TCP: Connect an active TCP socket to
+- *   a remote port.
++ * - %LANDLOCK_ACCESS_NET_BIND_TCP: Bind TCP sockets to the given local
++ *   port. Support added in Landlock ABI version 4.
++ * - %LANDLOCK_ACCESS_NET_CONNECT_TCP: Connect TCP sockets to the given
++ *   remote port. Support added in Landlock ABI version 4.
+  */
+ /* clang-format off */
+ #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+diff --git a/bundled/linux/include/uapi/linux/mount.h b/bundled/linux/include/uapi/linux/mount.h
+index 534dc2f1d..96f2d20e7 100644
+--- a/bundled/linux/include/uapi/linux/mount.h
++++ b/bundled/linux/include/uapi/linux/mount.h
+@@ -61,7 +61,8 @@
+ /*
+  * open_tree() flags.
+  */
+-#define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
++#define OPEN_TREE_CLONE		(1 << 0)	/* Clone the target tree and attach the clone */
++#define OPEN_TREE_NAMESPACE	(1 << 1)	/* Clone the target tree into a new mount namespace */
+ #define OPEN_TREE_CLOEXEC	O_CLOEXEC	/* Close the file on execve() */
+ 
+ /*
+@@ -197,7 +198,10 @@ struct statmount {
+  */
+ struct mnt_id_req {
+ 	__u32 size;
+-	__u32 mnt_ns_fd;
++	union {
++		__u32 mnt_ns_fd;
++		__u32 mnt_fd;
++	};
+ 	__u64 mnt_id;
+ 	__u64 param;
+ 	__u64 mnt_ns_id;
+@@ -232,4 +236,9 @@ struct mnt_id_req {
+ #define LSMT_ROOT		0xffffffffffffffff	/* root mount */
+ #define LISTMOUNT_REVERSE	(1 << 0) /* List later mounts first */
+ 
++/*
++ * @flag bits for statmount(2)
++ */
++#define STATMOUNT_BY_FD		0x00000001U	/* want mountinfo for given fd */
++
+ #endif /* _LINUX_MOUNT_H */
+diff --git a/bundled/linux/include/uapi/linux/mptcp_pm.h b/bundled/linux/include/uapi/linux/mptcp_pm.h
+index 593be618b..6e38dfc9f 100644
+--- a/bundled/linux/include/uapi/linux/mptcp_pm.h
++++ b/bundled/linux/include/uapi/linux/mptcp_pm.h
+@@ -11,7 +11,7 @@
+ #define MPTCP_PM_VER	1
+ 
+ /**
+- * enum mptcp_event_type
++ * enum mptcp_event_type - Netlink MPTCP event types
+  * @MPTCP_EVENT_UNSPEC: unused event
+  * @MPTCP_EVENT_CREATED: A new MPTCP connection has been created. It is the
+  *   good time to allocate memory and send ADD_ADDR if needed. Depending on the
+diff --git a/bundled/linux/include/uapi/linux/nl80211.h b/bundled/linux/include/uapi/linux/nl80211.h
+index 8134f10e4..b63f71850 100644
+--- a/bundled/linux/include/uapi/linux/nl80211.h
++++ b/bundled/linux/include/uapi/linux/nl80211.h
+@@ -11,7 +11,7 @@
+  * Copyright 2008 Jouni Malinen <jouni.malinen@atheros.com>
+  * Copyright 2008 Colin McCabe <colin@cozybit.com>
+  * Copyright 2015-2017	Intel Deutschland GmbH
+- * Copyright (C) 2018-2025 Intel Corporation
++ * Copyright (C) 2018-2026 Intel Corporation
+  *
+  * Permission to use, copy, modify, and/or distribute this software for any
+  * purpose with or without fee is hereby granted, provided that the above
+@@ -2880,8 +2880,9 @@ enum nl80211_commands {
+  *	index. If the userspace includes more RNR elements than number of
+  *	MBSSID elements then these will be added in every EMA beacon.
+  *
+- * @NL80211_ATTR_MLO_LINK_DISABLED: Flag attribute indicating that the link is
+- *	disabled.
++ * @NL80211_ATTR_MLO_LINK_DISABLED: Unused. It was used to indicate that a link
++ *	is disabled during association. However, the AP will send the
++ *	information by including a TTLM in the association response.
+  *
+  * @NL80211_ATTR_BSS_DUMP_INCLUDE_USE_DATA: Include BSS usage data, i.e.
+  *	include BSSes that can only be used in restricted scenarios and/or
+@@ -2973,6 +2974,16 @@ enum nl80211_commands {
+  *	primary channel is 2 MHz wide, and the control channel designates
+  *	the 1 MHz primary subchannel within that 2 MHz primary.
+  *
++ * @NL80211_ATTR_EPP_PEER: A flag attribute to indicate if the peer is an EPP
++ *	STA. Used with %NL80211_CMD_NEW_STA and %NL80211_CMD_ADD_LINK_STA
++ *
++ * @NL80211_ATTR_UHR_CAPABILITY: UHR Capability information element (from
++ *	association request when used with NL80211_CMD_NEW_STATION). Can be set
++ *	only if HE/EHT are also available.
++ * @NL80211_ATTR_DISABLE_UHR: Force UHR capable interfaces to disable
++ *	this feature during association. This is a flag attribute.
++ *	Currently only supported in mac80211 drivers.
++ *
+  * @NUM_NL80211_ATTR: total number of nl80211_attrs available
+  * @NL80211_ATTR_MAX: highest attribute number currently defined
+  * @__NL80211_ATTR_AFTER_LAST: internal use
+@@ -3541,6 +3552,11 @@ enum nl80211_attrs {
+ 
+ 	NL80211_ATTR_S1G_PRIMARY_2MHZ,
+ 
++	NL80211_ATTR_EPP_PEER,
++
++	NL80211_ATTR_UHR_CAPABILITY,
++	NL80211_ATTR_DISABLE_UHR,
++
+ 	/* add attributes here, update the policy in nl80211.c */
+ 
+ 	__NL80211_ATTR_AFTER_LAST,
+@@ -3893,6 +3909,12 @@ enum nl80211_eht_ru_alloc {
+  * @NL80211_RATE_INFO_4_MHZ_WIDTH: 4 MHz S1G rate
+  * @NL80211_RATE_INFO_8_MHZ_WIDTH: 8 MHz S1G rate
+  * @NL80211_RATE_INFO_16_MHZ_WIDTH: 16 MHz S1G rate
++ * @NL80211_RATE_INFO_UHR_MCS: UHR MCS index (u8, 0-15, 17, 19, 20, 23)
++ *	Note that the other EHT attributes (such as @NL80211_RATE_INFO_EHT_NSS)
++ *	are used in conjunction with this where applicable
++ * @NL80211_RATE_INFO_UHR_ELR: UHR ELR flag, which restricts NSS to 1,
++ *	MCS to 0 or 1, and GI to %NL80211_RATE_INFO_EHT_GI_1_6.
++ * @NL80211_RATE_INFO_UHR_IM: UHR Interference Mitigation flag
+  * @__NL80211_RATE_INFO_AFTER_LAST: internal use
+  */
+ enum nl80211_rate_info {
+@@ -3926,6 +3948,9 @@ enum nl80211_rate_info {
+ 	NL80211_RATE_INFO_4_MHZ_WIDTH,
+ 	NL80211_RATE_INFO_8_MHZ_WIDTH,
+ 	NL80211_RATE_INFO_16_MHZ_WIDTH,
++	NL80211_RATE_INFO_UHR_MCS,
++	NL80211_RATE_INFO_UHR_ELR,
++	NL80211_RATE_INFO_UHR_IM,
+ 
+ 	/* keep last */
+ 	__NL80211_RATE_INFO_AFTER_LAST,
+@@ -4248,6 +4273,10 @@ enum nl80211_mpath_info {
+  *	capabilities element
+  * @NL80211_BAND_IFTYPE_ATTR_EHT_CAP_PPE: EHT PPE thresholds information as
+  *	defined in EHT capabilities element
++ * @NL80211_BAND_IFTYPE_ATTR_UHR_CAP_MAC: UHR MAC capabilities as in UHR
++ *	capabilities element
++ * @NL80211_BAND_IFTYPE_ATTR_UHR_CAP_PHY: UHR PHY capabilities as in UHR
++ *	capabilities element
+  * @__NL80211_BAND_IFTYPE_ATTR_AFTER_LAST: internal use
+  * @NL80211_BAND_IFTYPE_ATTR_MAX: highest band attribute currently defined
+  */
+@@ -4265,6 +4294,8 @@ enum nl80211_band_iftype_attr {
+ 	NL80211_BAND_IFTYPE_ATTR_EHT_CAP_PHY,
+ 	NL80211_BAND_IFTYPE_ATTR_EHT_CAP_MCS_SET,
+ 	NL80211_BAND_IFTYPE_ATTR_EHT_CAP_PPE,
++	NL80211_BAND_IFTYPE_ATTR_UHR_CAP_MAC,
++	NL80211_BAND_IFTYPE_ATTR_UHR_CAP_PHY,
+ 
+ 	/* keep last */
+ 	__NL80211_BAND_IFTYPE_ATTR_AFTER_LAST,
+@@ -4444,6 +4475,11 @@ enum nl80211_wmm_rule {
+  *	channel in current regulatory domain.
+  * @NL80211_FREQUENCY_ATTR_NO_16MHZ: 16 MHz operation is not allowed on this
+  *	channel in current regulatory domain.
++ * @NL80211_FREQUENCY_ATTR_S1G_NO_PRIMARY: Channel is not permitted for use
++ *	as a primary channel. Does not prevent the channel from existing
++ *	as a non-primary subchannel. Only applicable to S1G channels.
++ * @NL80211_FREQUENCY_ATTR_NO_UHR: UHR operation is not allowed on this channel
++ *	in current regulatory domain.
+  * @NL80211_FREQUENCY_ATTR_MAX: highest frequency attribute number
+  *	currently defined
+  * @__NL80211_FREQUENCY_ATTR_AFTER_LAST: internal use
+@@ -4492,6 +4528,8 @@ enum nl80211_frequency_attr {
+ 	NL80211_FREQUENCY_ATTR_NO_4MHZ,
+ 	NL80211_FREQUENCY_ATTR_NO_8MHZ,
+ 	NL80211_FREQUENCY_ATTR_NO_16MHZ,
++	NL80211_FREQUENCY_ATTR_S1G_NO_PRIMARY,
++	NL80211_FREQUENCY_ATTR_NO_UHR,
+ 
+ 	/* keep last */
+ 	__NL80211_FREQUENCY_ATTR_AFTER_LAST,
+@@ -4705,6 +4743,7 @@ enum nl80211_sched_scan_match_attr {
+  *	despite NO_IR configuration.
+  * @NL80211_RRF_ALLOW_20MHZ_ACTIVITY: Allow activity in 20 MHz bandwidth,
+  *	despite NO_IR configuration.
++ * @NL80211_RRF_NO_UHR: UHR operation not allowed
+  */
+ enum nl80211_reg_rule_flags {
+ 	NL80211_RRF_NO_OFDM                 = 1 << 0,
+@@ -4731,6 +4770,7 @@ enum nl80211_reg_rule_flags {
+ 	NL80211_RRF_NO_6GHZ_AFC_CLIENT      = 1 << 23,
+ 	NL80211_RRF_ALLOW_6GHZ_VLP_AP       = 1 << 24,
+ 	NL80211_RRF_ALLOW_20MHZ_ACTIVITY    = 1 << 25,
++	NL80211_RRF_NO_UHR		    = 1 << 26,
+ };
+ 
+ #define NL80211_RRF_PASSIVE_SCAN	NL80211_RRF_NO_IR
+@@ -5425,6 +5465,7 @@ enum nl80211_bss_status {
+  * @NL80211_AUTHTYPE_FILS_SK: Fast Initial Link Setup shared key
+  * @NL80211_AUTHTYPE_FILS_SK_PFS: Fast Initial Link Setup shared key with PFS
+  * @NL80211_AUTHTYPE_FILS_PK: Fast Initial Link Setup public key
++ * @NL80211_AUTHTYPE_EPPKE: Enhanced Privacy Protection Key Exchange
+  * @__NL80211_AUTHTYPE_NUM: internal
+  * @NL80211_AUTHTYPE_MAX: maximum valid auth algorithm
+  * @NL80211_AUTHTYPE_AUTOMATIC: determine automatically (if necessary by
+@@ -5440,6 +5481,7 @@ enum nl80211_auth_type {
+ 	NL80211_AUTHTYPE_FILS_SK,
+ 	NL80211_AUTHTYPE_FILS_SK_PFS,
+ 	NL80211_AUTHTYPE_FILS_PK,
++	NL80211_AUTHTYPE_EPPKE,
+ 
+ 	/* keep last */
+ 	__NL80211_AUTHTYPE_NUM,
+@@ -6744,6 +6786,15 @@ enum nl80211_feature_flags {
+  * @NL80211_EXT_FEATURE_BEACON_RATE_EHT: Driver supports beacon rate
+  *	configuration (AP/mesh) with EHT rates.
+  *
++ * @NL80211_EXT_FEATURE_EPPKE: Driver supports Enhanced Privacy Protection
++ *	Key Exchange (EPPKE) with user space SME (NL80211_CMD_AUTHENTICATE)
++ *	in non-AP STA mode.
++ *
++ * @NL80211_EXT_FEATURE_ASSOC_FRAME_ENCRYPTION: This specifies that the
++ *	driver supports encryption of (Re)Association Request and Response
++ *	frames in both non‑AP STA and AP mode as specified in
++ *	"IEEE P802.11bi/D3.0, 12.16.6".
++ *
+  * @NUM_NL80211_EXT_FEATURES: number of extended features.
+  * @MAX_NL80211_EXT_FEATURES: highest extended feature index.
+  */
+@@ -6820,6 +6871,8 @@ enum nl80211_ext_feature_index {
+ 	NL80211_EXT_FEATURE_DFS_CONCURRENT,
+ 	NL80211_EXT_FEATURE_SPP_AMSDU_SUPPORT,
+ 	NL80211_EXT_FEATURE_BEACON_RATE_EHT,
++	NL80211_EXT_FEATURE_EPPKE,
++	NL80211_EXT_FEATURE_ASSOC_FRAME_ENCRYPTION,
+ 
+ 	/* add new features before the definition below */
+ 	NUM_NL80211_EXT_FEATURES,
+@@ -7432,6 +7485,8 @@ enum nl80211_nan_band_conf_attributes {
+  *	address that can take values from 50-6F-9A-01-00-00 to
+  *	50-6F-9A-01-FF-FF. This attribute is optional. If not present,
+  *	a random Cluster ID will be chosen.
++ *	This attribute will be ignored in NL80211_CMD_CHANGE_NAN_CONFIG
++ *	since after NAN was started, the cluster ID can no longer change.
+  * @NL80211_NAN_CONF_EXTRA_ATTRS: Additional NAN attributes to be
+  *	published in the beacons. This is an optional byte array.
+  * @NL80211_NAN_CONF_VENDOR_ELEMS: Vendor-specific elements that will
+@@ -7766,6 +7821,30 @@ enum nl80211_peer_measurement_attrs {
+  *	trigger based ranging measurement is supported
+  * @NL80211_PMSR_FTM_CAPA_ATTR_NON_TRIGGER_BASED: flag attribute indicating
+  *	if non-trigger-based ranging measurement is supported
++ * @NL80211_PMSR_FTM_CAPA_ATTR_6GHZ_SUPPORT: flag attribute indicating if
++ *	ranging on the 6 GHz band is supported
++ * @NL80211_PMSR_FTM_CAPA_ATTR_MAX_TX_LTF_REP: u32 attribute indicating
++ *	the maximum number of LTF repetitions the device can transmit in the
++ *	preamble of the ranging NDP (zero means only one LTF, no repetitions)
++ * @NL80211_PMSR_FTM_CAPA_ATTR_MAX_RX_LTF_REP: u32 attribute indicating
++ *	the maximum number of LTF repetitions the device can receive in the
++ *	preamble of the ranging NDP (zero means only one LTF, no repetitions)
++ * @NL80211_PMSR_FTM_CAPA_ATTR_MAX_TX_STS: u32 attribute indicating
++ *	the maximum number of space-time streams supported for ranging NDP TX
++ *	(zero-based)
++ * @NL80211_PMSR_FTM_CAPA_ATTR_MAX_RX_STS: u32 attribute indicating
++ *	the maximum number of space-time streams supported for ranging NDP RX
++ *	(zero-based)
++ * @NL80211_PMSR_FTM_CAPA_ATTR_MAX_TOTAL_LTF_TX: u32 attribute indicating the
++ *	maximum total number of LTFs the device can transmit. The total number
++ *	of LTFs is (number of LTF repetitions) * (number of space-time streams).
++ *	This limits the allowed combinations of LTF repetitions and STS.
++ * @NL80211_PMSR_FTM_CAPA_ATTR_MAX_TOTAL_LTF_RX: u32 attribute indicating the
++ *	maximum total number of LTFs the device can receive. The total number
++ *	of LTFs is (number of LTF repetitions) * (number of space-time streams).
++ *	This limits the allowed combinations of LTF repetitions and STS.
++ * @NL80211_PMSR_FTM_CAPA_ATTR_RSTA_SUPPORT: flag attribute indicating the
++ *	device supports operating as the RSTA in PMSR FTM request
+  *
+  * @NUM_NL80211_PMSR_FTM_CAPA_ATTR: internal
+  * @NL80211_PMSR_FTM_CAPA_ATTR_MAX: highest attribute number
+@@ -7783,6 +7862,14 @@ enum nl80211_peer_measurement_ftm_capa {
+ 	NL80211_PMSR_FTM_CAPA_ATTR_MAX_FTMS_PER_BURST,
+ 	NL80211_PMSR_FTM_CAPA_ATTR_TRIGGER_BASED,
+ 	NL80211_PMSR_FTM_CAPA_ATTR_NON_TRIGGER_BASED,
++	NL80211_PMSR_FTM_CAPA_ATTR_6GHZ_SUPPORT,
++	NL80211_PMSR_FTM_CAPA_ATTR_MAX_TX_LTF_REP,
++	NL80211_PMSR_FTM_CAPA_ATTR_MAX_RX_LTF_REP,
++	NL80211_PMSR_FTM_CAPA_ATTR_MAX_TX_STS,
++	NL80211_PMSR_FTM_CAPA_ATTR_MAX_RX_STS,
++	NL80211_PMSR_FTM_CAPA_ATTR_MAX_TOTAL_LTF_TX,
++	NL80211_PMSR_FTM_CAPA_ATTR_MAX_TOTAL_LTF_RX,
++	NL80211_PMSR_FTM_CAPA_ATTR_RSTA_SUPPORT,
+ 
+ 	/* keep last */
+ 	NUM_NL80211_PMSR_FTM_CAPA_ATTR,
+@@ -7798,12 +7885,15 @@ enum nl80211_peer_measurement_ftm_capa {
+  *	&enum nl80211_preamble), optional for DMG (u32)
+  * @NL80211_PMSR_FTM_REQ_ATTR_NUM_BURSTS_EXP: number of bursts exponent as in
+  *	802.11-2016 9.4.2.168 "Fine Timing Measurement Parameters element"
+- *	(u8, 0-15, optional with default 15 i.e. "no preference")
++ *	(u8, 0-15, optional with default 15 i.e. "no preference". No limit for
++ *	 non-EDCA ranging)
+  * @NL80211_PMSR_FTM_REQ_ATTR_BURST_PERIOD: interval between bursts in units
+  *	of 100ms (u16, optional with default 0)
+  * @NL80211_PMSR_FTM_REQ_ATTR_BURST_DURATION: burst duration, as in 802.11-2016
+  *	Table 9-257 "Burst Duration field encoding" (u8, 0-15, optional with
+- *	default 15 i.e. "no preference")
++ *	default 15 i.e. "no preference"). For non-EDCA ranging, this is the
++ *	burst duration in milliseconds (optional with default 0, i.e. let the
++ *	device decide).
+  * @NL80211_PMSR_FTM_REQ_ATTR_FTMS_PER_BURST: number of successful FTM frames
+  *	requested per burst
+  *	(u8, 0-31, optional with default 0 i.e. "no preference")
+@@ -7832,6 +7922,14 @@ enum nl80211_peer_measurement_ftm_capa {
+  * @NL80211_PMSR_FTM_REQ_ATTR_BSS_COLOR: optional. The BSS color of the
+  *	responder. Only valid if %NL80211_PMSR_FTM_REQ_ATTR_NON_TRIGGER_BASED
+  *	or %NL80211_PMSR_FTM_REQ_ATTR_TRIGGER_BASED is set.
++ * @NL80211_PMSR_FTM_REQ_ATTR_RSTA: optional. Request to perform the measurement
++ *	as the RSTA (flag). When set, the device is expected to dwell on the
++ *	channel specified in %NL80211_PMSR_PEER_ATTR_CHAN until it receives the
++ *	FTM request from the peer or the timeout specified by
++ *	%NL80211_ATTR_TIMEOUT has expired.
++ *	Only valid if %NL80211_PMSR_FTM_REQ_ATTR_LMR_FEEDBACK is set (so the
++ *	RSTA will have the measurement results to report back in the FTM
++ *	response).
+  *
+  * @NUM_NL80211_PMSR_FTM_REQ_ATTR: internal
+  * @NL80211_PMSR_FTM_REQ_ATTR_MAX: highest attribute number
+@@ -7852,6 +7950,7 @@ enum nl80211_peer_measurement_ftm_req {
+ 	NL80211_PMSR_FTM_REQ_ATTR_NON_TRIGGER_BASED,
+ 	NL80211_PMSR_FTM_REQ_ATTR_LMR_FEEDBACK,
+ 	NL80211_PMSR_FTM_REQ_ATTR_BSS_COLOR,
++	NL80211_PMSR_FTM_REQ_ATTR_RSTA,
+ 
+ 	/* keep last */
+ 	NUM_NL80211_PMSR_FTM_REQ_ATTR,
+@@ -7936,6 +8035,8 @@ enum nl80211_peer_measurement_ftm_failure_reasons {
+  *	9.4.2.22.1) starting with the Measurement Token, with Measurement
+  *	Type 11.
+  * @NL80211_PMSR_FTM_RESP_ATTR_PAD: ignore, for u64/s64 padding only
++ * @NL80211_PMSR_FTM_RESP_ATTR_BURST_PERIOD: actual burst period used by
++ *	the responder (similar to request, u16)
+  *
+  * @NUM_NL80211_PMSR_FTM_RESP_ATTR: internal
+  * @NL80211_PMSR_FTM_RESP_ATTR_MAX: highest attribute number
+@@ -7964,6 +8065,7 @@ enum nl80211_peer_measurement_ftm_resp {
+ 	NL80211_PMSR_FTM_RESP_ATTR_LCI,
+ 	NL80211_PMSR_FTM_RESP_ATTR_CIVICLOC,
+ 	NL80211_PMSR_FTM_RESP_ATTR_PAD,
++	NL80211_PMSR_FTM_RESP_ATTR_BURST_PERIOD,
+ 
+ 	/* keep last */
+ 	NUM_NL80211_PMSR_FTM_RESP_ATTR,
+diff --git a/bundled/linux/include/uapi/linux/perf_event.h b/bundled/linux/include/uapi/linux/perf_event.h
+index 210138d0f..b70e4b731 100644
+--- a/bundled/linux/include/uapi/linux/perf_event.h
++++ b/bundled/linux/include/uapi/linux/perf_event.h
+@@ -2,7 +2,7 @@
+ /*
+  * Performance events:
+  *
+- *    Copyright (C) 2008-2009, Thomas Gleixner <tglx@linutronix.de>
++ *    Copyright (C) 2008-2009, Linutronix GmbH, Thomas Gleixner <tglx@kernel.org>
+  *    Copyright (C) 2008-2011, Red Hat, Inc., Ingo Molnar
+  *    Copyright (C) 2008-2011, Red Hat, Inc., Peter Zijlstra
+  *
+@@ -1330,14 +1330,16 @@ union perf_mem_data_src {
+ 			mem_snoopx  :  2, /* Snoop mode, ext */
+ 			mem_blk     :  3, /* Access blocked */
+ 			mem_hops    :  3, /* Hop level */
+-			mem_rsvd    : 18;
++			mem_region  :  5, /* cache/memory regions */
++			mem_rsvd    : 13;
+ 	};
+ };
+ #elif defined(__BIG_ENDIAN_BITFIELD)
+ union perf_mem_data_src {
+ 	__u64 val;
+ 	struct {
+-		__u64	mem_rsvd    : 18,
++		__u64	mem_rsvd    : 13,
++			mem_region  :  5, /* cache/memory regions */
+ 			mem_hops    :  3, /* Hop level */
+ 			mem_blk     :  3, /* Access blocked */
+ 			mem_snoopx  :  2, /* Snoop mode, ext */
+@@ -1394,7 +1396,7 @@ union perf_mem_data_src {
+ #define PERF_MEM_LVLNUM_L4			0x0004 /* L4 */
+ #define PERF_MEM_LVLNUM_L2_MHB			0x0005 /* L2 Miss Handling Buffer */
+ #define PERF_MEM_LVLNUM_MSC			0x0006 /* Memory-side Cache */
+-/* 0x007 available */
++#define PERF_MEM_LVLNUM_L0			0x0007 /* L0 */
+ #define PERF_MEM_LVLNUM_UNC			0x0008 /* Uncached */
+ #define PERF_MEM_LVLNUM_CXL			0x0009 /* CXL */
+ #define PERF_MEM_LVLNUM_IO			0x000a /* I/O */
+@@ -1447,6 +1449,25 @@ union perf_mem_data_src {
+ /* 5-7 available */
+ #define PERF_MEM_HOPS_SHIFT			43
+ 
++/* Cache/Memory region */
++#define PERF_MEM_REGION_NA		0x0  /* Invalid */
++#define PERF_MEM_REGION_RSVD		0x01 /* Reserved */
++#define PERF_MEM_REGION_L_SHARE		0x02 /* Local CA shared cache */
++#define PERF_MEM_REGION_L_NON_SHARE	0x03 /* Local CA non-shared cache */
++#define PERF_MEM_REGION_O_IO		0x04 /* Other CA IO agent */
++#define PERF_MEM_REGION_O_SHARE		0x05 /* Other CA shared cache */
++#define PERF_MEM_REGION_O_NON_SHARE	0x06 /* Other CA non-shared cache */
++#define PERF_MEM_REGION_MMIO		0x07 /* MMIO */
++#define PERF_MEM_REGION_MEM0		0x08 /* Memory region 0 */
++#define PERF_MEM_REGION_MEM1		0x09 /* Memory region 1 */
++#define PERF_MEM_REGION_MEM2		0x0a /* Memory region 2 */
++#define PERF_MEM_REGION_MEM3		0x0b /* Memory region 3 */
++#define PERF_MEM_REGION_MEM4		0x0c /* Memory region 4 */
++#define PERF_MEM_REGION_MEM5		0x0d /* Memory region 5 */
++#define PERF_MEM_REGION_MEM6		0x0e /* Memory region 6 */
++#define PERF_MEM_REGION_MEM7		0x0f /* Memory region 7 */
++#define PERF_MEM_REGION_SHIFT		46
++
+ #define PERF_MEM_S(a, s) \
+ 	(((__u64)PERF_MEM_##a##_##s) << PERF_MEM_##a##_SHIFT)
+ 
+diff --git a/bundled/linux/include/uapi/linux/pkt_sched.h b/bundled/linux/include/uapi/linux/pkt_sched.h
+index bf05b13d6..dc40688e2 100644
+--- a/bundled/linux/include/uapi/linux/pkt_sched.h
++++ b/bundled/linux/include/uapi/linux/pkt_sched.h
+@@ -1036,6 +1036,7 @@ enum {
+ 	TCA_CAKE_STATS_DROP_NEXT_US,
+ 	TCA_CAKE_STATS_P_DROP,
+ 	TCA_CAKE_STATS_BLUE_TIMER_US,
++	TCA_CAKE_STATS_ACTIVE_QUEUES,
+ 	__TCA_CAKE_STATS_MAX
+ };
+ #define TCA_CAKE_STATS_MAX (__TCA_CAKE_STATS_MAX - 1)
+diff --git a/bundled/linux/include/uapi/linux/prctl.h b/bundled/linux/include/uapi/linux/prctl.h
+index 51c4e8c82..55b0446ff 100644
+--- a/bundled/linux/include/uapi/linux/prctl.h
++++ b/bundled/linux/include/uapi/linux/prctl.h
+@@ -386,4 +386,41 @@ struct prctl_mm_map {
+ # define PR_FUTEX_HASH_SET_SLOTS	1
+ # define PR_FUTEX_HASH_GET_SLOTS	2
+ 
++/* RSEQ time slice extensions */
++#define PR_RSEQ_SLICE_EXTENSION			79
++# define PR_RSEQ_SLICE_EXTENSION_GET		1
++# define PR_RSEQ_SLICE_EXTENSION_SET		2
++/*
++ * Bits for RSEQ_SLICE_EXTENSION_GET/SET
++ * PR_RSEQ_SLICE_EXT_ENABLE:	Enable
++ */
++# define PR_RSEQ_SLICE_EXT_ENABLE		0x01
++
++/*
++ * Get the current indirect branch tracking configuration for the current
++ * thread, this will be the value configured via PR_SET_INDIR_BR_LP_STATUS.
++ */
++#define PR_GET_INDIR_BR_LP_STATUS      80
++
++/*
++ * Set the indirect branch tracking configuration. PR_INDIR_BR_LP_ENABLE will
++ * enable cpu feature for user thread, to track all indirect branches and ensure
++ * they land on arch defined landing pad instruction.
++ * x86 - If enabled, an indirect branch must land on an ENDBRANCH instruction.
++ * arch64 - If enabled, an indirect branch must land on a BTI instruction.
++ * riscv - If enabled, an indirect branch must land on an lpad instruction.
++ * PR_INDIR_BR_LP_DISABLE will disable feature for user thread and indirect
++ * branches will no more be tracked by cpu to land on arch defined landing pad
++ * instruction.
++ */
++#define PR_SET_INDIR_BR_LP_STATUS      81
++# define PR_INDIR_BR_LP_ENABLE		   (1UL << 0)
++
++/*
++ * Prevent further changes to the specified indirect branch tracking
++ * configuration.  All bits may be locked via this call, including
++ * undefined bits.
++ */
++#define PR_LOCK_INDIR_BR_LP_STATUS      82
++
+ #endif /* _LINUX_PRCTL_H */
+diff --git a/bundled/linux/include/uapi/linux/taskstats.h b/bundled/linux/include/uapi/linux/taskstats.h
+index 5929030d4..3ae25f3ce 100644
+--- a/bundled/linux/include/uapi/linux/taskstats.h
++++ b/bundled/linux/include/uapi/linux/taskstats.h
+@@ -18,6 +18,7 @@
+ #define _LINUX_TASKSTATS_H
+ 
+ #include <linux/types.h>
++#include <linux/time_types.h>
+ 
+ /* Format for per-task data returned to userland when
+  *	- a task exits
+@@ -34,7 +35,7 @@
+  */
+ 
+ 
+-#define TASKSTATS_VERSION	16
++#define TASKSTATS_VERSION	17
+ #define TS_COMM_LEN		32	/* should be >= TASK_COMM_LEN
+ 					 * in linux/sched.h */
+ 
+@@ -230,6 +231,16 @@ struct taskstats {
+ 
+ 	__u64	irq_delay_max;
+ 	__u64	irq_delay_min;
++
++	/*v17: delay max timestamp record*/
++	struct __kernel_timespec cpu_delay_max_ts;
++	struct __kernel_timespec blkio_delay_max_ts;
++	struct __kernel_timespec swapin_delay_max_ts;
++	struct __kernel_timespec freepages_delay_max_ts;
++	struct __kernel_timespec thrashing_delay_max_ts;
++	struct __kernel_timespec compact_delay_max_ts;
++	struct __kernel_timespec wpcopy_delay_max_ts;
++	struct __kernel_timespec irq_delay_max_ts;
+ };
+ 
+ 
+diff --git a/bundled/linux/include/uapi/linux/tcp.h b/bundled/linux/include/uapi/linux/tcp.h
+index e35d416b4..bac6e83f9 100644
+--- a/bundled/linux/include/uapi/linux/tcp.h
++++ b/bundled/linux/include/uapi/linux/tcp.h
+@@ -226,6 +226,24 @@ enum tcp_ca_state {
+ #define TCPF_CA_Loss	(1<<TCP_CA_Loss)
+ };
+ 
++/* Values for tcpi_ecn_mode after negotiation */
++#define TCPI_ECN_MODE_DISABLED		0x0
++#define TCPI_ECN_MODE_RFC3168		0x1
++#define TCPI_ECN_MODE_ACCECN		0x2
++#define TCPI_ECN_MODE_PENDING		0x3
++
++/* Values for accecn_opt_seen */
++#define TCP_ACCECN_OPT_NOT_SEEN		0x0
++#define TCP_ACCECN_OPT_EMPTY_SEEN	0x1
++#define TCP_ACCECN_OPT_COUNTER_SEEN	0x2
++#define TCP_ACCECN_OPT_FAIL_SEEN	0x3
++
++/* Values for accecn_fail_mode */
++#define TCP_ACCECN_ACE_FAIL_SEND	BIT(0)
++#define TCP_ACCECN_ACE_FAIL_RECV	BIT(1)
++#define TCP_ACCECN_OPT_FAIL_SEND	BIT(2)
++#define TCP_ACCECN_OPT_FAIL_RECV	BIT(3)
++
+ struct tcp_info {
+ 	__u8	tcpi_state;
+ 	__u8	tcpi_ca_state;
+@@ -316,15 +334,17 @@ struct tcp_info {
+ 					 * in milliseconds, including any
+ 					 * unfinished recovery.
+ 					 */
+-	__u32	tcpi_received_ce;    /* # of CE marks received */
++	__u32	tcpi_received_ce;    /* # of CE marked segments received */
+ 	__u32	tcpi_delivered_e1_bytes;  /* Accurate ECN byte counters */
+ 	__u32	tcpi_delivered_e0_bytes;
+ 	__u32	tcpi_delivered_ce_bytes;
+ 	__u32	tcpi_received_e1_bytes;
+ 	__u32	tcpi_received_e0_bytes;
+ 	__u32	tcpi_received_ce_bytes;
+-	__u16	tcpi_accecn_fail_mode;
+-	__u16	tcpi_accecn_opt_seen;
++	__u32	tcpi_ecn_mode:2,
++		tcpi_accecn_opt_seen:2,
++		tcpi_accecn_fail_mode:4,
++		tcpi_options2:24;
+ };
+ 
+ /* netlink attributes types for SCM_TIMESTAMPING_OPT_STATS */
+diff --git a/bundled/linux/include/uapi/linux/typelimits.h b/bundled/linux/include/uapi/linux/typelimits.h
+new file mode 100644
+index 000000000..8166c639b
+--- /dev/null
++++ b/bundled/linux/include/uapi/linux/typelimits.h
+@@ -0,0 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _UAPI_LINUX_TYPELIMITS_H
++#define _UAPI_LINUX_TYPELIMITS_H
++
++#define __KERNEL_INT_MAX ((int)(~0U >> 1))
++#define __KERNEL_INT_MIN (-__KERNEL_INT_MAX - 1)
++
++#endif /* _UAPI_LINUX_TYPELIMITS_H */
+diff --git a/bundled/linux/include/uapi/linux/v4l2-controls.h b/bundled/linux/include/uapi/linux/v4l2-controls.h
+index 26c9e3255..52d87b330 100644
+--- a/bundled/linux/include/uapi/linux/v4l2-controls.h
++++ b/bundled/linux/include/uapi/linux/v4l2-controls.h
+@@ -1188,6 +1188,8 @@ enum v4l2_flash_strobe_source {
+ 
+ #define V4L2_CID_FLASH_CHARGE			(V4L2_CID_FLASH_CLASS_BASE + 11)
+ #define V4L2_CID_FLASH_READY			(V4L2_CID_FLASH_CLASS_BASE + 12)
++#define V4L2_CID_FLASH_DURATION			(V4L2_CID_FLASH_CLASS_BASE + 13)
++#define V4L2_CID_FLASH_STROBE_OE		(V4L2_CID_FLASH_CLASS_BASE + 14)
+ 
+ 
+ /* JPEG-class control IDs */
+@@ -2095,6 +2097,8 @@ struct v4l2_ctrl_mpeg2_quantisation {
+ #define V4L2_CID_STATELESS_HEVC_DECODE_MODE	(V4L2_CID_CODEC_STATELESS_BASE + 405)
+ #define V4L2_CID_STATELESS_HEVC_START_CODE	(V4L2_CID_CODEC_STATELESS_BASE + 406)
+ #define V4L2_CID_STATELESS_HEVC_ENTRY_POINT_OFFSETS (V4L2_CID_CODEC_STATELESS_BASE + 407)
++#define V4L2_CID_STATELESS_HEVC_EXT_SPS_ST_RPS  (V4L2_CID_CODEC_STATELESS_BASE + 408)
++#define V4L2_CID_STATELESS_HEVC_EXT_SPS_LT_RPS  (V4L2_CID_CODEC_STATELESS_BASE + 409)
+ 
+ enum v4l2_stateless_hevc_decode_mode {
+ 	V4L2_STATELESS_HEVC_DECODE_MODE_SLICE_BASED,
+@@ -2550,6 +2554,65 @@ struct v4l2_ctrl_hevc_scaling_matrix {
+ 	__u8	scaling_list_dc_coef_32x32[2];
+ };
+ 
++#define V4L2_HEVC_EXT_SPS_ST_RPS_FLAG_INTER_REF_PIC_SET_PRED	0x1
++
++/*
++ * struct v4l2_ctrl_hevc_ext_sps_st_rps - HEVC short term RPS parameters
++ *
++ * Dynamic size 1-dimension array for short term RPS. The number of elements
++ * is v4l2_ctrl_hevc_sps::num_short_term_ref_pic_sets. It can contain up to 65 elements.
++ *
++ * @delta_idx_minus1: Specifies the delta compare to the index. See details in section 7.4.8
++ *                    "Short-term reference picture set semantics" of the specification.
++ * @delta_rps_sign: Sign of the delta as specified in section 7.4.8 "Short-term reference picture
++ *                  set semantics" of the specification.
++ * @abs_delta_rps_minus1: Absolute delta RPS as specified in section 7.4.8 "Short-term reference
++ *                        picture set semantics" of the specification.
++ * @num_negative_pics: Number of short-term RPS entries that have picture order count values less
++ *                     than the picture order count value of the current picture.
++ * @num_positive_pics: Number of short-term RPS entries that have picture order count values
++ *                     greater than the picture order count value of the current picture.
++ * @used_by_curr_pic: Bit j specifies if short-term RPS j is used by the current picture.
++ * @use_delta_flag: Bit j equals to 1 specifies that the j-th entry in the source candidate
++ *                  short-term RPS is included in this candidate short-term RPS.
++ * @delta_poc_s0_minus1: Specifies the negative picture order count delta for the i-th entry in
++ *                       the short-term RPS. See details in section 7.4.8 "Short-term reference
++ *                       picture set semantics" of the specification.
++ * @delta_poc_s1_minus1: Specifies the positive picture order count delta for the i-th entry in
++ *                       the short-term RPS. See details in section 7.4.8 "Short-term reference
++ *                       picture set semantics" of the specification.
++ * @flags: See V4L2_HEVC_EXT_SPS_ST_RPS_FLAG_{}
++ */
++struct v4l2_ctrl_hevc_ext_sps_st_rps {
++	__u8	delta_idx_minus1;
++	__u8	delta_rps_sign;
++	__u8	num_negative_pics;
++	__u8	num_positive_pics;
++	__u32	used_by_curr_pic;
++	__u32	use_delta_flag;
++	__u16	abs_delta_rps_minus1;
++	__u16	delta_poc_s0_minus1[16];
++	__u16	delta_poc_s1_minus1[16];
++	__u16	flags;
++};
++
++#define V4L2_HEVC_EXT_SPS_LT_RPS_FLAG_USED_LT		0x1
++
++/*
++ * struct v4l2_ctrl_hevc_ext_sps_lt_rps - HEVC long term RPS parameters
++ *
++ * Dynamic size 1-dimension array for long term RPS. The number of elements
++ * is v4l2_ctrl_hevc_sps::num_long_term_ref_pics_sps. It can contain up to 65 elements.
++ *
++ * @lt_ref_pic_poc_lsb_sps: picture order count modulo MaxPicOrderCntLsb of the i-th candidate
++ *                          long-term reference picture.
++ * @flags: See V4L2_HEVC_EXT_SPS_LT_RPS_FLAG_{}
++ */
++struct v4l2_ctrl_hevc_ext_sps_lt_rps {
++	__u16	lt_ref_pic_poc_lsb_sps;
++	__u16	flags;
++};
++
+ /* Stateless VP9 controls */
+ 
+ #define V4L2_VP9_LOOP_FILTER_FLAG_DELTA_ENABLED	0x1
+diff --git a/bundled/linux/include/uapi/linux/version.h b/bundled/linux/include/uapi/linux/version.h
+index 28ccfa734..42c0b30f5 100644
+--- a/bundled/linux/include/uapi/linux/version.h
++++ b/bundled/linux/include/uapi/linux/version.h
+@@ -1,5 +1,5 @@
+-#define LINUX_VERSION_CODE 398080
++#define LINUX_VERSION_CODE 458752
+ #define KERNEL_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + ((c) > 255 ? 255 : (c)))
+-#define LINUX_VERSION_MAJOR 6
+-#define LINUX_VERSION_PATCHLEVEL 19
++#define LINUX_VERSION_MAJOR 7
++#define LINUX_VERSION_PATCHLEVEL 0
+ #define LINUX_VERSION_SUBLEVEL 0
+diff --git a/bundled/linux/include/uapi/linux/videodev2.h b/bundled/linux/include/uapi/linux/videodev2.h
+index 0708d6683..feb326686 100644
+--- a/bundled/linux/include/uapi/linux/videodev2.h
++++ b/bundled/linux/include/uapi/linux/videodev2.h
+@@ -748,6 +748,7 @@ struct v4l2_pix_format {
+ #define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* H264 parsed slices */
+ #define V4L2_PIX_FMT_HEVC_SLICE v4l2_fourcc('S', '2', '6', '5') /* HEVC parsed slices */
+ #define V4L2_PIX_FMT_AV1_FRAME v4l2_fourcc('A', 'V', '1', 'F') /* AV1 parsed frame */
++#define V4L2_PIX_FMT_AV1      v4l2_fourcc('A', 'V', '0', '1') /* AV1 */
+ #define V4L2_PIX_FMT_SPK      v4l2_fourcc('S', 'P', 'K', '0') /* Sorenson Spark */
+ #define V4L2_PIX_FMT_RV30     v4l2_fourcc('R', 'V', '3', '0') /* RealVideo 8 */
+ #define V4L2_PIX_FMT_RV40     v4l2_fourcc('R', 'V', '4', '0') /* RealVideo 9 & 10 */
+@@ -1916,6 +1917,8 @@ enum v4l2_ctrl_type {
+ 	V4L2_CTRL_TYPE_HEVC_SLICE_PARAMS	= 0x0272,
+ 	V4L2_CTRL_TYPE_HEVC_SCALING_MATRIX	= 0x0273,
+ 	V4L2_CTRL_TYPE_HEVC_DECODE_PARAMS	= 0x0274,
++	V4L2_CTRL_TYPE_HEVC_EXT_SPS_ST_RPS	= 0x0275,
++	V4L2_CTRL_TYPE_HEVC_EXT_SPS_LT_RPS	= 0x0276,
+ 
+ 	V4L2_CTRL_TYPE_AV1_SEQUENCE	    = 0x280,
+ 	V4L2_CTRL_TYPE_AV1_TILE_GROUP_ENTRY = 0x281,
+-- 
+2.47.3
+

@@ -1,0 +1,165 @@
+From 619b1e60da171d573481d2fbfea7645c8a80d1ae Mon Sep 17 00:00:00 2001
+From: "Dmitry V. Levin" <ldv@strace.io>
+Date: Tue, 10 Mar 2026 08:00:00 +0000
+Subject: [PATCH] bundled: update linux/io_uring.h to v7.0-rc3
+
+* bundled/linux/include/uapi/linux/io_uring.h: Update to
+headers_install'ed Linux kernel v7.0-rc3.
+* src/io_uring.c (print_io_uring_zcrx_ifq_reg): Follow the rename
+of __resv2 field of struct io_uring_zcrx_ifq_reg to rx_buf_len.
+* tests/io_uring_register.c (test_IORING_REGISTER_ZCRX_IFQ): Update
+expected output.
+
+Upstream: https://github.com/strace/strace/commit/619b1e60da171d573481d2fbfea7645c8a80d1ae
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ bundled/linux/include/uapi/linux/io_uring.h | 35 +++++++++++++++++++--
+ src/io_uring.c                              |  7 ++---
+ tests/io_uring_register.c                   |  8 ++---
+ 3 files changed, 39 insertions(+), 11 deletions(-)
+
+diff --git a/bundled/linux/include/uapi/linux/io_uring.h b/bundled/linux/include/uapi/linux/io_uring.h
+index b5b23c0d5..1ff16141c 100644
+--- a/bundled/linux/include/uapi/linux/io_uring.h
++++ b/bundled/linux/include/uapi/linux/io_uring.h
+@@ -188,7 +188,8 @@ enum io_uring_sqe_flags_bit {
+ /*
+  * If COOP_TASKRUN is set, get notified if task work is available for
+  * running and a kernel transition would be needed to run it. This sets
+- * IORING_SQ_TASKRUN in the sq ring flags. Not valid with COOP_TASKRUN.
++ * IORING_SQ_TASKRUN in the sq ring flags. Not valid without COOP_TASKRUN
++ * or DEFER_TASKRUN.
+  */
+ #define IORING_SETUP_TASKRUN_FLAG	(1U << 9)
+ #define IORING_SETUP_SQE128		(1U << 10) /* SQEs are 128 byte */
+@@ -237,6 +238,18 @@ enum io_uring_sqe_flags_bit {
+  */
+ #define IORING_SETUP_SQE_MIXED		(1U << 19)
+ 
++/*
++ * When set, io_uring ignores SQ head and tail and fetches SQEs to submit
++ * starting from index 0 instead from the index stored in the head pointer.
++ * IOW, the user should place all SQE at the beginning of the SQ memory
++ * before issuing a submission syscall.
++ *
++ * It requires IORING_SETUP_NO_SQARRAY and is incompatible with
++ * IORING_SETUP_SQPOLL. The user must also never change the SQ head and tail
++ * values and keep it set to 0. Any other value is undefined behaviour.
++ */
++#define IORING_SETUP_SQ_REWIND		(1U << 20)
++
+ enum io_uring_op {
+ 	IORING_OP_NOP,
+ 	IORING_OP_READV,
+@@ -700,6 +713,9 @@ enum io_uring_register_op {
+ 	/* auxiliary zcrx configuration, see enum zcrx_ctrl_op */
+ 	IORING_REGISTER_ZCRX_CTRL		= 36,
+ 
++	/* register bpf filtering programs */
++	IORING_REGISTER_BPF_FILTER		= 37,
++
+ 	/* this goes last */
+ 	IORING_REGISTER_LAST,
+ 
+@@ -805,6 +821,13 @@ struct io_uring_restriction {
+ 	__u32 resv2[3];
+ };
+ 
++struct io_uring_task_restriction {
++	__u16 flags;
++	__u16 nr_res;
++	__u32 resv[3];
++	__DECLARE_FLEX_ARRAY(struct io_uring_restriction, restrictions);
++};
++
+ struct io_uring_clock_register {
+ 	__u32	clockid;
+ 	__u32	__resv[3];
+@@ -1068,6 +1091,14 @@ enum zcrx_reg_flags {
+ 	ZCRX_REG_IMPORT	= 1,
+ };
+ 
++enum zcrx_features {
++	/*
++	 * The user can ask for the desired rx page size by passing the
++	 * value in struct io_uring_zcrx_ifq_reg::rx_buf_len.
++	 */
++	ZCRX_FEATURE_RX_PAGE_SIZE	= 1 << 0,
++};
++
+ /*
+  * Argument for IORING_REGISTER_ZCRX_IFQ
+  */
+@@ -1082,7 +1113,7 @@ struct io_uring_zcrx_ifq_reg {
+ 
+ 	struct io_uring_zcrx_offsets offsets;
+ 	__u32	zcrx_id;
+-	__u32	__resv2;
++	__u32	rx_buf_len;
+ 	__u64	__resv[3];
+ };
+ 
+diff --git a/src/io_uring.c b/src/io_uring.c
+index a479c9570..04de31651 100644
+--- a/src/io_uring.c
++++ b/src/io_uring.c
+@@ -1254,11 +1254,8 @@ print_io_uring_zcrx_ifq_reg(struct tcb *tcp, const kernel_ulong_t addr)
+ 	print_io_uring_zcrx_offsets(tcp, &arg.offsets);
+ 	tprint_struct_next();
+ 	PRINT_FIELD_U(arg, zcrx_id);
+-
+-	if (arg.__resv2) {
+-		tprint_struct_next();
+-		PRINT_FIELD_X(arg, __resv2);
+-	}
++	tprint_struct_next();
++	PRINT_FIELD_U(arg, rx_buf_len);
+ 
+ 	if (!IS_ARRAY_ZERO(arg.__resv)) {
+ 		tprint_struct_next();
+diff --git a/tests/io_uring_register.c b/tests/io_uring_register.c
+index cfaa93d20..9952f0370 100644
+--- a/tests/io_uring_register.c
++++ b/tests/io_uring_register.c
+@@ -2058,7 +2058,7 @@ test_IORING_REGISTER_ZCRX_IFQ(int fd_null)
+ 	       ", flags=" XLAT_FMT
+ 	       ", area_ptr=%#llx, region_ptr=%#llx"
+ 	       ", offsets={head=%u, tail=%u, rqes=%u}"
+-	       ", zcrx_id=%u}, 1) = %s\n",
++	       ", zcrx_id=%u, rx_buf_len=0}, 1) = %s\n",
+ 	       fd_null, path_null,
+ 	       XLAT_SEL(zcrx_ifq_ops.val, zcrx_ifq_ops.str),
+ 	       zcrx_ifq->if_idx, zcrx_ifq->if_rxq, zcrx_ifq->rq_entries,
+@@ -2073,9 +2073,9 @@ test_IORING_REGISTER_ZCRX_IFQ(int fd_null)
+ 	memset(zcrx_ifq, 0, sizeof(*zcrx_ifq));
+ 	zcrx_ifq->if_idx = 0xaaaa;
+ 	zcrx_ifq->offsets.__resv2 = 0xbbbb;
+-	zcrx_ifq->__resv2 = 0xcccc;
+ 	zcrx_ifq->offsets.__resv[0] = 0xddddddddddddddddULL;
+ 	zcrx_ifq->offsets.__resv[1] = 0xeeeeeeeeeeeeeeeeULL;
++	zcrx_ifq->rx_buf_len = 0xcccc;
+ 	zcrx_ifq->__resv[0] = 0x1111111111111111ULL;
+ 	zcrx_ifq->__resv[1] = 0x2222222222222222ULL;
+ 	zcrx_ifq->__resv[2] = 0x3333333333333333ULL;
+@@ -2086,7 +2086,7 @@ test_IORING_REGISTER_ZCRX_IFQ(int fd_null)
+ 	       ", area_ptr=NULL, region_ptr=NULL"
+ 	       ", offsets={head=0, tail=0, rqes=0, __resv2=%#x"
+ 	       ", __resv=[%#llx, %#llx]}"
+-	       ", zcrx_id=0, __resv2=%#x"
++	       ", zcrx_id=0, rx_buf_len=%u"
+ 	       ", __resv=[%#llx, %#llx, %#llx]}, 1) = %s\n",
+ 	       fd_null, path_null,
+ 	       XLAT_SEL(zcrx_ifq_ops.val, zcrx_ifq_ops.str),
+@@ -2094,7 +2094,7 @@ test_IORING_REGISTER_ZCRX_IFQ(int fd_null)
+ 	       zcrx_ifq->offsets.__resv2,
+ 	       (unsigned long long) zcrx_ifq->offsets.__resv[0],
+ 	       (unsigned long long) zcrx_ifq->offsets.__resv[1],
+-	       zcrx_ifq->__resv2,
++	       zcrx_ifq->rx_buf_len,
+ 	       (unsigned long long) zcrx_ifq->__resv[0],
+ 	       (unsigned long long) zcrx_ifq->__resv[1],
+ 	       (unsigned long long) zcrx_ifq->__resv[2],
+-- 
+2.47.3
+

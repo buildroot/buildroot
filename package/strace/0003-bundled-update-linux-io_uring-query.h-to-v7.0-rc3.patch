@@ -1,0 +1,123 @@
+From 81fb4e6cd8b22acc51b8f7226a60a75825087d7b Mon Sep 17 00:00:00 2001
+From: "Dmitry V. Levin" <ldv@strace.io>
+Date: Wed, 11 Mar 2026 08:00:00 +0000
+Subject: [PATCH] bundled: update linux/io_uring/query.h to v7.0-rc3
+
+* bundled/linux/include/uapi/linux/io_uring/query.h: Update to
+headers_install'ed Linux kernel v7.0-rc3.
+* src/io_uring.c (print_io_uring_query_zcrx): Follow the rename
+of "__resv1" field of struct io_uring_query_zcrx to "features".
+* tests/io_uring_register.c (test_IORING_REGISTER_QUERY): Update
+expected output.
+
+Upstream: https://github.com/strace/strace/commit/81fb4e6cd8b22acc51b8f7226a60a75825087d7b
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ .../linux/include/uapi/linux/io_uring/query.h    |  6 +++++-
+ src/io_uring.c                                   |  7 ++-----
+ tests/io_uring_register.c                        | 16 ++++++++--------
+ 3 files changed, 15 insertions(+), 14 deletions(-)
+
+diff --git a/bundled/linux/include/uapi/linux/io_uring/query.h b/bundled/linux/include/uapi/linux/io_uring/query.h
+index 2456e6c5e..95500759c 100644
+--- a/bundled/linux/include/uapi/linux/io_uring/query.h
++++ b/bundled/linux/include/uapi/linux/io_uring/query.h
+@@ -1,6 +1,9 @@
+ /* SPDX-License-Identifier: (GPL-2.0 WITH Linux-syscall-note) OR MIT */
+ /*
+  * Header file for the io_uring query interface.
++ *
++ * Copyright (C) 2026 Pavel Begunkov <asml.silence@gmail.com>
++ * Copyright (C) Meta Platforms, Inc.
+  */
+ #ifndef LINUX_IO_URING_QUERY_H
+ #define LINUX_IO_URING_QUERY_H
+@@ -50,7 +53,8 @@ struct io_uring_query_zcrx {
+ 	__u64 area_flags;
+ 	/* The number of supported ZCRX_CTRL_* opcodes */
+ 	__u32 nr_ctrl_opcodes;
+-	__u32 __resv1;
++	/* Bitmask of ZCRX_FEATURE_* indicating which features are available */
++	__u32 features;
+ 	/* The refill ring header size */
+ 	__u32 rq_hdr_size;
+ 	/* The alignment for the header */
+diff --git a/src/io_uring.c b/src/io_uring.c
+index 04de31651..d6eb63ffe 100644
+--- a/src/io_uring.c
++++ b/src/io_uring.c
+@@ -1538,15 +1538,12 @@ print_io_uring_query_zcrx(struct tcb *tcp, const kernel_ulong_t addr)
+ 	tprint_struct_next();
+ 	PRINT_FIELD_U(zcrx, nr_ctrl_opcodes);
+ 	tprint_struct_next();
++	PRINT_FIELD_X(zcrx, features);
++	tprint_struct_next();
+ 	PRINT_FIELD_U(zcrx, rq_hdr_size);
+ 	tprint_struct_next();
+ 	PRINT_FIELD_U(zcrx, rq_hdr_alignment);
+ 
+-	if (zcrx.__resv1) {
+-		tprint_struct_next();
+-		PRINT_FIELD_X(zcrx, __resv1);
+-	}
+-
+ 	if (zcrx.__resv2) {
+ 		tprint_struct_next();
+ 		PRINT_FIELD_X(zcrx, __resv2);
+diff --git a/tests/io_uring_register.c b/tests/io_uring_register.c
+index 9952f0370..158c714a0 100644
+--- a/tests/io_uring_register.c
++++ b/tests/io_uring_register.c
+@@ -2373,8 +2373,8 @@ test_IORING_REGISTER_QUERY(int fd_null)
+ 	printf("io_uring_register(%u<%s>, " XLAT_FMT
+ 	       ", {query_data=%p, query_op=" XLAT_FMT ", size=%u, result=0"
+ 	       ", query_data={register_flags=" XLAT_FMT ", area_flags=" XLAT_FMT
+-	       ", nr_ctrl_opcodes=%u, rq_hdr_size=%u, rq_hdr_alignment=%u}"
+-	       ", next_entry=NULL}, 0) = %s\n",
++	       ", nr_ctrl_opcodes=%u, features=0, rq_hdr_size=%u"
++	       ", rq_hdr_alignment=%u}, next_entry=NULL}, 0) = %s\n",
+ 	       fd_null, path_null,
+ 	       XLAT_SEL(query_ops.val, query_ops.str),
+ 	       zcrx_data,
+@@ -2490,8 +2490,8 @@ test_IORING_REGISTER_QUERY(int fd_null)
+ 	       ", sqe_flags=0, nr_query_opcodes=0}, next_entry="
+ 	       "{query_data=%p, query_op=" XLAT_FMT ", size=%u, result=0"
+ 	       ", query_data={register_flags=0, area_flags=0"
+-	       ", nr_ctrl_opcodes=%u, rq_hdr_size=0, rq_hdr_alignment=0}"
+-	       ", next_entry=NULL}}, 0) = %s\n",
++	       ", nr_ctrl_opcodes=%u, features=0, rq_hdr_size=0"
++	       ", rq_hdr_alignment=0}, next_entry=NULL}}, 0) = %s\n",
+ 	       fd_null, path_null,
+ 	       XLAT_SEL(query_ops.val, query_ops.str),
+ 	       opcode_data2,
+@@ -2570,22 +2570,22 @@ test_IORING_REGISTER_QUERY(int fd_null)
+ 	hdr->result = 0;
+ 
+ 	memset(zcrx_data, 0, sizeof(*zcrx_data));
+-	zcrx_data->__resv1 = 0xdeadbeef;
++	zcrx_data->features = 0xdeadbeef;
+ 	zcrx_data->__resv2 = 0xcafebabe12345678ULL;
+ 
+ 	sys_io_uring_register(fd_null, query_ops.val, hdr, 0);
+ 	printf("io_uring_register(%u<%s>, " XLAT_FMT
+ 	       ", {query_data=%p, query_op=" XLAT_FMT ", size=%u, result=0"
+ 	       ", query_data={register_flags=0, area_flags=0"
+-	       ", nr_ctrl_opcodes=0, rq_hdr_size=0"
+-	       ", rq_hdr_alignment=0, __resv1=%#x, __resv2=%#llx}"
++	       ", nr_ctrl_opcodes=0, features=%#x, rq_hdr_size=0"
++	       ", rq_hdr_alignment=0, __resv2=%#llx}"
+ 	       ", next_entry=NULL}, 0) = %s\n",
+ 	       fd_null, path_null,
+ 	       XLAT_SEL(query_ops.val, query_ops.str),
+ 	       zcrx_data,
+ 	       XLAT_ARGS(IO_URING_QUERY_ZCRX),
+ 	       (unsigned int) sizeof(*zcrx_data),
+-	       zcrx_data->__resv1,
++	       zcrx_data->features,
+ 	       (unsigned long long) zcrx_data->__resv2,
+ 	       errstr);
+ 
+-- 
+2.47.3
+
