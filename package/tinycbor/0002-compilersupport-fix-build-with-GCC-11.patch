@@ -1,0 +1,41 @@
+From 4adba2c1cc376cbbbbc603595e2f561a21259bfb Mon Sep 17 00:00:00 2001
+From: Florian Larysch <fl@n621.de>
+Date: Mon, 13 Apr 2026 23:34:39 +0200
+Subject: [PATCH] compilersupport: fix build with GCC < 11
+
+Commit 45e4641 ("Fix build with GCC < 11: [[fallthrough]] is supported
+but not allowed in C") introduced a fix for old GCC versions, but commit
+91d1c50 ("compilersupport: fix compilation in C23 mode") reverted it,
+reintroducing the build failure.
+
+Revert the revert.
+
+Signed-off-by: Florian Larysch <fl@n621.de>
+Upstream: https://github.com/intel/tinycbor/commit/76d7a29cead0f8c1c72a6b4fb2ecbc8a9885ed89
+---
+ src/compilersupport_p.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/compilersupport_p.h b/src/compilersupport_p.h
+index 7f24773..670a291 100644
+--- a/src/compilersupport_p.h
++++ b/src/compilersupport_p.h
+@@ -52,10 +52,14 @@
+ #  define cbor_static_assert(x)         ((void)sizeof(char[2*!!(x) - 1]))
+ #endif
+ 
+-#if defined(__has_cpp_attribute)    // C23 and C++17
++#if defined(__has_cpp_attribute) && defined(__cplusplus)    // C++17
+ #  if __has_cpp_attribute(fallthrough)
+ #    define CBOR_FALLTHROUGH            [[fallthrough]]
+ #  endif
++#elif defined(__has_c_attribute) && !defined(__cplusplus)   // C23
++#  if __has_c_attribute(fallthrough)
++#    define CBOR_FALLTHROUGH            [[fallthrough]]
++#  endif
+ #endif
+ #ifndef CBOR_FALLTHROUGH
+ #  ifdef __GNUC__
+-- 
+2.53.0
+

@@ -1,0 +1,29 @@
+From c2c569fbef704685ce62d45fb7b20a804f45e9f3 Mon Sep 17 00:00:00 2001
+From: Florian Larysch <larysch@fixme.gmbh>
+Date: Mon, 13 Apr 2026 21:57:03 +0200
+Subject: [PATCH] install json2cbor
+
+The old Make-based build system installed json2cbor during "make
+install" if it has been built. However, this behavior got dropped during
+the CMake migration, causing this tool to be missing by default. Restore
+the old behavior.
+
+Signed-off-by: Florian Larysch <fl@n621.de>
+Upstream: https://github.com/intel/tinycbor/commit/c2c569fbef704685ce62d45fb7b20a804f45e9f3
+---
+ tools/json2cbor/CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/json2cbor/CMakeLists.txt b/tools/json2cbor/CMakeLists.txt
+index 41892a3..a873114 100644
+--- a/tools/json2cbor/CMakeLists.txt
++++ b/tools/json2cbor/CMakeLists.txt
+@@ -6,4 +6,5 @@ if(LIBCJSON_FOUND)
+   tinycbor_add_executable(json2cbor json2cbor.c)
+   target_include_directories(json2cbor SYSTEM PUBLIC ${LIBCJSON_INCLUDE_DIRS})
+   target_link_libraries(json2cbor ${LIBCJSON_LIBRARIES})
++  install(TARGETS json2cbor)
+ endif()
+-- 
+2.53.0
+

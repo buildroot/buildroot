@@ -1,0 +1,62 @@
+From bd2f0a3d2402cbb2d6e071cc3051ad04aa93e63d Mon Sep 17 00:00:00 2001
+From: Florian Larysch <fl@n621.de>
+Date: Mon, 13 Apr 2026 23:26:21 +0200
+Subject: [PATCH] CMake: don't depend on C++ compiler for main build
+
+Only the tests actually require a C++ compiler, however CXX is globally
+enabled for the project, which prevents building on targets that do
+not have a C++ compiler available.
+
+Only enable C++ support selectively when building the tests is enabled
+too.
+
+Signed-off-by: Florian Larysch <fl@n621.de>
+Upstream: https://github.com/intel/tinycbor/pull/323
+---
+ CMakeLists.txt | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index e504ee5..e185474 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -24,7 +24,7 @@
+ 
+ cmake_minimum_required(VERSION 3.10)
+ 
+-project(tinycbor LANGUAGES C CXX VERSION 7.0)
++project(tinycbor LANGUAGES C VERSION 7.0)
+ 
+ # Set path to additional cmake scripts
+ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+@@ -56,7 +56,7 @@ add_library(tinycbor
+ )
+ if(WITH_FREESTANDING)
+   target_compile_options(tinycbor PUBLIC
+-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-ffreestanding>
++    $<$<NOT:$<C_COMPILER_ID:MSVC>>:-ffreestanding>
+   )
+ else()
+   target_sources(tinycbor PRIVATE
+@@ -106,8 +106,8 @@ endif()
+ 
+ # Enable warnings
+ target_compile_options(tinycbor PRIVATE
+-  $<$<CXX_COMPILER_ID:MSVC>:-W3>
+-  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:
++  $<$<C_COMPILER_ID:MSVC>:-W3>
++  $<$<NOT:$<C_COMPILER_ID:MSVC>>:
+     -Wall -Wextra
+     -Werror=format-security
+     -Werror=incompatible-pointer-types
+@@ -181,6 +181,7 @@ if(BUILD_EXAMPLES)
+   add_subdirectory(examples)
+ endif()
+ if(BUILD_TESTING)
++  enable_language(CXX)
+   enable_testing()
+   add_subdirectory(tests)
+ endif()
+-- 
+2.53.0
+
