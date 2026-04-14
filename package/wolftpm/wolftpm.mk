@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-WOLFTPM_VERSION = 3.1.0
+WOLFTPM_VERSION = 3.10.0
 WOLFTPM_SITE = $(call github,wolfSSL,wolfTPM,v$(WOLFTPM_VERSION))
 WOLFTPM_INSTALL_STAGING = YES
-WOLFTPM_LICENSE = GPL-2.0+
+WOLFTPM_LICENSE = GPL-3.0+
 WOLFTPM_LICENSE_FILES = LICENSE
 WOLFTPM_CONFIG_SCRIPTS = wolftpm-config
 
