@@ -58,6 +58,10 @@ config BR2_PACKAGE_MTD_FLASH_UNLOCK
 	bool "flash_unlock"
 	default y
 
+config BR2_PACKAGE_MTD_FSCKUBIFS
+	bool "fsck.ubifs"
+	select BR2_PACKAGE_MTD_UBIFS_UTILS
+
 config BR2_PACKAGE_MTD_FTL_CHECK
 	bool "ftl_check"
 
