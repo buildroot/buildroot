@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-KIBI_VERSION = 0.3.1
+KIBI_VERSION = 0.3.3
 KIBI_SITE = $(call github,ilai-deutel,kibi,v$(KIBI_VERSION))
 KIBI_LICENSE = MIT or Apache-2.0
 KIBI_LICENSE_FILES = LICENSE-MIT LICENSE-APACHE
