@@ -1,0 +1,68 @@
+From c66dc9a65723e610fd02da38471d68b8289eb074 Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Tue, 14 Jan 2025 14:09:36 +0000
+Subject: [PATCH] socket: use void cast to allow compile for arm32
+
+When compiling for arm32 the error: cast increases required alignment
+of target type occurs.
+
+/lib/socket.c: In function 'rpc_read_from_socket':
+lib/socket.c:586:49: error: cast increases required alignment of target type [-Werror=cast-align]
+  586 |                         rpc->rm_xid[1] = ntohl(*(uint32_t *)&buf[0]);
+      |                                                 ^
+lib/socket.c:587:61: error: cast increases required alignment of target type [-Werror=cast-align]
+  587 |                         rpc->pdu = rpc_find_pdu(rpc, ntohl(*(uint32_t *)&buf[0]));
+      |                                                             ^
+lib/socket.c:799:35: error: cast increases required alignment of target type [-Werror=cast-align]
+  799 |                                 *((uint32_t *)rpc->inbuf) = htonl(rpc->rm_xid[1]);
+      |                                   ^
+lib/socket.c:861:71: error: cast increases required alignment of target type [-Werror=cast-align]
+  861 |                                                 const READ3res *res = (READ3res *) rpc->pdu->zdr_decode_buf;
+      |                                                                       ^
+
+cast via (void *) to allow the compile to suceed, as all of the source buffers should be 32bit aligned.
+
+Signed-off-by: Rudi Heitbaum <rudi@heitbaum.com>
+
+Upstream: https://github.com/sahlberg/libnfs/commit/a01d42a0d9682d3e506d3c78680db8c7d158fe88
+Signed-off-by: Florian Larysch <fl@n621.de>
+---
+ lib/socket.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/lib/socket.c b/lib/socket.c
+index f51ca4d..5b9fce5 100644
+--- a/lib/socket.c
++++ b/lib/socket.c
+@@ -583,8 +583,8 @@ rpc_read_from_socket(struct rpc_context *rpc)
+ 		}
+ 		if (!rpc->is_server_context) {
+ 			rpc->rm_xid[0] = count;
+-			rpc->rm_xid[1] = ntohl(*(uint32_t *)&buf[0]);
+-			rpc->pdu = rpc_find_pdu(rpc, ntohl(*(uint32_t *)&buf[0]));
++			rpc->rm_xid[1] = ntohl(*(uint32_t *)(void *)&buf[0]);
++			rpc->pdu = rpc_find_pdu(rpc, ntohl(*(uint32_t *)(void *)&buf[0]));
+ 			if (rpc->pdu == NULL) {
+ 				rpc_set_error(rpc, "Failed to match incoming PDU/XID."
+ 						" Ignoring PDU");
+@@ -796,7 +796,7 @@ rpc_read_from_socket(struct rpc_context *rpc)
+                                 }
+ 
+                                 /* Copy the next 4 bytes into inbuf */
+-                                *((uint32_t *)rpc->inbuf) = htonl(rpc->rm_xid[1]);
++                                *((uint32_t *)(void *)rpc->inbuf) = htonl(rpc->rm_xid[1]);
+ 
+                                 /* but set inpos to 0, we will update it above
+                                  * that we have already read these 4 bytes in
+@@ -858,7 +858,7 @@ rpc_read_from_socket(struct rpc_context *rpc)
+                                                  * If the READ failed, bail out here as there is no
+                                                  * data.
+                                                  */
+-                                                const READ3res *res = (READ3res *) rpc->pdu->zdr_decode_buf;
++                                                const READ3res *res = (READ3res *)(void *) rpc->pdu->zdr_decode_buf;
+                                                 if (res->status != NFS3_OK) {
+                                                         goto payload_finished;
+                                                 }
+-- 
+2.53.0
+
