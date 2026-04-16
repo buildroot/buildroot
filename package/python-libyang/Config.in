@@ -1,0 +1,18 @@
+config BR2_PACKAGE_PYTHON_LIBYANG
+	bool "python-libyang"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libyang
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libyang
+	depends on !BR2_STATIC_LIBS # libyang
+	select BR2_PACKAGE_LIBYANG
+	select BR2_PACKAGE_PYTHON_CFFI # runtime
+	help
+	  Python CFFI bindings for the libyang YANG library.
+
+	  This package provides the 'libyang' Python module, used by
+	  higher-level tooling such as python-sysrepo.
+
+	  https://github.com/CESNET/libyang-python
+
+comment "python-libyang needs a toolchain w/ threads, dynamic library"
+	depends on !BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
