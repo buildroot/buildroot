@@ -22,7 +22,10 @@ HOST_XZ_ADD_CCACHE_DEPENDENCY = NO
 # 0002-liblzma-mt-dec-Simplify-by-removing-the-THR_STOP-sta.patch
 # 0003-liblzma-mt-dec-Don-t-free-the-input-buffer-too-early.patch
 # 0004-liblzma-mt-dec-Don-t-modify-thr-in_size-in-the-worke.patch
-XZ_IGNORE_CVES = CVE-2025-31115
+XZ_IGNORE_CVES += CVE-2025-31115
+
+# 0005-liblzma-Fix-a-buffer-overflow-in-lzma-index-append.patch
+XZ_IGNORE_CVES += CVE-2026-34743
 
 XZ_CONF_OPTS = \
 	--enable-encoders=lzma1,lzma2,delta,x86,powerpc,ia64,arm,armthumb,arm64,sparc,riscv \
