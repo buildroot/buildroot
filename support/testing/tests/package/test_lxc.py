@@ -13,10 +13,10 @@ class TestLxc(infra.basetest.BRTest):
             BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
             BR2_LINUX_KERNEL=y
             BR2_LINUX_KERNEL_CUSTOM_VERSION=y
-            BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="5.15.38"
+            BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="6.18.21"
             BR2_LINUX_KERNEL_DEFCONFIG="vexpress"
             BR2_LINUX_KERNEL_DTS_SUPPORT=y
-            BR2_LINUX_KERNEL_INTREE_DTS_NAME="vexpress-v2p-ca9"
+            BR2_LINUX_KERNEL_INTREE_DTS_NAME="arm/vexpress-v2p-ca9"
             BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES="{}"
             BR2_TARGET_GENERIC_GETTY_PORT="ttyAMA0"
             BR2_INIT_SYSTEMD=y
