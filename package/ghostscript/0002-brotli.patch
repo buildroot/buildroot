@@ -1,0 +1,29 @@
+Fix brotli build failure in ghostscript 10.06.0 on ARMv7
+
+Downloaded from https://bugs.ghostscript.com/show_bug.cgi?id=708831
+
+Upstream: https://github.com/google/brotli/issues/1415
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+
+diff --git a/brotli/c/dec/decode.c b/brotli/c/dec/decode.c
+index f8d550cf4c..07da1fb44e 100644
+--- a/brotli/c/dec/decode.c
++++ b/brotli/c/dec/decode.c
+@@ -436,11 +436,12 @@ static BROTLI_INLINE void PreloadSymbol(int safe,
+                                         brotli_reg_t* value) {
+   if (safe) {
+     return;
++  } else {
++    BROTLI_HC_MARK_TABLE_FOR_FAST_LOAD(table);
++    BROTLI_HC_ADJUST_TABLE_INDEX(table, BrotliGetBits(br, HUFFMAN_TABLE_BITS));
++    *bits = BROTLI_HC_FAST_LOAD_BITS(table);
++    *value = BROTLI_HC_FAST_LOAD_VALUE(table);
+   }
+-  BROTLI_HC_MARK_TABLE_FOR_FAST_LOAD(table);
+-  BROTLI_HC_ADJUST_TABLE_INDEX(table, BrotliGetBits(br, HUFFMAN_TABLE_BITS));
+-  *bits = BROTLI_HC_FAST_LOAD_BITS(table);
+-  *value = BROTLI_HC_FAST_LOAD_VALUE(table);
+ }
+ 
+ /* Decodes the next Huffman code using data prepared by PreloadSymbol.
