@@ -11,6 +11,9 @@ LIBCAP_LICENSE = GPL-2.0 or BSD-3-Clause
 LIBCAP_LICENSE_FILES = License
 LIBCAP_CPE_ID_VALID = YES
 
+# 0001-Address-a-potential-TOCTOU-race-condition-in-cap-set-file.patch
+LIBCAP_IGNORE_CVES += CVE-2026-4878
+
 LIBCAP_DEPENDENCIES = host-gperf
 LIBCAP_INSTALL_STAGING = YES
 
