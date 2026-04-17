@@ -144,6 +144,14 @@ comment "XWayland support needs a toolchain w/ threads, dynamic library"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS
 
+config BR2_PACKAGE_WESTON_VULKAN
+	bool "Vulkan support"
+	depends on BR2_PACKAGE_HAS_LIBGBM
+	select BR2_PACKAGE_VULKAN_LOADER
+
+comment "Vulkan support needs gbm"
+	depends on !BR2_PACKAGE_HAS_LIBGBM
+
 # Weston needs at least one shell; this can be one of the bundled ones,
 # below, of from a third-party package, which should then select this.
 config BR2_PACKAGE_WESTON_HAS_SHELL
@@ -167,6 +175,15 @@ config BR2_PACKAGE_WESTON_SHELL_KIOSK
 	bool "kiosk shell"
 	default y
 	select BR2_PACKAGE_WESTON_HAS_SHELL
+
+config BR2_PACKAGE_WESTON_SHELL_LUA
+	bool "lua shell"
+	default y
+	depends on BR2_PACKAGE_LUA_5_4
+	select BR2_PACKAGE_WESTON_HAS_SHELL
+
+comment "lua shell needs a Lua >= 5.4"
+	depends on !BR2_PACKAGE_LUA_5_4
 
 config BR2_PACKAGE_WESTON_SCREENSHARE
 	bool "screenshare"

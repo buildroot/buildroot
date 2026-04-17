@@ -1,0 +1,151 @@
+From 60e0ec39183f932b7b4ba60070a5b2ac64b42d30 Mon Sep 17 00:00:00 2001
+From: Erico Nunes <nunes.erico@gmail.com>
+Date: Thu, 5 Mar 2026 17:29:06 +0100
+Subject: [PATCH] vulkan-renderer: guard surface output creation with backend
+ defines
+
+Fix compilation errors when compiling with x11 or wayland backends
+disabled or not available.
+
+Fixes: 8f56d03d ("libweston: Vulkan renderer")
+
+Upstream: https://gitlab.freedesktop.org/wayland/weston/-/commit/ba10e6d81462fc8628dd340ba9404e13745eae18
+Signed-off-by: Erico Nunes <nunes.erico@gmail.com>
+Signed-off-by: Thomas Devoogdt <thomas.devoogdt@barco.com>
+---
+ .../vulkan-renderer-internal.h                | 17 ++++++++++----
+ libweston/renderer-vulkan/vulkan-renderer.c   | 22 +++++++++++++++----
+ 2 files changed, 31 insertions(+), 8 deletions(-)
+
+diff --git a/libweston/renderer-vulkan/vulkan-renderer-internal.h b/libweston/renderer-vulkan/vulkan-renderer-internal.h
+index aadfc6e4..f8604227 100644
+--- a/libweston/renderer-vulkan/vulkan-renderer-internal.h
++++ b/libweston/renderer-vulkan/vulkan-renderer-internal.h
+@@ -35,17 +35,21 @@
+ #include <stdbool.h>
+ #include <time.h>
+ 
+-#include <wayland-util.h>
+ #include <vulkan/vulkan.h>
+ #include "shared/helpers.h"
+ #include "libweston/libweston.h"
+ #include "libweston/libweston-internal.h"
+-#include <xcb/xcb.h>
+ 
+-#define VK_USE_PLATFORM_XCB_KHR
++#if defined(BUILD_WAYLAND_COMPOSITOR)
+ #define VK_USE_PLATFORM_WAYLAND_KHR
+ #include <vulkan/vulkan_wayland.h>
++#endif
++
++#if defined(BUILD_X11_COMPOSITOR)
++#define VK_USE_PLATFORM_XCB_KHR
++#include <xcb/xcb.h>
+ #include <vulkan/vulkan_xcb.h>
++#endif
+ 
+ #define MAX_NUM_IMAGES 5
+ #define MAX_CONCURRENT_FRAMES 2
+@@ -173,10 +177,15 @@ struct vulkan_renderer {
+ 	struct wl_list pipeline_list;
+ 	struct dmabuf_allocator *allocator;
+ 
++#if defined(BUILD_WAYLAND_COMPOSITOR)
+ 	PFN_vkCreateWaylandSurfaceKHR create_wayland_surface;
+-	PFN_vkCreateXcbSurfaceKHR create_xcb_surface;
+ 	PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR get_wayland_presentation_support;
++#endif
++
++#if defined(BUILD_X11_COMPOSITOR)
++	PFN_vkCreateXcbSurfaceKHR create_xcb_surface;
+ 	PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR get_xcb_presentation_support;
++#endif
+ 
+ 	PFN_vkGetImageMemoryRequirements2KHR get_image_memory_requirements2;
+ 	PFN_vkGetMemoryFdPropertiesKHR get_memory_fd_properties;
+diff --git a/libweston/renderer-vulkan/vulkan-renderer.c b/libweston/renderer-vulkan/vulkan-renderer.c
+index 9f701913..b15eff46 100644
+--- a/libweston/renderer-vulkan/vulkan-renderer.c
++++ b/libweston/renderer-vulkan/vulkan-renderer.c
+@@ -303,16 +303,20 @@ static const struct vulkan_extension_table vulkan_inst_ext_table[] = {
+ 		.name = VK_KHR_SURFACE_EXTENSION_NAME,
+ 		.flag = EXTENSION_KHR_SURFACE,
+ 	},
++#if defined(BUILD_WAYLAND_COMPOSITOR)
+ 	{
+ 		.name = VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME,
+ 		.flag = EXTENSION_KHR_WAYLAND_SURFACE,
+ 		.instance_dep = EXTENSION_KHR_SURFACE,
+ 	},
++#endif
++#if defined(BUILD_X11_COMPOSITOR)
+ 	{
+ 		.name = VK_KHR_XCB_SURFACE_EXTENSION_NAME,
+ 		.flag = EXTENSION_KHR_XCB_SURFACE,
+ 		.instance_dep = EXTENSION_KHR_SURFACE,
+ 	},
++#endif
+ };
+ 
+ /* Keep in sync with vulkan-renderer-internal.h. */
+@@ -3455,9 +3459,12 @@ vulkan_renderer_output_window_create_swapchain(struct weston_output *output,
+ 	struct vulkan_renderer *vr = get_renderer(ec);
+ 	struct vulkan_output_state *vo = get_output_state(output);
+ 	VkResult result;
+-	VkBool32 supported;
++	VkBool32 supported = 0;
+ 	assert(vulkan_instance_has(vr, EXTENSION_KHR_SURFACE));
+ 
++	vo->swapchain.surface = VK_NULL_HANDLE;
++
++#if defined(BUILD_WAYLAND_COMPOSITOR)
+ 	if (options->wayland_display && options->wayland_surface) {
+ 		assert(vulkan_instance_has(vr, EXTENSION_KHR_WAYLAND_SURFACE));
+ 
+@@ -3472,7 +3479,10 @@ vulkan_renderer_output_window_create_swapchain(struct weston_output *output,
+ 		result = vr->create_wayland_surface(vr->inst, &wayland_surface_create_info, NULL,
+ 						    &vo->swapchain.surface);
+ 		check_vk_success(result, "vkCreateWaylandSurfaceKHR");
+-	} else if (options->xcb_connection && options->xcb_window) {
++	}
++#endif
++#if defined(BUILD_X11_COMPOSITOR)
++	if (options->xcb_connection && options->xcb_window) {
+ 		assert(vulkan_instance_has(vr, EXTENSION_KHR_XCB_SURFACE));
+ 
+ 		supported = vr->get_xcb_presentation_support(vr->phys_dev, 0, options->xcb_connection, options->xcb_visualid);
+@@ -3486,9 +3496,9 @@ vulkan_renderer_output_window_create_swapchain(struct weston_output *output,
+ 		result = vr->create_xcb_surface(vr->inst, &xcb_surface_create_info, NULL,
+ 						&vo->swapchain.surface);
+ 		check_vk_success(result, "vkCreateXcbSurfaceKHR");
+-	} else {
+-		assert(0);
+ 	}
++#endif
++	assert(vo->swapchain.surface != VK_NULL_HANDLE);
+ 
+ 	vkGetPhysicalDeviceSurfaceSupportKHR(vr->phys_dev, 0, vo->swapchain.surface, &supported);
+ 	assert(supported);
+@@ -4190,15 +4200,19 @@ load_instance_proc(struct vulkan_renderer *vr, const char *func, void *proc_ptr)
+ static void
+ vulkan_renderer_setup_instance_extensions(struct vulkan_renderer *vr)
+ {
++#if defined(BUILD_WAYLAND_COMPOSITOR)
+ 	if (vulkan_instance_has(vr, EXTENSION_KHR_WAYLAND_SURFACE)) {
+ 		load_instance_proc(vr, "vkCreateWaylandSurfaceKHR", &vr->create_wayland_surface);
+ 		load_instance_proc(vr, "vkGetPhysicalDeviceWaylandPresentationSupportKHR", &vr->get_wayland_presentation_support);
+ 	}
++#endif
+ 
++#if defined(BUILD_X11_COMPOSITOR)
+ 	if (vulkan_instance_has(vr, EXTENSION_KHR_XCB_SURFACE)) {
+ 		load_instance_proc(vr, "vkCreateXcbSurfaceKHR", &vr->create_xcb_surface);
+ 		load_instance_proc(vr, "vkGetPhysicalDeviceXcbPresentationSupportKHR", &vr->get_xcb_presentation_support);
+ 	}
++#endif
+ }
+ 
+ static void
+-- 
+2.43.0
+
