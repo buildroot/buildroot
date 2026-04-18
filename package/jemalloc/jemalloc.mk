@@ -12,11 +12,15 @@ JEMALLOC_LICENSE_FILES = COPYING
 JEMALLOC_INSTALL_STAGING = YES
 JEMALLOC_CONFIG_SCRIPTS = jemalloc-config
 
+JEMALLOC_CFLAGS = $(TARGET_CFLAGS) -D_GNU_SOURCE
+
 # gcc bug internal compiler error: in merge_overlapping_regs, at
 # regrename.c:304. This bug is fixed since gcc 6.
 ifeq ($(BR2_or1k):$(BR2_TOOLCHAIN_GCC_AT_LEAST_6),y:)
-JEMALLOC_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -O0"
+JEMALLOC_CFLAGS += -O0
 endif
+
+JEMALLOC_CONF_ENV += CFLAGS="$(JEMALLOC_CFLAGS)"
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
