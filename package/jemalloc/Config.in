@@ -16,6 +16,7 @@ config BR2_PACKAGE_JEMALLOC
 	bool "jemalloc"
 	depends on BR2_PACKAGE_JEMALLOC_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_USE_MMU # madvise()
 	help
 	  This library providing a malloc(3) implementation that
 	  emphasizes fragmentation avoidance and scalable concurrency
@@ -25,4 +26,5 @@ config BR2_PACKAGE_JEMALLOC
 
 comment "jemalloc needs a toolchain w/ threads"
 	depends on BR2_PACKAGE_JEMALLOC_ARCH_SUPPORTS
+	depends on BR2_USE_MMU
 	depends on !BR2_TOOLCHAIN_HAS_THREADS
