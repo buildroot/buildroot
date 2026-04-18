@@ -1,0 +1,69 @@
+From 1782ea5dd749cd66b38b03aa02bd0c2f9d558f83 Mon Sep 17 00:00:00 2001
+From: Shubham Chakraborty <chakrabortyshubham66@gmail.com>
+Date: Sat, 18 Apr 2026 14:25:27 +0530
+Subject: [PATCH] src: fix C23 compatibility for getenv/getopt prototypes
+
+GCC 15 defaults to C23, which no longer supports unprototyped function
+declarations (K&R style). This fixes conflicts with strict prototypes
+in modern C libraries like musl.
+
+Build-tested in Buildroot using musl libc and C23.
+
+Upstream: https://github.com/Project-OSS-Revival/enca/pull/97
+Signed-off-by: Shubham Chakraborty <chakrabortyshubham66@gmail.com>
+---
+ src/getopt.h      | 16 +++++++++++-----
+ src/getopt_long.c |  2 +-
+ 2 files changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/src/getopt.h b/src/getopt.h
+index 2eae587..91647ae 100644
+--- a/src/getopt.h
++++ b/src/getopt.h
+@@ -144,7 +144,7 @@ struct option
+    errors, only prototype getopt for the GNU C library.  */
+ extern int getopt (int __argc, char *const *__argv, const char *__shortopts);
+ # else /* not __GNU_LIBRARY__ */
+-extern int getopt ();
++extern int getopt (int argc, char * const argv[], const char *shortopts);
+ # endif /* __GNU_LIBRARY__ */
+ 
+ # ifndef __need_getopt
+@@ -161,12 +161,18 @@ extern int _getopt_internal (int __argc, char *const *__argv,
+ 			     int __long_only);
+ # endif
+ #else /* not __STDC__ */
+-extern int getopt ();
++extern int getopt (int argc, char * const argv[], const char *shortopts);
+ # ifndef __need_getopt
+-extern int getopt_long ();
+-extern int getopt_long_only ();
++extern int getopt_long (int argc, char *const *argv, const char *shortopts,
++		        const struct option *longopts, int *longind);
++extern int getopt_long_only (int argc, char *const *argv,
++			     const char *shortopts,
++		             const struct option *longopts, int *longind);
+ 
+-extern int _getopt_internal ();
++extern int _getopt_internal (int __argc, char *const *__argv,
++			     const char *__shortopts,
++		             const struct option *__longopts, int *__longind,
++			     int __long_only);
+ # endif
+ #endif /* __STDC__ */
+ 
+diff --git a/src/getopt_long.c b/src/getopt_long.c
+index caba753..a55fe2a 100644
+--- a/src/getopt_long.c
++++ b/src/getopt_long.c
+@@ -199,7 +199,7 @@ static char *posixly_correct;
+    whose names are inconsistent.  */
+ 
+ #ifndef getenv
+-extern char *getenv ();
++extern char *getenv (const char *name);
+ #endif
+ 
+ static char *
+-- 
+2.53.0
