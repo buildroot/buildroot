@@ -1,0 +1,59 @@
+From 353a3236d9328349c18ce2e4e984755cb4a76ea7 Mon Sep 17 00:00:00 2001
+From: Jan Palus <jpalus@fastmail.com>
+Date: Sun, 17 Nov 2024 18:58:42 +0100
+Subject: [PATCH] md5-stream, sha*-stream, sm3-stream: Avoid duplicate symbols.
+
+* lib/md5-stream.c (GL_OPENSSL_INLINE): Remove definition, that caused
+the symbols defined in md5.o to be defined in md5-stream.o as well.
+* lib/sha1-stream.c (GL_OPENSSL_INLINE): Likewise.
+* lib/sha256-stream.c (GL_OPENSSL_INLINE): Likewise.
+* lib/sha512-stream.c (GL_OPENSSL_INLINE): Likewise.
+* lib/sm3-stream.c (GL_OPENSSL_INLINE): Likewise.
+
+Copyright-paperwork-exempt: Yes
+
+Upstream: https://gitweb.git.savannah.gnu.org/gitweb/?p=gnulib.git;a=commitdiff;h=353a3236d9328349c18ce2e4e984755cb4a76ea7
+Upstream issue: https://github.com/lavv17/lftp/issues/743
+
+[Bernd: partially backported to 4.9.3]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ ChangeLog           | 10 ++++++++++
+ lib/md5-stream.c    |  3 ---
+ lib/sha1-stream.c   |  3 ---
+ lib/sha256-stream.c |  3 ---
+ lib/sha512-stream.c |  3 ---
+ lib/sm3-stream.c    |  3 ---
+ 6 files changed, 10 insertions(+), 15 deletions(-)
+
+diff --git a/lib/md5-stream.c b/lib/md5-stream.c
+index fdd2bd8b4b..2cbdda6b0f 100644
+--- a/lib/md5-stream.c
++++ b/lib/md5-stream.c
+@@ -22,9 +22,6 @@
+ #include <config.h>
+ 
+ /* Specification.  */
+-#if HAVE_OPENSSL_MD5
+-# define GL_OPENSSL_INLINE _GL_EXTERN_INLINE
+-#endif
+ #include "md5.h"
+ 
+ #include <stdlib.h>
+diff --git a/lib/sha1-stream.c b/lib/sha1-stream.c
+index cbdf95ab76..b713e678a6 100644
+--- a/lib/sha1-stream.c
++++ b/lib/sha1-stream.c
+@@ -24,9 +24,6 @@
+ #include <config.h>
+ 
+ /* Specification.  */
+-#if HAVE_OPENSSL_SHA1
+-# define GL_OPENSSL_INLINE _GL_EXTERN_INLINE
+-#endif
+ #include "sha1.h"
+ 
+ #include <stdlib.h>
+-- 
+2.52.0
+
