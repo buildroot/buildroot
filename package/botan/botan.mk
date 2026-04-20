@@ -4,15 +4,12 @@
 #
 ################################################################################
 
-BOTAN_VERSION = 3.5.0
+BOTAN_VERSION = 3.11.1
 BOTAN_SOURCE = Botan-$(BOTAN_VERSION).tar.xz
 BOTAN_SITE = http://botan.randombit.net/releases
 BOTAN_LICENSE = BSD-2-Clause
 BOTAN_LICENSE_FILES = license.txt
 BOTAN_CPE_ID_VALID = YES
-
-# 0001-Add-more-value-barriers-to-avoid-compiler-induced-side-channels.patch
-BOTAN_IGNORE_CVES += CVE-2024-50382 CVE-2024-50383
 
 BOTAN_INSTALL_STAGING = YES
 
@@ -91,11 +88,7 @@ BOTAN_DEPENDENCIES += zlib
 BOTAN_CONF_OPTS += --with-zlib
 endif
 
-ifeq ($(BR2_POWERPC_CPU_HAS_ALTIVEC),)
-BOTAN_CONF_OPTS += --disable-altivec
-endif
-
-ifeq ($(BR2_ARM_CPU_HAS_NEON),)
+ifeq ($(BR2_arm)x$(BR2_ARM_CPU_HAS_NEON),yx)
 BOTAN_CONF_OPTS += --disable-neon
 endif
 
