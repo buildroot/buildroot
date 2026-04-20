@@ -1,0 +1,18 @@
+config BR2_PACKAGE_DTUI
+	bool "dtui"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_THREADS # dbus
+	depends on BR2_USE_MMU # dbus
+	select BR2_PACKAGE_DBUS # runtime
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  dtui is a minimal TUI for introspecting the state of the
+	  system/session D-Bus. It shows current services and lets
+	  you introspect objects and their interfaces.
+
+	  https://github.com/Troels51/dtui
+
+comment "dtui needs a toolchain w/ threads"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_HAS_THREADS
