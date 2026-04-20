@@ -26,6 +26,9 @@ MUSL_ADD_TOOLCHAIN_DEPENDENCY = NO
 
 MUSL_INSTALL_STAGING = YES
 
+# 0003-fix-pathological-slowness-incorrect-mappings-in-icon.patch
+MUSL_IGNORE_CVES += CVE-2026-6042
+
 # musl does not build with LTO, so explicitly disable it
 # when using a compiler that may have support for LTO
 ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_4_7),y)
