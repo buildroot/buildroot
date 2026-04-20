@@ -1,5 +1,6 @@
 comment "policycoreutils needs a toolchain w/ threads, dynamic library, gcc >= 5"
 	depends on BR2_PACKAGE_AUDIT_ARCH_SUPPORTS
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS || \
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_5
 
@@ -9,6 +10,7 @@ config BR2_PACKAGE_POLICYCOREUTILS
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libselinux, libsemanage, libsepol
 	depends on !BR2_STATIC_LIBS # libselinux, libsemanage, libsepol
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # libsemanage -> libselinux -> libsepol
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libcap-ng
 	select BR2_PACKAGE_LIBSELINUX
 	select BR2_PACKAGE_LIBSEMANAGE
 	select BR2_PACKAGE_LIBSEPOL

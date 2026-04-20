@@ -395,6 +395,7 @@ comment "scheduling utilities need a toolchain w/ headers >= 3.14"
 config BR2_PACKAGE_UTIL_LINUX_SETPRIV
 	bool "setpriv"
 	depends on BR2_USE_MMU # fork()
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libcap-ng
 	select BR2_PACKAGE_LIBCAP_NG
 	help
 	  Run a program with different Linux privilege settings
