@@ -63,6 +63,9 @@ SYSTEMD_SELINUX_MODULES = systemd udev xdg
 
 SYSTEMD_PROVIDES = udev
 
+# 0001-Fix-CVE-2026-40226.patch
+SYSTEMD_IGNORE_CVES += CVE-2026-34155
+
 SYSTEMD_CONF_OPTS += \
 	-Dcreate-log-dirs=false \
 	-Ddbus=disabled \
