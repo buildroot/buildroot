@@ -4,19 +4,13 @@
 #
 ################################################################################
 
-SQUID_VERSION = 6.14
+SQUID_VERSION = 7.5
 SQUID_SOURCE = squid-$(SQUID_VERSION).tar.xz
 SQUID_SITE = https://github.com/squid-cache/squid/releases/download/SQUID_$(subst .,_,$(SQUID_VERSION))
 SQUID_LICENSE = GPL-2.0+
 SQUID_LICENSE_FILES = COPYING
 SQUID_CPE_ID_VENDOR = squid-cache
 SQUID_SELINUX_MODULES = apache squid
-
-# 0001-Fix-ASN-1-encoding-of-long-SNMP-OIDs.patch
-SQUID_IGNORE_CVES += CVE-2025-59362
-
-# 0002-Proxy-auth-data-visible-to-scripts.patch
-SQUID_IGNORE_CVES += CVE-2025-62168
 
 SQUID_DEPENDENCIES = libcap host-libcap libtool libxml2 host-pkgconf \
 	$(if $(BR2_PACKAGE_LIBNETFILTER_CONNTRACK),libnetfilter_conntrack)
