@@ -14,6 +14,8 @@ STRONGSWAN_DEPENDENCIES = host-pkgconf
 STRONGSWAN_INSTALL_STAGING = YES
 # 0001-eap_mschapv2_failure_request_len.patch
 STRONGSWAN_IGNORE_CVES += CVE-2025-62291
+# 0002-fix-cve-2026-25075.patch
+STRONGSWAN_IGNORE_CVES += CVE-2026-25075
 STRONGSWAN_CONF_OPTS += \
 	--without-lib-prefix \
 	--enable-led \
