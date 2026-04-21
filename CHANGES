@@ -1,3 +1,94 @@
+2026.02.1, released April 21, 2026
+
+	Changes with potentially large impact:
+
+	- openssl was updated to 3.5.0 which has a few incompatible changes.
+	  See https://github.com/openssl/openssl/releases/tag/openssl-3.5.0
+
+	Important / security related fixes:
+
+	asterisk: CVE-2026-23739, CVE-2026-23741, CVE-2026-23738,
+	  CVE-2026-23740
+	bind: CVE-2026-1519
+	clamav: CVE-2026-20031
+	cpp-httplib: CVE-2026-21428, CVE-2026-22776, CVE-2026-28434,
+	  CVE-2026-28435, CVE-2026-29076, CVE-2026-31870, CVE-2026-32627,
+	  CVE-2026-33745, CVE-2026-34441
+	exiv2: CVE-2026-25884, CVE-2026-27596, CVE-2026-27631
+	expat: CVE-2026-32776, CVE-2026-32777, CVE-2026-32778
+	freetype: [No CVE tracking], CVE-2026-23865
+	giflib: CVE-2021-40633, CVE-2025-31344
+	go: CVE-2026-32289, CVE-2026-33810, CVE-2026-27144, CVE-2026-27143,
+	  CVE-2026-32288, CVE-2026-32283, CVE-2026-27140, CVE-2026-32280,
+	  CVE-2026-32281
+	libarchive: [No CVE tracking]
+	libcap: CVE-2026-4878
+	libcurl: CVE-2026-3805, CVE-2026-3784, CVE-2026-3783, CVE-2026-1965
+	libde265: CVE-2026-33164, CVE-2026-33165
+	libglib2: CVE-2025-13601, CVE-2026-1484, CVE-2026-1485, CVE-2026-1489
+	libgpiod2: [No CVE tracking]
+	libinput: CVE-2026-35093, CVE-2026-35094
+	libmicrohttpd: CVE-2025-59777, CVE-2025-62689
+	libopenssl: CVE-2026-31790, CVE-2026-28386, CVE-2026-28387,
+	  CVE-2026-28388, CVE-2026-28389, CVE-2026-28390, CVE-2026-31789
+	libpng: CVE-2026-33416, CVE-2026-33636, CVE-2026-34757
+	libsoup3: CVE-2025-14523
+	libtpms: CVE-2026-21444
+	libxml2: CVE-2026-1757, CVE-2026-0990, CVE-2026-0992, CVE-2025-10911,
+	  CVE-2026-0989
+	musl: CVE-2025-26519
+	nfs-utils: CVE-2025-12801
+	nghttp2: CVE-2026-27135
+	perl: CVE-2026-4176
+	python-django: CVE-2026-25673, CVE-2026-25674
+	python-flask: CVE-2026-27205
+	python-gpiod: [No CVE tracking]
+	python-pyasn1: CVE-2026-23490
+	python-pyjwt: CVE-2026-32597
+	python-wheel: CVE-2026-24049
+	python3: CVE-2026-4224, CVE-2026-3644, CVE-2026-2297
+	quickjs: CVE-2025-62490, CVE-2025-62491, CVE-2025-62492,
+	  CVE-2025-62493, CVE-2025-62494, CVE-2025-62495, CVE-2025-62496
+	rauc: CVE-2026-34155
+	redis: [No CVE tracking]
+	tor: TROVE-2026-003, TROVE-2026-004
+	wireshark: CVE-2026-3201, CVE-2026-3203
+	xz: CVE-2026-34743
+
+	Toolchain:
+
+	- linux-headers: bump to 6.19.12, 6.18.22, 6.12.81, 6.6.134, 6.1.168,
+	  5.15.202, 5.10.252
+	- uclibc: bump to 1.0.57
+
+	Infrastructure updates/fixes:
+
+	- cve-check: fix CVE URL format
+	- generate-cyclonedx: add source attribute with NVD reference for CVEs
+	- Add SECURITY.md
+	- Fix error handling in br2-external
+	- New runtime test for memcached
+	- Remove 32-bit EFI from runtime tests
+	- New runtime test for connman
+	- Added support for "secondary" target that are less often tested in
+	  autobuilders
+	- Update kernel and toolchain for some tests
+
+	Updated defconfigs: aarch64_efi, nitrogen*, stm32mp135f_dk,
+	versal2_vek385
+
+	Updated / fixed packages: asterisk, bind, bind, bootgen, clamav, cpp-
+	httplib, cpp-httplib, docker, edk2, exiv2, expat, faketime, freeradius-
+	server, freetype, freetype, giflib, giflib, go, igh-ethercat, jasper,
+	kodi, leafnode2, libarchive, libcap, libcurl, libde265, libftdi1,
+	libglib2, libgpiod2, libgpiod2, libheif, libinput, libmicrohttpd,
+	libopenssl, libpng, libpng, libsoup3, libtpms, libtpms, libvips,
+	libxml2, linux, linux-headers, ltp-testsuite, luvi, mesa3d, mpd, musl,
+	nfs-utils, nfs-utils, nghttp2, perl, php, postgresql, python-django,
+	python-flask, python-gpiod, python-pyasn1, python-pyjwt, python-tornado,
+	python-wheel, python3, python3, quickjs, rauc, redis, sqlite, sway, tor,
+	uboot, uclibc, wireshark, wpebackend-fdo, xen, xz, xz, zfs
+
 2026.02, released March 4th, 2026
 
 	Various fixes.
