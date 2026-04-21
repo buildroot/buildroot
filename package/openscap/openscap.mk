@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPENSCAP_VERSION = 1.4.3
+OPENSCAP_VERSION = 1.4.4
 OPENSCAP_SITE = https://github.com/OpenSCAP/openscap/releases/download/$(OPENSCAP_VERSION)
 OPENSCAP_LICENSE = LGPL-2.1+
 OPENSCAP_LICENSE_FILES = COPYING
