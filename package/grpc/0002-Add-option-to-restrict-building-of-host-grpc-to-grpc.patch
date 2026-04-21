@@ -15,6 +15,8 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Updated for 1.76.0:
 [build utf8_range_lib as it is now explicitly required]
 Signed-off-by: Michael Nosthoff <buildroot@heine.tech>
+[Bernd: rebased for 1.80.0]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  CMakeLists.txt | 39 +++++++++++++++++++++++++++++++++------
  1 file changed, 33 insertions(+), 6 deletions(-)
@@ -199,12 +201,15 @@ index bc86c00463..08441ddbd2 100644
  
  if(gRPC_INSTALL)
    install(EXPORT gRPCTargets
-@@ -52025,3 +52050,5 @@ generate_pkgconfig(
-   "-lgrpcpp_otel_plugin"
-   "-laddress_sorting -lupb_textformat_lib -lupb_json_lib -lupb_reflection_lib -lupb_wire_lib -lupb_message_lib -lutf8_range_lib -lupb_mini_descriptor_lib -lupb_mini_table_lib -lupb_hash_lib -lupb_mem_lib -lupb_base_lib -lupb_lex_lib"
-   "grpcpp_otel_plugin.pc")
-+
+@@ -54105,6 +54105,8 @@
+   "-laddress_sorting -lupb_textformat_lib -lupb_reflection_lib -lupb_wire_lib -lupb_message_lib -lutf8_range_lib -lupb_mini_descriptor_lib -lupb_mini_table_lib -lupb_hash_lib -lupb_mem_lib -lupb_base_lib -lupb_lex_lib"
+   "grpc++_unsecure.pc")
+ 
 +endif() # gRPC_BUILD_PLUGIN_SUPPORT_ONLY
++
+ if(gRPC_BUILD_GRPCPP_OTEL_PLUGIN)
+   # grpcpp_otel_plugin .pc file
+   generate_pkgconfig(
 -- 
 2.43.0
 

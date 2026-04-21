@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GRPC_VERSION = 1.78.0
+GRPC_VERSION = 1.80.0
 GRPC_SITE = $(call github,grpc,grpc,v$(GRPC_VERSION))
 GRPC_LICENSE = Apache-2.0, BSD-3-Clause (third_party code), MPL-2.0 (etc/roots.pem)
 GRPC_LICENSE_FILES = LICENSE
@@ -83,6 +83,7 @@ HOST_GRPC_CONF_OPTS = \
 	-DgRPC_BUILD_GRPC_PHP_PLUGIN=OFF \
 	-DgRPC_BUILD_GRPC_PYTHON_PLUGIN=OFF \
 	-DgRPC_BUILD_GRPC_RUBY_PLUGIN=OFF \
+	-DgRPC_BUILD_GRPCPP_OTEL_PLUGIN=OFF \
 	-DgRPC_DOWNLOAD_ARCHIVES=OFF
 
 $(eval $(cmake-package))
