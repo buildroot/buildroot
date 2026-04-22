@@ -131,5 +131,12 @@ define FRR_INSTALL_INIT_SYSV
 		$(TARGET_DIR)/etc/init.d/S50frr
 endef
 
+define FRR_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 644 $(@D)/tools/frr.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/frr.service
+	$(INSTALL) -D -m 644 $(@D)/tools/frr@.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/frr@.service
+endef
+
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
