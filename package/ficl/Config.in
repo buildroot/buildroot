@@ -1,9 +1,13 @@
 config BR2_PACKAGE_FICL
 	bool "ficl"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_6 # C11/static_assert
 	help
 	  Ficl is a programming language interpreter designed to be
 	  embedded into other systems as a command, macro, and
 	  development prototyping language.
 	  Ficl is an acronym for "Forth Inspired Command Language".
 
-	  http://ficl.sourceforge.net
+	  https://ficl.sourceforge.net/
+
+comment "ficl needs a gcc >= 4.6"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_6
