@@ -25,7 +25,12 @@ endef
 # toolchain.
 # https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=a5cbe05a6673b85bed2a63ffcfea6a96c6410cff
 ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_9),)
-LIBBPF_UPDATE_UAPI_HEADERS = install_uapi_headers
+LIBBPF_UPDATE_UAPI_HEADERS = install_uapi_headers UAPIDIR=/usr/include/bpf
+
+define LIBBPF_FIX_STAGING_PC
+	$(SED) 's/-I$${includedir}/-I$${includedir}\/bpf -I$${includedir}/' $(STAGING_DIR)/usr/lib/pkgconfig/libbpf.pc
+endef
+LIBBPF_POST_INSTALL_STAGING_HOOKS += LIBBPF_FIX_STAGING_PC
 endif
 
 define LIBBPF_INSTALL_STAGING_CMDS
