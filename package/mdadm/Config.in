@@ -2,6 +2,7 @@ config BR2_PACKAGE_MDADM
 	bool "mdadm"
 	depends on !BR2_STATIC_LIBS # dlfcn.h
 	depends on BR2_USE_MMU # fork()
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_10 # MD_DISK_FAILFAST
 	help
 	  Utility for managing Linux Software RAID arrays.
 
@@ -10,3 +11,6 @@ config BR2_PACKAGE_MDADM
 comment "mdadm needs a toolchain w/ dynamic library"
 	depends on BR2_STATIC_LIBS
 	depends on BR2_USE_MMU
+
+comment "mdadm needs kernel headers >= 4.10"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_10

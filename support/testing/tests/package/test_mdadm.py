@@ -69,7 +69,7 @@ class TestMdadm(infra.basetest.BRTest):
         self.assertRunOk(cat_mdstat_cmd)
 
         # We create a raid5 array with the drives.
-        cmd = f"mdadm --create --verbose {md_dev} --level=5 "
+        cmd = f"mdadm --create --verbose {md_dev} --level=5 --bitmap=none "
         cmd += f"--raid-devices={len(storage_devs)} "
         cmd += " ".join(storage_devs)
         self.assertRunOk(cmd)
