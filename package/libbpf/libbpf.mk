@@ -18,14 +18,14 @@ define LIBBPF_BUILD_CMDS
 		-C $(@D)/src
 endef
 
-# bpftrace uses variables from bpf_btf_info that were added since kernel
-# 5.11, so we need to update some uapi headers in STAGING_DIR if the
-# toolchain is build with linux-headers < 5.11.
+# bpftrace uses btf_enum64 that was added since kernel 6.0 so we need to
+# update some uapi headers in STAGING_DIR if the toolchain is build with
+# linux-headers < 6.0.
 # Otherwise bpftrace is broken due to out of date linux/bpf.h installed
 # by the toolchain.
-# https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=5329722057d41aebc31e391907a501feaa42f7d9
-# https://github.com/bpftrace/bpftrace/commit/fea31939899db48fa6d28f5ce880bfc39250ec9f
-ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_11),)
+# https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=6089fb325cf737eeb2c4d236c94697112ca860da
+# https://github.com/bpftrace/bpftrace/commit/d4f58382270c21b2c718aa0a6574c105f29e77a9
+ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_0),)
 LIBBPF_UPDATE_UAPI_HEADERS = install_uapi_headers UAPIDIR=/usr/include/bpf
 
 define LIBBPF_FIX_STAGING_PC
