@@ -14,8 +14,8 @@ and uses it to detect if the -Wunused-but-set-variable option is
 supported, and only uses it in this case.
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-(rebased against v0.1.0)
-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+(rebased against v1.4.1)
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 (rebased against v0.6.3)
 Signed-off-by: Adam Duskett <Aduskett@gmail.com>
 [rebased against v1.0.3)
@@ -35,7 +35,7 @@ diff --git a/src/Makefile.am b/src/Makefile.am
 index 96d361e53be0..a8bfd17c930c 100644
 --- a/src/Makefile.am
 +++ b/src/Makefile.am
-@@ -132,6 +132,7 @@ janus_CFLAGS = \
+@@ -134,6 +134,7 @@ janus_CFLAGS = \
  	-DEVENTDIR=\"$(eventdir)\" \
  	-DLOGGERDIR=\"$(loggerdir)\" \
  	-DCONFDIR=\"$(confdir)\" \
@@ -57,16 +57,16 @@ index c37c85b7ab06..5afe0ef0bbff 100644
  
  LT_PREREQ([2.2])
  LT_INIT
-@@ -65,8 +68,7 @@ cc*)
+@@ -63,8 +66,7 @@ cc*)
+ 	# Specific gcc flags
  	CFLAGS="$CFLAGS \
- 		-Wcast-align \
  		-Wno-override-init \
 -		-Wunsafe-loop-optimizations \
 -		-Wunused-but-set-variable"
 +		-Wunsafe-loop-optimizations"
  esac
  
- JANUS_VERSION=1102
+ JANUS_VERSION=1401
 diff --git a/m4/ax_check_compile_flag.m4 b/m4/ax_check_compile_flag.m4
 new file mode 100644
 index 0000000..51df0c0
