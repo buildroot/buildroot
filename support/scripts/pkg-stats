@@ -197,8 +197,7 @@ class Package:
 
         self.infras = list()
         with open(self.pkgfile, 'r') as f:
-            lines = f.readlines()
-            for line in lines:
+            for line in f:
                 match = INFRA_RE.match(line)
                 if not match:
                     continue
