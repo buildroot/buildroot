@@ -1,5 +1,5 @@
-From 01883cc14904e55d90955ad7cd9fc55bc18364ac Mon Sep 17 00:00:00 2001
-From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+From 3d198be196bdc59ba332b87d8c2959de0b9160d2 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
 Date: Sat, 20 Jan 2024 13:29:28 +0100
 Subject: [PATCH] Provide replacement function for strerror_l()
 
@@ -11,18 +11,19 @@ Upstream: N/A since it's due uclibc only
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
-[Giulio: ported to version 3.0 and 3.1]
+[Giulio: ported to version 3.0, 3.1 and 3.5]
 ---
- configure.ac       | 2 ++
- src/utils/module.c | 1 +
- src/utils/utils.h  | 4 ++++
- 3 files changed, 7 insertions(+)
+ configure.ac          | 2 ++
+ src/utils/dev_utils.c | 1 +
+ src/utils/module.c    | 1 +
+ src/utils/utils.h     | 4 ++++
+ 4 files changed, 8 insertions(+)
 
 diff --git a/configure.ac b/configure.ac
-index 02b26e3e..67341134 100644
+index e5d65d8b..507fa854 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -120,6 +120,8 @@ AC_CHECK_HEADERS([dlfcn.h string.h unistd.h sys/fcntl.h sys/ioctl.h linux/random
+@@ -123,6 +123,8 @@ AC_CHECK_HEADERS([dlfcn.h string.h unistd.h sys/fcntl.h sys/ioctl.h linux/random
                   [LIBBLOCKDEV_SOFT_FAILURE([Header file $ac_header not found.])],
                   [])
  
@@ -31,8 +32,20 @@ index 02b26e3e..67341134 100644
  AC_ARG_WITH([escrow],
      AS_HELP_STRING([--with-escrow], [support escrow @<:@default=yes@:>@]),
      [],
+diff --git a/src/utils/dev_utils.c b/src/utils/dev_utils.c
+index 89a54b4c..b4be5b44 100644
+--- a/src/utils/dev_utils.c
++++ b/src/utils/dev_utils.c
+@@ -23,6 +23,7 @@
+ #include <errno.h>
+ 
+ #include "dev_utils.h"
++#include "utils.h"
+ 
+ /**
+  * bd_utils_dev_utils_error_quark: (skip)
 diff --git a/src/utils/module.c b/src/utils/module.c
-index 6557c3ab..5893f0ac 100644
+index 11e139f8..c8b124e0 100644
 --- a/src/utils/module.c
 +++ b/src/utils/module.c
 @@ -28,6 +28,7 @@
@@ -59,5 +72,5 @@ index 801a8b6e..b2bdf0d0 100644
   * SECTION: utils
   * @short_description: library providing utility functions used by the blockdev library and its plugins
 -- 
-2.34.1
+2.47.3
 
