@@ -36,6 +36,9 @@ UTIL_LINUX_CPE_ID_VENDOR = kernel
 # 0001-libmount-ifdef-statx-call.patch
 UTIL_LINUX_AUTORECONF = YES
 
+# 0006-add-loopdev-fl-nofollow.patch
+UTIL_LINUX_IGNORE_CVES += CVE-2026-27456
+
 UTIL_LINUX_INSTALL_STAGING = YES
 UTIL_LINUX_DEPENDENCIES = \
 	host-pkgconf \
