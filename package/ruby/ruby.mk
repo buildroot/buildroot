@@ -19,6 +19,9 @@ RUBY_LICENSE_FILES = LEGAL COPYING BSDL
 
 RUBY_CPE_ID_VENDOR = ruby-lang
 
+# 0001-fix-CVE-2026-41316.patch
+RUBY_IGNORE_CVES += CVE-2026-41316
+
 RUBY_DEPENDENCIES = host-pkgconf host-ruby
 HOST_RUBY_DEPENDENCIES = host-libyaml host-pkgconf host-openssl
 RUBY_MAKE_ENV = $(TARGET_MAKE_ENV)
