@@ -20,9 +20,9 @@ config BR2_TARGET_ROOTFS_CPIO_DRACUT
 	bool "Invoke dracut to make a partial initramfs"
 	select BR2_PACKAGE_HOST_DRACUT
 	help
-	  Build an additional initramfs using dracut. This only contains
-	  a subset of the rootfs, as determined by the configuration
-	  file.
+	  Build an additional initramfs using dracut-ng. This only
+	  contains a subset of the rootfs, as determined by the
+	  configuration file.
 	  This can be useful to create a recovery system, for instance.
 
 endchoice

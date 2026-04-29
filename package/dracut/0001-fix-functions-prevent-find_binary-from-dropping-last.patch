@@ -1,0 +1,45 @@
+From 94c4274e32467235fb580a27ea182169f253ca5f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Mat=C3=A9o=20Pourrier?= <mateo.pourrier@smile.fr>
+Date: Tue, 28 Apr 2026 17:23:23 +0200
+Subject: [PATCH] fix(functions): prevent find_binary from dropping last PATH
+ element
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When `read` encounters EOF before the delimiter, it returns a non-zero
+exit status, causing the while loop to terminate immediately. As a result,
+if the PATH string doesn't end with a colon, the very last directory in
+PATH is ignored by find_binary().
+
+This caused regressions on split-usr architectures where critical
+binaries reside exclusively in /bin, and /bin happens to be
+appended at the very end of the PATH by dracut.sh.
+
+Appending a virtual colon to the Here-String ensures the loop processes
+all directories correctly.
+
+Fixes dracut-ng issue #1467 : https://github.com/dracut-ng/dracut-ng/issues/1467
+
+Upstream: https://github.com/dracut-ng/dracut-ng/pull/2416
+Signed-off-by: Matéo Pourrier <mateo.pourrier@smile.fr>
+---
+ dracut-functions.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dracut-functions.sh b/dracut-functions.sh
+index f430a28e..5046f45e 100755
+--- a/dracut-functions.sh
++++ b/dracut-functions.sh
+@@ -94,7 +94,7 @@ find_binary() {
+             printf "%s\n" "${_path}"
+             return 0
+         fi
+-    done <<< "$PATH"
++    done <<< "${PATH}:"
+ 
+     [[ -n ${dracutsysrootdir-} ]] && return 1
+     type -P "${1##*/}"
+-- 
+2.34.1
+

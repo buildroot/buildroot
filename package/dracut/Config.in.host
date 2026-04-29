@@ -2,8 +2,10 @@ config BR2_PACKAGE_HOST_DRACUT
 	bool
 	select BR2_PACKAGE_HOST_KMOD
 	help
-	  dracut is used to create an initramfs image by
+	  dracut-ng is used to create an initramfs image by
 	  copying tools and files from an installed system
 	  and combining it with the dracut framework.
+	  dracut-ng is a drop-in replacement for the legacy
+	  dracut project.
 
-	  https://dracut.wiki.kernel.org
+	  https://github.com/dracut-ng/dracut-ng/wiki
