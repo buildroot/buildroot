@@ -1,0 +1,29 @@
+From f55cf6d48ec69b4ac60a63903e9c6a2cb0fd155d Mon Sep 17 00:00:00 2001
+From: Steven Bellock <sbellock@nvidia.com>
+Date: Fri, 3 Apr 2026 11:00:07 -0700
+Subject: [PATCH] Update libspdm_rsp_measurement_extension_log.c
+
+Fix #3584 in 3.8.
+
+Signed-off-by: Steven Bellock <sbellock@nvidia.com>
+
+Fixes: https://github.com/DMTF/libspdm/security/advisories/GHSA-m4wc-xmvg-369f
+Upstream: https://github.com/DMTF/libspdm/commit/f55cf6d48ec69b4ac60a63903e9c6a2cb0fd155d
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ .../spdm_responder_lib/libspdm_rsp_measurement_extension_log.c  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/library/spdm_responder_lib/libspdm_rsp_measurement_extension_log.c b/library/spdm_responder_lib/libspdm_rsp_measurement_extension_log.c
+index 6dcb3a54bac..c5f2efa8c88 100644
+--- a/library/spdm_responder_lib/libspdm_rsp_measurement_extension_log.c
++++ b/library/spdm_responder_lib/libspdm_rsp_measurement_extension_log.c
+@@ -125,7 +125,7 @@ libspdm_return_t libspdm_get_response_measurement_extension_log(libspdm_context_
+                                                response_size, response);
+     }
+ 
+-    if ((uint64_t)(offset + length) > spdm_mel_len) {
++    if (((uint64_t)offset + length) > spdm_mel_len) {
+         length = (uint32_t)(spdm_mel_len - offset);
+     }
+     remainder_length = spdm_mel_len - (length + offset);
