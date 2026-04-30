@@ -24,6 +24,10 @@ else
 LIBGPIOD_CONF_OPTS += --disable-tools
 endif
 
+define LIBGPIOD_LINUX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_GPIO_CDEV_V1)
+endef
+
 ifeq ($(BR2_INSTALL_LIBSTDCPP),y)
 LIBGPIOD_CONF_OPTS += --enable-bindings-cxx
 else
