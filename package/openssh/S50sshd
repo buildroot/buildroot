@@ -36,6 +36,7 @@ stop() {
 		echo "OK"
 	else
 		echo "FAIL"
+		return "$status"
 	fi
 	# sshd deletes its PID file on exit, wait for it to be gone
 	while [ -f "$PIDFILE" ]; do
