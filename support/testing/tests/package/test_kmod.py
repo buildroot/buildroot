@@ -4,10 +4,13 @@ import infra.basetest
 
 
 class TestKmod(infra.basetest.BRTest):
-    # This test uses the "virtio_net" driver compiled as a module. We
-    # need to recompile a Kernel for that.
-    kernel_fragment = \
-        infra.filepath("tests/package/test_kmod/linux-virtio-net.fragment")
+    # This test uses the "virtio_net" driver compiled as a module, and
+    # compressed modules to test that kmod can handle them. We need to
+    # compile a kernel for that.
+    kernel_fragments = (
+        infra.filepath("tests/package/test_kmod/compressed-modules.fragment"),
+        infra.filepath("tests/package/test_kmod/linux-virtio-net.fragment"),
+    )
     config = \
         f"""
         BR2_aarch64=y
@@ -18,10 +21,13 @@ class TestKmod(infra.basetest.BRTest):
         BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="6.6.135"
         BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG=y
         BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE="board/qemu/aarch64-virt/linux.config"
-        BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES="{kernel_fragment}"
+        BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES="{" ".join(kernel_fragments)}"
         BR2_PACKAGE_BUSYBOX_SHOW_OTHERS=y
         BR2_PACKAGE_KMOD=y
         BR2_PACKAGE_KMOD_TOOLS=y
+        BR2_PACKAGE_ZSTD=y
+        BR2_PACKAGE_HOST_KMOD=y
+        BR2_PACKAGE_HOST_KMOD_ZSTD=y
         BR2_TARGET_ROOTFS_EXT2=y
         BR2_TARGET_ROOTFS_EXT2_4=y
         # BR2_TARGET_ROOTFS_TAR is not set
@@ -48,6 +54,7 @@ class TestKmod(infra.basetest.BRTest):
         out, ret = self.emulator.run("modprobe --version")
         self.assertEqual(ret, 0)
         self.assertTrue(out[0].startswith("kmod version"))
+        self.assertIn("+ZSTD", out[1])
 
         # List modules with "kmod list", the virtio-net module should
         # NOT be loaded yet.
@@ -61,6 +68,7 @@ class TestKmod(infra.basetest.BRTest):
         lsmod_out = "\n".join(out)
         self.assertRegex(lsmod_out, r'name: *virtio_net')
         self.assertRegex(lsmod_out, r'description: *Virtio network driver')
+        self.assertRegex(lsmod_out, r'filename:\s+/.*/virtio_net.ko.zst')
 
         # With this test configuration, we are not supposed to have an
         # eth0 Ethernet interface yet. Attempting to show info on this

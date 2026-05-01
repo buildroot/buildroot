@@ -28,6 +28,10 @@ endif
 
 KMOD_CONF_OPTS += -Dfishcompletiondir=no -Dzshcompletiondir=no
 
+# load compression libraries (if any are enabled below) as needed
+# using dlopen()
+KMOD_CONF_OPTS += -Ddlopen=all
+
 ifeq ($(BR2_PACKAGE_ZLIB),y)
 KMOD_DEPENDENCIES += zlib
 KMOD_CONF_OPTS += -Dzlib=enabled
