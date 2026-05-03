@@ -5,7 +5,7 @@
 ################################################################################
 
 DOS2UNIX_VERSION = 7.5.5
-DOS2UNIX_SITE = http://waterlan.home.xs4all.nl/dos2unix
+DOS2UNIX_SITE = https://waterlander.net/dos2unix/files
 DOS2UNIX_LICENSE = BSD-2-Clause
 DOS2UNIX_LICENSE_FILES = COPYING.txt
 DOS2UNIX_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES)
