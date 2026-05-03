@@ -1,0 +1,77 @@
+From 6b84377e146794446f21371f8455b870a029cc8e Mon Sep 17 00:00:00 2001
+From: Simon Marchi <simon.marchi@efficios.com>
+Date: Mon, 17 Nov 2025 16:25:18 -0500
+Subject: [PATCH] gdb/ser-unix: work around conflicting types for tcflag_t
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf8
+Content-Transfer-Encoding: 8bit
+
+When trying to cross-compile GDB to sparc-buildroot-linux-uclibc, I get:
+
+      CXX    ser-unix.o
+    In file included from /data1/smarchi/many-buildroots/toolchains/sparc/sparc-buildroot-linux-uclibc/sysroot/usr/include/termios.h:39,
+                     from /home/smarchi/src/binutils-gdb/gdb/ser-unix.c:51:
+    /data1/smarchi/many-buildroots/toolchains/sparc/sparc-buildroot-linux-uclibc/sysroot/usr/include/bits/termios.h:26:22: error: conflicting declaration âtypedef unsigned int tcflag_tâ
+       26 | typedef unsigned int tcflag_t;
+          |                      ^~~~~~~~
+    In file included from /home/smarchi/src/binutils-gdb/gdb/ser-unix.c:46:
+    /data1/smarchi/many-buildroots/toolchains/sparc/sparc-buildroot-linux-uclibc/sysroot/usr/include/asm/termbits.h:13:25: note: previous declaration as âtypedef long unsigned int tcflag_tâ
+       13 | typedef unsigned long   tcflag_t;
+          |                         ^~~~~~~~
+
+uClibc and the kernel don't agree on the definition of tcflag_t for this
+architecture.  Here' uClibc [1]:
+
+    typedef unsigned int tcflag_t;
+
+And here's the kernel [2]:
+
+    #if defined(__sparc__) && defined(__arch64__)
+    typedef unsigned int	tcflag_t;
+    #else
+    typedef unsigned long	tcflag_t; <--- that branch is take
+    #endif
+
+glibc [3] has the same definition as uClibc, so we would get the same
+problem.
+
+I propose to work around this the same way as we handle differences in
+the termios structure, by renaming the version from the kernel.
+
+I opened a bug on the glibc bugzilla [4] to ask if this is something
+that would need to be fixed on the libc side, but in the mean time we
+need to work around it.
+
+[1] https://github.com/kraj/uClibc/blob/ca1c74d67dd115d059a875150e10b8560a9c35a8/libc/sysdeps/linux/sparc/bits/termios.h#L26
+[2] https://github.com/torvalds/linux/blob/e7c375b181600caf135cfd03eadbc45eb530f2cb/arch/sparc/include/uapi/asm/termbits.h#L7-L11
+[3] https://gitlab.com/gnutools/glibc/-/blob/efc8642051e6c4fe5165e8986c1338ba2c180de6/bits/termios.h#L104
+[4] https://sourceware.org/bugzilla/show_bug.cgi?id=33643
+
+Change-Id: I71c6e0df5ac8e2ff3db3233a2220faaf70c3df6d
+Approved-By: Tom Tromey <tom@tromey.com>
+
+Upstream: https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=6b84377e146794446f21371f8455b870a029cc8e
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ gdb/ser-unix.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/gdb/ser-unix.c b/gdb/ser-unix.c
+index 553220e5b08..f9ef8441629 100644
+--- a/gdb/ser-unix.c
++++ b/gdb/ser-unix.c
+@@ -43,8 +43,10 @@
+ /* Workaround to resolve conflicting declarations of termios
+    in <asm/termbits.h> and <termios.h>.  */
+ #  define termios asmtermios
++#  define tcflag_t asmtcflag_t
+ #  include <asm/termbits.h>
+ #  undef termios
++#  undef tcflag_t
+ #endif
+ 
+ #ifdef HAVE_TERMIOS_H
+-- 
+2.43.7
+

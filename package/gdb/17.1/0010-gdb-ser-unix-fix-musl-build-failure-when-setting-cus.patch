@@ -1,0 +1,104 @@
+From 56c4ba5d7b530fea8277704a231be5e64fca04fc Mon Sep 17 00:00:00 2001
+From: Sunil Dora <sunilkumar.dora@windriver.com>
+Date: Tue, 24 Mar 2026 09:45:26 -0700
+Subject: [PATCH] gdb/ser-unix: fix musl build failure when setting custom baud
+ rates
+
+On musl-based systems, <asm/termbits.h> may expose BOTHER even though
+struct termios does not define c_ispeed/c_ospeed.  This causes the
+Linux-specific custom baud rate path to be compiled and fail to build.
+
+Fix the problem at the macro level by requiring
+HAVE_STRUCT_TERMIOS_C_OSPEED (obtained via AC_CHECK_MEMBERS) together
+with BOTHER in the HAVE_CUSTOM_BAUDRATE_SUPPORT guard.  This prevents
+the Linux-specific code from being compiled on musl while leaving
+set_custom_baudrate_linux unchanged.
+
+This is a pure build fix with no functional or behavioural change on
+any existing platform.
+
+Suggested-by: Maciej W. Rozycki <macro@orcam.me.uk>
+Signed-off-by: Sunil Dora <sunilkumar.dora@windriver.com>
+Approved-by: Kevin Buettner <kevinb@redhat.com>
+(cherry picked from commit 94d58b3add01b6d29382fbb68a2e098166072ee2)
+
+Upstream: https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=56c4ba5d7b530fea8277704a231be5e64fca04fc
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ gdb/config.in    |  3 +++
+ gdb/configure    | 13 +++++++++++++
+ gdb/configure.ac |  3 +++
+ gdb/ser-unix.c   |  4 +++-
+ 4 files changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/gdb/config.in b/gdb/config.in
+index efc3100cb9e..62ceb846824 100644
+--- a/gdb/config.in
++++ b/gdb/config.in
+@@ -517,6 +517,9 @@
+ /* Define to 1 if `st_blocks' is a member of `struct stat'. */
+ #undef HAVE_STRUCT_STAT_ST_BLOCKS
+ 
++/* Define to 1 if `c_ospeed' is a member of `struct termios'. */
++#undef HAVE_STRUCT_TERMIOS_C_OSPEED
++
+ /* Define to 1 if `td_pcb' is a member of `struct thread'. */
+ #undef HAVE_STRUCT_THREAD_TD_PCB
+ 
+diff --git a/gdb/configure b/gdb/configure
+index d0bdba6eb36..3c321d6220b 100755
+--- a/gdb/configure
++++ b/gdb/configure
+@@ -27336,6 +27336,19 @@ if test "$ac_res" != no; then :
+ fi
+ 
+ 
++# Check for members required by the legacy Linux custom baud rate path.
++ac_fn_c_check_member "$LINENO" "struct termios" "c_ospeed" "ac_cv_member_struct_termios_c_ospeed" "#include <termios.h>
++"
++if test "x$ac_cv_member_struct_termios_c_ospeed" = xyes; then :
++
++cat >>confdefs.h <<_ACEOF
++#define HAVE_STRUCT_TERMIOS_C_OSPEED 1
++_ACEOF
++
++
++fi
++
++
+ 
+ 
+ # Check whether --with-jit-reader-dir was given.
+diff --git a/gdb/configure.ac b/gdb/configure.ac
+index 52924106bca..9d3377f3c40 100644
+--- a/gdb/configure.ac
++++ b/gdb/configure.ac
+@@ -733,6 +733,9 @@ AC_CONFIG_FILES([jit-reader.h:jit-reader.in])
+ 
+ AC_SEARCH_LIBS(dlopen, dl)
+ 
++# Check for members required by the legacy Linux custom baud rate path.
++AC_CHECK_MEMBERS([struct termios.c_ospeed], [], [], [[#include <termios.h>]])
++
+ GDB_AC_WITH_DIR([JIT_READER_DIR], [jit-reader-dir],
+                 [directory to load the JIT readers from],
+                 [${libdir}/gdb])
+diff --git a/gdb/ser-unix.c b/gdb/ser-unix.c
+index 6f2766518be..ffd721ad599 100644
+--- a/gdb/ser-unix.c
++++ b/gdb/ser-unix.c
+@@ -53,7 +53,9 @@
+ 
+ #include "gdbsupport/scoped_ignore_sigttou.h"
+ 
+-#if defined(HAVE_SYS_IOCTL_H) && (defined(BOTHER) || defined(IOSSIOSPEED))
++#if (defined(HAVE_SYS_IOCTL_H) \
++     && ((defined(BOTHER) && defined(HAVE_STRUCT_TERMIOS_C_OSPEED)) \
++	  || defined(IOSSIOSPEED)))
+ #  define HAVE_CUSTOM_BAUDRATE_SUPPORT 1
+ #endif
+ 
+-- 
+2.43.7
+
