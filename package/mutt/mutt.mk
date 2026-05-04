@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-MUTT_VERSION = 2.2.13
-MUTT_SITE = https://bitbucket.org/mutt/mutt/downloads
+MUTT_VERSION = 2.2.16
+MUTT_SITE = http://ftp.mutt.org/pub/mutt
 MUTT_LICENSE = GPL-2.0+
 MUTT_LICENSE_FILES = GPL
 MUTT_CPE_ID_VENDOR = mutt
