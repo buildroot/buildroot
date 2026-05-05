@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GRUB2_VERSION = 2.12
+GRUB2_VERSION = 2.14
 GRUB2_SITE = $(BR2_GNU_MIRROR)/grub
 GRUB2_SOURCE = grub-$(GRUB2_VERSION).tar.xz
 GRUB2_LICENSE = GPL-3.0+
@@ -14,37 +14,6 @@ GRUB2_DEPENDENCIES = host-bison host-flex host-gawk host-grub2 \
 HOST_GRUB2_DEPENDENCIES = host-bison host-flex host-gawk \
 	$(BR2_PYTHON3_HOST_DEPENDENCY)
 GRUB2_INSTALL_IMAGES = YES
-
-# 0004-fs-hfs-Fix-stack-OOB-write-with-grub_strcpy.patch (yes, two
-# CVEs are fixed by this patch)
-GRUB2_IGNORE_CVES += CVE-2024-45782
-GRUB2_IGNORE_CVES += CVE-2024-56737
-
-# 0006-fs-tar-Integer-overflow-leads-to-heap-OOB-write.patch
-GRUB2_IGNORE_CVES += CVE-2024-45780
-
-# 0037-gettext-Integer-overflow-leads-to-heap-OOB-write.patch
-GRUB2_IGNORE_CVES += CVE-2024-45777
-
-# 0043-fs-bfs-Disable-under-lockdown.patch (yes, two CVEs are fixed by
-# this patch)
-GRUB2_IGNORE_CVES += CVE-2024-45778
-GRUB2_IGNORE_CVES += CVE-2024-45779
-
-# 0044-fs-Disable-many-filesystems-under-lockdown.patch (yes, four
-# CVEs are fixed by this patch)
-GRUB2_IGNORE_CVES += CVE-2025-0684
-GRUB2_IGNORE_CVES += CVE-2025-0685
-GRUB2_IGNORE_CVES += CVE-2025-0686
-GRUB2_IGNORE_CVES += CVE-2025-0689
-
-# 0050-fs-Prevent-overflows-when-allocating-memory-for-arra.patch
-# (yes, two CVEs are fixed by this patch)
-GRUB2_IGNORE_CVES += CVE-2025-0678
-GRUB2_IGNORE_CVES += CVE-2025-1125
-
-# 0074-Constant-time-grub_crypto_memcmp.patch
-GRUB2_IGNORE_CVES += CVE-2024-56738
 
 ifeq ($(BR2_TARGET_GRUB2_INSTALL_TOOLS),y)
 GRUB2_INSTALL_TARGET = YES
