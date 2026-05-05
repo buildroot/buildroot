@@ -1,0 +1,68 @@
+From 31bc8976fb7bfdde8b9293e6a4eb2becb29a73bc Mon Sep 17 00:00:00 2001
+From: Bobby Bingham <koorogi@koorogi.info>
+Date: Wed, 2 Jul 2025 18:09:28 -0500
+Subject: [PATCH] fix compilation on musl with gcc15
+
+Patch originally from https://codeberg.org/gentoo/gentoo/raw/branch/master/dev-build/make/files/make-4.4.1-c23.patch
+
+This addresses the same issues as, but is not quite identical to, the
+patch linked to as upstream.  Upstream has not acknowledged its patch in
+any way.
+
+Upstream bug report: https://savannah.gnu.org/bugs/index.php?68302
+
+Signed-off-by: Daniel Houck <Software@DRHouck.me>
+Upstream: https://lists.gnu.org/archive/html/bug-make/2025-03/msg00032.html
+---
+ lib/fnmatch.c | 2 +-
+ src/getopt.c  | 2 +-
+ src/getopt.h  | 7 -------
+ 3 files changed, 2 insertions(+), 9 deletions(-)
+
+diff --git a/lib/fnmatch.c b/lib/fnmatch.c
+index 01da376..9b54022 100644
+--- a/lib/fnmatch.c
++++ b/lib/fnmatch.c
+@@ -121,7 +121,7 @@ USA.  */
+    whose names are inconsistent.  */
+ 
+ # if !defined _LIBC && !defined getenv
+-extern char *getenv ();
++extern char *getenv (const char*);
+ # endif
+ 
+ # ifndef errno
+diff --git a/src/getopt.c b/src/getopt.c
+index 7a792de..9b56abe 100644
+--- a/src/getopt.c
++++ b/src/getopt.c
+@@ -202,7 +202,7 @@ static char *posixly_correct;
+    whose names are inconsistent.  */
+ 
+ #ifndef getenv
+-extern char *getenv ();
++extern char *getenv (const char*);
+ #endif
+ 
+ static char *
+diff --git a/src/getopt.h b/src/getopt.h
+index df18cee..a6cc621 100644
+--- a/src/getopt.h
++++ b/src/getopt.h
+@@ -96,14 +96,7 @@ struct option
+ #define optional_argument	2
+ 
+ #if defined (__STDC__) && __STDC__
+-#ifdef __GNU_LIBRARY__
+-/* Many other libraries have conflicting prototypes for getopt, with
+-   differences in the consts, in stdlib.h.  To avoid compilation
+-   errors, only prototype getopt for the GNU C library.  */
+ extern int getopt (int argc, char *const *argv, const char *shortopts);
+-#else /* not __GNU_LIBRARY__ */
+-extern int getopt ();
+-#endif /* __GNU_LIBRARY__ */
+ extern int getopt_long (int argc, char *const *argv, const char *shortopts,
+ 		        const struct option *longopts, int *longind);
+ extern int getopt_long_only (int argc, char *const *argv,
+-- 
+2.50.0
