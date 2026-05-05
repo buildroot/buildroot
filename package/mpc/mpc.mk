@@ -4,8 +4,9 @@
 #
 ################################################################################
 
-MPC_VERSION = 1.3.1
+MPC_VERSION = 1.4.1
 MPC_SITE = $(BR2_GNU_MIRROR)/mpc
+MPC_SOURCE = mpc-$(MPC_VERSION).tar.xz
 MPC_LICENSE = LGPL-3.0+
 MPC_LICENSE_FILES = COPYING.LESSER
 MPC_INSTALL_STAGING = YES
