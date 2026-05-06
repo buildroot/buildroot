@@ -1,6 +1,6 @@
 config BR2_PACKAGE_LIBINPUT
 	bool "libinput"
-	depends on BR2_PACKAGE_HAS_UDEV
+	depends on BR2_PACKAGE_HAS_LIBUDEV
 	select BR2_PACKAGE_LIBEVDEV
 	help
 	  libinput is a library to handle input devices in Wayland
@@ -34,5 +34,5 @@ config BR2_PACKAGE_LIBINPUT_PYTHON_TOOLS
 
 endif
 
-comment "libinput needs udev /dev management"
-	depends on !BR2_PACKAGE_HAS_UDEV
+comment "libinput needs libudev"
+	depends on !BR2_PACKAGE_HAS_LIBUDEV
