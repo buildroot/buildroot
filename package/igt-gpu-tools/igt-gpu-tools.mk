@@ -18,10 +18,10 @@ IGT_GPU_TOOLS_DEPENDENCIES = \
 	libdrm \
 	libglib2 \
 	libpciaccess \
+	libudev \
 	pciutils \
 	pixman \
 	procps-ng \
-	udev \
 	zlib
 
 IGT_GPU_TOOLS_CONF_OPTS = \
