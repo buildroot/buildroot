@@ -1,0 +1,70 @@
+From ed0afb9ed566b9bb9d8ad020979f133115a16d7e Mon Sep 17 00:00:00 2001
+From: Andrew Pinski <quic_apinski@quicinc.com>
+Date: Mon, 25 Nov 2024 14:03:27 -0800
+Subject: [PATCH] build: Move  memory include above safe-ctype.h [PR124830]
+
+This picks r15-5661-gf6e00226a4ca6 to gcc-12 branch, moving only
+the <memory> include to fix build issues with a C++20 host compiler.
+
+In some versions of libstdc++ the header includes locale which might not have been
+included yet. safe-ctype.h defines the toupper, tolower, etc. as macros so the
+c++ header files needed to be included before hand as comment in system.h says:
+/* Include C++ standard headers before "safe-ctype.h" to avoid GCC
+   poisoning the ctype macros through safe-ctype.h */
+
+I don't understand how it was working before when memory was included after
+safe-ctype.h rather than before. But this makes it consistent with the
+other C++ headers.
+
+gcc/ChangeLog:
+
+	PR target/117771
+	PR c/124830
+	* system.h: Move the include of sstream and memory above safe-ctype.h.
+
+Signed-off-by: Andrew Pinski <quic_apinski@quicinc.com>
+(cherry picked from commit 046776dac7cc74bdbab36f450af80644a045858a)
+[Marcus: backport to gcc-12, only move memory, sstream is not included
+in this version]
+Signed-off-by: Marcus Hoffmann <buildroot@bubu1.eu>
+Upstream: N/A (gcc-12 is unsupported upstream, patch adapted from gcc-13
+branch)
+---
+ gcc/system.h | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/gcc/system.h b/gcc/system.h
+index 38733dd81a6..7c00fc68a97 100644
+--- a/gcc/system.h
++++ b/gcc/system.h
+@@ -222,6 +222,12 @@ extern int fprintf_unlocked (FILE *, const char *, ...);
+ #ifdef INCLUDE_FUNCTIONAL
+ # include <functional>
+ #endif
++/* Some of the headers included by <memory> can use "abort" within a
++   namespace, e.g. "_VSTD::abort();", which fails after we use the
++   preprocessor to redefine "abort" as "fancy_abort" below.  */
++#ifdef INCLUDE_MEMORY
++# include <memory>
++#endif
+ # include <cstring>
+ # include <initializer_list>
+ # include <new>
+@@ -733,14 +739,6 @@ extern int vsnprintf (char *, size_t, const char *, va_list);
+ #define __builtin_expect(a, b) (a)
+ #endif
+ 
+-/* Some of the headers included by <memory> can use "abort" within a
+-   namespace, e.g. "_VSTD::abort();", which fails after we use the
+-   preprocessor to redefine "abort" as "fancy_abort" below.  */
+-
+-#ifdef INCLUDE_MEMORY
+-# include <memory>
+-#endif
+-
+ #ifdef INCLUDE_MALLOC_H
+ #if defined(HAVE_MALLINFO) || defined(HAVE_MALLINFO2)
+ #include <malloc.h>
+-- 
+2.54.0
+
