@@ -1,0 +1,32 @@
+From ed6025645f506c8941ab245f142db701b9f9bf2a Mon Sep 17 00:00:00 2001
+From: Gwenhael Goavec-Merou <gwenhael.goavec-merou@trabucayre.com>
+Date: Wed, 6 May 2026 18:12:24 +0200
+Subject: [PATCH] CMakeLists.txt: uses regex to remove potential rcX in
+ LIBFTDI_VERSION_MINOR
+
+LIBFTDI_VERSION_XXX is used by FTDI_VERSION to adapts code according
+to libftdi version. But when rcX is present in LIBFTDI_VERSION_MINOR
+cmake fails with the math function.
+This PR adds a REGEX to only keep numeric value and drop rcX
+
+Signed-off-by: Gwenhael Goavec-Merou <gwenhael.goavec-merou@trabucayre.com>
+Upstream: https://github.com/trabucayre/openFPGALoader/commit/ed6025645f506c8941ab245f142db701b9f9bf2a
+---
+ CMakeLists.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 442327f..2bf20e1 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -200,6 +200,7 @@ if (USE_PKGCONFIG)
+ 			string(REPLACE "." ";" VERSION_LIST ${LIBFTDI_VERSION})
+ 			list(GET VERSION_LIST 0 LIBFTDI_VERSION_MAJOR)
+ 			list(GET VERSION_LIST 1 LIBFTDI_VERSION_MINOR)
++			string(REGEX REPLACE "[^0-9].*" "" LIBFTDI_VERSION_MINOR "${LIBFTDI_VERSION_MINOR}")
+ 		endif()
+ 	else()
+ 		set(LIBFTDI_LIBRARY_DIRS "")
+-- 
+2.53.0
+
