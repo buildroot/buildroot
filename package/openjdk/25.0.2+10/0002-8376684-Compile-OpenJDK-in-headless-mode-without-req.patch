@@ -1,0 +1,144 @@
+From 434d082d9082c1ce2d9ea46ec3c90420442567b9 Mon Sep 17 00:00:00 2001
+From: Thomas Devoogdt <thomas@devoogdt.com>
+Date: Wed, 4 Feb 2026 06:48:59 +0000
+Subject: [PATCH] 8376684: Compile OpenJDK in headless mode without required
+ X11 libraries
+
+Reviewed-by: erikj, aivanov
+
+Upstream: https://github.com/openjdk/jdk/pull/28310
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+---
+ doc/building.html                                |  7 +++----
+ doc/building.md                                  |  6 ++----
+ make/autoconf/libraries.m4                       |  8 ++++----
+ make/modules/java.desktop/lib/AwtLibraries.gmk   | 16 ++++++++++++++--
+ .../unix/native/common/awt/utility/rect.h        |  4 ++--
+ 5 files changed, 25 insertions(+), 16 deletions(-)
+
+diff --git a/doc/building.html b/doc/building.html
+index da8465bc532..f8d815a5474 100644
+--- a/doc/building.html
++++ b/doc/building.html
+@@ -1380,10 +1380,9 @@ <h4 id="alsa-1">ALSA</h4>
+ can specify it by <code>--with-alsa</code>.</p></li>
+ </ul>
+ <h4 id="x11-1">X11</h4>
+-<p>You will need X11 libraries suitable for your <em>target</em> system.
+-In most cases, using Debian's pre-built libraries work fine.</p>
+-<p>Note that X11 is needed even if you only want to build a headless
+-JDK.</p>
++<p>When not building a headless JDK, you will need X11 libraries
++suitable for your <em>target</em> system. In most cases, using Debian's
++pre-built libraries work fine.</p>
+ <ul>
+ <li><p>Go to <a href="https://www.debian.org/distrib/packages">Debian
+ Package Search</a>, search for the following packages for your
+diff --git a/doc/building.md b/doc/building.md
+index 1a9fe6b2e78..92ebd3d32c7 100644
+--- a/doc/building.md
++++ b/doc/building.md
+@@ -1173,10 +1173,8 @@ #### ALSA
+ 
+ #### X11
+ 
+-You will need X11 libraries suitable for your *target* system. In most cases,
+-using Debian's pre-built libraries work fine.
+-
+-Note that X11 is needed even if you only want to build a headless JDK.
++When not building a headless JDK, you will need X11 libraries suitable for your
++*target* system. In most cases, using Debian's pre-built libraries work fine.
+ 
+ * Go to [Debian Package Search](https://www.debian.org/distrib/packages),
+   search for the following packages for your *target* system, and download them
+diff --git a/make/autoconf/libraries.m4 b/make/autoconf/libraries.m4
+index 96f377c2f99..8f02b7ec8a7 100644
+--- a/make/autoconf/libraries.m4
++++ b/make/autoconf/libraries.m4
+@@ -42,12 +42,12 @@ m4_include([lib-tests.m4])
+ AC_DEFUN_ONCE([LIB_DETERMINE_DEPENDENCIES],
+ [
+   # Check if X11 is needed
+-  if test "x$OPENJDK_TARGET_OS" = xwindows || test "x$OPENJDK_TARGET_OS" = xmacosx; then
+-    # No X11 support on windows or macosx
++  if test "x$OPENJDK_TARGET_OS" = xwindows ||
++     test "x$OPENJDK_TARGET_OS" = xmacosx ||
++     test "x$ENABLE_HEADLESS_ONLY" = xtrue; then
+     NEEDS_LIB_X11=false
+   else
+-    # All other instances need X11, even if building headless only, libawt still
+-    # needs X11 headers.
++    # All other instances need X11 for libawt.
+     NEEDS_LIB_X11=true
+   fi
+ 
+diff --git a/make/modules/java.desktop/lib/AwtLibraries.gmk b/make/modules/java.desktop/lib/AwtLibraries.gmk
+index 463e09e12dc..8b6b50b9e62 100644
+--- a/make/modules/java.desktop/lib/AwtLibraries.gmk
++++ b/make/modules/java.desktop/lib/AwtLibraries.gmk
+@@ -88,6 +88,10 @@ LIBAWT_EXTRA_HEADER_DIRS := \
+ 
+ LIBAWT_CFLAGS := -D__MEDIALIB_OLD_NAMES -D__USE_J2D_NAMES -DMLIB_NO_LIBSUNMATH
+ 
++ifeq ($(ENABLE_HEADLESS_ONLY), true)
++  LIBAWT_CFLAGS += -DHEADLESS
++endif
++
+ ifeq ($(call isTargetOs, windows), true)
+   LIBAWT_CFLAGS += -EHsc -DUNICODE -D_UNICODE -DMLIB_OS64BIT
+   LIBAWT_RCFLAGS ?= -I$(TOPDIR)/src/java.base/windows/native/launcher/icons
+@@ -167,11 +171,18 @@ ifeq ($(call isTargetOs, windows macosx), false)
+       $(TOPDIR)/src/$(MODULE)/$(OPENJDK_TARGET_OS_TYPE)/native/common/awt \
+       #
+ 
++  LIBAWT_HEADLESS_EXCLUDE_FILES := \
++      GLXGraphicsConfig.c \
++      GLXSurfaceData.c \
++      X11PMBlitLoops.c \
++      X11Renderer.c \
++      X11SurfaceData.c \
++      #
++
+   LIBAWT_HEADLESS_EXTRA_HEADER_DIRS := \
+       $(LIBAWT_DEFAULT_HEADER_DIRS) \
+       common/awt/debug \
+       common/font \
+-      common/java2d/opengl \
+       java.base:libjvm \
+       #
+ 
+@@ -191,7 +202,8 @@ ifeq ($(call isTargetOs, windows macosx), false)
+   $(eval $(call SetupJdkLibrary, BUILD_LIBAWT_HEADLESS, \
+       NAME := awt_headless, \
+       EXTRA_SRC := $(LIBAWT_HEADLESS_EXTRA_SRC), \
+-      EXCLUDES := medialib, \
++      EXCLUDES := medialib opengl, \
++      EXCLUDE_FILES := $(LIBAWT_HEADLESS_EXCLUDE_FILES), \
+       ONLY_EXPORTED := $(LIBAWT_HEADLESS_ONLY_EXPORTED), \
+       OPTIMIZATION := LOW, \
+       CFLAGS := -DHEADLESS=true $(CUPS_CFLAGS) $(FONTCONFIG_CFLAGS) \
+diff --git a/src/java.desktop/unix/native/common/awt/utility/rect.h b/src/java.desktop/unix/native/common/awt/utility/rect.h
+index ceea38f4349..91b5a17ec58 100644
+--- a/src/java.desktop/unix/native/common/awt/utility/rect.h
++++ b/src/java.desktop/unix/native/common/awt/utility/rect.h
+@@ -28,7 +28,7 @@
+ #ifndef _AWT_RECT_H
+ #define _AWT_RECT_H
+ 
+-#ifndef MACOSX
++#if !defined(HEADLESS) && !defined(MACOSX)
+ #include <X11/Xlib.h>
+ typedef XRectangle RECT_T;
+ #else
+@@ -39,7 +39,7 @@ typedef struct {
+     int width;
+     int height;
+ } RECT_T;
+-#endif /* !MACOSX */
++#endif /* !HEADLESS && !MACOSX */
+ 
+ #define RECT_EQ_X(r1,r2)        ((r1).x==(r2).x && (r1).width==(r2).width)
+ 
+-- 
+2.43.0
+
