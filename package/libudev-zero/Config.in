@@ -1,6 +1,7 @@
 config BR2_PACKAGE_LIBUDEV_ZERO
 	bool "libudev-zero"
 	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_HAS_LIBUDEV
 	help
 	  Daemonless replacement for libudev
 
@@ -8,3 +9,10 @@ config BR2_PACKAGE_LIBUDEV_ZERO
 
 comment "libudev-zero needs a toolchain w/ dynamic library"
 	depends on BR2_STATIC_LIBS
+
+if BR2_PACKAGE_LIBUDEV_ZERO
+
+config BR2_PACKAGE_PROVIDES_LIBUDEV
+	default "libudev-zero"
+
+endif # BR2_PACKAGE_LIBUDEV_ZERO
