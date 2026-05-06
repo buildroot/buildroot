@@ -1,0 +1,90 @@
+From 3f1812fd97467bbc69c53169c663a9c4d26c1550 Mon Sep 17 00:00:00 2001
+From: "H.J. Lu" <hjl.tools@gmail.com>
+Date: Mon, 4 May 2026 05:08:51 +0800
+Subject: or1k: Allow SImode for condition flag register
+
+Commit
+
+eb2ea476db2 emit-rtl: Allow extra checks for paradoxical subregs [PR119966]
+
+changed validate_subreg to return false on the paradoxical SImode subreg
+of the OpenRISC condition flag register (reg:BI sr_f), which triggered
+
+internal compiler error: in emit_move_multi_word, at expr.cc:4497
+
+c0694f95f59 or1k: Fix ICE in libgcc caused by recent validate_subreg changes
+
+changed or1k_can_change_mode_class to allow changing flags mode from BI
+to SI.  But or1k_hard_regno_mode_ok still returns false for condition
+flag register in SImode.  Update or1k_hard_regno_mode_ok to also allow
+condition flag register in SImode.
+
+Tested with or1k Linux cross compiler for or1k glibc build.
+
+gcc/
+
+	PR target/120587
+	PR target/125155
+	* config/or1k/or1k.cc (or1k_hard_regno_mode_ok): Allow condition
+	condition flag register in SImode.
+
+gcc/testsuite/
+
+	PR target/120587
+	PR target/125155
+	* gcc.target/or1k/pr125155.c: New test.
+
+Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
+(cherry picked from commit 710581c80b2fd39fa7a8674eccf7dca8cbc7c9c0)
+
+Upstream: https://gcc.gnu.org/cgit/gcc/commit/?h=releases/gcc-16&id=3f1812fd97467bbc69c53169c663a9c4d26c1550
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ gcc/config/or1k/or1k.cc                  |  7 ++++---
+ gcc/testsuite/gcc.target/or1k/pr125155.c | 14 ++++++++++++++
+ 2 files changed, 18 insertions(+), 3 deletions(-)
+ create mode 100644 gcc/testsuite/gcc.target/or1k/pr125155.c
+
+diff --git a/gcc/config/or1k/or1k.cc b/gcc/config/or1k/or1k.cc
+index 17240e3ee48d..66fd784f8b91 100644
+--- a/gcc/config/or1k/or1k.cc
++++ b/gcc/config/or1k/or1k.cc
+@@ -1389,10 +1389,11 @@ or1k_trampoline_init (rtx m_tramp, tree fndecl, rtx chain)
+ static bool
+ or1k_hard_regno_mode_ok (unsigned int regno, machine_mode mode)
+ {
+-  /* For OpenRISC, GENERAL_REGS can hold anything, while
+-     FLAG_REGS are really single bits within SP[SR].  */
++  /* For OpenRISC, GENERAL_REGS can hold anything, while FLAG_REGS are
++     really single bits within SP[SR].  Also allow condition flag register
++     in SImode to match or1k_can_change_mode_class.  */
+   if (REGNO_REG_CLASS (regno) == FLAG_REGS)
+-    return mode == BImode;
++    return mode == BImode || mode == SImode;
+   return true;
+ }
+ 
+diff --git a/gcc/testsuite/gcc.target/or1k/pr125155.c b/gcc/testsuite/gcc.target/or1k/pr125155.c
+new file mode 100644
+index 000000000000..8ca95475b666
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/or1k/pr125155.c
+@@ -0,0 +1,14 @@
++/* { dg-do compile } */
++/* { dg-options "-O2" } */
++
++int __pthread_keys_0_0;
++int
++___pthread_key_delete (void)
++{
++  int result = 22;
++  int __atg3_old = 0;
++  if (__atomic_compare_exchange_n (&__pthread_keys_0_0, &__atg3_old,
++				   0, 0, 2, 0))
++    result = 0;
++  return result;
++}
+-- 
+cgit 
+
