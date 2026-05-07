@@ -1,4 +1,4 @@
-From 5e390467b26a3cf3fecc04e1a0d482dff3162fc4 Mon Sep 17 00:00:00 2001
+From 0000ca30646d03f9dfbab9f62a5ce21a939c1018 Mon Sep 17 00:00:00 2001
 From: Karel Zak <kzak@redhat.com>
 Date: Thu, 19 Feb 2026 13:59:46 +0100
 Subject: [PATCH] loopdev: add LOOPDEV_FL_NOFOLLOW to prevent symlink attacks
@@ -47,9 +47,8 @@ Addresses: https://github.com/util-linux/util-linux/security/advisories/GHSA-qq4
 Signed-off-by: Karel Zak <kzak@redhat.com>
 
 CVE: CVE-2026-27456
-Upstream: https://github.com/util-linux/util-linux/commit/5e390467b26a3cf3fecc04e1a0d482dff3162fc4
-[Titouan: Adapt patch to apply cleanly onto util-linux 2.40]
-Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+Upstream: https://github.com/util-linux/util-linux/commit/0000ca30646d03f9dfbab9f62a5ce21a939c1018
+Signed-off-by: Marcus Hoffmann <buildroot@bubu1.eu>
 ---
  include/loopdev.h           | 3 ++-
  lib/loopdev.c               | 7 ++++++-
@@ -57,7 +56,7 @@ Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
  3 files changed, 10 insertions(+), 3 deletions(-)
 
 diff --git a/include/loopdev.h b/include/loopdev.h
-index d10bf7f37..0f85dd254 100644
+index d10bf7f3765..0f85dd25456 100644
 --- a/include/loopdev.h
 +++ b/include/loopdev.h
 @@ -139,7 +139,8 @@ enum {
@@ -71,7 +70,7 @@ index d10bf7f37..0f85dd254 100644
  
  /*
 diff --git a/lib/loopdev.c b/lib/loopdev.c
-index c72fb2c40..3d2274693 100644
+index c72fb2c404b..28fb489e402 100644
 --- a/lib/loopdev.c
 +++ b/lib/loopdev.c
 @@ -1267,7 +1267,10 @@ int loopcxt_set_backing_file(struct loopdev_cxt *lc, const char *filename)
@@ -82,7 +81,7 @@ index c72fb2c40..3d2274693 100644
 +	if (lc->flags & LOOPDEV_FL_NOFOLLOW)
 +		lc->filename = strdup(filename);
 +	else
-+		lc->filename = ul_canonicalize_path(filename);
++		lc->filename = canonicalize_path(filename);
  	if (!lc->filename)
  		return -errno;
  
@@ -96,7 +95,7 @@ index c72fb2c40..3d2274693 100644
  	if ((file_fd = open(lc->filename, mode | flags)) < 0) {
  		if (mode != O_RDONLY && (errno == EROFS || errno == EACCES))
 diff --git a/libmount/src/hook_loopdev.c b/libmount/src/hook_loopdev.c
-index 597b9339a..4df1915a6 100644
+index 597b9339ac0..4df1915a619 100644
 --- a/libmount/src/hook_loopdev.c
 +++ b/libmount/src/hook_loopdev.c
 @@ -272,7 +272,8 @@ static int setup_loopdev(struct libmnt_context *cxt,
