@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BUBBLEWRAP_VERSION = 0.11.1
+BUBBLEWRAP_VERSION = 0.11.2
 BUBBLEWRAP_SITE = https://github.com/containers/bubblewrap/releases/download/v$(BUBBLEWRAP_VERSION)
 BUBBLEWRAP_SOURCE = bubblewrap-$(BUBBLEWRAP_VERSION).tar.xz
 BUBBLEWRAP_DEPENDENCIES = host-pkgconf libcap
@@ -18,6 +18,7 @@ BUBBLEWRAP_CONF_OPTS = \
 	-Dman=disabled \
 	-Dpython=$(HOST_DIR)/bin/python \
 	-Drequire_userns=false \
+	-Dsupport_setuid=true \
 	-Dtests=false
 
 ifeq ($(BR2_PACKAGE_BASH_COMPLETION),y)
