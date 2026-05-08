@@ -5,7 +5,7 @@
 ################################################################################
 
 LIBCAMERA_SITE = https://git.linuxtv.org/libcamera.git
-LIBCAMERA_VERSION = v0.7.0
+LIBCAMERA_VERSION = v0.7.1
 LIBCAMERA_SITE_METHOD = git
 LIBCAMERA_DEPENDENCIES = \
 	host-openssl \
@@ -41,9 +41,7 @@ LIBCAMERA_LICENSE_FILES = \
 	LICENSES/Linux-syscall-note.txt \
 	LICENSES/MIT.txt
 
-ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_7),y)
-LIBCAMERA_CXXFLAGS = -faligned-new
-endif
+LIBCAMERA_CXXFLAGS = $(TARGET_CXXFLAGS) -faligned-new
 
 ifeq ($(BR2_PACKAGE_LIBCAMERA_PYTHON),y)
 LIBCAMERA_DEPENDENCIES += python3 python-pybind
