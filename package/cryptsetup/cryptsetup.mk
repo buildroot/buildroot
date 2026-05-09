@@ -41,6 +41,9 @@ CRYPTSETUP_CONF_OPTS += --with-crypto_backend=nettle
 else ifeq ($(BR2_PACKAGE_LIBNSS),y)
 CRYPTSETUP_DEPENDENCIES += libnss
 CRYPTSETUP_CONF_OPTS += --with-crypto_backend=nss
+else ifeq ($(BR2_PACKAGE_MBEDTLS),y)
+CRYPTSETUP_DEPENDENCIES += mbedtls
+CRYPTSETUP_CONF_OPTS += --with-crypto_backend=mbedtls
 else
 CRYPTSETUP_CONF_OPTS += --with-crypto_backend=kernel
 endif
