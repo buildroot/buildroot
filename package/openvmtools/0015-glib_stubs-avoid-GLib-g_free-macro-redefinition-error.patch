@@ -1,0 +1,34 @@
+From bfd12cf73d81919843383598e4a9e64c6e5fd97a Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Fri, 21 Nov 2025 00:29:10 -0800
+Subject: [PATCH] glib_stubs: avoid GLib g_free macro redefinition error
+
+glib 2.78+ defines g_free as an object-size checking macro.
+open-vm-tools overrides g_free(), leading to preprocessor expansion
+inside the function signature and breaking the build.
+
+Undefine the macro before defining the stub.
+
+Upstream-Status: Pending
+Signed-off-by: Khem Raj <raj.khem@gmail.com>
+
+Upstream: https://github.com/vmware/open-vm-tools/pull/779
+Signed-off-by: John Ernberg <j@j-ernberg.se>
+---
+ open-vm-tools/lib/rpcChannel/glib_stubs.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/lib/rpcChannel/glib_stubs.c b/lib/rpcChannel/glib_stubs.c
+index c32deb073..cb89c6a87 100644
+--- a/lib/rpcChannel/glib_stubs.c
++++ b/lib/rpcChannel/glib_stubs.c
+@@ -35,6 +35,9 @@
+ 
+ void *g_malloc0(size_t s) { return Util_SafeCalloc(1, s); }
+ void *g_malloc0_n(size_t n, size_t s) { return Util_SafeCalloc(n, s); }
++/* GLib defines g_free as a macro, so undefine it before providing
++ * our own stub implementation. */
++#undef g_free
+ void g_free(void *p) { free(p); }
+ 
+ void g_mutex_init(GMutex *mutex) { }
