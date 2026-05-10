@@ -84,7 +84,6 @@ CLANG_FILES_TO_REMOVE = \
 	/usr/libexec/c++-analyzer \
 	/usr/libexec/ccc-analyzer \
 	/usr/share/clang \
-	/usr/share/opt-viewer \
 	/usr/share/scan-build \
 	/usr/share/scan-view \
 	/usr/share/man/man1/scan-build.1 \
