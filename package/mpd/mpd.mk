@@ -24,6 +24,7 @@ MPD_CONF_OPTS = \
 	-Dmpcdec=disabled \
 	-Dopenmpt=disabled \
 	-Dpipewire=disabled \
+	-Dsidplay=disabled \
 	-Dsnapcast=false
 
 ifeq ($(BR2_PACKAGE_EXPAT),y)
@@ -282,13 +283,6 @@ MPD_DEPENDENCIES += libshout
 MPD_CONF_OPTS += -Dshout=enabled
 else
 MPD_CONF_OPTS += -Dshout=disabled
-endif
-
-ifeq ($(BR2_PACKAGE_MPD_SIDPLAY),y)
-MPD_DEPENDENCIES += libsidplay2
-MPD_CONF_OPTS += -Dsidplay=enabled
-else
-MPD_CONF_OPTS += -Dsidplay=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_MPD_SQLITE),y)
