@@ -33,7 +33,7 @@ TPM2_TSS_CONF_OPTS = \
 TPM2_TSS_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -std=c99"
 
 ifeq ($(BR2_PACKAGE_TPM2_TSS_FAPI),y)
-TPM2_TSS_DEPENDENCIES += json-c libcurl util-linux
+TPM2_TSS_DEPENDENCIES += json-c libcurl util-linux-libs
 TPM2_TSS_CONF_OPTS += --enable-fapi
 else
 TPM2_TSS_CONF_OPTS += --disable-fapi --disable-policy
