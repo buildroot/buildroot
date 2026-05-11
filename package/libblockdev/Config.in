@@ -47,6 +47,7 @@ config BR2_PACKAGE_LIBBLOCKDEV_LVM2
 	bool "lvm2"
 	depends on BR2_ENABLE_LOCALE # parted
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_5 # parted
+	select BR2_PACKAGE_JSON_GLIB
 	select BR2_PACKAGE_PARTED
 	select BR2_PACKAGE_LIBYAML
 	select BR2_PACKAGE_LVM2
