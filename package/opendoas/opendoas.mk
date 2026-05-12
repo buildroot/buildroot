@@ -50,8 +50,12 @@ define OPENDOAS_BUILD_CMDS
 endef
 
 define OPENDOAS_INSTALL_TARGET_CMDS
-	$(INSTALL) -D -m 0755 $(@D)/doas $(TARGET_DIR)/usr/bin/doas
+	$(INSTALL) -D $(@D)/doas $(TARGET_DIR)/usr/bin/doas
 	$(OPENDOAS_INSTALL_PAM_CONF)
+endef
+
+define OPENDOAS_PERMISSIONS
+	/usr/bin/doas f 4755 0 0 - - - - -
 endef
 
 # NOTE: Even though this package has a "configure" script, it is not
