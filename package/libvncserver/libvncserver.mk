@@ -13,6 +13,12 @@ LIBVNCSERVER_INSTALL_STAGING = YES
 LIBVNCSERVER_DEPENDENCIES = host-pkgconf lzo
 LIBVNCSERVER_CONF_OPTS = -DWITH_LZO=ON
 
+# 0002-add-bounds-checks-to-UltraZip-subrectangle-parsing.patch
+LIBVNCSERVER_IGNORE_CVES += CVE-2026-32853
+
+# 0003-fix-NULL-pointer-dereferences-in-httpd-proxy-handlers.patch
+LIBVNCSERVER_IGNORE_CVES += CVE-2026-32854
+
 # only used for examples
 LIBVNCSERVER_CONF_OPTS += \
 	-DWITH_FFMPEG=OFF \
