@@ -5,7 +5,7 @@
 ################################################################################
 
 LIBMEDIAART_VERSION_MAJOR = 1.9
-LIBMEDIAART_VERSION = $(LIBMEDIAART_VERSION_MAJOR).6
+LIBMEDIAART_VERSION = $(LIBMEDIAART_VERSION_MAJOR).7
 LIBMEDIAART_SOURCE = libmediaart-$(LIBMEDIAART_VERSION).tar.xz
 LIBMEDIAART_SITE = \
 	https://download.gnome.org/sources/libmediaart/$(LIBMEDIAART_VERSION_MAJOR)
