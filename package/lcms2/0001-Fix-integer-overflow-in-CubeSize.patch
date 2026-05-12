@@ -1,0 +1,28 @@
+From da6110b1d14abc394633a388209abd5ebedd7ab0 Mon Sep 17 00:00:00 2001
+From: Marti Maria <marti.maria@littlecms.com>
+Date: Thu, 19 Feb 2026 09:07:20 +0100
+Subject: [PATCH] Fix integer overflow in CubeSize()
+
+Thanks to @zerojackyi for reporting
+
+CVE: CVE-2026-41254
+Upstream: https://github.com/mm2/Little-CMS/commit/da6110b1d14abc394633a388209abd5ebedd7ab0
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/cmslut.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/cmslut.c b/src/cmslut.c
+index 10891486..b2452090 100644
+--- a/src/cmslut.c
++++ b/src/cmslut.c
+@@ -460,7 +460,8 @@ void EvaluateCLUTfloatIn16(const cmsFloat32Number In[], cmsFloat32Number Out[],
+ static
+ cmsUInt32Number CubeSize(const cmsUInt32Number Dims[], cmsUInt32Number b)
+ {
+-    cmsUInt32Number rv, dim;
++    cmsUInt32Number dim;
++    cmsUInt64Number rv;
+ 
+     _cmsAssert(Dims != NULL);
+ 

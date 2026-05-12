@@ -1,0 +1,38 @@
+From 6a686019825a89b715d16671f18d049523354176 Mon Sep 17 00:00:00 2001
+From: Marti Maria <marti.maria@littlecms.com>
+Date: Thu, 19 Feb 2026 08:48:50 +0100
+Subject: [PATCH] Fix for ParseCube integer overflow in LUT allocation
+
+thanks to @zerojackyi for reporting
+
+
+CVE: CVE-2026-42798
+Upstream: https://github.com/mm2/Little-CMS/commit/6a686019825a89b715d16671f18d049523354176
+[thomas: backport  to 2.16]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/cmscgats.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/src/cmscgats.c b/src/cmscgats.c
+index 252db22d..3d819fad 100644
+--- a/src/cmscgats.c
++++ b/src/cmscgats.c
+@@ -3128,7 +3128,16 @@ cmsBool ParseCube(cmsIT8* cube, cmsStage** Shaper, cmsStage** CLUT, char title[]
+ 
+             if (lut_size > 0) {
+ 
+-                int nodes = lut_size * lut_size * lut_size;
++                int nodes;
++                
++                /**
++                * Professional LUT‑generation tools (e.g., Nobe LutBake) list 65×65×65 as their highest supported size.                
++                */
++                if (lut_size > 65)
++                    return SynError(cube, "LUT size '%d' is over maximum of 65", lut_size);
++
++                nodes = lut_size * lut_size * lut_size;
++
+ 
+                 cmsFloat32Number* lut_table = _cmsMalloc(cube->ContextID, nodes * 3 * sizeof(cmsFloat32Number));
+                 if (lut_table == NULL) return FALSE;

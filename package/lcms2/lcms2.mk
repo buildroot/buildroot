@@ -14,6 +14,13 @@ LCMS2_INSTALL_STAGING = YES
 # tiff is only used by tificc sample
 LCMS2_CONF_OPTS = --without-tiff
 
+# 0001-Fix-integer-overflow-in-CubeSize.patch
+# 0002-check-overflow.patch
+LCMS2_IGNORE_CVES += CVE-2026-41254
+
+# 0003-Fix-for-ParseCube-integer-overflow-in-LUT-allocation.patch
+LCMS2_IGNORE_CVES += CVE-2026-42798
+
 ifeq ($(BR2_PACKAGE_JPEG),y)
 LCMS2_CONF_OPTS += --with-jpeg
 LCMS2_DEPENDENCIES += jpeg

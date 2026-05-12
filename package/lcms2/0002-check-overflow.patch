@@ -1,0 +1,34 @@
+From e0641b1828d0a1af5ecb1b11fe22f24fceefd4bc Mon Sep 17 00:00:00 2001
+From: Marti Maria <marti.maria@littlecms.com>
+Date: Thu, 12 Mar 2026 22:57:35 +0100
+Subject: [PATCH] check for overflow
+
+Thanks to Guanni Qu for detecting & reporting the issue
+
+CVE: CVE-2026-41254
+Upstream: https://github.com/mm2/Little-CMS/commit/e0641b1828d0a1af5ecb1b11fe22f24fceefd4bc
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/cmslut.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/cmslut.c b/src/cmslut.c
+index a60baf98..65c935fc 100644
+--- a/src/cmslut.c
++++ b/src/cmslut.c
+@@ -468,12 +468,12 @@ cmsUInt32Number CubeSize(const cmsUInt32Number Dims[], cmsUInt32Number b)
+     for (rv = 1; b > 0; b--) {
+ 
+         dim = Dims[b-1];
+-        if (dim <= 1) return 0;  // Error
+-
+-        rv *= dim;
++        if (dim <= 1) return 0;  
+ 
+         // Check for overflow
+         if (rv > UINT_MAX / dim) return 0;
++
++        rv *= dim;
+     }
+ 
+     // Again, prevent overflow
