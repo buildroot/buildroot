@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBDECOR_VERSION = 0.2.4
+LIBDECOR_VERSION = 0.2.5
 LIBDECOR_SOURCE = libdecor-$(LIBDECOR_VERSION).tar.xz
 LIBDECOR_SITE = https://gitlab.freedesktop.org/libdecor/libdecor/-/releases/$(LIBDECOR_VERSION)/downloads
 LIBDECOR_LICENSE = MIT
