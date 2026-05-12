@@ -17,7 +17,7 @@ class TestFileCapabilities(infra.basetest.BRTest):
         BR2_LINUX_KERNEL_DEFCONFIG="vexpress"
         BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES="{}"
         BR2_LINUX_KERNEL_DTS_SUPPORT=y
-        BR2_LINUX_KERNEL_INTREE_DTS_NAME="vexpress-v2p-ca9"
+        BR2_LINUX_KERNEL_INTREE_DTS_NAME="arm/vexpress-v2p-ca9"
         BR2_PACKAGE_LIBCAP=y
         BR2_PACKAGE_LIBCAP_TOOLS=y
         BR2_TARGET_ROOTFS_SQUASHFS=y
