@@ -14,6 +14,12 @@ DROPBEAR_PROGRAMS = dropbear $(DROPBEAR_TARGET_BINS)
 DROPBEAR_CPE_ID_VENDOR = dropbear_ssh_project
 DROPBEAR_CPE_ID_PRODUCT = dropbear_ssh
 
+# 0001-CVE-2019-6111.patch
+DROPBEAR_IGNORE_CVES += CVE-2019-6111
+
+# 0002-CVE-2026-35385.patch
+DROPBEAR_IGNORE_CVES += CVE-2026-35385
+
 # Disable hardening flags added by dropbear configure.ac, and let
 # Buildroot add them when the relevant options are enabled. This
 # prevents dropbear from using SSP support when not available.
