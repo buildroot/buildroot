@@ -28,6 +28,11 @@ LINUX_PAM_CPE_ID_VENDOR = linux-pam
 # 0002-pam_access-rework-resolving-of-tokens-as-hostname.patch
 LINUX_PAM_IGNORE_CVES += CVE-2024-10963
 
+# 0003-inline-pam-asprintf.patch 0004-pam-namespace-rebase.patch
+# 0005-cve-2025-6020-01.patch 0006-cve-2025-6020-02.patch
+# 0007-cve-2025-6020-03.patch
+LINUX_PAM_IGNORE_CVES += CVE-2025-6020
+
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
 LINUX_PAM_LIBS += -latomic
 endif

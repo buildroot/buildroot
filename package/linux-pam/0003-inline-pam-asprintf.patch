@@ -1,0 +1,103 @@
+From 10b80543807e3fc5af5f8bcfd8bb6e219bb3cecc Mon Sep 17 00:00:00 2001
+From: "Dmitry V. Levin" <ldv@strace.io>
+Date: Tue, 18 Feb 2025 08:00:00 +0000
+Subject: [PATCH] pam_inline: introduce pam_asprintf(), pam_snprintf(), and
+ pam_sprintf()
+
+pam_asprintf() is essentially asprintf() with the following semantic
+difference: it returns the string itself instead of its length.
+
+pam_snprintf() is essentially snprintf() with the following semantic
+difference: it returns -1 in case of truncation.
+
+pam_sprintf() is essentially snprintf() but with a check that the buffer
+is an array, and with an automatically calculated buffer size.
+
+Use of these helpers would make error checking simpler.
+
+(cherry picked from commit 10b80543807e3fc5af5f8bcfd8bb6e219bb3cecc)
+Signed-off-by: Dmitry V. Levin <ldv@strace.io>
+Upstream: https://github.com/linux-pam/linux-pam/commit/10b80543807e3fc5af5f8bcfd8bb6e219bb3cecc
+
+Signed-off-by: Hitendra Prajapati <hprajapati@mvista.com>
+Upstream: https://github.com/openembedded/openembedded-core/blob/scarthgap/meta/recipes-extended/pam/libpam/0001-pam-inline-pam-asprintf.patch
+[thomas: backport from OpenEmbedded patch to 1.6.1]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ libpam/include/pam_cc_compat.h |  6 ++++++
+ libpam/include/pam_inline.h    | 36 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
+ 
+diff --git a/libpam/include/pam_cc_compat.h b/libpam/include/pam_cc_compat.h
+index 0a6e32d..af05428 100644
+--- a/libpam/include/pam_cc_compat.h
++++ b/libpam/include/pam_cc_compat.h
+@@ -21,6 +21,12 @@
+ # define PAM_ATTRIBUTE_ALIGNED(arg)	/* empty */
+ #endif
+ 
++#if PAM_GNUC_PREREQ(3, 0)
++# define PAM_ATTRIBUTE_MALLOC		__attribute__((__malloc__))
++#else
++# define PAM_ATTRIBUTE_MALLOC		/* empty */
++#endif
++
+ #if PAM_GNUC_PREREQ(4, 6)
+ # define DIAG_PUSH_IGNORE_CAST_QUAL					\
+ 	_Pragma("GCC diagnostic push");					\
+diff --git a/libpam/include/pam_inline.h b/libpam/include/pam_inline.h
+index 7721c0b..ec0497c 100644
+--- a/libpam/include/pam_inline.h
++++ b/libpam/include/pam_inline.h
+@@ -9,6 +9,8 @@
+ #define PAM_INLINE_H
+ 
+ #include "pam_cc_compat.h"
++#include <stdarg.h>
++#include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <unistd.h>
+@@ -126,6 +128,40 @@ pam_drop_response(struct pam_response *reply, int replies)
+ }
+ 
+ 
++static inline char * PAM_FORMAT((printf, 1, 2)) PAM_NONNULL((1)) PAM_ATTRIBUTE_MALLOC
++pam_asprintf(const char *fmt, ...)
++{
++	int rc;
++	char *res;
++	va_list ap;
++
++	va_start(ap, fmt);
++	rc = vasprintf(&res, fmt, ap);
++	va_end(ap);
++
++	return rc < 0 ? NULL : res;
++}
++
++static inline int PAM_FORMAT((printf, 3, 4)) PAM_NONNULL((3))
++pam_snprintf(char *str, size_t size, const char *fmt, ...)
++{
++	int rc;
++	va_list ap;
++
++	va_start(ap, fmt);
++	rc = vsnprintf(str, size, fmt, ap);
++	va_end(ap);
++
++	if (rc < 0 || (unsigned int) rc >= size)
++		return -1;
++	return rc;
++}
++
++#define pam_sprintf(str_, fmt_, ...)						\
++	pam_snprintf((str_), sizeof(str_) + PAM_MUST_BE_ARRAY(str_), (fmt_),	\
++		     ##__VA_ARGS__)
++
++
+ static inline int
+ pam_read_passwords(int fd, int npass, char **passwords)
+ {
+-- 
+2.49.0
