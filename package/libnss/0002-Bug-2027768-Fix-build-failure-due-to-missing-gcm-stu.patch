@@ -1,0 +1,114 @@
+From 974469740e6fa9b7ad15f6d9b3945370dc11fa1e Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Mon, 30 Mar 2026 17:06:14 +0200
+Subject: [PATCH] Bug 2027768 - Fix build failure due to missing gcm stubs if
+ on big endian
+
+Building gcm on Big Endian architectures lead to linking failure due to
+missing gcm stubs. This is because those stubs are guarded by
+DHAVE_PLATFORM_GHASH that at the moment is defined for every architecture
+that provides acceleration. But at the moment we can also build without
+acceleration but DHAVE_PLATFORM_GHASH is defined in any case.
+So let's add to coreconf/Linux.mk a runtime test to find out which
+endianness toolchain is by setting the new introduced LITTLE_ENDIAN
+variable. And later on, in lib/freebl/Makefile let's guard
+DHAVE_PLATFORM_GHASH definition depending on LITTLE_ENDIAN VARIABLE.
+
+Upstream: https://bugzilla.mozilla.org/show_bug.cgi?id=2027768
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ nss/coreconf/Linux.mk   |  8 ++++++++
+ nss/lib/freebl/Makefile | 28 ++++++++++++++++++++++------
+ 2 files changed, 30 insertions(+), 6 deletions(-)
+
+diff --git a/coreconf/Linux.mk b/coreconf/Linux.mk
+index dcb432415f..cf1f62378d 100644
+--- a/nss/coreconf/Linux.mk
++++ b/nss/coreconf/Linux.mk
+@@ -188,6 +188,14 @@ endif
+ endif
+ endif
+ 
++# Test toolchain for endianness and set LITTLE_ENDIAN variable accordingly
++ENDIANNESS := $(shell echo | $(CC) -dM -E - | grep __BYTE_ORDER__)
++ifeq ($(findstring __ORDER_LITTLE_ENDIAN__,$(ENDIANNESS)),__ORDER_LITTLE_ENDIAN__)
++    LITTLE_ENDIAN := 1
++else
++    LITTLE_ENDIAN := 0
++endif
++
+ USE_SYSTEM_ZLIB = 1
+ ZLIB_LIBS = -lz
+ 
+diff --git a/lib/freebl/Makefile b/lib/freebl/Makefile
+index 4ee9d61f50..39ef28ec8c 100644
+--- a/nss/lib/freebl/Makefile
++++ b/nss/lib/freebl/Makefile
+@@ -112,7 +112,10 @@ endif
+ # NSS_X64 means the target is a 64-bits 64 CPU architecture
+ # NSS_X86_OR_X64 means the target is either x86 or x64
+ ifeq (,$(filter-out i386 x386 x86 x86_64,$(CPU_ARCH)))
+-        DEFINES += -DNSS_X86_OR_X64 -DHAVE_PLATFORM_GHASH
++        DEFINES += -DNSS_X86_OR_X64
++        ifeq ($(LITTLE_ENDIAN),1)
++            DEFINES += -DHAVE_PLATFORM_GHASH
++        endif
+         EXTRA_SRCS += ghash-x86.c aes-x86.c
+ $(OBJDIR)/ghash-x86.o: CFLAGS += -mpclmul -maes
+ $(OBJDIR)/aes-x86.o: CFLAGS += -mpclmul -maes
+@@ -138,7 +141,10 @@ endif
+ endif
+ ifeq ($(CPU_ARCH),aarch64)
+     ifdef CC_IS_CLANG
+-        DEFINES += -DUSE_HW_AES -DUSE_HW_SHA1 -DUSE_HW_SHA2 -DHAVE_PLATFORM_GHASH
++        DEFINES += -DUSE_HW_AES -DUSE_HW_SHA1 -DUSE_HW_SHA2
++        ifeq ($(LITTLE_ENDIAN),1)
++            DEFINES += -DHAVE_PLATFORM_GHASH
++        endif
+         EXTRA_SRCS += aes-armv8.c ghash-aarch64.c sha1-armv8.c sha256-armv8.c
+     else ifeq (1,$(CC_IS_GCC))
+         # GCC versions older than 4.9 don't support ARM AES. The check
+@@ -146,18 +152,26 @@ ifeq ($(CPU_ARCH),aarch64)
+         # and then rejects any major versions prior to 5. Note that
+         # there has been no GCC 4.10, as it was renamed to GCC 5.
+         ifneq (,$(filter 4.9,$(word 1,$(GCC_VERSION)).$(word 2,$(GCC_VERSION))))
+-            DEFINES += -DUSE_HW_AES -DUSE_HW_SHA1 -DUSE_HW_SHA2 -DHAVE_PLATFORM_GHASH
++            DEFINES += -DUSE_HW_AES -DUSE_HW_SHA1 -DUSE_HW_SHA2
++            ifeq ($(LITTLE_ENDIAN),1)
++                DEFINES += -DHAVE_PLATFORM_GHASH
++            endif
+             EXTRA_SRCS += aes-armv8.c ghash-aarch64.c sha1-armv8.c sha256-armv8.c
+         endif
+         ifeq (,$(filter 0 1 2 3 4,$(word 1,$(GCC_VERSION))))
+-            DEFINES += -DUSE_HW_AES -DUSE_HW_SHA1 -DUSE_HW_SHA2 -DHAVE_PLATFORM_GHASH
++            DEFINES += -DUSE_HW_AES -DUSE_HW_SHA1 -DUSE_HW_SHA2
++            ifeq ($(LITTLE_ENDIAN),1)
++                DEFINES += -DHAVE_PLATFORM_GHASH
++            endif
+             EXTRA_SRCS += aes-armv8.c ghash-aarch64.c sha1-armv8.c sha256-armv8.c
+         endif
+     endif
+ endif
+ ifeq ($(CPU_ARCH),arm)
+ ifndef NSS_DISABLE_ARM32_NEON
+-    DEFINES += -DHAVE_PLATFORM_GHASH
++    ifeq ($(LITTLE_ENDIAN),1)
++        DEFINES += -DHAVE_PLATFORM_GHASH
++    endif
+     EXTRA_SRCS += ghash-arm32-neon.c
+ endif
+     ifdef CC_IS_CLANG
+@@ -290,7 +304,9 @@ ifeq ($(CPU_ARCH),arm)
+     MPI_SRCS += mpi_arm.c
+ endif
+ ifeq ($(CPU_ARCH),ppc)
+-    DEFINES += -DHAVE_PLATFORM_GHASH
++    ifeq ($(LITTLE_ENDIAN),1)
++        DEFINES += -DHAVE_PLATFORM_GHASH
++    endif
+     EXTRA_SRCS += ghash-ppc.c
+ ifdef USE_64
+     DEFINES += -DNSS_NO_INIT_SUPPORT
+-- 
+2.47.3
+
