@@ -398,6 +398,15 @@ LINUX_FIRMWARE_FILES += mediatek/mt7662.bin mediatek/mt7662_rom_patch.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.ralink_a_mediatek_company_firmware
 endif
 
+# MT7916
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7916),y)
+LINUX_FIRMWARE_FILES += mediatek/mt7916_eeprom.bin \
+	mediatek/mt7916_rom_patch.bin \
+	mediatek/mt7916_wa.bin \
+	mediatek/mt7916_wm.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
+endif
+
 # MT7921
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7921),y)
 LINUX_FIRMWARE_FILES += mediatek/WIFI_MT7961_patch_mcu_1_2_hdr.bin \
