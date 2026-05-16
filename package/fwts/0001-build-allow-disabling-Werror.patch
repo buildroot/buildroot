@@ -1,0 +1,98 @@
+From 35689cd692c4181d4f1faf21bc5f83d59ec70511 Mon Sep 17 00:00:00 2001
+From: Julien Olivain <ju.o@free.fr>
+Date: Sat, 16 May 2026 11:03:22 +0200
+Subject: [PATCH] build: allow disabling -Werror
+
+BugLink: https://bugs.launchpad.net/fwts/+bug/2152793
+
+Enforcing "-Werror" in CFLAGS can be helpful from the package
+development point of view. It can also become problematic for
+distribution maintainers. When updating compilers, those newer
+compilers may have different warnings included in "-Wall" or
+"-Wextra", or their code analysis just improved.
+
+It is unlikely the fwts developers will update their toolchains
+at the same pace as other projects. There is a recent example
+with the release of gcc 16 breaking with fwts V26.03.00. Gcc 16
+is included in mainstream distributions like Fedora 44 and Arch Linux.
+
+In order to have smoother toolchain transitions, this commit
+introduces a new autoconf option "--disable-werror" which will remove
+the "-Werror" from the CFLAGS. In that case, the rest of the CFLAGS
+are preserved, which means the warning messages will still be reported,
+but the build will not fail.
+
+This commit also preserves the original project behavior, to have
+"-Werror" enabled by default with a simple "./configure" invocation.
+
+The motivation of this commit is to upstream a package patch that
+Buildroot carried over for a decade. See:
+https://gitlab.com/buildroot.org/buildroot/-/commit/a9a7a05f39a5cf720822a87c9ac6fa9cf27eaa0e
+
+Upstream: Proposed: https://lists.ubuntu.com/archives/fwts-devel/2026-May/014180.html
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ configure.ac              | 5 +++++
+ src/Makefile.am           | 2 +-
+ src/lib/src/Makefile.am   | 2 +-
+ src/utilities/Makefile.am | 2 +-
+ 4 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index fbf487c5..62e43d75 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -9,6 +9,11 @@
+ 	  LT_INIT
+ 	  AC_C_INLINE
+ 	  AM_PROG_CC_C_O
++	  AC_ARG_ENABLE([werror],
++	  AS_HELP_STRING([--disable-werror], [disable use of -Werror]),
++		[enable_werror=$enableval], [enable_werror=yes])
++	  AS_IF([test x$enable_werror = xyes], [WERROR="-Werror"])
++	  AC_SUBST([WERROR])
+   	  AC_CHECK_FUNCS([localtime_r])
+ 	  AC_CHECK_FUNCS([dup2])
+ 	  AC_CHECK_FUNCS([getcwd])
+diff --git a/src/Makefile.am b/src/Makefile.am
+index a98a75a1..0e7ba401 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -12,7 +12,7 @@ AM_CPPFLAGS = \
+ 	-I$(top_srcdir)/src/acpica/source/compiler	\
+ 	-I$(top_srcdir)/smccc_test			\
+ 	-pthread					\
+-	-Wall -Werror -Wextra				\
++	-Wall $(WERROR) -Wextra				\
+ 	-Wno-address-of-packed-member			\
+ 	-Wfloat-equal -Wmissing-declarations		\
+ 	-Wno-long-long -Wredundant-decls -Wshadow	\
+diff --git a/src/lib/src/Makefile.am b/src/lib/src/Makefile.am
+index 6534f38f..20b01d1e 100644
+--- a/src/lib/src/Makefile.am
++++ b/src/lib/src/Makefile.am
+@@ -23,7 +23,7 @@ AM_CPPFLAGS = \
+ 	-I$(top_srcdir)/src/acpica/source/compiler	\
+ 	-I$(top_srcdir)/smccc_test                      \
+ 	-DDATAROOTDIR=\"$(datarootdir)\"		\
+-	-Wall -Werror -Wextra				\
++	-Wall $(WERROR) -Wextra				\
+ 	-Wno-address-of-packed-member
+ 
+ pkglib_LTLIBRARIES = libfwts.la
+diff --git a/src/utilities/Makefile.am b/src/utilities/Makefile.am
+index 92c135d1..76a5cdcc 100644
+--- a/src/utilities/Makefile.am
++++ b/src/utilities/Makefile.am
+@@ -16,7 +16,7 @@
+ # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ #
+ 
+-AM_CPPFLAGS = -Wall -Werror -Wextra -DDATAROOTDIR=\"$(datarootdir)\" 	\
++AM_CPPFLAGS = -Wall $(WERROR) -Wextra -DDATAROOTDIR=\"$(datarootdir)\"	\
+ 	-I$(srcdir)/../lib/include
+ 
+ bin_PROGRAMS = kernelscan
+-- 
+2.54.0
+

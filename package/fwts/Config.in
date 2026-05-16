@@ -26,19 +26,10 @@ config BR2_PACKAGE_FWTS
 
 	  dtc (libfdt) is an optional dependency for fdt related tests.
 
+	  For testing EFI runtime services, the Kernel config must
+	  have CONFIG_EFI_TEST=y (since Kernel v4.9).
+
 	  https://wiki.ubuntu.com/FirmwareTestSuite
-
-if BR2_PACKAGE_FWTS
-config BR2_PACKAGE_FWTS_EFI_RUNTIME_MODULE
-	bool "efi_runtime module"
-	depends on BR2_LINUX_KERNEL
-	help
-	  Firmware Test Suite (FWTS) provides a EFI runtime kernel
-	  module required to run UEFI tests.
-
-comment "efi_runtime module needs a Linux kernel to be built"
-	depends on !BR2_LINUX_KERNEL
-endif
 
 comment "fwts needs a glibc toolchain w/ wchar, threads, dynamic library"
 	depends on BR2_PACKAGE_FWTS_ARCH_SUPPORTS
