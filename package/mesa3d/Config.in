@@ -520,6 +520,20 @@ comment "Gallium VA-API needs a gallium driver, incompatible with GLX w/o libglv
 	depends on !BR2_PACKAGE_MESA3D_GALLIUM_DRIVER || \
 		(BR2_PACKAGE_MESA3D_OPENGL_GLX && !BR2_PACKAGE_LIBGLVND)
 
+config BR2_PACKAGE_MESA3D_PATENTED_VIDEO_CODECS
+	bool "patented video codecs (H.264, H.265)"
+	depends on BR2_PACKAGE_MESA3D_GALLIUM_VA || BR2_PACKAGE_MESA3D_VULKAN_DRIVER
+	help
+	  Enable patent-encumbered video codec support (H.264, H.265,
+	  VC-1 decode/encode) for Gallium VA-API and/or Vulkan video.
+
+	  Without this, only royalty-free codecs are supported
+	  (AV1, VP9, MPEG-1/2, JPEG).
+
+comment "patented video codecs need Gallium VA-API or a Vulkan driver"
+	depends on !BR2_PACKAGE_MESA3D_GALLIUM_VA && \
+		!BR2_PACKAGE_MESA3D_VULKAN_DRIVER
+
 config BR2_PACKAGE_PROVIDES_LIBGBM
 	default "mesa3d" if BR2_PACKAGE_MESA3D_GBM
 
