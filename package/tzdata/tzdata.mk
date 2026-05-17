@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TZDATA_VERSION = 2025c
+TZDATA_VERSION = 2026b
 TZDATA_SOURCE = tzdata$(TZDATA_VERSION).tar.gz
 TZDATA_SITE = https://www.iana.org/time-zones/repository/releases
 TZDATA_SELINUX_MODULES = tzdata
