@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ZIC_VERSION = 2025c
+ZIC_VERSION = 2026b
 ZIC_SOURCE = tzcode$(ZIC_VERSION).tar.gz
 ZIC_SITE = https://www.iana.org/time-zones/repository/releases
 ZIC_STRIP_COMPONENTS = 0
