@@ -2,6 +2,7 @@ config BR2_PACKAGE_NDCTL
 	bool "ndctl"
 	depends on BR2_PACKAGE_HAS_UDEV
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10 # __struct_group()
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # json-c
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_USE_MMU
 	select BR2_PACKAGE_INIPARSER
@@ -20,6 +21,7 @@ config BR2_PACKAGE_NDCTL
 
 comment "ndctl needs udev /dev management, a toolchain headers >= 5.10"
 	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_PACKAGE_HAS_UDEV \
 		|| !BR2_TOOLCHAIN_HAS_THREADS \
 		|| !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10
