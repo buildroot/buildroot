@@ -4,51 +4,79 @@
 #
 ################################################################################
 
-NETATALK_VERSION = 3.1.19
-NETATALK_SITE = http://downloads.sourceforge.net/project/netatalk/netatalk-$(subst .,-,$(NETATALK_VERSION))
+NETATALK_VERSION = 4.4.3
+NETATALK_SITE = https://downloads.sourceforge.net/project/netatalk/netatalk-$(subst .,-,$(NETATALK_VERSION))
 NETATALK_SOURCE = netatalk-$(NETATALK_VERSION).tar.xz
 NETATALK_CONFIG_SCRIPTS = netatalk-config
-NETATALK_DEPENDENCIES = host-pkgconf openssl berkeleydb libgcrypt libgpg-error \
-	libevent
+NETATALK_DEPENDENCIES = \
+	host-pkgconf \
+	berkeleydb \
+	iniparser \
+	libevent \
+	libgcrypt \
+	libgpg-error \
+	openssl
 NETATALK_LICENSE = GPL-2.0+, LGPL-3.0+, MIT-like
 NETATALK_LICENSE_FILES = COPYING COPYRIGHT
 NETATALK_CPE_ID_VENDOR = netatalk
 
-# Don't run ldconfig!
-NETATALK_CONF_ENV += CC="$(TARGET_CC) -std=gnu99" \
-	ac_cv_path_NETA_LDCONFIG=""
 NETATALK_CONF_OPTS += \
-	--with-cnid-cdb-backend \
-	--with-bdb=$(STAGING_DIR)/usr \
-	--with-ssl-dir=$(STAGING_DIR)/usr \
-	--with-libgcrypt-dir=$(STAGING_DIR)/usr \
-	--with-shadow \
-	--disable-shell-check \
-	--without-kerberos \
-	--without-pam \
-	--with-libevent=no \
-	--with-dtrace=no \
-	--with-mysql-config=no
+	-Dwith-init-style=none \
+	-Dwith-afpstats=false \
+	-Dwith-cnid-backends=dbd \
+	-Dwith-bdb-path=$(STAGING_DIR)/usr \
+	-Dwith-libgcrypt-path=$(STAGING_DIR)/usr \
+	-Dwith-shell-check=false \
+	-Dwith-gssapi=false \
+	-Dwith-kerberos=false \
+	-Dwith-krbV-uam=false \
+	-Dwith-pam=false \
+	-Dwith-quota=false \
+	-Dwith-dtrace=false \
+	-Dwith-spotlight=false \
+	-Dwith-docs="" \
+	-Dwith-tcp-wrappers=false
+
+ifeq ($(BR2_TOOLCHAIN_USES_UCLIBC),y)
+NETATALK_CONF_OPTS += -Dwith-libiconv=false
+else
+NETATALK_CONF_OPTS += -Dwith-libiconv=true
+endif
 
 ifeq ($(BR2_PACKAGE_ACL),y)
 NETATALK_DEPENDENCIES += acl
+NETATALK_CONF_OPTS += -Dwith-acls=true
 else
-NETATALK_CONF_OPTS += --with-acls=no
+NETATALK_CONF_OPTS += -Dwith-acls=false
 endif
 
 ifeq ($(BR2_PACKAGE_AVAHI_DAEMON)$(BR2_PACKAGE_DBUS),yy)
 NETATALK_DEPENDENCIES += avahi
-NETATALK_CONF_OPTS += --enable-zeroconf=$(STAGING_DIR)/usr
+NETATALK_CONF_OPTS += -Dwith-zeroconf=true
 else
-NETATALK_CONF_OPTS += --disable-zeroconf
+NETATALK_CONF_OPTS += -Dwith-zeroconf=false
+endif
+
+ifeq ($(BR2_PACKAGE_CRACKLIB),y)
+NETATALK_DEPENDENCIES += cracklib
+NETATALK_CONF_OPTS += -Dwith-cracklib=true
+else
+NETATALK_CONF_OPTS += -Dwith-cracklib=false
 endif
 
 ifeq ($(BR2_PACKAGE_CUPS),y)
 NETATALK_DEPENDENCIES += cups
-NETATALK_CONF_ENV += ac_cv_path_CUPS_CONFIG=$(STAGING_DIR)/usr/bin/cups-config
-NETATALK_CONF_OPTS += --enable-cups
+NETATALK_CONF_OPTS += -Dwith-appletalk=true -Dwith-cups=true
+NETATALK_MESON_EXTRA_BINARIES += cups-config='$(STAGING_DIR)/usr/bin/cups-config'
 else
-NETATALK_CONF_OPTS += --disable-cups
+NETATALK_CONF_OPTS += -Dwith-appletalk=false -Dwith-cups=false
+endif
+
+ifeq ($(BR2_PACKAGE_OPENLDAP),y)
+NETATALK_DEPENDENCIES += openldap
+NETATALK_CONF_OPTS += -Dwith-ldap=true
+else
+NETATALK_CONF_OPTS += -Dwith-ldap=false
 endif
 
 define NETATALK_INSTALL_INIT_SYSV
@@ -56,4 +84,4 @@ define NETATALK_INSTALL_INIT_SYSV
 		$(TARGET_DIR)/etc/init.d/S50netatalk
 endef
 
-$(eval $(autotools-package))
+$(eval $(meson-package))
