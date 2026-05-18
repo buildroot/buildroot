@@ -1,0 +1,147 @@
+From fa27d70495e3b4f92c9de43b33aa09813a318495 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Mon, 18 May 2026 16:44:57 +0200
+Subject: [PATCH] fix(esp_hosted_ng): Fix build for kernel 7.1
+
+With commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=033fe322f5852d5144a85978e880e01b1787fd0d
+many functions esp_cfg80211_*() have argument struct netdevice * subsituted
+with struct wireless_dev *. So let's add separate function headers and
+retrieve struct netdev * from struct wireless_dev * if Linux version >= 7.1.
+
+Upstream: https://github.com/espressif/esp-hosted/pull/736
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ esp_hosted_ng/host/esp_cfg80211.c | 50 +++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+
+diff --git a/esp_hosted_ng/host/esp_cfg80211.c b/esp_hosted_ng/host/esp_cfg80211.c
+index c68f7983e6..1009df1fd5 100644
+--- a/esp_hosted_ng/host/esp_cfg80211.c
++++ b/esp_hosted_ng/host/esp_cfg80211.c
+@@ -533,22 +533,38 @@ static int esp_cfg80211_set_default_key(struct wiphy *wiphy,
+ }
+ 
+ static int esp_cfg80211_set_default_mgmt_key(struct wiphy *wiphy,
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(7, 1, 0))
++					     struct wireless_dev *wdev, INT_LINK_ID u8 key_index)
++#else
+ 					     struct net_device *ndev, INT_LINK_ID u8 key_index)
++#endif
+ {
+ 	return 0;
+ }
+ 
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(7, 1, 0))
++static int esp_cfg80211_del_key(struct wiphy *wiphy, struct wireless_dev *wdev,
++#else
+ static int esp_cfg80211_del_key(struct wiphy *wiphy, struct net_device *dev,
++#endif
+ 				INT_LINK_ID u8 key_index, bool pairwise,
+ 				const u8 *mac_addr)
+ {
+ 	return 0;
+ }
+ 
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(7, 1, 0))
++static int esp_cfg80211_add_key(struct wiphy *wiphy, struct wireless_dev *wdev,
++				INT_LINK_ID u8 key_index, bool pairwise,
++				const u8 *mac_addr, struct key_params *params)
++{
++	struct net_device *dev = wdev->netdev;
++#else
+ static int esp_cfg80211_add_key(struct wiphy *wiphy, struct net_device *dev,
+ 				INT_LINK_ID u8 key_index, bool pairwise,
+ 				const u8 *mac_addr, struct key_params *params)
+ {
++#endif
+ 	struct esp_wifi_device *priv = NULL;
+ 
+ 	if (!wiphy || !dev || !params) {
+@@ -564,7 +580,11 @@ static int esp_cfg80211_add_key(struct wiphy *wiphy, struct net_device *dev,
+ 	esp_dbg("\n");
+ 
+ 	if (params->key_len == 0) {
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(7, 1, 0))
++		return esp_cfg80211_del_key(wiphy, wdev, ZERO_LINK_ID key_index, pairwise, mac_addr);
++#else
+ 		return esp_cfg80211_del_key(wiphy, dev, ZERO_LINK_ID key_index, pairwise, mac_addr);
++#endif
+ 	}
+ 	return cmd_add_key(priv, key_index, pairwise, mac_addr, params);
+ }
+@@ -783,9 +803,16 @@ static int esp_cfg80211_set_tx_power(struct wiphy *wiphy,
+ 	return cmd_set_tx_power(priv, priv->tx_pwr);
+ }
+ 
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(7, 1, 0))
++static int esp_cfg80211_get_station(struct wiphy *wiphy, struct wireless_dev *wdev,
++				    const u8 *mac, struct station_info *sinfo)
++{
++	struct net_device *ndev = wdev->netdev;
++#else
+ static int esp_cfg80211_get_station(struct wiphy *wiphy, struct net_device *ndev,
+ 				    const u8 *mac, struct station_info *sinfo)
+ {
++#endif
+ 	struct esp_wifi_device *priv = NULL;
+ 
+ 	priv = netdev_priv(ndev);
+@@ -1034,9 +1061,16 @@ static int esp_cfg80211_probe_client(struct wiphy *wiphy, struct net_device *dev
+ 	return 0;
+ }
+ 
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(7, 1, 0))
++static int esp_cfg80211_del_station(struct wiphy *wiphy, struct wireless_dev *wdev,
++					struct station_del_parameters *params)
++{
++	struct net_device *dev = wdev->netdev;
++#else
+ static int esp_cfg80211_del_station(struct wiphy *wiphy, struct net_device *dev,
+ 					struct station_del_parameters *params)
+ {
++#endif
+ 	struct esp_wifi_device *priv = NULL;
+ 
+ 	if (!wiphy || !dev) {
+@@ -1055,10 +1089,18 @@ static int esp_cfg80211_del_station(struct wiphy *wiphy, struct net_device *dev,
+ 	return 0;
+ }
+ 
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(7, 1, 0))
++static int esp_cfg80211_add_station(struct wiphy *wiphy, struct wireless_dev *wdev,
++				    const u8 *mac,
++				    struct station_parameters *params)
++{
++	struct net_device *dev = wdev->netdev;
++#else
+ static int esp_cfg80211_add_station(struct wiphy *wiphy, struct net_device *dev,
+ 				    const u8 *mac,
+ 				    struct station_parameters *params)
+ {
++#endif
+ 	struct esp_wifi_device *priv = NULL;
+ 
+ 	if (!wiphy || !dev) {
+@@ -1078,10 +1120,18 @@ static int esp_cfg80211_add_station(struct wiphy *wiphy, struct net_device *dev,
+ 	return 0;
+ }
+ 
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(7, 1, 0))
++static int esp_cfg80211_change_station(struct wiphy *wiphy,
++				       struct wireless_dev *wdev, const u8 *mac,
++				       struct station_parameters *params)
++{
++	struct net_device *dev = wdev->netdev;
++#else
+ static int esp_cfg80211_change_station(struct wiphy *wiphy,
+ 				       struct net_device *dev, const u8 *mac,
+ 				       struct station_parameters *params)
+ {
++#endif
+ 	struct esp_wifi_device *priv = NULL;
+ 
+ 	if (!wiphy || !dev) {
+-- 
+2.47.3
+
