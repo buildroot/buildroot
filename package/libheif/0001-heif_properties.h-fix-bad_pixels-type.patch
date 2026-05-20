@@ -1,0 +1,28 @@
+From ef124f9988e57a06ad6d102c236d2bb4b82aef5d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C8=98tefan=20Talpalaru?= <stefantalpalaru@yahoo.com>
+Date: Wed, 20 May 2026 00:37:24 +0200
+Subject: [PATCH] heif_properties.h: fix "bad_pixels" type
+
+Upstream: https://github.com/strukturag/libheif/commit/ef124f9988e57a06ad6d102c236d2bb4b82aef5d
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ libheif/api/libheif/heif_properties.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libheif/api/libheif/heif_properties.h b/libheif/api/libheif/heif_properties.h
+index 9432bd46..0dec3a37 100644
+--- a/libheif/api/libheif/heif_properties.h
++++ b/libheif/api/libheif/heif_properties.h
+@@ -335,7 +335,7 @@ heif_error heif_image_add_sensor_bad_pixels_map(heif_image*,
+                                                  uint32_t num_bad_columns,
+                                                  const uint32_t* bad_columns,
+                                                  uint32_t num_bad_pixels,
+-                                                 const heif_bad_pixel* bad_pixels);
++                                                 const struct heif_bad_pixel* bad_pixels);
+ 
+ // Returns the number of sensor bad pixels maps on this image (0 if none).
+ LIBHEIF_API
+-- 
+2.47.3
+
