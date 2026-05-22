@@ -2,6 +2,7 @@ config BR2_PACKAGE_OPENSCAP
 	bool "openscap"
 	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS  # libgcrypt
 	depends on !BR2_STATIC_LIBS # dlfcn.h
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
 	select BR2_PACKAGE_LIBCURL
 	# In theory should build without crypto, but in practice it
 	# doesn't: https://github.com/OpenSCAP/openscap/issues/2310
@@ -18,6 +19,6 @@ config BR2_PACKAGE_OPENSCAP
 	  https://www.open-scap.org/
 	  https://github.com/OpenSCAP/openscap
 
-comment "openscap needs a toolchain w/ dynamic library"
+comment "openscap needs a toolchain w/ dynamic library, NPTL"
 	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS
-	depends on BR2_STATIC_LIBS
+	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS_NPTL
