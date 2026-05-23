@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2026.05"
 
+config BR2_PACKAGE_PIGPIO
+	bool "pigpio removed"
+	select BR2_LEGACY
+	help
+	  pigpio was no longer maintained upstream, so it has been
+	  dropped.
+
 config BR2_PACKAGE_XML_SECURITY_C
 	bool "xml-security-c removed"
 	select BR2_LEGACY
