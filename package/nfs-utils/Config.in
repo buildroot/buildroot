@@ -27,7 +27,7 @@ if BR2_PACKAGE_NFS_UTILS
 
 config BR2_PACKAGE_NFS_UTILS_NFSV4
 	bool "NFSv4/NFSv4.1"
-	depends on !BR2_STATIC_LIBS # keyutils, lvm2
+	depends on !BR2_STATIC_LIBS # keyutils
 	select BR2_PACKAGE_KEYUTILS
 	select BR2_PACKAGE_LVM2
 	help
