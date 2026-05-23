@@ -61,6 +61,10 @@ ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 CRYPTSETUP_CONF_OPTS += --with-tmpfilesdir=/usr/lib/tmpfiles.d
 endif
 
+ifeq ($(BR2_STATIC_LIBS),y)
+CRYPTSETUP_CONF_OPTS += --disable-external-tokens
+endif
+
 HOST_CRYPTSETUP_DEPENDENCIES = \
 	host-pkgconf \
 	host-lvm2 \
