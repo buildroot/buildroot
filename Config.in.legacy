@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2026.05"
 
+config BR2_PACKAGE_DAQ
+	bool "daq removed"
+	select BR2_LEGACY
+	help
+	  The only dependee, snort, has been removed. Look at daq3
+	  for an alternative.
+
 config BR2_PACKAGE_FWTS_EFI_RUNTIME_MODULE
 	bool "fwts efi_runtime kernel module removed"
 	select BR2_LEGACY
