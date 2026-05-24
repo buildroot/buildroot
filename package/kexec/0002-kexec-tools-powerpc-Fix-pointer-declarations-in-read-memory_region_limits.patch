@@ -1,0 +1,54 @@
+From 8ac3a7e08957fcb3fa59c9fc4e9c283b9a072ce6 Mon Sep 17 00:00:00 2001
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Date: Wed, 22 Oct 2025 13:44:13 +0200
+Subject: kexec-tools: powerpc: Fix pointer declarations in
+ read_memory_region_limits()
+
+Fixes the following two build errors on 32-bit PowerPC:
+
+kexec/arch/ppc/kexec-ppc.c: In function 'read_memory_region_limits':
+kexec/arch/ppc/kexec-ppc.c:106:11: error: assignment to 'long long unsigned int *' from incompatible pointer type 'long unsigned int *' [-Wincompatible-pointer-types]
+  106 |         p = (unsigned long*)buf;
+      |           ^
+
+kexec/arch/ppc/kexec-ppc.c: In function 'read_memory_region_limits':
+kexec/arch/ppc/kexec-ppc.c:112:19: error: assignment to 'long unsigned int *' from incompatible pointer type 'long long unsigned int *' [-Wincompatible-pointer-types]
+  112 |                 p = (unsigned long long *)p + 1;
+      |                   ^
+
+Signed-off-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Reviewed-by: Khalid Aziz <khalid@gonehiking.org>
+Signed-off-by: Simon Horman <horms@kernel.org>
+
+Upstream: https://git.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git/patch/?id=8ac3a7e08957fcb3fa59c9fc4e9c283b9a072ce6
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ kexec/arch/ppc/kexec-ppc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kexec/arch/ppc/kexec-ppc.c b/kexec/arch/ppc/kexec-ppc.c
+index d3dad0f..e173433 100644
+--- a/kexec/arch/ppc/kexec-ppc.c
++++ b/kexec/arch/ppc/kexec-ppc.c
+@@ -91,7 +91,7 @@ int read_memory_region_limits(int fd, unsigned long long *start,
+ 				unsigned long long *end)
+ {
+ 	char buf[MAXBYTES];
+-	unsigned long *p;
++	unsigned long long *p;
+ 	unsigned long nbytes = dt_address_cells + dt_size_cells;
+ 
+ 	if (lseek(fd, 0, SEEK_SET) == -1) {
+@@ -103,7 +103,7 @@ int read_memory_region_limits(int fd, unsigned long long *start,
+ 		return -1;
+ 	}
+ 
+-	p = (unsigned long*)buf;
++	p = (unsigned long long*)buf;
+ 	if (dt_address_cells == sizeof(unsigned long)) {
+ 		*start = p[0];
+ 		p++;
+-- 
+cgit 1.3-korg
+
