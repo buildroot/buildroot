@@ -1,0 +1,64 @@
+From 0c6acdae090cb74ca60c81194ac9ac819a19935f Mon Sep 17 00:00:00 2001
+From: Michal Suchanek <msuchanek@suse.de>
+Date: Mon, 4 Aug 2025 13:25:38 +0200
+Subject: [PATCH] nvram.c: Correct librtas function prototypes
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fix build breakage with GCC 15 (which assumes C23) such that and empty
+argument list is treated as zero arguments rather than an arbitrary
+number.
+
+src/nvram.c: In function ‘dump_rtas_event_entry’:
+src/nvram.c:932:18: error: too many arguments to function ‘parse_rtas_event’; expected 0, have 2
+  932 |     rtas_event = parse_rtas_event(data, len);
+      |                  ^~~~~~~~~~~~~~~~ ~~~~
+src/nvram.c:938:5: error: too many arguments to function ‘rtas_print_event’; expected 0, have 3
+  938 |     rtas_print_event(stdout, rtas_event, 0);
+      |     ^~~~~~~~~~~~~~~~ ~~~~~~
+src/nvram.c:940:5: error: too many arguments to function ‘cleanup_rtas_event’; expected 0, have 1
+  940 |     cleanup_rtas_event(rtas_event);
+      |     ^~~~~~~~~~~~~~~~~~ ~~~~~~~~~~
+In file included from src/vcpustat.c:34:
+
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+[tyreld: add description to commit log]
+Signed-off-by: Tyrel Datwyler <tyreld@linux.ibm.com>
+
+Upstream: https://github.com/ibm-power-utilities/powerpc-utils/commit/0c6acdae090cb74ca60c81194ac9ac819a19935f
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/nvram.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/src/nvram.c b/src/nvram.c
+index 1987c3d9..45a61ebf 100644
+--- a/src/nvram.c
++++ b/src/nvram.c
+@@ -886,6 +886,8 @@ dump_errlog(struct nvram *nvram)
+     return 0;
+ }
+ 
++struct rtas_event;
++
+ /**
+  * dump_rtas_event_entry
+  * @brief Dump event-scan data.
+@@ -901,11 +903,11 @@ dump_errlog(struct nvram *nvram)
+ int
+ dump_rtas_event_entry(char *data, int len)
+ {
+-    void *rtas_event;
++    struct rtas_event *rtas_event;
+     void *handle;
+-    void *(*parse_rtas_event)();
+-    void (*rtas_print_event)();
+-    void (*cleanup_rtas_event)();
++    struct rtas_event *(*parse_rtas_event)(char *, int);
++    int (*rtas_print_event)(FILE *, struct rtas_event *, int);
++    int (*cleanup_rtas_event)(struct rtas_event *);
+ 
+     handle = dlopen("/usr/lib/librtasevent.so", RTLD_LAZY);
+     if (handle == NULL)
