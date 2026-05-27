@@ -7,7 +7,7 @@
 # Use last Go version that go-bootstrap-stage1 can build: v1.19.x
 # See https://golang.org/doc/install/source#bootstrapFromSource
 GO_BOOTSTRAP_STAGE2_VERSION = 1.19.13
-GO_BOOTSTRAP_STAGE2_SITE = https://storage.googleapis.com/golang
+GO_BOOTSTRAP_STAGE2_SITE = https://go.dev/dl
 GO_BOOTSTRAP_STAGE2_SOURCE = go$(GO_BOOTSTRAP_STAGE2_VERSION).src.tar.gz
 
 GO_BOOTSTRAP_STAGE2_LICENSE = BSD-3-Clause

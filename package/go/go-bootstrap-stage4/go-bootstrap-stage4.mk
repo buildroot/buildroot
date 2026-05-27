@@ -7,7 +7,7 @@
 # Use last Go version that go-bootstrap-stage3 can build: v1.23.x
 # See https://go.dev/doc/go1.24#bootstrap
 GO_BOOTSTRAP_STAGE4_VERSION = 1.23.12
-GO_BOOTSTRAP_STAGE4_SITE = https://storage.googleapis.com/golang
+GO_BOOTSTRAP_STAGE4_SITE = https://go.dev/dl
 GO_BOOTSTRAP_STAGE4_SOURCE = go$(GO_BOOTSTRAP_STAGE4_VERSION).src.tar.gz
 
 GO_BOOTSTRAP_STAGE4_LICENSE = BSD-3-Clause
