@@ -7,7 +7,7 @@
 # Generate version string using:
 #   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master | cut -d '-' -f 2-
 # When updating the version, please also update localedef
-GLIBC_VERSION = 2.42-51-gcbf39c26b25801e9bc88499b4fd361ac172d4125
+GLIBC_VERSION = 2.42-67-g4ebd33dd77eabe8d4c45232bed4b42a31d2f9edc
 GLIBC_SITE = https://sourceware.org/git/glibc.git
 GLIBC_SITE_METHOD = git
 
@@ -30,6 +30,21 @@ GLIBC_IGNORE_CVES += CVE-2026-0915
 
 # Fixed by glibc-2.42-51-gcbf39c26b25801e9bc88499b4fd361ac172d4125
 GLIBC_IGNORE_CVES += CVE-2025-15281
+
+# Fixed by glibc-2.42-58-g8e863fb1c92360520704a69dc948be6bb4a17cb3
+GLIBC_IGNORE_CVES += CVE-2026-4437
+
+# Fixed by glibc-2.42-59-g426378547e6ddead92f28f5558a124eb0821d2f9
+GLIBC_IGNORE_CVES += CVE-2026-4438
+
+# Fixed by glibc-2.42-62-gf13c1bb0f97fbc12a6ba1ab5669ce561ea32b80a
+GLIBC_IGNORE_CVES += CVE-2026-4046
+
+# Fixed by glibc-2.42-66-gb4bca35ab9e76890504c4dbdd5eaf15a93514580
+GLIBC_IGNORE_CVES += CVE-2026-5928
+
+# Fixed by glibc-2.42-67-g4ebd33dd77eabe8d4c45232bed4b42a31d2f9edc
+GLIBC_IGNORE_CVES += CVE-2026-5450
 
 # This CVE is considered as not being security issues by
 # upstream glibc:
