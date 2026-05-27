@@ -4,12 +4,13 @@
 #
 ################################################################################
 
-UHTTPD_VERSION = 15346de8d3ba422002496526ee24c62a3601ab8c
+UHTTPD_VERSION = 506e24987b97fbc866005bfb71316bd63601a1ef
 UHTTPD_SITE = https://git.openwrt.org/project/uhttpd.git
 UHTTPD_SITE_METHOD = git
 UHTTPD_LICENSE = ISC
 UHTTPD_LICENSE_FILES = uhttpd.h
 UHTTPD_DEPENDENCIES = libubox json-c
+UHTTPD_CONF_OPTS += -DUCODE_SUPPORT=OFF
 
 ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
 UHTTPD_DEPENDENCIES += libxcrypt
