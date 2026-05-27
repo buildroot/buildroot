@@ -870,7 +870,7 @@ endif
 endif
 
 # Globally remove following conflicting and useless files
-$(2)_DROP_FILES_OR_DIRS += /share/info/dir
+$(2)_DROP_FILES_OR_DIRS += /share/info/dir /usr/share/info/dir
 
 ifeq ($$($(2)_TYPE),host)
 $(2)_POST_INSTALL_HOOKS += REMOVE_CONFLICTING_USELESS_FILES_IN_HOST
