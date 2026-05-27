@@ -1,8 +1,12 @@
 config BR2_PACKAGE_ODHCP6C
 	bool "odhcp6c"
 	depends on BR2_USE_MMU # fork()
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_10
 	help
 	  odhcp6c is a minimal DHCPv6 and RA-client for use in
 	  embedded Linux systems, especially routers.
 
 	  https://git.openwrt.org/project/odhcp6c.git
+
+comment "odhcp6c needs a toolchain w/ gcc >= 10"
+	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_GCC_AT_LEAST_10
