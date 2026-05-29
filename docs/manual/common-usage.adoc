@@ -170,6 +170,18 @@ by using the +show-info+ make target:
 make show-info
 ----
 
+Buildroot can also produce information in the +show-info+ format about all
+packages regardless of the configuration or architecture by using
++show-info-all+.
+This is used for maintenance tasks that require information about every
+package in the tree, such as generating a full-tree SBOM for
+https://security.buildroot.org[].
+It does not require a +.config+ file:
+
+----
+make show-info-all
+----
+
 Buildroot can also produce details about packages as HTML and JSON
 output using the +pkg-stats+ make target. Amongst other things, these
 details include whether known CVEs (security vulnerabilities) affect

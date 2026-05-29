@@ -126,7 +126,7 @@ noconfig_targets := menuconfig nconfig gconfig xconfig config oldconfig randconf
 	defconfig %_defconfig allyesconfig allnoconfig alldefconfig syncconfig release \
 	randpackageconfig allyespackageconfig allnopackageconfig \
 	print-version olddefconfig distclean manual manual-% check-package \
-	check-package-external
+	check-package-external show-info-all
 
 # Some global targets do not trigger a build, but are used to collect
 # metadata, or do various checks. When such targets are triggered,
@@ -142,7 +142,7 @@ nobuild_targets := source %-source \
 	clean distclean help show-targets graph-depends \
 	%-graph-depends %-show-depends %-show-version \
 	graph-build graph-size list-defconfigs \
-	savedefconfig update-defconfig printvars show-vars
+	savedefconfig update-defconfig printvars show-vars show-info-all
 ifeq ($(MAKECMDGOALS),)
 BR_BUILDING = y
 else ifneq ($(filter-out $(nobuild_targets),$(MAKECMDGOALS)),)
@@ -235,6 +235,13 @@ BR2_CONFIG = $(CONFIG_DIR)/.config
 # Pull in the user's configuration file
 ifeq ($(filter $(noconfig_targets),$(MAKECMDGOALS)),)
 -include $(BR2_CONFIG)
+endif
+# show-info-all needs to access the PACKAGES_ALL variable. This variable
+# contains a reference to every package present in Buildroot.
+# Since the 'show-info-all' command might be used without actually having a
+# dotconfig this condition is forced to be set true.
+ifeq ($(MAKECMDGOALS),show-info-all)
+BR2_HAVE_DOT_CONFIG = y
 endif
 
 ifeq ($(BR2_PER_PACKAGE_DIRECTORIES),)
@@ -934,15 +941,22 @@ check-dependencies:
 	$(TOPDIR)/support/scripts/graph-depends -C
 
 .PHONY: show-info
-show-info:
+show-info: show-info-inner
+show-info: SHOW_INFO_PACKAGES = \
+	$(foreach i,$(PACKAGES) $(TARGETS_ROOTFS), \
+		$(i) $($(call UPPERCASE,$(i))_FINAL_RECURSIVE_DEPENDENCIES) \
+	)
+
+.PHONY: show-info-all
+show-info-all: show-info-inner
+show-info-all: SHOW_INFO_PACKAGES = $(PACKAGES_ALL)
+
+.PHONY: show-info-inner
+show-info-inner:
 	@:
 	$(info $(call clean-json, \
 			{ $(foreach p, \
-				$(sort $(foreach i,$(PACKAGES) $(TARGETS_ROOTFS), \
-						$(i) \
-						$($(call UPPERCASE,$(i))_FINAL_RECURSIVE_DEPENDENCIES) \
-					) \
-				), \
+				$(sort $(SHOW_INFO_PACKAGES)), \
 				$(call json-info,$(call UPPERCASE,$(p)))$(comma) \
 			) } \
 		) \
@@ -1213,6 +1227,8 @@ help:
 	@echo '  external-deps          - list external packages used'
 	@echo '  legal-info             - generate info about license compliance'
 	@echo '  show-info              - generate info about packages, as a JSON blurb'
+	@echo '  show-info-all          - generate info about all packages in Buildroot,'
+	@echo '                           regardless of configuration or target architecture'
 	@echo '  pkg-stats              - generate info about packages as JSON and HTML'
 	@echo '  printvars              - dump internal variables selected with VARS=...'
 	@echo '  show-vars              - dump all internal variables as a JSON blurb; use VARS=...'
