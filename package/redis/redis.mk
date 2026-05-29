@@ -8,7 +8,7 @@ REDIS_VERSION = 7.2.13
 REDIS_SITE = http://download.redis.io/releases
 REDIS_LICENSE = BSD-3-Clause (core); MIT and BSD family licenses (Bundled components)
 REDIS_LICENSE_FILES = COPYING
-REDIS_CPE_ID_VENDOR = redislabs
+REDIS_CPE_ID_VENDOR = redis
 REDIS_SELINUX_MODULES = redis
 
 define REDIS_USERS
