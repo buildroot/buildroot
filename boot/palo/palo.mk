@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PALO_VERSION = 2.28
+PALO_VERSION = 2.29
 PALO_SITE = https://git.kernel.org/pub/scm/linux/kernel/git/deller/palo.git/snapshot
 PALO_LICENSE = GPL-2.0
 PALO_LICENSE_FILES = COPYING
