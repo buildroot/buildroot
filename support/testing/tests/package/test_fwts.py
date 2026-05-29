@@ -3,6 +3,7 @@ import os
 import infra.basetest
 
 
+# gitlab-runner: large
 class TestFwts(infra.basetest.BRTest):
     kernel_fragment = \
         infra.filepath("tests/package/test_fwts/linux-efi-test.fragment")
