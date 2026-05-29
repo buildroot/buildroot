@@ -190,6 +190,17 @@ if test "${missing_progs}" = "yes" ; then
 	exit 1
 fi
 
+INSTALL_VERSION="$(install --version | sed -n 's/^install \(.*\)/\1/p')"
+if [ "${INSTALL_VERSION}" = "(uutils coreutils) 0.8.0" ]; then
+	echo
+	echo "You have an uutils 'install' version installed which is affected by:"
+	echo "  https://github.com/uutils/coreutils/issues/12166"
+	echo
+	echo "Please change to coreutils install with:"
+	echo "update-alternatives --install /usr/bin/install install /usr/bin/gnuinstall 100"
+	exit 1
+fi
+
 PATCH_VERSION="$(patch -v 2>/dev/null | sed -n 's/^GNU patch \(.*\)/\1/p')"
 if [ -z "${PATCH_VERSION}" ] ; then
 	echo
