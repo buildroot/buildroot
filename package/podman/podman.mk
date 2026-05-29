@@ -33,6 +33,10 @@ PODMAN_TAGS += libsubid
 
 PODMAN_CPE_ID_VERSION = $(subst v,,$(PODMAN_VERSION))
 
+# Windows only issue:
+# https://github.com/containers/podman/security/advisories/GHSA-hc8w-h2mf-hp59
+PODMAN_IGNORE_CVES += CVE-2026-33414
+
 ifeq ($(BR2_PACKAGE_BTRFS_PROGS),y)
 PODMAN_DEPENDENCIES += btrfs-progs
 define PODMAN_LINUX_CONFIG_FIXUPS_BTRFS
