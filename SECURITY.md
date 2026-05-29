@@ -1,5 +1,7 @@
 # Security Policy
 
+ [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/12245/badge)](https://www.bestpractices.dev/projects/12245)
+
 ## Security advisories
 
 Advisories for Buildroot security vulnerabilities are reported on the
