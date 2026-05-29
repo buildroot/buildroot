@@ -42,7 +42,7 @@ gen_tests() {
         do_basics=true
         do_defconfigs=base
         do_runtime=true
-    elif [ "${CI_PIPELINE_SOURCE}" = "trigger" ]; then
+    elif [ -n "${BR_SCHEDULE_JOBS}" ]; then
         case "${BR_SCHEDULE_JOBS}" in
           (basic)
             do_basics=true
