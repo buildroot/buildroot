@@ -9,7 +9,7 @@ HIREDIS_VERSION = $(HIREDIS_VERSION_MAJOR).0
 HIREDIS_SITE = $(call github,redis,hiredis,v$(HIREDIS_VERSION))
 HIREDIS_LICENSE = BSD-3-Clause
 HIREDIS_LICENSE_FILES = COPYING
-HIREDIS_CPE_ID_VENDOR = redislabs
+HIREDIS_CPE_ID_VENDOR = redis
 HIREDIS_INSTALL_STAGING = YES
 
 # The package is a dependency to ccache so ccache cannot be a dependency
