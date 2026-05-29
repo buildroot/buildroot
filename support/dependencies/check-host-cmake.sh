@@ -9,6 +9,18 @@ minor_min="${1#*.}"
 major_max="4"
 minor_max="0"
 
+# When running 'make show-info-all' or pkg-stats, it is possible to trigger this
+# script without passing a version number. These cases are special because they
+# force the reading of all packages without requiring a .config, so
+# BR2_HOST_CMAKE_AT_LEAST is unset and the script is called as:
+#   check-host-cmake.sh cmake cmake3
+# Without validation, the integer comparisons below would produce errors like:
+#   check-host-cmake.sh: line 37: [: cmake: integer expected
+# The following lines checks we have a single digit number from $1 before
+# continuing the script.
+[ "${major_min}" -eq "${major_min}" ] 2>/dev/null || exit 1
+[ "${minor_min}" -eq "${minor_min}" ] 2>/dev/null || exit 1
+
 shift
 
 for candidate; do
