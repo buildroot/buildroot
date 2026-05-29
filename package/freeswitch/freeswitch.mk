@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FREESWITCH_VERSION = 1.10.12
+FREESWITCH_VERSION = 1.11.1
 FREESWITCH_SOURCE = freeswitch-$(FREESWITCH_VERSION).-release.tar.xz
 FREESWITCH_SITE = https://files.freeswitch.org/freeswitch-releases
 # External modules need headers/libs from staging
@@ -18,9 +18,6 @@ FREESWITCH_LICENSE_FILES = \
 	COPYING \
 	libs/apr/LICENSE \
 	libs/srtp/LICENSE
-
-# 0006-Move-project-to-PCRE2.patch
-FREESWITCH_AUTORECONF = YES
 
 FREESWITCH_CPE_ID_VENDOR = freeswitch
 
@@ -81,7 +78,7 @@ FREESWITCH_CONF_ENV += \
 FREESWITCH_CONF_OPTS = \
 	--without-erlang \
 	--enable-fhs \
-	--without-python \
+	--without-python3 \
 	--disable-system-xmlrpc-c
 
 # Enable optional modules
@@ -156,14 +153,6 @@ define FREESWITCH_ENABLE_MODULES
 endef
 FREESWITCH_PRE_CONFIGURE_HOOKS += FREESWITCH_ENABLE_MODULES
 
-# mod_isac supports a limited set of archs
-# src/mod/codecs/mod_isac/typedefs.h
-ifeq ($(BR2_i386)$(BR2_mips)$(BR2_mipsel)$(BR2_mips64)$(BR2_mips64el)$(BR2_x86_64),y)
-FREESWITCH_LICENSE += , BSD-3-Clause (mod_isac)
-FREESWITCH_LICENSE_FILES += src/mod/codecs/mod_isac/LICENSE
-FREESWITCH_ENABLED_MODULES += codecs/mod_isac
-endif
-
 ifeq ($(BR2_PACKAGE_ALSA_LIB),y)
 FREESWITCH_DEPENDENCIES += alsa-lib
 FREESWITCH_ENABLED_MODULES += endpoints/mod_alsa
@@ -231,11 +220,6 @@ ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
 FREESWITCH_DEPENDENCIES += libxcrypt
 endif
 
-ifeq ($(BR2_PACKAGE_LIBYAML),y)
-FREESWITCH_DEPENDENCIES += libyaml
-FREESWITCH_ENABLED_MODULES += languages/mod_yaml
-endif
-
 ifeq ($(BR2_PACKAGE_LUA),y)
 FREESWITCH_DEPENDENCIES += lua
 FREESWITCH_ENABLED_MODULES += languages/mod_lua
@@ -251,11 +235,6 @@ FREESWITCH_DEPENDENCIES += opus
 FREESWITCH_ENABLED_MODULES += codecs/mod_opus
 endif
 
-ifeq ($(BR2_PACKAGE_PORTAUDIO),y)
-FREESWITCH_DEPENDENCIES += portaudio
-FREESWITCH_ENABLED_MODULES += endpoints/mod_portaudio
-endif
-
 ifeq ($(BR2_PACKAGE_LAME)$(BR2_PACKAGE_LIBSHOUT)$(BR2_PACKAGE_MPG123),yyy)
 FREESWITCH_DEPENDENCIES += lame libshout mpg123
 FREESWITCH_ENABLED_MODULES += formats/mod_shout
@@ -269,11 +248,6 @@ endif
 ifeq ($(BR2_PACKAGE_LIBSNDFILE),y)
 FREESWITCH_DEPENDENCIES += libsndfile
 FREESWITCH_ENABLED_MODULES += formats/mod_sndfile
-endif
-
-ifeq ($(BR2_PACKAGE_LIBSOUNDTOUCH),y)
-FREESWITCH_DEPENDENCIES += libsoundtouch
-FREESWITCH_ENABLED_MODULES += applications/mod_soundtouch
 endif
 
 ifeq ($(BR2_PACKAGE_FREESWITCH_OPENCV4),y)
