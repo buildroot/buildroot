@@ -1,0 +1,32 @@
+From 6883e346fa88f48022edf84328a09a4653b8c2fe Mon Sep 17 00:00:00 2001
+From: Roger Leigh <rleigh@codelibre.net>
+Date: Sat, 10 Mar 2018 21:27:27 +0000
+Subject: [PATCH] XERCESC-2141: Enable C++17, C++14 or C++11 when available
+
+Upstream: https://github.com/apache/xerces-c/commit/6883e346fa88f48022edf84328a09a4653b8c2fe
+
+[Bernd: rebased for version 3.3.0, limited to CMakeLists.txt]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ CMakeLists.txt              |   4 +-
+ configure.ac                |   9 +
+ m4/ax_cxx_compile_stdcxx.m4 | 982 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 993 insertions(+), 2 deletions(-)
+ create mode 100644 m4/ax_cxx_compile_stdcxx.m4
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4254f89bb..f5cdb55cc 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -32,9 +32,9 @@ if (POLICY CMP0067)
+ 
+ cmake_minimum_required(VERSION 3.12.0)
+ 
+-# Try C++14, then fall back to C++11 and C++98.  Used for feature tests
++# Try C++17, then fall back to C++14, C++11 then C++98.  Used for feature tests
+ # for optional features.
+-set(CMAKE_CXX_STANDARD 14)
++set(CMAKE_CXX_STANDARD 17)
+ 
+ # Use folders (for IDE project grouping)
+ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
