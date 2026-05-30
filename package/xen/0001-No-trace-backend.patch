@@ -1,0 +1,36 @@
+From b3bca9b696b64cced62f6fe6d8b40058c9779409 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@arm.com>
+Date: Mon, 16 Jun 2025 17:16:39 +0200
+Subject: [PATCH] No trace backend
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream: Buildroot specific. This is a temporary patch for an intermediate bump.
+Signed-off-by: Vincent Stehlé <vincent.stehle@arm.com>
+---
+ tools/Makefile | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/tools/Makefile b/tools/Makefile
+index 7d172117..a9a3196e 100644
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -217,13 +217,7 @@ subdir-all-qemu-xen-dir: qemu-xen-dir-find
+ 	fi; \
+ 	mkdir -p qemu-xen-build; \
+ 	cd qemu-xen-build; \
+-	if $$source/scripts/tracetool.py --check-backend --backend log ; then \
+-		enable_trace_backend="--enable-trace-backends=log"; \
+-	elif $$source/scripts/tracetool.py --check-backend --backend stderr ; then \
+-		enable_trace_backend='--enable-trace-backends=stderr'; \
+-	else \
+-		enable_trace_backend='' ; \
+-	fi ; \
++	enable_trace_backend='' ; \
+ 	if [ "$(CONFIG_9PFS)" = "y" ]; then \
+ 		virtfs='--enable-virtfs' ; \
+ 	elif [ "$(CONFIG_9PFS)" = "n" ]; then \
+-- 
+2.51.0
+

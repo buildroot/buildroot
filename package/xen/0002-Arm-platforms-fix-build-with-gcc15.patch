@@ -15,14 +15,14 @@ Acked-by: Michal Orzel <michal.orzel@amd.com>
 Upstream: https://xenbits.xen.org/gitweb/?p=xen.git;a=commitdiff;h=39f95089e2ba15c5438ce904c0cbbd8d79d3e6e7
 Signed-off-by: Vincent Stehlé <vincent.stehle@arm.com>
 ---
- xen/include/asm-arm/platforms/midway.h | 2 +-
- xen/include/asm-arm/platforms/omap5.h  | 2 +-
+ xen/arch/arm/include/asm/platforms/midway.h | 2 +-
+ xen/arch/arm/include/asm/platforms/omap5.h  | 2 +-
  2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/xen/include/asm-arm/platforms/midway.h b/xen/include/asm-arm/platforms/midway.h
+diff --git a/xen/arch/arm/include/asm/platforms/midway.h b/xen/arch/arm/include/asm/platforms/midway.h
 index 099e435..6914393 100644
---- a/xen/include/asm-arm/platforms/midway.h
-+++ b/xen/include/asm-arm/platforms/midway.h
+--- a/xen/arch/arm/include/asm/platforms/midway.h
++++ b/xen/arch/arm/include/asm/platforms/midway.h
 @@ -1,5 +1,5 @@
  #ifndef __ASM_ARM_PLATFORMS_MIDWAY_H
 -#define __ASM_ASM_PLATFORMS_MIDWAY_H
@@ -30,10 +30,10 @@ index 099e435..6914393 100644
  
  /* addresses of SREG registers for resetting the SoC */
  #define MW_SREG_PWR_REQ             0xfff3cf00
-diff --git a/xen/include/asm-arm/platforms/omap5.h b/xen/include/asm-arm/platforms/omap5.h
+diff --git a/xen/arch/arm/include/asm/platforms/omap5.h b/xen/arch/arm/include/asm/platforms/omap5.h
 index c559c84..8867b45 100644
---- a/xen/include/asm-arm/platforms/omap5.h
-+++ b/xen/include/asm-arm/platforms/omap5.h
+--- a/xen/arch/arm/include/asm/platforms/omap5.h
++++ b/xen/arch/arm/include/asm/platforms/omap5.h
 @@ -1,5 +1,5 @@
  #ifndef __ASM_ARM_PLATFORMS_OMAP5_H
 -#define __ASM_ASM_PLATFORMS_OMAP5_H

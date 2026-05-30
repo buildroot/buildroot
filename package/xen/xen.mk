@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-XEN_VERSION = 4.14.6
+XEN_VERSION = 4.19.5
 XEN_SITE = https://downloads.xenproject.org/release/xen/$(XEN_VERSION)
 XEN_SELINUX_MODULES = systemd udev xen
 XEN_LICENSE = GPL-2.0
-XEN_LICENSE_FILES = COPYING
+XEN_LICENSE_FILES = COPYING LICENSES/GPL-2.0
 XEN_CPE_ID_VENDOR = xen
 XEN_CPE_ID_PREFIX = cpe:2.3:o
-XEN_DEPENDENCIES = host-acpica host-python3
+XEN_DEPENDENCIES = host-acpica host-meson host-pkgconf host-python3
 
 # Calculate XEN_ARCH
 ifeq ($(ARCH),aarch64)
@@ -23,7 +23,8 @@ endif
 XEN_CONF_OPTS = \
 	--disable-golang \
 	--disable-ocamltools \
-	--with-initddir=/etc/init.d
+	--with-initddir=/etc/init.d \
+	--disable-werror
 
 XEN_CONF_ENV = PYTHON=$(HOST_DIR)/bin/python3
 XEN_MAKE_ENV = \

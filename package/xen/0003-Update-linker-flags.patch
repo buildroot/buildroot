@@ -1,0 +1,81 @@
+From 2ba2eef5b11d81b801265ae92df91571c19cc8a3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Vincent=20Stehl=C3=A9?= <vincent.stehle@arm.com>
+Date: Tue, 30 Sep 2025 11:39:54 +0200
+Subject: [PATCH] Update linker flags
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream: Buildroot specific. This is a temporary patch for an intermediate bump.
+Signed-off-by: Vincent Stehlé <vincent.stehle@arm.com>
+---
+ tools/Makefile                             | 29 +++++++++++++++++++++-
+ tools/qemu-xen/include/hw/xen/xen_native.h |  2 +-
+ 2 files changed, 29 insertions(+), 2 deletions(-)
+
+diff --git a/tools/Makefile b/tools/Makefile
+index a9a3196e..5d289651 100644
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -37,8 +37,12 @@ SUBDIRS-$(CONFIG_X86) += xenpaging
+ SUBDIRS-$(CONFIG_X86) += debugger
+ SUBDIRS-$(CONFIG_TESTS) += tests
+ 
++# These don't cross-compile
++ifeq ($(XEN_COMPILE_ARCH),$(XEN_TARGET_ARCH))
+ SUBDIRS-y += python
+ SUBDIRS-$(CONFIG_PYGRUB) += pygrub
++endif
++
+ SUBDIRS-$(OCAML_TOOLS) += ocaml
+ 
+ ifeq ($(CONFIG_RUMP),y)
+@@ -236,8 +240,31 @@ subdir-all-qemu-xen-dir: qemu-xen-dir-find
+ 		-DXC_WANT_COMPAT_GNTTAB_API=1 \
+ 		-DXC_WANT_COMPAT_MAP_FOREIGN_API=1 \
+ 		-DXC_WANT_COMPAT_DEVICEMODEL_API=1 \
++		-I$(XEN_ROOT)/tools/include \
+ 		$(EXTRA_CFLAGS_QEMU_XEN)" \
+-		--extra-ldflags="$(QEMU_UPSTREAM_RPATH)" \
++		--extra-ldflags=" \
++		-L$(XEN_ROOT)/tools/libs/call \
++		-L$(XEN_ROOT)/tools/libs/ctrl \
++		-L$(XEN_ROOT)/tools/libs/devicemodel \
++		-L$(XEN_ROOT)/tools/libs/evtchn \
++		-L$(XEN_ROOT)/tools/libs/foreignmemory \
++		-L$(XEN_ROOT)/tools/libs/gnttab \
++		-L$(XEN_ROOT)/tools/libs/guest \
++		-L$(XEN_ROOT)/tools/libs/store \
++		-L$(XEN_ROOT)/tools/libs/toolcore \
++		-L$(XEN_ROOT)/tools/libs/toollog \
++		-L$(XEN_ROOT)/tools/xenstore \
++		-Wl,-rpath-link=$(XEN_ROOT)/tools/libs/call \
++		-Wl,-rpath-link=$(XEN_ROOT)/tools/libs/ctrl \
++		-Wl,-rpath-link=$(XEN_ROOT)/tools/libs/devicemodel \
++		-Wl,-rpath-link=$(XEN_ROOT)/tools/libs/evtchn \
++		-Wl,-rpath-link=$(XEN_ROOT)/tools/libs/foreignmemory \
++		-Wl,-rpath-link=$(XEN_ROOT)/tools/libs/gnttab \
++		-Wl,-rpath-link=$(XEN_ROOT)/tools/libs/guest \
++		-Wl,-rpath-link=$(XEN_ROOT)/tools/libs/store \
++		-Wl,-rpath-link=$(XEN_ROOT)/tools/libs/toolcore \
++		-Wl,-rpath-link=$(XEN_ROOT)/tools/libs/toollog \
++		$(QEMU_UPSTREAM_RPATH)" \
+ 		--bindir=$(LIBEXEC_BIN) \
+ 		--datadir=$(SHAREDIR)/qemu-xen \
+ 		--localstatedir=$(localstatedir) \
+diff --git a/tools/qemu-xen/include/hw/xen/xen_native.h b/tools/qemu-xen/include/hw/xen/xen_native.h
+index 6bcc83ba..2590904e 100644
+--- a/tools/qemu-xen/include/hw/xen/xen_native.h
++++ b/tools/qemu-xen/include/hw/xen/xen_native.h
+@@ -2,7 +2,7 @@
+ #define QEMU_HW_XEN_NATIVE_H
+ 
+ #ifdef __XEN_INTERFACE_VERSION__
+-#error In Xen native files, include xen_native.h before other Xen headers
++#warning In Xen native files, include xen_native.h before other Xen headers
+ #endif
+ 
+ /*
+-- 
+2.51.0
+
