@@ -146,6 +146,22 @@ endif
 
 comment "Legacy options removed in 2026.05"
 
+config BR2_PACKAGE_LIBHDHOMERUN
+	bool "libhdhomerun"
+	select BR2_LEGACY
+	help
+	  libhdhomerun was removed from Buildroot as it was
+	  insufficiently maintained. It can be re-added if someone
+	  volunteers to  maintain it.
+
+config BR2_PACKAGE_KODI_PVR_HDHOMERUN
+	bool "kodi-pvr-hdhomerun"
+	select BR2_LEGACY
+	help
+	  kodi-pvr-hdhomerun was removed from Buildroot as it was
+	  insufficiently maintained. It can be re-added if someone
+	  volunteers to maintain it.
+
 config BR2_PACKAGE_ZEEK
 	bool "zeek removed"
 	select BR2_LEGACY

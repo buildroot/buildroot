@@ -16,6 +16,7 @@ TVHEADEND_DEPENDENCIES = \
 	host-python3 \
 	openssl
 TVHEADEND_CONF_OPTS = \
+	--disable-hdhomerun_client \
 	--disable-omx \
 	--disable-pcre
 
@@ -106,13 +107,6 @@ TVHEADEND_DEPENDENCIES += libdvbcsa
 TVHEADEND_CONF_OPTS += --enable-tvhcsa
 else
 TVHEADEND_CONF_OPTS += --disable-tvhcsa
-endif
-
-ifeq ($(BR2_PACKAGE_LIBHDHOMERUN),y)
-TVHEADEND_DEPENDENCIES += libhdhomerun
-TVHEADEND_CONF_OPTS += --enable-hdhomerun_client
-else
-TVHEADEND_CONF_OPTS += --disable-hdhomerun_client
 endif
 
 ifeq ($(BR2_PACKAGE_LIBICONV),y)
