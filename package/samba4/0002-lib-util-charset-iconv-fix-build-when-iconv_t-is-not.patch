@@ -1,0 +1,98 @@
+From aab0668cc358e443b243528939947c3eea93ca27 Mon Sep 17 00:00:00 2001
+From: Titouan Christophe <titouan.christophe@mind.be>
+Date: Sat, 30 May 2026 00:30:00 +0200
+Subject: [PATCH] charset: fix iconv_t int/pointer conversion on uClibc
+
+The iconv handles cd_pull, cd_push and cd_direct are stored as 'void *'
+in struct smb_iconv_s, but iconv_open() returns and iconv()/iconv_close()
+take an iconv_t. On glibc this is harmless because iconv_t is itself a
+'void *', so the implicit conversions are between identical types.
+
+On uClibc however iconv_t is a 'long int', so storing iconv_open()'s
+result into a 'void *' field (and passing those fields back to iconv()
+and iconv_close()) is an implicit integer<->pointer conversion. Since
+GCC 14 -Wint-conversion is an error by default, this breaks the build:
+
+  iconv.c: In function 'sys_iconv':
+  iconv.c:166:38: error: passing argument 1 of 'iconv' makes integer
+    from pointer without a cast [-Wint-conversion]
+  iconv.c: In function 'smb_iconv_open_ex':
+  iconv.c:403:30: error: assignment to 'void *' from 'iconv_t'
+    {aka 'long int'} makes pointer from integer without a cast
+    [-Wint-conversion]
+
+Add explicit casts between iconv_t and void * so the conversions are
+intentional and the code builds on both glibc and uClibc.
+
+Upstream: not applicable to samba, because uclibc has already released
+          a fix, but this isn't included yet in Buildroot prebuilt toolchains.
+          The problem is therefore to be patched in Buildroot itself.
+
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ lib/util/charset/iconv.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/lib/util/charset/iconv.c b/lib/util/charset/iconv.c
+index 074794a26e3..90389d6a954 100644
+--- a/lib/util/charset/iconv.c
++++ b/lib/util/charset/iconv.c
+@@ -163,7 +163,7 @@ static size_t sys_iconv(void *cd,
+ 	size_t ret = iconv((iconv_t)cd,
+ 			   discard_const_p(char *, inbuf), inbytesleft,
+ 			   outbuf, outbytesleft);
+-	if (ret == (size_t)-1) iconv(cd, NULL, NULL, NULL, NULL);
++	if (ret == (size_t)-1) iconv((iconv_t)cd, NULL, NULL, NULL, NULL);
+ 	return ret;
+ }
+ #endif
+@@ -345,12 +345,12 @@ static int smb_iconv_t_destructor(smb_iconv_t hwd)
+ 	}
+ #endif
+ #ifdef HAVE_NATIVE_ICONV
+-	if (hwd->cd_pull != NULL && hwd->cd_pull != (iconv_t)-1)
+-		iconv_close(hwd->cd_pull);
+-	if (hwd->cd_push != NULL && hwd->cd_push != (iconv_t)-1)
+-		iconv_close(hwd->cd_push);
+-	if (hwd->cd_direct != NULL && hwd->cd_direct != (iconv_t)-1)
+-		iconv_close(hwd->cd_direct);
++	if (hwd->cd_pull != NULL && hwd->cd_pull != (void *)(iconv_t)-1)
++		iconv_close((iconv_t)hwd->cd_pull);
++	if (hwd->cd_push != NULL && hwd->cd_push != (void *)(iconv_t)-1)
++		iconv_close((iconv_t)hwd->cd_push);
++	if (hwd->cd_direct != NULL && hwd->cd_direct != (void *)(iconv_t)-1)
++		iconv_close((iconv_t)hwd->cd_direct);
+ #endif
+ 
+ 	return 0;
+@@ -400,19 +400,19 @@ _PUBLIC_ smb_iconv_t smb_iconv_open_ex(TALLOC_CTX *mem_ctx, const char *tocode,
+ 	 * conversions */
+ 
+ 	if (from == NULL) {
+-		ret->cd_pull = iconv_open("UTF-16LE", fromcode);
+-		if (ret->cd_pull == (iconv_t)-1)
+-			ret->cd_pull = iconv_open("UCS-2LE", fromcode);
+-		if (ret->cd_pull != (iconv_t)-1) {
++		ret->cd_pull = (void *)iconv_open("UTF-16LE", fromcode);
++		if (ret->cd_pull == (void *)(iconv_t)-1)
++			ret->cd_pull = (void *)iconv_open("UCS-2LE", fromcode);
++		if (ret->cd_pull != (void *)(iconv_t)-1) {
+ 			ret->pull = sys_iconv;
+ 		}
+ 	}
+ 
+ 	if (to == NULL) {
+-		ret->cd_push = iconv_open(tocode, "UTF-16LE");
+-		if (ret->cd_push == (iconv_t)-1)
+-			ret->cd_push = iconv_open(tocode, "UCS-2LE");
+-		if (ret->cd_push != (iconv_t)-1) {
++		ret->cd_push = (void *)iconv_open(tocode, "UTF-16LE");
++		if (ret->cd_push == (void *)(iconv_t)-1)
++			ret->cd_push = (void *)iconv_open(tocode, "UCS-2LE");
++		if (ret->cd_push != (void *)(iconv_t)-1) {
+ 			ret->push = sys_iconv;
+ 		}
+ 	}
+-- 
+2.54.0
+
