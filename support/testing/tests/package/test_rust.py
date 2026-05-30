@@ -35,7 +35,6 @@ class TestRustBin(TestRustBase):
         self.assertRunOk("rg Buildroot /etc/issue")
 
 
-# gitlab-runner: 2xlarge
 class TestRust(TestRustBase):
     config = \
         """

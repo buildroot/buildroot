@@ -3,7 +3,6 @@ import os
 import infra.basetest
 
 
-# gitlab-runner: medium
 class TestLlamaCpp(infra.basetest.BRTest):
     config = """
         BR2_aarch64=y

@@ -3,7 +3,6 @@ import os
 import infra.basetest
 
 
-# gitlab-runner: large
 class TestOpenJdk(infra.basetest.BRTest):
     br2_external = [infra.filepath("tests/package/br2-external/openjdk")]
     config = \

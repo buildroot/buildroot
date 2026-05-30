@@ -57,7 +57,6 @@ class TestMenderRO(TestMenderInfra):
         self.run_mender_test()
 
 
-# gitlab-runner: large
 class TestMenderSystemd(TestMenderInfra):
     config = \
         """

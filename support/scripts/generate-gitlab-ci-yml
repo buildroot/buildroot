@@ -24,7 +24,7 @@ _EOF_
 gen_tests() {
     local -a basics defconfigs runtimes
     local do_basics do_defconfigs do_runtime do_testpkg
-    local defconfigs_ext cfg runner tst
+    local defconfigs_ext cfg tst
 
     basics=( check-package check-symbol DEVELOPERS package symbol )
 
@@ -133,15 +133,7 @@ gen_tests() {
 
     if ${do_runtime:-false}; then
         printf 'runtime_test_download: { extends: .runtime_test_download }\n'
-        for test in "${runtimes[@]}"; do
-            test_file=$(echo "${test}" | tr '.' '/' | sed 's%\(.*/test_[^/]*\)/.*test_run$%support/testing/\1.py%g')
-            test_name=$(echo "${test}" | sed 's/.test_run$//g' | sed 's/.*\.//')
-            runner=$(grep -w -B 1 "${test_name}" "${test_file}" | head -1 | sed -n 's/^.*# gitlab-runner: \(.*\)/\1/p' ) || true
-            if [ -z "${runner}" ]; then
-                runner="small"
-            fi
-            printf '%s: { extends: [ .runtime_test_base, .runner-%s ]}\n' "${test}" "${runner}"
-        done
+        printf '%s: { extends: .runtime_test_base }\n' "${runtimes[@]}"
     fi
 
     if [ -n "${do_testpkg}" ]; then

@@ -3,7 +3,6 @@ import os
 import infra.basetest
 
 
-# gitlab-runner: large
 class TestOpenBLAS(infra.basetest.BRTest):
     config = \
         """

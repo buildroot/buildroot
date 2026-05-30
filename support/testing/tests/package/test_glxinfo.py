@@ -5,7 +5,6 @@ import infra.basetest
 GLXINFO_TIMEOUT = 120
 
 
-# gitlab-runner: large
 class TestGlxinfo(infra.basetest.BRTest):
     config = \
         """
