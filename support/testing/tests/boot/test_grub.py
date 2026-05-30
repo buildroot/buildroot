@@ -32,6 +32,7 @@ class TestGrubi386BIOS(infra.basetest.BRTest):
         self.emulator.login()
 
 
+# gitlab-runner: large
 class TestGrubi386EFI(infra.basetest.BRTest):
     config = \
         """
@@ -82,6 +83,7 @@ class TestGrubi386EFI(infra.basetest.BRTest):
         self.assertRunOk(cmd)
 
 
+# gitlab-runner: large
 class TestGrubX8664EFI(infra.basetest.BRTest):
     config = \
         """
@@ -133,6 +135,7 @@ class TestGrubX8664EFI(infra.basetest.BRTest):
         self.assertRunOk(cmd)
 
 
+# gitlab-runner: large
 class TestGrubAArch64EFI(infra.basetest.BRTest):
     config = \
         """
@@ -174,6 +177,7 @@ class TestGrubAArch64EFI(infra.basetest.BRTest):
         self.assertRunOk(cmd)
 
 
+# gitlab-runner: large
 class TestGrubRiscV64EFI(infra.basetest.BRTest):
     scripts = [
         "board/qemu/post-image.sh",

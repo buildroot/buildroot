@@ -5,6 +5,7 @@ import infra.basetest
 from ..graphics_base import GraphicsBase
 
 
+# gitlab-runner: large
 class TestWeston(infra.basetest.BRTest, GraphicsBase):
     config = \
         """

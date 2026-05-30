@@ -3,6 +3,7 @@ import os
 import infra.basetest
 
 
+# gitlab-runner: xlarge
 class TestKmsCube(infra.basetest.BRTest):
     config = \
         """

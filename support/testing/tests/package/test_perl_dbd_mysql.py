@@ -2,6 +2,7 @@ from tests.package.test_perl import TestPerlBase
 import os
 
 
+# gitlab-runner: xlarge
 class TestPerlDBDmysql(TestPerlBase):
     """
     package:

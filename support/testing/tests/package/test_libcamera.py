@@ -3,6 +3,7 @@ import os
 import infra.basetest
 
 
+# gitlab-runner: medium
 class TestLibCamera(infra.basetest.BRTest):
     # A specific configuration is needed for testing libcamera:
     # a kernel config fragment enables v4l2 vimc driver.
