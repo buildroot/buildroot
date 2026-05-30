@@ -3,7 +3,7 @@ import os
 import infra.basetest
 
 
-# gitlab-runner: large
+# gitlab-runner: 2xlarge
 class TestPythonPyQt5(infra.basetest.BRTest):
     # We use a specific configuration for:
     # - using Aarch64, to have more than 256MB memory,
