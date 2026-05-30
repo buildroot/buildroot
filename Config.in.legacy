@@ -278,6 +278,13 @@ config BR2_BINUTILS_VERSION_2_43_X
 	  binutils 2.43 has been removed, select a newer version
 	  instead.
 
+config BR2_parisc10
+	bool "PA-RISC architecture version 1.0 support removed"
+	select BR2_LEGACY
+	help
+	  Following the build issues with glibc 2.43, Buildroot has
+	  removed support for this architecture version.
+
 comment "Legacy options removed in 2026.02"
 
 config BR2_PACKAGE_QEMU_TARGET_CRIS
