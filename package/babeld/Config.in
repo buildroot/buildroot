@@ -1,8 +1,14 @@
 config BR2_PACKAGE_BABELD
 	bool "babeld"
 	depends on BR2_USE_MMU # fork()
+	# uses textrel
+	depends on !BR2_TOOLCHAIN_USES_MUSL
 	help
 	  Babel is a loop-avoiding distance-vector routing protocol for
 	  IPv6 and IPv4 with fast convergence properties.
 
 	  https://www.irif.fr/~jch/software/babel/
+
+comment "babeld needs a uClibc or glibc toolchain"
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_USES_MUSL
