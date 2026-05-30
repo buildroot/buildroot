@@ -3,6 +3,7 @@ import os
 import time
 
 
+# gitlab-runner: large
 class TestDistributionRegistry(infra.basetest.BRTest):
     config = \
         """

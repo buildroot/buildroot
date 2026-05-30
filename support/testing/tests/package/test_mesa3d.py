@@ -4,6 +4,7 @@ import infra.basetest
 RUSTICL_TIMEOUT = 180
 
 
+# gitlab-runner: 2xlarge
 class TestMesa3DRusticl(infra.basetest.BRTest):
     config = """
         BR2_aarch64=y

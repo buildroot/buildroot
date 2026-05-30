@@ -3,6 +3,7 @@ import os
 import infra.basetest
 
 
+# gitlab-runner: large
 class TestFwts(infra.basetest.BRTest):
     config = \
         """

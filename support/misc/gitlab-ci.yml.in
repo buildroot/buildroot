@@ -5,6 +5,30 @@ stages:
 before_script:
   - git config --global --add safe.directory ${CI_PROJECT_DIR}
 
+.runner-small:
+    tags:
+        - saas-linux-small-amd64
+
+.runner-medium:
+    tags:
+        - saas-linux-medium-amd64
+
+.runner-large:
+    tags:
+        - saas-linux-large-amd64
+
+.runner-xlarge:
+    tags:
+        - saas-linux-xlarge-amd64
+
+.runner-2xlarge:
+    tags:
+        - saas-linux-2xlarge-amd64
+
+.runner-buildroot-runner-only:
+    tags:
+        - buildroot-runner
+
 .check-check-package_base:
     stage: test
     script:
