@@ -4,6 +4,7 @@ import subprocess
 import infra.basetest
 
 
+# gitlab-runner: large
 class TestDosFsTools(infra.basetest.BRTest):
     # This test needs a Kernel with vfat and NLS support. The vfat
     # filesystem also needs character set conversion libraries, since

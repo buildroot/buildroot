@@ -3,6 +3,7 @@ import os
 from tests.package.test_python import TestPythonPackageBase
 
 
+# gitlab-runner: large
 class TestPythonPy3SciPy(TestPythonPackageBase):
     __test__ = True
     # Need to use a different toolchain than the default due to

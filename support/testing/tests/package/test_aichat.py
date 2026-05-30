@@ -5,6 +5,7 @@ import time
 import infra.basetest
 
 
+# gitlab-runner: medium
 class TestAiChat(infra.basetest.BRTest):
     rootfs_overlay = \
         infra.filepath("tests/package/test_aichat/rootfs-overlay")
