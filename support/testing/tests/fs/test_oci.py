@@ -3,6 +3,7 @@ import shutil
 import infra.basetest
 
 
+# gitlab-runner: xlarge
 class TestOci(infra.basetest.BRTest):
     config = \
         """

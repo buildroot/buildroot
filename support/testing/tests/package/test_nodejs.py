@@ -29,7 +29,7 @@ class TestNodeJSBasic(infra.basetest.BRTest):
         self.assertRunOk("node sample_nodejs_basic.js")
 
 
-# gitlab-runner: large
+# gitlab-runner: 2xlarge
 class TestNodeJSModuleHostBin(infra.basetest.BRTest):
     config = \
         """
