@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-MINIZIP_ZLIB_VERSION = 1.3.1
+MINIZIP_ZLIB_VERSION = 1.3.2
 MINIZIP_ZLIB_SOURCE = zlib-$(MINIZIP_ZLIB_VERSION).tar.xz
-MINIZIP_ZLIB_SITE = http://www.zlib.net
+MINIZIP_ZLIB_SITE = https://www.zlib.net
 MINIZIP_ZLIB_LICENSE = Zlib
 MINIZIP_ZLIB_LICENSE_FILES = LICENSE
 MINIZIP_ZLIB_INSTALL_STAGING = YES
