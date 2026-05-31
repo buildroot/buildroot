@@ -81,7 +81,7 @@ class TestPppd(infra.basetest.BRTest):
 
         # We start our (fake) remote pppd instance, in our netns.
         cmd = f"ip netns exec {namespace} "
-        cmd += f"pppd noauth ifname ppp1 {pty1} {remote_ip}:{local_ip}"
+        cmd += f"pppd noauth ifname ppp1 {pty1} 115200 {remote_ip}:{local_ip}"
         self.assertRunOk(cmd)
 
         # We wait a bit for the pppd to settle...
@@ -89,7 +89,7 @@ class TestPppd(infra.basetest.BRTest):
 
         # We start out local pppd instance, this time in the default
         # network namespace.
-        cmd = f"pppd noauth ifname ppp0 {pty0} {local_ip}:{remote_ip}"
+        cmd = f"pppd noauth ifname ppp0 {pty0} 115200 {local_ip}:{remote_ip}"
         self.assertRunOk(cmd)
 
         # We wait again...
