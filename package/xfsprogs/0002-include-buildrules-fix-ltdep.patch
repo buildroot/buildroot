@@ -1,0 +1,48 @@
+From cddc06c0eef874c01293cdb6e60090771a347c56 Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@smile.fr>
+Date: Sun, 31 May 2026 21:08:09 +0200
+Subject: [PATCH] include/buildrules: fix ltdep
+
+Our CI uses "/builds/buildroot.org/buildroot" as build directory.
+Unlikely the xfsprogs build system misbehave when a directory in
+the path contain ".o".
+
+While generating .ltdep, the sed command used to convert object file
+(.o) to libtool object (.lo) replace buildroot.org by buildroot.lorg.
+
+  .ltdep: $(CFILES) $(HFILES)
+    $(Q)$(MAKEDEP) $(CFILES) | $(SED) -e 's,^\([^:]*\)\.o,\1.lo,' > .ltdep
+
+Building libfrog
+    [CC]     gen_crc32table
+    [GENERATE] crc32table.h
+gmake[4]: *** No rule to make target '/builds/buildroot.lorg/buildroot/test-output/TestXfs/host/include/urcu.h', needed by 'avl64.lo'.  Stop.
+
+Update the sed command to avoid this effect.
+
+Upstream: https://lore.kernel.org/linux-xfs/20260531194553.1378795-1-romain.naour@smile.fr/T/#u
+
+Fixes:
+https://gitlab.com/buildroot.org/buildroot/-/jobs/14607335648
+
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ include/buildrules | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/buildrules b/include/buildrules
+index 871e92db..3fabbe5a 100644
+--- a/include/buildrules
++++ b/include/buildrules
+@@ -140,7 +140,7 @@ rmltdep:
+ 	$(Q)rm -f .ltdep
+ 
+ .ltdep: $(CFILES) $(HFILES)
+-	$(Q)$(MAKEDEP) $(CFILES) | $(SED) -e 's,^\([^:]*\)\.o,\1.lo,' > .ltdep
++	$(Q)$(MAKEDEP) $(CFILES) | $(SED) -e 's,^\([^:]*\)\.o:,\1.lo:,' > .ltdep
+ 
+ depend: rmdep .dep
+ 
+-- 
+2.54.0
+
