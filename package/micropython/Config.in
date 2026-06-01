@@ -13,9 +13,28 @@ if BR2_PACKAGE_MICROPYTHON
 
 config BR2_PACKAGE_MICROPYTHON_LIB
 	bool "micropython-lib"
-	select BR2_PACKAGE_PCRE2 # runtime
 	help
 	  Core Python libraries ported to MicroPython.
+
+	  This contains compatible but reduced-functionality versions
+	  of some Python standard library and wider Python ecosystem
+	  modules, as well as some MicroPython-specific libraries
+	  that aren't included in the base package.
+
+if BR2_PACKAGE_MICROPYTHON_LIB
+
+config BR2_PACKAGE_MICROPYTHON_LIB_UNIXFFI
+	bool "micropython-lib unix-ffi modules"
+	default y
+	select BR2_PACKAGE_LIBFFI
+	select BR2_PACKAGE_PCRE2 # runtime
+	help
+	  Unix-specific MicroPython packages
+
+	  These provide additional functionality to MicroPython in
+	  standard environments.
+
+endif # BR2_PACKAGE_MICROPYTHON_LIB
 
 endif # BR2_PACKAGE_MICROPYTHON
 
