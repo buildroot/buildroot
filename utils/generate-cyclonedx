@@ -302,7 +302,7 @@ def cyclonedx_source_hashes(comp, source):
 
     hashes = []
     for hash_file in comp.get("hashes", []):
-        with Path(hash_file).open() as f:
+        with (brpath / hash_file).open() as f:
             for line in f:
                 line = line.strip()
                 if not line.startswith("#") and line.endswith(f" {source}"):
