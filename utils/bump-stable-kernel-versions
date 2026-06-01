@@ -78,6 +78,10 @@ update_linux_hash() {
                 echo ">>> Updating version from ${old_version} to ${new_version} in Config.in files"
                 sed -Ei "s/\tdefault \"${old_version}\"([\t ]+)if /\tdefault \"${new_version}\"\1if /" \
                     package/linux-headers/Config.in.host linux/Config.in
+                git mv package/linux-headers/"${old_version}" package/linux-headers/"${new_version}"
+                if [ -d linux/"${old_version}" ]; then
+                    git mv linux/"${old_version}" linux/"${new_version}"
+                fi
 
                 updated_releases_list="${updated_releases_list} ${release_version}.x"
                 updated_versions="${updated_versions}\n - ${old_version} -> ${new_version}"
