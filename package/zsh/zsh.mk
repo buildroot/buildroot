@@ -5,7 +5,7 @@
 ################################################################################
 
 ZSH_VERSION = 5.9
-ZSH_SITE = http://www.zsh.org/pub
+ZSH_SITE = http://www.zsh.org/pub/old
 ZSH_SOURCE = zsh-$(ZSH_VERSION).tar.xz
 ZSH_DEPENDENCIES = ncurses
 ZSH_CONF_OPTS = --bindir=/bin
