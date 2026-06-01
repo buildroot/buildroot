@@ -120,6 +120,41 @@ OPENCV4_CONF_OPTS += \
 	-DENABLE_NEON=$(if $(BR2_ARM_CPU_HAS_NEON),ON,OFF) \
 	-DENABLE_VFPV3=OFF
 
+# LoongArch: OpenCV probes the host compiler for LSX/LASX by trying to
+# compile a small test program with '-mlsx' / '-mlasx'. With Buildroot's
+# toolchain this check succeeds even when the target CPU does not have
+# the matching ISA extension, and the resulting OpenCV libraries end up
+# containing LSX/LASX instructions, causing SIGILL at runtime on CPUs
+# such as the LA264.
+#
+# Trust Buildroot's own LoongArch SIMD selection (BR2_LOONGARCH_SIMD_*)
+# as the source of truth and translate it to OpenCV's CPU_BASELINE /
+# CPU_DISPATCH knobs (OpenCV knows LSX and LASX on LoongArch):
+#
+#   BR2_LOONGARCH_SIMD_NONE  -> no baseline, no dispatch
+#   BR2_LOONGARCH_SIMD_LSX   -> baseline = LSX,  no dispatch
+#   BR2_LOONGARCH_SIMD_LASX  -> baseline = LSX,  dispatch = LASX
+#                              (LASX implies LSX; OpenCV's own upstream
+#                              combination matches BR2's choice above.)
+#
+# We only enter this block on LoongArch, so the existing OpenCV auto
+# detection still applies for all other architectures.
+ifeq ($(BR2_loongarch64),y)
+ifeq ($(BR2_LOONGARCH_SIMD_NONE),y)
+OPENCV4_CONF_OPTS += \
+	-DCPU_BASELINE= \
+	-DCPU_DISPATCH=
+else ifeq ($(BR2_LOONGARCH_SIMD_LSX),y)
+OPENCV4_CONF_OPTS += \
+	-DCPU_BASELINE=LSX \
+	-DCPU_DISPATCH=
+else ifeq ($(BR2_LOONGARCH_SIMD_LASX),y)
+OPENCV4_CONF_OPTS += \
+	-DCPU_BASELINE=LSX \
+	-DCPU_DISPATCH=LASX
+endif
+endif
+
 # Cuda stuff
 OPENCV4_CONF_OPTS += \
 	-DBUILD_CUDA_STUBS=OFF \
