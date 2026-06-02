@@ -25,6 +25,9 @@ NTP_CONF_OPTS = \
 	--with-yielding-select=yes \
 	--disable-local-libevent
 
+# NVD Entry incorrectly match on every patch revision. Fixed in 4.2.8p6.
+NTP_IGNORE_CVES += CVE-2015-7977
+
 # 0002-ntp-syscalls-fallback.patch
 NTP_AUTORECONF = YES
 
