@@ -51,6 +51,9 @@ UNZIP_IGNORE_CVES += CVE-2019-13232
 # 0028-cve-2022-0529-and-cve-2022-0530.patch
 UNZIP_IGNORE_CVES += CVE-2022-0529 CVE-2022-0530
 
+# 0032-Fix-null-pointer-dereference-and-use-of-uninitialized-data.patch
+UNZIP_IGNORE_CVES += CVE-2021-4217
+
 # unzip already defines _LARGEFILE_SOURCE and _LARGEFILE64_SOURCE when
 # necessary, redefining it on the command line causes some warnings.
 UNZIP_TARGET_CFLAGS = \
