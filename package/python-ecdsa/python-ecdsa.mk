@@ -10,6 +10,7 @@ PYTHON_ECDSA_SITE = https://files.pythonhosted.org/packages/c0/1f/924e3caae75f47
 PYTHON_ECDSA_SETUP_TYPE = setuptools
 PYTHON_ECDSA_LICENSE = MIT
 PYTHON_ECDSA_LICENSE_FILES = LICENSE
-PYTHON_ECDSA_CPE_ID_VALID = YES
+PYTHON_ECDSA_CPE_ID_VENDOR = tlsfuzzer
+PYTHON_ECDSA_CPE_ID_PRODUCT = ecdsa
 
 $(eval $(python-package))
