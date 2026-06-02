@@ -10,6 +10,10 @@ CAPNPROTO_LICENSE = MIT
 CAPNPROTO_LICENSE_FILES = LICENSE
 CAPNPROTO_CPE_ID_VENDOR = capnproto
 CAPNPROTO_INSTALL_STAGING = YES
+
+# 0001-fix-http-body-size-integer-overflow-bugs.patch
+CAPNPROTO_IGNORE_CVES += CVE-2026-32239 CVE-2026-32240
+
 # Fetched from Github with no configure script
 CAPNPROTO_AUTORECONF = YES
 CAPNPROTO_CONF_OPTS = --with-external-capnp
