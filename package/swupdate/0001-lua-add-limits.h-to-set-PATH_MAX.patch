@@ -1,0 +1,30 @@
+From 3de6491463f4b1ddf2e792771831acfb705e246d Mon Sep 17 00:00:00 2001
+From: Stefano Babic <stefano.babic@swupdate.org>
+Date: Tue, 11 Feb 2025 09:08:15 +0100
+Subject: [PATCH] lua: add limits.h to set PATH_MAX
+
+This fixes github action (debian slim), with other builds the file is
+automatically included.
+
+Upstream: https://github.com/sbabic/swupdate/commit/3de6491463f4b1ddf2e792771831acfb705e246d
+Signed-off-by: Stefano Babic <stefano.babic@swupdate.org>
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ corelib/lua_interface.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/corelib/lua_interface.c b/corelib/lua_interface.c
+index 02d48259..ffe62d88 100644
+--- a/corelib/lua_interface.c
++++ b/corelib/lua_interface.c
+@@ -16,6 +16,7 @@
+ #include <sys/sysmacros.h>
+ #endif
+ #include <sys/types.h>
++#include <limits.h>
+ 
+ #include "lua.h"
+ #include "lauxlib.h"
+-- 
+2.47.3
+
