@@ -13,6 +13,9 @@ PYTHON3_LICENSE_FILES = LICENSE
 PYTHON3_CPE_ID_VENDOR = python
 PYTHON3_CPE_ID_PRODUCT = python
 
+# 0011-3.14-gh-149079-Fix-O-n-2-canonical-ordering-in-unico.patch
+PYTHON3_IGNORE_CVES += CVE-2026-3276
+
 # This host Python is installed in $(HOST_DIR), as it is needed when
 # cross-compiling third-party Python modules.
 
