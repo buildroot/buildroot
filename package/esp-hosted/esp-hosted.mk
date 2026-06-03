@@ -29,5 +29,7 @@ else
 ESP_HOSTED_MODULE_MAKE_OPTS = target=sdio
 endif
 
+ESP_HOSTED_MODULE_MAKE_OPTS += KCFLAGS="-Wno-error"
+
 $(eval $(kernel-module))
 $(eval $(generic-package))
