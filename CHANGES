@@ -1,3 +1,53 @@
+2026.05-rc4, released June 4th, 2026
+
+	Fixes all over the tree.
+
+        Infrastructure:
+
+        - dependencies: detect and reject buggy uutils 'install'
+          program as used in Ubuntu 26.04
+
+        - pkg-generic: Cleanup /usr/share/info/dir in the target
+
+        - generate-cyclonedx / cve-check: Various fixes for better
+          CycloneDX / BSI TR-03183-2 compliance
+
+        - linux: No longer forcibly disable CONFIG_WERROR
+
+        - 'make show-info-all' added, which works like 'make
+          show-info' but for all packages. The package hash files are
+          now also included in the show-info{,-all} output.
+
+        Architectures:
+
+        - Drop support for the (rare) PA-RISC 1.0 variant
+
+	Updated/fixed packages: aardvark-dns, arm-trusted-firmware,
+	asterisk, babeld, bpftrace, busybox, ca-certificates, cairo,
+	capnproto, collectd, cppdb, crucible, cups-filters,
+	docker-cli, docker-engine, drm-info, efl, esp-hosted, exim,
+	faad2, freeipmi, freeswitch, gcc-bare-metal, gdb, gerbera,
+	glibc, graphene, gst1-plugins-bad, gst1-plugins-good,
+	gstreamer1, harfbuzz, heirloom-mailx, hiredis, hplip, icu,
+	jemalloc, jq, kodi, lcms2, libbpf, libdill, libdrm, libenca,
+	libgit2, libheif, libks, libmad, libmicrohttpd,
+	libmodsecurity, libpthsem, libssh2, liburing, llvm-project,
+	lrzip, lrzsz, lua-sdl2, mesa3d, mpd, mrp, ndctl, netatalk,
+	netavark, odhcp6c, openblas, opencv4, opendoas, openscap, php,
+	podman, poppler, powerpc-utils, privoxy, python-ecdsa,
+	python-gymnasium, python3, qt53d, qt5webengine-chromium,
+	qt6base, readline, redis, rpcbind, rtl8188eu,
+	rtl8812au-aircrack-ng, rtl8822cs, runc, rust, rust-bin,
+	samba4, sane-airscan, sane-backends, sdl2_image, sqlite,
+	sshfs, stellarium, suricata, sway, sysrepo, tor, unzip,
+	ustream-ssl, util-linux, vlc, vorbis-tools, weston,
+	wireless-regdb, xdriver_xf86-video-nv, xen, xerces,
+	xserver_xorg-server, xwayland, zsh
+
+        Removed packages: daq, kodi-pvr-hdhomerun, libhdhomerun,
+        libphidget, phidgetwebservice, pigpio, ptpd2, xml-security-c,
+        zeek
+
 2026.05-rc3, released May 29th, 2026
 
 	Fixes all over the tree.
