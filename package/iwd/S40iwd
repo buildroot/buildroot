@@ -3,7 +3,7 @@
 DAEMON="iwd"
 PIDFILE="/var/run/$DAEMON.pid"
 
-IWD_ARGS=""
+IWD_ARGS="--logger syslog"
 
 # shellcheck source=/dev/null
 [ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
