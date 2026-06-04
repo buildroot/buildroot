@@ -38,7 +38,11 @@ endif
 ifeq ($(BR2_PACKAGE_SYSTEMD_RESOLVED),y)
 IWD_RESOLV_SERVICE = systemd
 else
+ifeq ($(BR2_PACKAGE_OPENRESOLV),y)
 IWD_RESOLV_SERVICE = resolvconf
+else
+IWD_RESOLV_SERVICE = none
+endif
 endif
 
 ifeq ($(BR2_PACKAGE_IWD_IWMON),y)

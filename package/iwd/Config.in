@@ -7,10 +7,12 @@ config BR2_PACKAGE_IWD
 	depends on BR2_USE_WCHAR # ell
 	select BR2_PACKAGE_DBUS # runtime
 	select BR2_PACKAGE_ELL
-	select BR2_PACKAGE_OPENRESOLV if !BR2_PACKAGE_SYSTEMD_RESOLVED
 	help
 	  iNet Wireless daemon (iwd)
-	  Enable the readline package to enable the iwctl tool.
+
+	  Enable the readline package to enable the iwctl tool. If you
+	  want to use iwd standalone, you probably also want
+	  openresolv or systemd-resolved to handle DNS configuration.
 
 	  https://iwd.wiki.kernel.org/
 
