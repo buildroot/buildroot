@@ -43,10 +43,16 @@ stop() {
 	return "$status"
 }
 
+restart() {
+	stop
+	start
+}
+
 case "$1" in
-	start|stop)
-		"$1";;
+	start|stop|restart)
+		"$1"
+		;;
 	*)
-		echo "Usage: $0 {start|stop}"
+		echo "Usage: $0 {start|stop|restart}"
 		exit 1
 esac
