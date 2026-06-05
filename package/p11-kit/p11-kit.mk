@@ -44,4 +44,13 @@ P11_KIT_CONF_OPTS += \
 	--without-libtasn1
 endif
 
+HOST_P11_KIT_DEPENDENCIES = host-pkgconf
+
+HOST_P11_KIT_CONF_OPTS = \
+	--without-libffi \
+	--without-trust-paths \
+	--disable-trust-module \
+	--without-libtasn1
+
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))
