@@ -1,0 +1,119 @@
+From da2aa3c97fe9a374709c4bddf9b55253d53e1350 Mon Sep 17 00:00:00 2001
+From: Tom Hochstein <tom.hochstein@nxp.com>
+Date: Thu, 12 Jun 2025 06:49:58 -0700
+Subject: [PATCH] YOCIMX-9281-1: Fix gcc15 errors
+
+Fix several instances of the following errors:
+
+```
+| inmates/lib/include/inmate_common.h:87:16: error: cannot use keyword 'true' as enumeration constant
+|    87 | typedef enum { true = 1, false = 0 } bool;
+|       |                ^~~~
+```
+
+```
+| In file included from configs/arm64/hikey.c:16:
+| include/jailhouse/cell-config.h:318:41: error: initializer-string for array of 'char' truncates NUL terminator but destination lacks 'nonstring' attribute (6 chars into 5 available) [-Werror=unterminated-string-initialization]
+|   318 | #define JAILHOUSE_SYSTEM_SIGNATURE      "JHSYS"
+|       |                                         ^~~~~~~
+| configs/arm64/hikey.c:26:30: note: in expansion of macro 'JAILHOUSE_SYSTEM_SIGNATURE'
+|    26 |                 .signature = JAILHOUSE_SYSTEM_SIGNATURE,
+|       |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+
+Upstream: https://github.com/nxp-imx/imx-jailhouse/commit/2be7793ca658015470fe0d60c0c973e12ce68d73
+
+Signed-off-by: Tom Hochstein <tom.hochstein@nxp.com>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+[Romain:
+  use "__STDC_VERSION__ < 202311L" as suggested by Peter Korsgaard
+  https://lore.kernel.org/buildroot/878q8uk9qf.fsf@dell.be.48ers.dk/
+]
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ hypervisor/include/jailhouse/header.h | 2 +-
+ hypervisor/include/jailhouse/types.h  | 2 ++
+ include/jailhouse/cell-config.h       | 4 ++--
+ include/jailhouse/hypercall.h         | 2 +-
+ inmates/lib/include/inmate_common.h   | 2 ++
+ 5 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/hypervisor/include/jailhouse/header.h b/hypervisor/include/jailhouse/header.h
+index 518bc5cb..324eb94b 100644
+--- a/hypervisor/include/jailhouse/header.h
++++ b/hypervisor/include/jailhouse/header.h
+@@ -55,7 +55,7 @@ struct jailhouse_header {
+ 	/** Signature "JAILHOUS" used for basic validity check of the
+ 	 * hypervisor image.
+ 	 * @note Filled at build time. */
+-	char signature[8];
++	char signature[8] __attribute__ ((nonstring));
+ 	/** Size of hypervisor core.
+ 	 * It starts with the hypervisor's header and ends after its bss
+ 	 * section. Rounded up to page boundary.
+diff --git a/hypervisor/include/jailhouse/types.h b/hypervisor/include/jailhouse/types.h
+index 6d78ad6d..80f2a9ca 100644
+--- a/hypervisor/include/jailhouse/types.h
++++ b/hypervisor/include/jailhouse/types.h
+@@ -19,7 +19,9 @@
+ 
+ #ifndef __ASSEMBLY__
+ 
++#if __STDC_VERSION__ < 202311L
+ typedef enum { true = 1, false = 0 } bool;
++#endif
+ 
+ /** Describes a CPU set. */
+ struct cpu_set {
+diff --git a/include/jailhouse/cell-config.h b/include/jailhouse/cell-config.h
+index 17d59306..affce1c2 100644
+--- a/include/jailhouse/cell-config.h
++++ b/include/jailhouse/cell-config.h
+@@ -91,7 +91,7 @@
+  * structure.
+  */
+ struct jailhouse_cell_desc {
+-	char signature[5];
++	char signature[5] __attribute__ ((nonstring));
+ 	__u8 architecture;
+ 	__u16 revision;
+ 
+@@ -330,7 +330,7 @@ struct jailhouse_pio {
+  * General descriptor of the system.
+  */
+ struct jailhouse_system {
+-	char signature[5];
++	char signature[5] __attribute__ ((nonstring));
+ 	__u8 architecture;
+ 	__u16 revision;
+ 
+diff --git a/include/jailhouse/hypercall.h b/include/jailhouse/hypercall.h
+index 07574d3d..cf58a4c9 100644
+--- a/include/jailhouse/hypercall.h
++++ b/include/jailhouse/hypercall.h
+@@ -107,7 +107,7 @@
+ 
+ #define COMM_REGION_GENERIC_HEADER					\
+ 	/** Communication region magic JHCOMM */			\
+-	char signature[6];						\
++	char signature[6] __attribute__ ((nonstring));						\
+ 	/** Communication region ABI revision */			\
+ 	__u16 revision;							\
+ 	/** Cell state, initialized by hypervisor, updated by cell. */	\
+diff --git a/inmates/lib/include/inmate_common.h b/inmates/lib/include/inmate_common.h
+index 1c20a0af..cae2a673 100644
+--- a/inmates/lib/include/inmate_common.h
++++ b/inmates/lib/include/inmate_common.h
+@@ -84,7 +84,9 @@ typedef u32 __u32;
+ typedef s64 __s64;
+ typedef u64 __u64;
+ 
++#if __STDC_VERSION__ < 202311L
+ typedef enum { true = 1, false = 0 } bool;
++#endif
+ 
+ #include <jailhouse/hypercall.h>
+ 
+-- 
+2.54.0
+

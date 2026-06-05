@@ -1,0 +1,38 @@
+From bc09bd33a23f9599b0cb4596a0b7f5c601a74c75 Mon Sep 17 00:00:00 2001
+From: Peng Fan <peng.fan@nxp.com>
+Date: Mon, 25 Aug 2025 09:48:05 +0800
+Subject: [PATCH] YOCIMX-9281-2: hypervisor: arm64: fix strh usage
+
+hypervisor/arch/arm64/entry.S:555: Error: immediate offset out of range
+
+Per ARM spec:
+STRH (immediate)
+<pimm> Is the optional positive immediate byte offset, a multiple of 2 in
+the range 0 to 8190, defaulting to 0 and encoded in the "imm12" field
+as <pimm>/2.
+
+So align sdei_event to 2 bytes aligned.
+
+Upstream: https://github.com/nxp-imx/imx-jailhouse/commit/98f6f8dc23d6b3d4fe5b15045ccb3d3ef36747be
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+[Romain: rebase on top of latest commit on upstream repo
+  https://github.com/siemens/jailhouse/commit/e57d1eff6d55aeed5f977fe4e2acfb6ccbdd7560]
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ hypervisor/arch/arm64/include/asm/percpu_fields.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/hypervisor/arch/arm64/include/asm/percpu_fields.h b/hypervisor/arch/arm64/include/asm/percpu_fields.h
+index 67573fd6..118d69d0 100644
+--- a/hypervisor/arch/arm64/include/asm/percpu_fields.h
++++ b/hypervisor/arch/arm64/include/asm/percpu_fields.h
+@@ -13,4 +13,4 @@
+ #define ARCH_PERCPU_FIELDS						\
+ 	ARM_PERCPU_FIELDS						\
+ 	unsigned long id_aa64mmfr0;					\
+-	bool sdei_event;
++	bool sdei_event __attribute__((aligned(2)));
+-- 
+2.54.0
+
