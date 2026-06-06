@@ -2,7 +2,6 @@
 #
 # S95mpd	Starts Music Player daemon.
 #
-# shellcheck disable=SC2317 # functions are called via variable
 
 DAEMON="mpd"
 PIDFILE="/var/run/$DAEMON.pid"
@@ -57,5 +56,3 @@ case "$1" in
 		echo "Usage: $0 {start|stop|reload|restart}"
 		exit 1
 esac
-
-exit $?
