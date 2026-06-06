@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2026.08"
 
+config BR2_PACKAGE_TS4900_FPGA
+	bool "ts4900-fpga removed"
+	select BR2_LEGACY
+	help
+	  The ts4900 defconfig was removed, so ts4900-fpga package
+	  has been dropped.
+
 config BR2_GDB_VERSION_14
 	bool "gdb 14.x has been removed"
 	select BR2_LEGACY
