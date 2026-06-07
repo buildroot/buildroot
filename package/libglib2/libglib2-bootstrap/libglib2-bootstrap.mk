@@ -72,7 +72,8 @@ HOST_LIBGLIB2_BOOTSTRAP_CONF_OPTS = \
 	-Dsystemtap=false \
 	-Dxattr=false \
 	-Dtests=false \
-	-Doss_fuzz=disabled
+	-Doss_fuzz=disabled \
+	-Dsysprof=disabled
 
 $(eval $(meson-package))
 $(eval $(host-meson-package))
