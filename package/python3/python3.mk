@@ -15,6 +15,8 @@ PYTHON3_CPE_ID_PRODUCT = python
 
 # 0013-Fix-O-n-2-canonical-ordering-in-unicodedata-normalize.patch
 PYTHON3_IGNORE_CVES += CVE-2026-3276
+# 0014-tarfile-data_filter-validate-written-link.patch
+PYTHON3_IGNORE_CVES += CVE-2026-7774
 
 # This host Python is installed in $(HOST_DIR), as it is needed when
 # cross-compiling third-party Python modules.
