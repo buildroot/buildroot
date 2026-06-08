@@ -17,6 +17,8 @@ PYTHON3_CPE_ID_PRODUCT = python
 PYTHON3_IGNORE_CVES += CVE-2026-3276
 # 0014-tarfile-data_filter-validate-written-link.patch
 PYTHON3_IGNORE_CVES += CVE-2026-7774
+# 0015-Apply-CVE-2021-4189-PASV-fix-to-ftplib-ftpcp.patch
+PYTHON3_IGNORE_CVES += CVE-2026-8328
 
 # This host Python is installed in $(HOST_DIR), as it is needed when
 # cross-compiling third-party Python modules.
