@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SIGSUM_GO_VERSION = v0.13.1
+SIGSUM_GO_VERSION = v0.14.1
 SIGSUM_GO_SITE = https://git.glasklar.is/sigsum/core/sigsum-go
 SIGSUM_GO_SITE_METHOD = git
 SIGSUM_GO_LICENSE = BSD-2-Clause
