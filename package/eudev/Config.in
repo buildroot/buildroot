@@ -4,6 +4,7 @@ config BR2_PACKAGE_EUDEV
 	depends on BR2_USE_MMU # uses fork()
 	depends on BR2_USE_WCHAR # needs C99 compiler
 	depends on !BR2_STATIC_LIBS # dlfcn.h
+	select BR2_PACKAGE_HAS_LIBUDEV
 	select BR2_PACKAGE_HAS_UDEV
 	select BR2_PACKAGE_UDEV_GENTOO_SCRIPTS if BR2_INIT_OPENRC
 	select BR2_PACKAGE_UTIL_LINUX
@@ -18,6 +19,9 @@ config BR2_PACKAGE_EUDEV
 	  https://github.com/eudev-project/eudev
 
 if BR2_PACKAGE_EUDEV
+
+config BR2_PACKAGE_PROVIDES_LIBUDEV
+	default "eudev"
 
 config BR2_PACKAGE_PROVIDES_UDEV
 	default "eudev"

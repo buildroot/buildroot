@@ -10,7 +10,6 @@ CRYPTSETUP_SOURCE = cryptsetup-$(CRYPTSETUP_VERSION).tar.xz
 CRYPTSETUP_SITE = $(BR2_KERNEL_MIRROR)/linux/utils/cryptsetup/v$(CRYPTSETUP_VERSION_MAJOR)
 CRYPTSETUP_DEPENDENCIES = \
 	lvm2 popt host-pkgconf json-c libargon2 \
-	$(if $(BR2_PACKAGE_LIBICONV),libiconv) \
 	$(if $(BR2_PACKAGE_UTIL_LINUX_LIBS),util-linux-libs,util-linux) \
 	$(TARGET_NLS_DEPENDENCIES)
 CRYPTSETUP_LICENSE = Apache-2.0, CC-BY-SA-4.0, GPL-2.0+ (programs), LGPL-2.1+ (library)
@@ -41,6 +40,9 @@ CRYPTSETUP_CONF_OPTS += --with-crypto_backend=nettle
 else ifeq ($(BR2_PACKAGE_LIBNSS),y)
 CRYPTSETUP_DEPENDENCIES += libnss
 CRYPTSETUP_CONF_OPTS += --with-crypto_backend=nss
+else ifeq ($(BR2_PACKAGE_MBEDTLS),y)
+CRYPTSETUP_DEPENDENCIES += mbedtls
+CRYPTSETUP_CONF_OPTS += --with-crypto_backend=mbedtls
 else
 CRYPTSETUP_CONF_OPTS += --with-crypto_backend=kernel
 endif
@@ -56,6 +58,10 @@ endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 CRYPTSETUP_CONF_OPTS += --with-tmpfilesdir=/usr/lib/tmpfiles.d
+endif
+
+ifeq ($(BR2_STATIC_LIBS),y)
+CRYPTSETUP_CONF_OPTS += --disable-external-tokens
 endif
 
 HOST_CRYPTSETUP_DEPENDENCIES = \

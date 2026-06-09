@@ -1,0 +1,42 @@
+From b0361dc7fef630248310db1cdea1ee89f68ead7b Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Tue, 2 Jun 2026 20:20:01 +0200
+Subject: [PATCH] utils: sofprobeclient: fix musl build
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+With musl C library, we see following build failure:
+
+probes_demux.c: In function ‘parser_parse_data’:
+probes_demux.c:321:9: error: unknown type name ‘uint’; did you mean ‘int’?
+  321 |         uint i = 0;
+
+probes_demux.c:386:25: error: unknown type name ‘uint’; did you mean ‘int’?
+  386 |                         uint data_to_copy;
+
+uint is defined in <sys/types.h> header. It is usually included by
+<stdlib.h> but in musl stdlib.h doesn't include it.
+
+Upstream: https://github.com/alsa-project/tinycompress/pull/37
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/utils/sofprobeclient/probes_demux.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/utils/sofprobeclient/probes_demux.c b/src/utils/sofprobeclient/probes_demux.c
+index b11f702..be0a2e0 100644
+--- a/src/utils/sofprobeclient/probes_demux.c
++++ b/src/utils/sofprobeclient/probes_demux.c
+@@ -16,6 +16,7 @@
+ #include <string.h>
+ #include <time.h>
+ #include <unistd.h>
++#include <sys/types.h>
+ 
+ #include "probe_dma_frame.h"
+ 
+-- 
+2.47.3
+

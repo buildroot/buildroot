@@ -4,6 +4,7 @@ config BR2_PACKAGE_PYTHON_GYMNASIUM
 	depends on BR2_INSTALL_LIBSTDCPP # python-numpy
 	depends on BR2_TOOLCHAIN_USES_GLIBC || BR2_TOOLCHAIN_USES_MUSL # python-numpy
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_9 # python-numpy
+	depends on BR2_HOST_GCC_AT_LEAST_9  # host-python-numpy
 	select BR2_PACKAGE_PYTHON_CLOUDPICKLE # runtime
 	select BR2_PACKAGE_PYTHON_FARAMA_NOTIFICATIONS # runtime
 	select BR2_PACKAGE_PYTHON_NUMPY # runtime
@@ -12,7 +13,7 @@ config BR2_PACKAGE_PYTHON_GYMNASIUM
 	  A standard API for reinforcement learning and a diverse set
 	  of reference environments (formerly Gym).
 
-	  https://farama.org
+	  https://gymnasium.farama.org
 
 comment "python-gymnasium needs a glibc or musl toolchain w/ C++, gcc >= 9"
 	depends on BR2_PACKAGE_PYTHON_NUMPY_ARCH_SUPPORTS

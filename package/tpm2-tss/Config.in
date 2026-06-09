@@ -1,8 +1,8 @@
 config BR2_PACKAGE_TPM2_TSS
 	bool "tpm2-tss"
 	depends on !BR2_STATIC_LIBS # dlfcn.h
-	select BR2_PACKAGE_OPENSSL
-	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL
+	select BR2_PACKAGE_OPENSSL if !BR2_PACKAGE_MBEDTLS
+	select BR2_PACKAGE_OPENSSL_FORCE_LIBOPENSSL if !BR2_PACKAGE_MBEDTLS
 	help
 	  OSS implementation of the Trusted Computing Group's (TCG) TPM2
 	  Software Stack (TSS). This stack consists of the following
@@ -35,11 +35,13 @@ config BR2_PACKAGE_TPM2_TSS
 if BR2_PACKAGE_TPM2_TSS
 
 config BR2_PACKAGE_TPM2_TSS_FAPI
-	bool "fapi support"
+	bool "FAPI support"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # json-c
+	depends on !BR2_PACKAGE_MBEDTLS # configure: FAPI has to be compiled with OpenSSL
 	select BR2_PACKAGE_JSON_C
 	select BR2_PACKAGE_LIBCURL
 	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBS
 	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
 	help
 	  This option allows to enable Feature API (FAPI).  Feature
@@ -52,6 +54,9 @@ config BR2_PACKAGE_TPM2_TSS_FAPI
 
 	  https://trustedcomputinggroup.org/wp-content/uploads/TSS_FAPI_v0.94_r04_pubrev.pdf
 	  https://trustedcomputinggroup.org/wp-content/uploads/TSS_JSON_Policy_v0.7_r04_pubrev.pdf
+
+comment "FAPI not supported with Mbed TLS backend"
+	depends on BR2_PACKAGE_MBEDTLS
 
 endif
 

@@ -4,10 +4,12 @@
 #
 ################################################################################
 
-SWIPL_VERSION = 9.2.9
+SWIPL_VERSION = 10.0.2
 SWIPL_SITE = https://www.swi-prolog.org/download/stable/src
 SWIPL_LICENSE = BSD-2-Clause
 SWIPL_LICENSE_FILES = LICENSE
+
+SWIPL_SUPPORTS_IN_SOURCE_BUILD = NO
 
 HOST_SWIPL_DEPENDENCIES = host-zlib
 
@@ -16,6 +18,7 @@ SWIPL_DEPENDENCIES = host-swipl zlib
 # A host-swipl is needed to compile the target prolog boot
 # boot.prl file.
 HOST_SWIPL_CONF_OPTS = \
+	-DHAVE_CURSES_H=0 \
 	-DBUILD_PDF_DOCUMENTATION=OFF \
 	-DSWIPL_PACKAGES=OFF \
 	-DUSE_GMP=OFF \
@@ -29,12 +32,13 @@ HOST_SWIPL_CONF_OPTS = \
 # the path set to this variable. Therefore, we cannot use the host
 # "swipl" binary installed in $(HOST_DIR)/usr/bin.
 SWIPL_CONF_OPTS = \
+	-DHAVE_CURSES_H=0 \
 	-DBUILD_PDF_DOCUMENTATION=OFF \
 	-DHAVE_WEAK_ATTRIBUTE=1 \
 	-DLLROUND_OK=1 \
 	-DMODF_OK=1 \
 	-DQSORT_R_GNU=1 \
-	-DSWIPL_NATIVE_FRIEND=$(HOST_SWIPL_SRCDIR) \
+	-DSWIPL_NATIVE_FRIEND=$(HOST_SWIPL_BUILDDIR) \
 	-DSWIPL_PACKAGES=OFF \
 	-DUSE_TCMALLOC=OFF \
 	-DCMAKE_CXX_COMPILER=true

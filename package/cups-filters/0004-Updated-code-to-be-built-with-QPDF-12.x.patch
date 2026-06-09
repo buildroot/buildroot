@@ -1,0 +1,165 @@
+From 7b6e46ea6237763104bf2a22eca66ba92a6b71a4 Mon Sep 17 00:00:00 2001
+From: Till Kamppeter <till.kamppeter@gmail.com>
+Date: Wed, 12 Nov 2025 16:10:51 +0100
+Subject: [PATCH] Updated code to be built with QPDF 12.x
+
+- Set `#define POINTERHOLDER_TRANSITION 3`
+- Explicitly `#include <qpdf/PointerHolder.hh>`
+- `ph = (PointerHolder<Buffer>) new Buffer(buff, profile_size);` in `rastertopdf.cpp`
+- Removed `-DPOINTERHOLDER_TRANSITION=0` from `CXXFLAGS` in `configure.ac`
+- Replaced all `replaceOrRemoveKey()` by `replaceKey()`
+
+Upstream: https://github.com/OpenPrinting/cups-filters/commit/7b6e46ea6237763104bf2a22eca66ba92a6b71a4
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.ac                               |  3 ---
+ filter/pdf.cxx                             |  2 ++
+ filter/pdftopdf/qpdf_pdftopdf_processor.cc | 18 +++++++++---------
+ filter/pdftopdf/qpdf_xobject.cc            |  2 ++
+ filter/rastertopdf.cpp                     |  4 +++-
+ filter/urftopdf.cpp                        |  2 ++
+ 6 files changed, 18 insertions(+), 13 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 32180d0da..702b58a0a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -793,9 +793,6 @@ AS_IF([test x"$GCC" = "xyes"], [
+ 	CXXFLAGS="$CXXFLAGS -Wall " # -Weffc++" # TODO: enable when it does not print 1MB of warnings
+ ])
+ CFLAGS="$CFLAGS -D_GNU_SOURCE"
+-CXXFLAGS="$CXXFLAGS -D_GNU_SOURCE -DPOINTERHOLDER_TRANSITION=0"
+-#                                   ^^ Silence deprecation warnings of QPDF 11
+-#                                      See /usr/include/qpdf/PointerHolder.hh
+ CXXFLAGS="$CXXFLAGS -std=c++17" # Needed to build with current QPDF (11.x)
+ 
+ # ==========================
+diff --git a/filter/pdf.cxx b/filter/pdf.cxx
+index 68b1af912..7d592dc95 100644
+--- a/filter/pdf.cxx
++++ b/filter/pdf.cxx
+@@ -21,6 +21,8 @@
+ #include <vector>
+ #include <string>
+ #include <cstring>
++#define POINTERHOLDER_TRANSITION 3
++#include <qpdf/PointerHolder.hh>
+ #include <qpdf/QPDF.hh>
+ #include <qpdf/QPDFObjectHandle.hh>
+ #include <qpdf/QPDFWriter.hh>
+diff --git a/filter/pdftopdf/qpdf_pdftopdf_processor.cc b/filter/pdftopdf/qpdf_pdftopdf_processor.cc
+index beffc2423..3c21a6512 100644
+--- a/filter/pdftopdf/qpdf_pdftopdf_processor.cc
++++ b/filter/pdftopdf/qpdf_pdftopdf_processor.cc
+@@ -83,10 +83,10 @@ QPDFObjectHandle QPDF_PDFTOPDF_PageHandle::get() // {{{
+     page.getKey("/Resources").replaceKey("/XObject",QPDFObjectHandle::newDictionary(xobjs));
+     content.append("Q\n");
+     page.getKey("/Contents").replaceStreamData(content,QPDFObjectHandle::newNull(),QPDFObjectHandle::newNull());
+-    page.replaceOrRemoveKey("/Rotate",makeRotate(rotation));
++    page.replaceKey("/Rotate",makeRotate(rotation));
+   } else {
+     Rotation rot=getRotate(page)+rotation;
+-    page.replaceOrRemoveKey("/Rotate",makeRotate(rot));
++    page.replaceKey("/Rotate",makeRotate(rot));
+   }
+   page=QPDFObjectHandle(); // i.e. uninitialized
+   return ret;
+@@ -181,9 +181,9 @@ Rotation QPDF_PDFTOPDF_PageHandle::crop(const PageRect &cropRect,Rotation orient
+   page.assertInitialized();
+   Rotation save_rotate = getRotate(page);
+   if(orientation==ROT_0||orientation==ROT_180)
+-    page.replaceOrRemoveKey("/Rotate",makeRotate(ROT_90));
++    page.replaceKey("/Rotate",makeRotate(ROT_90));
+   else
+-    page.replaceOrRemoveKey("/Rotate",makeRotate(ROT_0));
++    page.replaceKey("/Rotate",makeRotate(ROT_0));
+ 
+   PageRect currpage= getBoxAsRect(getTrimBox(page));
+   double width = currpage.right-currpage.left;
+@@ -242,7 +242,7 @@ Rotation QPDF_PDFTOPDF_PageHandle::crop(const PageRect &cropRect,Rotation orient
+   //Cropping.
+   // TODO: Borders are covered by the image. buffer space?
+   page.replaceKey("/TrimBox",makeBox(currpage.left,currpage.bottom,currpage.right,currpage.top));
+-  page.replaceOrRemoveKey("/Rotate",makeRotate(save_rotate));
++  page.replaceKey("/Rotate",makeRotate(save_rotate));
+   return getRotate(page);
+ }
+ 
+@@ -251,14 +251,14 @@ bool QPDF_PDFTOPDF_PageHandle::is_landscape(Rotation orientation)
+   page.assertInitialized();
+   Rotation save_rotate = getRotate(page);
+   if(orientation==ROT_0||orientation==ROT_180)
+-    page.replaceOrRemoveKey("/Rotate",makeRotate(ROT_90));
++    page.replaceKey("/Rotate",makeRotate(ROT_90));
+   else
+-    page.replaceOrRemoveKey("/Rotate",makeRotate(ROT_0));
++    page.replaceKey("/Rotate",makeRotate(ROT_0));
+ 
+   PageRect currpage= getBoxAsRect(getTrimBox(page));
+   double width = currpage.right-currpage.left;
+   double height = currpage.top-currpage.bottom;
+-  page.replaceOrRemoveKey("/Rotate",makeRotate(save_rotate));
++  page.replaceKey("/Rotate",makeRotate(save_rotate));
+   if(width>height)
+     return true;
+   return false;
+@@ -665,7 +665,7 @@ void QPDF_PDFTOPDF_Processor::autoRotateAll(bool dst_lscape,Rotation normal_land
+       // TODO? other rotation direction, e.g. if (src_rot==ROT_0)&&(param.orientation==ROT_270) ... etc.
+       // rotation=ROT_270;
+ 
+-      page.replaceOrRemoveKey("/Rotate",makeRotate(src_rot+rotation));
++      page.replaceKey("/Rotate",makeRotate(src_rot+rotation));
+     }
+   }
+ }
+diff --git a/filter/pdftopdf/qpdf_xobject.cc b/filter/pdftopdf/qpdf_xobject.cc
+index 12732f1e9..2550bdd4f 100644
+--- a/filter/pdftopdf/qpdf_xobject.cc
++++ b/filter/pdftopdf/qpdf_xobject.cc
+@@ -1,5 +1,7 @@
+ #include "qpdf_xobject.h"
+ //#include <qpdf/Types.h>
++#define POINTERHOLDER_TRANSITION 3
++#include <qpdf/PointerHolder.hh>
+ #include <qpdf/QPDF.hh>
+ #include <qpdf/Pl_Discard.hh>
+ #include <qpdf/Pl_Count.hh>
+diff --git a/filter/rastertopdf.cpp b/filter/rastertopdf.cpp
+index ad5dd34c5..6a1aa218f 100644
+--- a/filter/rastertopdf.cpp
++++ b/filter/rastertopdf.cpp
+@@ -39,6 +39,8 @@
+ #include <arpa/inet.h>   // ntohl
+ 
+ #include <vector>
++#define POINTERHOLDER_TRANSITION 3
++#include <qpdf/PointerHolder.hh>
+ #include <qpdf/QPDF.hh>
+ #include <qpdf/QPDFWriter.hh>
+ #include <qpdf/QUtil.hh>
+@@ -481,7 +483,7 @@ QPDFObjectHandle embedIccProfile(QPDF &pdf)
+     cmsSaveProfileToMem(colorProfile, buff, &profile_size);
+ 
+     // Write ICC profile buffer into PDF
+-    ph = new Buffer(buff, profile_size);  
++    ph = (PointerHolder<Buffer>) new Buffer(buff, profile_size);
+     iccstream = QPDFObjectHandle::newStream(&pdf, ph);
+     iccstream.replaceDict(QPDFObjectHandle::newDictionary(streamdict));
+ 
+diff --git a/filter/urftopdf.cpp b/filter/urftopdf.cpp
+index 4e7f6535a..e5c9f1f33 100644
+--- a/filter/urftopdf.cpp
++++ b/filter/urftopdf.cpp
+@@ -32,6 +32,8 @@
+ #include <arpa/inet.h>   // ntohl
+ 
+ #include <vector>
++#define POINTERHOLDER_TRANSITION 3
++#include <qpdf/PointerHolder.hh>
+ #include <qpdf/QPDF.hh>
+ #include <qpdf/QPDFWriter.hh>
+ #include <qpdf/QUtil.hh>
+-- 
+2.47.3
+

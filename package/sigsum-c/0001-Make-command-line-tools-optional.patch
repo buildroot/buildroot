@@ -1,0 +1,71 @@
+From 5c74c6d0dd2dd1707b178083815f3a165e3e7dc3 Mon Sep 17 00:00:00 2001
+From: Florian Larysch <fl@n621.de>
+Date: Fri, 22 May 2026 14:36:02 +0200
+Subject: [PATCH] Make command line tools optional
+
+When only using the sigsum-c library in another program, the
+dedicated sigsum-c-verify tool might be redundant.
+
+Allow disabling it to save space/avoid littering /bin.
+
+Upstream: https://git.glasklar.is/sigsum/core/sigsum-c/-/commit/5c74c6d0dd2dd1707b178083815f3a165e3e7dc3
+Signed-off-by: Florian Larysch <fl@n621.de>
+---
+ Makefile.in  |  4 ++--
+ configure.ac | 11 +++++++++++
+ 2 files changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 0648adb..771551a 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -12,7 +12,7 @@ lib:
+ tools: lib
+ 	cd tools && $(MAKE) all
+ 
+-all:	lib @IF_PARSERS@ tools
++all:	lib @IF_TOOLS@ tools
+ 
+ clean distclean:
+ 	cd lib && $(MAKE) $@
+@@ -34,7 +34,7 @@ install-lib: lib
+ install-tools: tools
+ 	cd tools && $(MAKE) install
+ 
+-install: install-lib @IF_PARSERS@ install-tools
++install: install-lib @IF_TOOLS@ install-tools
+ 
+ # Remake configure-generated files.
+ # From the autoconf manual (4.8.5 Automatic Remaking)
+diff --git a/configure.ac b/configure.ac
+index 37a18b7..8305789 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -19,6 +19,16 @@ else
+    IF_PARSERS='#'
+ fi
+ 
++AC_ARG_ENABLE(tools,
++	AS_HELP_STRING([--disable-tools], [Do not build or install command-line tools.]),,
++	[enable_tools="$enable_parsers"])
++
++if test "$enable_tools" = yes ; then
++   IF_TOOLS=''
++else
++   IF_TOOLS='#'
++fi
++
+ AC_ARG_ENABLE(static,
+   AS_HELP_STRING([--disable-static], [Do not build any static library]),,
+   [enable_static=yes])
+@@ -47,6 +57,7 @@ if test -z "$PIC_CFLAGS" ; then
+ fi
+ 
+ AC_SUBST(IF_PARSERS)
++AC_SUBST(IF_TOOLS)
+ AC_SUBST(IF_STATIC)
+ AC_SUBST(IF_SHARED)
+ AC_SUBST(IF_NOT_SHARED)
+-- 
+2.54.0
+

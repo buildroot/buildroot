@@ -316,7 +316,9 @@ endif
 
 # By default llvm-tblgen is built and installed on the target but it is
 # not necessary. Also erase LLVMHello.so from /usr/lib
+# opt-viewer is not necessary either, remove that too
 define LLVM_DELETE_LLVM_TBLGEN_TARGET
+	rm -rf $(TARGET_DIR)/usr/share/opt-viewer
 	rm -f $(TARGET_DIR)/usr/bin/llvm-tblgen $(TARGET_DIR)/usr/lib/LLVMHello.so
 endef
 LLVM_POST_INSTALL_TARGET_HOOKS = LLVM_DELETE_LLVM_TBLGEN_TARGET

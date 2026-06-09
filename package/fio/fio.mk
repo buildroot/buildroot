@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FIO_VERSION = 3.41
+FIO_VERSION = 3.42
 FIO_SITE = https://brick.kernel.dk/snaps
 FIO_LICENSE = GPL-2.0
 FIO_LICENSE_FILES = COPYING MORAL-LICENSE

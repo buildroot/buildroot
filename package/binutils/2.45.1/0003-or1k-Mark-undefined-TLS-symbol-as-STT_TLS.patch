@@ -1,0 +1,61 @@
+From d320649e1805e5330a09b103d4ca890a12815f56 Mon Sep 17 00:00:00 2001
+From: "H.J. Lu" <hjl.tools@gmail.com>
+Date: Tue, 18 Nov 2025 12:09:54 +0800
+Subject: [PATCH] or1k: Mark undefined TLS symbol as STT_TLS
+
+Update or1k_apply_fix to handle all TLS relocations.
+
+	PR gas/33426
+	* config/tc-or1k.c (or1k_apply_fix): Handle all TLS relocations.
+
+Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
+
+Upstream: https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=d320649e1805e5330a09b103d4ca890a12815f56
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ gas/config/tc-or1k.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/gas/config/tc-or1k.c b/gas/config/tc-or1k.c
+index f5a20b94fa7..798cf6d6acc 100644
+--- a/gas/config/tc-or1k.c
++++ b/gas/config/tc-or1k.c
+@@ -354,22 +354,28 @@ or1k_apply_fix (struct fix *f, valueT *t, segT s)
+ 
+   switch (f->fx_r_type)
+     {
++    case BFD_RELOC_OR1K_TLS_DTPMOD:
++    case BFD_RELOC_OR1K_TLS_DTPOFF:
+     case BFD_RELOC_OR1K_TLS_GD_HI16:
++    case BFD_RELOC_OR1K_TLS_GD_LO13:
+     case BFD_RELOC_OR1K_TLS_GD_LO16:
+     case BFD_RELOC_OR1K_TLS_GD_PG21:
+-    case BFD_RELOC_OR1K_TLS_GD_LO13:
++    case BFD_RELOC_OR1K_TLS_IE_AHI16:
++    case BFD_RELOC_OR1K_TLS_IE_HI16:
++    case BFD_RELOC_OR1K_TLS_IE_LO13:
++    case BFD_RELOC_OR1K_TLS_IE_LO16:
++    case BFD_RELOC_OR1K_TLS_IE_PG21:
+     case BFD_RELOC_OR1K_TLS_LDM_HI16:
++    case BFD_RELOC_OR1K_TLS_LDM_LO13:
+     case BFD_RELOC_OR1K_TLS_LDM_LO16:
+     case BFD_RELOC_OR1K_TLS_LDM_PG21:
+-    case BFD_RELOC_OR1K_TLS_LDM_LO13:
+     case BFD_RELOC_OR1K_TLS_LDO_HI16:
+     case BFD_RELOC_OR1K_TLS_LDO_LO16:
+-    case BFD_RELOC_OR1K_TLS_IE_HI16:
+-    case BFD_RELOC_OR1K_TLS_IE_LO16:
+-    case BFD_RELOC_OR1K_TLS_IE_PG21:
+-    case BFD_RELOC_OR1K_TLS_IE_LO13:
++    case BFD_RELOC_OR1K_TLS_LE_AHI16:
+     case BFD_RELOC_OR1K_TLS_LE_HI16:
+     case BFD_RELOC_OR1K_TLS_LE_LO16:
++    case BFD_RELOC_OR1K_TLS_LE_SLO16:
++    case BFD_RELOC_OR1K_TLS_TPOFF:
+       S_SET_THREAD_LOCAL (f->fx_addsy);
+       break;
+     default:
+-- 
+2.43.7
+

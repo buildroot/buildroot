@@ -1,0 +1,57 @@
+From 0cce0968980e8fdd9053cba436a66246b2303a84 Mon Sep 17 00:00:00 2001
+From: Till Kamppeter <till.kamppeter@gmail.com>
+Date: Wed, 6 Dec 2023 22:56:41 +0100
+Subject: [PATCH] libcupsfilters: Fixed building with QPDF 11.x
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Set CXXFLAGS="-DPOINTERHOLDER_TRANSITION=0" to silence QPDF warnings
+
+QPDF 11 issues warnings about deprecated "PointerHolder", even if the
+code does not use "PointerHolder" any more. This compiler macro
+suppresses the warnings.
+
+See /usr/include/qpdf/PointerHolder.hh of QPDF 11.
+
+Backported from libcupsfilters (2.x), commit 076a994fce
+
+Added "-std=c++17" C++ compiler flag (PR#18)
+
+Needed as otherwise the QPDF.hh file of QPDF 11 causes the error
+
+    ‘std::string_view’ has not been declared
+
+Adding the "-std=c++17" to CXXFLAGS fixes this. See also
+
+    https://stackoverflow.com/questions/58295334/error-stdstring-view-has-no
+t-been-declared
+
+Backported from libcupsfilters (2.x), commit e1daf27c59
+
+Upstream: https://github.com/OpenPrinting/cups-filters/commit/0cce0968980e8fdd9053cba436a66246b2303a84
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.ac | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 083aecb83..f293e803b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -837,7 +837,10 @@ AS_IF([test x"$GCC" = "xyes"], [
+ 	CXXFLAGS="$CXXFLAGS -Wall " # -Weffc++" # TODO: enable when it does not print 1MB of warnings
+ ])
+ CFLAGS="$CFLAGS -D_GNU_SOURCE"
+-CXXFLAGS="$CXXFLAGS -D_GNU_SOURCE"
++CXXFLAGS="$CXXFLAGS -D_GNU_SOURCE -DPOINTERHOLDER_TRANSITION=0"
++#                                   ^^ Silence deprecation warnings of QPDF 11
++#                                      See /usr/include/qpdf/PointerHolder.hh
++CXXFLAGS="$CXXFLAGS -std=c++17" # Needed to build with current QPDF (11.x)
+ 
+ # ==========================
+ # Braille embossing/liblouis
+-- 
+2.47.3
+

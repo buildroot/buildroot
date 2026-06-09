@@ -11,6 +11,8 @@ POCO_LICENSE_FILES = LICENSE
 POCO_CPE_ID_VENDOR = pocoproject
 POCO_INSTALL_STAGING = YES
 
+POCO_EXCLUDES = **/libpq/libpq-fs.h
+
 POCO_DEPENDENCIES = \
 	pcre2 \
 	utf8proc \

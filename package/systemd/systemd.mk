@@ -62,7 +62,7 @@ SYSTEMD_DEPENDENCIES = \
 
 SYSTEMD_SELINUX_MODULES = systemd udev xdg
 
-SYSTEMD_PROVIDES = udev
+SYSTEMD_PROVIDES = libudev udev
 
 SYSTEMD_CONF_OPTS += \
 	-Dcreate-log-dirs=false \

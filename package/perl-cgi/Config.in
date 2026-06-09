@@ -1,0 +1,12 @@
+config BR2_PACKAGE_PERL_CGI
+	bool "perl-cgi"
+	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_PERL_HTML_PARSER # runtime
+	select BR2_PACKAGE_PERL_URI # runtime
+	help
+	  Handle Common Gateway Interface requests and responses.
+
+	  https://metacpan.org/module/CGI
+
+comment "perl-cgi needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS

@@ -144,6 +144,16 @@ config BR2_powerpc_power9
 	select BR2_POWERPC_CPU_HAS_ALTIVEC
 	select BR2_POWERPC_CPU_HAS_VSX
 	select BR2_ARCH_NEEDS_GCC_AT_LEAST_6
+config BR2_powerpc_power10
+	bool "power10"
+	select BR2_POWERPC_CPU_HAS_ALTIVEC
+	select BR2_POWERPC_CPU_HAS_VSX
+	select BR2_ARCH_NEEDS_GCC_AT_LEAST_11
+config BR2_powerpc_power11
+	bool "power11"
+	select BR2_POWERPC_CPU_HAS_ALTIVEC
+	select BR2_POWERPC_CPU_HAS_VSX
+	select BR2_ARCH_NEEDS_GCC_AT_LEAST_15
 endchoice
 
 config BR2_POWERPC_SOFT_FLOAT
@@ -207,6 +217,8 @@ config BR2_GCC_TARGET_CPU
 	default "power7"	if BR2_powerpc_power7
 	default "power8"	if BR2_powerpc_power8
 	default "power9"	if BR2_powerpc_power9
+	default "power10"	if BR2_powerpc_power10
+	default "power11"	if BR2_powerpc_power11
 
 config BR2_READELF_ARCH_NAME
 	default "PowerPC"	if BR2_powerpc

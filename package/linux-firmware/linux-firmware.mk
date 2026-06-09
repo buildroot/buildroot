@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LINUX_FIRMWARE_VERSION = 20260410
+LINUX_FIRMWARE_VERSION = 20260519
 LINUX_FIRMWARE_SOURCE = linux-firmware-$(LINUX_FIRMWARE_VERSION).tar.xz
 LINUX_FIRMWARE_SITE = $(BR2_KERNEL_MIRROR)/linux/kernel/firmware
 LINUX_FIRMWARE_INSTALL_IMAGES = YES
@@ -398,6 +398,28 @@ LINUX_FIRMWARE_FILES += mediatek/mt7662.bin mediatek/mt7662_rom_patch.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.ralink_a_mediatek_company_firmware
 endif
 
+# MT7916
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7916),y)
+LINUX_FIRMWARE_FILES += mediatek/mt7916_eeprom.bin \
+	mediatek/mt7916_rom_patch.bin \
+	mediatek/mt7916_wa.bin \
+	mediatek/mt7916_wm.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
+endif
+
+# MT7920
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7920),y)
+LINUX_FIRMWARE_FILES += mediatek/WIFI_MT7961_patch_mcu_1a_2_hdr.bin \
+	mediatek/WIFI_RAM_CODE_MT7961_1a.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
+endif
+
+# Mediatek MT7920 Bluetooth
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7920_BT),y)
+LINUX_FIRMWARE_FILES += mediatek/BT_RAM_CODE_MT7961_1a_2_hdr.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
+endif
+
 # MT7921
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7921),y)
 LINUX_FIRMWARE_FILES += mediatek/WIFI_MT7961_patch_mcu_1_2_hdr.bin \
@@ -435,6 +457,14 @@ endif
 # Mediatek MT7925 Bluetooth
 ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7925_BT),y)
 LINUX_FIRMWARE_FILES += mediatek/mt7925/BT_RAM_CODE_MT7925_1_1_hdr.bin
+LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
+endif
+
+# MT7927
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MEDIATEK_MT7927),y)
+LINUX_FIRMWARE_FILES += \
+	mediatek/mt7927/WIFI_MT6639_PATCH_MCU_2_1_hdr.bin \
+	mediatek/mt7927/WIFI_RAM_CODE_MT6639_2_1.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.mediatek
 endif
 

@@ -1,0 +1,36 @@
+From a84eece62edd46c1f4c8047f1052ac6181fc8b3e Mon Sep 17 00:00:00 2001
+From: Lucas Hecht <lucas.hecht@agdsn.de>
+Date: Tue, 26 May 2026 18:49:48 +0200
+Subject: [PATCH] backend: remove linux/prctl.h include to fix musl conflict
+
+Building with musl fails due to a duplicate definition of prctl_mm_map.
+This is because musl redefines linux/prctl.h in sys/prctl.h.
+
+This commit removes the linux/prctl.h include.
+
+Fixes: #2096
+
+Signed-off-by: Lucas Hecht <lucas.hecht@agdsn.de>
+
+Upstream: https://github.com/axboe/fio/commit/a84eece62edd46c1f4c8047f1052ac6181fc8b3e
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ backend.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/backend.c b/backend.c
+index f6023d0e..e2b33b14 100644
+--- a/backend.c
++++ b/backend.c
+@@ -32,7 +32,6 @@
+ #include <pthread.h>
+ 
+ #ifdef CONFIG_LINUX
+-#include <linux/prctl.h>
+ #include <sys/prctl.h>
+ #endif
+ 
+-- 
+2.47.3
+

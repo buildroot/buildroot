@@ -4,6 +4,7 @@ config BR2_PACKAGE_WIREPLUMBER
 	depends on BR2_PACKAGE_LUA_5_3 || BR2_PACKAGE_LUA_5_4
 	depends on BR2_USE_WCHAR # libglib2
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libglib2
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC # gettid
 	depends on BR2_USE_MMU # libglib2
 	select BR2_PACKAGE_LIBGLIB2
 	help
@@ -15,8 +16,9 @@ config BR2_PACKAGE_WIREPLUMBER
 
 	  https://pipewire.pages.freedesktop.org/wireplumber/
 
-comment "wireplumber needs a toolchain w/ wchar, threads and Lua >= 5.3"
+comment "wireplumber needs a glibc or musl toolchain w/ wchar, threads and Lua >= 5.3"
 	depends on BR2_PACKAGE_PIPEWIRE
 	depends on BR2_USE_MMU
 	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
+		BR2_TOOLCHAIN_USES_UCLIBC || \
 		(!BR2_PACKAGE_LUA_5_3 && !BR2_PACKAGE_LUA_5_4)

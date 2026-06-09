@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LIBENCA_VERSION = 1.19
-LIBENCA_SITE = http://dl.cihar.com/enca
+LIBENCA_VERSION = 1.22
+LIBENCA_SITE = https://github.com/Project-OSS-Revival/enca/releases/download/$(LIBENCA_VERSION)
 LIBENCA_SOURCE = enca-$(LIBENCA_VERSION).tar.xz
 LIBENCA_INSTALL_STAGING = YES
 LIBENCA_LICENSE = GPL-2.0

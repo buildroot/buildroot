@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QUOTA_VERSION = 4.10
+QUOTA_VERSION = 4.11
 QUOTA_SITE = https://downloads.sourceforge.net/project/linuxquota/quota-tools/$(QUOTA_VERSION)
 QUOTA_DEPENDENCIES = $(TARGET_NLS_DEPENDENCIES) host-nfs-utils
 QUOTA_LICENSE = GPL-2.0+

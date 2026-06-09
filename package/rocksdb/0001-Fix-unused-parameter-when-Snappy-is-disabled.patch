@@ -1,0 +1,24 @@
+From cfd448002d601159feab4908a616ae09c444b39e Mon Sep 17 00:00:00 2001
+From: Youngjae Lee <ls4154.lee@gmail.com>
+Date: Thu, 26 Jun 2025 21:51:03 +0900
+Subject: [PATCH] Fix unused parameter warning when Snappy is disabled
+
+Upstream: https://github.com/facebook/rocksdb/pull/13732
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ util/compression.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/util/compression.cc b/util/compression.cc
+index 0aa473b179d..ca1649571ca 100644
+--- a/util/compression.cc
++++ b/util/compression.cc
+@@ -693,6 +693,7 @@ class BuiltinDecompressorV2SnappyOnly : public BuiltinDecompressorV2 {
+     args.uncompressed_size = uncompressed_length;
+     return Status::OK();
+ #else
++    (void)args;
+     return Status::NotSupported("Snappy not supported in this build");
+ #endif
+   }

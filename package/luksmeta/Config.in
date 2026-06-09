@@ -2,7 +2,7 @@ config BR2_PACKAGE_LUKSMETA
 	bool "luksmeta"
 	depends on BR2_TOOLCHAIN_HAS_THREADS # cryptsetup -> lvm2
 	depends on BR2_USE_MMU # cryptsetup -> lvm2
-	depends on !BR2_STATIC_LIBS # cryptsetup -> lvm2
+	depends on !BR2_STATIC_LIBS # Build fails because of multiple crc32c() definitions
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # cryptsetup -> json-c
 	select BR2_PACKAGE_CRYPTSETUP
 	help

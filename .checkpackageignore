@@ -129,8 +129,6 @@ configs/olpc_xo175_defconfig lib_defconfig.ForceCheckHash
 configs/olpc_xo1_defconfig lib_defconfig.ForceCheckHash
 configs/orangepi_pc2_defconfig lib_defconfig.ForceCheckHash
 configs/orangepi_zero_plus_defconfig lib_defconfig.ForceCheckHash
-configs/pine64_defconfig lib_defconfig.ForceCheckHash
-configs/pine64_pinecube_defconfig lib_defconfig.ForceCheckHash
 configs/s6lx9_microboard_defconfig lib_defconfig.ForceCheckHash
 configs/sipeed_lichee_rv_defconfig lib_defconfig.ForceCheckHash
 configs/sipeed_lichee_rv_dock_defconfig lib_defconfig.ForceCheckHash
@@ -191,7 +189,6 @@ package/at/0001-Makefile.in-fix-make-install-for-non-root-don-t-stri.patch lib_p
 package/at/S99at lib_sysv.Indent lib_sysv.Variables
 package/attr/0001-build-with-older-GCCs.patch lib_patch.Upstream
 package/aumix/0001-fix-incorrect-makefile-am.patch lib_patch.Upstream
-package/autoconf/0001-dont-add-dirty-to-version.patch lib_patch.Upstream
 package/automake/0001-noman.patch lib_patch.Upstream
 package/avahi/S05avahi-setup.sh lib_sysv.Indent lib_sysv.Variables
 package/avahi/S50avahi-daemon lib_sysv.Indent lib_sysv.Variables
@@ -352,9 +349,9 @@ package/fstrcmp/0001-disable-rpath.patch lib_patch.Upstream
 package/ftop/0001-overflow.patch lib_patch.Upstream
 package/fxdiv/0001-CMake-don-t-enable-CXX-unless-building-tests-benchma.patch lib_patch.Upstream
 package/fxload/0001-fix-static-build.patch lib_patch.Upstream
-package/gcc/13.4.0/0001-disable-split-stack-for-non-thread-builds.patch lib_patch.Upstream
 package/gcc/14.3.0/0001-disable-split-stack-for-non-thread-builds.patch lib_patch.Upstream
 package/gcc/15.2.0/0001-disable-split-stack-for-non-thread-builds.patch lib_patch.Upstream
+package/gcc/16.1.0/0001-disable-split-stack-for-non-thread-builds.patch lib_patch.Upstream
 package/gcc/8.4.0/0001-xtensa-fix-PR-target-91880.patch lib_patch.Upstream
 package/gcc/8.4.0/0002-Revert-re-PR-target-92095-internal-error-with-O1-mcp.patch lib_patch.Upstream
 package/gcc/8.4.0/0003-libsanitizer-Remove-cyclades-from-libsanitizer.patch lib_patch.Upstream
@@ -386,6 +383,15 @@ package/gdb/16.3/0006-Fix-getrandom-compile-for-uclibc-v1.0.35.patch lib_patch.U
 package/gdb/16.3/0007-fix-musl-build-on-riscv.patch lib_patch.Upstream
 package/gdb/16.3/0008-gdbserver-Makefile.in-fix-NLS-build.patch lib_patch.Upstream
 package/gdb/16.3/0009-gdb-Fix-native-build-on-xtensa.patch lib_patch.Upstream
+package/gdb/17.1/0001-ppc-ptrace-Define-pt_regs-uapi_pt_regs-on-GLIBC-syst.patch lib_patch.Upstream
+package/gdb/17.1/0002-sh-ptrace-Define-pt_-dsp-regs-uapi_pt_-dsp-regs-on-G.patch lib_patch.Upstream
+package/gdb/17.1/0003-use-asm-sgidefs.h.patch lib_patch.Upstream
+package/gdb/17.1/0004-gdbserver-fix-build-for-m68k.patch lib_patch.Upstream
+package/gdb/17.1/0005-nat-fork-inferior-include-linux-ptrace.h.patch lib_patch.Upstream
+package/gdb/17.1/0006-Fix-getrandom-compile-for-uclibc-v1.0.35.patch lib_patch.Upstream
+package/gdb/17.1/0007-fix-musl-build-on-riscv.patch lib_patch.Upstream
+package/gdb/17.1/0008-gdbserver-Makefile.in-fix-NLS-build.patch lib_patch.Upstream
+package/gdb/17.1/0009-gdb-Fix-native-build-on-xtensa.patch lib_patch.Upstream
 package/genpart/0001-fix-return-code.patch lib_patch.Upstream
 package/gensio/0001-Fix-missing-EVP_PKEY_ED25519-build-error-on-libressl.patch lib_patch.Upstream
 package/gerbera/S99gerbera lib_sysv.Indent
@@ -561,8 +567,7 @@ package/lirc-tools/0002-configure-add-disable-doc-option.patch lib_patch.Upstrea
 package/lirc-tools/S25lircd lib_sysv.Indent lib_sysv.Variables
 package/live555/0001-Add-a-pkg-config-file-for-the-shared-libraries.patch lib_patch.Upstream
 package/lldpd/S60lldpd Shellcheck lib_sysv.Indent lib_sysv.Variables
-package/lm-sensors/0001-static-build.patch lib_patch.Upstream
-package/lm-sensors/0002-no-host-ldconfig.patch lib_patch.Upstream
+package/lm-sensors/0001-no-host-ldconfig.patch lib_patch.Upstream
 package/lmbench/0001-scripts-build-use-bin-bash-as-shell.patch lib_patch.Upstream
 package/lmbench/0002-src-Makefile-add-lmbench-to-list-of-executables.patch lib_patch.Upstream
 package/lmbench/0003-TOO_LONG-100-usec-to-prevent-memsize-from-timingout-.patch lib_patch.Upstream
@@ -687,8 +692,9 @@ package/olsr/0006-build-patch-for-gpsd-3-25.patch lib_patch.Upstream
 package/olsr/S50olsr Shellcheck lib_sysv.Indent lib_sysv.Variables
 package/open-plc-utils/0001-Remove-OWNER-and-GROUPS-parameters-to-install.patch lib_patch.Upstream
 package/open2300/0001-fix-makefile.patch lib_patch.Upstream
-package/openjdk/17.0.12+7/0001-Add-ARCv2-ISA-processors-support-to-Zero.patch lib_patch.Upstream
-package/openjdk/21.0.4+7/0001-Add-ARCv2-ISA-processors-support-to-Zero.patch lib_patch.Upstream
+package/openjdk/17.0.18+8/0001-Add-ARCv2-ISA-processors-support-to-Zero.patch lib_patch.Upstream
+package/openjdk/21.0.10+7/0001-Add-ARCv2-ISA-processors-support-to-Zero.patch lib_patch.Upstream
+package/openjdk/25.0.2+10/0001-Add-ARCv2-ISA-processors-support-to-Zero.patch lib_patch.Upstream
 package/openldap/0001-fix-bignum.patch lib_patch.Upstream
 package/openldap/0002-disable-docs.patch lib_patch.Upstream
 package/openntpd/S49ntp Shellcheck lib_sysv.Variables
@@ -776,11 +782,7 @@ package/qextserialport/0001-Create-a-main-include-file-QExtSerialPort.patch lib_
 package/qextserialport/0002-Tell-qmake-to-add-a-pkgconfig-file-to-ease-usage-wit.patch lib_patch.Upstream
 package/qt5/qt5base/0001-qtbase-Fix-build-error-when-using-EGL.patch lib_patch.Upstream
 package/qt5/qt5base/0002-double-conversion-enable-for-microblaze.patch lib_patch.Upstream
-package/qt5/qt5base/0003-double-conversion-enable-for-nios2.patch lib_patch.Upstream
-package/qt5/qt5base/0004-double-conversion-enable-for-xtensa.patch lib_patch.Upstream
 package/qt5/qt5base/0005-eglfs-avoid-breaking-compilation-for-obscure-EGLNativeDisplayType-types.patch lib_patch.Upstream
-package/qt5/qt5base/0006-Fix-build-on-riscv32.patch lib_patch.Upstream
-package/qt5/qt5base/0007-src-corelib-configure.json-fix-atomicfptr-detection.patch lib_patch.Upstream
 package/qt5/qt5base/0008-eglconvenience-add-missing-QList-include.patch lib_patch.Upstream
 package/qt5/qt5declarative/0001-qsgtexture-fix-debug-build-with-uclibc.patch lib_patch.Upstream
 package/qt5/qt5declarative/0002-qv4regexp_p-needs-c-limits-include-instead-of-plain-.patch lib_patch.Upstream
@@ -788,10 +790,8 @@ package/qt5/qt5enginio/0001-Do-not-use-deprecated-QLinkedList.patch lib_patch.Up
 package/qt5/qt5location/0001-3rdparty-mapbox-gl-native-fix-musl-compile-pthread_g.patch lib_patch.Upstream
 package/qt5/qt5script/0001-Detect-32-bits-armv8-a-architecture.patch lib_patch.Upstream
 package/qt5/qt5tools/0001-Disable-designer-tool-fixes-configure-error.patch lib_patch.Upstream
-package/qt5/qt5webengine-chromium/0001-Add-python3-build-support.patch lib_patch.Upstream
-package/qt5/qt5webengine-chromium/0002-Don-t-rebase-sysroot-path.patch lib_patch.Upstream
+package/qt5/qt5webengine-chromium/0001-Don-t-rebase-sysroot-path.patch lib_patch.Upstream
 package/qt5/qt5webengine/0001-gn.pro-don-t-link-statically-with-libstc.patch lib_patch.Upstream
-package/qt5/qt5webengine/0002-Add-python3-build-support.patch lib_patch.Upstream
 package/qt5/qt5webkit/0001-WinCairo-PlayStation-ICU-68.1-no-longer-exposes-FALS.patch lib_patch.Upstream
 package/qt5/qt5webkit/0002-Fix-compilation-with-Python-3.9-avoid-passing-encodi.patch lib_patch.Upstream
 package/qt5/qt5webkit/0003-Let-Bison-generate-the-header-directly-to-fix-build-.patch lib_patch.Upstream
@@ -811,7 +811,6 @@ package/restorecond/S02restorecond Shellcheck
 package/ripgrep/0001-puts-jemalloc-allocator-behind-a-cargo-feature-flag.patch lib_patch.Upstream
 package/riscv-isa-sim/0001-riscv-disable-precompiled-headers.patch lib_patch.Upstream
 package/rng-tools/S21rngd Shellcheck lib_sysv.Variables
-package/rocksdb/0001-build_tools-build_detect_platform-fix-C-tests.patch lib_patch.Upstream
 package/rpcbind/0001-Remove-yellow-pages-support.patch lib_patch.Upstream
 package/rpcbind/S30rpcbind lib_sysv.EmptyLastLine lib_sysv.Indent lib_sysv.Variables
 package/rt-tests/0001-Fix-a-build-issue-with-uClibc-ng.patch lib_patch.Upstream
@@ -884,7 +883,6 @@ package/ti-sgx-um/0001-Makefile-do-not-install-init-script.patch lib_patch.Upstr
 package/ti-sgx-um/S80ti-sgx lib_sysv.Variables
 package/ti-utils/0001-plt.h-fix-build-with-gcc-10.patch lib_patch.Upstream
 package/tinyalsa/0001-include-time.h-before-asound.h.patch lib_patch.Upstream
-package/tinycompress/0001-wave-add-time.h-missing-header-inclusion.patch lib_patch.Upstream
 package/tinydtls/0001-sha2-sha2.c-fix-build-on-big-endian.patch lib_patch.Upstream
 package/transmission/S92transmission Shellcheck lib_sysv.ConsecutiveEmptyLines lib_sysv.Indent lib_sysv.Variables
 package/triggerhappy/S10triggerhappy Shellcheck lib_sysv.Indent lib_sysv.Variables

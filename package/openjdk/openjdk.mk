@@ -4,15 +4,18 @@
 #
 ################################################################################
 
-ifeq ($(BR2_PACKAGE_OPENJDK_VERSION_21),y)
+ifeq ($(BR2_PACKAGE_OPENJDK_VERSION_25),y)
+OPENJDK_VERSION_MAJOR = 25
+OPENJDK_VERSION_MINOR = 0.2
+OPENJDK_VERSION_BUILD = 10
+else ifeq ($(BR2_PACKAGE_OPENJDK_VERSION_21),y)
 OPENJDK_VERSION_MAJOR = 21
-OPENJDK_VERSION_MINOR = 0.4
+OPENJDK_VERSION_MINOR = 0.10
 OPENJDK_VERSION_BUILD = 7
-
 else
 OPENJDK_VERSION_MAJOR = 17
-OPENJDK_VERSION_MINOR = 0.12
-OPENJDK_VERSION_BUILD = 7
+OPENJDK_VERSION_MINOR = 0.18
+OPENJDK_VERSION_BUILD = 8
 endif
 OPENJDK_VERSION = $(OPENJDK_VERSION_MAJOR).$(OPENJDK_VERSION_MINOR)+$(OPENJDK_VERSION_BUILD)
 OPENJDK_SITE = $(call github,openjdk,jdk$(OPENJDK_VERSION_MAJOR)u,jdk-$(OPENJDK_VERSION))
@@ -80,7 +83,6 @@ OPENJDK_CONF_ENV = \
 
 OPENJDK_CONF_OPTS = \
 	--disable-full-docs \
-	--disable-manpages \
 	--disable-warnings-as-errors \
 	--enable-openjdk-only \
 	--enable-unlimited-crypto \
@@ -90,7 +92,7 @@ OPENJDK_CONF_OPTS = \
 	--with-debug-level=release \
 	--with-devkit=$(HOST_DIR) \
 	--with-extra-cflags="$(TARGET_CFLAGS)" \
-	--with-extra-cxxflags="$(TARGET_CXXFLAGS)" \
+	--with-extra-cxxflags="$(TARGET_CXXFLAGS) -fpermissive" \
 	--with-extra-ldflags="-Wl,-rpath,$(OPENJDK_INSTALL_BASE)/lib,-rpath,$(OPENJDK_INSTALL_BASE)/lib/$(OPENJDK_JVM_VARIANT)" \
 	--with-giflib=system \
 	--with-jobs=$(PARALLEL_JOBS) \

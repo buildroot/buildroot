@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PIPEWIRE_VERSION = 1.2.8
+PIPEWIRE_VERSION = 1.6.6
 PIPEWIRE_SOURCE = pipewire-$(PIPEWIRE_VERSION).tar.bz2
 PIPEWIRE_SITE = https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/$(PIPEWIRE_VERSION)
 PIPEWIRE_LICENSE = MIT, LGPL-2.1+ (libspa-alsa), GPL-2.0 (libjackserver)
@@ -70,13 +70,13 @@ endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 PIPEWIRE_CONF_OPTS += \
-	-Dsystemd=enabled \
+	-Dlibsystemd=enabled \
 	-Dsystemd-system-service=enabled \
 	-Dsystemd-user-service=enabled
 PIPEWIRE_DEPENDENCIES += systemd
 else
 PIPEWIRE_CONF_OPTS += \
-	-Dsystemd=disabled \
+	-Dlibsystemd=disabled \
 	-Dsystemd-system-service=disabled \
 	-Dsystemd-user-service=disabled
 endif
@@ -100,7 +100,8 @@ else
 PIPEWIRE_CONF_OPTS += -Davahi=disabled
 endif
 
-ifeq ($(BR2_PACKAGE_JACK2),y)
+# uClibc does not implement thread_local
+ifeq ($(BR2_PACKAGE_JACK2):$(BR2_TOOLCHAIN_USES_UCLIBC),y:)
 PIPEWIRE_CONF_OPTS += -Dpipewire-jack=enabled -Djack=enabled
 PIPEWIRE_DEPENDENCIES += jack2
 else

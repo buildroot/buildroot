@@ -1,0 +1,17 @@
+config BR2_PACKAGE_SIGSUM_C
+	bool "sigsum-c"
+	select BR2_PACKAGE_NETTLE
+	help
+	  C library and command-line utility for verifying Sigsum
+	  proofs.
+
+	  https://git.glasklar.is/sigsum/core/sigsum-c/
+
+if BR2_PACKAGE_SIGSUM_C
+
+config BR2_PACKAGE_SIGSUM_C_TOOLS
+	bool "Enable tools"
+	help
+	  Build CLI tools like sigsum-c-verify.
+
+endif

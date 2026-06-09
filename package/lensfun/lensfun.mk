@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-LENSFUN_VERSION = 0.3.4
-LENSFUN_SITE = $(call github,lensfun,lensfun,v$(LENSFUN_VERSION))
+LENSFUN_VERSION = 268821c02495c0ffff8332417f0d59bdbefa545d
+LENSFUN_SITE = $(call github,lensfun,lensfun,$(LENSFUN_VERSION))
 LENSFUN_LICENSE = LGPL-3.0+ (libraries), GPL-3.0+ (programs)
 LENSFUN_LICENSE_FILES = docs/gpl-3.0.txt docs/lgpl-3.0.txt
 LENSFUN_INSTALL_STAGING = YES
@@ -42,6 +42,8 @@ endif
 
 # Don't install helper scripts (which require python3 and gksudo).
 # Don't run setup.py on the host.
-LENSFUN_CONF_OPTS += -DINSTALL_HELPER_SCRIPTS=OFF -DPYTHON=OFF
+LENSFUN_CONF_OPTS += \
+	-DINSTALL_HELPER_SCRIPTS=OFF \
+	-DINSTALL_PYTHON_MODULE=OFF
 
 $(eval $(cmake-package))

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SWUPDATE_VERSION = 2025.05
+SWUPDATE_VERSION = 2025.12
 SWUPDATE_SITE = $(call github,sbabic,swupdate,$(SWUPDATE_VERSION))
 SWUPDATE_LICENSE = GPL-2.0, GPL-2.0+, LGPL-2.1+, MIT, ISC, BSD-1-Clause, BSD-3-Clause, CC0-1.0, CC-BY-SA-4.0, OFL-1.1
 SWUPDATE_LICENSE_FILES = LICENSES/BSD-1-Clause.txt \
@@ -18,7 +18,7 @@ SWUPDATE_LICENSE_FILES = LICENSES/BSD-1-Clause.txt \
 	LICENSES/MIT.txt \
 	LICENSES/OFL-1.1.txt
 SWUPDATE_INSTALL_STAGING = YES
-SWUPDATE_DEPENDENCIES = json-c libubootenv
+SWUPDATE_DEPENDENCIES = json-c libconfig libubootenv
 
 # swupdate uses $CROSS-cc instead of $CROSS-gcc, which is not
 # available in all external toolchains, and use CC for linking. Ensure
@@ -51,13 +51,6 @@ else
 SWUPDATE_MAKE_ENV += HAVE_LIBBLKID=n
 endif
 
-ifeq ($(BR2_PACKAGE_LIBCONFIG),y)
-SWUPDATE_DEPENDENCIES += libconfig
-SWUPDATE_MAKE_ENV += HAVE_LIBCONFIG=y
-else
-SWUPDATE_MAKE_ENV += HAVE_LIBCONFIG=n
-endif
-
 ifeq ($(BR2_PACKAGE_LIBCURL),y)
 SWUPDATE_DEPENDENCIES += libcurl
 SWUPDATE_MAKE_ENV += HAVE_LIBCURL=y
@@ -80,6 +73,13 @@ SWUPDATE_DEPENDENCIES += libgpiod
 SWUPDATE_MAKE_ENV += HAVE_LIBGPIOD=y
 else
 SWUPDATE_MAKE_ENV += HAVE_LIBGPIOD=n
+endif
+
+ifeq ($(BR2_PACKAGE_LIBGPGME),y)
+SWUPDATE_DEPENDENCIES += libgpgme
+SWUPDATE_MAKE_ENV += HAVE_GPGME=y
+else
+SWUPDATE_MAKE_ENV += HAVE_GPGME=n
 endif
 
 ifeq ($(BR2_PACKAGE_LIBURIPARSER),y)
@@ -126,10 +126,8 @@ endif
 ifeq ($(BR2_PACKAGE_OPENSSL),y)
 SWUPDATE_DEPENDENCIES += openssl
 SWUPDATE_MAKE_ENV += HAVE_LIBSSL=y
-SWUPDATE_MAKE_ENV += HAVE_LIBCRYPTO=y
 else
 SWUPDATE_MAKE_ENV += HAVE_LIBSSL=n
-SWUPDATE_MAKE_ENV += HAVE_LIBCRYPTO=n
 endif
 
 ifeq ($(BR2_PACKAGE_P11_KIT),y)

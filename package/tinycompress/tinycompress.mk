@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-TINYCOMPRESS_VERSION = 1.2.13
+TINYCOMPRESS_VERSION = 1.2.16
 TINYCOMPRESS_SOURCE = tinycompress-$(TINYCOMPRESS_VERSION).tar.bz2
 TINYCOMPRESS_SITE = https://www.alsa-project.org/files/pub/tinycompress
 TINYCOMPRESS_LICENSE = BSD-3-Clause and LGPL-2.1
 TINYCOMPRESS_LICENSE_FILES = COPYING
 TINYCOMPRESS_INSTALL_STAGING = YES
+TINYCOMPRESS_DEPENDENCIES = host-pkgconf
 
 $(eval $(autotools-package))

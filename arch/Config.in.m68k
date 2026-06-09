@@ -23,6 +23,11 @@ choice
 	help
 	  Specific CPU variant to use
 
+config BR2_m68k_68000
+	bool "68000"
+	select BR2_m68k_m68k
+	select BR2_SOFT_FLOAT
+
 config BR2_m68k_68030
 	bool "68030"
 	select BR2_m68k_m68k
@@ -41,6 +46,7 @@ config BR2_m68k_cf5208
 endchoice
 
 config BR2_GCC_TARGET_CPU
+	default "68000"		if BR2_m68k_68000
 	default "68030"		if BR2_m68k_68030
 	default "68040"		if BR2_m68k_68040
 	default "5208"		if BR2_m68k_cf5208

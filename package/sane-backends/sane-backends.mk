@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-SANE_BACKENDS_VERSION = 1.1.1
+SANE_BACKENDS_VERSION = 1.4.0
 SANE_BACKENDS_SITE = \
-	https://gitlab.com/sane-project/backends/uploads/7d30fab4e115029d91027b6a58d64b43
+	https://gitlab.com/-/project/429008/uploads/843c156420e211859e974f78f64c3ea3
 SANE_BACKENDS_CONFIG_SCRIPTS = sane-config
 SANE_BACKENDS_LICENSE = GPL-2.0+
 SANE_BACKENDS_LICENSE_FILES = COPYING
@@ -81,6 +81,15 @@ define SANE_BACKENDS_DISABLE_DOCS
 endef
 
 SANE_BACKENDS_POST_CONFIGURE_HOOKS += SANE_BACKENDS_DISABLE_DOCS
+
+# uClibc does not provide iopl() on these platforms:
+# umax_pp_low.c:835:7: error: implicit declaration of function 'iopl'
+ifeq ($(BR2_microblazeel)$(BR2_mipsel)$(BR2_powerpc)$(BR2_TOOLCHAIN_USES_UCLIBC),yy)
+define SANE_BACKENDS_DISABLE_UMAX_PP
+	$(SED) 's/umax_pp //' $(@D)/configure
+endef
+SANE_BACKENDS_POST_PATCH_HOOKS += SANE_BACKENDS_DISABLE_UMAX_PP
+endif
 
 define SANE_BACKENDS_USERS
 	saned -1 saned -1 * /etc/sane.d - - Saned User

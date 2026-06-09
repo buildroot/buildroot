@@ -1,0 +1,43 @@
+From ac1110be8a65b230a3413890c77565cead5fa44f Mon Sep 17 00:00:00 2001
+From: Thomas Devoogdt <thomas@devoogdt.com>
+Date: Sat, 21 Feb 2026 15:45:42 +0100
+Subject: [PATCH] src: hotspot: aarch64: macro assembler: fix cmp
+
+Older GCC versions (e.g., GCC 6.x from bootlin toolchains) cannot
+resolve the overload ambiguity when passing an InstanceKlass::ClassState
+enum value to cmp(). The compiler sees both cmp(Register, unsigned char)
+and the deleted cmp(Register, unsigned int) as candidates.
+
+Explicitly cast the enum value to unsigned char to fix the build with
+older toolchains.
+
+Fixes:
+
+  * For target hotspot_variant-server_libjvm_objs_macroAssembler_aarch64.o:
+  /home/thomas/br-test-pkg/bootlin-aarch64-glibc-old/build/openjdk-25.0.2+10/src/hotspot/cpu/aarch64/macroAssembler_aarch64.cpp: In member function 'void MacroAssembler::clinit_barrier(Register, Register, Label*, Label*)':
+  /home/thomas/br-test-pkg/bootlin-aarch64-glibc-old/build/openjdk-25.0.2+10/src/hotspot/cpu/aarch64/macroAssembler_aarch64.cpp:2048:48: error: call of overloaded 'cmp(Register&, InstanceKlass::ClassState)' is ambiguous
+     cmp(scratch, InstanceKlass::fully_initialized);
+                                                  ^
+
+Upstream: https://github.com/openjdk/jdk/pull/29856
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+---
+ src/hotspot/cpu/aarch64/macroAssembler_aarch64.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/hotspot/cpu/aarch64/macroAssembler_aarch64.cpp b/src/hotspot/cpu/aarch64/macroAssembler_aarch64.cpp
+index a424bd7f275..5cf4b1d981f 100644
+--- a/src/hotspot/cpu/aarch64/macroAssembler_aarch64.cpp
++++ b/src/hotspot/cpu/aarch64/macroAssembler_aarch64.cpp
+@@ -2045,7 +2045,7 @@ void MacroAssembler::clinit_barrier(Register klass, Register scratch, Label* L_f
+   // Fast path check: class is fully initialized
+   lea(scratch, Address(klass, InstanceKlass::init_state_offset()));
+   ldarb(scratch, scratch);
+-  cmp(scratch, InstanceKlass::fully_initialized);
++  cmp(scratch, (unsigned char)InstanceKlass::fully_initialized);
+   br(Assembler::EQ, *L_fast_path);
+ 
+   // Fast path check: current thread is initializer thread
+-- 
+2.43.0
+

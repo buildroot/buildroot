@@ -144,6 +144,23 @@ endif
 
 ###############################################################################
 
+comment "Legacy options removed in 2026.08"
+
+config BR2_GCC_VERSION_13_X
+	bool "gcc 13.x support removed"
+	select BR2_LEGACY
+	help
+	  Support for building a toolchain based on GCC 13.x has been
+	  removed, chose a newer GCC version instead.
+
+config BR2_PACKAGE_QEMU_TARGET_MICROBLAZEEL
+	bool "qemu target microblazeel removed"
+	select BR2_PACKAGE_QEMU_TARGET_MICROBLAZE
+	select BR2_LEGACY
+	help
+	  Version 11.0.0 of qemu folded microblazeel support into
+	  the microblaze target.
+
 comment "Legacy options removed in 2026.05"
 
 config BR2_PACKAGE_PTPD2

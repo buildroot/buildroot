@@ -1,0 +1,6 @@
+config BR2_PACKAGE_HAS_LIBUDEV
+	bool
+
+config BR2_PACKAGE_PROVIDES_LIBUDEV
+	string
+	depends on BR2_PACKAGE_HAS_LIBUDEV

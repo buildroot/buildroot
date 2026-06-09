@@ -1,0 +1,42 @@
+From 87cb37e3341a33c5a8fac361972c53b1edc56799 Mon Sep 17 00:00:00 2001
+From: Thomas Devoogdt <thomas@devoogdt.com>
+Date: Sat, 21 Feb 2026 15:50:42 +0100
+Subject: [PATCH] src: hotspot: share: gc: shenandoah: fix constexpr
+
+Older GCC versions (e.g., GCC 6.x from bootlin toolchains) enforce
+C++14 rules more strictly and do not allow constexpr member functions
+on non-literal types. ShenandoahSimpleBitMap is not a literal type
+because it has a non-trivial destructor or other disqualifying members.
+
+Remove constexpr from ShenandoahSimpleBitMap::alignment() to fix the
+build with older toolchains. The function can still be inlined and
+optimized.
+
+Fixes:
+
+  /home/thomas/br-test-pkg/bootlin-aarch64-glibc-old/build/openjdk-25.0.2+10/src/hotspot/share/gc/shenandoah/shenandoahSimpleBitMap.hpp:93:26: error: enclosing class of constexpr non-static member function 'idx_t ShenandoahSimpleBitMap::alignment() const' is not a literal type
+     inline constexpr idx_t alignment() const {
+                            ^~~~~~~~~
+
+Upstream: https://github.com/openjdk/jdk/pull/29856
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+---
+ src/hotspot/share/gc/shenandoah/shenandoahSimpleBitMap.hpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/hotspot/share/gc/shenandoah/shenandoahSimpleBitMap.hpp b/src/hotspot/share/gc/shenandoah/shenandoahSimpleBitMap.hpp
+index 3a4cb8cf742..451c11e2e58 100644
+--- a/src/hotspot/share/gc/shenandoah/shenandoahSimpleBitMap.hpp
++++ b/src/hotspot/share/gc/shenandoah/shenandoahSimpleBitMap.hpp
+@@ -90,7 +90,7 @@ class ShenandoahSimpleBitMap {
+     return array_idx;
+   }
+ 
+-  inline constexpr idx_t alignment() const {
++  inline idx_t alignment() const {
+     return BitsPerWord;
+   }
+ 
+-- 
+2.43.0
+
