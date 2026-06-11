@@ -19,6 +19,11 @@ LIBINPUT_CONF_OPTS = -Dtests=false -Dlibwacom=false -Ddocumentation=false
 # https://gitlab.freedesktop.org/libinput/libinput/-/commit/9e37bc0cfa4d975291e5a2899e148fb83526d4a2
 LIBINPUT_IGNORE_CVES += CVE-2026-35093 CVE-2026-35094
 
+# 0001-dont-call-function-in-macro-argument.patch
+# 0002-util-sanitize-control-characters-in-str-sanitize.patch
+# 0003-libinput-device-group-sanitize-phys-before-printing-it.patch
+LIBINPUT_IGNORE_CVES += CVE-2026-50292
+
 ifeq ($(BR2_PACKAGE_LIBGTK3),y)
 LIBINPUT_CONF_OPTS += -Ddebug-gui=true
 LIBINPUT_DEPENDENCIES += libgtk3
