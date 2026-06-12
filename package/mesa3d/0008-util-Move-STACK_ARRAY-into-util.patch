@@ -1,0 +1,120 @@
+From 1f3496053b13451bd992c3ca390edb4d39c5ffa2 Mon Sep 17 00:00:00 2001
+From: Faith Ekstrand <faith.ekstrand@collabora.com>
+Date: Tue, 29 Jul 2025 03:10:41 -0400
+Subject: [PATCH] util: Move STACK_ARRAY into util
+
+It's useful for more than just Vulkan.
+
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+Reviewed-by: Christoph Pillmayer <christoph.pillmayer@arm.com>
+(cherry picked from commit f43cff3728e58c377d1e03b13db62514217abfe1)
+
+Part-of: <https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/39969>
+Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/commit/6167c7acf049330f37b59ea9bd155d8f644f4efa
+[removed changes to .pick_status.json, not applicable to 24.0.9]
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+ src/util/meson.build      |  1 +
+ src/util/stack_array.h    | 45 +++++++++++++++++++++++++++++++++++++++
+ src/vulkan/util/vk_util.h | 17 +--------------
+ 3 files changed, 47 insertions(+), 16 deletions(-)
+ create mode 100644 src/util/stack_array.h
+
+diff --git a/src/util/meson.build b/src/util/meson.build
+index eb88f235c47..d7cba3a5966 100644
+--- a/src/util/meson.build
++++ b/src/util/meson.build
+@@ -122,6 +122,7 @@ files_mesa_util = files(
+   'softfloat.h',
+   'sparse_array.c',
+   'sparse_array.h',
++  'stack_array.h',
+   'string_buffer.c',
+   'string_buffer.h',
+   'strndup.h',
+diff --git a/src/util/stack_array.h b/src/util/stack_array.h
+new file mode 100644
+index 00000000000..e2133bdc2f4
+--- /dev/null
++++ b/src/util/stack_array.h
+@@ -0,0 +1,45 @@
++/*
++ * Copyright © 2025 Collabora, Ltd.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice (including the next
++ * paragraph) shall be included in all copies or substantial portions of the
++ * Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
++ * IN THE SOFTWARE.
++ */
++
++#include <stdlib.h>
++
++#ifndef UTIL_STACK_ARRAY_H
++#define UTIL_STACK_ARRAY_H
++
++#define STACK_ARRAY_SIZE 8
++
++/* Sometimes gcc may claim -Wmaybe-uninitialized for the stack array in some
++ * places it can't verify that when size is 0 nobody down the call chain reads
++ * the array. Please don't try to fix it by zero-initializing the array here
++ * since it's used in a lot of different places. An "if (size == 0) return;"
++ * may work for you.
++ */
++#define STACK_ARRAY(type, name, size) \
++   type _stack_##name[STACK_ARRAY_SIZE]; \
++   type *const name = \
++     ((size) <= STACK_ARRAY_SIZE ? _stack_##name : (type *)malloc((size) * sizeof(type)))
++
++#define STACK_ARRAY_FINISH(name) \
++   if (name != _stack_##name) free(name)
++
++#endif /* UTIL_STACK_ARRAY_H */
+diff --git a/src/vulkan/util/vk_util.h b/src/vulkan/util/vk_util.h
+index 5c1ac5e1f25..e1712e4a78d 100644
+--- a/src/vulkan/util/vk_util.h
++++ b/src/vulkan/util/vk_util.h
+@@ -26,6 +26,7 @@
+ #include "compiler/shader_enums.h"
+ #include "util/bitscan.h"
+ #include "util/macros.h"
++#include "util/stack_array.h"
+ #include "c99_compat.h"
+ 
+ #include <stdlib.h>
+@@ -358,22 +359,6 @@ struct nir_spirv_specialization*
+ vk_spec_info_to_nir_spirv(const VkSpecializationInfo *spec_info,
+                           uint32_t *out_num_spec_entries);
+ 
+-#define STACK_ARRAY_SIZE 8
+-
+-/* Sometimes gcc may claim -Wmaybe-uninitialized for the stack array in some
+- * places it can't verify that when size is 0 nobody down the call chain reads
+- * the array. Please don't try to fix it by zero-initializing the array here
+- * since it's used in a lot of different places. An "if (size == 0) return;"
+- * may work for you.
+- */
+-#define STACK_ARRAY(type, name, size) \
+-   type _stack_##name[STACK_ARRAY_SIZE]; \
+-   type *const name = \
+-     ((size) <= STACK_ARRAY_SIZE ? _stack_##name : (type *)malloc((size) * sizeof(type)))
+-
+-#define STACK_ARRAY_FINISH(name) \
+-   if (name != _stack_##name) free(name)
+-
+ static inline uint8_t
+ vk_index_type_to_bytes(enum VkIndexType type)
+ {

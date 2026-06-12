@@ -1,0 +1,108 @@
+From 17d07f85828eca081d7fe1bcd9cbbf747fcc1300 Mon Sep 17 00:00:00 2001
+From: Ian Romanick <ian.d.romanick@intel.com>
+Date: Fri, 23 Jan 2026 09:58:26 -0800
+Subject: [PATCH] spirv: Use STACK_ARRAY instead of NIR_VLA
+
+The number of fields comes from the shader, so it could be a value large
+enough that using alloca would be problematic.
+
+Fixes: 2a023f30a64 ("nir/spirv: Add basic support for types")
+Reviewed-by: Caio Oliveira <caio.oliveira@intel.com>
+Reviewed-by: Ryan Neph <ryanneph@google.com>
+Reviewed-by: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+(cherry picked from commit 3da828d2dd12e20ba2afc152db8d7236c7a48c13)
+
+Part-of: <https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/39969>
+Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/commit/3db355dc37e823011666767ecc1f9d48bdc6e3a0
+[removed changes to .pick_status.json, not applicable to 24.0.9]
+[conflict in git context around the added include directive due to
+ missing 51d3c4c8896a ("spirv: support float8 spec constant op"),
+ 90e1b128903c ("spirv: Add bfloat16 support to SpecConstantOp"),
+ d21926bc0433 ("spirv: Emit code for NonSemantic.DebugPrintf if
+ supported"), 221371e9039b ("mesa: replace shader_info::source_sha1")]
+CVE: CVE-2026-40393
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+ src/compiler/spirv/spirv_to_nir.c | 27 +++++++++++++++++----------
+ 1 file changed, 17 insertions(+), 10 deletions(-)
+
+diff --git a/src/compiler/spirv/spirv_to_nir.c b/src/compiler/spirv/spirv_to_nir.c
+index f57c9ba42a2..17ae5a64301 100644
+--- a/src/compiler/spirv/spirv_to_nir.c
++++ b/src/compiler/spirv/spirv_to_nir.c
+@@ -27,7 +27,6 @@
+ 
+ #include "glsl_types.h"
+ #include "vtn_private.h"
+-#include "nir/nir_vla.h"
+ #include "nir/nir_control_flow.h"
+ #include "nir/nir_constant_expressions.h"
+ #include "nir/nir_deref.h"
+@@ -37,6 +36,7 @@
+ #include "util/u_math.h"
+ #include "util/u_string.h"
+ #include "util/u_debug.h"
++#include "util/stack_array.h"
+ 
+ #include <stdio.h>
+ 
+@@ -1013,7 +1013,7 @@ vtn_type_get_nir_type(struct vtn_builder *b, struct vtn_type *type,
+       case vtn_base_type_struct: {
+          bool need_new_struct = false;
+          const uint32_t num_fields = type->length;
+-         NIR_VLA(struct glsl_struct_field, fields, num_fields);
++         STACK_ARRAY(struct glsl_struct_field, fields, num_fields);
+          for (unsigned i = 0; i < num_fields; i++) {
+             fields[i] = *glsl_get_struct_field_data(type->type, i);
+             const struct glsl_type *field_nir_type =
+@@ -1023,20 +1023,25 @@ vtn_type_get_nir_type(struct vtn_builder *b, struct vtn_type *type,
+                need_new_struct = true;
+             }
+          }
++
++         const struct glsl_type *result;
+          if (need_new_struct) {
+             if (glsl_type_is_interface(type->type)) {
+-               return glsl_interface_type(fields, num_fields,
+-                                          /* packing */ 0, false,
+-                                          glsl_get_type_name(type->type));
++               result = glsl_interface_type(fields, num_fields,
++                                            /* packing */ 0, false,
++                                            glsl_get_type_name(type->type));
+             } else {
+-               return glsl_struct_type(fields, num_fields,
+-                                       glsl_get_type_name(type->type),
+-                                       glsl_struct_type_is_packed(type->type));
++               result = glsl_struct_type(fields, num_fields,
++                                         glsl_get_type_name(type->type),
++                                         glsl_struct_type_is_packed(type->type));
+             }
+          } else {
+             /* No changes, just pass it on */
+-            return type->type;
++            result = type->type;
+          }
++
++         STACK_ARRAY_FINISH(fields);
++         return result;
+       }
+ 
+       case vtn_base_type_image:
+@@ -1647,7 +1652,7 @@ vtn_handle_type(struct vtn_builder *b, SpvOp opcode,
+       val->type->offsets = vtn_alloc_array(b, unsigned, num_fields);
+       val->type->packed = false;
+ 
+-      NIR_VLA(struct glsl_struct_field, fields, count);
++      STACK_ARRAY(struct glsl_struct_field, fields, count);
+       for (unsigned i = 0; i < num_fields; i++) {
+          val->type->members[i] = vtn_get_type(b, w[i + 2]);
+          const char *name = NULL;
+@@ -1703,6 +1708,8 @@ vtn_handle_type(struct vtn_builder *b, SpvOp opcode,
+                                             name ? name : "struct",
+                                             val->type->packed);
+       }
++
++      STACK_ARRAY_FINISH(fields);
+       break;
+    }
+ 

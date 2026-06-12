@@ -1,0 +1,124 @@
+From 2094d5a43bee1878767ba0b957daf9436b71a7d6 Mon Sep 17 00:00:00 2001
+From: Paulo Zanoni <paulo.r.zanoni@intel.com>
+Date: Mon, 18 Mar 2024 16:33:54 -0700
+Subject: [PATCH] vulkan: don't zero-initialize STACK_ARRAY()'s stack array
+
+STACK_ARRAY() is used in a lot of places. When games are running we
+see STACK_ARRAY() arrays being used all the time: each queue
+submission uses 6, WaitSemaphores and syncobj waiting also uses them:
+they're constantly present in Vulkan runtime.
+
+There's no need for STACK_ARRAY()'s stack array to be initialized,
+callers cannot not depend on it. If the number of elements is greater
+than STACK_ARRAY_SIZE, then STACK_ARRAY() will just malloc() the array
+and return it not initialized: anybody depending of
+zero-initialization is going to break when the array is big.
+
+The reason why we're zero-intializing STACK_ARRAY()'s stack array is
+to silence -Wmaybe-uninitialized warnings: see commit d7957df31848
+("vulkan: fix uninitialized variables"). I don't think that commit is
+the ideal way to deal with the problem, so this patch proposes a
+better solution.
+
+The problem here is that zero-initializing it adds code we don't need
+for every single caller. STACK_ARRAY() already has 63 callers and only
+3 of them are affected by the -Wmaybe-uninitialized warining. So here
+we undo what commit d7957df31848 did and instead we fix the 3 cases
+that actually generate the -Wmaybe-uninitialized warnings.
+
+Gcc is only emitting those warinings because it knows that the number
+of elements in the array may be zero, so the loops we have that set
+elements to the array may end up do nothing, and then we pass the
+array uninitialized to other functions.
+
+For the cases related to vk_sync this is just returning VK_SUCCESS
+earlier, instead of relying on the check that eventually happens at
+__vk_sync_wait_many(). For the vkCmdWaitEvents() function, the Vulkan
+spec says that "eventCount must be greater than 0", so the early
+return doesn't hurt anybody either. In both cases we make the zero
+case faster by not defining an 8-sized array, zero-initializing it,
+then returning success without using it.
+
+Reference: d7957df31848 ("vulkan: fix uninitialized variables")
+Acked-by: Yonggang Luo <luoyonggang@gmail.com>
+Reviewed-by: Yiwei Zhang <zzyiwei@chromium.org>
+Signed-off-by: Paulo Zanoni <paulo.r.zanoni@intel.com>
+Part-of: <https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/28288>
+Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/commit/b0653370d0ea7d6c72cd419451debed52e09653d
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+ src/vulkan/runtime/vk_queue.c           |  4 ++++
+ src/vulkan/runtime/vk_sync_binary.c     |  3 +++
+ src/vulkan/runtime/vk_synchronization.c |  3 +++
+ src/vulkan/util/vk_util.h               | 14 +++++++-------
+ 4 files changed, 17 insertions(+), 7 deletions(-)
+
+diff --git a/src/vulkan/runtime/vk_queue.c b/src/vulkan/runtime/vk_queue.c
+index 81087dde7fc..36ebe0ef23f 100644
+--- a/src/vulkan/runtime/vk_queue.c
++++ b/src/vulkan/runtime/vk_queue.c
+@@ -1037,6 +1037,10 @@ vk_queue_wait_before_present(struct vk_queue *queue,
+       return VK_SUCCESS;
+ 
+    const uint32_t wait_count = pPresentInfo->waitSemaphoreCount;
++
++   if (wait_count == 0)
++      return VK_SUCCESS;
++
+    STACK_ARRAY(struct vk_sync_wait, waits, wait_count);
+ 
+    for (uint32_t i = 0; i < wait_count; i++) {
+diff --git a/src/vulkan/runtime/vk_sync_binary.c b/src/vulkan/runtime/vk_sync_binary.c
+index 3d2720f9348..c10cabe348a 100644
+--- a/src/vulkan/runtime/vk_sync_binary.c
++++ b/src/vulkan/runtime/vk_sync_binary.c
+@@ -91,6 +91,9 @@ vk_sync_binary_wait_many(struct vk_device *device,
+                          enum vk_sync_wait_flags wait_flags,
+                          uint64_t abs_timeout_ns)
+ {
++   if (wait_count == 0)
++      return VK_SUCCESS;
++
+    STACK_ARRAY(struct vk_sync_wait, timeline_waits, wait_count);
+ 
+    for (uint32_t i = 0; i < wait_count; i++) {
+diff --git a/src/vulkan/runtime/vk_synchronization.c b/src/vulkan/runtime/vk_synchronization.c
+index 53fb56e686d..701474164e4 100644
+--- a/src/vulkan/runtime/vk_synchronization.c
++++ b/src/vulkan/runtime/vk_synchronization.c
+@@ -249,6 +249,9 @@ vk_common_CmdWaitEvents(
+    VK_FROM_HANDLE(vk_command_buffer, cmd_buffer, commandBuffer);
+    struct vk_device *device = cmd_buffer->base.device;
+ 
++   if (eventCount == 0)
++      return;
++
+    STACK_ARRAY(VkDependencyInfo, deps, eventCount);
+ 
+    /* Note that dstStageMask and srcStageMask in the CmdWaitEvent2() call
+diff --git a/src/vulkan/util/vk_util.h b/src/vulkan/util/vk_util.h
+index 4095de57b0c..5c1ac5e1f25 100644
+--- a/src/vulkan/util/vk_util.h
++++ b/src/vulkan/util/vk_util.h
+@@ -360,14 +360,14 @@ vk_spec_info_to_nir_spirv(const VkSpecializationInfo *spec_info,
+ 
+ #define STACK_ARRAY_SIZE 8
+ 
+-#ifdef __cplusplus
+-#define STACK_ARRAY_ZERO_INIT {}
+-#else
+-#define STACK_ARRAY_ZERO_INIT {0}
+-#endif
+-
++/* Sometimes gcc may claim -Wmaybe-uninitialized for the stack array in some
++ * places it can't verify that when size is 0 nobody down the call chain reads
++ * the array. Please don't try to fix it by zero-initializing the array here
++ * since it's used in a lot of different places. An "if (size == 0) return;"
++ * may work for you.
++ */
+ #define STACK_ARRAY(type, name, size) \
+-   type _stack_##name[STACK_ARRAY_SIZE] = STACK_ARRAY_ZERO_INIT; \
++   type _stack_##name[STACK_ARRAY_SIZE]; \
+    type *const name = \
+      ((size) <= STACK_ARRAY_SIZE ? _stack_##name : (type *)malloc((size) * sizeof(type)))
+ 

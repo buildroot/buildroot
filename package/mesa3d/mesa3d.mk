@@ -262,4 +262,8 @@ else
 MESA3D_CONF_OPTS += -Dglvnd=false
 endif
 
+# 0009-spirv-Use-STACK_ARRAY-instead-of-NIR_VLA.patch
+# 0010-nir-Use-STACK_ARRAY-instead-of-NIR_VLA.patch
+MESA3D_IGNORE_CVES += CVE-2026-40393
+
 $(eval $(meson-package))

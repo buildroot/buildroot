@@ -1,0 +1,32 @@
+From 85d8bab69a7812908d9984c2783dc9a447e0d1ea Mon Sep 17 00:00:00 2001
+From: Aaron Ruby <aruby@qnx.com>
+Date: Mon, 13 Jan 2025 12:52:48 -0500
+Subject: [PATCH] vulkan/util: Add c99_compat.h inclusion for cpp 'restrict'
+ compatibility
+
+Reviewed-by: Gurchetan Singh <gurchetansingh@chromium.org>
+Reviewed-by: Aaron Ruby <None>
+Part-of: <https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33006>
+Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/commit/e9663276f4824199fe9053ef8d6724f907b76bd1
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+ src/vulkan/util/vk_util.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/vulkan/util/vk_util.h b/src/vulkan/util/vk_util.h
+index 295f6e474b4..4095de57b0c 100644
+--- a/src/vulkan/util/vk_util.h
++++ b/src/vulkan/util/vk_util.h
+@@ -23,9 +23,11 @@
+ #ifndef VK_UTIL_H
+ #define VK_UTIL_H
+ 
++#include "compiler/shader_enums.h"
+ #include "util/bitscan.h"
+ #include "util/macros.h"
+-#include "compiler/shader_enums.h"
++#include "c99_compat.h"
++
+ #include <stdlib.h>
+ #include <string.h>
+ 
