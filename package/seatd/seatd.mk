@@ -10,6 +10,7 @@ SEATD_SITE = https://git.sr.ht/~kennylevinsen/seatd/archive
 SEATD_LICENSE = MIT
 SEATD_LICENSE_FILES = LICENSE
 SEATD_INSTALL_STAGING = YES
+SEATD_CPE_ID_VALID = YES
 
 SEATD_CONF_OPTS += \
 	-Dman-pages=disabled \
