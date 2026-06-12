@@ -15,10 +15,10 @@ Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
  1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/Configure b/Configure
-index ac3206e..764ef89 100755
+index 4614b5becf..cac670405e 100755
 --- a/Configure
 +++ b/Configure
-@@ -1510,10 +1510,6 @@ if ($config{prefix} && !$config{CROSS_COMPILE}) {
+@@ -1515,10 +1515,6 @@ if ($config{prefix} && !$config{CROSS_COMPILE}) {
          unless file_name_is_absolute($config{prefix});
  }
  
@@ -29,7 +29,7 @@ index ac3206e..764ef89 100755
  # Allow overriding the build file name
  $config{build_file} = env('BUILDFILE') || $target{build_file} || "Makefile";
  
-@@ -1808,6 +1804,10 @@ if ($strict_warnings)
+@@ -1813,6 +1809,10 @@ if ($strict_warnings)
                  }
          }
  
