@@ -27,6 +27,12 @@ ifeq ($(BR2_PACKAGE_SYSTEMD),y)
 FOOT_DEPENDENCIES += systemd
 endif
 
+# As recommended by upstream foot, prefer ncurses terminfo if
+# available.
+ifeq ($(BR2_PACKAGE_NCURSES),y)
+FOOT_CONF_OPTS += -Dterminfo=disabled
+endif
+
 ifeq ($(BR2_PACKAGE_LIBUTEMPTER),y)
 FOOT_DEPENDENCIES += libutempter
 FOOT_CONF_OPTS += -Dutmp-backend='libutempter'
