@@ -151,6 +151,12 @@ NETWORK_MANAGER_CONF_OPTS += \
 	-Dconfig_logging_backend_default=journal \
 	-Dsession_tracking=systemd \
 	-Dsuspend_resume=systemd
+ifneq ($(BR2_PACKAGE_SYSTEMD_INITRD),y)
+define NETWORK_MANAGER_CLEAN_INITRD
+	rm -f $(TARGET_DIR)/usr/lib/systemd/system/NetworkManager-*initrd.service
+endef
+NETWORK_MANAGER_POST_INSTALL_TARGET_HOOKS += NETWORK_MANAGER_CLEAN_INITRD
+endif
 else
 NETWORK_MANAGER_CONF_OPTS += \
 	-Dsystemd_journal=false \
