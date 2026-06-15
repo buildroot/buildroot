@@ -1,0 +1,11 @@
+config BR2_PACKAGE_PERL_CGI_SESSION
+	bool "perl-cgi-session"
+	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_PERL_CGI # runtime
+	help
+	  Persistent session data in CGI applications.
+
+	  https://metacpan.org/release/CGI-Session
+
+comment "perl-cgi-session needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
