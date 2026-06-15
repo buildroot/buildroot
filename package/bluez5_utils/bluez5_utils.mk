@@ -5,7 +5,7 @@
 ################################################################################
 
 # Keep the version and patches in sync with bluez5_utils-headers
-BLUEZ5_UTILS_VERSION = 5.79
+BLUEZ5_UTILS_VERSION = 5.86
 BLUEZ5_UTILS_SOURCE = bluez-$(BLUEZ5_UTILS_VERSION).tar.xz
 BLUEZ5_UTILS_SITE = $(BR2_KERNEL_MIRROR)/linux/bluetooth
 BLUEZ5_UTILS_INSTALL_STAGING = YES
@@ -86,13 +86,6 @@ BLUEZ5_UTILS_CONF_OPTS += \
 	--disable-vcp
 endif
 
-# enable health plugin
-ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HEALTH),y)
-BLUEZ5_UTILS_CONF_OPTS += --enable-health
-else
-BLUEZ5_UTILS_CONF_OPTS += --disable-health
-endif
-
 # enable hid plugin
 ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HID),y)
 BLUEZ5_UTILS_CONF_OPTS += --enable-hid
@@ -135,13 +128,6 @@ ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_NFC),y)
 BLUEZ5_UTILS_CONF_OPTS += --enable-nfc
 else
 BLUEZ5_UTILS_CONF_OPTS += --disable-nfc
-endif
-
-# enable sap plugin
-ifeq ($(BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_SAP),y)
-BLUEZ5_UTILS_CONF_OPTS += --enable-sap
-else
-BLUEZ5_UTILS_CONF_OPTS += --disable-sap
 endif
 
 # enable sixaxis plugin

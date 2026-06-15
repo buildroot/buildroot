@@ -146,6 +146,18 @@ endif
 
 comment "Legacy options removed in 2026.08"
 
+config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_SAP
+	bool "bluez sap plugin removed"
+	select BR2_LEGACY
+	help
+	  Build plugin for SAP profile.
+
+config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HEALTH
+	bool "bluez health plugin removed"
+	select BR2_LEGACY
+	help
+	  Build plugin for health profiles.
+
 config BR2_GCC_VERSION_13_X
 	bool "gcc 13.x support removed"
 	select BR2_LEGACY

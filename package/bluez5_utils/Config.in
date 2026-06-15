@@ -72,11 +72,6 @@ config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_AUDIO
 	help
 	  Build plugins for audio profiles (for A2DP and AVRCP).
 
-config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HEALTH
-	bool "build health plugin"
-	help
-	  Build plugin for health profiles.
-
 config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_HID
 	bool "build hid plugin"
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_18
@@ -125,11 +120,6 @@ config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_NFC
 	bool "build nfc plugin"
 	help
 	  Build plugin for NFC pairing.
-
-config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_SAP
-	bool "build sap plugin"
-	help
-	  Build plugin for SAP profile.
 
 config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_SIXAXIS
 	bool "build sixaxis plugin"
