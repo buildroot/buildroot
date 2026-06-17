@@ -1,5 +1,6 @@
 config BR2_PACKAGE_HOST_BOOTGEN
 	bool "host bootgen"
+	depends on BR2_HOST_GCC_AT_LEAST_5 # C++14
 	help
 	  bootgen is a tool to generate a boot.bin firmware
 	  for Xilinx versal, zynqmp and zynq product families.
