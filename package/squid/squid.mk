@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SQUID_VERSION = 7.5
+SQUID_VERSION = 7.6
 SQUID_SOURCE = squid-$(SQUID_VERSION).tar.xz
 SQUID_SITE = https://github.com/squid-cache/squid/releases/download/SQUID_$(subst .,_,$(SQUID_VERSION))
 SQUID_LICENSE = GPL-2.0+
