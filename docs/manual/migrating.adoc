@@ -247,3 +247,14 @@ In 2026.02, the network-manager package stopped selecting the gnutls package as
 a cryptography backend automatically. Manually enable the gnutls or libnss
 package if you require features that depend on a cryptography backend, such as
 certificate-based authentication.
+
+[[migrating-to-2026-08]]
+=== Migration to 2026.08
+
+In 2026.08, the iwd package stopped installing a custom
++/etc/iwd/main.conf+, and started using the upstream example
+instead. With that the +EnableNetworkConfiguration+ setting changed
+from +true+ to +false+, in line with upstream defaults. If you need
++EnableNetworkConfiguration=true+ to let +iwd+ handle network
+configuration for active wifi connections, adjust +/etc/iwd/main.conf+
+in your build (see xref:rootfs-custom[] for options).
