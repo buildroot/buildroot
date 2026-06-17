@@ -48,6 +48,17 @@ alternative to QEMU_EFI.fd. You will also need to change the machine
 specification to "-M virt,secure=on" on qemu command line, to enable TrustZone
 support, and you will need to increase the memory with "-m 1024".
 
+HTTP boot
+---------
+
+Some U-Boot and Devicetree based firmwares are capable of booting with UEFI from
+HTTP(s). [4]
+
+The aarch64_efi_defconfig has appropriate persistent memory support compiled in
+the Linux kernel to support this scenario. [5]
+
 [1]: https://github.com/ARM-software/ebbr
 [2]: https://developer.arm.com/architectures/system-architectures/arm-systemready
 [3]: https://github.com/glikely/u-boot-tfa-build
+[4]: https://docs.u-boot-project.org/en/latest/develop/uefi/uefi.html#uefi-http-boot-using-the-legacy-tcp-stack
+[5]: https://github.com/ARM-software/edge-iot-arch-guide/blob/main/source/http-boot/pmem_node.md
