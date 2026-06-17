@@ -1,0 +1,15 @@
+config BR2_PACKAGE_WGET2
+	bool "wget2"
+	depends on BR2_USE_MMU # fork()
+	depends on BR2_USE_WCHAR
+	select BR2_PACKAGE_OPENSSL if !BR2_PACKAGE_GNUTLS
+	select BR2_PACKAGE_LIBOPENSSL_ENABLE_RMD160 if BR2_PACKAGE_LIBOPENSSL
+	help
+	  GNU Wget2 is the successor of GNU Wget, a file and recursive
+	  website downloader.
+
+	  https://gitlab.com/gnuwget/wget2
+
+comment "wget2 needs a toolchain w/ wchar"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR
