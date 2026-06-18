@@ -34,8 +34,7 @@ class TestJq(infra.basetest.BRTest):
 
         # Check the execution fails on a non JSON file.
         cmd = "jq -M '.' broken.json"
-        _, ret = self.emulator.run(cmd)
-        self.assertNotEqual(ret, 0)
+        self.assertRunNotOk(cmd)
 
         # Check an execution of a simple query. Note that output is a
         # JSON (quoted) string.
