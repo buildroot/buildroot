@@ -33,8 +33,7 @@ class TestWhich(infra.basetest.BRTest):
 
         # We check "which" returns an error when the program is not
         # found.
-        _, ret = self.emulator.run(f"which {alias_name}")
-        self.assertNotEqual(ret, 0)
+        self.assertRunNotOk(f"which {alias_name}")
 
         # We define a shell alias.
         alias_cmd = "/bin/true"
