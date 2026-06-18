@@ -27,8 +27,7 @@ class TestScreen(infra.basetest.BRTest):
 
         # There is no "screen" running yet. Listing sessions is
         # expected to fail.
-        _, exit_code = self.emulator.run("screen -ls")
-        self.assertNotEqual(exit_code, 0)
+        self.assertRunNotOk("screen -ls")
 
         # We now start a detached and named session.
         self.assertRunOk(f"screen -dmS {session_name}")
@@ -57,5 +56,4 @@ class TestScreen(infra.basetest.BRTest):
 
         # Since the session is supposed to be terminated, listing
         # sessions is expected to fail (again).
-        _, exit_code = self.emulator.run("screen -ls")
-        self.assertNotEqual(exit_code, 0)
+        self.assertRunNotOk("screen -ls")
