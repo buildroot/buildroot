@@ -73,8 +73,7 @@ class TestKmod(infra.basetest.BRTest):
         # With this test configuration, we are not supposed to have an
         # eth0 Ethernet interface yet. Attempting to show info on this
         # interface is expected to fail .
-        _, ret = self.emulator.run("ip link show dev eth0")
-        self.assertNotEqual(ret, 0)
+        self.assertRunNotOk("ip link show dev eth0")
 
         # We try to load the module.
         self.assertRunOk("modprobe virtio-net")
@@ -101,5 +100,4 @@ class TestKmod(infra.basetest.BRTest):
 
         # Now the driver is unloaded, we should no longer be able to
         # ping the emulator.
-        _, ret = self.emulator.run(ping_cmd)
-        self.assertNotEqual(ret, 0)
+        self.assertRunNotOk(ping_cmd)
