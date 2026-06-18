@@ -180,8 +180,7 @@ class TestPostgreSQL(infra.basetest.BRTest):
         self.assertRunOk(cmd)
 
         # Check the server is no longer ready.
-        _, exit_code = self.emulator.run("pg_isready")
-        self.assertNotEqual(exit_code, 0)
+        self.assertRunNotOk("pg_isready")
 
         # Restart the server.
         cmd = f"su - {self.db_admin} -c 'pg_ctl start -D {self.pgdata_dir}'"
