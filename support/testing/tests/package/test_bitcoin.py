@@ -108,8 +108,7 @@ class TestBitcoin(infra.basetest.BRTest):
         # The bitcoin daemon is not started. A client ping is expected
         # to fail.
         ping_cmd = f"{self.cli_cmd} ping"
-        _, ret = self.emulator.run(ping_cmd)
-        self.assertNotEqual(ret, 0)
+        self.assertRunNotOk(ping_cmd)
 
         # Start the daemon.
         cmd = f"bitcoind -regtest -daemonwait -fallbackfee={btc_fee:f}"
