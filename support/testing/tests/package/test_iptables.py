@@ -68,8 +68,7 @@ class TestIptables(infra.basetest.BRTest):
         # A ping to 127.0.0.2 is expected to fail, because our rule is
         # supposed to drop it.
         ping_test_cmd = ping_cmd_prefix + "127.0.0.2"
-        _, exit_code = self.emulator.run(ping_test_cmd)
-        self.assertNotEqual(exit_code, 0)
+        self.assertRunNotOk(ping_test_cmd)
 
         # Save the current rules to test the init script later.
         self.assertRunOk("/etc/init.d/S35iptables save")
@@ -85,8 +84,7 @@ class TestIptables(infra.basetest.BRTest):
         self.assertRunOk("/etc/init.d/S35iptables start")
 
         # Ping to 127.0.0.2 is expected to fail again.
-        _, exit_code = self.emulator.run(ping_test_cmd)
-        self.assertNotEqual(exit_code, 0)
+        self.assertRunNotOk(ping_test_cmd)
 
         # And flush the rules again.
         self.assertRunOk("/etc/init.d/S35iptables stop")
