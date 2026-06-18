@@ -31,8 +31,7 @@ class TestLibGpgme(infra.basetest.BRTest):
         # We did not create a gpg key yet. We should not be able to
         # list our key.
         gpgme_listkey = f"echo LISTKEYS | gpgme-tool | grep '{gpg_userid}'"
-        _, exit_code = self.emulator.run(gpgme_listkey)
-        self.assertNotEqual(exit_code, 0)
+        self.assertRunNotOk(gpgme_listkey)
 
         # We now create our gpg key.
         cmd = "gpg --batch --passphrase ''"
@@ -66,8 +65,7 @@ class TestLibGpgme(infra.basetest.BRTest):
 
         # The output encrypted file is also expected to be different
         # from the input plain text file.
-        _, exit_code = self.emulator.run(f"cmp {plain_file} {enc_file}")
-        self.assertNotEqual(exit_code, 0)
+        self.assertRunNotOk(f"cmp {plain_file} {enc_file}")
 
         # We now decrypt the encrypted file using gpgme-tool commands.
         gpgme_dec_cmds = [
