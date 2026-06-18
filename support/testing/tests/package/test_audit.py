@@ -80,8 +80,7 @@ class TestAudit(infra.basetest.BRTest):
         # normal user. This command is expected to fail (as only root
         # can root is supposed to read this file).
         cmd = f"su - {user} -c 'cat /etc/shadow'"
-        _, ret = self.emulator.run(cmd)
-        self.assertNotEqual(ret, 0)
+        self.assertRunNotOk(cmd)
 
         # Our last failed read attempt is supposed to have generated
         # an event. We check we can see it in the log.
