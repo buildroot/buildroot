@@ -32,8 +32,7 @@ class TestDos2Unix(infra.basetest.BRTest):
         self.assertRunOk("unix2dos -n original.txt dos.txt")
 
         # DOS file is expected to be different than the UNIX file
-        _, exit_code = self.emulator.run("cmp original.txt dos.txt")
-        self.assertNotEqual(exit_code, 0)
+        self.assertRunNotOk("cmp original.txt dos.txt")
 
         # The "cat -A" command should print '^M$' for CR-LF
         self.assertRunOk("cat -A dos.txt | grep -Fq '^M$'")
