@@ -43,5 +43,4 @@ class TestRasdaemon(infra.basetest.BRTest):
         self.assertRunOk("/etc/init.d/S95rasdaemon restart")
         self.assertRunOk("pidof /usr/sbin/rasdaemon")
         self.assertRunOk("/etc/init.d/S95rasdaemon stop")
-        _, ret = self.emulator.run("pidof /usr/sbin/rasdaemon")
-        self.assertNotEqual(ret, 0)
+        self.assertRunNotOk("pidof /usr/sbin/rasdaemon")
