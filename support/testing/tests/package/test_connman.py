@@ -47,8 +47,7 @@ class TestConnMan(infra.basetest.BRTest):
 
         # If we try to ping again the qemu gateway,
         # it should now fail.
-        _, ret = self.emulator.run(ping_cmd)
-        self.assertNotEqual(ret, 0)
+        self.assertRunNotOk(ping_cmd)
 
         # We ask connman to re-enable Ethernet.
         self.assertRunOk("connmanctl enable ethernet")
