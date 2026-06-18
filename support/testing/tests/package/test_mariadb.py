@@ -179,8 +179,7 @@ class TestMariaDB(infra.basetest.BRTest):
         self.assertRunOk("/etc/init.d/S97mysqld stop")
 
         # Check the server is stopped.
-        _, exit_code = self.emulator.run("mariadb-admin ping")
-        self.assertNotEqual(exit_code, 0)
+        self.assertRunNotOk("mariadb-admin ping")
 
         # Restart the server.
         self.assertRunOk("/etc/init.d/S97mysqld start")
