@@ -65,8 +65,7 @@ class TestCryptSetup(infra.basetest.BRTest):
         # Check the device is NOT detected as a LUKS volume, because
         # it is not formatted yet.
         is_luks_cmd = f"cryptsetup isLuks {dev}"
-        _, ret = self.emulator.run(is_luks_cmd)
-        self.assertNotEqual(ret, 0)
+        self.assertRunNotOk(is_luks_cmd)
 
         # Format the LUKS volume.
         cmd = f"echo {passkey} | cryptsetup luksFormat {dev}"
@@ -110,15 +109,13 @@ class TestCryptSetup(infra.basetest.BRTest):
 
         # We are NOT supposed to find our plain text message on the
         # encrypted storage device.
-        _, ret = self.emulator.run(f"grep -Fq '{msg}' {dev}", timeout=10)
-        self.assertNotEqual(ret, 0)
+        self.assertRunNotOk(f"grep -Fq '{msg}' {dev}", timeout=10)
 
         # Try to open LUKS volume with a wrong password. This is
         # expected to fail.
         cmd = f"echo 'Wrong{passkey}' | "
         cmd += f"cryptsetup open --type luks {dev} {dm_name}"
-        _, ret = self.emulator.run(cmd, timeout=10)
-        self.assertNotEqual(ret, 0)
+        self.assertRunNotOk(cmd, timeout=10)
 
         # Check the device-mapper device was NOT created (since we
         # tried to open it with a wrong password).
