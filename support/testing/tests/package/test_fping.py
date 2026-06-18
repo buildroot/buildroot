@@ -41,5 +41,4 @@ class TestFping(infra.basetest.BRTest):
         self.assertRunOk("ip route add to prohibit 192.168.12.0/24")
 
         # We expect fping to fail when pinging the prohibited network.
-        _, ret = self.emulator.run("fping 192.168.12.34")
-        self.assertNotEqual(ret, 0)
+        self.assertRunNotOk("fping 192.168.12.34")
