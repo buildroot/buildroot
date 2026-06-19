@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TMUX_VERSION = 3.6a
+TMUX_VERSION = 3.6b
 TMUX_SITE = https://github.com/tmux/tmux/releases/download/$(TMUX_VERSION)
 TMUX_LICENSE = ISC
 TMUX_LICENSE_FILES = COPYING
