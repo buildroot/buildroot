@@ -280,6 +280,12 @@ def parse_uris(uris: list[str]) -> Iterator[tuple[list[str], str]]:
         scheme, _, stripped_uri = uri.partition("+")
         if stripped_uri:
             parsed = urllib.parse.urlparse(stripped_uri)
+
+            # convert scp-style host:path site to ssh:// uri
+            if scheme == "git" and not parsed.scheme:
+                host, _, path = stripped_uri.partition(":")
+                stripped_uri = "ssh://" + host + "/" + path
+
             if parsed.hostname != "sources.buildroot.net":
                 yield scheme.split("|"), stripped_uri
 
