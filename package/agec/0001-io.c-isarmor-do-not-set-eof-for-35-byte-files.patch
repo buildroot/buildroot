@@ -1,0 +1,35 @@
+From eb8ccfe5bb32273226d80236caab7a9386d71071 Mon Sep 17 00:00:00 2001
+From: Peter Korsgaard <peter@korsgaard.com>
+Date: Thu, 18 Jun 2026 15:12:38 +0200
+Subject: [PATCH] io.c: isarmor(): do not set eof for <35 byte files
+
+Encryption is silently broken for <35 byte files since commit b374d8de5a
+("stop reading after first EOF"), as readall() sets the eof flag when it was
+unable to read the entire 35 bytes in isarmor(), causing bread() to return
+EOF and ignore the <35 bytes already read.
+
+Fix it by only setting the eof flag in isarmor() if nothing could be read.
+
+Upstream: mailed to amin@firemail.cc
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+ io.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/io.c b/io.c
+index 15ed4f7..2773022 100644
+--- a/io.c
++++ b/io.c
+@@ -128,8 +128,7 @@ isarmor(Ibuf *b)
+ 	nr = readall(b->fd, b->buf, sizeof(armorfirst) - 1, &b->eof);
+ 	if(nr == -1)
+ 		return -1;
+-	if(nr == 0)
+-		b->eof = 1;
++	b->eof = (nr == 0);
+ 	b->size = nr;
+ 	if((usize)nr < sizeof(armorfirst) - 1)
+ 		return 0;
+-- 
+2.47.3
+

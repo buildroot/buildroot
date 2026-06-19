@@ -1,0 +1,10 @@
+config BR2_PACKAGE_AGEC
+	bool "agec"
+	select BR2_PACKAGE_OPENSSL
+	help
+	  Agec is a simple file encryption tool that implements the
+	  age format in C with minimal dependencies. The tool supports
+	  asymmetric encryption based on X25519, and a passphrase
+	  encryption based on scrypt.
+
+	  https://git.sr.ht/~min/agec
