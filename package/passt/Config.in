@@ -1,6 +1,6 @@
 config BR2_PACKAGE_PASST
 	bool "passt"
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_0
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_9
 	help
 	  passt: Plug A Simple Socket Transport
 	  pasta: Pack A Subtle Tap Abstraction
@@ -19,5 +19,5 @@ config BR2_PACKAGE_PASST
 
 	  https://passt.top/passt/about/
 
-comment "passt needs a toolchain w/ headers >= 5.0"
-	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_0
+comment "passt needs a toolchain w/ headers >= 5.9"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_9
