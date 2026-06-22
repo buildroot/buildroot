@@ -37,6 +37,7 @@ UTIL_LINUX_CPE_ID_VENDOR = kernel
 UTIL_LINUX_AUTORECONF = YES
 
 # 0006-add-loopdev-fl-nofollow.patch
+# 0014-loopdev-use-openat2-RESOLVE_NO_SYMLINKS-for-backing-.patch
 UTIL_LINUX_IGNORE_CVES += CVE-2026-27456
 
 # 0008-CVE-2025-14104-1.patch
