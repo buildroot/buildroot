@@ -1,0 +1,59 @@
+From 2dacaf3eea391e3bbf48e7d3ecce02cafe045b6d Mon Sep 17 00:00:00 2001
+From: Karel Zak <kzak@redhat.com>
+Date: Wed, 27 May 2026 15:15:22 +0200
+Subject: [PATCH] loopdev: use openat2(RESOLVE_NO_SYMLINKS) for backing file
+
+Use ul_open_no_symlinks() instead of open(O_NOFOLLOW) when
+LOOPDEV_FL_NOFOLLOW is set.  O_NOFOLLOW only rejects symlinks at the
+last path component, but TOCTOU attacks swap intermediate components.
+openat2(RESOLVE_NO_SYMLINKS) rejects symlinks at any component.
+
+Upstream: https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git/commit/?h=stable/v2.41&id=2dacaf3eea391e3bbf48e7d3ecce02cafe045b6d
+CVE: CVE-2026-27456
+Signed-off-by: Karel Zak <kzak@redhat.com>
+(cherry picked from commit 119d23f1e3f55cf10e3c66dab80fc308c9f26456)
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+[Fiona: add CVE trailer]
+Signed-off-by: Fiona Klute <fiona.klute@gmx.de>
+---
+ lib/loopdev.c | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
+
+diff --git a/lib/loopdev.c b/lib/loopdev.c
+index 76685be70..31377fc9a 100644
+--- a/lib/loopdev.c
++++ b/lib/loopdev.c
+@@ -1412,16 +1412,21 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
+ 	if (lc->config.info.lo_flags & LO_FLAGS_DIRECT_IO)
+ 		flags |= O_DIRECT;
+ 	if (lc->flags & LOOPDEV_FL_NOFOLLOW)
+-		flags |= O_NOFOLLOW;
+-
+-	if ((file_fd = open(lc->filename, mode | flags)) < 0) {
+-		if (mode != O_RDONLY && (errno == EROFS || errno == EACCES))
+-			file_fd = open(lc->filename, (mode = O_RDONLY) | flags);
++		file_fd = ul_open_no_symlinks(lc->filename, mode | flags, 0);
++	else
++		file_fd = open(lc->filename, mode | flags);
+ 
+-		if (file_fd < 0) {
+-			DBG(SETUP, ul_debugobj(lc, "open backing file failed: %m"));
+-			return -errno;
+-		}
++	if (file_fd < 0 && mode != O_RDONLY
++	    && (errno == EROFS || errno == EACCES)) {
++		mode = O_RDONLY;
++		if (lc->flags & LOOPDEV_FL_NOFOLLOW)
++			file_fd = ul_open_no_symlinks(lc->filename, mode | flags, 0);
++		else
++			file_fd = open(lc->filename, mode | flags);
++	}
++	if (file_fd < 0) {
++		DBG(SETUP, ul_debugobj(lc, "open backing file failed: %m"));
++		return -errno;
+ 	}
+ 	DBG(SETUP, ul_debugobj(lc, "backing file open: OK"));
+ 
+-- 
+2.47.3
+
