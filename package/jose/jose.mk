@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-JOSE_VERSION = 14
+JOSE_VERSION = 15
 JOSE_SOURCE = jose-$(JOSE_VERSION).tar.xz
 JOSE_SITE = https://github.com/latchset/jose/releases/download/v$(JOSE_VERSION)
 JOSE_LICENSE = Apache-2.0
