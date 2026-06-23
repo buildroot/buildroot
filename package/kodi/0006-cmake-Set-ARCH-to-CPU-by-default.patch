@@ -1,0 +1,41 @@
+From 1695ba12380272056f369f434747839b2ae38d91 Mon Sep 17 00:00:00 2001
+From: fossdd <fossdd@pwned.life>
+Date: Sat, 22 Feb 2025 20:59:28 +0100
+Subject: [PATCH] [cmake] Set ARCH to CPU by default
+
+Reduces complexity of redundant architecture names and allows building
+for other architectures implicitly.
+
+Upstream: https://github.com/xbmc/xbmc/commit/1695ba12380272056f369f434747839b2ae38d91
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ cmake/scripts/linux/ArchSetup.cmake | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
+
+diff --git a/cmake/scripts/linux/ArchSetup.cmake b/cmake/scripts/linux/ArchSetup.cmake
+index ab142177c8..f29a870a1e 100644
+--- a/cmake/scripts/linux/ArchSetup.cmake
++++ b/cmake/scripts/linux/ArchSetup.cmake
+@@ -37,17 +37,8 @@ else()
+   elseif(CPU MATCHES aarch64 OR CPU MATCHES arm64)
+     set(ARCH aarch64)
+     set(NEON True)
+-  elseif(CPU MATCHES riscv64)
+-    set(ARCH riscv64)
+-    set(NEON False)
+-  elseif(CPU MATCHES ppc64le)
+-    set(ARCH ppc64le)
+-    set(NEON False)
+-  elseif(CPU MATCHES loongarch64)
+-    set(ARCH loongarch64)
+-    set(NEON False)
+   else()
+-    message(SEND_ERROR "Unknown CPU: ${CPU}")
++    set(ARCH ${CPU})
+   endif()
+ endif()
+ 
+-- 
+2.47.3
+

@@ -4,6 +4,8 @@ config BR2_PACKAGE_KODI_ARCH_SUPPORTS
 	default y if BR2_PACKAGE_HOST_OPENJDK_BIN_ARCH_SUPPORTS
 	# i386: needs sse (see upstream PR 10351)
 	depends on !(BR2_i386 && !BR2_X86_CPU_HAS_SSE)
+	# m68k not supported upstream
+	depends on !BR2_m68k
 	depends on BR2_USE_MMU # libcdio, and others
 
 comment "kodi needs python3 w/ .py modules, a uClibc or glibc toolchain w/ C++, threads, wchar, dynamic library, gcc >= 9.x, host gcc >= 9.x"
