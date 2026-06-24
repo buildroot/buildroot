@@ -233,6 +233,7 @@ def cyclonedx_patches(patch_list: list[str]):
                     "resolves": [
                         {
                             "type": "security",
+                            "id": cve,
                             "name": cve
                         } for cve in cves
                     ]
