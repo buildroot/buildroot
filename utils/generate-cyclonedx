@@ -372,6 +372,9 @@ def cyclonedx_component(name, comp):
         "bom-ref": name,
         "type": "library",
         **({
+            "scope": "excluded"
+        } if comp["type"] == "host" else {}),
+        **({
             "name": comp["name"],
         } if "name" in comp else {}),
         **({
