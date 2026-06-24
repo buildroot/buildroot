@@ -539,7 +539,7 @@ def main():
     parser.add_argument("--project-version", type=str, default=f"{BR2_VERSION_FULL}",
                         help="Specify the project version to use in the SBOM metadata (default: builroot version)")
     parser.add_argument("--cdx-version", type=str, default=DEFAULT_CYCLONEDX_VERSION,
-                        choices=["1.6", "1.6.1", "1.6.2"],
+                        choices=["1.6", "1.6.1", "1.6.2", "1.7", "1.7.1"],
                         help=f"Set CycloneDX version (default: {DEFAULT_CYCLONEDX_VERSION})")
 
     args = parser.parse_args()
