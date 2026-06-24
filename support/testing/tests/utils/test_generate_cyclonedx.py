@@ -21,7 +21,7 @@ class TestGenerateCycloneDX(unittest.TestCase):
 
         cyclonedx_dir = Path(self.schema_dir.name) / "cyclonedx"
         cyclonedx_dir.mkdir(parents=True)
-        schema_path = cyclonedx_dir / "spdx-1.6.schema.json"
+        schema_path = cyclonedx_dir / "spdx-1.6.2.schema.json"
         schema_path.write_text(json.dumps({"enum": SCHEMA_LICENSES}))
 
         self.env = os.environ.copy()
