@@ -12,6 +12,7 @@ import argparse
 import importlib.util
 import json
 import os
+from collections import defaultdict
 from pathlib import Path
 from typing import Iterator
 import urllib.error
@@ -36,10 +37,10 @@ BR2_VERSION_FULL = (
     .strip()
 )
 
-# Set of vulnerabilities that were addressed by a patch present in buildroot
-# tree. This set is used to set the analysis of the ignored CVEs to
-# 'resolved_with_pedigree'.
-VULN_WITH_PEDIGREE = set()
+# Vulnerabilities that were addressed by a patch present in buildroot tree,
+# as a set per component reference. This is used to set the analysis of the
+# ignored CVEs of that component to 'resolved_with_pedigree'.
+VULN_WITH_PEDIGREE = defaultdict(set)
 
 SPDX_LICENSES = []
 
@@ -218,11 +219,12 @@ def read_patch_file(patch_path: Path) -> str:
         return f.read()
 
 
-def cyclonedx_patches(patch_list: list[str]):
+def cyclonedx_patches(comp_ref: str, patch_list: list[str]):
     """Translate a list of patches from the show-info JSON to a list of
     patches in CycloneDX format.
 
     Args:
+        comp_ref (str): Reference of the component the patches are part of.
         patch_list (list): Array of patch relative paths for a given component.
 
     Returns:
@@ -245,7 +247,7 @@ def cyclonedx_patches(patch_list: list[str]):
             issue = {}
             cves = extract_cves_from_header(header)
             if cves:
-                VULN_WITH_PEDIGREE.update(cves)
+                VULN_WITH_PEDIGREE[comp_ref].update(cves)
                 issue = {
                     "resolves": [
                         {
@@ -402,7 +404,7 @@ def cyclonedx_component(name, comp):
             "cpe": comp["cpe-id"],
         } if "cpe-id" in comp else {}),
         **cyclonedx_external_refs(comp),
-        **(cyclonedx_patches(comp["patches"]) if comp.get("patches") else {}),
+        **(cyclonedx_patches(name, comp["patches"]) if comp.get("patches") else {}),
         "properties": [{
             "name": "BR_TYPE",
             "value": comp["type"],
@@ -437,11 +439,14 @@ def cyclonedx_vulnerabilities(show_info_dict):
     Returns:
         list: Solved vulnerabilities list in CycloneDX format.
     """
-    cves = {}
+    cves = defaultdict(list)
 
     for name, comp in show_info_dict.items():
         for cve in comp.get('ignore_cves', []):
-            cves.setdefault(cve, []).append(name)
+            state = "in_triage"
+            if cve in VULN_WITH_PEDIGREE.get(name, set()):
+                state = "resolved_with_pedigree"
+            cves[(cve, state)].append(name)
 
     return [{
         "id": cve,
@@ -450,13 +455,13 @@ def cyclonedx_vulnerabilities(show_info_dict):
             "url": "https://nvd.nist.gov/vuln/detail/" + cve
         },
         "analysis": {
-            "state": "resolved_with_pedigree" if cve in VULN_WITH_PEDIGREE else "in_triage",
+            "state": state,
             "detail": f"The CVE '{cve}' has been marked as ignored by Buildroot"
         },
         "affects": [
             {"ref": bomref} for bomref in components
         ]
-    } for cve, components in cves.items()]
+    } for (cve, state), components in cves.items()]
 
 
 def br2_virtual_is_provided_by(ref, show_info_dict) -> list:
