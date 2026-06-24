@@ -149,6 +149,7 @@ class TestGenerateCycloneDX(unittest.TestCase):
                 "uris": [
                     "git+git://git.example.org/foo",
                     "svn+https://svn.example.org/foo",
+                    "git+git@example.org:project/foo.git",
                     "https+https://sources.buildroot.net/foo",
                     "http|https+https://mirror.example.org/foo",
                 ],
@@ -171,6 +172,11 @@ class TestGenerateCycloneDX(unittest.TestCase):
                     "type": "vcs",
                     "url": "https://svn.example.org/foo",
                     "comment": "svn repository",
+                },
+                {
+                    "type": "vcs",
+                    "url": "ssh://git@example.org/project/foo.git",
+                    "comment": "git repository",
                 },
                 {
                     "type": "source-distribution",
