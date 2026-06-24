@@ -5,6 +5,7 @@ import os
 import subprocess
 import tempfile
 import unittest
+from collections import defaultdict
 from pathlib import Path
 
 import infra
@@ -100,15 +101,23 @@ class TestGenerateCycloneDX(unittest.TestCase):
                 return component
         self.fail(f"component {name} missing")
 
+    def _map_vulnerabilities(self, result: dict) -> dict:
+        vuln_map = defaultdict(list)
+        for vuln in result["vulnerabilities"]:
+            vuln_map[vuln["id"]].append(vuln)
+        return vuln_map
+
     def test_default(self):
         result = self._run_script()
 
         self.assertEqual(len(result["components"]), 4)
         self.assertIn("vulnerabilities", result)
-        vulnerabilities = {v["id"]: v for v in result["vulnerabilities"]}
+        vulnerabilities = self._map_vulnerabilities(result)
         self.assertEqual(len(vulnerabilities), 2)
-        self.assertEqual(vulnerabilities["CVE-2025-0001"]["analysis"]["state"], "resolved_with_pedigree")
-        self.assertEqual(vulnerabilities["CVE-2025-0002"]["analysis"]["state"], "in_triage")
+        self.assertEqual(len(vulnerabilities["CVE-2025-0001"]), 1)
+        self.assertEqual(len(vulnerabilities["CVE-2025-0002"]), 1)
+        self.assertEqual(vulnerabilities["CVE-2025-0001"][0]["analysis"]["state"], "resolved_with_pedigree")
+        self.assertEqual(vulnerabilities["CVE-2025-0002"][0]["analysis"]["state"], "in_triage")
 
         foo = self._find_component(result, "package-foo")
         patch = foo["pedigree"]["patches"][0]
@@ -244,3 +253,57 @@ class TestGenerateCycloneDX(unittest.TestCase):
                 }
             ],
         )
+
+    def test_vulnerabilities_with_different_analysis(self):
+        """
+        If multiple packages ignore the same vulnerability but provide
+        different analyses, the generator must produce multiple
+        vulnerability entries with the same vulnerability ID but different
+        analysis information.
+
+        This situation can occur when generating a CycloneDX SBOM from the
+        output of 'make show-info-all'. The resulting SBOM includes packages
+        that exist in multiple versions within Buildroot (gnupg for instance).
+
+        In such a case, one package version may ignore a vulnerability because
+        it is not affected, while another package version may address it
+        through a patch.
+
+        Therefore, multiple vulnerability entries must be generated, each with
+        its own analysis and reference information.
+        """
+
+        info = {
+            "gnupg": {
+                "name": "gnupg",
+                "version": "1.4.23",
+                "type": "target",
+                "ignore_cves": ["CVE-2025-0001"],
+                "virtual": False,
+            },
+            "gnupg2": {
+                "name": "gnupg2",
+                "version": "2.5.20",
+                "type": "target",
+                "virtual": False,
+                "patches": [PATCH],
+                "ignore_cves": ["CVE-2025-0001"],
+            },
+        }
+
+        result = self._run_script(show_info=info)
+        self.assertEqual(len(result["vulnerabilities"]), 2)
+
+        vulnerabilities = self._map_vulnerabilities(result)
+
+        self.assertEqual(len(vulnerabilities["CVE-2025-0001"]), 2)
+
+        ignored = next((v for v in vulnerabilities["CVE-2025-0001"] if v["analysis"]["state"] == "in_triage"), None)
+        self.assertIsNotNone(ignored)
+        self.assertEqual(len(ignored["affects"]), 1)
+        self.assertEqual(ignored["affects"][0]["ref"], "gnupg")
+
+        resolved = next((v for v in vulnerabilities["CVE-2025-0001"] if v["analysis"]["state"] == "resolved_with_pedigree"), None)
+        self.assertIsNotNone(resolved)
+        self.assertEqual(len(resolved["affects"]), 1)
+        self.assertEqual(resolved["affects"][0]["ref"], "gnupg2")
