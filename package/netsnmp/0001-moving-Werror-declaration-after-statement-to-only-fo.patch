@@ -1,0 +1,80 @@
+From 6facf270a6b9850846f015e64b8347319069fd57 Mon Sep 17 00:00:00 2001
+From: Wes Hardaker <opensource@hardakers.net>
+Date: Mon, 29 Dec 2025 13:38:59 -0800
+Subject: [PATCH] moving -Werror=declaration-after-statement to only for
+ developers
+
+Upstream: https://github.com/net-snmp/net-snmp/commit/0f19435ecc8fd6c3ef9cf2a391bd7bca25539e80
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.d/config_os_progs | 39 +++++++++++++++++++------------------
+ 1 file changed, 20 insertions(+), 19 deletions(-)
+
+diff --git a/configure.d/config_os_progs b/configure.d/config_os_progs
+index b3ecf556cc..b029de6017 100644
+--- a/configure.d/config_os_progs
++++ b/configure.d/config_os_progs
+@@ -110,24 +110,6 @@ AC_SUBST(LIBTOOL_DEPS)
+ #   Build environment:
+ ##
+ 
+-for opt in -Werror=declaration-after-statement
+-do
+-    AC_MSG_CHECKING([whether the compiler supports $opt])
+-    netsnmp_save_CFLAGS="$CFLAGS"
+-    if test x$opt != x-Wstrict-prototypes; then
+-      CFLAGS="-Werror $opt $CFLAGS"
+-    else
+-      CFLAGS="$opt $CFLAGS"
+-    fi
+-    AC_LINK_IFELSE([AC_LANG_PROGRAM([], [])], [
+-      AC_MSG_RESULT([yes])
+-      CFLAGS="$opt $netsnmp_save_CFLAGS"
+-    ], [
+-      AC_MSG_RESULT([no])
+-      CFLAGS="$netsnmp_save_CFLAGS"
+-    ])
+-done
+-
+ #   developer build 
+ #       (enabled by default when building from SVN checkout)
+ #
+@@ -135,7 +117,7 @@ if test "x$developer" != "xno" -a -f $srcdir/remove-files; then
+     developer="yes"
+ fi
+ if test "x$developer" = "xyes" -a "x$GCC" = "xyes"; then
+-    AC_MSG_CHECKING([for developer gcc flags])
++    AC_MSG_NOTICE([Checking for developer compiler flags])
+     #       WWWXXX - strict type checking
+     #
+     netsnmp_save_CFLAGS="$CFLAGS"
+@@ -159,6 +141,25 @@ if test "x$developer" = "xyes" -a "x$GCC" = "xyes"; then
+       CFLAGS="$netsnmp_save_CFLAGS"
+     done
+     AC_MSG_RESULT($DEVFLAGS)
++
++    for opt in -Werror=declaration-after-statement
++    do
++        AC_MSG_CHECKING([whether the compiler supports $opt])
++        netsnmp_save_CFLAGS="$CFLAGS"
++        if test x$opt != x-Wstrict-prototypes; then
++          CFLAGS="-Werror $opt $CFLAGS"
++        else
++          CFLAGS="$opt $CFLAGS"
++        fi
++        AC_LINK_IFELSE([AC_LANG_PROGRAM([], [])], [
++          AC_MSG_RESULT([yes])
++          CFLAGS="$opt $netsnmp_save_CFLAGS"
++        ], [
++          AC_MSG_RESULT([no])
++          CFLAGS="$netsnmp_save_CFLAGS"
++        ])
++    done
++
+ else
+     DEVFLAGS=""
+ fi
+-- 
+2.47.3
+
