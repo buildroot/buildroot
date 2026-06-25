@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SIGSUM_C_VERSION = v1.0.0
+SIGSUM_C_VERSION = v1.1.0
 SIGSUM_C_SITE = https://git.glasklar.is/sigsum/core/sigsum-c
 SIGSUM_C_SITE_METHOD = git
 SIGSUM_C_LICENSE = BSD-2-Clause
