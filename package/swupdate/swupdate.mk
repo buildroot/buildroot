@@ -20,6 +20,9 @@ SWUPDATE_LICENSE_FILES = LICENSES/BSD-1-Clause.txt \
 SWUPDATE_INSTALL_STAGING = YES
 SWUPDATE_DEPENDENCIES = json-c libubootenv
 
+# 0002-CVE-2026-28525.patch
+SWUPDATE_IGNORE_CVES += CVE-2026-28525
+
 # swupdate uses $CROSS-cc instead of $CROSS-gcc, which is not
 # available in all external toolchains, and use CC for linking. Ensure
 # TARGET_CC is used for both.
