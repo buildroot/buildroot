@@ -24,6 +24,7 @@ class TestIptables(infra.basetest.BRTest):
         BR2_TARGET_ROOTFS_CPIO_GZIP=y
         # BR2_TARGET_ROOTFS_TAR is not set
         """
+    iptables_backend = "(legacy)"
 
     def test_run(self):
         img = os.path.join(self.builddir, "images", "rootfs.cpio.gz")
@@ -41,7 +42,7 @@ class TestIptables(infra.basetest.BRTest):
         cmd = "iptables --version"
         output, exit_code = self.emulator.run(cmd)
         self.assertEqual(exit_code, 0)
-        self.assertTrue(output[0].endswith("(legacy)"))
+        self.assertTrue(output[0].endswith(self.iptables_backend))
 
         # We delete all rules in all chains. We also set default
         # policies to ACCEPT for INPUT and OUTPUT chains. This should
@@ -95,3 +96,14 @@ class TestIptables(infra.basetest.BRTest):
         # Since we deleted the rule, the ping test command which was
         # supposed to fail earlier is now supposed to succeed.
         self.assertRunOk(ping_test_cmd)
+
+
+class TestIptablesNft(TestIptables):
+    # Build iptables with nftables backend, and run the same test
+    # procedure as above
+    config = TestIptables.config + \
+        """
+        BR2_PACKAGE_IPTABLES_NFTABLES=y
+        BR2_PACKAGE_IPTABLES_NFTABLES_DEFAULT=y
+        """
+    iptables_backend = "(nf_tables)"
