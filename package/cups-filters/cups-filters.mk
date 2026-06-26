@@ -21,6 +21,9 @@ CUPS_FILTERS_IGNORE_CVES += CVE-2023-24805
 # 0002-rastertopclx.c-Fix-infinite-loop-caused-by-crafted-f.patch
 CUPS_FILTERS_IGNORE_CVES += CVE-2025-64524
 
+# 0005-fix-out-of-bounds-write-in-pdftoraster.patch
+CUPS_FILTERS_IGNORE_CVES += CVE-2025-64503
+
 CUPS_FILTERS_DEPENDENCIES = cups libglib2 lcms2 qpdf fontconfig freetype jpeg
 
 CUPS_FILTERS_CONF_OPTS = \
