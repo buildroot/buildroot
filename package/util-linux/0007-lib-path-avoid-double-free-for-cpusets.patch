@@ -1,0 +1,30 @@
+From 27279d4ab2431e1afb3a125ae7306eb2323b86b7 Mon Sep 17 00:00:00 2001
+From: Karel Zak <kzak@redhat.com>
+Date: Wed, 2 Jul 2025 12:25:45 +0200
+Subject: [PATCH] lib/path: avoid double free() for cpusets
+
+Addresses: https://github.com/util-linux/util-linux/issues/3641
+Signed-off-by: Karel Zak <kzak@redhat.com>
+
+Upstream: https://github.com/util-linux/util-linux/commit/27279d4ab2431e1afb3a125ae7306eb2323b86b7
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ lib/path.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/lib/path.c b/lib/path.c
+index f897599fd06..29b074a959b 100644
+--- a/lib/path.c
++++ b/lib/path.c
+@@ -1053,8 +1053,10 @@ static int ul_path_cpuparse(struct path_cxt *pc, cpu_set_t **set, int maxcpus, i
+ 	rc = 0;
+ 
+ out:
+-	if (rc)
++	if (rc) {
+ 		cpuset_free(*set);
++		*set = NULL;
++	}
+ 	free(buf);
+ 	return rc;
+ }
