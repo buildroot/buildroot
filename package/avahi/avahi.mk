@@ -60,6 +60,9 @@ AVAHI_IGNORE_CVES += CVE-2025-68471
 # 0016-core-fix-uncontrolled-recursion-bug-using-a-simple-loop-detection-algorithm.patch
 AVAHI_IGNORE_CVES += CVE-2026-24401
 
+# 0017-core-refuse-to-accept-publish-flags-where-both-wide-area-and-multicast-are-set.patch
+AVAHI_IGNORE_CVES += CVE-2026-34933
+
 AVAHI_CONF_ENV = \
 	avahi_cv_sys_cxx_works=yes \
 	DATADIRNAME=share
