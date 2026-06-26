@@ -1,0 +1,41 @@
+From 50d94ca0f2fa6177613c97c59791bde568631865 Mon Sep 17 00:00:00 2001
+From: Till Kamppeter <till.kamppeter@gmail.com>
+Date: Mon, 10 Nov 2025 18:31:48 +0100
+Subject: [PATCH] Fix out-of-bounds write in pdftoraster
+
+PDFs with too large page dimensions could cause an integer overflow and then a too small buffer for the pixel line to be allocated.
+
+Fixed this by cropping the page size to the maximum allowed by the standard, 14400x14400pt, 200x200in, 5x5m
+
+https://community.adobe.com/t5/indesign-discussions/maximum-width-of-a-pdf/td-p/9217372
+
+CVE: CVE-2025-64503
+Upstream: https://github.com/OpenPrinting/cups-filters/commit/50d94ca0f2fa6177613c97c59791bde568631865
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ filter/pdftoraster.cxx | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/filter/pdftoraster.cxx b/filter/pdftoraster.cxx
+index 7b3af924f..b64b34c62 100755
+--- a/filter/pdftoraster.cxx
++++ b/filter/pdftoraster.cxx
+@@ -1698,6 +1698,18 @@ static void outPage(poppler::document *doc, int pageNo,
+     header.PageSize[0] = (unsigned)l;
+   else
+     header.PageSize[1] = (unsigned)l;
++  /*
++    Maximum allowed page size for PDF is 200x200 inches (~ 5x5 m), or 14400x14400 pt
++    https://community.adobe.com/t5/indesign-discussions/maximum-width-of-a-pdf/td-p/9217372
++  */
++  if (header.PageSize[0] > 14400) {
++    fprintf(stderr, "ERROR: Page width is %dpt, too large, cropping to 14400pt\n", header.PageSize[0]);
++    header.PageSize[0] = 14400;
++  }
++  if (header.PageSize[1] > 14400) {
++    fprintf(stderr, "ERROR: Page height is %dpt, too large, cropping to 14400pt\n", header.PageSize[1]);
++    header.PageSize[1] = 14400;
++  }
+ 
+   memset(paperdimensions, 0, sizeof(paperdimensions));
+   memset(margins, 0, sizeof(margins));
