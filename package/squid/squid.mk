@@ -18,6 +18,9 @@ SQUID_IGNORE_CVES += CVE-2025-59362
 # 0002-Proxy-auth-data-visible-to-scripts.patch
 SQUID_IGNORE_CVES += CVE-2025-62168
 
+# 0003-CVE-2026-33515.patch
+SQUID_IGNORE_CVES += CVE-2026-33515
+
 SQUID_DEPENDENCIES = libcap host-libcap libtool libxml2 host-pkgconf \
 	$(if $(BR2_PACKAGE_LIBNETFILTER_CONNTRACK),libnetfilter_conntrack)
 SQUID_CONF_ENV = \
