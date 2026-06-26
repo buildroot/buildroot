@@ -21,8 +21,7 @@ Upstream: https://github.com/chromium/chromium/commit/0991fc6acd3c85472000f2055a
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 ---
  chromium/PRESUBMIT_test_mocks.py | 2 +-
- chromium/tools/grit/grit/util.py | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/chromium/PRESUBMIT_test_mocks.py b/chromium/PRESUBMIT_test_mocks.py
 index 0a9e5a54ecd..6b0eca1e1c2 100644
@@ -37,19 +36,3 @@ index 0a9e5a54ecd..6b0eca1e1c2 100644
      if hasattr(filename, 'AbsoluteLocalPath'):
         filename = filename.AbsoluteLocalPath()
      for file_ in self.files:
-diff --git a/chromium/tools/grit/grit/util.py b/chromium/tools/grit/grit/util.py
-index 77db06adffb..27f9aba5aa3 100644
---- a/chromium/tools/grit/grit/util.py
-+++ b/chromium/tools/grit/grit/util.py
-@@ -210,7 +210,7 @@ def ReadFile(filename, encoding):
-     mode = 'rb'
-     encoding = None
-   else:
--    mode = 'rU'
-+    mode = 'r'
- 
-   with io.open(abs(filename), mode, encoding=encoding) as f:
-     return f.read()
--- 
-2.25.1
-

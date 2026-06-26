@@ -46,10 +46,10 @@ upstream, so not sent.
  1 file changed, 8 deletions(-)
 
 diff --git a/configure.pri b/configure.pri
-index 8da334c83..3ff298e9f 100644
+index cb53c93b0..73a0e7a2a 100644
 --- a/configure.pri
 +++ b/configure.pri
-@@ -370,14 +370,6 @@ defineTest(qtConfTest_hasThumbFlag) {
+@@ -384,14 +384,6 @@ defineTest(qtConfTest_hasThumbFlag) {
      !isEmpty(FLAG): return(true)
      FLAG = $$qtwebengine_extractCFlag("-marm")
      !isEmpty(FLAG): return(false)

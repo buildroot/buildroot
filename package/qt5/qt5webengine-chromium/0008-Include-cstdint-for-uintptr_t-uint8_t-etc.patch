@@ -1,0 +1,297 @@
+From 80ddc04dd2398611afd8eafd89f5a6cd81b82363 Mon Sep 17 00:00:00 2001
+From: Arnout Vandecappelle <arnout@rnout.be>
+Date: Sun, 18 May 2025 09:59:24 +0200
+Subject: [PATCH] Include <cstdint> for uintptr_t, uint8_t, etc.
+
+GCC 15 adheres more strictly to the standard about which type is defined
+in which header. As such, uintptr_t, uint8_t, etc. are  no longer
+available unless cstdint is included.
+
+Add #include <cstdint> in the files that gave errors with GCC 15
+
+Most (all?) of these fixes are already upstream, but spread out over
+various commits that don't necessarily apply to our version. Fixing it
+ourselves is simpler.
+
+Signed-off-by: Arnout Vandecappelle <arnout@rnout.be>
+Upstream: N/A, already fixed and we're very far behind
+[added additional cstdint imports for qt5.15.18 bump]
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+---
+ chromium/base/task/thread_pool.h                                | 1 +
+ chromium/gpu/command_buffer/common/skia_utils.h                 | 1 +
+ chromium/gpu/command_buffer/service/gpu_fence_manager.h         | 1 +
+ chromium/net/tools/huffman_trie/trie_entry.h                    | 1 +
+ .../transport_security_state_entry.h                            | 1 +
+ chromium/third_party/pdfium/core/fpdfapi/page/cpdf_function.h   | 1 +
+ .../pdfium/core/fxcodec/jbig2/JBig2_DocumentContext.h           | 1 +
+ chromium/third_party/pdfium/core/fxcodec/jbig2/jbig2_decoder.h  | 1 +
+ chromium/third_party/pdfium/third_party/base/span.h             | 1 +
+ .../perfetto/include/perfetto/ext/tracing/core/slice.h          | 1 +
+ .../perfetto/include/perfetto/tracing/tracing_backend.h         | 1 +
+ .../perfetto/src/trace_processor/importers/gzip/gzip_utils.h    | 1 +
+ chromium/third_party/webrtc/api/fec_controller.h                | 1 +
+ chromium/third_party/webrtc/api/network_state_predictor.h       | 1 +
+ chromium/third_party/webrtc/api/task_queue/task_queue_base.h    | 1 +
+ chromium/third_party/webrtc/common_video/h264/pps_parser.h      | 2 ++
+ chromium/third_party/webrtc/common_video/h264/sps_parser.h      | 2 ++
+ .../webrtc/modules/include/module_common_types_public.h         | 1 +
+ .../third_party/webrtc/modules/video_coding/timestamp_map.h     | 1 +
+ chromium/third_party/webrtc/video/stats_counter.h               | 1 +
+ chromium/third_party/woff2/include/woff2/output.h               | 1 +
+ 21 files changed, 23 insertions(+)
+
+diff --git a/chromium/base/task/thread_pool.h b/chromium/base/task/thread_pool.h
+index 085c249ba58..afc674ca7f6 100644
+--- a/chromium/base/task/thread_pool.h
++++ b/chromium/base/task/thread_pool.h
+@@ -5,6 +5,7 @@
+ #ifndef BASE_TASK_THREAD_POOL_H_
+ #define BASE_TASK_THREAD_POOL_H_
+ 
++#include <cstdint>
+ #include <memory>
+ #include <utility>
+ 
+diff --git a/chromium/gpu/command_buffer/common/skia_utils.h b/chromium/gpu/command_buffer/common/skia_utils.h
+index 6508d79a1d4..a9f9528f133 100644
+--- a/chromium/gpu/command_buffer/common/skia_utils.h
++++ b/chromium/gpu/command_buffer/common/skia_utils.h
+@@ -5,6 +5,7 @@
+ #ifndef GPU_COMMAND_BUFFER_COMMON_SKIA_UTILS_H_
+ #define GPU_COMMAND_BUFFER_COMMON_SKIA_UTILS_H_
+ 
++#include <cstdint>
+ #include <memory>
+ 
+ #include "base/optional.h"
+diff --git a/chromium/gpu/command_buffer/service/gpu_fence_manager.h b/chromium/gpu/command_buffer/service/gpu_fence_manager.h
+index ee50d6fddd1..576f6e3bc8a 100644
+--- a/chromium/gpu/command_buffer/service/gpu_fence_manager.h
++++ b/chromium/gpu/command_buffer/service/gpu_fence_manager.h
+@@ -5,6 +5,7 @@
+ #ifndef GPU_COMMAND_BUFFER_SERVICE_GPU_FENCE_MANAGER_H_
+ #define GPU_COMMAND_BUFFER_SERVICE_GPU_FENCE_MANAGER_H_
+ 
++#include <cstdint>
+ #include <memory>
+ #include <vector>
+ 
+diff --git a/chromium/net/tools/huffman_trie/trie_entry.h b/chromium/net/tools/huffman_trie/trie_entry.h
+index fe70260f981..eac6a7fc249 100644
+--- a/chromium/net/tools/huffman_trie/trie_entry.h
++++ b/chromium/net/tools/huffman_trie/trie_entry.h
+@@ -5,6 +5,7 @@
+ #ifndef NET_TOOLS_HUFFMAN_TRIE_TRIE_ENTRY_H_
+ #define NET_TOOLS_HUFFMAN_TRIE_TRIE_ENTRY_H_
+ 
++#include <cstdint>
+ #include <memory>
+ #include <string>
+ #include <vector>
+diff --git a/chromium/net/tools/transport_security_state_generator/transport_security_state_entry.h b/chromium/net/tools/transport_security_state_generator/transport_security_state_entry.h
+index 59059d88f6d..fe15bb7429f 100644
+--- a/chromium/net/tools/transport_security_state_generator/transport_security_state_entry.h
++++ b/chromium/net/tools/transport_security_state_generator/transport_security_state_entry.h
+@@ -5,6 +5,7 @@
+ #ifndef NET_TOOLS_TRANSPORT_SECURITY_STATE_GENERATOR_TRANSPORT_SECURITY_STATE_ENTRY_H_
+ #define NET_TOOLS_TRANSPORT_SECURITY_STATE_GENERATOR_TRANSPORT_SECURITY_STATE_ENTRY_H_
+ 
++#include <cstdint>
+ #include <map>
+ #include <memory>
+ #include <string>
+diff --git a/chromium/third_party/pdfium/core/fpdfapi/page/cpdf_function.h b/chromium/third_party/pdfium/core/fpdfapi/page/cpdf_function.h
+index fd68b6b49d3..dc7c015d56c 100644
+--- a/chromium/third_party/pdfium/core/fpdfapi/page/cpdf_function.h
++++ b/chromium/third_party/pdfium/core/fpdfapi/page/cpdf_function.h
+@@ -7,6 +7,7 @@
+ #ifndef CORE_FPDFAPI_PAGE_CPDF_FUNCTION_H_
+ #define CORE_FPDFAPI_PAGE_CPDF_FUNCTION_H_
+ 
++#include <cstdint>
+ #include <memory>
+ #include <set>
+ #include <vector>
+diff --git a/chromium/third_party/pdfium/core/fxcodec/jbig2/JBig2_DocumentContext.h b/chromium/third_party/pdfium/core/fxcodec/jbig2/JBig2_DocumentContext.h
+index 9bcdd371e79..5921794f1f3 100644
+--- a/chromium/third_party/pdfium/core/fxcodec/jbig2/JBig2_DocumentContext.h
++++ b/chromium/third_party/pdfium/core/fxcodec/jbig2/JBig2_DocumentContext.h
+@@ -7,6 +7,7 @@
+ #ifndef CORE_FXCODEC_JBIG2_JBIG2_DOCUMENTCONTEXT_H_
+ #define CORE_FXCODEC_JBIG2_JBIG2_DOCUMENTCONTEXT_H_
+ 
++#include <cstdint>
+ #include <list>
+ #include <memory>
+ #include <utility>
+diff --git a/chromium/third_party/pdfium/core/fxcodec/jbig2/jbig2_decoder.h b/chromium/third_party/pdfium/core/fxcodec/jbig2/jbig2_decoder.h
+index 97867ca851c..a0ac6bd4ba5 100644
+--- a/chromium/third_party/pdfium/core/fxcodec/jbig2/jbig2_decoder.h
++++ b/chromium/third_party/pdfium/core/fxcodec/jbig2/jbig2_decoder.h
+@@ -7,6 +7,7 @@
+ #ifndef CORE_FXCODEC_JBIG2_JBIG2_DECODER_H_
+ #define CORE_FXCODEC_JBIG2_JBIG2_DECODER_H_
+ 
++#include <cstdint>
+ #include <memory>
+ 
+ #include "core/fxcodec/fx_codec_def.h"
+diff --git a/chromium/third_party/pdfium/third_party/base/span.h b/chromium/third_party/pdfium/third_party/base/span.h
+index bb07f43a021..c06dfb87348 100644
+--- a/chromium/third_party/pdfium/third_party/base/span.h
++++ b/chromium/third_party/pdfium/third_party/base/span.h
+@@ -5,6 +5,7 @@
+ #ifndef THIRD_PARTY_BASE_SPAN_H_
+ #define THIRD_PARTY_BASE_SPAN_H_
+ 
++#include <cstdint>
+ #include <stddef.h>
+ 
+ #include <algorithm>
+diff --git a/chromium/third_party/perfetto/include/perfetto/ext/tracing/core/slice.h b/chromium/third_party/perfetto/include/perfetto/ext/tracing/core/slice.h
+index 4ce66fdeadc..3f3932b2287 100644
+--- a/chromium/third_party/perfetto/include/perfetto/ext/tracing/core/slice.h
++++ b/chromium/third_party/perfetto/include/perfetto/ext/tracing/core/slice.h
+@@ -20,6 +20,7 @@
+ #include <stddef.h>
+ #include <string.h>
+ 
++#include <cstdint>
+ #include <memory>
+ #include <string>
+ #include <vector>
+diff --git a/chromium/third_party/perfetto/include/perfetto/tracing/tracing_backend.h b/chromium/third_party/perfetto/include/perfetto/tracing/tracing_backend.h
+index 67b0d2eb51e..3c2462de588 100644
+--- a/chromium/third_party/perfetto/include/perfetto/tracing/tracing_backend.h
++++ b/chromium/third_party/perfetto/include/perfetto/tracing/tracing_backend.h
+@@ -17,6 +17,7 @@
+ #ifndef INCLUDE_PERFETTO_TRACING_TRACING_BACKEND_H_
+ #define INCLUDE_PERFETTO_TRACING_TRACING_BACKEND_H_
+ 
++#include <cstdint>
+ #include <memory>
+ #include <string>
+ 
+diff --git a/chromium/third_party/perfetto/src/trace_processor/importers/gzip/gzip_utils.h b/chromium/third_party/perfetto/src/trace_processor/importers/gzip/gzip_utils.h
+index 624363ff66f..68783e879c8 100644
+--- a/chromium/third_party/perfetto/src/trace_processor/importers/gzip/gzip_utils.h
++++ b/chromium/third_party/perfetto/src/trace_processor/importers/gzip/gzip_utils.h
+@@ -18,6 +18,7 @@
+ #define SRC_TRACE_PROCESSOR_IMPORTERS_GZIP_GZIP_UTILS_H_
+ 
+ #include <memory>
++#include <cstdint>
+ 
+ struct z_stream_s;
+ 
+diff --git a/chromium/third_party/webrtc/api/fec_controller.h b/chromium/third_party/webrtc/api/fec_controller.h
+index 3e5f7bb2168..87777a53f1c 100644
+--- a/chromium/third_party/webrtc/api/fec_controller.h
++++ b/chromium/third_party/webrtc/api/fec_controller.h
+@@ -11,6 +11,7 @@
+ #ifndef API_FEC_CONTROLLER_H_
+ #define API_FEC_CONTROLLER_H_
+ 
++#include <cstdint>
+ #include <memory>
+ #include <vector>
+ 
+diff --git a/chromium/third_party/webrtc/api/network_state_predictor.h b/chromium/third_party/webrtc/api/network_state_predictor.h
+index 9cf5ab6f022..2d165baa5da 100644
+--- a/chromium/third_party/webrtc/api/network_state_predictor.h
++++ b/chromium/third_party/webrtc/api/network_state_predictor.h
+@@ -11,6 +11,7 @@
+ #ifndef API_NETWORK_STATE_PREDICTOR_H_
+ #define API_NETWORK_STATE_PREDICTOR_H_
+ 
++#include <cstdint>
+ #include <memory>
+ #include <vector>
+ 
+diff --git a/chromium/third_party/webrtc/api/task_queue/task_queue_base.h b/chromium/third_party/webrtc/api/task_queue/task_queue_base.h
+index 90b1efd31eb..63526a7383b 100644
+--- a/chromium/third_party/webrtc/api/task_queue/task_queue_base.h
++++ b/chromium/third_party/webrtc/api/task_queue/task_queue_base.h
+@@ -10,6 +10,7 @@
+ #ifndef API_TASK_QUEUE_TASK_QUEUE_BASE_H_
+ #define API_TASK_QUEUE_TASK_QUEUE_BASE_H_
+ 
++#include <cstdint>
+ #include <memory>
+ 
+ #include "api/task_queue/queued_task.h"
+diff --git a/chromium/third_party/webrtc/common_video/h264/pps_parser.h b/chromium/third_party/webrtc/common_video/h264/pps_parser.h
+index d6c31b06887..d02f544eecc 100644
+--- a/chromium/third_party/webrtc/common_video/h264/pps_parser.h
++++ b/chromium/third_party/webrtc/common_video/h264/pps_parser.h
+@@ -11,6 +11,8 @@
+ #ifndef COMMON_VIDEO_H264_PPS_PARSER_H_
+ #define COMMON_VIDEO_H264_PPS_PARSER_H_
+ 
++#include <cstdint>
++
+ #include "absl/types/optional.h"
+ 
+ namespace rtc {
+diff --git a/chromium/third_party/webrtc/common_video/h264/sps_parser.h b/chromium/third_party/webrtc/common_video/h264/sps_parser.h
+index 76e627d27a3..0c0937eb227 100644
+--- a/chromium/third_party/webrtc/common_video/h264/sps_parser.h
++++ b/chromium/third_party/webrtc/common_video/h264/sps_parser.h
+@@ -11,6 +11,8 @@
+ #ifndef COMMON_VIDEO_H264_SPS_PARSER_H_
+ #define COMMON_VIDEO_H264_SPS_PARSER_H_
+ 
++#include <cstdint>
++
+ #include "absl/types/optional.h"
+ 
+ namespace rtc {
+diff --git a/chromium/third_party/webrtc/modules/include/module_common_types_public.h b/chromium/third_party/webrtc/modules/include/module_common_types_public.h
+index 345e45ce127..8338a514624 100644
+--- a/chromium/third_party/webrtc/modules/include/module_common_types_public.h
++++ b/chromium/third_party/webrtc/modules/include/module_common_types_public.h
+@@ -11,6 +11,7 @@
+ #ifndef MODULES_INCLUDE_MODULE_COMMON_TYPES_PUBLIC_H_
+ #define MODULES_INCLUDE_MODULE_COMMON_TYPES_PUBLIC_H_
+ 
++#include <cstdint>
+ #include <limits>
+ 
+ #include "absl/types/optional.h"
+diff --git a/chromium/third_party/webrtc/modules/video_coding/timestamp_map.h b/chromium/third_party/webrtc/modules/video_coding/timestamp_map.h
+index c85666c9aa0..dfb90e447d8 100644
+--- a/chromium/third_party/webrtc/modules/video_coding/timestamp_map.h
++++ b/chromium/third_party/webrtc/modules/video_coding/timestamp_map.h
+@@ -11,6 +11,7 @@
+ #ifndef MODULES_VIDEO_CODING_TIMESTAMP_MAP_H_
+ #define MODULES_VIDEO_CODING_TIMESTAMP_MAP_H_
+ 
++#include <cstdint>
+ #include <memory>
+ 
+ namespace webrtc {
+diff --git a/chromium/third_party/webrtc/video/stats_counter.h b/chromium/third_party/webrtc/video/stats_counter.h
+index fb6017f415f..ed5530ca0f7 100644
+--- a/chromium/third_party/webrtc/video/stats_counter.h
++++ b/chromium/third_party/webrtc/video/stats_counter.h
+@@ -11,6 +11,7 @@
+ #ifndef VIDEO_STATS_COUNTER_H_
+ #define VIDEO_STATS_COUNTER_H_
+ 
++#include <cstdint>
+ #include <memory>
+ #include <string>
+ 
+diff --git a/chromium/third_party/woff2/include/woff2/output.h b/chromium/third_party/woff2/include/woff2/output.h
+index c325f67be72..5c4dc4d1850 100644
+--- a/chromium/third_party/woff2/include/woff2/output.h
++++ b/chromium/third_party/woff2/include/woff2/output.h
+@@ -10,6 +10,7 @@
+ #define WOFF2_WOFF2_OUT_H_
+ 
+ #include <algorithm>
++#include <cstdint>
+ #include <cstring>
+ #include <memory>
+ #include <string>

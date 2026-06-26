@@ -18,8 +18,7 @@ Pick-to: 6.1 6.2
 Fixes: QTBUG-96067
 Change-Id: Ib6a9bcc496f37e69ac39362cb0a021fccaf311f5
 Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
-[Retrieved from:
-https://code.qt.io/cgit/qt/qtbase.git/commit/?id=035dc537bee26e3b63a211b2835d8560439e161f]
+Upstream: https://code.qt.io/cgit/qt/qtbase.git/commit/?id=035dc537bee26e3b63a211b2835d8560439e161f
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 [Dario: make the patch to be applied with fuzz factor 0]
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
@@ -28,10 +27,10 @@ Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
  1 file changed, 5 insertions(+)
 
 diff --git a/src/corelib/thread/qfutex_p.h b/src/corelib/thread/qfutex_p.h
-index f287b752d75f..fd7d09ac8572 100644
+index e294537787e..6bf59d51df3 100644
 --- a/src/corelib/thread/qfutex_p.h
 +++ b/src/corelib/thread/qfutex_p.h
-@@ -81,6 +81,11 @@ QT_END_NAMESPACE
+@@ -82,6 +82,11 @@ QT_END_NAMESPACE
  // if not defined in linux/futex.h
  #  define FUTEX_PRIVATE_FLAG        128         // added in v2.6.22
  
