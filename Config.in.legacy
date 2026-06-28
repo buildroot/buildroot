@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2026.08"
 
+config BR2_KERNEL_HEADERS_7_0
+	bool "kernel headers version 7.0.x are no longer supported"
+	select BR2_LEGACY
+	help
+	  Version 7.0.x of the Linux kernel headers are no longer
+	  maintained upstream and are now removed.
+
 config BR2_PACKAGE_BLUEZ5_UTILS_PLUGINS_SAP
 	bool "bluez sap plugin removed"
 	select BR2_LEGACY

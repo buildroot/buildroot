@@ -52,10 +52,6 @@ config BR2_KERNEL_HEADERS_6_18
 	bool "Linux 6.18.x kernel headers"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_18
 
-config BR2_KERNEL_HEADERS_7_0
-	bool "Linux 7.0.x kernel headers"
-	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_7_0
-
 config BR2_KERNEL_HEADERS_7_1
 	bool "Linux 7.1.x kernel headers"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_7_1
@@ -482,7 +478,6 @@ config BR2_DEFAULT_KERNEL_HEADERS
 	default "6.6.143"	if BR2_KERNEL_HEADERS_6_6
 	default "6.12.94"	if BR2_KERNEL_HEADERS_6_12
 	default "6.18.37"	if BR2_KERNEL_HEADERS_6_18
-	default "7.0.14"	if BR2_KERNEL_HEADERS_7_0
 	default "7.1.2"		if BR2_KERNEL_HEADERS_7_1
 	default BR2_DEFAULT_KERNEL_VERSION if BR2_KERNEL_HEADERS_VERSION
 	default "custom"	if BR2_KERNEL_HEADERS_CUSTOM_TARBALL
