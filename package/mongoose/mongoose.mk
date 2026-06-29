@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MONGOOSE_VERSION = 7.17
+MONGOOSE_VERSION = 7.22
 MONGOOSE_SITE = $(call github,cesanta,mongoose,$(MONGOOSE_VERSION))
 MONGOOSE_LICENSE = GPL-2.0
 MONGOOSE_LICENSE_FILES = LICENSE
@@ -12,9 +12,6 @@ MONGOOSE_CPE_ID_VENDOR = cesanta
 MONGOOSE_INSTALL_STAGING = YES
 # static library
 MONGOOSE_INSTALL_TARGET = NO
-
-# 0001-improve-resiliency.patch
-MONGOOSE_IGNORE_CVES += CVE-2025-65502
 
 MONGOOSE_CFLAGS = $(TARGET_CFLAGS) -std=gnu99
 
