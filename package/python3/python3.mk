@@ -21,6 +21,8 @@ PYTHON3_IGNORE_CVES += CVE-2026-7774
 PYTHON3_IGNORE_CVES += CVE-2026-8328
 # 0016-prevent-bz2-decompressor-reuse-after-errors.patch
 PYTHON3_IGNORE_CVES += CVE-2026-9669
+# 0017-Fix-symlink-escape-via-tarfile-hardlink-extraction-fallback.patch
+PYTHON3_IGNORE_CVES += CVE-2026-11940
 
 # This host Python is installed in $(HOST_DIR), as it is needed when
 # cross-compiling third-party Python modules.
