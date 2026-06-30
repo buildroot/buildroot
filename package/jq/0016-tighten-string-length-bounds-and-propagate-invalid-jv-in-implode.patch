@@ -1,0 +1,65 @@
+From 46d1da30944ce93dd671ac72b6513fc0eb747837 Mon Sep 17 00:00:00 2001
+From: itchyny <itchyny@cybozu.co.jp>
+Date: Tue, 16 Jun 2026 14:31:14 +0900
+Subject: [PATCH] Tighten string length bounds and propagate invalid jv in
+ implode
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The bound added in CVE-2026-32316 (e47e56d22) still allowed
+`sizeof(jvp_string) + (currlen + len) * 2 + 1` to wrap `size_t` on
+32-bit platforms. Tighten the threshold so the final allocation
+fits in 32-bit `size_t`.
+
+Also break out of `jv_string_implode` and `f_string_implode` once
+`jv_string_append_codepoint` returns an invalid `jv`; otherwise the
+next iteration triggers the assertion in `jvp_string_ptr` (or
+invokes undefined behavior under `-DNDEBUG`).
+
+Fixes CVE-2026-54679.
+
+Co-authored-by: Dirk Müller <dirk@dmllr.de>
+
+CVE: CVE-2026-54679
+Upstream: https://github.com/jqlang/jq/commit/46d1da30944ce93dd671ac72b6513fc0eb747837
+[thomas: backport - jv_string_repeat not present]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/builtin.c | 1 +
+ src/jv.c      | 5 +++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/builtin.c b/src/builtin.c
+index ed205d9935..a3b7a61ae8 100644
+--- a/src/builtin.c
++++ b/src/builtin.c
+@@ -1396,6 +1396,7 @@ static jv f_string_implode(jq_state *jq, jv a) {
+     if (nv < 0 || nv > 0x10FFFF || (nv >= 0xD800 && nv <= 0xDFFF))
+       nv = 0xFFFD; // U+FFFD REPLACEMENT CHARACTER
+     s = jv_string_append_codepoint(s, nv);
++    if (!jv_is_valid(s)) break;
+   }
+ 
+   jv_free(a);
+diff --git a/src/jv.c b/src/jv.c
+index bcd7c9b5b0..48a63e6e55 100644
+--- a/src/jv.c
++++ b/src/jv.c
+@@ -1197,7 +1197,7 @@ static uint32_t jvp_string_remaining_space(jvp_string* s) {
+ static jv jvp_string_append(jv string, const char* data, uint32_t len) {
+   jvp_string* s = jvp_string_ptr(string);
+   uint32_t currlen = jvp_string_length(s);
+-  if ((uint64_t)currlen + len >= INT_MAX) {
++  if ((uint64_t)currlen + len >= INT_MAX - sizeof(jvp_string) / 2) {
+     jv_free(string);
+     return jv_invalid_with_msg(jv_string("String too long"));
+   }
+@@ -1483,6 +1483,7 @@ jv jv_string_implode(jv j) {
+     if (nv < 0 || nv > 0x10FFFF || (nv >= 0xD800 && nv <= 0xDFFF))
+       nv = 0xFFFD; // U+FFFD REPLACEMENT CHARACTER
+     s = jv_string_append_codepoint(s, nv);
++    if (!jv_is_valid(s)) break;
+   }
+ 
+   jv_free(j);
