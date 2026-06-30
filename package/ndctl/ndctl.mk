@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NDCTL_VERSION = 83
+NDCTL_VERSION = 85
 NDCTL_SITE = $(call github,pmem,ndctl,v$(NDCTL_VERSION))
 NDCTL_LICENSE = \
 	CC0-1.0 (helper routines), \
@@ -26,12 +26,8 @@ NDCTL_DEPENDENCIES = \
 	udev \
 	util-linux-libs
 
-# Currently, disabling keyutils or fwctl support will cause builds to
-# fail. Therefore, always pass the -Dfwctl=enabled and -Dkeyutils=enabled.
 NDCTL_CONF_OPTS = \
 	-Ddocs=disabled \
-	-Dfwctl=enabled \
-	-Dkeyutils=enabled \
 	-Diniparserdir=$(STAGING_DIR)/usr/include/iniparser
 
 ifeq ($(BR2_PACKAGE_LIBTRACEFS)$(BR2_PACKAGE_LIBTRACEEVENT),yy)
