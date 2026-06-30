@@ -1,0 +1,53 @@
+From 9761ceb7d6cc48c16b25f0ab1baaef0e701927e4 Mon Sep 17 00:00:00 2001
+From: itchyny <itchyny@cybozu.co.jp>
+Date: Wed, 6 May 2026 19:45:24 +0900
+Subject: [PATCH] Reject numeric literals longer than DEC_MAX_DIGITS
+ (999999999)
+
+A signed-int overflow in decNumber's D2U macro lets huge literals
+write attacker-controlled bytes past a stack buffer. Cap the length
+before calling decNumberFromString, and pre-slice long strings in
+jv_dump_string_trunc so the resulting error message doesn't itself
+allocate a multi-GiB buffer.
+
+Fixes CVE-2026-43894.
+
+CVE: CVE-2026-43894
+Upstream: https://github.com/jqlang/jq/commit/9761ceb7d6cc48c16b25f0ab1baaef0e701927e4
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/jv.c       | 5 ++++-
+ src/jv_print.c | 4 ++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/src/jv.c b/src/jv.c
+index 84fafef666..074ee310c5 100644
+--- a/src/jv.c
++++ b/src/jv.c
+@@ -578,7 +578,10 @@ static jvp_literal_number* jvp_literal_number_alloc(unsigned literal_length) {
+ }
+ 
+ static jv jvp_literal_number_new(const char * literal) {
+-  jvp_literal_number* n = jvp_literal_number_alloc(strlen(literal));
++  size_t len = strlen(literal);
++  if (len > DEC_MAX_DIGITS)
++    return JV_INVALID;
++  jvp_literal_number* n = jvp_literal_number_alloc(len);
+ 
+   decContext *ctx = DEC_CONTEXT();
+   decContextClearStatus(ctx, DEC_Conversion_syntax);
+diff --git a/src/jv_print.c b/src/jv_print.c
+index 5c86c5d97c..bc251070f7 100644
+--- a/src/jv_print.c
++++ b/src/jv_print.c
+@@ -408,6 +408,10 @@ jv jv_dump_string(jv x, int flags) {
+ }
+ 
+ char *jv_dump_string_trunc(jv x, char *outbuf, size_t bufsize) {
++  if (jv_get_kind(x) == JV_KIND_STRING &&
++      (size_t)jv_string_length_bytes(jv_copy(x)) > bufsize) {
++    x = jv_string_slice(x, 0, bufsize);
++  }
+   x = jv_dump_string(x, 0);
+   const char *str = jv_string_value(x);
+   const size_t len = strlen(str);

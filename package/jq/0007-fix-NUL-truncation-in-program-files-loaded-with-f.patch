@@ -1,0 +1,34 @@
+From 5a015deae35d19e3ebbc65db6c157a80e76df738 Mon Sep 17 00:00:00 2001
+From: itchyny <itchyny@cybozu.co.jp>
+Date: Fri, 24 Apr 2026 22:15:08 +0900
+Subject: [PATCH] Fix NUL truncation in program files loaded with -f
+
+This fixes CVE-2026-41256.
+
+CVE: CVE-2026-41256
+Upstream: https://github.com/jqlang/jq/commit/5a015deae35d19e3ebbc65db6c157a80e76df738
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/main.c   | 8 ++++++++
+ tests/shtest | 7 +++++++
+ 2 files changed, 15 insertions(+)
+
+diff --git a/src/main.c b/src/main.c
+index ce362607e2..fb5c7ab8e3 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -611,6 +611,14 @@ int main(int argc, char* argv[]) {
+       ret = JQ_ERROR_SYSTEM;
+       goto out;
+     }
++    int len = jv_string_length_bytes(jv_copy(data));
++    if ((size_t)len != strlen(jv_string_value(data))) {
++      fprintf(stderr, "jq: program file contains NUL bytes\n");
++      free(program_origin);
++      jv_free(data);
++      ret = JQ_ERROR_SYSTEM;
++      goto out;
++    }
+     jq_set_attr(jq, jv_string("PROGRAM_ORIGIN"), jq_realpath(jv_string(dirname(program_origin))));
+     ARGS = JV_OBJECT(jv_string("positional"), ARGS,
+                      jv_string("named"), jv_copy(program_arguments));
