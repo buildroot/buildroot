@@ -10,7 +10,7 @@ X11VNC_DEPENDENCIES = xlib_libXt xlib_libXext xlib_libXtst libvncserver
 X11VNC_LICENSE = GPL-2.0+
 X11VNC_LICENSE_FILES = COPYING
 X11VNC_CPE_ID_VALID = YES
-# 0002-scan-limit-access-to-shared-memory-segments-to-current-user.patch
+# 0002-scan-limit-access-to-shared-memory-segments-to-curre.patch
 X11VNC_IGNORE_CVES += CVE-2020-29074
 
 # Source coming from github, no configure included
