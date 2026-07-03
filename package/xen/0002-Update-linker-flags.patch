@@ -6,10 +6,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
+The -I$(XEN_ROOT)/tools/include added to QEMU's extra-cflags causes
+__XEN_INTERFACE_VERSION__ to be defined before xen_native.h is included,
+triggering an include-order assertion. Downgrade to a warning since the
+version is consistent in cross-compile.
+Ref: https://github.com/qemu/qemu/commit/e2abfe5ec6
+
 Upstream: Buildroot specific. This is a temporary patch for an intermediate bump.
 Signed-off-by: Vincent Stehlé <vincent.stehle@arm.com>
 ---
- tools/Makefile                             | 29 +++++++++++++++++++++-
+ tools/Makefile                              | 29 ++++++++++++++++++++-
  tools/qemu-xen/include/hw/xen/xen_native.h |  2 +-
  2 files changed, 29 insertions(+), 2 deletions(-)
 
@@ -30,7 +36,7 @@ index a9a3196e..5d289651 100644
  SUBDIRS-$(OCAML_TOOLS) += ocaml
  
  ifeq ($(CONFIG_RUMP),y)
-@@ -236,8 +240,31 @@ subdir-all-qemu-xen-dir: qemu-xen-dir-find
+@@ -189,8 +193,31 @@ subdir-all-qemu-xen-dir: qemu-xen-dir-find
  		-DXC_WANT_COMPAT_GNTTAB_API=1 \
  		-DXC_WANT_COMPAT_MAP_FOREIGN_API=1 \
  		-DXC_WANT_COMPAT_DEVICEMODEL_API=1 \
