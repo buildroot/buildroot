@@ -197,6 +197,63 @@ def test_Indent(testname, filename, string, expected):
     assert warnings == expected
 
 
+MissingCVEPatch = [
+    ('patches present',
+     {'0001-some-fix.patch': 'CVE: CVE-2000-1234', '0002-other-fix.patch': 'CVE: CVE-2000-1234'},
+     '# 0001-some-fix.patch\n'
+     '# 0002-other-fix.patch\n'
+     'FOO_IGNORE_CVES += CVE-2000-1234\n',
+     []),
+    ('patch missing',
+     {'0002-other-fix.patch': 'CVE: CVE-2000-1234'},
+     '# 0001-some-fix.patch\n'
+     '# 0002-other-fix.patch\n'
+     'FOO_IGNORE_CVES += CVE-2000-1234\n',
+     [['{}:1: patch file \'0001-some-fix.patch\' mentioned for ignored CVEs is missing',
+       '# 0001-some-fix.patch\n']]),
+    ('CVE tag missing',
+     {'0001-some-fix.patch': ''},
+     '# 0001-some-fix.patch\n'
+     'FOO_IGNORE_CVES += CVE-2000-1234\n',
+     [['{}: patch file \'0001-some-fix.patch\' is missing \'CVE:\' tag',
+       '# 0001-some-fix.patch\n']]),
+    ('patch in version subdir',
+     {'1.0/0001-some-fix.patch': 'CVE: CVE-2000-1234'},
+     '# 1.0/0001-some-fix.patch\n'
+     'FOO_IGNORE_CVES += CVE-2000-1234\n',
+     []),
+    ('comments between patch and ignore',
+     {},
+     '# 0001-some-fix.patch\n'
+     '# this entry is not stale\n'
+     'FOO_IGNORE_CVES += CVE-2000-1234\n',
+     [['{}:1: patch file \'0001-some-fix.patch\' mentioned for ignored CVEs is missing',
+       '# 0001-some-fix.patch\n']]),
+    ('comment not followed by ignore',
+     {},
+     '# 0001-some-fix.patch\n'
+     'FOO_DEPENDENCIES = host-foo\n'
+     'FOO_IGNORE_CVES += CVE-2000-1234\n',
+     []),
+    ('ignore without patch comment',
+     {},
+     'FOO_IGNORE_CVES += CVE-2000-1234\n',
+     []),
+    ]
+
+
+@pytest.mark.parametrize('testname,patches,string,expected', MissingCVEPatch)
+def test_MissingCVEPatch(testname, patches, string, expected, tmp_path):
+    filename = str(tmp_path / 'foo.mk')
+    for patch_name, content in patches.items():
+        patch_path = tmp_path / patch_name
+        patch_path.parent.mkdir(parents=True, exist_ok=True)
+        patch_path.write_text(content)
+    warnings = util.check_file(m.MissingCVEPatch, filename, string)
+    expected = [[w[0].format(filename)] + w[1:] for w in expected]
+    assert warnings == expected
+
+
 OverriddenVariable = [
     ('simple assignment',
      'any.mk',
