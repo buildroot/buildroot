@@ -6,6 +6,7 @@
 
 import os
 import re
+from pathlib import Path
 
 from checkpackagelib.base import _CheckFunction
 from checkpackagelib.lib import ConsecutiveEmptyLines  # noqa: F401
@@ -115,6 +116,47 @@ class Indent(_CheckFunction):
                 return ["{}:{}: unexpected indent with tabs"
                         .format(self.filename, lineno),
                         text]
+
+
+class MissingCVEPatch(_CheckFunction):
+    PATCH_COMMENT = re.compile(r"^#\s*(\S+\.patch)\s*$")
+    IGNORE_CVES = re.compile(r"^[A-Z0-9_]+_IGNORE_CVES\s*\+?=")
+    CVE_TAG_IN_PATCH = re.compile(r"^CVE: *CVE-\d+-\d+$")
+
+    def before(self):
+        self.pending_patches = []
+        self.package_dir = Path(self.filename).parent
+
+    def check_patch_files(self):
+        for patch_lineno, patch_name, patch_text in self.pending_patches:
+            patch_file = self.package_dir / patch_name
+            self.pending_patch = None
+
+            if not patch_file.is_file():
+                return ["{}:{}: patch file '{}' mentioned for ignored CVEs is missing"
+                        .format(self.filename, patch_lineno, patch_name),
+                        patch_text]
+
+            if not any(map(self.CVE_TAG_IN_PATCH.match, patch_file.open())):
+                return ["{}: patch file '{}' is missing 'CVE:' tag"
+                        .format(self.filename, patch_name),
+                        patch_text]
+
+    def check_line(self, lineno, text):
+        m = self.PATCH_COMMENT.match(text.rstrip())
+        if m:
+            self.pending_patches.append((lineno, m.group(1), text))
+            return
+
+        # other comments do not break the association between the patch
+        # comment and the following _IGNORE_CVES assignment
+        if text.lstrip().startswith("#"):
+            return
+
+        if self.IGNORE_CVES.search(text):
+            return self.check_patch_files()
+
+        self.pending_patches = []
 
 
 class OverriddenVariable(_CheckFunction):
