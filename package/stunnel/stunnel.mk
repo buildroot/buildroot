@@ -6,7 +6,7 @@
 
 STUNNEL_VERSION_MAJOR = 5
 STUNNEL_VERSION = $(STUNNEL_VERSION_MAJOR).71
-STUNNEL_SITE = http://www.usenix.org.uk/mirrors/stunnel/archive/$(STUNNEL_VERSION_MAJOR).x
+STUNNEL_SITE = https://www.stunnel.org/archive/$(STUNNEL_VERSION_MAJOR).x
 STUNNEL_DEPENDENCIES = host-pkgconf openssl
 STUNNEL_CONF_OPTS = --with-ssl=$(STAGING_DIR)/usr --with-threads=fork \
 	--disable-libwrap
