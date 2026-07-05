@@ -1,0 +1,47 @@
+From 9507706136fde8c324d95d5c84c78bae1703bafc Mon Sep 17 00:00:00 2001
+From: Downtown Allday <downtownallday@gmail.com>
+Date: Fri, 3 Apr 2026 09:34:00 -0400
+Subject: [PATCH] fix the following error: error: no member named 'format' in
+ namespace 'fmt'
+
+the comment in fmt/core.h says including 'format' via core is deprectated:
+// Using fmt::format via fmt/core.h has been deprecated since version 11
+// and now requires an explicit opt in.
+#ifdef FMT_DEPRECATED_HEAVY_CORE
+#  include "format.h"
+#endif
+
+Upstream: https://github.com/gerbera/gerbera/commit/9507706136fde8c324d95d5c84c78bae1703bafc
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/database/search_handler.h | 2 +-
+ src/exceptions.h              | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/database/search_handler.h b/src/database/search_handler.h
+index ac5afb1b7..c1c99d00d 100644
+--- a/src/database/search_handler.h
++++ b/src/database/search_handler.h
+@@ -32,7 +32,7 @@
+ #include "util/tools.h"
+ 
+ #include <algorithm>
+-#include <fmt/core.h>
++#include <fmt/format.h>
+ #include <map>
+ #include <memory>
+ #include <tuple>
+diff --git a/src/exceptions.h b/src/exceptions.h
+index 180e63ad4..e5ed74f3d 100644
+--- a/src/exceptions.h
++++ b/src/exceptions.h
+@@ -34,7 +34,7 @@
+ #ifndef __EXCEPTIONS_H__
+ #define __EXCEPTIONS_H__
+ 
+-#include <fmt/core.h>
++#include <fmt/format.h>
+ #include <stdexcept>
+ #include <string>
+ 

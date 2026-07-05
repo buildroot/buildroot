@@ -1,0 +1,148 @@
+From 7caa9ae9ebf5c4cded5a292701528ff1d5c4946e Mon Sep 17 00:00:00 2001
+From: Downtown Allday <downtownallday@gmail.com>
+Date: Fri, 3 Apr 2026 09:31:07 -0400
+Subject: [PATCH] Fix the following errors: error: no member named 'strerror'
+ in namespace 'std' error: no member named 'memcpy' in namespace 'std' error:
+ no member named 'strchr' in namespace 'std'
+
+all of these require <cstring>. see:
+https://en.cppreference.com/w/cpp/string/byte/strerror
+https://en.cppreference.com/w/cpp/string/byte/memcpy
+https://en.cppreference.com/w/cpp/string/byte/strchr
+
+Upstream: https://github.com/gerbera/gerbera/commit/7caa9ae9ebf5c4cded5a292701528ff1d5c4946e
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/config/setup/config_setup_path.cc | 1 +
+ src/content/inotify/mt_inotify.cc     | 1 +
+ src/iohandler/mem_io_handler.cc       | 1 +
+ src/util/grb_fs.cc                    | 1 +
+ src/util/grb_net.cc                   | 1 +
+ src/util/string_converter.cc          | 1 +
+ src/util/thread_executor.cc           | 1 +
+ src/util/thread_runner.h              | 1 +
+ src/util/tools.cc                     | 1 +
+ src/util/url_utils.cc                 | 1 +
+ 10 files changed, 10 insertions(+)
+
+diff --git a/src/config/setup/config_setup_path.cc b/src/config/setup/config_setup_path.cc
+index cdb7244e4..a10e3c9f2 100644
+--- a/src/config/setup/config_setup_path.cc
++++ b/src/config/setup/config_setup_path.cc
+@@ -31,6 +31,7 @@
+ #include "util/logger.h"
+ 
+ #include <pugixml.hpp>
++#include <cstring>
+ 
+ bool ConfigPathSetup::checkPathValue(std::string& optValue, std::string& pathValue) const
+ {
+diff --git a/src/content/inotify/mt_inotify.cc b/src/content/inotify/mt_inotify.cc
+index e938e60a1..e140b5f4f 100644
+--- a/src/content/inotify/mt_inotify.cc
++++ b/src/content/inotify/mt_inotify.cc
+@@ -52,6 +52,7 @@
+ #include <sys/select.h>
+ #include <thread>
+ #include <unistd.h>
++#include <cstring>
+ #ifdef SOLARIS
+ #include <sys/filio.h> // FIONREAD
+ #endif
+diff --git a/src/iohandler/mem_io_handler.cc b/src/iohandler/mem_io_handler.cc
+index 21e4a1960..ba16a10d7 100644
+--- a/src/iohandler/mem_io_handler.cc
++++ b/src/iohandler/mem_io_handler.cc
+@@ -35,6 +35,7 @@
+ #include "mem_io_handler.h" // API
+ 
+ #include "exceptions.h"
++#include <cstring>
+ 
+ MemIOHandler::MemIOHandler(const void* buffer, int length)
+     : buffer(new char[length])
+diff --git a/src/util/grb_fs.cc b/src/util/grb_fs.cc
+index cd3e612a7..09c892f2e 100644
+--- a/src/util/grb_fs.cc
++++ b/src/util/grb_fs.cc
+@@ -30,6 +30,7 @@ Gerbera - https://gerbera.io/
+ #include <fcntl.h>
+ #include <fstream>
+ #include <sstream>
++#include <cstring>
+ #include <sys/stat.h>
+ #include <unistd.h>
+ 
+diff --git a/src/util/grb_net.cc b/src/util/grb_net.cc
+index 8986bfa4a..68395e001 100644
+--- a/src/util/grb_net.cc
++++ b/src/util/grb_net.cc
+@@ -30,6 +30,7 @@ Gerbera - https://gerbera.io/
+ #include <ifaddrs.h>
+ #include <netdb.h>
+ #include <regex>
++#include <cstring>
+ 
+ #ifdef SOLARIS
+ #include <sys/sockio.h>
+diff --git a/src/util/string_converter.cc b/src/util/string_converter.cc
+index fa11e1de2..21e2760d9 100644
+--- a/src/util/string_converter.cc
++++ b/src/util/string_converter.cc
+@@ -42,6 +42,7 @@
+ 
+ #include <array>
+ #include <vector>
++#include <cstring>
+ #if FMT_VERSION >= 100202
+ #include <fmt/ranges.h>
+ #endif
+diff --git a/src/util/thread_executor.cc b/src/util/thread_executor.cc
+index 669856272..ca0a1755c 100644
+--- a/src/util/thread_executor.cc
++++ b/src/util/thread_executor.cc
+@@ -34,6 +34,7 @@
+ #include "thread_executor.h" // API
+ 
+ #include "util/logger.h"
++#include <cstring>
+ 
+ ThreadExecutor::~ThreadExecutor()
+ {
+diff --git a/src/util/thread_runner.h b/src/util/thread_runner.h
+index a2e55f8eb..08dbc8b9c 100644
+--- a/src/util/thread_runner.h
++++ b/src/util/thread_runner.h
+@@ -36,6 +36,7 @@
+ #include <mutex>
+ #include <pthread.h>
+ #include <thread>
++#include <cstring>
+ 
+ using ThreadProc = std::function<void(void* target)>;
+ 
+diff --git a/src/util/tools.cc b/src/util/tools.cc
+index 2174ff352..cc1877286 100644
+--- a/src/util/tools.cc
++++ b/src/util/tools.cc
+@@ -43,6 +43,7 @@
+ #include <queue>
+ #include <regex>
+ #include <sstream>
++#include <cstring>
+ 
+ #ifdef __HAIKU__
+ #define _DEFAULT_SOURCE
+diff --git a/src/util/url_utils.cc b/src/util/url_utils.cc
+index efb4099ec..3127d53fb 100644
+--- a/src/util/url_utils.cc
++++ b/src/util/url_utils.cc
+@@ -30,6 +30,7 @@ Gerbera - https://gerbera.io/
+ #include <fmt/ranges.h>
+ #endif
+ #include <sstream>
++#include <cstring>
+ 
+ // URL FORMATTING CONSTANTS
+ #define URL_UI_PARAM_SEPARATOR '?'
