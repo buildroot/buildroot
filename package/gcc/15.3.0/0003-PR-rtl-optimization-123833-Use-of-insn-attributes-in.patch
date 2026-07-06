@@ -1,0 +1,85 @@
+From 654c733fa3f10531f3fd6b6d89e39f28c0075bd6 Mon Sep 17 00:00:00 2001
+From: Roger Sayle <roger@nextmovesoftware.com>
+Date: Sat, 7 Feb 2026 07:50:41 +0000
+Subject: [PATCH] PR rtl-optimization/123833: Use of insn attributes in
+ insn_costs corrupts recog_data.
+
+Thanks again to Jeff Law and Andrew Pinski.  Here's a revised patch that
+addresses the true underlying cause of PR 128333.  recog.cc's cancel_changes
+was not correctly updating the recog_data cache, which leads to strange
+(incorrect) behavior in fwprop and ifcvt.
+
+2026-02-07  Roger Sayle  <roger@nextmovesoftware.com>
+	    Andrew Pinski  <andrew.pinski@oss.qualcomm.com>
+	    Jeff Law  <jeffrey.law@oss.qualcomm.com>
+
+gcc/ChangeLog
+	PR rtl-optimization/123833
+	* recog.cc (cancel_changes): Update the recog_data cache if it
+	holds the instruction being changed.
+
+gcc/testsuite
+	PR rtl-optimization/123833
+	* gcc.target/mips/pr123833.c: New test case.
+
+Upstream: https://gcc.gnu.org/cgit/gcc/commit/?id=654c733fa3f10531f3fd6b6d89e39f28c0075bd6
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ gcc/recog.cc                             |  6 +++++-
+ gcc/testsuite/gcc.target/mips/pr123833.c | 26 ++++++++++++++++++++++++
+ 2 files changed, 31 insertions(+), 1 deletion(-)
+ create mode 100644 gcc/testsuite/gcc.target/mips/pr123833.c
+
+diff --git a/gcc/recog.cc b/gcc/recog.cc
+index 48f6b45ec6d..f37e548d6ab 100644
+--- a/gcc/recog.cc
++++ b/gcc/recog.cc
+@@ -608,7 +608,11 @@ cancel_changes (int num)
+       else
+ 	*changes[i].loc = changes[i].old;
+       if (changes[i].object && !MEM_P (changes[i].object))
+-	INSN_CODE (changes[i].object) = changes[i].old_code;
++	{
++	  INSN_CODE (changes[i].object) = changes[i].old_code;
++	  if (recog_data.insn == changes[i].object)
++	    recog_data.insn = nullptr;
++	}
+     }
+   num_changes = num;
+ }
+diff --git a/gcc/testsuite/gcc.target/mips/pr123833.c b/gcc/testsuite/gcc.target/mips/pr123833.c
+new file mode 100644
+index 00000000000..4d0c9e8eaec
+--- /dev/null
++++ b/gcc/testsuite/gcc.target/mips/pr123833.c
+@@ -0,0 +1,26 @@
++/* { dg-do compile } */
++/* { dg-options "-O1 -mabi=64 -mhard-float" } */
++
++typedef short int16_t;
++typedef signed char int8_t;
++typedef long long int64_t;
++typedef unsigned char uint8_t;
++typedef unsigned long long uint64_t;
++
++#define BS_VEC(type, num) type __attribute__((vector_size(num * sizeof(type))))
++BS_VEC(int8_t, 2) backsmith_pure_0(int64_t);
++uint64_t backsmith_pure_4(int16_t BS_ARG_0)
++{
++    BS_VEC(int16_t, 16)
++    BS_VAR_0 = __builtin_convertvector(
++        __builtin_shufflevector(backsmith_pure_0(0), backsmith_pure_0(0), 0, 2,
++                                2, 3, 2, 1, 2, 3, 0, 2, 0, 0, 2, 2, 0, 1),
++        BS_VEC(int16_t, 16));
++    for (;;)
++    {
++        if (__builtin_ctzg((uint8_t)BS_VAR_0[3], BS_ARG_0))
++            for (;;);
++        return 0;
++    }
++}
++
+-- 
+2.47.3
+
