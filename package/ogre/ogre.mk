@@ -4,12 +4,15 @@
 #
 ################################################################################
 
-OGRE_VERSION = v14.4.1
+OGRE_VERSION_UPSTREAM = 14.4.1
+OGRE_VERSION = v$(OGRE_VERSION_UPSTREAM)
 OGRE_SITE = https://github.com/OGRECave/ogre
 OGRE_SITE_METHOD = git
 OGRE_LICENSE = MIT (main library, DeferredShadingMedia samples), Public Domain (samples and plugins)
 OGRE_LICENSE_FILES = LICENSE
 OGRE_INSTALL_STAGING = YES
+OGRE_CPE_ID_VENDOR = ogre3d
+OGRE_CPE_ID_VERSION = $(OGRE_VERSION_UPSTREAM)
 
 # Download with imgui submodule (https://github.com/ocornut/imgui
 OGRE_GIT_SUBMODULES = YES
