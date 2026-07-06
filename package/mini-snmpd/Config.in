@@ -4,4 +4,19 @@ config BR2_PACKAGE_MINI_SNMPD
 	  Mini SNMPd is a minimal implementation targeted at small or
 	  embedded UNIX systems with limited resources
 
-	  http://troglobit.com/mini-snmpd.html
+	  Enable BR2_PACKAGE_LIBCONFUSE for /etc/mini-snmpd.conf support
+	  with an example file.  Also enabling BR2_PACKAGE_ETHTOOL adds
+	  ethtool-based interface statistics.
+
+	  https://troglobit.com/mini-snmpd.html
+
+if BR2_PACKAGE_MINI_SNMPD
+
+config BR2_PACKAGE_MINI_SNMPD_INTERFACES
+	int "Number of network interfaces"
+	default 8
+	range 1 256
+	help
+	  Max number of network interfaces exposed in IF-MIB::ifTable
+
+endif
