@@ -4,13 +4,12 @@
 #
 ################################################################################
 
-MINI_SNMPD_VERSION = 1.6
-MINI_SNMPD_SITE = $(call github,troglobit,mini-snmpd,v$(MINI_SNMPD_VERSION))
+MINI_SNMPD_VERSION = 2.0
+MINI_SNMPD_SITE = https://github.com/troglobit/mini-snmpd/releases/download/v$(MINI_SNMPD_VERSION)
 MINI_SNMPD_LICENSE = GPL-2.0
 MINI_SNMPD_LICENSE_FILES = COPYING
 MINI_SNMPD_CPE_ID_VENDOR = minisnmpd_project
 MINI_SNMPD_CPE_ID_PRODUCT = minisnmpd
-MINI_SNMPD_AUTORECONF = YES
 MINI_SNMPD_DEPENDENCIES = host-pkgconf
 
 define MINI_SNMPD_INSTALL_ETC_DEFAULT
