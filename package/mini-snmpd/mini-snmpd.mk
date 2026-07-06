@@ -19,4 +19,9 @@ endef
 
 MINI_SNMPD_POST_INSTALL_TARGET_HOOKS += MINI_SNMPD_INSTALL_ETC_DEFAULT
 
+define MINI_SNMPD_INSTALL_INIT_SYSV
+	$(INSTALL) -D -m 0755 package/mini-snmpd/S60mini-snmpd \
+		$(TARGET_DIR)/etc/init.d/S60mini-snmpd
+endef
+
 $(eval $(autotools-package))
