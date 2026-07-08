@@ -1,4 +1,5 @@
 config BR2_PACKAGE_HOST_MOSQUITTO
 	bool "host mosquitto (mosquitto_passwd)"
+	select BR2_HOST_CMAKE_AT_LEAST_4_3
 	help
 	  Only installs mosquitto_passwd.
