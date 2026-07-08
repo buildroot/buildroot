@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DRACUT_VERSION = 110
+DRACUT_VERSION = 111
 DRACUT_SITE = $(call github,dracut-ng,dracut-ng,$(DRACUT_VERSION))
 DRACUT_LICENSE = GPL-2.0
 DRACUT_LICENSE_FILES = COPYING
