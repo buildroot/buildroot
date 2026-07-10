@@ -1,0 +1,36 @@
+From 48a177958a9ecff8f7cee379affb2f35984b58a9 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Fri, 10 Jul 2026 20:34:01 +0200
+Subject: [PATCH] tools/intel_gpu_frequency: include limits.h to fix musl build
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes build error seen with musl-based toolchains:
+
+../tools/intel_gpu_frequency.c:90:19: error:
+ ‘PATH_MAX’ undeclared (first use in this function)
+   90 |         char path[PATH_MAX];
+
+Upstream: https://patchwork.freedesktop.org/patch/739159/?series=170207&rev=1
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ tools/intel_gpu_frequency.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/intel_gpu_frequency.c b/tools/intel_gpu_frequency.c
+index 6316c2e58..7df7f331d 100644
+--- a/tools/intel_gpu_frequency.c
++++ b/tools/intel_gpu_frequency.c
+@@ -25,6 +25,7 @@
+ #include <dirent.h>
+ #include <fcntl.h>
+ #include <getopt.h>
++#include <limits.h>
+ #include <stdio.h>
+ #include <time.h>
+ #include <unistd.h>
+-- 
+2.47.3
+
