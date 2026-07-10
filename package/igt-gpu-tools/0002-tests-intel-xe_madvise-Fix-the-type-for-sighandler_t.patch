@@ -1,0 +1,46 @@
+From e807c4cd97c3e9bbbd89026cf9ed0b16b02ef397 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Fri, 10 Jul 2026 20:35:22 +0200
+Subject: [PATCH] tests/intel/xe_madvise: Fix the type for sighandler_t
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+__sighandler_t is private interface in glibc so its
+better to not use it, as an aside fixes build with musl
+
+Patch was inspired by
+https://lists.gnu.org/r/bug-time/2025-03/msg00000.html
+
+Fixes build error seen with musl-based toolchains:
+
+../tests/intel/xe_madvise.c: In function ‘test_dontneed_after_mmap’:
+../tests/intel/xe_madvise.c:400:48: error: ‘__sighandler_t’ undeclared
+ (first use in this function); did you mean ‘sighandler_t’?
+  400 |          old_sigsegv = signal(SIGSEGV, (__sighandler_t)sigtrap);
+
+Upstream: https://patchwork.freedesktop.org/patch/739160/?series=170207&rev=1
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ tests/intel/xe_madvise.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tests/intel/xe_madvise.c b/tests/intel/xe_madvise.c
+index 3d36be941..a33a08630 100644
+--- a/tests/intel/xe_madvise.c
++++ b/tests/intel/xe_madvise.c
+@@ -397,8 +397,8 @@ static void test_dontneed_after_mmap(int fd)
+ 		char *ptr = (char *)map;
+ 		int sig;
+ 
+-		old_sigsegv = signal(SIGSEGV, (__sighandler_t)sigtrap);
+-		old_sigbus = signal(SIGBUS, (__sighandler_t)sigtrap);
++		old_sigsegv = signal(SIGSEGV, (sighandler_t)sigtrap);
++		old_sigbus = signal(SIGBUS, (sighandler_t)sigtrap);
+ 
+ 		sig = sigsetjmp(jmp, 1); /* savemask=1: save/restore signal mask */
+ 		switch (sig) {
+-- 
+2.47.3
+
