@@ -1,0 +1,9 @@
+config BR2_PACKAGE_SDL3_TTF
+	bool "sdl3_ttf"
+	depends on BR2_PACKAGE_SDL3
+	select BR2_PACKAGE_FREETYPE
+	help
+	  SDL3_ttf is a sample TrueType font library. It allows you to
+	  use TrueType fonts in your SDL3 applications.
+
+	  http://www.libsdl.org/projects/SDL_ttf/
