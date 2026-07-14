@@ -1,0 +1,10 @@
+config BR2_PACKAGE_SDL3_GFX
+	bool "sdl3_gfx"
+	depends on BR2_PACKAGE_SDL3
+	help
+	  The SDL3_gfx library is an extension to the SDL3 library
+	  which provides basic antialiased drawing routines such as
+	  lines, circles or polygons, an interpolating rotozoomer for
+	  SDL surfaces, framerate control and MMX image filters.
+
+	  https://github.com/sabdul-khabir/SDL3_gfx
