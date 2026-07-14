@@ -1,0 +1,41 @@
+From f282f4e995becc55a8fa380781dc36e0ff0796d2 Mon Sep 17 00:00:00 2001
+From: Florian Larysch <fl@n621.de>
+Date: Tue, 14 Jul 2026 16:07:54 +0200
+Subject: [PATCH] pahole: fix BTF function parameter type match check
+
+The BTF_KIND_FUNC_PROTO arm in types__match() first checks whether two
+function types identified by t1/t2 have matching return types and then
+attempts to iterate over the function parameters (p1/p2) to check them
+for compatibility too.
+
+However, the loop just repeats the check on t1/t2 instead of p1/p2, so
+we just keep re-checking return type compatibility, ignoring possible
+mismatches of the actual parameter types.
+
+Fix this by actually comparing p1 and p2. This also resolves a
+unused-but-set-variable build-time warning.
+
+Upstream: https://lore.kernel.org/dwarves/20260714140858.17507-1-fl@n621.de/
+Signed-off-by: Florian Larysch <fl@n621.de>
+---
+ btf_encoder.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/btf_encoder.c b/btf_encoder.c
+index 4a585f5..4f9790e 100644
+--- a/btf_encoder.c
++++ b/btf_encoder.c
+@@ -1109,8 +1109,8 @@ static bool types__match(struct btf_encoder *encoder,
+ 					  btf2, t2->type))
+ 				return false;
+ 			for (i = 0; i < vlen; i++, p1++, p2++) {
+-				if (!types__match(encoder, btf1, t1->type,
+-						  btf2, t2->type))
++				if (!types__match(encoder, btf1, p1->type,
++						  btf2, p2->type))
+ 					return false;
+ 			}
+ 			return true;
+-- 
+2.55.0
+

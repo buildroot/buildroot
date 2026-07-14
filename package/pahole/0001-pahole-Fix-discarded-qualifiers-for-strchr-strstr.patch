@@ -1,0 +1,147 @@
+From 5f5809cd50cc4d583a2fe3f4d556cb120760e229 Mon Sep 17 00:00:00 2001
+From: Damien Hourtoulle <damien.hourtoulle@gmail.com>
+Date: Wed, 11 Mar 2026 15:09:39 +0100
+Subject: [PATCH] pahole: Fix discarded-qualifiers for strchr/strstr.
+
+Glibc 2.43 added C23 const-preserving overloads :
+https://sourceware.org/glibc/wiki/Release/2.43.
+
+For the function prototype__new, fix local variable declaration to use
+the correct const char* type instead of char*, removing the need to
+discard the const qualifier.
+
+Also fix a pre-existing bug in type__find_type_enum: when iterating
+over a '+'-concatenated list of enum names, after advancing to the next
+segment the new separator was not nullified, causing "second+third" to
+be passed to cu__find_enumeration_by_name instead of "second".  Add a
+null check before writing to sep_mutable to avoid a null dereference
+when no further '+' is present.
+
+Signed-off-by: Damien Hourtoulle <damien.hourtoulle@gmail.com>
+Signed-off-by: Alan Maguire <alan.maguire@oracle.com>
+Link: https://lore.kernel.org/dwarves/20260311140938.81459-2-d.hourtoulle@geoide.fr/
+
+Upstream: https://git.kernel.org/pub/scm/devel/pahole/pahole.git/commit/?id=ba31cfa08ffcfe6ff5757f325de5b03ca157cb78
+Signed-off-by: Florian Larysch <fl@n621.de>
+---
+ btf_encoder.c |  2 +-
+ pahole.c      | 35 ++++++++++++++++++-----------------
+ 2 files changed, 19 insertions(+), 18 deletions(-)
+
+diff --git a/btf_encoder.c b/btf_encoder.c
+index 03bc3c7..4a585f5 100644
+--- a/btf_encoder.c
++++ b/btf_encoder.c
+@@ -1199,7 +1199,7 @@ static bool str_contains_non_fn_suffix(const char *str) {
+ 		".cold",
+ 		".part"
+ 	};
+-	char *suffix = strchr(str, '.');
++	const char *suffix = strchr(str, '.');
+ 	int i;
+ 
+ 	if (!suffix)
+diff --git a/pahole.c b/pahole.c
+index ef01e58..8c827fc 100644
+--- a/pahole.c
++++ b/pahole.c
+@@ -2482,7 +2482,7 @@ static int64_t type_instance__int_value(struct type_instance *instance, const ch
+ 	int byte_offset = 0;
+ 
+ 	if (!member) {
+-		char *sep = strchr(member_name_orig, '.');
++		const char *sep = strchr(member_name_orig, '.');
+ 
+ 		if (!sep)
+ 			return -1;
+@@ -2495,8 +2495,8 @@ static int64_t type_instance__int_value(struct type_instance *instance, const ch
+ 		char *member_name = member_name_alloc;
+ 		struct type *type = instance->type;
+ 
+-		sep = member_name_alloc + (sep - member_name_orig);
+-		*sep = 0;
++		char *sep_mutable = member_name_alloc + (sep - member_name_orig);  // sep mutable for the copy
++		*sep_mutable = 0;
+ 
+ 		while (1) {
+ 			member = type__find_member_by_name(type, member_name);
+@@ -2509,9 +2509,9 @@ out_free_member_name:
+ 			type = tag__type(cu__type(cu, member->tag.type));
+ 			if (type == NULL)
+ 				goto out_free_member_name;
+-			member_name = sep + 1;
+-			sep = strchr(member_name, '.');
+-			if (!sep)
++			member_name = sep_mutable + 1;
++			sep_mutable = strchr(member_name, '.');
++			if (!sep_mutable)
+ 				break;
+ 
+ 		}
+@@ -2949,7 +2949,7 @@ static struct prototype *prototype__new(const char *expression)
+ 
+ 	strcpy(prototype->name, expression);
+ 
+-	const char *name = prototype->name;
++	char *name = prototype->name;
+ 
+ 	prototype->nr_args = 0;
+ 
+@@ -2963,10 +2963,9 @@ static struct prototype *prototype__new(const char *expression)
+ 	if (args_close == NULL)
+ 		goto out_no_closing_parens;
+ 
++	*args_open++ = *args_close = '\0';
+ 	char *args = args_open;
+ 
+-	*args++ = *args_close = '\0';
+-
+ 	while (isspace(*args))
+ 		++args;
+ 
+@@ -3113,7 +3112,7 @@ static int type__find_type_enum(struct type *type, struct cu *cu, const char *ty
+ 		return type__add_type_enum(type, te, cu);
+ 
+ 	// Now look at a 'virtual enum', i.e. the concatenation of multiple enums
+-	char *sep = strchr(type_enum, '+');
++	const char *sep = strchr(type_enum, '+');
+ 
+ 	if (!sep)
+ 		return -1;
+@@ -3125,13 +3124,13 @@ static int type__find_type_enum(struct type *type, struct cu *cu, const char *ty
+ 
+ 	int ret = -1;
+ 
+-	sep = type_enums + (sep - type_enum);
++	char *sep_mutable = type_enums + (sep - type_enum);
++	char *cur = type_enums;
+ 
+-	type_enum = type_enums;
+-	*sep = '\0';
++	*sep_mutable = '\0';
+ 
+ 	while (1) {
+-		te = cu__find_enumeration_by_name(cu, type_enum, NULL);
++		te = cu__find_enumeration_by_name(cu, cur, NULL);
+ 
+ 		if (!te)
+ 			goto out;
+@@ -3140,10 +3139,12 @@ static int type__find_type_enum(struct type *type, struct cu *cu, const char *ty
+ 		if (ret)
+ 			goto out;
+ 
+-		if (sep == NULL)
++		if (sep_mutable == NULL)
+ 			break;
+-		type_enum = sep + 1;
+-		sep = strchr(type_enum, '+');
++		cur = sep_mutable + 1;
++		sep_mutable = strchr(cur, '+');
++		if (sep_mutable)
++			*sep_mutable = '\0';
+ 	}
+ 
+ 	ret = 0;
+-- 
+2.55.0
+
