@@ -1,0 +1,184 @@
+From 56f6f09035b034b96c84637160729aabf07f3460 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Wed, 17 Jun 2026 20:45:19 +0200
+Subject: [PATCH] dhcpv6relay: fix build with gcc 9.x
+
+Fixes various build errors seen with gcc 9.x:
+
+Making all in dhcpv6relay
+  CC       dhcpv6relay_la-dhcpv6relay.lo
+dhcpv6relay.c: In function 'dhcpv6relay_down':
+dhcpv6relay.c:193:1: error: parameter name omitted
+ void dhcpv6relay_down(void*, int)
+ ^~~~
+dhcpv6relay.c:193:1: error: parameter name omitted
+dhcpv6relay.c: In function 'dhcpv6relay_release_route':
+dhcpv6relay.c:265:45: error: parameter name omitted
+ void dhcpv6relay_release_route(const struct in6_addr* addr, uint8_t prefixlen, uint32_t /* lifetime */)
+                                             ^~~~~~~~
+dhcpv6relay.c: In function 'dhcpv6relay_process_ia_pd':
+dhcpv6relay.c:343:2: error: label at end of compound statement
+  default:
+  ^~~~~~~
+dhcpv6relay.c: In function 'dhcpv6relay_process_ia_na':
+dhcpv6relay.c:380:2: error: label at end of compound statement
+  default:
+  ^~~~~~~
+dhcpv6relay.c: In function 'dhcpv6relay_process_packet_for_routes':
+dhcpv6relay.c:422:2: error: a label can only be part of a statement and a declaration is not a statement
+  dhcpv6relay_route_func func;
+  ^~~~~~~~~~~~~~~~~~~~~~
+dhcpv6relay.c:449:6: error: label at end of compound statement
+      default:
+      ^~~~~~~
+dhcpv6relay.c: In function 'dhcpv6relay_server_event':
+dhcpv6relay.c:463:1: error: parameter name omitted
+ void dhcpv6relay_server_event(int fd, void*)
+ ^~~~
+dhcpv6relay.c:558:2: error: label at end of compound statement
+  default:
+  ^~~~~~~
+dhcpv6relay.c: In function 'dhcpv6relay_client_event':
+dhcpv6relay.c:619:1: error: parameter name omitted
+ void dhcpv6relay_client_event(int fd, void*)
+ ^~~~
+dhcpv6relay.c: In function 'dhcpv6relay_send_router_advertisement_timed':
+dhcpv6relay.c:795:1: error: parameter name omitted
+ void dhcpv6relay_send_router_advertisement_timed(void*)
+ ^~~~
+dhcpv6relay.c: In function 'dhcpv6relay_router_solicitation':
+dhcpv6relay.c:802:1: error: parameter name omitted
+ void dhcpv6relay_router_solicitation(int fd, void*)
+ ^~~~
+dhcpv6relay.c: In function 'dhcpv6relay_up':
+dhcpv6relay.c:855:1: error: parameter name omitted
+ void dhcpv6relay_up(void*, int)
+ ^~~~
+dhcpv6relay.c:855:1: error: parameter name omitted
+
+Upstream: https://github.com/ppp-project/ppp/pull/598
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ pppd/plugins/dhcpv6relay/dhcpv6relay.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
+
+diff --git a/pppd/plugins/dhcpv6relay/dhcpv6relay.c b/pppd/plugins/dhcpv6relay/dhcpv6relay.c
+index e9ebba1..e416720 100644
+--- a/pppd/plugins/dhcpv6relay/dhcpv6relay.c
++++ b/pppd/plugins/dhcpv6relay/dhcpv6relay.c
+@@ -190,7 +190,7 @@ void routes_remove_all()
+ }
+ 
+ static
+-void dhcpv6relay_down(void*, int)
++void dhcpv6relay_down(__attribute__((unused)) void* unused, __attribute__((unused)) int unusedint)
+ {
+     routes_remove_all();
+     if (dhcpv6relay_sock_ll >= 0) {
+@@ -262,7 +262,7 @@ void dhcpv6relay_route_timeout(void* _r)
+ }
+ 
+ static
+-void dhcpv6relay_release_route(const struct in6_addr* addr, uint8_t prefixlen, uint32_t /* lifetime */)
++void dhcpv6relay_release_route(const struct in6_addr* addr, uint8_t prefixlen, __attribute__((unused)) uint32_t lifetime)
+ {
+     char in6addr[INET6_ADDRSTRLEN];
+ 
+@@ -341,7 +341,7 @@ void dhcpv6relay_process_ia_pd(const unsigned char *bfr, uint16_t len, dhcpv6rel
+ 	    routefunc((const struct in6_addr*)(bfr + 9), bfr[8], ntohl(*(const uint32_t*)(bfr+4)));
+ 	    break;
+ 	default:
+-	    /* nothing */
++	    break;
+ 	}
+ 
+ 	bfr += optlen;
+@@ -378,7 +378,7 @@ void dhcpv6relay_process_ia_na(const unsigned char *bfr, uint16_t len, dhcpv6rel
+ 	    routefunc((const struct in6_addr*)bfr, 128, ntohl(*(const uint32_t*)(bfr+20)));
+ 	    break;
+ 	default:
+-	    /* nothing */
++	    break;
+ 	}
+ 
+ 	bfr += optlen;
+@@ -392,6 +392,7 @@ void dhcpv6relay_process_packet_for_routes(const unsigned char *bfr, uint16_t le
+     if (len < 1)
+ 	return;
+     uint8_t pkttype = *bfr;
++    dhcpv6relay_route_func func;
+ 
+     switch (pkttype) {
+     case DHCPv6_MSGTYPE_RELAY_FORW:
+@@ -419,7 +420,6 @@ void dhcpv6relay_process_packet_for_routes(const unsigned char *bfr, uint16_t le
+ 	break;
+     case DHCPv6_MSGTYPE_REPLY:
+     case DHCPv6_MSGTYPE_RELEASE:
+-	dhcpv6relay_route_func func;
+ 	if (pkttype == DHCPv6_MSGTYPE_RELEASE)
+ 	    func = dhcpv6relay_release_route;
+ 	else
+@@ -447,6 +447,7 @@ void dhcpv6relay_process_packet_for_routes(const unsigned char *bfr, uint16_t le
+ 		dhcpv6relay_process_ia_na(bfr, optlen, func);
+ 		break;
+ 	    default:
++		break;
+ 	    }
+ 	    bfr += optlen;
+ 
+@@ -460,7 +461,7 @@ void dhcpv6relay_process_packet_for_routes(const unsigned char *bfr, uint16_t le
+ }
+ 
+ static
+-void dhcpv6relay_server_event(int fd, void*)
++void dhcpv6relay_server_event(int fd, __attribute__((unused)) void* unused)
+ {
+     unsigned char buffer[1024];
+     unsigned char *options = buffer + 34; /* skip fixed header */
+@@ -558,6 +559,7 @@ void dhcpv6relay_server_event(int fd, void*)
+ 	default:
+ 	    /* notice("DHCPv6 relay: Skipping processing of option %u of length %u.",
+ 		    type, len); */
++	    break;
+ 	}
+ 	options += len;
+ 	r -= len;
+@@ -616,7 +618,7 @@ int dhcpv6relay_init_upstream()
+ }
+ 
+ static
+-void dhcpv6relay_client_event(int fd, void*)
++void dhcpv6relay_client_event(int fd, __attribute__((unused)) void* unused)
+ {
+     unsigned char buffer[1024];
+     unsigned char fwd_head[256];
+@@ -792,14 +794,14 @@ void dhcpv6relay_send_router_advertisement(const struct sockaddr* da)
+ }
+ 
+ static
+-void dhcpv6relay_send_router_advertisement_timed(void*)
++void dhcpv6relay_send_router_advertisement_timed(__attribute__((unused)) void* unused)
+ {
+     dhcpv6relay_send_router_advertisement(NULL);
+     ppp_timeout(dhcpv6relay_send_router_advertisement_timed, NULL, dhcpv6relay_ra_interval, 0);
+ }
+ 
+ static
+-void dhcpv6relay_router_solicitation(int fd, void*)
++void dhcpv6relay_router_solicitation(int fd, __attribute__((unused)) void* unused)
+ {
+     unsigned char bfr[1]; /* kernel will truncate packets in case of overflow,
+ 			     and we don't care about the content.  Will
+@@ -852,7 +854,7 @@ int dhcpv6relay_populate_ll(struct sockaddr_in6* res)
+ }
+ 
+ static
+-void dhcpv6relay_up(void*, int)
++void dhcpv6relay_up(__attribute__((unused)) void* unused, __attribute__((unused)) int unusedint)
+ {
+     struct sockaddr_in6 sa;
+     struct ipv6_mreq mreq;
+-- 
+2.47.3
+
