@@ -1,0 +1,45 @@
+From 33f6391e6e87dfd8906899de7e765a48bd51144b Mon Sep 17 00:00:00 2001
+From: Andrew Bradford <andrew.bradford@konsulko.com>
+Date: Mon, 22 Jun 2026 14:48:15 -0400
+Subject: [PATCH] cdo: Fix incompatible-pointer-types in
+ cdoseq_load_cdo_from_buffer
+
+GCC 14 promotes -Wincompatible-pointer-types to a hard error, so the
+build fails with:
+
+  utils/src/cdo-load.c:140:14: error: assignment to 'char *' from incompatible pointer type 'uint32_t *' {aka 'unsigned int *'} [-Wincompatible-pointer-types]
+    140 |         data = raw->data;
+        |              ^
+  make: *** [Makefile:81: build/obj/cdo-load.o] Error 1
+
+The function parameter data is char *, but raw->data (struct CdoRawInfo)
+is uint32_t *. The sibling function cdoseq_load_cdo avoids this because
+its local data is void *, which accepts any pointer without a cast.
+
+Add an explicit (char *) cast.
+
+Signed-off-by: Andrew Bradford <andrew.bradford@konsulko.com>
+
+Upstream: https://github.com/Xilinx/bootgen/pull/47
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ utils/src/cdo-load.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/utils/src/cdo-load.c b/utils/src/cdo-load.c
+index cb0ff49..96a479a 100755
+--- a/utils/src/cdo-load.c
++++ b/utils/src/cdo-load.c
+@@ -137,7 +137,7 @@ CdoSequence * cdoseq_load_cdo_from_buffer(char * data, size_t size) {
+     if (data == NULL) goto done;
+     raw = cdoraw_decode(data, size);
+     if (raw != NULL) {
+-        data = raw->data;
++        data = (char *)raw->data;
+         size = raw->size;
+     }
+     if (is_cdo_data(data, size)) {
+-- 
+2.47.3
+
