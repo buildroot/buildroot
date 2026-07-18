@@ -1,0 +1,30 @@
+From 4d33b5bcc924c9271c40a19796f8316ba6aaa276 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sat, 18 Jul 2026 08:10:21 +0200
+Subject: [PATCH] CMakeLists.txt: Don't force -fstack-protector
+
+This allows the environment to decide whether SSP should be used or
+not, for example to support toolchains that don't have SSP support.
+
+Upstream: N/A Buildroot specific
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ CMakeLists.txt | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 892f30d94b..93ccbf71ec 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -532,7 +532,6 @@ else()
+   unset(cxx_supports_fortify_source)
+ 
+   try_append_cxx_flags("-Wstack-protector" TARGET core_interface SKIP_LINK)
+-  try_append_cxx_flags("-fstack-protector-all" TARGET core_interface)
+   try_append_cxx_flags("-fcf-protection=full" TARGET core_interface)
+ 
+   if(MINGW)
+-- 
+2.47.3
+
