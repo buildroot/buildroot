@@ -1,0 +1,36 @@
+From 28c3533e5fb350fe1c27cf06dee6928825bc7bf2 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sat, 18 Jul 2026 07:46:09 +0200
+Subject: [PATCH] Fix static link of libevent
+
+Change link order to fix build error
+
+/home/thomas/autobuild/instance-2/output-1/host/lib/gcc/i686-buildroot-linux-musl/14.3.0/../../../../i686-buildroot-linux-musl/bin/ld:
+ /home/thomas/autobuild/instance-2/output-1/host/i686-buildroot-linux-musl/sysroot/usr/lib/libevent_extra.a(http.o):
+ in function `evhttp_connection_retry':
+http.c:(.text+0x1f7b): undefined reference to `bufferevent_socket_get_conn_address_'
+
+Upstream: Not applicable (libevent support was removed in master branch)
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index ad18115bbc..8e2a7bfcce 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -355,8 +355,8 @@ if(BUILD_CLI)
+     bitcoin_cli
+     bitcoin_common
+     bitcoin_util
+-    libevent::core
+     libevent::extra
++    libevent::core
+   )
+   install_binary_component(bitcoin-cli HAS_MANPAGE)
+ endif()
+-- 
+2.47.3
+
