@@ -115,6 +115,7 @@ config BR2_PACKAGE_QEMU_SDL
 config BR2_PACKAGE_QEMU_OPENGL
 	bool "Enable OpenGL"
 	depends on BR2_PACKAGE_HAS_LIBEGL || BR2_PACKAGE_HAS_LIBGL
+	depends on !BR2_STATIC_LIBS # libepoxy
 	select BR2_PACKAGE_LIBEPOXY
 	help
 	  Say 'y' to enable OpenGL accelerated display frontend support.
@@ -126,9 +127,13 @@ config BR2_PACKAGE_QEMU_OPENGL
 comment "OpenGL support needs an OpenGL and/or OpenGL EGL backend"
 	depends on !(BR2_PACKAGE_HAS_LIBEGL || BR2_PACKAGE_HAS_LIBGL)
 
+comment "OpenGL support needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
+
 config BR2_PACKAGE_QEMU_VIRGLRENDERER
 	bool "Enable virglrenderer"
 	depends on BR2_PACKAGE_HAS_LIBEGL || BR2_PACKAGE_HAS_LIBGL
+	depends on !BR2_STATIC_LIBS # libepoxy -> virglrenderer
 	select BR2_PACKAGE_QEMU_OPENGL
 	select BR2_PACKAGE_VIRGLRENDERER
 	help
@@ -146,6 +151,9 @@ comment "virglrenderer needs OpenGL accelerated display frontend support"
 comment "virglrenderer needs virgl, venus, or a DRM backend for guest acceleration"
 	depends on BR2_PACKAGE_QEMU_VIRGLRENDERER
 	depends on !BR2_PACKAGE_VIRGLRENDERER_HAS_BACKEND
+
+comment "virglrenderer needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
 
 config BR2_PACKAGE_QEMU_FDT
 	bool "Enable FDT"
