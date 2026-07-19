@@ -31,7 +31,7 @@ comment "wpewebkit needs an OpenGL ES w/ EGL-capable Wayland backend"
 
 config BR2_PACKAGE_WPEWEBKIT
 	bool "wpewebkit"
-	depends on !BR2_STATIC_LIBS # wayland
+	depends on !BR2_STATIC_LIBS # libepoxy, wayland
 	depends on !BR2_BINFMT_FLAT # icu
 	depends on BR2_HOST_GCC_AT_LEAST_7 # icu
 	depends on BR2_INSTALL_LIBSTDCPP # harfbuzz, icu

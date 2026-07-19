@@ -2,6 +2,7 @@ config BR2_PACKAGE_VIRGLRENDERER
 	bool "virglrenderer"
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # needs gcc >= 4.9 for __sync builtins
 	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on !BR2_STATIC_LIBS # libepoxy
 	depends on BR2_USE_MMU # fork()
 	select BR2_PACKAGE_LIBEPOXY
 	help
@@ -107,8 +108,8 @@ config BR2_PACKAGE_VIRGLRENDERER_VAAPI
 
 endif
 
-comment "virglrenderer needs a toolchain w/ gcc >= 4.9"
-	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+comment "virglrenderer needs a toolchain w/ dynamic library, gcc >= 4.9"
+	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 
 config BR2_PACKAGE_VIRGLRENDERER_HAS_BACKEND
 	bool

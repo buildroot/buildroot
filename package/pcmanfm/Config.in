@@ -5,6 +5,7 @@ config BR2_PACKAGE_PCMANFM
 	depends on BR2_TOOLCHAIN_HAS_THREADS # libfm
 	depends on BR2_USE_MMU # libfm
 	depends on BR2_INSTALL_LIBSTDCPP # libfm
+	depends on !BR2_STATIC_LIBS # libepoxy -> libgtk3 -> libfm
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libfm
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libfm
 	depends on BR2_PACKAGE_HAS_LIBEGL || BR2_PACKAGE_HAS_LIBGL # libfm
@@ -22,11 +23,12 @@ config BR2_PACKAGE_PCMANFM
 
 	  http://wiki.lxde.org/en/PCManFM
 
-comment "pcmanfm a toolchain w/ wchar, threads, C++, gcc >= 4.9"
+comment "pcmanfm a toolchain w/ dynamic library, wchar, threads, C++, gcc >= 4.9"
 	depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_USE_WCHAR || !BR2_TOOLCHAIN_HAS_THREADS || \
+		BR2_STATIC_LIBS || \
 		!BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
 
 comment "pcmanfm needs X.org with an OpenGL backend"
