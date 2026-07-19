@@ -1,5 +1,6 @@
 config BR2_PACKAGE_LIBEPOXY
 	bool "libepoxy"
+	depends on !BR2_STATIC_LIBS # dlfcn.h
 	select BR2_PACKAGE_XUTIL_UTIL_MACROS
 	help
 	  Epoxy is a library for handling OpenGL function pointer
@@ -10,3 +11,6 @@ config BR2_PACKAGE_LIBEPOXY
 	  OpenGL entry points at runtime.
 
 	  https://github.com/anholt/libepoxy
+
+comment "libepoxy needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
