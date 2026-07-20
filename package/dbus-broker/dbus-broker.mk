@@ -10,7 +10,7 @@ DBUS_BROKER_SITE = https://github.com/bus1/dbus-broker/releases/download/v$(DBUS
 
 DBUS_BROKER_LICENSE = \
 	Apache-2.0, \
-	Apache-2.0 and/or LGPL-2.1+ (c-dvar, c-ini, c-list, c-rbtree, c-shquote, c-stdaux, c-utf8)
+	Apache-2.0 or LGPL-2.1+ (bundled subprojects c-dvar, c-ini, c-list, c-rbtree, c-shquote, c-stdaux, c-utf8)
 # For the third-party code, the licensing legal-info is inconsistent between
 # the AUTHORS and README, so keep both
 DBUS_BROKER_LICENSE_FILES = \
