@@ -1,0 +1,40 @@
+From 0c67372257575f6ec59364aba5ca579c126b7678 Mon Sep 17 00:00:00 2001
+From: Voxel <voxel@andreev.msk.ru>
+Date: Tue, 21 Jul 2026 19:28:00 +0200
+Subject: [PATCH] scp: fix build with gcc >= 14.x
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes build errors seen with gcc 14.x:
+
+src/scp.c: In function ‘sink’:
+src/scp.c:1214:32: error: implicit declaration of function ‘ascii_isdigit’
+ [-Wimplicit-function-declaration]
+
+src/scp.c: In function ‘okname’:
+src/scp.c:1501:22: error: implicit declaration of function ‘ascii_isalpha’
+ [-Wimplicit-function-declaration]
+
+Upstream: https://github.com/mkj/dropbear/pull/474
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/scp.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/scp.c b/src/scp.c
+index d7266fdd..633b4dba 100644
+--- a/src/scp.c
++++ b/src/scp.c
+@@ -81,6 +81,7 @@
+ #include "compat.h"
+ #include "scpmisc.h"
+ #include "progressmeter.h"
++#include "dbutil.h"
+ 
+ void bwlimit(int);
+ 
+-- 
+2.47.3
+
