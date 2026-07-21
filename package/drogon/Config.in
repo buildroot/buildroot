@@ -1,0 +1,52 @@
+config BR2_PACKAGE_DROGON
+	bool "drogon"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_11 # C++17/20
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_JSONCPP
+	select BR2_PACKAGE_UTIL_LINUX
+	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
+	select BR2_PACKAGE_ZLIB
+	help
+	  Drogon is a C++17/20 based HTTP application framework.
+	  Drogon can be used to easily build various types of web
+	  application server programs using C++.
+
+	  https://github.com/drogonframework/drogon
+
+if BR2_PACKAGE_DROGON
+
+config BR2_PACKAGE_DROGON_BROTLI
+	bool "build Brotli"
+	select BR2_PACKAGE_BROTLI
+	help
+	  Add support for brotli compression.
+
+config BR2_PACKAGE_DROGON_CTL
+	bool "build drogon_ctl"
+	help
+	  drogon_ctl is a command-line tool used to generate
+	  project skeletons and source code.
+
+config BR2_PACKAGE_DROGON_EXAMPLES
+	bool "build examples"
+
+config BR2_PACKAGE_DROGON_ORM
+	bool "build orm"
+	help
+	  Enable the ORM module for typed database access.
+
+config BR2_PACKAGE_DROGON_YAML_CONFIG
+	bool "build yaml config"
+	select BR2_PACKAGE_YAML_CPP
+	help
+	  Add support for YAML configuration via yaml-cpp.
+
+endif
+
+comment "drogon needs a toolchain w/ C++, threads, gcc >= 11"
+	depends on BR2_USE_MMU
+	depends on !BR2_INSTALL_LIBSTDCPP || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_11 || \
+		!BR2_TOOLCHAIN_HAS_THREADS
