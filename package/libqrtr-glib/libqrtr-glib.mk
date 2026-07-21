@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBQRTR_GLIB_VERSION = 1.2.2
+LIBQRTR_GLIB_VERSION = 1.4.0
 LIBQRTR_GLIB_SITE = https://gitlab.freedesktop.org/mobile-broadband/libqrtr-glib/-/archive/$(LIBQRTR_GLIB_VERSION)
 LIBQRTR_GLIB_LICENSE = LGPL-2.1+
 LIBQRTR_GLIB_LICENSE_FILES = LICENSES/LGPL-2.1-or-later.txt
