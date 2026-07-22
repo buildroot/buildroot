@@ -4,6 +4,8 @@
 #
 ################################################################################
 
+SKELETON_INIT_NONE_LICENSE = GPL-2.0-or-later
+
 # The skeleton can't depend on the toolchain, since all packages depends on the
 # skeleton and the toolchain is a target package, as is skeleton.
 # Hence, skeleton would depends on the toolchain and the toolchain would depend
