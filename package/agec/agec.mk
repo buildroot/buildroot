@@ -7,7 +7,7 @@
 AGEC_VERSION = 0.1.0
 AGEC_SOURCE = $(AGEC_VERSION).tar.gz
 AGEC_SITE = https://git.sr.ht/~min/agec/archive
-AGEC_LICENSE = BSD-0-Clause
+AGEC_LICENSE = 0BSD
 AGEC_LICENSE_FILES = LICENSE
 AGEC_DEPENDENCIES = host-pkgconf openssl
 
