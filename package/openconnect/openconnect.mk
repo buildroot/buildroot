@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-OPENCONNECT_VERSION = 9.12
+OPENCONNECT_VERSION = 9.21
 OPENCONNECT_SITE = https://www.infradead.org/openconnect/download
 OPENCONNECT_DEPENDENCIES = host-pkgconf libxml2 zlib
 OPENCONNECT_LICENSE = LGPL-2.1
