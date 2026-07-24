@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ZIX_VERSION = 0.8.0
+ZIX_VERSION = 0.8.2
 ZIX_SITE = https://download.drobilla.net
 ZIX_SOURCE = zix-$(ZIX_VERSION).tar.xz
 ZIX_LICENSE = ISC
