@@ -1,0 +1,113 @@
+From 0da22762971551462cfad8f0b11cfb037472a4e8 Mon Sep 17 00:00:00 2001
+From: DRC <information@libjpeg-turbo.org>
+Date: Thu, 16 Jul 2026 12:09:54 -0400
+Subject: [PATCH] libspng: Really remove gamma correction code
+
+We really don't use it, and fpclassify() apparently introduces yet
+another libm dependency in some cases (although I can't reproduce that.)
+
+Fixes #904
+
+Upstream: https://github.com/libjpeg-turbo/libjpeg-turbo/commit/0da22762971551462cfad8f0b11cfb037472a4e8
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/spng/spng.c | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
+
+diff --git a/src/spng/spng.c b/src/spng/spng.c
+index 06249d68..aeadb67e 100644
+--- a/src/spng/spng.c
++++ b/src/spng/spng.c
+@@ -353,9 +353,12 @@ struct spng_ctx
+     int widest_pass;
+     int last_pass; /* last non-empty pass */
+ 
++#if 0 /* libjpeg-turbo: Eliminate unused gamma correction code, which
++         introduces an unwanted libm dependency */
+     uint16_t *gamma_lut; /* points to either _lut8 or _lut16 */
+     uint16_t *gamma_lut16;
+     uint16_t gamma_lut8[256];
++#endif
+     unsigned char trns_px[8];
+     union spng__decode_plte decode_plte;
+     struct spng_sbit decode_sb;
+@@ -1742,6 +1745,8 @@ static uint16_t sample_to_target(uint16_t sample, unsigned bit_depth, unsigned s
+     return sample;
+ }
+ 
++#if 0 /* libjpeg-turbo: Eliminate unused gamma correction code, which
++         introduces an unwanted libm dependency */
+ static inline void gamma_correct_row(unsigned char *row, uint32_t pixels, int fmt, const uint16_t *gamma_lut)
+ {
+     uint32_t i;
+@@ -1785,6 +1790,7 @@ static inline void gamma_correct_row(unsigned char *row, uint32_t pixels, int fm
+         }
+     }
+ }
++#endif
+ 
+ /* Apply transparency to output row */
+ static inline void trns_row(unsigned char *row,
+@@ -3302,7 +3308,10 @@ int spng_decode_scanline(spng_ctx *ctx, void *out, size_t len)
+     const struct spng_subimage *sub = ctx->subimage;
+ 
+     const struct spng_ihdr *ihdr = &ctx->ihdr;
++#if 0 /* libjpeg-turbo: Eliminate unused gamma correction code, which
++         introduces an unwanted libm dependency */
+     const uint16_t *gamma_lut = ctx->gamma_lut;
++#endif
+     unsigned char *trns_px = ctx->trns_px;
+     const struct spng_sbit *sb = &ctx->decode_sb;
+     const struct spng_plte_entry *plte = ctx->decode_plte.rgba;
+@@ -3529,7 +3538,10 @@ int spng_decode_scanline(spng_ctx *ctx, void *out, size_t len)
+ 
+     if(f.do_scaling) scale_row(out, width, fmt, processing_depth, sb);
+ 
++#if 0 /* libjpeg-turbo: Eliminate unused gamma correction code, which
++         introduces an unwanted libm dependency */
+     if(f.apply_gamma) gamma_correct_row(out, width, fmt, gamma_lut);
++#endif
+ 
+     /* The previous scanline is always defiltered */
+     void *t = ctx->prev_scanline;
+@@ -3768,6 +3780,8 @@ int spng_decode_image(spng_ctx *ctx, void *out, size_t len, int fmt, int flags)
+ 
+     /*if(f.same_layout && !flags && !f.interlaced) f.zerocopy = 1;*/
+ 
++#if 0 /* libjpeg-turbo: Eliminate unused gamma correction code, which
++         introduces an unwanted libm dependency */
+     uint16_t *gamma_lut = NULL;
+ 
+     if(f.apply_gamma)
+@@ -3807,15 +3821,14 @@ int spng_decode_image(spng_ctx *ctx, void *out, size_t len, int fmt, int flags)
+         unsigned i;
+         for(i=0; i < lut_entries; i++)
+         {
+-#if 0 /* libjpeg-turbo: Eliminate libm dependency */
+             float c = pow((float)i / max, exponent) * max;
+-#endif
+             float c = 0.0f;
+             if(c > max) c = max;
+ 
+             gamma_lut[i] = (uint16_t)c;
+         }
+     }
++#endif
+ 
+     struct spng_sbit *sb = &ctx->decode_sb;
+ 
+@@ -5000,7 +5013,10 @@ void spng_ctx_free(spng_ctx *ctx)
+ 
+     if(!ctx->user_owns_out_png) spng__free(ctx, ctx->out_png);
+ 
++#if 0 /* libjpeg-turbo: Eliminate unused gamma correction code, which
++         introduces an unwanted libm dependency */
+     spng__free(ctx, ctx->gamma_lut16);
++#endif
+ 
+     spng__free(ctx, ctx->row_buf);
+     spng__free(ctx, ctx->scanline_buf);
+-- 
+2.47.3
+
