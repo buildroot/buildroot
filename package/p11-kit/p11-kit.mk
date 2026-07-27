@@ -38,4 +38,10 @@ P11_KIT_CONF_OPTS += \
 	--without-libtasn1
 endif
 
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
+P11_KIT_CONF_OPTS += --with-systemd
+else
+P11_KIT_CONF_OPTS += --without-systemd
+endif
+
 $(eval $(autotools-package))
