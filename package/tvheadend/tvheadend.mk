@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-TVHEADEND_VERSION = 37453bc3fe5f9e10f3428ebb1abdc613f8b07186
+TVHEADEND_VERSION = c0cbd14550aa40b4f4eb32d1baea1e7a1ed89cf4
 TVHEADEND_SITE = $(call github,tvheadend,tvheadend,$(TVHEADEND_VERSION))
 TVHEADEND_LICENSE = GPL-3.0+
 TVHEADEND_LICENSE_FILES = LICENSE.md
@@ -18,7 +18,9 @@ TVHEADEND_DEPENDENCIES = \
 TVHEADEND_CONF_OPTS = \
 	--disable-hdhomerun_client \
 	--disable-omx \
-	--disable-pcre
+	--disable-pcloud_cache \
+	--disable-pcre \
+	--disable-vue_build
 
 ifeq ($(BR2_PACKAGE_AVAHI),y)
 TVHEADEND_DEPENDENCIES += avahi
