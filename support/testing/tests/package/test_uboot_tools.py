@@ -1,11 +1,14 @@
 import hashlib
 import re
+import subprocess
 import zlib
 from pathlib import Path
 
 import infra.basetest
 
 EXAMPLE_ITS = Path(__file__).parent / "test_uboot_tools/example.its"
+KEY_DTS = Path(__file__).parent / "test_uboot_tools/key.dts"
+SIGNED_ITS = Path(__file__).parent / "test_uboot_tools/signed.its"
 
 
 def get_hashes(output: str) -> dict[str, str]:
@@ -72,6 +75,7 @@ class TestHostUbootTools(infra.basetest.BRHostPkgTest):
         """
         BR2_PACKAGE_HOST_UBOOT_TOOLS=y
         BR2_PACKAGE_HOST_UBOOT_TOOLS_FIT_SUPPORT=y
+        BR2_PACKAGE_HOST_UBOOT_TOOLS_FIT_SIGNATURE_SUPPORT=y
         """
 
     def test_run(self):
@@ -86,3 +90,70 @@ class TestHostUbootTools(infra.basetest.BRHostPkgTest):
                 self.assertEqual(expected[h], reported[h])
         # Python does not have built-in CRC16 support, just check it is present
         self.assertIn("crc16-ccitt", reported)
+
+        # See U-Boot FIT Signature Verification documentation:
+        # https://source.denx.de/u-boot/u-boot/-/blob/v2026.07/doc/usage/fit/signature.rst
+        keydir = Path(self.builddir) / "keys"
+        keydir.mkdir(exist_ok=True)
+
+        # We generate a prublic/private key pair to sign the image.
+        cmd = [
+            "host/bin/openssl", "req", "-batch", "-new", "-x509", "-nodes",
+            "-newkey", "rsa:2048", "-keyout", str(keydir / "dev.key"),
+            "-out", str(keydir / "dev.crt"), "-subj", "/CN=Buildroot FIT test",
+        ]
+        infra.run_cmd_on_host(self.builddir, cmd)
+
+        # We compile the empty dtb that will be used to store the
+        # public key.
+        cmd = [
+            "host/bin/dtc", "-I", "dts", "-O", "dtb", "-p", "0x1000",
+            "-o", "test-key.dtb", str(KEY_DTS),
+        ]
+        infra.run_cmd_on_host(self.builddir, cmd)
+
+        # We sign the image and write the public key in our key
+        # storage dtb.
+        cmd = [
+            "host/bin/mkimage", "-f", str(SIGNED_ITS), "-k", str(keydir),
+            "-K", "test-key.dtb", "-r", "signed.fit",
+        ]
+        infra.run_cmd_on_host(self.builddir, cmd)
+
+        # We check there is a signature present in the FIT image.
+        cmd = [
+            "host/bin/fdtget", "-t", "bx", "signed.fit",
+            "/configurations/config-1/signature-1", "value",
+        ]
+        signature = infra.run_cmd_on_host(self.builddir, cmd).split()
+        self.assertEqual(len(signature), 256)
+
+        # We check the key is marked as required for the configuration.
+        cmd = [
+            "host/bin/fdtget", "-t", "s", "test-key.dtb",
+            "/signature/key-dev", "required",
+        ]
+        required = infra.run_cmd_on_host(self.builddir, cmd).strip()
+        self.assertEqual(required, "conf")
+
+        # We actually check the signature is valid.
+        cmd = [
+            "host/bin/fit_check_sign", "-f", "signed.fit",
+            "-k", "test-key.dtb",
+        ]
+        infra.run_cmd_on_host(self.builddir, cmd)
+
+        # We "corrupt" the signature, by setting it to zero.
+        cmd = [
+            "host/bin/fdtput", "-t", "bx", "signed.fit",
+            "/configurations/config-1/signature-1", "value", "00",
+        ]
+        infra.run_cmd_on_host(self.builddir, cmd)
+
+        # We check again the siganute, and expect a failure.
+        cmd = [
+            "host/bin/fit_check_sign", "-f", "signed.fit",
+            "-k", "test-key.dtb",
+        ]
+        with self.assertRaises(subprocess.CalledProcessError):
+            infra.run_cmd_on_host(self.builddir, cmd)
