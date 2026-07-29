@@ -23,8 +23,8 @@ to you.
 |           +-- linux.config
 |           +-- busybox.config
 |           +-- <other configuration files>
-|           +-- post_build.sh
-|           +-- post_image.sh
+|           +-- post-build.sh
+|           +-- post-image.sh
 |           +-- rootfs_overlay/
 |           |   +-- etc/
 |           |   +-- <some files>
@@ -84,7 +84,7 @@ layers 'common' and 'fooboard' is:
 +-- board/
     +-- <company>/
         +-- common/
-        |   +-- post_build.sh
+        |   +-- post-build.sh
         |   +-- rootfs_overlay/
         |   |   +-- ...
         |   +-- patches/
@@ -94,7 +94,7 @@ layers 'common' and 'fooboard' is:
             +-- linux.config
             +-- busybox.config
             +-- <other configuration files>
-            +-- post_build.sh
+            +-- post-build.sh
             +-- rootfs_overlay/
             |   +-- ...
             +-- patches/
