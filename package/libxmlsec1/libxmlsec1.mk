@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBXMLSEC1_VERSION = 1.3.9
+LIBXMLSEC1_VERSION = 1.3.12
 LIBXMLSEC1_SOURCE = xmlsec1-$(LIBXMLSEC1_VERSION).tar.gz
 LIBXMLSEC1_SITE = https://github.com/lsh123/xmlsec/releases/download/$(LIBXMLSEC1_VERSION)
 LIBXMLSEC1_LICENSE = MIT
@@ -21,6 +21,14 @@ LIBXMLSEC1_CONF_OPTS = \
 	--without-gcrypt \
 	--without-nss \
 	--disable-des
+
+# xmlsec_unit_tests needs xmlDebugDumpDocument() from libxml2 which is not
+# present in buildroot because libxml2 is build with -without-debug
+define LIBXMLSEC1_DISABLE_UNIT_TESTS
+	$(SED) 's/noinst_PROGRAMS = xmlsec_unit_tests/noinst_PROGRAMS =/' \
+		$(@D)/apps/Makefile.am
+endef
+LIBXMLSEC1_POST_PATCH_HOOKS += LIBXMLSEC1_DISABLE_UNIT_TESTS
 
 HOST_LIBXMLSEC1_CONF_OPTS = \
 	--enable-crypto-dl=no \

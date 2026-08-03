@@ -1,5 +1,7 @@
 config BR2_PACKAGE_LIBXMLSEC1
 	bool "libxmlsec1"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 #-Wformat-overflow
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC
 	select BR2_PACKAGE_OPENSSL
 	select BR2_PACKAGE_LIBXML2
 	help
@@ -10,3 +12,6 @@ config BR2_PACKAGE_LIBXMLSEC1
 
 	  https://www.aleksey.com/xmlsec/
 	  https://github.com/lsh123/xmlsec
+
+comment "libxmlsec1 needs a toolchain w/ gcc >= 7"
+	depends on  !BR2_TOOLCHAIN_GCC_AT_LEAST_7 || !BR2_TOOLCHAIN_HAS_ATOMIC
