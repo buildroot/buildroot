@@ -20,7 +20,6 @@ PIPEWIRE_CONF_OPTS += \
 	-Dspa-plugins=enabled \
 	-Daudiomixer=enabled \
 	-Daudioconvert=enabled \
-	-Dbluez5-codec-lc3=disabled \
 	-Dbluez5-codec-lc3plus=disabled \
 	-Dcontrol=enabled \
 	-Daudiotestsrc=enabled \
@@ -128,6 +127,12 @@ PIPEWIRE_CONF_OPTS += -Dbluez5-codec-aac=enabled
 PIPEWIRE_DEPENDENCIES += fdk-aac
 else
 PIPEWIRE_CONF_OPTS += -Dbluez5-codec-aac=disabled
+endif
+ifeq ($(BR2_PACKAGE_LIBLC3),y)
+PIPEWIRE_CONF_OPTS += -Dbluez5-codec-lc3=enabled
+PIPEWIRE_DEPENDENCIES += liblc3
+else
+PIPEWIRE_CONF_OPTS += -Dbluez5-codec-lc3=disabled
 endif
 else
 PIPEWIRE_CONF_OPTS += -Dbluez5=disabled
