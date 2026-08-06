@@ -1,0 +1,210 @@
+From 5e853bba484d22620e8b6f97bf329da3075070b5 Mon Sep 17 00:00:00 2001
+From: Gerlof Langeveld <gerlof.langeveld@atoptool.nl>
+Date: Sat, 18 Jul 2026 12:54:39 +0200
+Subject: [PATCH] Define explicit value for _POSIX_C_SOURCE macro
+
+Certain compilers expect an explicit value for the _POSIX_C_SOURCE
+macro. It has been explicitly defined now as 200809L which is also
+the default value whenever it is not explicitly defined.
+
+Upstream: https://github.com/Atoptool/atop/commit/5e853bba484d22620e8b6f97bf329da3075070b5
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ atop.c        | 2 +-
+ atopacctd.c   | 2 +-
+ atopcat.c     | 2 +-
+ atophide.c    | 2 +-
+ atopsar.c     | 2 +-
+ cgroups.c     | 2 +-
+ drawbar.c     | 2 +-
+ gpucom.c      | 2 +-
+ netatopif.c   | 2 +-
+ photoproc.c   | 2 +-
+ photosyst.c   | 2 +-
+ rawlog.c      | 2 +-
+ showgeneric.c | 2 +-
+ various.c     | 2 +-
+ 14 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/atop.c b/atop.c
+index 4270715..53c9231 100644
+--- a/atop.c
++++ b/atop.c
+@@ -118,7 +118,7 @@
+ ** can be linked with 'atop'; the one to use can eventually be chosen
+ ** at runtime. 
+ */
+-#define _POSIX_C_SOURCE	
++#define _POSIX_C_SOURCE	200809L
+ #define _XOPEN_SOURCE
+ #define _GNU_SOURCE
+ #define _DEFAULT_SOURCE
+diff --git a/atopacctd.c b/atopacctd.c
+index ae87235..90deec9 100644
+--- a/atopacctd.c
++++ b/atopacctd.c
+@@ -36,7 +36,7 @@
+ ** it under the terms of the GNU General Public License version 2 as
+ ** published by the Free Software Foundation.
+ */
+-#define _POSIX_C_SOURCE
++#define _POSIX_C_SOURCE	200809L
+ #define _XOPEN_SOURCE
+ #define _GNU_SOURCE
+ #define _DEFAULT_SOURCE
+diff --git a/atopcat.c b/atopcat.c
+index aa9624d..938a0cb 100644
+--- a/atopcat.c
++++ b/atopcat.c
+@@ -28,7 +28,7 @@
+ ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ ** --------------------------------------------------------------------------
+ */
+-#define _POSIX_C_SOURCE
++#define _POSIX_C_SOURCE	200809L
+ #define _XOPEN_SOURCE
+ #define _GNU_SOURCE
+ #define _DEFAULT_SOURCE
+diff --git a/atophide.c b/atophide.c
+index eb87d66..fd6bbdf 100644
+--- a/atophide.c
++++ b/atophide.c
+@@ -31,7 +31,7 @@
+ ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ ** --------------------------------------------------------------------------
+ */
+-#define _POSIX_C_SOURCE
++#define _POSIX_C_SOURCE	200809L
+ #define _XOPEN_SOURCE
+ #define _GNU_SOURCE
+ #define _DEFAULT_SOURCE
+diff --git a/atopsar.c b/atopsar.c
+index 8874d6f..112b01f 100644
+--- a/atopsar.c
++++ b/atopsar.c
+@@ -28,7 +28,7 @@
+ ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ ** --------------------------------------------------------------------------
+ */
+-#define _POSIX_C_SOURCE
++#define _POSIX_C_SOURCE	200809L
+ #define _XOPEN_SOURCE
+ #define _GNU_SOURCE
+ #define _DEFAULT_SOURCE
+diff --git a/cgroups.c b/cgroups.c
+index e24e448..64b6a6a 100644
+--- a/cgroups.c
++++ b/cgroups.c
+@@ -27,7 +27,7 @@
+ ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ ** --------------------------------------------------------------------------
+ */
+-#define _POSIX_C_SOURCE
++#define _POSIX_C_SOURCE	200809L
+ #define _XOPEN_SOURCE
+ #define _GNU_SOURCE
+ #define _DEFAULT_SOURCE
+diff --git a/drawbar.c b/drawbar.c
+index bc3d2eb..651a81e 100644
+--- a/drawbar.c
++++ b/drawbar.c
+@@ -103,7 +103,7 @@
+ // horizontally scaled by the user, atop might switch from one model to
+ // the other.
+ /////////////////////////////////////////////////////////////////////////////
+-#define _POSIX_C_SOURCE
++#define _POSIX_C_SOURCE	200809L
+ #define _XOPEN_SOURCE
+ #define _GNU_SOURCE
+ #define _DEFAULT_SOURCE
+diff --git a/gpucom.c b/gpucom.c
+index 2335116..fddd07b 100644
+--- a/gpucom.c
++++ b/gpucom.c
+@@ -23,7 +23,7 @@
+ ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ ** See the GNU General Public License for more details.
+ */
+-#define _POSIX_C_SOURCE
++#define _POSIX_C_SOURCE	200809L
+ #define _XOPEN_SOURCE
+ #define _GNU_SOURCE
+ #define _DEFAULT_SOURCE
+diff --git a/netatopif.c b/netatopif.c
+index d0e9c29..92ca4f9 100644
+--- a/netatopif.c
++++ b/netatopif.c
+@@ -22,7 +22,7 @@
+ ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ ** See the GNU General Public License for more details.
+ */
+-#define _POSIX_C_SOURCE
++#define _POSIX_C_SOURCE	200809L
+ #define _XOPEN_SOURCE
+ #define _GNU_SOURCE
+ #define _DEFAULT_SOURCE
+diff --git a/photoproc.c b/photoproc.c
+index 78be340..9846691 100644
+--- a/photoproc.c
++++ b/photoproc.c
+@@ -30,7 +30,7 @@
+ ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ ** --------------------------------------------------------------------------
+ */
+-#define _POSIX_C_SOURCE
++#define _POSIX_C_SOURCE	200809L
+ #define _XOPEN_SOURCE
+ #define _GNU_SOURCE
+ #define _DEFAULT_SOURCE
+diff --git a/photosyst.c b/photosyst.c
+index 08489ce..303d2f9 100644
+--- a/photosyst.c
++++ b/photosyst.c
+@@ -29,7 +29,7 @@
+ ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ ** --------------------------------------------------------------------------
+ */
+-#define _POSIX_C_SOURCE
++#define _POSIX_C_SOURCE	200809L
+ #define _XOPEN_SOURCE
+ #define _GNU_SOURCE
+ #define _DEFAULT_SOURCE
+diff --git a/rawlog.c b/rawlog.c
+index 6a5064e..f5b7e4e 100644
+--- a/rawlog.c
++++ b/rawlog.c
+@@ -26,7 +26,7 @@
+ ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ ** --------------------------------------------------------------------------
+ */
+-#define _POSIX_C_SOURCE
++#define _POSIX_C_SOURCE	200809L
+ #define _XOPEN_SOURCE
+ #define _GNU_SOURCE
+ #define _DEFAULT_SOURCE
+diff --git a/showgeneric.c b/showgeneric.c
+index f3e73be..17f0ed6 100644
+--- a/showgeneric.c
++++ b/showgeneric.c
+@@ -29,7 +29,7 @@
+ ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ ** --------------------------------------------------------------------------
+ */
+-#define _POSIX_C_SOURCE
++#define _POSIX_C_SOURCE	200809L
+ #define _XOPEN_SOURCE
+ #define _GNU_SOURCE
+ #define _DEFAULT_SOURCE
+diff --git a/various.c b/various.c
+index 7353a52..4ff5860 100644
+--- a/various.c
++++ b/various.c
+@@ -29,7 +29,7 @@
+ ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ ** --------------------------------------------------------------------------
+ */
+-#define _POSIX_C_SOURCE
++#define _POSIX_C_SOURCE	200809L
+ #define _XOPEN_SOURCE
+ #define _GNU_SOURCE
+ #define _DEFAULT_SOURCE
