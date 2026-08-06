@@ -7,8 +7,7 @@ Subject: [PATCH] gh-139275: Fix compilation of
 
 Upstream: https://github.com/python/cpython/commit/1963e701001839389cfb1b11d803b0743f4705d7
 
-[ Bernd Kuhls: ported to Python 3.14.4]
-[ Vincent Fazio: update to apply cleanly to 3.14.3 ]
+[ Bernd Kuhls: ported to Python 3.14.7]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  .../2025-09-24-17-32-52.gh-issue-139275.novrqf.rst              | 2 ++
@@ -29,9 +28,9 @@ diff --git a/Modules/_remote_debugging_module.c b/Modules/_remote_debugging_modu
 index b46538b76df..e86a27d5812 100644
 --- a/Modules/_remote_debugging_module.c
 +++ b/Modules/_remote_debugging_module.c
-@@ -834,7 +834,7 @@ _Py_RemoteDebug_GetAsyncioDebugAddress(proc_handle_t* handle)
-         PyErr_SetString(PyExc_RuntimeError, "Failed to find the AsyncioDebug section in the process.");
-         _PyErr_ChainExceptions1(exc);
+@@ -1329,7 +1329,7 @@ _Py_RemoteDebug_GetAsyncioDebugAddress(proc_handle_t* handle)
+             _PyErr_ChainExceptions1(exc);
+         }
      }
 -#elif defined(__linux__)
 +#elif defined(__linux__) && HAVE_PROCESS_VM_READV
@@ -42,9 +41,9 @@ diff --git a/Python/remote_debug.h b/Python/remote_debug.h
 index 8f9b6cd4c49..b7d17a0f345 100644
 --- a/Python/remote_debug.h
 +++ b/Python/remote_debug.h
-@@ -923,7 +923,7 @@
-             handle->pid);
-         _PyErr_ChainExceptions1(exc);
+@@ -1174,7 +1174,7 @@
+             _PyErr_ChainExceptions1(exc);
+         }
      }
 -#elif defined(__linux__)
 +#elif defined(__linux__) && HAVE_PROCESS_VM_READV
