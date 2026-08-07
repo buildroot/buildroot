@@ -283,16 +283,18 @@ the commit message body.
 When you bump a package to a new version, you should also submit a
 separate patch for each package. Don't forget to update the +.hash+
 file, or add it if it doesn't exist yet. Also don't forget to check if
-the +_LICENSE+ and +_LICENSE_FILES+ are still valid. The summary line
-should be something like +<packagename>: bump to version <new
-version>+. If the new version only contains security updates compared
-to the existing one, the summary should be +<packagename>: security
-bump to version <new version>+ and the commit message body should show
-the CVE numbers that are fixed. If some package patches can be removed
-in the new version, it should be explained explicitly why they can be
-removed, preferably with the upstream commit ID. Also any other
-required changes should be explained explicitly, like configure
-options that no longer exist or are no longer needed.
+the +_LICENSE+ and +_LICENSE_FILES+ are still valid. If the hash of a
+license file changed, please include a note in the commit message
+about what changed, ideally with a link to the upstream commit. The
+summary line should be something like +<packagename>: bump to version
+<new version>+. If the new version only contains security updates
+compared to the existing one, the summary should be +<packagename>:
+security bump to version <new version>+ and the commit message body
+should show the CVE numbers that are fixed. If some package patches
+can be removed in the new version, it should be explained explicitly
+why they can be removed, preferably with the upstream commit ID. Also
+any other required changes should be explained explicitly, like
+configure options that no longer exist or are no longer needed.
 
 If you are interested in getting notified of build failures and of
 further changes in the packages you added or modified, please add
