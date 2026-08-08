@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2026.05.2"
 
+config BR2_TOOLCHAIN_EXTERNAL_SYNOPSYS_ARC
+	bool "Synopsys ARC toolchain removed"
+	select BR2_LEGACY
+	help
+	  The Synopsys ARC external toolchain has been removed, as it
+	  was no longer maintained in Buildroot.
+
 config BR2_PACKAGE_TS4900_FPGA
 	bool "ts4900-fpga removed"
 	select BR2_LEGACY
