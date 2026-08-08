@@ -7,14 +7,9 @@ config BR2_PACKAGE_HOST_BINUTILS_SUPPORTS_CFI
 
 choice
 	prompt "Binutils Version"
-	default BR2_BINUTILS_VERSION_2_45_X if !BR2_arc
-	default BR2_BINUTILS_VERSION_ARC if BR2_arc
+	default BR2_BINUTILS_VERSION_2_45_X
 	help
 	  Select the version of binutils you wish to use.
-
-config BR2_BINUTILS_VERSION_ARC
-	bool "binutils arc (2.43)"
-	depends on BR2_arc
 
 config BR2_BINUTILS_VERSION_2_44_X
 	bool "binutils 2.44"
@@ -29,14 +24,12 @@ endchoice
 
 config BR2_BINUTILS_VERSION
 	string
-	default "arc-2024.12-release"	if BR2_BINUTILS_VERSION_ARC
 	default "2.44"		if BR2_BINUTILS_VERSION_2_44_X
 	default "2.45.1"	if BR2_BINUTILS_VERSION_2_45_X
 	default "2.46.1"	if BR2_BINUTILS_VERSION_2_46_X
 
 config BR2_BINUTILS_GPROFNG
 	bool "gprofng support"
-	depends on !BR2_BINUTILS_VERSION_ARC
 	help
 	  This option enables support for gprofng, a new profiler.
 
