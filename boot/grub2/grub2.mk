@@ -15,6 +15,13 @@ HOST_GRUB2_DEPENDENCIES = host-bison host-flex host-gawk \
 	$(BR2_PYTHON3_HOST_DEPENDENCY)
 GRUB2_INSTALL_IMAGES = YES
 
+# 0001-Revert-configure-Check-linker-for-image-base-support.patch
+# 0002-Revert-configure-Print-a-more-helpful-error-if-autoc.patch
+GRUB2_AUTORECONF = YES
+GRUB2_DEPENDENCIES += host-pkgconf
+HOST_GRUB2_AUTORECONF = YES
+HOST_GRUB2_DEPENDENCIES += host-pkgconf
+
 ifeq ($(BR2_TARGET_GRUB2_INSTALL_TOOLS),y)
 GRUB2_INSTALL_TARGET = YES
 else

@@ -1,0 +1,75 @@
+From 3a9d2dd2f5fb07b75a74c307d61b9b9fc5d20a62 Mon Sep 17 00:00:00 2001
+From: Yi Zhao <yi.zhao@windriver.com>
+Date: Fri, 27 Feb 2026 11:46:54 +0800
+Subject: [PATCH] Revert "configure: Check linker for --image-base support"
+
+This reverts commit 1a5417f39a0ccefcdd5440f2a67f84d2d2e26960.
+
+Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
+Upstream: temporary revert, until upstream fixes the issue, see
+discussion at
+https://lists.gnu.org/archive/html/grub-devel/2026-02/msg00039.html
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ acinclude.m4 |  5 -----
+ configure.ac | 14 ++------------
+ 2 files changed, 2 insertions(+), 17 deletions(-)
+
+diff --git a/acinclude.m4 b/acinclude.m4
+index 70c1912f8..fa7840f09 100644
+--- a/acinclude.m4
++++ b/acinclude.m4
+@@ -79,11 +79,6 @@ AC_DEFUN([grub_PROG_OBJCOPY_ABSOLUTE],
+ [AC_MSG_CHECKING([whether ${TARGET_OBJCOPY} works for absolute addresses])
+ AC_CACHE_VAL(grub_cv_prog_objcopy_absolute,
+ [cat > conftest.c <<\EOF
+-asm (
+-    ".globl start, _start, __start\n"
+-    ".ifdef cmain; .set start = _start = __start = cmain\n.endif\n"
+-    ".ifdef _cmain; .set start = _start = __start = _cmain\n.endif\n"
+-);
+ void cmain (void);
+ void
+ cmain (void)
+diff --git a/configure.ac b/configure.ac
+index d8ca1b7c1..041cfbab4 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1461,6 +1461,7 @@ elif test x$grub_cv_target_cc_link_format = x-mi386pe || test x$grub_cv_target_c
+   TARGET_IMG_LDSCRIPT='$(top_srcdir)'"/conf/i386-cygwin-img-ld.sc"
+   TARGET_IMG_LDFLAGS="-Wl,-T${TARGET_IMG_LDSCRIPT}"
+   TARGET_IMG_LDFLAGS_AC="-Wl,-T${srcdir}/conf/i386-cygwin-img-ld.sc"
++  TARGET_IMG_BASE_LDOPT="-Wl,-Ttext"
+   TARGET_IMG_CFLAGS=
+ else
+   TARGET_APPLE_LINKER=0
+@@ -1468,6 +1469,7 @@ else
+   TARGET_IMG_LDSCRIPT=
+   TARGET_IMG_LDFLAGS='-Wl,-N'
+   TARGET_IMG_LDFLAGS_AC='-Wl,-N'
++  TARGET_IMG_BASE_LDOPT="-Wl,-Ttext"
+   TARGET_IMG_CFLAGS=
+ fi
+ 
+@@ -1798,18 +1800,6 @@ grub_PROG_TARGET_CC
+ m4_ifndef([AX_CHECK_LINK_FLAG], [m4_fatal([autoconf-archive is missing. You must install it to generate the configure script.])])
+ 
+ if test "x$TARGET_APPLE_LINKER" != x1 ; then
+-AX_CHECK_LINK_FLAG([-Wl,--image-base,0x400000],
+-    [TARGET_IMG_BASE_LDOPT="-Wl,--image-base"],
+-    [TARGET_IMG_BASE_LDOPT="-Wl,-Ttext"],
+-    [],
+-    [AC_LANG_SOURCE([
+-asm (".globl start; start:");
+-asm (".globl _start; _start:");
+-asm (".globl __start; __start:");
+-void __main (void);
+-void __main (void) {}
+-int main (void);
+-    ])])
+ grub_PROG_OBJCOPY_ABSOLUTE
+ fi
+ grub_PROG_LD_BUILD_ID_NONE
+-- 
+2.43.0
+

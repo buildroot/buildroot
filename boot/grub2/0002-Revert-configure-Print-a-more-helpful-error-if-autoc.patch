@@ -1,0 +1,36 @@
+From d0f516385dc73e8dd92b78ce08c1df100434fe67 Mon Sep 17 00:00:00 2001
+From: Yi Zhao <yi.zhao@windriver.com>
+Date: Fri, 27 Feb 2026 13:58:44 +0800
+Subject: [PATCH] Revert "configure: Print a more helpful error if
+ autoconf-archive is not installed"
+
+This reverts commit ac042f3f58d33ce9cd5ff61750f06da1a1d7b0eb.
+
+Signed-off-by: Yi Zhao <yi.zhao@windriver.com>
+Upstream: temporary revert, until upstream fixes the issue, see
+discussion at
+https://lists.gnu.org/archive/html/grub-devel/2026-02/msg00039.html
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ configure.ac | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 041cfbab4..209c0fb11 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1794,11 +1794,6 @@ LIBS=""
+ # Defined in acinclude.m4.
+ grub_ASM_USCORE
+ grub_PROG_TARGET_CC
+-
+-# The error message produced by autoconf if autoconf-archive is not installed is
+-# quite misleading and not very helpful. So, try point people in the right direction.
+-m4_ifndef([AX_CHECK_LINK_FLAG], [m4_fatal([autoconf-archive is missing. You must install it to generate the configure script.])])
+-
+ if test "x$TARGET_APPLE_LINKER" != x1 ; then
+ grub_PROG_OBJCOPY_ABSOLUTE
+ fi
+-- 
+2.43.0
+
