@@ -23,6 +23,8 @@ GCC 5+
 GCC 6.2+
  https://sourceware.org/git/?p=glibc.git;a=commit;h=4dcbbc3b28aaeafe23e1a30db84055aa6f6fa987
 
+Upstream: Not applicable
+
 Signed-off-by: Matthew Weber <matthew.weber@rockwellcollins.com>
 [yann.morin.1998@free.fr: update for 2.37]
 Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
@@ -30,17 +32,17 @@ Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
 Signed-off-by: Romain Naour <romain.naour@gmail.com>
 [yann.morin.1998@free.fr: rebase for 2.39]
 Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
-[Bernd: rebase for 2.43]
+[Bernd: rebase for 2.44]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  configure | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/configure b/configure
-index 0cd2269859..1c7e42ec10 100755
+index 604279533a..9daca5fb98 100755
 --- a/configure
 +++ b/configure
-@@ -5350,7 +5350,7 @@ printf %s "checking version of $LD... " >&6; }
+@@ -5307,7 +5307,7 @@ printf %s "checking version of $LD... " >&6; }
    ac_prog_version=`$LD --version 2>&1 | sed -n 's/^.*GNU ld.* \([0-9][0-9]*\.[0-9.]*\).*$/\1/p'`
    case $ac_prog_version in
      '') ac_prog_version="v. ?.??, bad"; ac_verc_fail=yes;;
@@ -49,7 +51,7 @@ index 0cd2269859..1c7e42ec10 100755
         ac_prog_version="$ac_prog_version, ok"; ac_verc_fail=no;;
      *) ac_prog_version="$ac_prog_version, bad"; ac_verc_fail=yes;;
  
-@@ -5799,7 +5799,7 @@ int
+@@ -5756,7 +5756,7 @@ int
  main (void)
  {
  

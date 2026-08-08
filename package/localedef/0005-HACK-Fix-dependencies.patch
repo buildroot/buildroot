@@ -1,0 +1,43 @@
+From 8419660a3dcf8e6780365f7298e7d85ca0c5537f Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 26 Jul 2026 12:17:36 +0200
+Subject: [PATCH] HACK: Fix dependencies
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream commit 7cac99621e9601f916121bcaa9b7734a2e4c2529 changed the
+handling of dependencies which forced the addition of the make target
+'lib' to the target 'others' causing the build of unneeded targets for
+the host build of localedef including build errors:
+
+/home/bernd/buildroot/output/per-package/host-localedef/host/bin/ccache
+ /usr/bin/gcc gconv_simple.c
+[...]
+In file included from <command-line>:
+../include/wchar.h:154:20: error: ‘wcstof128’ undeclared here (not in a function); did you mean ‘wcstof128_l’?
+
+To fix the problem we remove the addition of the 'lib' make target.
+
+Upstream: Not applicable
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ Makefile | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index a6aabca691..0ac1a45c36 100644
+--- a/Makefile
++++ b/Makefile
+@@ -581,7 +581,6 @@ endif
+ # 'tests' and 'xtests' additionally require the 'others' pass.  The
+ # testroot used by the container tests performs a full installation in
+ # its recipe, which must not run concurrently with the build passes.
+-$(addsuffix /others,$(subdirs)): lib
+ $(addsuffix /tests,$(subdirs)) $(addsuffix /xtests,$(subdirs)): others
+ $(objpfx)testroot.pristine/install.stamp: | others
+ 
+-- 
+2.47.3
+
