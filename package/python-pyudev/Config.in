@@ -1,6 +1,6 @@
 config BR2_PACKAGE_PYTHON_PYUDEV
 	bool "python-pyudev"
-	depends on BR2_PACKAGE_HAS_UDEV
+	depends on BR2_PACKAGE_HAS_LIBUDEV
 	select BR2_PACKAGE_PYTHON3_ZLIB # runtime
 	help
 	  pyudev is a LGPL licenced, pure Python 2/3 binding to
@@ -9,5 +9,5 @@ config BR2_PACKAGE_PYTHON_PYUDEV
 
 	  https://github.com/pyudev/pyudev
 
-comment "python-pyudev needs udev /dev management"
-	depends on !BR2_PACKAGE_HAS_UDEV
+comment "python-pyudev needs libudev"
+	depends on !BR2_PACKAGE_HAS_LIBUDEV
