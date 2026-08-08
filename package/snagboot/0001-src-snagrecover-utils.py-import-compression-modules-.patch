@@ -1,0 +1,57 @@
+From fa60aaf200eb1e6d31124ac3e7631e9e5458d145 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 8 Aug 2026 19:03:52 +0200
+Subject: [PATCH] src/snagrecover/utils.py: import compression modules when
+ needed
+
+Commit 4f98bdec5ebeb13d9f851f848c3bd0086ef31eeb ("snagflash: Support
+on-the-fly decompression of input files") has added unconditional
+imports of lzma, bz2 and gzip Python modules, even if compressed input
+files are not used.
+
+Switch to dynamic imports where these modules are only imported
+on-demand. This allows to relax the need to have support for those
+modules in Python, which can be helpful in environments such as
+Buildroot where dependencies are kept to a minimum.
+
+Upstream: https://github.com/bootlin/snagboot/pull/95
+[Thomas: upstream version is different as upstream master branch also
+supports zstd compression, which wasn't supported as of v2.6.1 of
+snagboot]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/snagrecover/utils.py | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/src/snagrecover/utils.py b/src/snagrecover/utils.py
+index 8d240f6..dfe7d23 100644
+--- a/src/snagrecover/utils.py
++++ b/src/snagrecover/utils.py
+@@ -16,9 +16,7 @@ from snagrecover.usb import SnagbootUSBContext
+ import yaml
+ import importlib.resources
+ 
+-import lzma
+-import bz2
+-import gzip
++from math import ceil
+ 
+ USB_RETRIES = 9
+ USB_INTERVAL = 1
+@@ -47,10 +45,13 @@ def open_compressed_file(path: str, mode):
+ 	comp = get_compression_method(path)
+ 
+ 	if comp == "xz":
++		import lzma
+ 		file = lzma.open(path, mode)
+ 	elif comp == "bz2":
++		import bz2
+ 		file = bz2.open(path, mode)
+ 	elif comp == "gz":
++		import gzip
+ 		file = gzip.open(path, mode)
+ 	else:
+ 		return open(path, mode)
+-- 
+2.55.0
+
