@@ -26,10 +26,15 @@ if BR2_PACKAGE_TPM2_TOOLS
 config BR2_PACKAGE_TPM2_TOOLS_FAPI
 	bool "fapi tools"
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on !BR2_PACKAGE_MBEDTLS # tss-fapi
 	select BR2_PACKAGE_TPM2_TSS_FAPI
 	help
 	  This option enables Feature API (FAPI) support in
 	  tpm2-tools. The FAPI tools are prefixed with tss2_.
+
+comment "fapi-tools not supported with Mbed TLS backend"
+	depends on BR2_TOOLCHAIN_HAS_SYNC_4
+	depends on BR2_PACKAGE_MBEDTLS
 
 endif
 
