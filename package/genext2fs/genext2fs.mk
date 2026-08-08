@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GENEXT2FS_VERSION = 1.5.0
+GENEXT2FS_VERSION = 1.6.2
 GENEXT2FS_SITE = $(call github,bestouff,genext2fs,v$(GENEXT2FS_VERSION))
 GENEXT2FS_LICENSE = GPL-2.0
 GENEXT2FS_LICENSE_FILES = COPYING
