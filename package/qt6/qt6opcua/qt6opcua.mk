@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT6OPCUA_VERSION = $(QT6_VERSION)
+QT6OPCUA_VERSION = v$(QT6_VERSION)-lts-lgpl
 QT6OPCUA_SITE = $(QT6_GIT)/qt/qtopcua.git
 QT6OPCUA_SITE_METHOD = git
 QT6OPCUA_INSTALL_STAGING = YES

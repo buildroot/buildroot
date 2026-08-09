@@ -68,7 +68,7 @@ QT6MULTIMEDIA_CONF_OPTS += -DFEATURE_ffmpeg=ON
 QT6MULTIMEDIA_DEPENDENCIES += ffmpeg
 # libxext/libxrandr are needed for ffmpeg plugin to build with X11
 # support:
-# https://code.qt.io/cgit/qt/qtmultimedia.git/tree/src/plugins/multimedia/ffmpeg/CMakeLists.txt?h=6.8.1#n198
+# https://code.qt.io/cgit/qt/qtmultimedia.git/tree/src/plugins/multimedia/ffmpeg/CMakeLists.txt?h=v6.8.4-lts-lgpl#n198
 ifeq ($(BR2_PACKAGE_XORG7),y)
 QT6MULTIMEDIA_DEPENDENCIES += xlib_libXext xlib_libXrandr
 endif

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT6MQTT_VERSION = $(QT6_VERSION)
+QT6MQTT_VERSION = v$(QT6_VERSION)-lts-lgpl
 QT6MQTT_SITE = $(QT6_GIT)/qt/qtmqtt.git
 
 QT6MQTT_INSTALL_STAGING = YES

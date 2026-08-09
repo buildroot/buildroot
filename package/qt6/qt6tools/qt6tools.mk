@@ -37,7 +37,7 @@ QT6TOOLS_CONF_OPTS = \
 	-DQT_BUILD_TESTS=OFF
 
 # Disable clang support in qt6tools for now, as version 17 is needed:
-# https://code.qt.io/cgit/qt/qttools.git/tree/.cmake.conf?h=6.8.1
+# https://code.qt.io/cgit/qt/qttools.git/tree/.cmake.conf?h=v6.8.4-lts-lgpl
 QT6TOOLS_CONF_OPTS += -DFEATURE_clang=OFF
 
 QT6TOOLS_DEPENDENCIES = \
@@ -55,7 +55,7 @@ HOST_QT6TOOLS_CONF_OPTS = \
 	-DQT_BUILD_TESTS=OFF
 
 # Disable clang support in qt6tools for now, as version 17 is needed:
-# https://code.qt.io/cgit/qt/qttools.git/tree/.cmake.conf?h=6.8.1
+# https://code.qt.io/cgit/qt/qttools.git/tree/.cmake.conf?h=v6.8.4-lts-lgpl
 HOST_QT6TOOLS_CONF_OPTS += -DFEATURE_clang=OFF
 
 HOST_QT6TOOLS_DEPENDENCIES = host-qt6base
