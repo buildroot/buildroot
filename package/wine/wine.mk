@@ -189,7 +189,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_WAYLAND),y)
 WINE_CONF_OPTS += --with-wayland
-WINE_DEPENDENCIES += wayland
+WINE_DEPENDENCIES += wayland libxkbcommon
 else
 WINE_CONF_OPTS += --without-wayland
 endif
