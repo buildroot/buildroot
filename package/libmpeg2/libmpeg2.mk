@@ -16,6 +16,10 @@ LIBMPEG2_INSTALL_STAGING = YES
 LIBMPEG2_AUTORECONF = YES
 LIBMPEG2_CONF_OPTS = --without-x --disable-directx
 
+# Compilers using C23 no longer allows K&R style function
+# declarations, so force to use gnu89 standard.
+LIBMPEG2_CONF_ENV += CFLAGS="$(TARGET_CFLAGS) -std=gnu89"
+
 LIBMPEG2_CPE_ID_VENDOR = videolan
 
 ifeq ($(BR2_PACKAGE_SDL),y)
