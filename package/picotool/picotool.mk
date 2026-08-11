@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PICOTOOL_VERSION = 2.2.0-a4
+PICOTOOL_VERSION = 2.3.0
 PICOTOOL_SITE = $(call github,raspberrypi,picotool,$(PICOTOOL_VERSION))
 PICOTOOL_LICENSE = BSD-3-Clause
 PICOTOOL_LICENSE_FILES = LICENSE.TXT

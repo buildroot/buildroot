@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-PICO_SDK_VERSION = 2.2.0
+PICO_SDK_VERSION = 2.3.0
 PICO_SDK_SITE = https://github.com/raspberrypi/pico-sdk.git
 PICO_SDK_SITE_METHOD = git
 PICO_SDK_GIT_SUBMODULES = YES
