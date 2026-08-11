@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-SPANDSP_VERSION = 3.0.0-6ec23e5a7e
-SPANDSP_SITE = https://files.freeswitch.org/downloads/libs
+SPANDSP_VERSION = 3.1.1
+SPANDSP_SITE = $(call github,freeswitch,spandsp,v$(SPANDSP_VERSION))
 SPANDSP_LICENSE = LGPL-2.1 (library), GPL-2.0 (test suite)
 SPANDSP_LICENSE_FILES = COPYING
 # We're patching configure.ac
 SPANDSP_AUTORECONF = YES
 
-SPANDSP_DEPENDENCIES = tiff host-pkgconf
+SPANDSP_DEPENDENCIES = tiff host-tiff host-pkgconf
 SPANDSP_INSTALL_STAGING = YES
 SPANDSP_CONF_ENV = LIBS="`$(PKG_CONFIG_HOST_BINARY) --libs libtiff-4`"
 

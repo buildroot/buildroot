@@ -1,0 +1,36 @@
+From 0617f8d89ad5102f569c1d2b0483179fdfb1a83a Mon Sep 17 00:00:00 2001
+From: Christian Marangi <ansuelsmth@gmail.com>
+Date: Thu, 20 Nov 2025 16:39:06 +0100
+Subject: [PATCH] Permit to provide custom CPPFLAGS_FOR_BUILD
+
+In the context of cross compilation the CPPFLAGS for the target might be
+different than the one for build tools.
+
+Permit to provide custom CPPFLAGS_FOR_BUILD value to handle this
+scenario.
+
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+
+Upstream: https://github.com/freeswitch/spandsp/pull/112
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index fa87245..450b8fa 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -61,7 +61,7 @@ then
+     # are not the same, we set reasonable default values for the tools.
+ 
+     CC_FOR_BUILD=${CC_FOR_BUILD-gcc}
+-    CPPFLAGS_FOR_BUILD="\$(CPPFLAGS)"
++    CPPFLAGS_FOR_BUILD=${CPPFLAGS_FOR_BUILD-"\$(CPPFLAGS)"}
+     CC=${CC-${host_alias}-gcc}
+     CFLAGS=${CFLAGS-"-g -O2"}
+     CXX=${CXX-${host_alias}-c++}
+-- 
+2.47.3
+
