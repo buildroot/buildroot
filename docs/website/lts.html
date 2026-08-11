@@ -46,7 +46,7 @@
             <p class="br-lts-item-text">
             Tracking of the vulnerabilities affecting Buildroot
             is available at
-            <a href="https://security.buildroot.org/2025.02.x/vulnerability">security.buildroot.org</a>.
+            <a href="https://security.buildroot.org/">security.buildroot.org</a>.
             <br/>
             LTS stewards ensure this data remains up-to-date by actively
             maintaining Buildroot packages metadata.
@@ -166,10 +166,6 @@
     <br/>
     <br/>
 
-    <p>
-    More details about the LTS workflow at <a href="https://gitlab.com/buildroot.org/buildroot-lts-tools">buildroot.org/buildroot-lts-tools</a>.
-    </p>
-
     <div id="organization" class="br-lts-section-header">
         <div class="br-lts-bg-grid"></div>
         <div class="br-lts-title-box">How we work</div>
@@ -181,12 +177,28 @@
     analyze based on the previous week's commits to the master branch. The
     commits are then annotated to define a list of candidates for the LTS
     branches.
-    <br><br>
-    On Thursday, the candidates are cherry-picked to a staging branch to be
-    reviewed by the other maintainers. On Thursday evening the branch is
-    synced with upstream and contributors are notified. Feedback from
-    users, sponsors and autobuilders are then collected and vulnerability
-    analyses updated.
+    </p>
+
+    <p>
+    Mid-week, the candidates are cherry-picked to a staging branch hosted on
+    <a href="https://gitlab.com/essensium-mind/buildroot/">gitlab.com/essensium-mind/buildroot</a>.
+    Every maintained branch has a staging branch, with the <code>.x</code>
+    suffix replaced by <code>.pre</code>. The staging branch allows other
+    maintainers to review the changes before they are pushed upstream.
+    </p>
+
+    <p>
+    By the end of the week, the staging branches are pushed upstream and
+    contributors are notified. Feedback from users, sponsors and
+    <a href="https://autobuild.buildroot.org/">autobuilders</a>
+    are then collected and
+    <a href="https://security.buildroot.org/">vulnerability analyses</a>
+    updated.
+    </p>
+
+    <p>
+    For more information about the development workflow, see the
+    <a href="https://gitlab.com/buildroot.org/buildroot-lts-tools/-/blob/main/tools/README.md">documentation</a>.
     </p>
     <br/>
 
@@ -222,13 +234,13 @@
         </div>
 
         <div class="br-lts-chart-row br-lts-chart-row--tall">
-            <div class="br-lts-chart-label">Sync with upstream branch</div>
-            <div class="br-lts-bar br-lts-col-start-9"></div>
+            <div class="br-lts-chart-label">Push to upstream branch</div>
+            <div class="br-lts-bar br-lts-bar--span-2 br-lts-col-start-9"></div>
         </div>
 
         <div class="br-lts-chart-row br-lts-chart-row--tall">
             <div class="br-lts-chart-label">Update vulns</div>
-            <div class="br-lts-bar br-lts-col-start-10"></div>
+            <div class="br-lts-bar br-lts-bar--span-2 br-lts-col-start-10"></div>
         </div>
     </div>
 
