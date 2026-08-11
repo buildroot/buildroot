@@ -32,6 +32,10 @@ BUSYBOX_IGNORE_CVES += CVE-2025-46394
 # 0014-wget-dont-allow-control-characters-or-spaces-in-the-URL.patch
 BUSYBOX_IGNORE_CVES += CVE-2025-60876
 
+# 0017-tar-strip-unsafe-hardlink-components.patch
+# 0018-only-strip-unsafe-components-from-hardlinks.patch
+BUSYBOX_IGNORE_CVES += CVE-2026-26157 CVE-2026-26158
+
 BUSYBOX_CFLAGS = \
 	$(TARGET_CFLAGS)
 
