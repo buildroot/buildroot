@@ -5,19 +5,21 @@
 == Release Engineering
 === Releases
 
-The Buildroot project makes quarterly releases with monthly bugfix
-releases.  The first release of each year is a long term support
-release, LTS.
+The Buildroot project makes quarterly stable releases with monthly bugfix
+releases. Starting with 2025.02, the first release of every odd-numbered year
+is a long-term support (LTS) release supported for three years.
 
- - Quarterly releases: 2020.02, 2020.05, 2020.08, and 2020.11
- - Bugfix releases: 2020.02.1, 2020.02.2, ...
- - LTS releases: 2020.02, 2021.02, ...
+ - LTS releases: 2025.02, 2027.02, 2029.02 ...
+ - Non-LTS releases: 2025.05, 2025.08, 2025.11, 2026.02, ...
+ - Bugfix releases: 2025.02.1, 2025.02.2, ...
 
-Releases are supported until the first bugfix release of the next
-release, e.g., 2020.05.x is EOL when 2020.08.1 is released.
+LTS releases are supported for three years, with a one-year overlap with the
+next LTS release, e.g., 2025.02.x is EOL when 2028.02 is released.
 
-LTS releases are supported until the first bugfix release of the next
-LTS, e.g., 2020.02.x is supported until 2021.02.1 is released.
+Non-LTS releases are supported until the next release, e.g., 2025.05.x is EOL
+when 2025.08 is released.
+
+See the table at https://lts.buildroot.org/#releases[lts.buildroot.org].
 
 === Development
 
