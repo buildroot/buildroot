@@ -5,7 +5,7 @@
 ################################################################################
 
 REDIS_VERSION = 8.6.5
-REDIS_SITE = http://download.redis.io/releases
+REDIS_SITE = https://download.redis.io/releases
 REDIS_LICENSE = \
 	AGPL-3.0 or SSPL-1.0 or RSAL-2.0 (core); \
 	MIT and BSD family licenses (Bundled components)
