@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBBLURAY_VERSION = 1.4.0
+LIBBLURAY_VERSION = 1.5.0
 LIBBLURAY_SOURCE = libbluray-$(LIBBLURAY_VERSION).tar.xz
 LIBBLURAY_SITE = https://download.videolan.org/pub/videolan/libbluray/$(LIBBLURAY_VERSION)
 LIBBLURAY_INSTALL_STAGING = YES
