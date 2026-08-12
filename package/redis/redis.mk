@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-REDIS_VERSION = 8.8.1
+REDIS_VERSION = 8.10.0
 REDIS_SITE = https://download.redis.io/releases
 REDIS_LICENSE = \
 	AGPL-3.0 or SSPL-1.0 or RSAL-2.0 (core); \
@@ -49,13 +49,15 @@ REDIS_BUILDOPTS += BUILD_TLS=no
 endif
 
 define REDIS_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) $(REDIS_BUILDOPTS) -C $(@D)
+	$(TARGET_MAKE_ENV) $(MAKE) $(REDIS_BUILDOPTS) -C $(@D) build redis
 endef
 
 define REDIS_INSTALL_TARGET_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) $(REDIS_BUILDOPTS) -C $(@D) \
 		LDCONFIG=true install
-	$(INSTALL) -D -m 0644 $(@D)/redis.conf \
+	$(TARGET_MAKE_ENV) $(MAKE) $(REDIS_BUILDOPTS) -C $(@D) \
+		sync-redis-conf
+	$(INSTALL) -D -m 0644 $(@D)/redis-full.conf \
 		$(TARGET_DIR)/etc/redis.conf
 endef
 
