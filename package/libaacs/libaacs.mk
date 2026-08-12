@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-LIBAACS_VERSION = 0.11.1
-LIBAACS_SITE = http://download.videolan.org/pub/videolan/libaacs/$(LIBAACS_VERSION)
-LIBAACS_SOURCE = libaacs-$(LIBAACS_VERSION).tar.bz2
+LIBAACS_VERSION = 0.12.0
+LIBAACS_SITE = https://download.videolan.org/pub/videolan/libaacs/$(LIBAACS_VERSION)
+LIBAACS_SOURCE = libaacs-$(LIBAACS_VERSION).tar.xz
 LIBAACS_LICENSE = LGPL-2.1+
 LIBAACS_LICENSE_FILES = COPYING
 LIBAACS_INSTALL_STAGING = YES
