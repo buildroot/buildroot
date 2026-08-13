@@ -5,24 +5,13 @@
 ################################################################################
 
 PYTHON3_VERSION_MAJOR = 3.12
-PYTHON3_VERSION = $(PYTHON3_VERSION_MAJOR).13
+PYTHON3_VERSION = $(PYTHON3_VERSION_MAJOR).14
 PYTHON3_SOURCE = Python-$(PYTHON3_VERSION).tar.xz
 PYTHON3_SITE = https://python.org/ftp/python/$(PYTHON3_VERSION)
 PYTHON3_LICENSE = Python-2.0, others
 PYTHON3_LICENSE_FILES = LICENSE
 PYTHON3_CPE_ID_VENDOR = python
 PYTHON3_CPE_ID_PRODUCT = python
-
-# 0013-Fix-O-n-2-canonical-ordering-in-unicodedata-normalize.patch
-PYTHON3_IGNORE_CVES += CVE-2026-3276
-# 0014-tarfile-data_filter-validate-written-link.patch
-PYTHON3_IGNORE_CVES += CVE-2026-7774
-# 0015-Apply-CVE-2021-4189-PASV-fix-to-ftplib-ftpcp.patch
-PYTHON3_IGNORE_CVES += CVE-2026-8328
-# 0016-prevent-bz2-decompressor-reuse-after-errors.patch
-PYTHON3_IGNORE_CVES += CVE-2026-9669
-# 0017-Fix-symlink-escape-via-tarfile-hardlink-extraction-fallback.patch
-PYTHON3_IGNORE_CVES += CVE-2026-11940
 
 # This host Python is installed in $(HOST_DIR), as it is needed when
 # cross-compiling third-party Python modules.
