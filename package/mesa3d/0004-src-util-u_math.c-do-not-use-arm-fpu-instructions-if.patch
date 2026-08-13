@@ -1,0 +1,55 @@
+From 345b14a820a557b72f218637cb37ef39947b1f50 Mon Sep 17 00:00:00 2001
+From: Alexander Kanavin <alex@linutronix.de>
+Date: Wed, 1 Jul 2026 22:48:15 +0200
+Subject: [PATCH] src/util/u_math.c: do not use arm fpu instructions if fpu is
+ not available
+
+Signed-off-by: Alexander Kanavin <alex@linutronix.de>
+Part-of: <https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/42682>
+
+Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/42682
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/util/u_math.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/util/u_math.c b/src/util/u_math.c
+index 722eac7f733..5683766a417 100644
+--- a/src/util/u_math.c
++++ b/src/util/u_math.c
+@@ -87,6 +87,7 @@ util_fpstate_get(void)
+    }
+ #endif
+ #if DETECT_ARCH_ARM
++#if !defined(__SOFTFP__)
+    if (util_get_cpu_caps()->has_neon) {
+ #ifdef HAVE___BUILTIN_ARM_GET_FPSCR
+       fpstate = __builtin_arm_get_fpscr();
+@@ -94,6 +95,7 @@ util_fpstate_get(void)
+       __asm__ volatile("vmrs %0, fpscr" : "=r"(fpstate));
+ #endif
+    }
++#endif
+ #elif DETECT_ARCH_AARCH64
+    {
+ #ifdef HAVE___BUILTIN_AARCH64_GET_FPCR
+@@ -154,6 +156,7 @@ util_fpstate_set(unsigned fpstate)
+    }
+ #endif
+ #if DETECT_ARCH_ARM
++#if !defined(__SOFTFP__)
+    if (util_get_cpu_caps()->has_neon) {
+ #ifdef HAVE___BUILTIN_ARM_SET_FPSCR
+       __builtin_arm_set_fpscr(fpstate);
+@@ -161,6 +164,7 @@ util_fpstate_set(unsigned fpstate)
+       __asm__ volatile("vmsr fpscr, %0" :: "r"(fpstate));
+ #endif
+    }
++#endif
+ #elif DETECT_ARCH_AARCH64
+    {
+ #ifdef HAVE___BUILTIN_AARCH64_SET_FPCR
+-- 
+2.47.3
+
