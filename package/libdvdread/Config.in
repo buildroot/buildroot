@@ -1,8 +1,12 @@
 config BR2_PACKAGE_LIBDVDREAD
 	bool "libdvdread"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_8 # libdvdcss
 	select BR2_PACKAGE_LIBDVDCSS
 	help
 	  libdvdread provides a simple foundation for reading
 	  DVD-Video images.
 
 	  https://www.videolan.org/developers/libdvdnav.html
+
+comment "libdvdread needs a toolchain w/ gcc >= 8"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_8

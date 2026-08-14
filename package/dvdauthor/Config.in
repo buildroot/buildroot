@@ -17,9 +17,13 @@ if BR2_PACKAGE_DVDAUTHOR
 
 config BR2_PACKAGE_DVDAUTHOR_DVDUNAUTHOR
 	bool "dvdunauthor"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_8 # libdvdcss -> libdvdread
 	select BR2_PACKAGE_LIBDVDREAD
 	help
 	  This option enables the dvdunauthor program, which requires
 	  libdvdread.
+
+comment "dvdunauthor needs a toolchain w/ gcc >= 8"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_8
 
 endif

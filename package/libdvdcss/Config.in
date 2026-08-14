@@ -1,7 +1,11 @@
 config BR2_PACKAGE_LIBDVDCSS
 	bool "libdvdcss"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_8 # std=c17
 	help
 	  libdvdcss is a simple library designed for accessing DVDs like
 	  a block device without having to bother about the decryption.
 
 	  http://www.videolan.org/developers/libdvdcss.html
+
+comment "libdvdcss needs a toolchain w/ gcc >= 8"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_8
