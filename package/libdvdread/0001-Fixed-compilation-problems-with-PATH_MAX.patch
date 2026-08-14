@@ -1,0 +1,40 @@
+From 4462612349edd3030d81e3c3a7b638e13e6b8ef2 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Wed, 12 Aug 2026 22:40:26 +0200
+Subject: [PATCH] Fixed compilation problems with PATH_MAX
+
+../src/dvd_reader.c: In function 'dir_has_file':
+../src/dvd_reader.c:393:14: error: 'PATH_MAX' undeclared (first use in this function)
+  393 |   char path[ PATH_MAX + 1 ];
+
+The build error was introduced by
+https://code.videolan.org/videolan/libdvdread/-/commit/da7d7ed4e8fe08c0af310925995b2f4742f7eabf
+
+and was found using the buildroot Gitlab pipelines with gcc 9.3.0.
+
+Upstream: https://code.videolan.org/videolan/libdvdread/-/merge_requests/142
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/dvd_reader.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/src/dvd_reader.c b/src/dvd_reader.c
+index ceef4ee..2a70958 100644
+--- a/src/dvd_reader.c
++++ b/src/dvd_reader.c
+@@ -29,6 +29,11 @@
+ #include <limits.h>         /* PATH_MAX */
+ #include <ctype.h>          /* isalpha */
+ 
++#include <config.h>
++#ifdef HAVE_SYS_PARAM_H
++#   include <sys/param.h>   /* PATH_MAX */
++#endif
++
+ #if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__bsdi__) || defined(__APPLE__)
+ # define SYS_BSD 1
+ #endif
+-- 
+2.47.3
+
