@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CRAMFS_VERSION = 2.1
+CRAMFS_VERSION = 2.2
 CRAMFS_SITE = $(call github,npitre,cramfs-tools,v$(CRAMFS_VERSION))
 CRAMFS_LICENSE = GPL-2.0+
 CRAMFS_LICENSE_FILES = COPYING
