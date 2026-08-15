@@ -1,6 +1,7 @@
 config BR2_PACKAGE_DOUBLE_CONVERSION
 	bool "double-conversion"
 	depends on BR2_INSTALL_LIBSTDCPP
+	select BR2_HOST_CMAKE_AT_LEAST_3_29
 	help
 	  Provides binary-decimal and decimal-binary routines for
 	  IEEE doubles.
