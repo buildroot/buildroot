@@ -1,0 +1,174 @@
+From c6efc293a52fdde7d4876243faaaa768fe052719 Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Sat, 15 Aug 2026 18:20:33 +0200
+Subject: [PATCH] Fix SSP support for riscv32
+
+On modern 32-bit architectures like RISC-V (riscv32), legacy 32-bit
+time syscalls like __NR_gettimeofday are intentionally omitted because
+RV32 implements a strict time64-only ABI to avoid the Year 2038 bug.
+
+Therefore, use AT_RANDOM from the auxiliary vector first, as glibc does,
+to obtain random data for the stack canary. If AT_RANDOM is unavailable,
+fall back to reading random data from /dev/urandom.
+
+Tested with aarch64, riscv32 and riscv32 noMMU targets.
+
+Upstream: https://mailman.openadk.org/mailman3/hyperkitty/list/devel@uclibc-ng.org/thread/WIKMWPXJYAPTVVZ2MMZINUJNPIJXBMOE/
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+---
+ extra/Configs/Config.in               | 10 -------
+ ldso/include/dl-syscall.h             | 12 --------
+ ldso/ldso/ldso.c                      |  4 ++-
+ libc/misc/internals/__uClibc_main.c   |  4 ++-
+ libc/sysdeps/linux/common/dl-osinfo.h | 40 +++++++++++++++++----------
+ 5 files changed, 32 insertions(+), 38 deletions(-)
+
+diff --git a/extra/Configs/Config.in b/extra/Configs/Config.in
+index c3aabf1b4..15a072593 100644
+--- a/extra/Configs/Config.in
++++ b/extra/Configs/Config.in
+@@ -2211,16 +2211,6 @@ config UCLIBC_HAS_SSP
+ 
+ 	  Most people will answer N.
+ 
+-config SSP_QUICK_CANARY
+-	bool "Use simple guard values without accessing /dev/urandom"
+-	depends on UCLIBC_HAS_SSP
+-	help
+-	  Use gettimeofday(2) to define the __guard without accessing
+-	  /dev/urandom.
+-	  WARNING: This makes smashing stack protector vulnerable to timing
+-	  	attacks.
+-	  Most people will answer N.
+-
+ choice
+ 	prompt "Propolice protection blocking signal"
+ 	depends on UCLIBC_HAS_SSP
+diff --git a/ldso/include/dl-syscall.h b/ldso/include/dl-syscall.h
+index c143b8d45..e08b2cd41 100644
+--- a/ldso/include/dl-syscall.h
++++ b/ldso/include/dl-syscall.h
+@@ -260,18 +260,6 @@ _dl_pread(int fd, void *buf, size_t count, off_t offset)
+ }
+ #endif
+ 
+-#ifdef __UCLIBC_HAS_SSP__
+-# include <sys/time.h>
+-# define __NR__dl_gettimeofday __NR_gettimeofday
+-static __always_inline _syscall2(int, _dl_gettimeofday, struct timeval *, tv,
+-# ifdef __USE_BSD
+-                        struct timezone *
+-# else
+-                        void *
+-# endif
+-						, tz)
+-#endif
+-
+ /* Some architectures always use 12 as page shift for mmap2() eventhough the
+  * real PAGE_SHIFT != 12.  Other architectures use the same value as
+  * PAGE_SHIFT...
+diff --git a/ldso/ldso/ldso.c b/ldso/ldso/ldso.c
+index 55f7d7e45..96ee3d496 100755
+--- a/ldso/ldso/ldso.c
++++ b/ldso/ldso/ldso.c
+@@ -1225,7 +1225,9 @@ of this helper program; chances are you did not intend to run this program.\n\
+ #ifdef __UCLIBC_HAS_SSP__
+ 	_dl_debug_early("Setting up SSP guards\n");
+ 	/* Set up the stack checker's canary.  */
+-	stack_chk_guard = _dl_setup_stack_chk_guard ();
++	stack_chk_guard = _dl_setup_stack_chk_guard (
++		_dl_auxvt[AT_RANDOM].a_type == AT_RANDOM ?
++		(void *)_dl_auxvt[AT_RANDOM].a_un.a_val : NULL);
+ # ifdef THREAD_SET_STACK_GUARD
+ 	THREAD_SET_STACK_GUARD (stack_chk_guard);
+ # else
+diff --git a/libc/misc/internals/__uClibc_main.c b/libc/misc/internals/__uClibc_main.c
+index 549606505..bbf471b17 100644
+--- a/libc/misc/internals/__uClibc_main.c
++++ b/libc/misc/internals/__uClibc_main.c
+@@ -296,7 +296,9 @@ void __uClibc_init(void)
+ #ifndef SHARED
+ # ifdef __UCLIBC_HAS_SSP__
+     /* Set up the stack checker's canary.  */
+-    stack_chk_guard = _dl_setup_stack_chk_guard();
++    stack_chk_guard = _dl_setup_stack_chk_guard(
++    _dl_auxvt[AT_RANDOM].a_type == AT_RANDOM ?
++        (void *)_dl_auxvt[AT_RANDOM].a_un.a_val : NULL);
+ #  ifdef THREAD_SET_STACK_GUARD
+     THREAD_SET_STACK_GUARD (stack_chk_guard);
+ #  else
+diff --git a/libc/sysdeps/linux/common/dl-osinfo.h b/libc/sysdeps/linux/common/dl-osinfo.h
+index 3110cb05d..0a42ea094 100644
+--- a/libc/sysdeps/linux/common/dl-osinfo.h
++++ b/libc/sysdeps/linux/common/dl-osinfo.h
+@@ -21,22 +21,42 @@
+ #  ifdef IS_IN_libc
+ #   include <fcntl.h>
+ #   include <unistd.h>
+-#   include <sys/time.h>
++#   include <string.h>
+ #   define OPEN open
+ #   define READ read
+ #   define CLOSE close
+-#   define GETTIMEOFDAY gettimeofday
++#   define MEMCPY memcpy
+ #  else
++#   include <dl-string.h>
+ #   define OPEN _dl_open
+ #   define READ _dl_read
+ #   define CLOSE _dl_close
+-#   define GETTIMEOFDAY _dl_gettimeofday
++#   define MEMCPY _dl_memcpy
+ #  endif
+ 
+-static __always_inline uintptr_t _dl_setup_stack_chk_guard(void)
++static __always_inline uintptr_t
++_dl_setup_stack_chk_guard(void *dl_random)
+ {
+ 	uintptr_t ret;
+-#  ifndef __SSP_QUICK_CANARY__
++
++	/*
++	 * Linux supplies random data through AT_RANDOM.
++	 * Use it directly when available.
++	 */
++	if (dl_random != NULL) {
++		MEMCPY(&ret, dl_random, sizeof(ret));
++
++#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
++		ret &= ~(uintptr_t)0xff;
++#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
++		ret &= ~((uintptr_t)0xff << (8 * (sizeof(ret) - 1)));
++#else
++# error "Unknown byte order"
++#endif
++
++		return ret;
++	}
++
+ 	{
+ 		int fd = OPEN("/dev/urandom", O_RDONLY, 0);
+ 		if (fd >= 0) {
+@@ -46,18 +66,10 @@ static __always_inline uintptr_t _dl_setup_stack_chk_guard(void)
+ 				return ret;
+ 		}
+ 	}
+-#  endif /* !__SSP_QUICK_CANARY__ */
+ 
+-	/* Start with the "terminator canary". */
++	/* Fallback just the "terminator canary". */
+ 	ret = 0xFF0A0D00UL;
+ 
+-	/* Everything failed? Or we are using a weakened model of the
+-	 * terminator canary */
+-	{
+-		struct timeval tv;
+-		if (GETTIMEOFDAY(&tv, NULL) != (-1))
+-			ret ^= tv.tv_usec ^ tv.tv_sec;
+-	}
+ 	return ret;
+ }
+ # endif /* libc || rtld */
+-- 
+2.47.3
+
