@@ -1,0 +1,107 @@
+From 49f8b364c9a6f6db4ab535f999386fecfa38241b Mon Sep 17 00:00:00 2001
+From: Thomas Haller <thom311@gmail.com>
+Date: Thu, 11 Dec 2025 22:27:07 +0100
+Subject: [PATCH] include/linux: include linux header "ila.h"
+
+Taken from v6.18 (7d0a66e4bb9081d75c82ec4957c50034cb0ea449).
+
+https://github.com/thom311/libnl/issues/447
+
+Upstream: https://github.com/thom311/libnl/commit/49f8b364c9a6f6db4ab535f999386fecfa38241b
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ Makefile.am                       |  1 +
+ include/linux-private/linux/ila.h | 68 +++++++++++++++++++++++++++++++
+ 2 files changed, 69 insertions(+)
+ create mode 100644 include/linux-private/linux/ila.h
+
+diff --git a/Makefile.am b/Makefile.am
+index 2bd0c06e..e63e3112 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -278,6 +278,7 @@ noinst_HEADERS = \
+ 	include/linux-private/linux/if_packet.h \
+ 	include/linux-private/linux/if_tunnel.h \
+ 	include/linux-private/linux/if_vlan.h \
++	include/linux-private/linux/ila.h \
+ 	include/linux-private/linux/in.h \
+ 	include/linux-private/linux/in6.h \
+ 	include/linux-private/linux/in_route.h \
+diff --git a/include/linux-private/linux/ila.h b/include/linux-private/linux/ila.h
+new file mode 100644
+index 00000000..6a6c97cf
+--- /dev/null
++++ b/include/linux-private/linux/ila.h
+@@ -0,0 +1,68 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/* ila.h - ILA Interface */
++
++#ifndef _LINUX_ILA_H
++#define _LINUX_ILA_H
++
++/* NETLINK_GENERIC related info */
++#define ILA_GENL_NAME		"ila"
++#define ILA_GENL_VERSION	0x1
++
++enum {
++	ILA_ATTR_UNSPEC,
++	ILA_ATTR_LOCATOR,			/* u64 */
++	ILA_ATTR_IDENTIFIER,			/* u64 */
++	ILA_ATTR_LOCATOR_MATCH,			/* u64 */
++	ILA_ATTR_IFINDEX,			/* s32 */
++	ILA_ATTR_DIR,				/* u32 */
++	ILA_ATTR_PAD,
++	ILA_ATTR_CSUM_MODE,			/* u8 */
++	ILA_ATTR_IDENT_TYPE,			/* u8 */
++	ILA_ATTR_HOOK_TYPE,			/* u8 */
++
++	__ILA_ATTR_MAX,
++};
++
++#define ILA_ATTR_MAX		(__ILA_ATTR_MAX - 1)
++
++enum {
++	ILA_CMD_UNSPEC,
++	ILA_CMD_ADD,
++	ILA_CMD_DEL,
++	ILA_CMD_GET,
++	ILA_CMD_FLUSH,
++
++	__ILA_CMD_MAX,
++};
++
++#define ILA_CMD_MAX	(__ILA_CMD_MAX - 1)
++
++#define ILA_DIR_IN	(1 << 0)
++#define ILA_DIR_OUT	(1 << 1)
++
++enum {
++	ILA_CSUM_ADJUST_TRANSPORT,
++	ILA_CSUM_NEUTRAL_MAP,
++	ILA_CSUM_NO_ACTION,
++	ILA_CSUM_NEUTRAL_MAP_AUTO,
++};
++
++enum {
++	ILA_ATYPE_IID = 0,
++	ILA_ATYPE_LUID,
++	ILA_ATYPE_VIRT_V4,
++	ILA_ATYPE_VIRT_UNI_V6,
++	ILA_ATYPE_VIRT_MULTI_V6,
++	ILA_ATYPE_NONLOCAL_ADDR,
++	ILA_ATYPE_RSVD_1,
++	ILA_ATYPE_RSVD_2,
++
++	ILA_ATYPE_USE_FORMAT = 32, /* Get type from type field in identifier */
++};
++
++enum {
++	ILA_HOOK_ROUTE_OUTPUT,
++	ILA_HOOK_ROUTE_INPUT,
++};
++
++#endif /* _LINUX_ILA_H */
+-- 
+2.47.3
+

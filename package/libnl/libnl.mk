@@ -13,6 +13,10 @@ LIBNL_CPE_ID_VALID = YES
 LIBNL_INSTALL_STAGING = YES
 LIBNL_DEPENDENCIES = host-bison host-flex host-pkgconf
 
+# 0002-include-linux-include-linux-header-ila.h.patch
+LIBNL_AUTORECONF = YES
+HOST_LIBNL_AUTORECONF = YES
+
 HOST_LIBNL_DEPENDENCIES = host-bison host-flex host-pkgconf
 
 ifeq ($(BR2_PACKAGE_LIBNL_TOOLS),y)
