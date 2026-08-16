@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HOSTAPD_VERSION = 2.11
+HOSTAPD_VERSION = 2.12
 HOSTAPD_SITE = http://w1.fi/releases
 HOSTAPD_SUBDIR = hostapd
 HOSTAPD_CONFIG = $(HOSTAPD_DIR)/$(HOSTAPD_SUBDIR)/.config
@@ -15,10 +15,6 @@ HOSTAPD_LICENSE_FILES = README
 
 HOSTAPD_CPE_ID_VENDOR = w1.fi
 HOSTAPD_SELINUX_MODULES = hostapd
-
-# 0001-RADIUS-Drop-pending-request-only-when-accepting-the-response.patch
-# 0002-RADIUS-Fix-pending-request-dropping.patch
-HOSTAPD_IGNORE_CVES += CVE-2025-24912
 
 HOSTAPD_CONFIG_ENABLE = \
 	CONFIG_INTERNAL_LIBTOMMATH \
@@ -35,10 +31,6 @@ HOSTAPD_CONFIG_EDITS += 's/\#\(CONFIG_TLS=openssl\)/\1/'
 else
 HOSTAPD_CONFIG_DISABLE += CONFIG_EAP_PWD CONFIG_EAP_TEAP
 HOSTAPD_CONFIG_EDITS += 's/\#\(CONFIG_TLS=\).*/\1internal/'
-endif
-
-ifeq ($(BR2_PACKAGE_HOSTAPD_DRIVER_HOSTAP),)
-HOSTAPD_CONFIG_DISABLE += CONFIG_DRIVER_HOSTAP
 endif
 
 ifeq ($(BR2_PACKAGE_HOSTAPD_DRIVER_NL80211),)

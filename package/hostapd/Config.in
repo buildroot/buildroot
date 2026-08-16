@@ -14,13 +14,6 @@ config BR2_PACKAGE_HOSTAPD
 
 if BR2_PACKAGE_HOSTAPD
 
-config BR2_PACKAGE_HOSTAPD_DRIVER_HOSTAP
-	bool "Enable hostap driver"
-	default y
-	select BR2_PACKAGE_HOSTAPD_HAS_WIFI_DRIVERS
-	help
-	  Enable support for Host AP driver.
-
 config BR2_PACKAGE_HOSTAPD_DRIVER_NL80211
 	bool "Enable nl80211 driver"
 	default y
@@ -41,7 +34,6 @@ config BR2_PACKAGE_HOSTAPD_DRIVER_WIRED
 config BR2_PACKAGE_HOSTAPD_DRIVER_NONE
 	bool
 	default y
-	depends on !BR2_PACKAGE_HOSTAPD_DRIVER_HOSTAP
 	depends on !BR2_PACKAGE_HOSTAPD_DRIVER_NL80211
 	depends on !BR2_PACKAGE_HOSTAPD_DRIVER_WIRED
 
