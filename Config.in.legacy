@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2025.02.17"
 
+config BR2_PACKAGE_HOSTAPD_DRIVER_HOSTAP
+	bool "hostapd hostap driver removed"
+	select BR2_LEGACY
+	help
+	  The hostap driver was removed from hostapd.
+
 config BR2_GDB_VERSION_ARC
 	bool "ARC-specific gdb version removed"
 	select BR2_LEGACY
