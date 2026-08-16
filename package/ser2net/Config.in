@@ -4,6 +4,7 @@ config BR2_PACKAGE_SER2NET
 	depends on !BR2_STATIC_LIBS # gensio
 	depends on BR2_TOOLCHAIN_HAS_ATOMIC # gensio
 	select BR2_PACKAGE_GENSIO
+	select BR2_PACKAGE_LIBXCRYPT if BR2_TOOLCHAIN_USES_GLIBC
 	select BR2_PACKAGE_LIBYAML
 	help
 	  Ser2net provides a way for a user to connect from a network

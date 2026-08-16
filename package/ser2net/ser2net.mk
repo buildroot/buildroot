@@ -4,11 +4,17 @@
 #
 ################################################################################
 
-SER2NET_VERSION = 4.3.8
+SER2NET_VERSION = 4.6.8
 SER2NET_SITE = https://downloads.sourceforge.net/project/ser2net/ser2net
 SER2NET_LICENSE = GPL-2.0+
 SER2NET_LICENSE_FILES = COPYING
 SER2NET_DEPENDENCIES = gensio libyaml
+# We are patching configure.ac
+SER2NET_AUTORECONF = YES
+
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+SER2NET_DEPENDENCIES += libxcrypt
+endif
 
 ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),y)
 SER2NET_CONF_OPTS += --with-pthreads
