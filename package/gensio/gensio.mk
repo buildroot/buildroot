@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GENSIO_VERSION = 2.5.5
+GENSIO_VERSION = 3.0.4
 GENSIO_SITE = http://downloads.sourceforge.net/project/ser2net/ser2net
 GENSIO_LICENSE = LGPL-2.1+ (library), GPL-2.0+ (tools)
 GENSIO_LICENSE_FILES = COPYING.LIB COPYING
@@ -12,6 +12,7 @@ GENSIO_INSTALL_STAGING = YES
 GENSIO_CONF_OPTS = \
 	--without-swig \
 	--without-python
+GENSIO_AUTORECONF = YES
 
 ifeq ($(BR2_INSTALL_LIBSTDCPP),y)
 GENSIO_CONF_OPTS += --with-cplusplus
