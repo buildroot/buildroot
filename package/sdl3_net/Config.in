@@ -1,0 +1,9 @@
+config BR2_PACKAGE_SDL3_NET
+	bool "sdl3_net"
+	depends on BR2_PACKAGE_SDL3
+	help
+	  SDL3_net is a small cross-platform networking library for
+	  SDL3, providing TCP and UDP sockets and hostname
+	  resolution.
+
+	  https://github.com/libsdl-org/SDL_net
