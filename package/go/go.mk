@@ -7,7 +7,7 @@
 # When bumping this to 1.27 (or beyond), remove the workaround for
 # upstream issue https://github.com/golang/go/issues/77436, below
 # (i.e. revert the commit adding these lines).
-GO_VERSION = 1.26.5
+GO_VERSION = 1.26.6
 
 HOST_GO_GOPATH = $(HOST_DIR)/share/go-path
 HOST_GO_HOST_CACHE = $(HOST_DIR)/share/host-go-cache
