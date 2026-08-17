@@ -4,6 +4,9 @@
 #
 ################################################################################
 
+# When bumping this to 1.27 (or beyond), remove the workaround for
+# upstream issue https://github.com/golang/go/issues/77436, below
+# (i.e. revert the commit adding these lines).
 GO_VERSION = 1.26.5
 
 HOST_GO_GOPATH = $(HOST_DIR)/share/go-path
@@ -75,10 +78,13 @@ HOST_GO_TARGET_ENV = \
 	$(if $(GO_GOARM),GOARM=$(GO_GOARM)) \
 	CC="$(TARGET_CC)" \
 	CXX="$(TARGET_CXX)" \
-	CGO_CFLAGS="$(TARGET_CFLAGS)" \
-	CGO_CXXFLAGS="$(TARGET_CXXFLAGS)" \
 	CGO_LDFLAGS="$(TARGET_LDFLAGS)" \
 	GOTOOLDIR="$(HOST_GO_TOOLDIR)"
+
+# Workaround for https://github.com/golang/go/issues/77436
+HOST_GO_TARGET_ENV += \
+	CGO_CFLAGS="$(subst -g3,-g2,$(TARGET_CFLAGS))" \
+	CGO_CXXFLAGS="$(subst -g3,-g2,$(TARGET_CXXFLAGS))"
 
 # Allow packages to use cgo support if it is available for the target. They
 # will need the toolchain for cgo support; for convenence, include that
