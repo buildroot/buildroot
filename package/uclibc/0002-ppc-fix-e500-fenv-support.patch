@@ -1,0 +1,237 @@
+From dff69277d71965cff0a757a030e03994a4a83aa6 Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Tue, 18 Aug 2026 06:02:54 +0200
+Subject: [PATCH] ppc: fix e500 fenv support
+
+Upstream: https://gogs.waldemar-brodkorb.de/oss/uclibc-ng/commit/dff69277d71965cff0a757a030e03994a4a83aa6
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+---
+ libm/powerpc/e500/fpu/fclrexcpt.c    | 1 -
+ libm/powerpc/e500/fpu/fe_nomask.c    | 1 -
+ libm/powerpc/e500/fpu/fedisblxcpt.c  | 1 -
+ libm/powerpc/e500/fpu/feenablxcpt.c  | 1 -
+ libm/powerpc/e500/fpu/fegetenv.c     | 1 -
+ libm/powerpc/e500/fpu/fegetexcept.c  | 1 -
+ libm/powerpc/e500/fpu/fegetround.c   | 1 -
+ libm/powerpc/e500/fpu/feholdexcpt.c  | 2 --
+ libm/powerpc/e500/fpu/fenv_const.c   | 1 -
+ libm/powerpc/e500/fpu/fesetenv.c     | 5 +----
+ libm/powerpc/e500/fpu/fesetround.c   | 2 --
+ libm/powerpc/e500/fpu/feupdateenv.c  | 1 -
+ libm/powerpc/e500/fpu/fgetexcptflg.c | 1 -
+ libm/powerpc/e500/fpu/fraiseexcpt.c  | 3 ---
+ libm/powerpc/e500/fpu/fsetexcptflg.c | 1 -
+ libm/powerpc/e500/fpu/ftestexcept.c  | 1 -
+ 16 files changed, 1 insertion(+), 23 deletions(-)
+
+diff --git a/libm/powerpc/e500/fpu/fclrexcpt.c b/libm/powerpc/e500/fpu/fclrexcpt.c
+index 805aaa487..02dc4bcf8 100644
+--- a/libm/powerpc/e500/fpu/fclrexcpt.c
++++ b/libm/powerpc/e500/fpu/fclrexcpt.c
+@@ -1,6 +1,5 @@
+ /* Clear given exceptions in current floating-point environment.
+    Copyright (C) 2004 Free Software Foundation, Inc.
+-   This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+diff --git a/libm/powerpc/e500/fpu/fe_nomask.c b/libm/powerpc/e500/fpu/fe_nomask.c
+index d5915165c..fe709803d 100644
+--- a/libm/powerpc/e500/fpu/fe_nomask.c
++++ b/libm/powerpc/e500/fpu/fe_nomask.c
+@@ -1,6 +1,5 @@
+ /* Procedure definition for FE_NOMASK_ENV.
+    Copyright (C) 1997 Free Software Foundation, Inc.
+-   This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+diff --git a/libm/powerpc/e500/fpu/fedisblxcpt.c b/libm/powerpc/e500/fpu/fedisblxcpt.c
+index 0700f4577..0a54df6fb 100644
+--- a/libm/powerpc/e500/fpu/fedisblxcpt.c
++++ b/libm/powerpc/e500/fpu/fedisblxcpt.c
+@@ -1,6 +1,5 @@
+ /* Disable floating-point exceptions.
+    Copyright (C) 2004 Free Software Foundation, Inc.
+-   This file is part of the GNU C Library.
+    Contributed by Aldy Hernandez <aldyh@redhat.com>, 2004.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+diff --git a/libm/powerpc/e500/fpu/feenablxcpt.c b/libm/powerpc/e500/fpu/feenablxcpt.c
+index 9f03181f4..bc1c30a83 100644
+--- a/libm/powerpc/e500/fpu/feenablxcpt.c
++++ b/libm/powerpc/e500/fpu/feenablxcpt.c
+@@ -1,6 +1,5 @@
+ /* Enable floating-point exceptions.
+    Copyright (C) 2004 Free Software Foundation, Inc.
+-   This file is part of the GNU C Library.
+    Contributed by Aldy Hernandez <aldyh@redhat.com>, 2004.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+diff --git a/libm/powerpc/e500/fpu/fegetenv.c b/libm/powerpc/e500/fpu/fegetenv.c
+index c1a914dc3..934ac92e9 100644
+--- a/libm/powerpc/e500/fpu/fegetenv.c
++++ b/libm/powerpc/e500/fpu/fegetenv.c
+@@ -1,7 +1,6 @@
+ /* Store current floating-point environment.
+    Copyright (C) 2004 Free Software Foundation, Inc.
+    Contributed by Aldy Hernandez <aldyh@redhat.com>, 2004
+-   This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+diff --git a/libm/powerpc/e500/fpu/fegetexcept.c b/libm/powerpc/e500/fpu/fegetexcept.c
+index bf0215d62..b932f8036 100644
+--- a/libm/powerpc/e500/fpu/fegetexcept.c
++++ b/libm/powerpc/e500/fpu/fegetexcept.c
+@@ -1,6 +1,5 @@
+ /* Get floating-point exceptions.
+    Copyright (C) 2004 Free Software Foundation, Inc.
+-   This file is part of the GNU C Library.
+    Contributed by Aldy Hernandez <aldyh@redhat.com>, 2004.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+diff --git a/libm/powerpc/e500/fpu/fegetround.c b/libm/powerpc/e500/fpu/fegetround.c
+index f501c6ce8..7b54ead30 100644
+--- a/libm/powerpc/e500/fpu/fegetround.c
++++ b/libm/powerpc/e500/fpu/fegetround.c
+@@ -1,6 +1,5 @@
+ /* Return current rounding direction.
+    Copyright (C) 2004 Free Software Foundation, Inc.
+-   This file is part of the GNU C Library.
+    Contributed by Aldy Hernandez <aldyh@redhat.com>, 2004.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+diff --git a/libm/powerpc/e500/fpu/feholdexcpt.c b/libm/powerpc/e500/fpu/feholdexcpt.c
+index edeb2cf81..2b0c4ca4c 100644
+--- a/libm/powerpc/e500/fpu/feholdexcpt.c
++++ b/libm/powerpc/e500/fpu/feholdexcpt.c
+@@ -1,6 +1,5 @@
+ /* Store current floating-point environment and clear exceptions.
+    Copyright (C) 2004, 2006 Free Software Foundation, Inc.
+-   This file is part of the GNU C Library.
+    Contributed by Aldy Hernandez <aldyh@redhat.com>, 2004.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -41,4 +40,3 @@ feholdexcept (fenv_t *envp)
+ 
+   return 0;
+ }
+-libm_hidden_def (feholdexcept)
+diff --git a/libm/powerpc/e500/fpu/fenv_const.c b/libm/powerpc/e500/fpu/fenv_const.c
+index 3c9f5578a..cfbff0793 100644
+--- a/libm/powerpc/e500/fpu/fenv_const.c
++++ b/libm/powerpc/e500/fpu/fenv_const.c
+@@ -1,6 +1,5 @@
+ /* Constants for fenv_bits.h.
+    Copyright (C) 2004 Free Software Foundation, Inc.
+-   This file is part of the GNU C Library.
+    Contributed by Aldy Hernandez <aldyh@redhat.com>, 2004.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+diff --git a/libm/powerpc/e500/fpu/fesetenv.c b/libm/powerpc/e500/fpu/fesetenv.c
+index 392e0c0bf..28d113959 100644
+--- a/libm/powerpc/e500/fpu/fesetenv.c
++++ b/libm/powerpc/e500/fpu/fesetenv.c
+@@ -1,6 +1,5 @@
+ /* Install given floating-point environment.
+    Copyright (C) 1997,99,2000,01,02 Free Software Foundation, Inc.
+-   This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+@@ -21,7 +20,7 @@
+ #include <sys/prctl.h>
+ 
+ int
+-__fesetenv (const fenv_t *envp)
++fesetenv (const fenv_t *envp)
+ {
+   fenv_union_t u;
+   INTERNAL_SYSCALL_DECL (err);
+@@ -33,5 +32,3 @@ __fesetenv (const fenv_t *envp)
+   /* Success.  */
+   return 0;
+ }
+-
+-libm_hidden_ver (__fesetenv, fesetenv)
+diff --git a/libm/powerpc/e500/fpu/fesetround.c b/libm/powerpc/e500/fpu/fesetround.c
+index 783541d5b..800a8a4d2 100644
+--- a/libm/powerpc/e500/fpu/fesetround.c
++++ b/libm/powerpc/e500/fpu/fesetround.c
+@@ -1,6 +1,5 @@
+ /* Set current rounding direction.
+    Copyright (C) 2004, 2006 Free Software Foundation, Inc.
+-   This file is part of the GNU C Library.
+    Contributed by Aldy Hernandez <aldyh@redhat.com>, 2004.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -33,4 +32,3 @@ fesetround (int round)
+ 
+   return 0;
+ }
+-libm_hidden_def (fesetround)
+diff --git a/libm/powerpc/e500/fpu/feupdateenv.c b/libm/powerpc/e500/fpu/feupdateenv.c
+index 47f316318..6c1f8941c 100644
+--- a/libm/powerpc/e500/fpu/feupdateenv.c
++++ b/libm/powerpc/e500/fpu/feupdateenv.c
+@@ -1,6 +1,5 @@
+ /* Install given floating-point environment and raise exceptions.
+    Copyright (C) 2004 Free Software Foundation, Inc.
+-   This file is part of the GNU C Library.
+    Contributed by Aldy Hernandez <aldyh@redhat.com>, 2004.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+diff --git a/libm/powerpc/e500/fpu/fgetexcptflg.c b/libm/powerpc/e500/fpu/fgetexcptflg.c
+index d27356574..d4847ef6d 100644
+--- a/libm/powerpc/e500/fpu/fgetexcptflg.c
++++ b/libm/powerpc/e500/fpu/fgetexcptflg.c
+@@ -1,6 +1,5 @@
+ /* Store current representation for exceptions.
+    Copyright (C) 2004 Free Software Foundation, Inc.
+-   This file is part of the GNU C Library.
+    Contributed by Aldy Hernandez <aldyh@redhat.com>, 2004.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+diff --git a/libm/powerpc/e500/fpu/fraiseexcpt.c b/libm/powerpc/e500/fpu/fraiseexcpt.c
+index 0c92b2868..43025fe25 100644
+--- a/libm/powerpc/e500/fpu/fraiseexcpt.c
++++ b/libm/powerpc/e500/fpu/fraiseexcpt.c
+@@ -1,6 +1,5 @@
+ /* Raise given exceptions.
+    Copyright (C) 2004, 2006 Free Software Foundation, Inc.
+-   This file is part of the GNU C Library.
+    Contributed by Aldy Hernandez <aldyh@redhat.com>, 2004.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+@@ -24,5 +23,3 @@
+ #define __FERAISEEXCEPT_INTERNAL feraiseexcept
+ 
+ #include "../spe-raise.c"
+-
+-libm_hidden_def (feraiseexcept)
+diff --git a/libm/powerpc/e500/fpu/fsetexcptflg.c b/libm/powerpc/e500/fpu/fsetexcptflg.c
+index 11ea89f16..2fde513a0 100644
+--- a/libm/powerpc/e500/fpu/fsetexcptflg.c
++++ b/libm/powerpc/e500/fpu/fsetexcptflg.c
+@@ -1,6 +1,5 @@
+ /* Set floating-point environment exception handling.
+    Copyright (C) 1997,99,2000,01,04 Free Software Foundation, Inc.
+-   This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+diff --git a/libm/powerpc/e500/fpu/ftestexcept.c b/libm/powerpc/e500/fpu/ftestexcept.c
+index 55f752b25..2c082f509 100644
+--- a/libm/powerpc/e500/fpu/ftestexcept.c
++++ b/libm/powerpc/e500/fpu/ftestexcept.c
+@@ -1,6 +1,5 @@
+ /* Test exception in current environment.
+    Copyright (C) 2004 Free Software Foundation, Inc.
+-   This file is part of the GNU C Library.
+    Contributed by Aldy Hernandez <aldyh@redhat.com>, 2004.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+-- 
+2.47.3
+
