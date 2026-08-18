@@ -1,0 +1,151 @@
+From 1105fd6c97f020f6ca7426e19d29081f404b567d Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Tue, 18 Aug 2026 18:13:29 +0200
+Subject: [PATCH] fenv: struct rm_ctx should be private and not exposed in a
+ public header
+
+Upstream: https://gogs.waldemar-brodkorb.de/oss/uclibc-ng/commit/1105fd6c97f020f6ca7426e19d29081f404b567d
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+---
+ include/fenv.h              | 10 ----------
+ include/fenv_private.h      | 24 ++++++++++++++++++++++++
+ libm/aarch64/fenv_private.h |  1 +
+ libm/arc/fenv_private.h     |  1 +
+ libm/arm/fenv_private.h     |  1 +
+ libm/csky/fenv_private.h    |  1 +
+ libm/mips/fenv_private.h    |  1 +
+ libm/sparc/fenv_private.h   |  1 +
+ 8 files changed, 30 insertions(+), 10 deletions(-)
+ create mode 100644 include/fenv_private.h
+
+diff --git a/include/fenv.h b/include/fenv.h
+index 4b532c573..34042d5ac 100644
+--- a/include/fenv.h
++++ b/include/fenv.h
+@@ -1,5 +1,4 @@
+ /* Copyright (C) 1997, 1999, 2000 Free Software Foundation, Inc.
+-   This file is part of the GNU C Library.
+ 
+    The GNU C Library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+@@ -131,15 +130,6 @@ extern int fedisableexcept (int __excepts) __THROW;
+ extern int fegetexcept (void) __THROW;
+ #endif
+ 
+-/* Rounding mode context.  This allows functions to set/restore rounding mode
+-   only when the desired rounding mode is different from the current rounding
+-   mode.  */
+-struct rm_ctx
+-{
+-  fenv_t env;
+-  bool updated_status;
+-};
+-
+ __END_DECLS
+ 
+ #endif /* fenv.h */
+diff --git a/include/fenv_private.h b/include/fenv_private.h
+new file mode 100644
+index 000000000..5e81c71aa
+--- /dev/null
++++ b/include/fenv_private.h
+@@ -0,0 +1,24 @@
++/* Copyright (C) 1997, 1999, 2000 Free Software Foundation, Inc.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++/* Rounding mode context.  This allows functions to set/restore rounding mode
++   only when the desired rounding mode is different from the current rounding
++   mode.  */
++struct rm_ctx
++{
++  fenv_t env;
++  bool updated_status;
++};
+diff --git a/libm/aarch64/fenv_private.h b/libm/aarch64/fenv_private.h
+index 5afb790ea..3eaf0eb3f 100644
+--- a/libm/aarch64/fenv_private.h
++++ b/libm/aarch64/fenv_private.h
+@@ -19,6 +19,7 @@
+ #define AARCH64_FENV_PRIVATE_H 1
+ 
+ #include <fenv.h>
++#include <fenv_private.h>
+ #include <fpu_control.h>
+ 
+ static __always_inline void
+diff --git a/libm/arc/fenv_private.h b/libm/arc/fenv_private.h
+index 5f74c5e13..2e985722f 100644
+--- a/libm/arc/fenv_private.h
++++ b/libm/arc/fenv_private.h
+@@ -19,6 +19,7 @@
+ #define _FENV_PRIVATE_H 1
+ 
+ #include <fenv.h>
++#include <fenv_private.h>
+ #include "get-rounding-mode.h"
+ 
+ /* The standards only specify one variant of the fenv.h interfaces.
+diff --git a/libm/arm/fenv_private.h b/libm/arm/fenv_private.h
+index 566bf443c..61418d9f4 100644
+--- a/libm/arm/fenv_private.h
++++ b/libm/arm/fenv_private.h
+@@ -19,6 +19,7 @@
+ #define ARM_FENV_PRIVATE_H 1
+ 
+ #include <fenv.h>
++#include <fenv_private.h>
+ #include <fpu_control.h>
+ 
+ static __always_inline void
+diff --git a/libm/csky/fenv_private.h b/libm/csky/fenv_private.h
+index f0f48a88a..e6015abee 100644
+--- a/libm/csky/fenv_private.h
++++ b/libm/csky/fenv_private.h
+@@ -19,6 +19,7 @@
+ #define CSKY_FENV_PRIVATE_H 1
+ 
+ #include <fenv.h>
++#include <fenv_private.h>
+ #include <fpu_control.h>
+ #include "fenv_libc.h"
+ 
+diff --git a/libm/mips/fenv_private.h b/libm/mips/fenv_private.h
+index bc9be3b62..273d6faf8 100644
+--- a/libm/mips/fenv_private.h
++++ b/libm/mips/fenv_private.h
+@@ -24,6 +24,7 @@
+    code instead.  */
+ 
+ #include <fenv.h>
++#include <fenv_private.h>
+ #include "fenv_libc.h"
+ #include <fpu_control.h>
+ 
+diff --git a/libm/sparc/fenv_private.h b/libm/sparc/fenv_private.h
+index b888d8442..c76fbad7f 100644
+--- a/libm/sparc/fenv_private.h
++++ b/libm/sparc/fenv_private.h
+@@ -2,6 +2,7 @@
+ #define SPARC_FENV_PRIVATE_H 1
+ 
+ #include <fenv.h>
++#include <fenv_private.h>
+ #include <fpu_control.h>
+ 
+ /* For internal use only: access the fp state register.  */
+-- 
+2.47.3
+
