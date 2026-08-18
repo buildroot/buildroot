@@ -13,6 +13,13 @@ DRACUT_CPE_ID_VALID = YES
 HOST_DRACUT_DEPENDENCIES = host-pkgconf host-kmod host-cross-ldd
 HOST_DRACUT_INSTALL_OPTS = systemdsystemunitdir="" install
 
+ifeq ($(BR2_PACKAGE_HOST_RUSTC),y)
+HOST_DRACUT_CONF_OPTS += --enable-dracut-cpio
+HOST_DRACUT_DEPENDENCIES += host-rustc
+else
+HOST_DRACUT_CONF_OPTS += --disable-dracut-cpio
+endif
+
 define HOST_DRACUT_POST_INSTALL_WRAPPER_SCRIPT
 	mv $(HOST_DIR)/bin/dracut $(HOST_DIR)/bin/dracut.real
 	sed -e "s%@@TARGET_CROSS@@%$(TARGET_CROSS)%" \
