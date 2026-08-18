@@ -1,5 +1,7 @@
 config BR2_PACKAGE_PASST
 	bool "passt"
+	# lacks ARG_MAX, struct tcp_repair_window, TCP_SEND_QUEUE
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_9
 	help
 	  passt: Plug A Simple Socket Transport
@@ -19,5 +21,6 @@ config BR2_PACKAGE_PASST
 
 	  https://passt.top/passt/about/
 
-comment "passt needs a toolchain w/ headers >= 5.9"
-	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_9
+comment "passt needs a glibc or musl toolchain w/ headers >= 5.9"
+	depends on BR2_TOOLCHAIN_USES_UCLIBC || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_9
