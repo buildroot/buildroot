@@ -1,3 +1,39 @@
+2026.08-rc1, released August 18th, 2026
+
+	Fixes all over the tree and new features.
+
+        Architectures:
+        - Support for M68K nommu
+        - Support for IBM Power 10/11 variants
+
+        Toolchain:
+	- Support for Linux 7.1.x headers
+        - Binutils 2.46.1, GCC 16.2.0, now defaults to GCC 15
+        - Glibc 2.44, uClibc-ng 1.0.59
+        - Support for ARC-specific GCC version and external toolchain
+          dropped
+
+        Infrastructure:
+        - Support for building packages written in the hare
+          programming language
+        - Libudev virtual package, similar to jpeg or openssl.
+	- generate-cyclonedx: fixup scp-style git sites
+
+        New defconfigs: QEMU PPC64LE Powernv10 / Powernv11
+
+	Removed defconfigs: Acmesystems aria/arietta g25, Avnet S6LX9
+	Microboard, Technologic TS-4900 / TS-5500
+
+	New packages: agec, cpp-argparse, drogon, dtui, hare, harec,
+	hare-dbus, hare-ev, hare-xml, libcppconnman, liblc3, libudev,
+	libudev-zero, perl-cgi, perl-cgi-session, perl-log-message,
+	perl-log-message-simple, perl-switch, python-libyang,
+	python-sysv-ipc, qbe, qemu-xen, qt6grpc, qt6positioning,
+	scdoc, sdl3, sdl3_gfx, sdl3_image, sdl3_ttf, sigsum-c,
+	virglrenderer, wget2
+
+	Removed packages: argparse, ts4900-fpga
+
 2026.05.1, released July 15, 2026
 
 	Important / security related fixes:
