@@ -1,0 +1,46 @@
+From fce6b611e2530602c44fd914222529028173c509 Mon Sep 17 00:00:00 2001
+From: Edgar Bonet <bonet@grenoble.cnrs.fr>
+Date: Wed, 19 Aug 2026 18:15:25 +0200
+Subject: [PATCH] build: do not require a C++ compiler if it is not needed
+
+Languages specified in the meson project() function are considered hard
+dependencies. When trying to build libgpiod in an environment lacking a
+C++ compiler, the build fails with an obscure error message ("ERROR:
+Unable to get gcc pre-processor defines").
+
+As the C++ compiler is only needed for building the C++ bindings, do not
+require it unless the option bindings-cxx is enabled.
+
+Signed-off-by: Edgar Bonet <bonet@grenoble.cnrs.fr>
+Upstream: https://lore.kernel.org/linux-gpio/0eb5c26d-731c-4ebb-be34-76466cf57720@grenoble.cnrs.fr/
+---
+ meson.build | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index c030b50..fed612f 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-or-later
+ # SPDX-FileCopyrightText: 2026 Qualcomm Technologies, Inc. and/or its subsidiaries
+ 
+-project('libgpiod', ['c', 'cpp'],
++project('libgpiod', 'c',
+   version: '2.3.1',
+   license: 'LGPL-2.1-or-later',
+   default_options: [
+@@ -56,6 +56,10 @@ opt_dbus                = get_option('dbus')
+ opt_introspection       = get_option('introspection')
+ opt_systemd             = get_option('systemd')
+ 
++if opt_bindings_cxx.allowed()
++  add_languages('cpp')
++endif
++
+ if get_option('profiling')
+   profiling_c_args    = ['-fprofile-arcs', '-ftest-coverage']
+   profiling_link_args = ['-lgcov']
+-- 
+2.43.0
+
