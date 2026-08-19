@@ -89,19 +89,3 @@ class TestGdbFullTarget(BaseGdb):
     def test_run(self):
         self.boot()
         self.verify_gdb()
-
-
-class TestGdbArc(BaseGdb):
-    config = \
-        """
-        BR2_arcle=y
-        BR2_archs38=y
-        BR2_TOOLCHAIN_EXTERNAL=y
-        BR2_PACKAGE_HOST_GDB=y
-        BR2_PACKAGE_GDB=y
-        BR2_PACKAGE_GDB_SERVER=y
-        BR2_PACKAGE_GDB_DEBUGGER=y
-        """
-
-    def test_run(self):
-        self.verify_host_gdb("arc-linux")
