@@ -67,6 +67,6 @@ endif
 config BR2_GDB_VERSION
 	string
 	default "15.2"	   if BR2_GDB_VERSION_15
-	default "16.3"	   if BR2_GDB_VERSION_16
+	default "16.3"	   if BR2_GDB_VERSION_16 || !BR2_PACKAGE_HOST_GDB
 	default "17.1"	   if BR2_GDB_VERSION_17
 	depends on BR2_PACKAGE_GDB || BR2_PACKAGE_HOST_GDB
