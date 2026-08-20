@@ -24,11 +24,12 @@ start_one() {
 }
 
 start() {
+	ret=0
 	# shellcheck disable=SC2086 # we need the word splitting
 	for prog in ${PROGS}; do
 		start_one "${prog}" || ret=$?
 	done
-	return "$ret"
+	return $ret
 }
 
 stop_one() {
@@ -45,11 +46,12 @@ stop_one() {
 }
 
 stop() {
+	ret=0
 	# shellcheck disable=SC2086 # we need the word splitting
 	for prog in ${PROGS}; do
 		stop_one "${prog}" || ret=$?
 	done
-	return "$ret"
+	return $ret
 }
 
 restart() {
