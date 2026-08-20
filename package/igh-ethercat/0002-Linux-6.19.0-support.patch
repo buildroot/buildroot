@@ -1,0 +1,36 @@
+From 2c947e90d93d9c5a0129b62744de9720b48d2a17 Mon Sep 17 00:00:00 2001
+From: Nicola Fontana <ntd@entidi.it>
+Date: Sun, 8 Mar 2026 15:39:41 +0100
+Subject: [PATCH] Linux 6.19.0 support
+
+Commit 89aec171d9d1ab168e43fcf9754b82e4c0aef9b9 (part of linux kernel
+6.19.0-rc1) introduced an arbitrarily sized sockaddr struct to be used
+instead of the classical one.
+
+Closes #200
+
+Upstream: https://gitlab.com/etherlab.org/ethercat/-/commit/c42c9cf8bc31c56cc20ae630605495e3f19f3f9a
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ devices/generic.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/devices/generic.c b/devices/generic.c
+index f6cef9b5..a08af54b 100644
+--- a/devices/generic.c
++++ b/devices/generic.c
+@@ -234,7 +234,11 @@ int ec_gen_device_create_socket(
+     sa.sll_family = AF_PACKET;
+     sa.sll_protocol = htons(ETH_P_ETHERCAT);
+     sa.sll_ifindex = desc->ifindex;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 19, 0)
++    ret = kernel_bind(dev->socket, (struct sockaddr_unsized *) &sa, sizeof(sa));
++#else
+     ret = kernel_bind(dev->socket, (struct sockaddr *) &sa, sizeof(sa));
++#endif
+     if (ret) {
+         printk(KERN_ERR PFX "Failed to bind() socket to interface"
+                 " (ret = %i).\n", ret);
+-- 
+2.55.0
+
