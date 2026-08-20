@@ -12,6 +12,11 @@ WGET_LICENSE = GPL-3.0+
 WGET_LICENSE_FILES = COPYING
 WGET_CPE_ID_VENDOR = gnu
 
+# 0002-src-metalink.c-clean_metalink_string-Fix-buffer-underflow.patch
+# 0003-src-metalink.c-clean_metalink_string-Fix-inverted-trailing-space-check.patch
+# 0004-src-metalink.c-Include-ctype.h.patch
+WGET_IGNORE_CVES += CVE-2026-58469
+
 WGET_CONF_OPTS += --disable-pcre
 
 ifeq ($(BR2_PACKAGE_LIBPSL),y)
