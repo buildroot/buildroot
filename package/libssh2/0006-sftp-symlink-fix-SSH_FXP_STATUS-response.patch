@@ -1,0 +1,46 @@
+From 4ed26f5740bdd409269ed9fb48a28bf8f565b681 Mon Sep 17 00:00:00 2001
+From: Will Cosgrove <will@panic.com>
+Date: Mon, 20 Oct 2025 14:04:52 -0700
+Subject: [PATCH] Fix sftp_symlink when getting SSH_FXP_STATUS response (#1731)
+
+Move advancing past packet ID before reading the FXP_STATUS response.
+
+CVE: CVE-2025-15661
+Upstream: https://github.com/libssh2/libssh2/commit/4ed26f5740bdd409269ed9fb48a28bf8f565b681
+Signed-off-by: Stefan Müller <stefan.mueller@rey-technology.com>
+---
+ src/sftp.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/src/sftp.c b/src/sftp.c
+index 70d7686daf..bb297b831a 100644
+--- a/src/sftp.c
++++ b/src/sftp.c
+@@ -4006,6 +4006,13 @@ static int sftp_symlink(LIBSSH2_SFTP *sftp, const char *path,
+                               "SFTP Protocol Error (type)");
+     }
+
++    /* advance past id */
++    if(_libssh2_get_u32(&buf, &tmp_u32)) {
++        LIBSSH2_FREE(session, data);
++        return _libssh2_error(session, LIBSSH2_ERROR_SFTP_PROTOCOL,
++                              "SFTP Protocol Error (id)");
++    }
++
+     if(packet_type == SSH_FXP_STATUS) {
+         if(_libssh2_get_u32(&buf, &tmp_u32)) {
+             LIBSSH2_FREE(session, data);
+@@ -4025,13 +4032,6 @@ static int sftp_symlink(LIBSSH2_SFTP *sftp, const char *path,
+         }
+     }
+
+-    /* advance past id */
+-    if(_libssh2_get_u32(&buf, &tmp_u32)) {
+-        LIBSSH2_FREE(session, data);
+-        return _libssh2_error(session, LIBSSH2_ERROR_SFTP_PROTOCOL,
+-                              "SFTP Protocol Error (id)");
+-    }
+-
+     /* look for at least one link */
+     if(_libssh2_get_u32(&buf, &tmp_u32) || tmp_u32 < 1) {
+         LIBSSH2_FREE(session, data);
