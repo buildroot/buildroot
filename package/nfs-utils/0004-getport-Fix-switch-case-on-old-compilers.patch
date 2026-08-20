@@ -1,0 +1,44 @@
+From 7b886f3502977040461a8b31f5948a128f7069e2 Mon Sep 17 00:00:00 2001
+From: Petr Vorel <petr.vorel@gmail.com>
+Date: Thu, 20 Aug 2026 01:03:10 +0200
+Subject: [FTBFS,PATCH,nfs-utils 1/1] getport: Fix switch case on old compilers
+Cc: Steve Dickson <SteveD@RedHat.com>,
+    Giulio Benetti <giulio.benetti@benettiengineering.com>,
+    Julien Olivain <ju.o@free.fr>
+
+Buildroot distro compiles with fairly old compilers, which defaults to
+old C11 standard (some of still used compilers don't even have newer
+standard than C11). Workaround code which requires C23 with using { }.
+
+This fixes error:
+
+    getport.c:460:3: error: a label can only be part of a statement and a declaration is not a statement
+       size_t path_len = len - offsetof(struct sockaddr_un, sun_path);
+       ^~~~~~
+
+Fixes: 1a6dcd74 ("Removed warnings in nfs_sockaddr2universal()")
+Signed-off-by: Petr Vorel <petr.vorel@gmail.com>
+Upstream: https://lore.kernel.org/linux-nfs/20260819232049.438643-1-petr.vorel@gmail.com/
+---
+ support/nfs/getport.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/support/nfs/getport.c b/support/nfs/getport.c
+index 6bd2f713..18ea0777 100644
+--- a/support/nfs/getport.c
++++ b/support/nfs/getport.c
+@@ -456,9 +456,10 @@ char *nfs_sockaddr2universal(const struct sockaddr *sap)
+ 	int len = sizeof(struct sockaddr);
+ 
+ 	switch (sap->sa_family) {
+-	case AF_LOCAL:
++	case AF_LOCAL: {
+ 		size_t path_len = len - offsetof(struct sockaddr_un, sun_path);
+ 		return strndup(sun->sun_path, path_len);
++	}
+ 	case AF_INET:
+ 		if (inet_ntop(AF_INET, (const void *)&sin->sin_addr.s_addr,
+ 					buf, (socklen_t)sizeof(buf)) == NULL)
+-- 
+2.53.0
+
