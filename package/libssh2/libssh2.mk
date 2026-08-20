@@ -33,6 +33,9 @@ LIBSSH2_IGNORE_CVES += CVE-2026-66032
 # 0008-openssl-fix-AES-GCM-bounds-checks.patch
 LIBSSH2_IGNORE_CVES += CVE-2026-66033
 
+# 0009-publickey-fix-potential-OOB-read.patch
+LIBSSH2_IGNORE_CVES += CVE-2026-66034
+
 ifeq ($(BR2_PACKAGE_LIBSSH2_MBEDTLS),y)
 LIBSSH2_DEPENDENCIES += mbedtls
 LIBSSH2_CONF_OPTS += --with-libmbedcrypto-prefix=$(STAGING_DIR)/usr \
