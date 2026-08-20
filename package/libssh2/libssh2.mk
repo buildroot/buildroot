@@ -22,6 +22,11 @@ LIBSSH2_IGNORE_CVES += CVE-2026-55199
 # 0003-transport-c-Additional-boundary-checks-for-packet-length.patch
 LIBSSH2_IGNORE_CVES += CVE-2026-55200
 
+# 0004-sftp-symlink-fix-out-of-bounds-read.patch
+# 0005-libssh2-priv-backport-LIBSSH2_UNCONST.patch
+# 0006-sftp-symlink-fix-SSH_FXP_STATUS-response.patch
+LIBSSH2_IGNORE_CVES += CVE-2025-15661
+
 ifeq ($(BR2_PACKAGE_LIBSSH2_MBEDTLS),y)
 LIBSSH2_DEPENDENCIES += mbedtls
 LIBSSH2_CONF_OPTS += --with-libmbedcrypto-prefix=$(STAGING_DIR)/usr \
