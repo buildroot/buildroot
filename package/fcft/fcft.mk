@@ -5,8 +5,7 @@
 ################################################################################
 
 FCFT_VERSION = 3.3.2
-FCFT_SOURCE = $(FCFT_VERSION).tar.gz
-FCFT_SITE = https://codeberg.org/dnkl/fcft/archive
+FCFT_SITE = https://codeberg.org/dnkl/fcft/releases/download/$(FCFT_VERSION)
 FCFT_LICENSE = MIT
 FCFT_LICENSE_FILES = LICENSE
 FCFT_INSTALL_STAGING = YES
