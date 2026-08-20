@@ -27,6 +27,9 @@ LIBSSH2_IGNORE_CVES += CVE-2026-55200
 # 0006-sftp-symlink-fix-SSH_FXP_STATUS-response.patch
 LIBSSH2_IGNORE_CVES += CVE-2025-15661
 
+# 0007-sftp-prevent-dangling-pointer-after-free.patch
+LIBSSH2_IGNORE_CVES += CVE-2026-66032
+
 ifeq ($(BR2_PACKAGE_LIBSSH2_MBEDTLS),y)
 LIBSSH2_DEPENDENCIES += mbedtls
 LIBSSH2_CONF_OPTS += --with-libmbedcrypto-prefix=$(STAGING_DIR)/usr \
