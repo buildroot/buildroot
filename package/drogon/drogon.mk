@@ -41,6 +41,11 @@ DROGON_CONF_OPTS += -DBUILD_CTL=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_DROGON_EXAMPLES),y)
+# Some examples embed CSP views, whose C++ sources are generated at
+# build time by drogon_ctl. When cross-compiling, CMake does not
+# substitute the drogon_ctl target executable in the custom command, so
+# the tool is looked up in PATH and must be provided by host-drogon.
+DROGON_DEPENDENCIES += host-drogon
 DROGON_CONF_OPTS += -DBUILD_EXAMPLES=ON
 else
 DROGON_CONF_OPTS += -DBUILD_EXAMPLES=OFF
