@@ -1,0 +1,107 @@
+From 83238ba35f966bb35a065e6d141f3ccf714f4324 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 22 Aug 2026 14:50:56 +0200
+Subject: [PATCH] Fix prototype detection when __STDC__ is defined but
+ PROTOTYPES is not
+
+Commit a356d343aa9db52b75432cde927b6f9bad6a7c44 ("Automake 1.12 and up
+no longer supports pre-ANSI") dropped the AM_C_PROTOTYPES call from
+configure.ac, so PROTOTYPES is no longer defined by configure. The
+headers' fallback to K&R-style prototypes breaks compilation with
+modern compilers.
+
+Check for __STDC__ directly as a fallback, which is defined by all
+conforming C89/C99 compilers.
+
+Upstream: https://savannah.gnu.org/bugs/index.php?68633
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ afmlib/afm.h     | 2 +-
+ afmlib/afmint.h  | 2 +-
+ afmlib/strhash.h | 2 +-
+ compat/xalloc.h  | 2 +-
+ src/gsint.h      | 2 +-
+ states/defs.h    | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/afmlib/afm.h b/afmlib/afm.h
+index 19855ce..a79648d 100644
+--- a/afmlib/afm.h
++++ b/afmlib/afm.h
+@@ -24,7 +24,7 @@
+ #define AFM_H
+ 
+ #ifndef ___P
+-#if PROTOTYPES
++#if defined(__STDC__) || defined(PROTOTYPES)
+ #define ___P(protos) protos
+ #else /* no PROTOTYPES */
+ #define ___P(protos) ()
+diff --git a/afmlib/afmint.h b/afmlib/afmint.h
+index 7995ae5..aee449a 100644
+--- a/afmlib/afmint.h
++++ b/afmlib/afmint.h
+@@ -34,7 +34,7 @@
+ #include <stdio.h>
+ 
+ #ifndef ___P
+-#if PROTOTYPES
++#if defined(__STDC__) || defined(PROTOTYPES)
+ #define ___P(protos) protos
+ #else /* no PROTOTYPES */
+ #define ___P(protos) ()
+diff --git a/afmlib/strhash.h b/afmlib/strhash.h
+index 938b2de..a91c0a9 100644
+--- a/afmlib/strhash.h
++++ b/afmlib/strhash.h
+@@ -24,7 +24,7 @@
+ #define STRHASH_H
+ 
+ #ifndef ___P
+-#if PROTOTYPES
++#if defined(__STDC__) || defined(PROTOTYPES)
+ #define ___P(protos) protos
+ #else /* no PROTOTYPES */
+ #define ___P(protos) ()
+diff --git a/compat/xalloc.h b/compat/xalloc.h
+index 203bcb8..fd50b68 100644
+--- a/compat/xalloc.h
++++ b/compat/xalloc.h
+@@ -28,7 +28,7 @@
+ #define XALLOC_H
+ 
+ #ifndef ___P
+-#if PROTOTYPES
++#if defined(__STDC__) || defined(PROTOTYPES)
+ #define ___P(protos) protos
+ #else /* no PROTOTYPES */
+ #define ___P(protos) ()
+diff --git a/src/gsint.h b/src/gsint.h
+index 3c2527a..001961c 100644
+--- a/src/gsint.h
++++ b/src/gsint.h
+@@ -39,7 +39,7 @@
+ #include <sys/stat.h>
+ 
+ #ifndef ___P
+-#if PROTOTYPES
++#if defined(__STDC__) || defined(PROTOTYPES)
+ #define ___P(protos) protos
+ #else /* no PROTOTYPES */
+ #define ___P(protos) ()
+diff --git a/states/defs.h b/states/defs.h
+index 2808900..63155a9 100644
+--- a/states/defs.h
++++ b/states/defs.h
+@@ -37,7 +37,7 @@
+ #include <ctype.h>
+ 
+ #ifndef ___P
+-#if PROTOTYPES
++#if defined(__STDC__) || defined(PROTOTYPES)
+ #define ___P(protos) protos
+ #else /* no PROTOTYPES */
+ #define ___P(protos) ()
+-- 
+2.55.0
+
