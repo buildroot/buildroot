@@ -1,0 +1,35 @@
+From be920933dbe1fb73c27fecb280200f6f06abfdc2 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Sat, 22 Aug 2026 15:19:17 +0200
+Subject: [PATCH] Use -std=gnu89 instead of -std=c89
+
+-std=c89 suppresses feature test macros, which causes <limits.h> to
+not define PATH_MAX on certain C libraries (e.g. musl). Using
+-std=gnu89 enables _GNU_SOURCE and other extensions, ensuring
+PATH_MAX and other POSIX constants are available.
+
+This most notably fixes the build with the musl C library.
+
+Upstream: https://savannah.gnu.org/bugs/index.php?68634
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ configure.ac | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 4431cb1..46ea59d 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -11,7 +11,8 @@ AC_PROG_INSTALL
+ AC_PROG_CC
+ 
+ # Force C89 standard and fix modern GCC global variable handling
+-CFLAGS="$CFLAGS -std=c89"
++# Use GNU89 to access PATH_MAX in <limits.h>
++CFLAGS="$CFLAGS -std=gnu89"
+ 
+ AC_USE_SYSTEM_EXTENSIONS
+ 
+-- 
+2.55.0
+
