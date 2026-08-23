@@ -1,0 +1,32 @@
+From de58cbe979942308eb8823a526cd68b06d5dc662 Mon Sep 17 00:00:00 2001
+From: Sacha <sachahony@gmail.com>
+Date: Wed, 13 Mar 2024 13:28:41 +0100
+Subject: [PATCH] Change libs order to avoid picking up system libei
+
+Upstream: https://github.com/erlang/otp/commit/de58cbe
+Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+---
+ lib/odbc/c_src/Makefile.in | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/lib/odbc/c_src/Makefile.in b/lib/odbc/c_src/Makefile.in
+index d1b26743a6a4..03ed314f6a26 100644
+--- a/lib/odbc/c_src/Makefile.in
++++ b/lib/odbc/c_src/Makefile.in
+@@ -80,10 +80,10 @@ ODBC_INCLUDE = @ODBC_INCLUDE@
+ # ----------------------------------------------------
+ CC =  @CC@
+ CFLAGS = $(TYPEFLAGS) @CFLAGS@ @THR_DEFS@ @DEFS@
+-EI_LDFLAGS = -L$(EI_ROOT)/obj$(TYPEMARKER)/$(TARGET)
++EI_LDFLAGS = -L$(EI_ROOT)/obj$(TYPEMARKER)/$(TARGET) $(EI_LIB)
+ LD = @LD@
+-LDFLAGS =  $(ODBC_LIB) $(EI_LDFLAGS)
+-LIBS = @LIBS@ @THR_LIBS@ $(EI_LIB)
++LDFLAGS =  $(EI_LDFLAGS) $(ODBC_LIB)
++LIBS = @LIBS@ @THR_LIBS@
+ INCLUDES = -I. $(ODBC_INCLUDE) $(EI_INCLUDE)
+ TARGET_FLAGS =  @TARGET_FLAGS@
+ 
+-- 
+2.55.0
+
