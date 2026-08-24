@@ -1,0 +1,28 @@
+From f0152f4c04d6ef21159dd5bc98700dc46ac8cb04 Mon Sep 17 00:00:00 2001
+From: Tom Pollard <tom.pollard@codethink.co.uk>
+Date: Tue, 28 Jul 2026 10:51:27 +0100
+Subject: [PATCH] Allow libdisplay-info 0.4.0
+
+Signed-off-by: Tom Pollard <tom.pollard@codethink.co.uk>
+Upstream: https://gitlab.freedesktop.org/wayland/weston/-/commit/54cd5c3354c618815addd7e1d82fc66247099136
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 79256cd6..d6ede4df 100644
+--- a/meson.build
++++ b/meson.build
+@@ -178,7 +178,7 @@ endif
+ 
+ dep_libdisplay_info = dependency(
+ 	'libdisplay-info',
+-	version: ['>= 0.2.0', '< 0.4.0'],
++	version: ['>= 0.2.0', '< 0.5.0'],
+ 	fallback: ['display-info', 'di_dep'],
+ 	default_options: [
+ 		'werror=false',
+-- 
+2.55.0
+
