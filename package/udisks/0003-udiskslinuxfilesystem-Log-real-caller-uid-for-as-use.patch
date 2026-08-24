@@ -1,0 +1,57 @@
+From 132ebab4a196f7fbd01fa28283627b2227eb399b Mon Sep 17 00:00:00 2001
+From: Tomas Bzatek <tbzatek@redhat.com>
+Date: Sun, 3 May 2026 14:00:01 +0200
+Subject: [PATCH] udiskslinuxfilesystem: Log real caller uid for as-user
+ mounts
+
+When a mount is performed with the as-user option targeting a different
+user, log both the effective (target) uid and the real caller uid to
+provide an audit trail of who authorized the operation.
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+(cherry picked from commit 98e5a76c155640d155280cdb642791f00def736a)
+---
+CVE: CVE-2026-7867
+Upstream: https://github.com/storaged-project/udisks/commit/132ebab4a196f7fbd01fa28283627b2227eb399b
+Signed-off-by: Raphaël Mélotte <raphael.melotte@mind.be>
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ src/udiskslinuxfilesystem.c | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
+
+diff --git a/src/udiskslinuxfilesystem.c b/src/udiskslinuxfilesystem.c
+index eb2a3f21..5e2508cc 100644
+--- a/src/udiskslinuxfilesystem.c
++++ b/src/udiskslinuxfilesystem.c
+@@ -1443,11 +1443,23 @@ handle_mount (UDisksFilesystem      *filesystem,
+                                system_managed,
+                                system_managed ? FALSE : mpoint_persistent);
+ 
+-  udisks_notice ("Mounted %s%s at %s on behalf of uid %u",
+-                 device,
+-                 system_managed ? " (system)" : "",
+-                 mount_point_to_use,
+-                 effective_uid);
++  if (effective_uid != caller_uid)
++    {
++      udisks_notice ("Mounted %s%s at %s on behalf of uid %u (requested by uid %u)",
++                     device,
++                     system_managed ? " (system)" : "",
++                     mount_point_to_use,
++                     effective_uid,
++                     caller_uid);
++    }
++  else
++    {
++      udisks_notice ("Mounted %s%s at %s on behalf of uid %u",
++                     device,
++                     system_managed ? " (system)" : "",
++                     mount_point_to_use,
++                     effective_uid);
++    }
+ 
+   udisks_linux_block_object_trigger_uevent_sync (UDISKS_LINUX_BLOCK_OBJECT (object),
+                                                  UDISKS_DEFAULT_WAIT_TIMEOUT);
+-- 
+2.54.0
+

@@ -1,0 +1,211 @@
+From 0050f51d40e468f6a3197ccdc77b5bd59c923a37 Mon Sep 17 00:00:00 2001
+From: Tomas Bzatek <tbzatek@redhat.com>
+Date: Tue, 28 Apr 2026 19:29:14 +0200
+Subject: [PATCH] udiskslinuxfilesystem: Rework fstab mount authorization
+ for as-user
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The polkit authorization logic in handle_mount_fstab() had two problems
+when 'as-user' was combined with fstab entries containing 'user',
+'users' or 'x-udisks-auth' mount options:
+
+1. The 'filesystem-mount-other-user' polkit check was inside the code
+   block that is skipped when 'user'/'users'/'x-udisks-auth' options
+   are present, allowing an unprivileged caller to mount on behalf of
+   another user without any authorization.
+
+2. When 'user' or 'users' fstab options were present and the initial
+   mount attempt failed with a permission error, the code would fall
+   back to mounting as root. This fallback should only be available
+   when 'x-udisks-auth' is explicitly specified.
+
+Restructure the authorization flow so that:
+ - The 'filesystem-mount-other-user' check is evaluated first,
+   independently of fstab mount options, and is always enforced
+   when caller_uid != effective_uid.
+ - The root fallback on BD_FS_ERROR_AUTH is gated on 'x-udisks-auth'
+   being present, not just any of the user-level mount options.
+ - When root uses 'as-user' without 'user'/'users' fstab options,
+   the root fallback is implicitly enabled.
+ - Regular polkit checks (filesystem-mount, mount-system,
+   mount-other-seat) only apply for same-user mounts without
+   'user'/'users'/'x-udisks-auth'.
+
+Update the D-Bus API documentation to reflect the new behavior.
+
+Reported-by: Azizcan Daştan <azizcan.dastan5@gmail.com>
+Reported-by: Özlem Ozan <oozan1725@gmail.com>
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+(cherry picked from commit 68108081aa9049cf3bb2fb0044cb4de83f962390)
+---
+CVE: CVE-2026-7867
+Upstream: https://github.com/storaged-project/udisks/commit/0050f51d40e468f6a3197ccdc77b5bd59c923a37
+Signed-off-by: Raphaël Mélotte <raphael.melotte@mind.be>
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ data/org.freedesktop.UDisks2.xml | 24 ++++++-----
+ src/udiskslinuxfilesystem.c      | 73 ++++++++++++++++++++++++--------
+ 2 files changed, 70 insertions(+), 27 deletions(-)
+
+diff --git a/data/org.freedesktop.UDisks2.xml b/data/org.freedesktop.UDisks2.xml
+index 53194c70..f7201adc 100644
+--- a/data/org.freedesktop.UDisks2.xml
++++ b/data/org.freedesktop.UDisks2.xml
+@@ -2654,7 +2654,8 @@
+         filesystem is mounted on behalf of the specified user instead
+         of the calling one. This has usually an effect on the returned
+         @mount_path and it also allows that user to unmount the
+-        filesystem later. This option expects a user name, not a UID.
++        filesystem later. This option expects a user name, not a UID
++        and always performs an authorization check.
+ 
+         If the device in question is referenced in the
+         <filename>/etc/fstab</filename> file, the
+@@ -2662,15 +2663,18 @@
+         and the given options or filesystem type given in @options are
+         ignored.
+ 
+-        If <literal>x-udisks-auth</literal> is specified as an option
+-        for the device in the <filename>/etc/fstab</filename> file,
+-        then the <command>mount</command> command is run as the
+-        calling user, without performing any authorization check
+-        mentioned above. If this fails because of insufficient
+-        permissions, an authorization check is performed (which
+-        typically results in the user having to authenticate as an
+-        administrator). If authorized, the <command>mount</command>
+-        command is then run as root.
++        If <literal>x-udisks-auth</literal>, <literal>user</literal> or
++        <literal>users</literal> are specified as options for the
++        device in the <filename>/etc/fstab</filename> file, then the
++        <command>mount</command> command is run as the calling user
++        (or the effective user of the <parameter>as-user</parameter>
++        option respectively), without performing any authorization check
++        mentioned above. If this fails because of insufficient permissions
++        and <literal>x-udisks-auth</literal> is specified, an
++        authorization check is performed (which typically results in
++        the user having to authenticate as an administrator). If
++        authorized, the <command>mount</command> command is then run
++        as root.
+ 
+         The filesystem should be unmounted using the
+         org.freedesktop.UDisks2.Filesystem.Unmount() method.
+diff --git a/src/udiskslinuxfilesystem.c b/src/udiskslinuxfilesystem.c
+index ebdd2e05..eb2a3f21 100644
+--- a/src/udiskslinuxfilesystem.c
++++ b/src/udiskslinuxfilesystem.c
+@@ -918,30 +918,60 @@ handle_mount_fstab (UDisksDaemon          *daemon,
+   const gchar *message = NULL;
+   gboolean success = FALSE;
+   gboolean mount_fstab_as_root = FALSE;
++  gboolean x_udisks_auth = FALSE;
++  gboolean user_mount = FALSE;
+   UDisksBaseJob *job = NULL;
+   GError *error = NULL;
+ 
+   block = udisks_object_peek_block (object);
+   device = udisks_block_get_device (block);
+ 
+-  if (!has_option (fstab_mount_options, "x-udisks-auth") &&
+-      !has_option (fstab_mount_options, "user") &&
+-      !has_option (fstab_mount_options, "users"))
++  x_udisks_auth = has_option (fstab_mount_options, "x-udisks-auth");
++  user_mount = x_udisks_auth ||
++               has_option (fstab_mount_options, "user") ||
++               has_option (fstab_mount_options, "users");
++
++  /* 'as-user' rules:
++   *  - when caller is root:
++   *    - if 'user'/'users' present, do not fall back to mounting as root, unless 'x-udisks-auth' is specified
++   *    - if 'user'/'users' not present, try as effective user first and allow fallback to mounting as root (implies 'x-udisks-auth')
++   *  - when caller is unprivileged:
++   *    - always require polkit auth to prevent identity spoofing
++   *    - do not fall back to mounting as root, unless 'x-udisks-auth' is specified
++   *    - if neither 'user'/'users'/'x-udisks-auth' present, failure is expected by nature (unless 'as-user=root')
++   *
++   * general fstab mounting rules:
++   *  - when caller is root, mount as root, allow anything
++   *  - when caller is unprivileged:
++   *    - if 'user'/'users' present, do not fall back to mounting as root, unless 'x-udisks-auth' is specified
++   *    - if only 'x-udisks-auth' present, mount as user and fall back to mounting as root if not successful
++   *    - if neither 'user'/'users'/'x-udisks-auth' present, require polkit auth and mount as root
++   *
++   * Further assumptions:
++   *  - when 'user'/'users' not present and mounting as unprivileged, this typically fails but it is still beneficial to try that e.g. for FUSE mounts
++   *  - assuming libblockdev mount error code mapping works reliably (for the BD_FS_ERROR_AUTH check)
++   */
++
++  if (caller_uid != effective_uid)
++    {
++      /* Always require authorization when mounting on behalf of another user,
++       * regardless of fstab mount options.
++       */
++      action_id = "org.freedesktop.udisks2.filesystem-mount-other-user";
++
++      /* When 'user'/'users' not present and the caller is root, allow
++       * fallback mounting as root.
++       */
++      if (caller_uid == 0 && !user_mount)
++        x_udisks_auth = TRUE;
++    }
++  else
++  if (!user_mount)
+     {
+       mount_fstab_as_root = TRUE;
++
+       action_id = "org.freedesktop.udisks2.filesystem-mount";
+-      /* Translators: Shown in authentication dialog when the user
+-       * requests mounting a filesystem.
+-       *
+-       * Do not translate $(drive), it's a placeholder and
+-       * will be replaced by the name of the drive/device in question
+-       */
+-      message = N_("Authentication is required to mount $(drive)");
+-      if (caller_uid != effective_uid)
+-        {
+-          action_id = "org.freedesktop.udisks2.filesystem-mount-other-user";
+-        }
+-      else if (!udisks_daemon_util_setup_by_user (daemon, object, caller_uid))
++      if (!udisks_daemon_util_setup_by_user (daemon, object, caller_uid))
+         {
+           if (udisks_block_get_hint_system (block))
+             {
+@@ -952,7 +982,17 @@ handle_mount_fstab (UDisksDaemon          *daemon,
+               action_id = "org.freedesktop.udisks2.filesystem-mount-other-seat";
+             }
+         }
++    }
+ 
++  if (action_id)
++    {
++      /* Translators: Shown in authentication dialog when the user
++       * requests mounting a filesystem.
++       *
++       * Do not translate $(drive), it's a placeholder and
++       * will be replaced by the name of the drive/device in question
++       */
++      message = N_("Authentication is required to mount $(drive)");
+       if (!udisks_daemon_util_check_authorization_sync (daemon,
+                                                         object,
+                                                         action_id,
+@@ -962,7 +1002,6 @@ handle_mount_fstab (UDisksDaemon          *daemon,
+         return FALSE;
+     }
+ 
+-
+   if (!g_file_test (mount_point_to_use, G_FILE_TEST_IS_DIR))
+     {
+       if (g_mkdir_with_parents (mount_point_to_use, 0755) != 0)
+@@ -1011,7 +1050,7 @@ handle_mount_fstab (UDisksDaemon          *daemon,
+ 
+       if (!success)
+         {
+-          if (!mount_fstab_as_root && g_error_matches (error, BD_FS_ERROR, BD_FS_ERROR_AUTH))
++          if (!mount_fstab_as_root && g_error_matches (error, BD_FS_ERROR, BD_FS_ERROR_AUTH) && x_udisks_auth)
+             {
+               g_clear_error (&error);
+               action_id = "org.freedesktop.udisks2.filesystem-fstab";
+-- 
+2.54.0
+

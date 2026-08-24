@@ -1,0 +1,43 @@
+From 3b016cc881b1d3c3d843ec13e35102beaaac7023 Mon Sep 17 00:00:00 2001
+From: Tomas Bzatek <tbzatek@redhat.com>
+Date: Tue, 28 Apr 2026 19:10:38 +0200
+Subject: [PATCH] udisksdaemonutil: Pass as-user target to polkit details
+
+When the 'as-user' D-Bus method option is present, propagate the
+target username to polkit details as 'mount.as-user'. This allows
+polkit rules to make fine-grained authorization decisions based on
+who the mount is being performed for.
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+(cherry picked from commit 681d58a76f6aaa5045eb43e665c65f497d35b810)
+---
+CVE: CVE-2026-7867
+Upstream: https://github.com/storaged-project/udisks/commit/3b016cc881b1d3c3d843ec13e35102beaaac7023
+Signed-off-by: Raphaël Mélotte <raphael.melotte@mind.be>
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ src/udisksdaemonutil.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/src/udisksdaemonutil.c b/src/udisksdaemonutil.c
+index 3db92f58..36e3184b 100644
+--- a/src/udisksdaemonutil.c
++++ b/src/udisksdaemonutil.c
+@@ -797,6 +797,14 @@ udisks_daemon_util_check_authorization_sync_with_error (UDisksDaemon           *
+   polkit_details_insert (details, "polkit.message", message);
+   polkit_details_insert (details, "polkit.gettext_domain", "udisks2");
+ 
++  if (options != NULL &&
++      g_strcmp0 (action_id, "org.freedesktop.udisks2.filesystem-mount-other-user") == 0)
++    {
++      const gchar *as_user = NULL;
++      g_variant_lookup (options, "as-user", "&s", &as_user);
++      _safe_polkit_details_insert (details, "mount.as-user", as_user);
++    }
++
+   /* Find drive associated with the block device, if any */
+   if (object != NULL)
+     {
+-- 
+2.54.0
+

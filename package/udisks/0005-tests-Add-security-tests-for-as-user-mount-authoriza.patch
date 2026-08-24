@@ -1,0 +1,351 @@
+From 36231768dde088c8b4d4796ff2d311d089d84052 Mon Sep 17 00:00:00 2001
+From: Tomas Bzatek <tbzatek@redhat.com>
+Date: Wed, 29 Apr 2026 16:36:45 +0200
+Subject: [PATCH] tests: Add security tests for as-user mount authorization
+
+Add tests verifying that an unprivileged D-Bus caller cannot exploit
+the 'as-user' option in Filesystem.Mount() to mount on behalf of
+another user without polkit authorization. Use a dedicated
+'udisks_test_target' user instead of 'nobody' to avoid OS-level
+special treatment of system users that could mask real behavior.
+
+Dynamic mount tests (in UdisksFSTestCase, inherited by all FS types):
+- test_mount_as_user_denied: as-user=<another_user> is denied
+- test_mount_as_user_root_denied: as-user=root is denied
+- test_mount_as_user_self: as-user=<self> behaves like plain mount
+
+Fstab mount tests (in NonPOSIXTestCase, inherited by VFAT/EXFAT):
+- test_mount_fstab_{users,user,x-udisks-auth}_as_user_denied:
+  fstab entries that normally allow unprivileged mounting must still
+  require authorization when as-user is specified
+- test_mount_fstab_{users,user,x-udisks-auth}_as_root_denied:
+  same but with as-user=root
+- test_mount_fstab_defaults_as_user_from_root: root can mount
+  fstab 'defaults' device with as-user targeting a non-root user
+- test_mount_fstab_defaults_as_user_denied: unprivileged user
+  cannot mount fstab 'defaults' device with as-user
+
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+(cherry picked from commit 5ec20c9d5719ead510d800bc3eb5a731e5712f39)
+---
+CVE: CVE-2026-7867
+Upstream: https://github.com/storaged-project/udisks/commit/36231768dde088c8b4d4796ff2d311d089d84052
+Signed-off-by: Raphaël Mélotte <raphael.melotte@mind.be>
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ src/tests/dbus-tests/test_80_filesystem.py | 278 +++++++++++++++++++++
+ 1 file changed, 278 insertions(+)
+
+diff --git a/src/tests/dbus-tests/test_80_filesystem.py b/src/tests/dbus-tests/test_80_filesystem.py
+index 1f375ac6..03336512 100644
+--- a/src/tests/dbus-tests/test_80_filesystem.py
++++ b/src/tests/dbus-tests/test_80_filesystem.py
+@@ -30,6 +30,8 @@ class UdisksFSTestCase(udiskstestcase.UdisksTestCase):
+     _can_query_size = False
+ 
+     username = 'udisks_test_user'
++    # a separate target user used for 'as-user' mount tests
++    target_username = 'udisks_test_target'
+ 
+     requested_plugins = BlockDev.plugin_specs_from_names(("fs",))
+ 
+@@ -1037,6 +1039,174 @@ class UdisksFSTestCase(udiskstestcase.UdisksTestCase):
+         pipe.send([True, ''])
+         pipe.close()
+ 
++    def _mount_with_as_user_fail(self, pipe, uid, gid, device, target_user):
++        """ Try to mount @device as user with given @uid and @gid using the
++            'as-user' option set to @target_user. This is expected to fail
++            with a NotAuthorized error.
++        """
++        os.setresgid(gid, gid, gid)
++        os.setresuid(uid, uid, uid)
++
++        try:
++            safe_dbus.call_sync(self.iface_prefix,
++                                self.path_prefix + '/block_devices/' + os.path.basename(device),
++                                self.iface_prefix + '.Filesystem',
++                                'Mount',
++                                GLib.Variant('(a{sv})', ({'as-user': GLib.Variant('s', target_user)},)))
++        except Exception as e:
++            msg = str(e)
++            if 'org.freedesktop.UDisks2.Error.NotAuthorized' in msg and \
++               'Not authorized to perform operation' in msg:
++                pipe.send([True, ''])
++                pipe.close()
++                return
++            else:
++                pipe.send([False, 'Mount DBus call failed with unexpected exception: %s' % msg])
++                pipe.close()
++                return
++
++        pipe.send([False, 'Mount with as-user=%s unexpectedly succeeded for uid %d' % (target_user, uid)])
++        pipe.close()
++
++    def _test_mount_as_user_denied(self, target_user):
++        """ Test that an unprivileged user cannot use as-user to mount on
++            behalf of @target_user without polkit authorization.
++        """
++        self._check_can_create()
++
++        if not self._can_mount:
++            self.skipTest('Cannot mount %s filesystem' % self._fs_signature)
++
++        disk = self.get_object('/block_devices/' + os.path.basename(self.vdevs[0]))
++        self.assertIsNotNone(disk)
++
++        disk.Format(self._fs_signature, self.no_options, dbus_interface=self.iface_prefix + '.Block')
++        self.addCleanup(self.wipe_fs, self.vdevs[0])
++        self.addCleanup(self.try_unmount, self.vdevs[0])
++
++        self.addCleanup(self._remove_user, self.username)
++        uid, gid = self._add_user(self.username)
++
++        if target_user != 'root':
++            self.addCleanup(self._remove_user, target_user)
++            self._add_user(target_user)
++
++        parent_conn, child_conn = Pipe()
++        proc = Process(target=self._mount_with_as_user_fail,
++                       args=(child_conn, int(uid), int(gid), self.vdevs[0], target_user))
++        proc.start()
++        res = parent_conn.recv()
++        parent_conn.close()
++        proc.join()
++
++        if not res[0]:
++            self.fail(res[1])
++
++    @udiskstestcase.tag_test(udiskstestcase.TestTags.UNSAFE)
++    def test_mount_as_user_denied(self):
++        """ Test that an unprivileged user cannot use as-user to mount on
++            behalf of another user without authorization.
++        """
++        self._test_mount_as_user_denied(self.target_username)
++
++    @udiskstestcase.tag_test(udiskstestcase.TestTags.UNSAFE)
++    def test_mount_as_user_root_denied(self):
++        """ Test that an unprivileged user cannot use as-user=root to mount
++            without authorization.
++        """
++        self._test_mount_as_user_denied('root')
++
++    def _mount_as_user_result(self, pipe, uid, gid, device, options):
++        """ Try to mount @device as user with given @uid and @gid using
++            the given @options dict. Returns [True, error_string] on D-Bus
++            error or [True, ''] on success.
++        """
++        os.setresgid(gid, gid, gid)
++        os.setresuid(uid, uid, uid)
++
++        try:
++            safe_dbus.call_sync(self.iface_prefix,
++                                self.path_prefix + '/block_devices/' + os.path.basename(device),
++                                self.iface_prefix + '.Filesystem',
++                                'Mount',
++                                GLib.Variant('(a{sv})', (options,)))
++        except Exception as e:
++            pipe.send([True, str(e)])
++            pipe.close()
++            return
++
++        pipe.send([True, ''])
++        pipe.close()
++
++    @udiskstestcase.tag_test(udiskstestcase.TestTags.UNSAFE)
++    def test_mount_as_user_self(self):
++        """ Test that as-user targeting the caller's own username behaves
++            identically to mounting without as-user (no extra mount-other-user
++            authorization required).
++        """
++        self._check_can_create()
++
++        if not self._can_mount:
++            self.skipTest('Cannot mount %s filesystem' % self._fs_signature)
++
++        disk = self.get_object('/block_devices/' + os.path.basename(self.vdevs[0]))
++        self.assertIsNotNone(disk)
++
++        disk.Format(self._fs_signature, self.no_options, dbus_interface=self.iface_prefix + '.Block')
++        self.addCleanup(self.wipe_fs, self.vdevs[0])
++        self.addCleanup(self.try_unmount, self.vdevs[0])
++
++        self.addCleanup(self._remove_user, self.username)
++        uid, gid = self._add_user(self.username)
++
++        # first try a plain mount without as-user
++        parent_conn, child_conn = Pipe()
++        proc = Process(target=self._mount_as_user_result,
++                       args=(child_conn, int(uid), int(gid), self.vdevs[0], {}))
++        proc.start()
++        res_plain = parent_conn.recv()
++        parent_conn.close()
++        proc.join()
++
++        self.assertTrue(res_plain[0])
++        plain_error = res_plain[1]
++
++        # unmount if the plain mount succeeded
++        if not plain_error:
++            self.try_unmount(self.vdevs[0])
++
++        # now try with as-user=<self>
++        parent_conn, child_conn = Pipe()
++        proc = Process(target=self._mount_as_user_result,
++                       args=(child_conn, int(uid), int(gid), self.vdevs[0],
++                             {'as-user': GLib.Variant('s', self.username)}))
++        proc.start()
++        res_as_user = parent_conn.recv()
++        parent_conn.close()
++        proc.join()
++
++        self.assertTrue(res_as_user[0])
++        as_user_error = res_as_user[1]
++
++        if not plain_error and not as_user_error:
++            return
++        if plain_error and as_user_error:
++            # extract the GDBus error name (e.g. 'org.freedesktop.UDisks2.Error.NotAuthorizedCanObtain')
++            dbus_err_re = re.compile(r'GDBus\.Error:([\w.]+):')
++            plain_match = dbus_err_re.search(plain_error)
++            as_user_match = dbus_err_re.search(as_user_error)
++            plain_err_name = plain_match.group(1) if plain_match else plain_error
++            as_user_err_name = as_user_match.group(1) if as_user_match else as_user_error
++            self.assertEqual(plain_err_name, as_user_err_name,
++                             'as-user=<self> produced a different error than plain mount: '
++                             'plain=%s, as-user=%s' % (plain_error, as_user_error))
++            return
++
++        if plain_error:
++            self.fail('Plain mount failed (%s) but as-user=<self> succeeded' % plain_error)
++        else:
++            self.fail('Plain mount succeeded but as-user=<self> failed: %s' % as_user_error)
++
+     @udiskstestcase.tag_test(udiskstestcase.TestTags.UNSAFE)
+     def test_mount_as_user(self):
+         """ Test mounting a filesystem on behalf of a different user."""
+@@ -1550,6 +1720,108 @@ class NonPOSIXTestCase(UdisksFSTestCase):
+             self.fail(res[1])
+ 
+ 
++    def _test_mount_fstab_as_user_denied(self, fstab_options, target_user):
++        """ Test that an unprivileged user cannot use 'as-user' option to mount
++            a device listed in /etc/fstab with @fstab_options on behalf of
++            @target_user without polkit authorization.
++        """
++        disk = self.get_object('/block_devices/' + os.path.basename(self.vdevs[0]))
++        self.assertIsNotNone(disk)
++
++        self.addCleanup(self._remove_user, self.username)
++        uid, gid = self._add_user(self.username)
++
++        if target_user != 'root':
++            self.addCleanup(self._remove_user, target_user)
++            self._add_user(target_user)
++
++        self.addCleanup(self.try_unmount, self.vdevs[0])
++        self._prepare_mount_test(disk, True, fstab_options)
++
++        parent_conn, child_conn = Pipe()
++        proc = Process(target=self._mount_with_as_user_fail,
++                       args=(child_conn, int(uid), int(gid), self.vdevs[0], target_user))
++        proc.start()
++        res = parent_conn.recv()
++        parent_conn.close()
++        proc.join()
++
++        if not res[0]:
++            self.fail(res[1])
++
++    @udiskstestcase.tag_test(udiskstestcase.TestTags.UNSAFE)
++    def test_mount_fstab_as_user_denied(self):
++        """ Test that user cannot use as-user to mount fstab 'users' device
++            on behalf of another user without authorization.
++        """
++        self._test_mount_fstab_as_user_denied('users', self.target_username)
++
++    @udiskstestcase.tag_test(udiskstestcase.TestTags.UNSAFE)
++    def test_mount_fstab_user_as_user_denied(self):
++        """ Test that user cannot use as-user to mount fstab 'user' device
++            on behalf of another user without authorization.
++        """
++        self._test_mount_fstab_as_user_denied('user', self.target_username)
++
++    @udiskstestcase.tag_test(udiskstestcase.TestTags.UNSAFE)
++    def test_mount_fstab_x_udisks_auth_as_user_denied(self):
++        """ Test that user cannot use as-user to mount fstab 'x-udisks-auth'
++            device on behalf of another user without authorization.
++        """
++        self._test_mount_fstab_as_user_denied('x-udisks-auth', self.target_username)
++
++    @udiskstestcase.tag_test(udiskstestcase.TestTags.UNSAFE)
++    def test_mount_fstab_as_root_denied(self):
++        """ Test that user cannot use as-user=root to mount fstab 'users'
++            device without authorization.
++        """
++        self._test_mount_fstab_as_user_denied('users', 'root')
++
++    @udiskstestcase.tag_test(udiskstestcase.TestTags.UNSAFE)
++    def test_mount_fstab_user_as_root_denied(self):
++        """ Test that user cannot use as-user=root to mount fstab 'user'
++            device without authorization.
++        """
++        self._test_mount_fstab_as_user_denied('user', 'root')
++
++    @udiskstestcase.tag_test(udiskstestcase.TestTags.UNSAFE)
++    def test_mount_fstab_x_udisks_auth_as_root_denied(self):
++        """ Test that user cannot use as-user=root to mount fstab
++            'x-udisks-auth' device without authorization.
++        """
++        self._test_mount_fstab_as_user_denied('x-udisks-auth', 'root')
++
++    @udiskstestcase.tag_test(udiskstestcase.TestTags.UNSAFE)
++    def test_mount_fstab_defaults_as_user_from_root(self):
++        """ Test that root can mount a device listed in /etc/fstab with
++            'defaults' (no 'user', 'users' or 'x-udisks-auth' options)
++            using the 'as-user' option targeting a non-root user.
++        """
++        disk = self.get_object('/block_devices/' + os.path.basename(self.vdevs[0]))
++        self.assertIsNotNone(disk)
++
++        self.addCleanup(self._remove_user, self.target_username)
++        self._add_user(self.target_username)
++
++        self.addCleanup(self.try_unmount, self.vdevs[0])
++        self._prepare_mount_test(disk, True, 'defaults')
++
++        d = dbus.Dictionary(signature='sv')
++        d['as-user'] = self.target_username
++        mnt_path = disk.Mount(d, dbus_interface=self.iface_prefix + '.Filesystem')
++        self.assertIsNotNone(mnt_path)
++        self.assertTrue(os.path.ismount(mnt_path))
++
++    @udiskstestcase.tag_test(udiskstestcase.TestTags.UNSAFE)
++    def test_mount_fstab_defaults_as_user_denied(self):
++        """ Test that an unprivileged user cannot use 'as-user' option to
++            mount a device listed in /etc/fstab with 'defaults' (no 'user',
++            'users' or 'x-udisks-auth') on behalf of another user without
++            polkit authorization.
++        """
++        self._test_mount_fstab_as_user_denied('defaults', self.target_username)
++
++
+ class VFATTestCase(NonPOSIXTestCase):
+     _fs_signature = 'vfat'
+     _can_mount = True
+@@ -1691,6 +1963,12 @@ class UDFTestCase(UdisksFSTestCase):
+     def test_mount_fstab_complex_label_bad(self):
+         super(UDFTestCase, self).test_mount_fstab_complex_label_bad()
+ 
++    def test_mount_as_user_denied(self):
++        self.skipTest('Skipping as-user authorization test for UDF')
++
++    def test_mount_as_user_root_denied(self):
++        self.skipTest('Skipping as-user authorization test for UDF')
++
+ 
+ class FailsystemTestCase(UdisksFSTestCase):
+     # test that not supported operations fail 'nicely'
+-- 
+2.54.0
+

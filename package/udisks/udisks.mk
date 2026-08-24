@@ -39,6 +39,13 @@ UDISKS_CONF_OPTS = \
 	--disable-vdo \
 	--disable-zram
 
+# 0001-udiskslinuxfilesystem-Separate-real-caller-identity-.patch
+# 0002-udiskslinuxfilesystem-Rework-fstab-mount-authorizati.patch
+# 0003-udiskslinuxfilesystem-Log-real-caller-uid-for-as-use.patch
+# 0004-udisksdaemonutil-Pass-as-user-target-to-polkit-detai.patch
+# 0005-tests-Add-security-tests-for-as-user-mount-authoriza.patch
+UDISKS_IGNORE_CVES += CVE-2026-7867
+
 ifeq ($(BR2_PACKAGE_UDISKS_FHS_MEDIA),y)
 UDISKS_CONF_OPTS += --enable-fhs-media
 else

@@ -1,0 +1,252 @@
+From 2d97818f41fbeb645fbb7b0373ed448bd26503f6 Mon Sep 17 00:00:00 2001
+From: Tomas Bzatek <tbzatek@redhat.com>
+Date: Tue, 28 Apr 2026 19:10:09 +0200
+Subject: [PATCH] udiskslinuxfilesystem: Separate real caller identity from
+ as-user target
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When the 'as-user' option is specified in Filesystem.Mount(), the code
+previously overwrote caller_uid/caller_gid with the target user's identity.
+This meant downstream functions received a uid they believed was the
+D-Bus caller's, but was actually the target's.
+
+Introduce effective_uid/effective_gid/effective_user_name to hold the
+as-user target identity (or the caller's identity when as-user is not
+set). The real D-Bus caller identity is now always resolved into
+caller_uid/caller_gid and used for authorization-related decisions
+(setup_by_user, on_user_seat checks), while effective_* is used for
+mount point calculation, run_as_uid/run_as_gid, and state tracking.
+
+Reported-by: Azizcan Daştan <azizcan.dastan5@gmail.com>
+Reported-by: Özlem Ozan <oozan1725@gmail.com>
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+(cherry picked from commit 397eea88d58f77f6e02d537c4c961201b9245943)
+---
+CVE: CVE-2026-7867
+Upstream: https://github.com/storaged-project/udisks/commit/2d97818f41fbeb645fbb7b0373ed448bd26503f6
+Signed-off-by: Raphaël Mélotte <raphael.melotte@mind.be>
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ src/udiskslinuxfilesystem.c | 93 +++++++++++++++++++++----------------
+ 1 file changed, 53 insertions(+), 40 deletions(-)
+
+diff --git a/src/udiskslinuxfilesystem.c b/src/udiskslinuxfilesystem.c
+index 9f4880ad..ebdd2e05 100644
+--- a/src/udiskslinuxfilesystem.c
++++ b/src/udiskslinuxfilesystem.c
+@@ -905,7 +905,8 @@ handle_mount_fstab (UDisksDaemon          *daemon,
+                     UDisksObject          *object,
+                     uid_t                  caller_uid,
+                     gid_t                  caller_gid,
+-                    gboolean               mount_other_user,
++                    uid_t                  effective_uid,
++                    gid_t                  effective_gid,
+                     const gchar           *mount_point_to_use,
+                     const gchar           *fstab_mount_options,
+                     GDBusMethodInvocation *invocation,
+@@ -936,7 +937,7 @@ handle_mount_fstab (UDisksDaemon          *daemon,
+        * will be replaced by the name of the drive/device in question
+        */
+       message = N_("Authentication is required to mount $(drive)");
+-      if (mount_other_user)
++      if (caller_uid != effective_uid)
+         {
+           action_id = "org.freedesktop.udisks2.filesystem-mount-other-user";
+         }
+@@ -981,14 +982,14 @@ handle_mount_fstab (UDisksDaemon          *daemon,
+       job = udisks_daemon_launch_simple_job (daemon,
+                                              UDISKS_OBJECT (object),
+                                              "filesystem-mount",
+-                                             mount_fstab_as_root ? 0 : caller_uid,
++                                             mount_fstab_as_root ? 0 : effective_uid,
+                                              NULL /* cancellable */);
+ 
+       /* XXX: using run_as_uid for root doesn't work even if the caller is already root */
+-      if (!mount_fstab_as_root && caller_uid != 0)
++      if (!mount_fstab_as_root && effective_uid != 0)
+         {
+-          BDExtraArg uid_arg = { g_strdup ("run_as_uid"), g_strdup_printf ("%d", caller_uid) };
+-          BDExtraArg gid_arg = { g_strdup ("run_as_gid"), g_strdup_printf ("%d", caller_gid) };
++          BDExtraArg uid_arg = { g_strdup ("run_as_uid"), g_strdup_printf ("%d", effective_uid) };
++          BDExtraArg gid_arg = { g_strdup ("run_as_gid"), g_strdup_printf ("%d", effective_gid) };
+           const BDExtraArg *extra_args[3] = { &uid_arg, &gid_arg, NULL };
+ 
+           success = bd_fs_mount (NULL, mount_point_to_use, NULL, NULL, extra_args, &error);
+@@ -1066,8 +1067,9 @@ handle_mount_dynamic (UDisksDaemon          *daemon,
+                       UDisksObject          *object,
+                       uid_t                  caller_uid,
+                       gid_t                  caller_gid,
+-                      const gchar           *caller_user_name,
+-                      gboolean               mount_other_user,
++                      uid_t                  effective_uid,
++                      gid_t                  effective_gid,
++                      const gchar           *effective_user_name,
+                       gchar                **mount_point_to_use,
+                       gboolean              *mpoint_persistent,
+                       GDBusMethodInvocation *invocation,
+@@ -1127,7 +1129,7 @@ handle_mount_dynamic (UDisksDaemon          *daemon,
+    * will be replaced by the name of the drive/device in question
+    */
+   message = N_("Authentication is required to mount $(drive)");
+-  if (mount_other_user)
++  if (caller_uid != effective_uid)
+     {
+       action_id = "org.freedesktop.udisks2.filesystem-mount-other-user";
+     }
+@@ -1161,9 +1163,9 @@ handle_mount_dynamic (UDisksDaemon          *daemon,
+   /* Calculate mount point (guaranteed to be valid UTF-8) */
+   *mount_point_to_use = calculate_mount_point (daemon,
+                                                block,
+-                                               caller_uid,
+-                                               caller_gid,
+-                                               caller_user_name,
++                                               effective_uid,
++                                               effective_gid,
++                                               effective_user_name,
+                                                fs_type_to_use,
+                                                mpoint_persistent,
+                                                &error);
+@@ -1178,7 +1180,7 @@ handle_mount_dynamic (UDisksDaemon          *daemon,
+   /* Calculate mount options (guaranteed to be valid UTF-8) */
+   mount_options = udisks_linux_calculate_mount_options (daemon,
+                                                         block,
+-                                                        caller_uid,
++                                                        effective_uid,
+                                                         fs_signature,
+                                                         fs_type_to_use,
+                                                         options,
+@@ -1258,14 +1260,16 @@ handle_mount (UDisksFilesystem      *filesystem,
+   UDisksBlock *block;
+   UDisksDaemon *daemon;
+   UDisksState *state = NULL;
+-  gchar *opt_as_user = NULL;
++  const gchar *opt_as_user = NULL;
+   uid_t caller_uid;
+   gid_t caller_gid;
++  uid_t effective_uid = 0;
++  gid_t effective_gid = 0;
++  gchar *effective_user_name = NULL;
+   const gchar * const *existing_mount_points;
+   gchar *mount_point_to_use = NULL;
+   gboolean mpoint_persistent = TRUE;
+   gchar *fstab_mount_options = NULL;
+-  gchar *caller_user_name = NULL;
+   GError *error = NULL;
+   gboolean system_managed = FALSE;
+   gchar *device = NULL;
+@@ -1323,35 +1327,42 @@ handle_mount (UDisksFilesystem      *filesystem,
+       goto out;
+     }
+ 
++  /* Always resolve the real D-Bus caller identity */
++  if (!udisks_daemon_util_get_caller_uid_sync (daemon,
++                                               invocation,
++                                               NULL /* GCancellable */,
++                                               &caller_uid,
++                                               &error))
++    {
++      g_dbus_method_invocation_return_gerror (invocation, error);
++      g_clear_error (&error);
++      goto out;
++    }
++
++  if (!udisks_daemon_util_get_user_info (caller_uid,
++                                         &caller_gid,
++                                         opt_as_user ? NULL : &effective_user_name,
++                                         &error))
++    {
++      g_dbus_method_invocation_return_gerror (invocation, error);
++      g_clear_error (&error);
++      goto out;
++    }
++
+   if (opt_as_user)
+     {
+-      if (!udisks_daemon_util_get_user_info_by_name (opt_as_user, &caller_uid, &caller_gid, &error))
++      if (!udisks_daemon_util_get_user_info_by_name (opt_as_user, &effective_uid, &effective_gid, &error))
+         {
+           g_dbus_method_invocation_return_gerror (invocation, error);
+           g_clear_error (&error);
+           goto out;
+         }
+-      caller_user_name = g_strdup (opt_as_user);
++      effective_user_name = g_strdup (opt_as_user);
+     }
+   else
+     {
+-      if (!udisks_daemon_util_get_caller_uid_sync (daemon,
+-                                                   invocation,
+-                                                   NULL /* GCancellable */,
+-                                                   &caller_uid,
+-                                                   &error))
+-        {
+-          g_dbus_method_invocation_return_gerror (invocation, error);
+-          g_clear_error (&error);
+-          goto out;
+-        }
+-
+-      if (!udisks_daemon_util_get_user_info (caller_uid, &caller_gid, &caller_user_name, &error))
+-        {
+-          g_dbus_method_invocation_return_gerror (invocation, error);
+-          g_clear_error (&error);
+-          goto out;
+-        }
++      effective_uid = caller_uid;
++      effective_gid = caller_gid;
+     }
+ 
+   /* Mount it */
+@@ -1361,7 +1372,8 @@ handle_mount (UDisksFilesystem      *filesystem,
+                                object,
+                                caller_uid,
+                                caller_gid,
+-                               opt_as_user != NULL,
++                               effective_uid,
++                               effective_gid,
+                                mount_point_to_use,
+                                fstab_mount_options,
+                                invocation,
+@@ -1374,8 +1386,9 @@ handle_mount (UDisksFilesystem      *filesystem,
+                                  object,
+                                  caller_uid,
+                                  caller_gid,
+-                                 caller_user_name,
+-                                 opt_as_user != NULL,
++                                 effective_uid,
++                                 effective_gid,
++                                 effective_user_name,
+                                  &mount_point_to_use,
+                                  &mpoint_persistent,
+                                  invocation,
+@@ -1387,7 +1400,7 @@ handle_mount (UDisksFilesystem      *filesystem,
+   udisks_state_add_mounted_fs (state,
+                                mount_point_to_use,
+                                udisks_block_get_device_number (block),
+-                               caller_uid,
++                               effective_uid,
+                                system_managed,
+                                system_managed ? FALSE : mpoint_persistent);
+ 
+@@ -1395,7 +1408,7 @@ handle_mount (UDisksFilesystem      *filesystem,
+                  device,
+                  system_managed ? " (system)" : "",
+                  mount_point_to_use,
+-                 caller_uid);
++                 effective_uid);
+ 
+   udisks_linux_block_object_trigger_uevent_sync (UDISKS_LINUX_BLOCK_OBJECT (object),
+                                                  UDISKS_DEFAULT_WAIT_TIMEOUT);
+@@ -1409,7 +1422,7 @@ handle_mount (UDisksFilesystem      *filesystem,
+     udisks_state_check (state);
+   g_free (mount_point_to_use);
+   g_free (fstab_mount_options);
+-  g_free (caller_user_name);
++  g_free (effective_user_name);
+   g_free (device);
+   g_clear_object (&object);
+ 
+-- 
+2.54.0
+
