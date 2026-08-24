@@ -212,6 +212,14 @@ else
 GDB_CONF_OPTS += --without-expat
 endif
 
+ifeq ($(BR2_PACKAGE_XXHASH),y)
+GDB_CONF_OPTS += --with-xxhash
+GDB_CONF_OPTS += --with-xxhash-prefix=$(STAGING_DIR)/usr
+GDB_DEPENDENCIES += xxhash
+else
+GDB_CONF_OPTS += --without-xxhash
+endif
+
 ifeq ($(BR2_PACKAGE_XZ),y)
 GDB_CONF_OPTS += --with-lzma
 GDB_CONF_OPTS += --with-liblzma-prefix=$(STAGING_DIR)/usr
@@ -292,6 +300,14 @@ HOST_GDB_CONF_OPTS += --with-liblzma-prefix=$(HOST_DIR)
 HOST_GDB_DEPENDENCIES += host-xz
 else
 HOST_GDB_CONF_OPTS += --without-lzma
+endif
+
+ifeq ($(BR2_PACKAGE_HOST_GDB_XXHASH),y)
+HOST_GDB_CONF_OPTS += --with-xxhash
+HOST_GDB_CONF_OPTS += --with-xxhash-prefix=$(HOST_DIR)
+HOST_GDB_DEPENDENCIES += host-xxhash
+else
+HOST_GDB_CONF_OPTS += --without-xxhash
 endif
 
 # Since gdb 9, in-tree builds for GDB are not allowed anymore,
