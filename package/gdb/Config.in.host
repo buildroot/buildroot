@@ -44,6 +44,11 @@ config BR2_PACKAGE_HOST_GDB_SIM
 	help
 	  This option enables the simulator support in the cross gdb.
 
+config BR2_PACKAGE_HOST_GDB_LZMA
+	bool "lzma support"
+	help
+	  This option enables lzma support in the cross gdb.
+
 choice
 	prompt "GDB debugger Version"
 	default BR2_GDB_VERSION_16

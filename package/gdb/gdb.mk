@@ -293,6 +293,14 @@ else
 HOST_GDB_CONF_OPTS += --disable-sim
 endif
 
+ifeq ($(BR2_PACKAGE_HOST_GDB_LZMA),y)
+HOST_GDB_CONF_OPTS += --with-lzma
+HOST_GDB_CONF_OPTS += --with-liblzma-prefix=$(HOST_DIR)
+HOST_GDB_DEPENDENCIES += host-xz
+else
+HOST_GDB_CONF_OPTS += --without-lzma
+endif
+
 # Since gdb 9, in-tree builds for GDB are not allowed anymore,
 # so we create a 'build' subdirectory in the gdb sources, and
 # build from there.
