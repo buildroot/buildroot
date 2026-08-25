@@ -1,4 +1,4 @@
-From 447a6aa8df882a67ca3df6f5e95be42e1463eaf0 Mon Sep 17 00:00:00 2001
+From 1db9a29f4c831b656600a64de0531516dd198641 Mon Sep 17 00:00:00 2001
 From: Titouan Christophe <titouan.christophe@mind.be>
 Date: Fri, 29 Aug 2025 19:47:34 +0200
 Subject: [PATCH] Add configure-time check for -lanl
@@ -18,7 +18,7 @@ and only add the linker flag otherwise.
 [1] https://sourceware.org/pipermail/libc-alpha/2021-August/129718.html
 [2] https://autobuild.buildroot.org/results/16223cd838876abc9b6f941f7dc20d23afa32c3b/build-end.log
 
-Upstream: https://github.com/eclipse-mosquitto/mosquitto/pull/3358
+Upstream: https://github.com/eclipse-mosquitto/mosquitto/commit/dfde35aa0fa5863863f4d0c8f2bbefe39320a119
 
 Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
 ---
@@ -26,22 +26,21 @@ Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
  1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/config.mk b/config.mk
-index 34d5163f..cc7987c4 100644
+index 34d5163f..594a7267 100644
 --- a/config.mk
 +++ b/config.mk
-@@ -318,8 +318,11 @@ ifeq ($(WITH_EC),yes)
+@@ -318,7 +318,10 @@ ifeq ($(WITH_EC),yes)
  endif
  
  ifeq ($(WITH_ADNS),yes)
 -	BROKER_LDADD:=$(BROKER_LDADD) -lanl
- 	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_ADNS
-+	NEED_LIBANL := $(shell printf '#include <stdlib.h>\n#include <netdb.h>\nint main(){return getaddrinfo_a(0, NULL, 0, NULL);}'| $(CC) -D_GNU_SOURCE -o /dev/null -x c - 2>/dev/null || echo YES)
-+	ifeq ($(NEED_LIBANL),YES)
-+		BROKER_LDADD:=$(BROKER_LDADD) -lanl
++	NEED_LIBANL:=$(shell printf 'int main(){return 0;}' | gcc -D_GNU_SOURCE -lanl -o /dev/null -x c - 2>/dev/null || echo yes)
++	ifeq ($(NEED_LIBANL),yes)
++		BROKER_LDADD+=-lanl
 +	endif
+ 	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_ADNS
  endif
  
- ifeq ($(WITH_CONTROL),yes)
 -- 
-2.50.1
+2.43.0
 
