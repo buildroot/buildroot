@@ -1,0 +1,38 @@
+From 96a67c8e51997a18bfc0942416b815057e279caf Mon Sep 17 00:00:00 2001
+From: InterLinked1 <24227567+InterLinked1@users.noreply.github.com>
+Date: Tue, 8 Jul 2025 18:35:56 -0400
+Subject: [PATCH] kernel.h: Add wrappers for del_timer and del_timer_sync.
+
+del_timer[_sync] was renamed to timer_delete[_sync] in kernel
+commit bb663f0f3c396c6d05f6c5eeeea96ced20ff112e, and the
+compatibility wrappers were removed completely in kernel commit
+8fa7292fee5c5240402371ea89ab285ec856c916. Add the wrappers
+back on newer kernels to allow compilation.
+
+Resolves: #91
+
+Upstream: https://github.com/asterisk/dahdi-linux/commit/67d909a8a73364d6fa47bbf8baf314175c94f546
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ include/dahdi/kernel.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/include/dahdi/kernel.h b/include/dahdi/kernel.h
+index ab129a8..ddd3eb4 100644
+--- a/include/dahdi/kernel.h
++++ b/include/dahdi/kernel.h
+@@ -62,6 +62,11 @@
+ #define netif_napi_add netif_napi_add_weight
+ #endif
+ 
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,15,0)
++#define del_timer timer_delete
++#define del_timer_sync timer_delete_sync
++#endif
++
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 18, 0)
+ #include <linux/pci.h>
+ #include <linux/dma-mapping.h>
+-- 
+2.55.0
+

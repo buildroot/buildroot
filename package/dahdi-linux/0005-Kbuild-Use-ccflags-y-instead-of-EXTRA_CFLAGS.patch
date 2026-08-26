@@ -1,0 +1,186 @@
+From fc3748466d96fa465fe665403b73d6f4f75c124b Mon Sep 17 00:00:00 2001
+From: InterLinked1 <24227567+InterLinked1@users.noreply.github.com>
+Date: Fri, 21 Feb 2025 21:42:19 -0500
+Subject: [PATCH] Kbuild: Use ccflags-y instead of EXTRA_CFLAGS.
+
+ccflags-y was added to the kernel back in 2007, in commit
+f77bf01425b11947eeb3b5b54. Recent kernel commit
+dbd83ea09699390892e5efecddd74ae43a00f071 has now completely
+removed the deprecated EXTRA_CFLAGS.
+
+Comments in Kbuild and the Makefile for the oct612x library were
+added back when it was created in 2013 in commit f65299e8b2e6ffb0b07089759f8c4ff33a695c09
+to use the newer ccflags-y based on the kernel version,
+but the change was never made to conditionally move away
+from the EXTRA_CFLAGS.
+
+Now that the older way no longer exists, always use ccflags-y.
+
+Resolves: #76
+
+Upstream: https://github.com/asterisk/dahdi-linux/commit/9d5b120cb5573d39bcd9e3d8a7b212e25ab5c2c4
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ drivers/dahdi/Kbuild            | 4 ++--
+ drivers/dahdi/oct612x/Kbuild    | 5 +----
+ drivers/dahdi/oct612x/Makefile  | 5 +----
+ drivers/dahdi/voicebus/Kbuild   | 4 ++--
+ drivers/dahdi/wcb4xxp/Kbuild    | 2 +-
+ drivers/dahdi/wct4xxp/Kbuild    | 6 +++---
+ drivers/dahdi/wctc4xxp/Kbuild   | 4 ++--
+ drivers/dahdi/wctdm24xxp/Kbuild | 2 +-
+ drivers/dahdi/xpp/Kbuild        | 4 ++--
+ 9 files changed, 15 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/dahdi/Kbuild b/drivers/dahdi/Kbuild
+index cd0365b..9c9355a 100644
+--- a/drivers/dahdi/Kbuild
++++ b/drivers/dahdi/Kbuild
+@@ -75,13 +75,13 @@ CFLAGS_MODULE += -I$(DAHDI_INCLUDE) -I$(src) -Wno-format-truncation
+ BAD_KERNELS_VERS := 22 34 34.0.1 34.0.2
+ BAD_KERNELS := $(foreach ver,$(BAD_KERNELS_VERS),2.6.9-$(ver).EL 2.6.9-$(ver).ELsmp)
+ ifneq (,$(filter $(KVERS),$(BAD_KERNELS)))
+-EXTRA_CFLAGS+=-Drw_lock_t=rwlock_t
++ccflags-y+=-Drw_lock_t=rwlock_t
+ endif
+ 
+ # A number of Fedora 10 (9 also?) kernels backported hrtimer to 2.6.27
+ # as part of an ALSA backport. TODO: Any better way to detect that?
+ ifeq (1,$(shell fgrep -q ' hrtimer_set_expires' include/linux/hrtimer.h 2>/dev/null && echo 1))
+-EXTRA_CFLAGS+=-DHAVE_HRTIMER_ACCESSORS=1
++ccflags-y+=-DHAVE_HRTIMER_ACCESSORS=1
+ endif
+ 
+ ifeq (1,$(shell fgrep -q 'wait_for_completion_timeout' include/linux/completion.h 2>/dev/null && echo 1))
+diff --git a/drivers/dahdi/oct612x/Kbuild b/drivers/dahdi/oct612x/Kbuild
+index ac53fe7..5015f7e 100644
+--- a/drivers/dahdi/oct612x/Kbuild
++++ b/drivers/dahdi/oct612x/Kbuild
+@@ -24,9 +24,6 @@ octapi_files = octdeviceapi/oct6100api/oct6100_api/oct6100_adpcm_chan.o \
+ 		apilib/llman/octapi_llman.o \
+ 		oct612x-user.o
+ 
+-# TODO: ccflags was added in 2.6.24 in commit f77bf01425b11947eeb3b5b54. This
+-# should be changed to a conditional compilation based on the Kernel Version.
+-# ccflags-y := -I$(src)/.. -Wno-undef -I$(src)/include -I$(src)/octdeviceapi -I$(src)/octdeviceapi/oct6100api
+-EXTRA_CFLAGS = -I$(src)/.. -Wno-undef -I$(src)/include -I$(src)/octdeviceapi -I$(src)/octdeviceapi/oct6100api
++ccflags-y := -I$(src)/.. -Wno-undef -I$(src)/include -I$(src)/octdeviceapi -I$(src)/octdeviceapi/oct6100api
+ obj-$(DAHDI_BUILD_ALL)$(CONFIG_DAHDI_OCT612X) := oct612x.o
+ oct612x-objs := $(octapi_files)
+diff --git a/drivers/dahdi/oct612x/Makefile b/drivers/dahdi/oct612x/Makefile
+index 5d29143..d01997b 100644
+--- a/drivers/dahdi/oct612x/Makefile
++++ b/drivers/dahdi/oct612x/Makefile
+@@ -23,8 +23,5 @@ octapi_files = octdeviceapi/oct6100api/oct6100_api/oct6100_adpcm_chan.o \
+ 		apilib/largmath/octapi_largmath.o \
+ 		apilib/llman/octapi_llman.o
+ 
+-# TODO: ccflags was added in 2.6.24 in commit f77bf01425b11947eeb3b5b54. This
+-# should be changed to a conditional compilation based on the Kernel Version.
+-# ccflags-y := -I$(src)/.. -Wno-undef -I$(src)/include -I$(src)/octdeviceapi -I$(src)/octdeviceapi/oct6100api
+-EXTRA_CFLAGS = -I$(src)/.. -Wno-undef -I$(src)/include -I$(src)/octdeviceapi -I$(src)/octdeviceapi/oct6100api
++ccflags-y := -I$(src)/.. -Wno-undef -I$(src)/include -I$(src)/octdeviceapi -I$(src)/octdeviceapi/oct6100api
+ lib-y := $(octapi_files)
+diff --git a/drivers/dahdi/voicebus/Kbuild b/drivers/dahdi/voicebus/Kbuild
+index 3bf9640..45026d9 100644
+--- a/drivers/dahdi/voicebus/Kbuild
++++ b/drivers/dahdi/voicebus/Kbuild
+@@ -8,10 +8,10 @@ ifneq ($(HOTPLUG_FIRMWARE),yes)
+ dahdi_voicebus-objs += $(FIRM_DIR)/dahdi-fw-vpmoct032.o
+ $(warning WARNING: You are compiling firmware into voicebus.ko which is not available under the terms of the GPL. It may be a violation of the GPL to distribute the resulting image since it combines both GPL and non-GPL work. You should consult a lawyer of your own before distributing such an image.)
+ else
+-  EXTRA_CFLAGS+=-DHOTPLUG_FIRMWARE
++  ccflags-y+=-DHOTPLUG_FIRMWARE
+ endif
+ 
+-EXTRA_CFLAGS += -I$(src)/.. -Wno-undef
++ccflags-y += -I$(src)/.. -Wno-undef
+ 
+ $(obj)/$(FIRM_DIR)/dahdi-fw-vpmoct032.o: $(obj)/voicebus.o
+ 	$(MAKE) -C $(obj)/$(FIRM_DIR) dahdi-fw-vpmoct032.o
+diff --git a/drivers/dahdi/wcb4xxp/Kbuild b/drivers/dahdi/wcb4xxp/Kbuild
+index 80606bf..59ffc8d 100644
+--- a/drivers/dahdi/wcb4xxp/Kbuild
++++ b/drivers/dahdi/wcb4xxp/Kbuild
+@@ -1,6 +1,6 @@
+ obj-m += wcb4xxp.o
+ 
+-EXTRA_CFLAGS += -I$(src)/.. -Wno-undef
++ccflags-y += -I$(src)/.. -Wno-undef
+ 
+ wcb4xxp-objs := base.o
+ 
+diff --git a/drivers/dahdi/wct4xxp/Kbuild b/drivers/dahdi/wct4xxp/Kbuild
+index cf01ccf..eeeb2f6 100644
+--- a/drivers/dahdi/wct4xxp/Kbuild
++++ b/drivers/dahdi/wct4xxp/Kbuild
+@@ -2,16 +2,16 @@ obj-$(DAHDI_BUILD_ALL)$(CONFIG_DAHDI_WCT4XXP) += wct4xxp.o
+ 
+ FIRM_DIR	:= ../firmware
+ 
+-EXTRA_CFLAGS += -I$(src)/.. -I$(src)/../oct612x/ $(shell $(src)/../oct612x/octasic-helper cflags $(src)/../oct612x) -Wno-undef
++ccflags-y += -I$(src)/.. -I$(src)/../oct612x/ $(shell $(src)/../oct612x/octasic-helper cflags $(src)/../oct612x) -Wno-undef
+ 
+ # The OCT612X source files are from a vendor drop and we do not want to edit
+ # them to make this warning go away. Therefore, turn off the
+ # unused-but-set-variable warning for this driver.
+ 
+-EXTRA_CFLAGS += $(call cc-option, -Wno-unused-but-set-variable)
++ccflags-y += $(call cc-option, -Wno-unused-but-set-variable)
+ 
+ ifeq ($(HOTPLUG_FIRMWARE),yes)
+-  EXTRA_CFLAGS+=-DHOTPLUG_FIRMWARE
++  ccflags-y+=-DHOTPLUG_FIRMWARE
+ endif
+ 
+ wct4xxp-objs := base.o vpm450m.o
+diff --git a/drivers/dahdi/wctc4xxp/Kbuild b/drivers/dahdi/wctc4xxp/Kbuild
+index 9f97498..2f1bfbf 100644
+--- a/drivers/dahdi/wctc4xxp/Kbuild
++++ b/drivers/dahdi/wctc4xxp/Kbuild
+@@ -2,10 +2,10 @@ obj-$(DAHDI_BUILD_ALL)$(CONFIG_DAHDI_WCTC4XXP) += wctc4xxp.o
+ 
+ FIRM_DIR	:= ../firmware
+ 
+-EXTRA_CFLAGS += -I$(src)/.. -Wno-undef
++ccflags-y += -I$(src)/.. -Wno-undef
+ 
+ ifeq ($(HOTPLUG_FIRMWARE),yes)
+-  EXTRA_CFLAGS+=-DHOTPLUG_FIRMWARE
++  ccflags-y+=-DHOTPLUG_FIRMWARE
+ endif
+ 
+ wctc4xxp-objs := base.o
+diff --git a/drivers/dahdi/wctdm24xxp/Kbuild b/drivers/dahdi/wctdm24xxp/Kbuild
+index 22cc71a..c9d96b7 100644
+--- a/drivers/dahdi/wctdm24xxp/Kbuild
++++ b/drivers/dahdi/wctdm24xxp/Kbuild
+@@ -1,5 +1,5 @@
+ obj-$(DAHDI_BUILD_ALL)$(CONFIG_DAHDI_WCTDM24XXP) += wctdm24xxp.o
+ 
+-EXTRA_CFLAGS += -I$(src)/.. -Wno-undef
++ccflags-y += -I$(src)/.. -Wno-undef
+ 
+ wctdm24xxp-objs := base.o xhfc.o
+diff --git a/drivers/dahdi/xpp/Kbuild b/drivers/dahdi/xpp/Kbuild
+index e46a9d7..02d3149 100644
+--- a/drivers/dahdi/xpp/Kbuild
++++ b/drivers/dahdi/xpp/Kbuild
+@@ -1,4 +1,4 @@
+-EXTRA_CFLAGS	=	$(XPP_LOCAL_CFLAGS)	\
++ccflags-y	=	$(XPP_LOCAL_CFLAGS)	\
+ 			-DDEBUG			\
+ 			-DPOLL_DIGITAL_INPUTS	\
+ 			-DDEBUG_PCMTX		\
+@@ -32,7 +32,7 @@ xpd_echo-objs		+= card_echo.o
+ xpp_mmap-objs		+= mmapbus.o mmapdrv.o
+ 
+ ifeq	(y,$(PARPORT_DEBUG))
+-EXTRA_CFLAGS	+= -DDEBUG_SYNC_PARPORT
++ccflags-y	+= -DDEBUG_SYNC_PARPORT
+ obj-m		+= parport_debug.o
+ endif
+ 
+-- 
+2.55.0
+
