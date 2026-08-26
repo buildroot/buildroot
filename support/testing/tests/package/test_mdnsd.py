@@ -1,4 +1,5 @@
 import os
+import time
 
 import infra.basetest
 
@@ -29,6 +30,9 @@ class TestMdnsd(infra.basetest.BRTest):
         # The responder is started at boot by /etc/init.d/S50mdnsd and
         # advertises the bundled _http._tcp service from /etc/mdns.d/.
         self.assertRunOk("pidof mdnsd")
+
+        # We wait for mdnsd to be ready...
+        time.sleep(1)
 
         # mdnsd only answers on multicast capable interfaces that are
         # up, so wait for eth0 to get its DHCP address before querying.
