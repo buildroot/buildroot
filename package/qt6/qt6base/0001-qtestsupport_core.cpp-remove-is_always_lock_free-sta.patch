@@ -1,0 +1,41 @@
+From 2983318421d623c6c9feff95ff947ca489f4313d Mon Sep 17 00:00:00 2001
+From: Mitch Curtis <mitch.curtis@qt.io>
+Date: Mon, 11 May 2026 08:41:08 +0800
+Subject: [PATCH] qtestsupport_core.cpp: remove is_always_lock_free
+ static_assert
+
+This causes a build failure when cross-compiling Qt for MIPS32 targets
+(e.g. `mips-unknown-linux-musl`, `mipsel-unknown-linux-musl`).
+
+Amends 9b938823776865837901f29082301f5624ac2b04.
+
+Fixes: QTBUG-146670
+Change-Id: I170bd9f93c1ef809f56e5b36835e457bbbe8e16c
+Reviewed-by: Thiago Macieira <thiago.macieira@intel.com>
+Reviewed-by: Qt Cherry-pick Bot <cherrypick_bot@qt-project.org>
+
+Upstream: https://github.com/qt/qtbase/commit/2983318421d623c6c9feff95ff947ca489f4313d
+[Romain: backport to 6.11.1]
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ src/corelib/kernel/qtestsupport_core.cpp | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/src/corelib/kernel/qtestsupport_core.cpp b/src/corelib/kernel/qtestsupport_core.cpp
+index 9bbe1c18e84..5f28cedec68 100644
+--- a/src/corelib/kernel/qtestsupport_core.cpp
++++ b/src/corelib/kernel/qtestsupport_core.cpp
+@@ -8,10 +8,6 @@
+ 
+ using namespace std::chrono_literals;
+ 
+-// Assert that this instantiation of std::atomic is always lock-free so we
+-// know that no code will execute on destruction.
+-static_assert(std::atomic<std::chrono::milliseconds>::is_always_lock_free);
+-
+ QT_BEGIN_NAMESPACE
+ 
+ // ### Qt 7: reduce the default: QTBUG-138160
+-- 
+2.55.0
+
