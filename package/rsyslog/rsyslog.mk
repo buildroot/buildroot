@@ -12,6 +12,9 @@ RSYSLOG_CPE_ID_VENDOR = rsyslog
 RSYSLOG_DEPENDENCIES = zlib libestr liblogging libfastjson host-pkgconf
 RSYSLOG_CONF_ENV = ac_cv_prog_cc_c99='-std=c99'
 
+# 0001-imptcp-guard-regex-framing-match-at-line-start.patch
+RSYSLOG_IGNORE_CVES += CVE-2026-19654
+
 ifeq ($(BR2_PACKAGE_RSYSLOG_EXTRA_PLUGINS),y)
 RSYSLOG_PLUGINS = imdiag imfile impstats imptcp \
 	mmanon mmaudit mmfields mmjsonparse mmpstrucdata mmsequence mmutf8fix \
