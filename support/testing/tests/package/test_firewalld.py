@@ -59,7 +59,10 @@ class TestFirewalldSystemd(infra.basetest.BRTest):
 
         cmd = "firewall-cmd --state"
         output, exit_code = self.emulator.run(cmd, timeout=10)
-        self.assertIn("running", output[0])
+        # Ignore any unexpected log from firewall-cmd
+        # like "Waiting on dbus connection..."
+        expected_line = next(ln for ln in output if ln.strip().startswith('running'))
+        self.assertIn("running", expected_line)
         self.assertEqual(exit_code, 0)
 
 
@@ -104,5 +107,8 @@ class TestFirewalldSysVInit(infra.basetest.BRTest):
         self.emulator.login(timeout=120)
         cmd = "firewall-cmd --state"
         output, exit_code = self.emulator.run(cmd, timeout=10)
-        self.assertIn("running", output[0])
+        # Ignore any unexpected log from firewall-cmd
+        # like "Waiting on dbus connection..."
+        expected_line = next(ln for ln in output if ln.strip().startswith('running'))
+        self.assertIn("running", expected_line)
         self.assertEqual(exit_code, 0)
