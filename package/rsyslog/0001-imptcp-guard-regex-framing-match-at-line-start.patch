@@ -1,0 +1,47 @@
+From 07b3c40a5a78c79ed9109251f842ca7e955dd586 Mon Sep 17 00:00:00 2001
+From: Rainer Gerhards <rgerhards@adiscon.com>
+Date: Mon, 20 Jul 2026 17:19:28 +0200
+Subject: [PATCH] imptcp: guard regex framing match at line start
+
+Why
+A regex match at the beginning of the receive buffer can form a
+negative message length after oversize-frame recovery.
+
+Impact
+Regex-framed imptcp listeners reject that invalid transition instead
+of submitting a negative message length.
+
+Before/After
+Before: a match with a zero line offset submitted an invalid length.
+After: only a match following an existing line can submit a frame.
+
+Technical Overview
+Mirror the line-offset guard used by the shared imtcp parser.
+Leave existing regex framing and oversize recovery behavior unchanged.
+
+Security advisory:
+https://github.com/rsyslog/rsyslog/security/advisories/GHSA-cj5r-wh2m-7w29
+
+Reported-by: Raphael Eikenberg (@eikendev)
+With the help of AI-Agents: Codex
+---
+CVE: CVE-2026-19654
+Upstream: https://github.com/rsyslog/rsyslog/commit/07b3c40a5a78c79ed9109251f842ca7e955dd586
+Signed-off-by: Thomas Perale <thomas.perale@mind.be
+---
+ plugins/imptcp/imptcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plugins/imptcp/imptcp.c b/plugins/imptcp/imptcp.c
+index 838e1648fc..90a7d6f7ed 100644
+--- a/plugins/imptcp/imptcp.c
++++ b/plugins/imptcp/imptcp.c
+@@ -1054,8 +1054,8 @@ static rsRetVal ATTR_NONNULL() processDataRcvd_regexFraming(ptcpsess_t *const __
+ 		pThis->iCurrLine = pThis->iMsg;
+ 	} else {
+ 		const int isMatch = !regexec(&inst->start_preg, (char*)pThis->pMsg+pThis->iCurrLine, 0, NULL, 0);
+-		if(isMatch) {
++		if (pThis->iCurrLine > 0 && isMatch) {
+ 			DBGPRINTF("regex match (%d), framing line: %s\n", pThis->iCurrLine, pThis->pMsg);
+ 			strcpy((char*)pThis->pMsg_save, (char*) pThis->pMsg+pThis->iCurrLine);
+ 			pThis->iMsg = pThis->iCurrLine - 1;
