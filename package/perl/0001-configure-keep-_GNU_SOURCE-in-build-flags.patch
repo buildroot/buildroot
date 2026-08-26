@@ -1,0 +1,55 @@
+From 6bdfdff24f4a7d17d3b7d9d02bca3eac11c235a4 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Wed, 26 Aug 2026 19:34:39 +0200
+Subject: [PATCH] configure: keep _GNU_SOURCE in build flags
+
+The checkfunc() function probes available libc functions with _GNU_SOURCE
+defined. The generated config.sh did not retain that define in ccflags, so
+the actual cross build could use functions whose prototypes remain hidden by
+feature-test macros. This breaks musl builds, where memrchr is declared only
+with _GNU_SOURCE.
+
+To fix this, append _GNU_SOURCE to explicit -Dccflags values while parsing
+configure arguments. Such values are locked before configure_tool.sh can
+append flags. This keeps the function-availability checks and subsequent
+compilation in the same feature set, including when flags are supplied
+through CFLAGS.
+
+This fixes the regression introduced by b40c560f5d5e (configure_func.sh: Add
+_GNU_SOURCE define and function signatures).
+
+It fixes the following build issue with musl:
+
+    In file included from op.c:163:
+    op.c: In function 'Perl_newATTRSUB_x':
+    perl.h:2385:25: error: implicit declaration of function 'memrchr'; did
+    you mean 'memchr'? [-Wimplicit-function-declaration]
+     2385 | #    define my_memrchr  memrchr
+          |                         ^~~~~~~
+
+This issue is worked around in several build systems:
+
+- In OpenEmbedded:
+  https://github.com/openembedded/openembedded-core/commit/6422e62
+
+- In NixOS:
+  https://github.com/NixOS/nixpkgs/pull/441527
+
+Fixes: https://github.com/arsv/perl-cross/issues/158
+Upstream: https://github.com/arsv/perl-cross/pull/180
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+
+diff --git a/cnf/configure_args.sh b/cnf/configure_args.sh
+index 5bc4c6b..65ffc96 100644
+--- a/cnf/configure_args.sh
++++ b/cnf/configure_args.sh
+@@ -225,6 +225,9 @@ while [ $i -le $# -o -n "$n" ]; do
+ 		host|target|build) ;;
+ 		# original Configure options
+ 		D)
++			if [ "$k" = 'ccflags' ]; then
++				v="$v -D_GNU_SOURCE"
++			fi
+ 			setordefine "$k" "$x" "$v" 'define' 'true'
+ 			;;
+ 		U)
