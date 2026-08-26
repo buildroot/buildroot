@@ -1,0 +1,35 @@
+From 6d7aab6d01ffa68f79b0b238d812a074051d94c4 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Wed, 26 Aug 2026 00:00:00 +0000
+Subject: [PATCH] src/olsr_types.h: fix boolean type check with C23
+
+GCC 15 defaults to GNU C23. In C23, bool, true and false are keywords,
+and <stdbool.h> no longer defines __bool_true_false_are_defined. Therefore
+the existing preprocessor check incorrectly rejects a valid C23 environment.
+
+Keep the check for older C standards, where these identifiers must be
+provided as macros by <stdbool.h> or by the GNU C fallback.
+
+Upstream: https://github.com/OLSR/olsrd/pull/139
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/olsr_types.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/olsr_types.h b/src/olsr_types.h
+index 36d2b723..ce2a0559 100644
+--- a/src/olsr_types.h
++++ b/src/olsr_types.h
+@@ -82,7 +82,8 @@ typedef signed int int32_t;
+ 
+ /* add some safe-gaurds */
+ #ifndef _MSC_VER
+-#if !defined bool || !defined true || !defined false || !defined __bool_true_false_are_defined
++#if (!defined __STDC_VERSION__ || __STDC_VERSION__ < 202311L) && \
++    (!defined bool || !defined true || !defined false || !defined __bool_true_false_are_defined)
+ #error You have no C99-like boolean types. Please extend src/olsr_type.h!
+ #endif /* !defined bool || !defined true || !defined false || !defined __bool_true_false_are_defined */
+ #endif /* _MSC_VER */
+-- 
+2.55.0
+
