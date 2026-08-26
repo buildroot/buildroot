@@ -1,5 +1,9 @@
 config BR2_PACKAGE_QT6DECLARATIVE
 	bool "qt6declarative"
+	# When target qt6base has network support, qt6declarative
+	# assumes that qmlprofiler is available, but that requires
+	# network support in host-qt6base.
+	select BR2_PACKAGE_HOST_QT6BASE_NETWORK if BR2_PACKAGE_QT6BASE_NETWORK # qmlprofiler
 	help
 	  Qt is a cross-platform application and UI framework for
 	  developers using C++.
@@ -14,7 +18,6 @@ config BR2_PACKAGE_QT6DECLARATIVE_QUICK
 	bool "quick module"
 	# Enable host test module to ensure that qmltestrunner is built
 	select BR2_PACKAGE_HOST_QT6BASE_TEST if BR2_PACKAGE_QT6BASE_TEST # qmltestrunner
-	select BR2_PACKAGE_HOST_QT6BASE_NETWORK if BR2_PACKAGE_QT6BASE_NETWORK # qmlprofiler
 	select BR2_PACKAGE_QT6BASE_GUI
 	select BR2_PACKAGE_QT6BASE_OPENGL if BR2_PACKAGE_QT6_GL_SUPPORTS
 	select BR2_PACKAGE_QT6SHADERTOOLS
