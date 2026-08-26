@@ -1,0 +1,38 @@
+From ce23f1b3db8be19ca74589958a9af56c3ee888d0 Mon Sep 17 00:00:00 2001
+From: Dimitri Papadopoulos
+ <3234522+DimitriPapadopoulos@users.noreply.github.com>
+Date: Mon, 25 Dec 2023 13:04:00 +0100
+Subject: [PATCH] Fix typos found by codespell
+
+Upstream: https://github.com/autoconf-archive/autoconf-archive/commit/7d383b7aea765a8bc557ec6e88461c6da2db034e
+[Thomas: partial backport, only changes to ax_prog_cc_for_build.m4 were kept]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ m4/ax_prog_cc_for_build.m4 | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/m4/ax_prog_cc_for_build.m4 b/m4/ax_prog_cc_for_build.m4
+index 1db8d73..2f44436 100644
+--- a/m4/ax_prog_cc_for_build.m4
++++ b/m4/ax_prog_cc_for_build.m4
+@@ -32,7 +32,7 @@
+ #   and this notice are preserved. This file is offered as-is, without any
+ #   warranty.
+ 
+-#serial 21
++#serial 22
+ 
+ AU_ALIAS([AC_PROG_CC_FOR_BUILD], [AX_PROG_CC_FOR_BUILD])
+ AC_DEFUN([AX_PROG_CC_FOR_BUILD], [dnl
+@@ -141,7 +141,7 @@ popdef([ac_cv_prog_gcc])dnl
+ popdef([ac_cv_prog_CPP])dnl
+ 
+ dnl restore global variables ac_ext, ac_cpp, ac_compile,
+-dnl ac_link, ac_compiler_gnu (dependant on the current
++dnl ac_link, ac_compiler_gnu (dependent on the current
+ dnl language after popping):
+ AC_LANG_POP([C])
+ 
+-- 
+2.55.0
+

@@ -1,0 +1,41 @@
+From 2755b093cd69fb980ecb22d905cc6658c895d44a Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Ondr=CC=8Cej=20Sury=CC=81?= <ondrej@isc.org>
+Date: Tue, 26 Apr 2022 15:24:18 +0200
+Subject: [PATCH] ax_prog_cc_for_build: Properly restore ac_cv_c_compiler_gnu
+
+The ac_cv_c_compiler_gnu wasn't properly restored to original
+state (f.e. yes), but value of the "save" variable was used:
+
+ac_cv_c_compiler_gnu=${ac_cv_c_compiler_gnu=saved_ac_cv_c_compiler_gnu}
+
+Additionally, we don't need to cache the saved_ac_cv_c_compiler_gnu
+and was_set_ac_cv_c_compiler_gnu, so remove the ac_cv_ from their names.
+
+This would not manifest on a single run, but any repeated run with cache
+file (./configure -C) would be broken.
+
+Upstream: https://github.com/autoconf-archive/autoconf-archive/commit/13018ae91007cfa1b1a3877db8ef5cb233af1ae6
+[Thomas: partial backport only. Most of the commit is already in bind,
+except the serial number update, which is needed for follow-up commits
+to apply cleanly]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ m4/ax_prog_cc_for_build.m4 | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/m4/ax_prog_cc_for_build.m4 b/m4/ax_prog_cc_for_build.m4
+index f6518db..1db8d73 100644
+--- a/m4/ax_prog_cc_for_build.m4
++++ b/m4/ax_prog_cc_for_build.m4
+@@ -32,7 +32,7 @@
+ #   and this notice are preserved. This file is offered as-is, without any
+ #   warranty.
+ 
+-#serial 20
++#serial 21
+ 
+ AU_ALIAS([AC_PROG_CC_FOR_BUILD], [AX_PROG_CC_FOR_BUILD])
+ AC_DEFUN([AX_PROG_CC_FOR_BUILD], [dnl
+-- 
+2.55.0
+
