@@ -14,7 +14,7 @@ config BR2_PACKAGE_BPFTRACE
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # bcc -> clang
 	depends on BR2_INSTALL_LIBSTDCPP # bcc -> clang
 	depends on BR2_HOST_GCC_AT_LEAST_7 # bcc -> clang
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_13 # libbpf
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10 # CAP_BPF, CAP_PERFMON
 	depends on BR2_USE_WCHAR # bcc -> clang, bcc -> python3, libbpf
 	depends on BR2_TOOLCHAIN_HAS_THREADS # bcc -> clang, bcc -> python3, libbpf
 	depends on !BR2_STATIC_LIBS # bcc -> clang, bcc -> python3, libbpf
@@ -47,10 +47,10 @@ config BR2_PACKAGE_BPFTRACE
 
 	  https://www.github.com/iovisor/bpftrace
 
-comment "bpftrace needs a glibc toolchain w/ C++, gcc >= 7, host gcc >= 7, kernel headers >= 4.13"
+comment "bpftrace needs a glibc toolchain w/ C++, gcc >= 7, host gcc >= 7, kernel headers >= 5.10"
 	depends on BR2_PACKAGE_BPFTRACE_ARCH_SUPPORTS
 	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on !BR2_TOOLCHAIN_USES_GLIBC || !BR2_INSTALL_LIBSTDCPP \
 		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_7 || !BR2_HOST_GCC_AT_LEAST_7 \
-		|| !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_13
+		|| !BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10
