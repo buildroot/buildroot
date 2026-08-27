@@ -1,0 +1,36 @@
+From 5358d4e20801ffbb1c0834eab36c003049d4055f Mon Sep 17 00:00:00 2001
+From: Romain Naour <romain.naour@smile.fr>
+Date: Sun, 16 Aug 2026 22:27:28 +0200
+Subject: [PATCH] xtensa: disable SSP when needed
+
+-fno-stack-protector must be passed to avoid linking errors related to
+undefined references to '__stack_chk_guard' and '__stack_chk_fail' if
+toolchain enforces -fstack-protector.
+
+Fixes:
+https://gitlab.com/buildroot.org/toolchains-builder/-/jobs/15876432953
+
+Upstream: Submitted to Max Filippov via email for initial review.
+
+Cc: Max Filippov <jcmvbkbc@gmail.com>
+Signed-off-by: Romain Naour <romain.naour@smile.fr>
+---
+ arch/xtensa/boot/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/xtensa/boot/Makefile b/arch/xtensa/boot/Makefile
+index d8b0fadf429a9..dfb758cdb2756 100644
+--- a/arch/xtensa/boot/Makefile
++++ b/arch/xtensa/boot/Makefile
+@@ -9,7 +9,7 @@
+ 
+ 
+ # KBUILD_CFLAGS used when building rest of boot (takes effect recursively)
+-KBUILD_CFLAGS	+= -fno-builtin
++KBUILD_CFLAGS	+= -fno-builtin -fno-stack-protector
+ 
+ subdir-y	:= lib
+ targets		+= vmlinux.bin vmlinux.bin.gz
+-- 
+2.55.0
+
