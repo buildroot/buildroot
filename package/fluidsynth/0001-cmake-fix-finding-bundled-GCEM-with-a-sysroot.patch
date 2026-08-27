@@ -1,0 +1,41 @@
+From f558b8656efe8bba7dd94f4acfceb1294a7ded22 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Thu, 27 Aug 2026 08:59:32 +0200
+Subject: [PATCH] cmake: fix finding bundled GCEM with a sysroot
+
+CMAKE_FIND_ROOT_PATH_MODE_INCLUDE may be set to ONLY when cross
+compiling, to ensure that header searches use the target sysroot
+instead of accidentally finding host headers.
+
+This causes find_path() to re-root the absolute path to the bundled
+GCEM headers under the target sysroot, making FindGCEM miss
+gcem/include/gcem.hpp in situations where
+CMAKE_FIND_ROOT_PATH_MODE_INCLUDE is set to ONLY.
+
+To fix this, this commit passes NO_CMAKE_FIND_ROOT_PATH to prevent
+sysroot re-rooting when searching this source-tree path. It allows to
+properly detected gcem/include/gcem.hpp and avoid the download if
+already present.
+
+Upstream: https://github.com/FluidSynth/fluidsynth/pull/1835
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ cmake_admin/FindGCEM.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cmake_admin/FindGCEM.cmake b/cmake_admin/FindGCEM.cmake
+index 980951cc..e02d97f8 100644
+--- a/cmake_admin/FindGCEM.cmake
++++ b/cmake_admin/FindGCEM.cmake
+@@ -23,7 +23,7 @@ This will define the following variables:
+ #]=======================================================================]
+ 
+ # Find the headers and library
+-find_path(GCEM_INCLUDE_DIR NAMES "gcem.hpp" PATHS "${CMAKE_CURRENT_SOURCE_DIR}/gcem/include")
++find_path(GCEM_INCLUDE_DIR NAMES "gcem.hpp" PATHS "${CMAKE_CURRENT_SOURCE_DIR}/gcem/include" NO_CMAKE_FIND_ROOT_PATH)
+ 
+ include(FindPackageHandleStandardArgs)
+ 
+-- 
+2.55.0
+
