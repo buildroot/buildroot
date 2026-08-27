@@ -419,6 +419,17 @@ define LINUX_KCONFIG_FIXUP_CMDS_ROOTFS_CPIO
 endef
 endif
 
+# Since kernel >= 6.15.y, x86 and x86_64 kernels requires a toolchain
+# with SSP support when CONFIG_STACKPROTECTOR is enabled.
+# For toolchains without SSP support, make sure to disable
+# CONFIG_STACKPROTECTOR to avoid link issues when building kernel
+# modules.
+ifeq ($(BR2_i386)$(BR2_x86_64):$(BR2_TOOLCHAIN_HAS_SSP),y:)
+define LINUX_FIXUP_CONFIG_STACKPROTECTOR
+	$(call KCONFIG_DISABLE_OPT,CONFIG_STACKPROTECTOR)
+endef
+endif
+
 define LINUX_KCONFIG_FIXUP_CMDS
 	@$(call MESSAGE,"Updating kernel config with fixups")
 	$(if $(LINUX_NEEDS_MODULES),
@@ -429,6 +440,7 @@ define LINUX_KCONFIG_FIXUP_CMDS
 	)
 	$(LINUX_FIXUP_CONFIG_ENDIANNESS)
 	$(LINUX_FIXUP_CONFIG_PAHOLE_CHECK)
+	$(LINUX_FIXUP_CONFIG_STACKPROTECTOR)
 	$(if $(BR2_arm)$(BR2_armeb),
 		$(call KCONFIG_ENABLE_OPT,CONFIG_AEABI))
 	$(if $(BR2_powerpc)$(BR2_powerpc64)$(BR2_powerpc64le),
