@@ -15,8 +15,10 @@ HAPROXY_CPE_ID_VENDOR = haproxy
 # https://git.haproxy.org/?p=haproxy-2.6.git;a=commit;h=832b672eee54866c7a42a1d46078cc9ae0d544d9
 HAPROXY_IGNORE_CVES += CVE-2023-45539
 
+# haproxy relies on signed overflow, so MUST be built with -fwrapv
 HAPROXY_MAKE_OPTS = \
 	LD=$(TARGET_CC) \
+	CFLAGS="$(TARGET_CFLAGS) -fwrapv" \
 	PREFIX=/usr \
 	TARGET=custom
 
