@@ -1,0 +1,45 @@
+From be6ac1ed28b4842e8f2e54c39a2b3fc48feaf8b2 Mon Sep 17 00:00:00 2001
+From: "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
+Date: Sun, 26 Oct 2025 18:36:56 +0300
+Subject: [PATCH] virt: Drop ATTRIBUTE_UNUSED for virt_eventloop_timeout_cb
+
+ATTRIBUTE_UNUSED seems to be never was a public part of the libvirt interface
+and leads to the following issue with recent libvirt versions were
+ATTRIBUTE_UNUSED has been renamed to G_GNUC_UNUSED:
+
+src/virt.c:2209:49: error: expected ';', ',' or ')' before 'ATTRIBUTE_UNUSED'
+ 2209 | static void virt_eventloop_timeout_cb(int timer ATTRIBUTE_UNUSED,
+      |                                                 ^~~~~~~~~~~~~~~~
+src/virt.c: In function 'register_event_impl':
+src/virt.c:2222:26: error: 'virt_eventloop_timeout_cb' undeclared (first use in this function)
+ 2222 |                          virt_eventloop_timeout_cb, NULL, NULL) < 0) {
+      |                          ^~~~~~~~~~~~~~~~~~~~~~~~~
+src/virt.c:2222:26: note: each undeclared identifier is reported only once for each function it appears in
+
+Drop ATTRIBUTE_UNUSED here as there is little use from it.
+
+Upstream: https://github.com/collectd/collectd/commit/050877ed952ffc15c849803a9b3e77c5cec15f81
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/virt.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/src/virt.c b/src/virt.c
+index 01c7c777..ee0440e9 100644
+--- a/src/virt.c
++++ b/src/virt.c
+@@ -2205,8 +2205,9 @@ static int domain_lifecycle_event_cb(__attribute__((unused)) virConnectPtr con_,
+   return 0;
+ }
+ 
+-static void virt_eventloop_timeout_cb(int timer ATTRIBUTE_UNUSED,
+-                                      void *timer_info) {}
++static void
++virt_eventloop_timeout_cb(__attribute__((unused)) int timer,
++                          __attribute__((unused)) void *timer_info) {}
+ 
+ static int register_event_impl(void) {
+   if (virEventRegisterDefaultImpl() < 0) {
+-- 
+2.55.0
+
