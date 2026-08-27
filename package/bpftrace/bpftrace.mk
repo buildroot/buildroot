@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BPFTRACE_VERSION = 0.24.2
+BPFTRACE_VERSION = 0.26.1
 BPFTRACE_SITE = $(call github,bpftrace,bpftrace,v$(BPFTRACE_VERSION))
 BPFTRACE_LICENSE = Apache-2.0
 BPFTRACE_LICENSE_FILES = LICENSE
@@ -13,8 +13,6 @@ BPFTRACE_DEPENDENCIES = \
 	bzip2 \
 	cereal \
 	elfutils \
-	host-bison \
-	host-flex \
 	host-vim \
 	libbpf \
 	llvm \
@@ -29,6 +27,7 @@ BPFTRACE_CONF_OPTS += \
 	-DBUILD_SHARED_LIBS:BOOL=OFF \
 	-DBUILD_TESTING:BOOL=OFF \
 	-DCMAKE_CXX_FLAGS="$(TARGET_CXXFLAGS) -I$(STAGING_DIR)/usr/include/bpf" \
-	-DENABLE_MAN:BOOL=OFF
+	-DENABLE_MAN:BOOL=OFF \
+	-DUSE_SYSTEM_LIBBPF:BOOL=ON
 
 $(eval $(cmake-package))
