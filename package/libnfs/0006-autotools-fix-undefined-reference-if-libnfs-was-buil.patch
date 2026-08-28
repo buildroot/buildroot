@@ -1,0 +1,41 @@
+From 8c6bf2f173fdca0a954ed206b3a386e33b5de47b Mon Sep 17 00:00:00 2001
+From: Andreas Ziegler <15275159+aeolio@users.noreply.github.com>
+Date: Sun, 28 Jun 2026 06:20:48 +0000
+Subject: [PATCH] autotools: fix 'undefined reference' if libnfs was built with
+ gnutls support (#587)
+
+Signed-off-by: Andreas Ziegler <15275159+aeolio@users.noreply.github.com>
+Upstream: a3e86449217fe5429c38e2b06c4f7e6b3cd3be32
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ configure.ac | 2 ++
+ libnfs.pc.in | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index a012004..6e5100f 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -284,6 +284,8 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+ [[const char *v = GNUTLS_VERSION;]])],[libnfs_cv_HAVE_TLS=yes],[libnfs_cv_HAVE_TLS=no])])
+ if test x"$libnfs_cv_HAVE_TLS" = x"yes"; then
+     AC_DEFINE(HAVE_TLS,1,[Whether we have linux tls support])
++    # tell pkg-config that gnutls needs to be linked also
++    AC_SUBST(tls_library,"-lgnutls")
+ fi
+ AM_CONDITIONAL([HAVE_TLS], [test $libnfs_cv_HAVE_TLS = yes])
+ 
+diff --git a/libnfs.pc.in b/libnfs.pc.in
+index fdc012c..42be7b2 100644
+--- a/libnfs.pc.in
++++ b/libnfs.pc.in
+@@ -10,5 +10,5 @@ Description: libnfs is a client library for accessing NFS shares over a network.
+ Version: @VERSION@
+ Requires:
+ Conflicts:
+-Libs: -L${libdir} -lnfs
++Libs: -L${libdir} -lnfs @tls_library@
+ Cflags: -I${includedir}
+-- 
+2.55.0
+
