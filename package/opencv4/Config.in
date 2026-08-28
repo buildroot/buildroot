@@ -379,6 +379,8 @@ config BR2_PACKAGE_OPENCV4_WITH_V4L
 config BR2_PACKAGE_OPENCV4_WITH_WEBP
 	bool "webp support"
 	select BR2_PACKAGE_WEBP
+	select BR2_PACKAGE_WEBP_DEMUX
+	select BR2_PACKAGE_WEBP_MUX
 	help
 	  Enable WebP support.
 
