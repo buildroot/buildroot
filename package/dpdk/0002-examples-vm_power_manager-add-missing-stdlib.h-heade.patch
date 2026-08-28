@@ -1,0 +1,46 @@
+From 9f6c3191b3178294d698cdca859ce9dac78517ff Mon Sep 17 00:00:00 2001
+From: Guillaume Gardet <Guillaume.Gardet@arm.com>
+Date: Thu, 29 Aug 2024 16:33:19 +0200
+Subject: [PATCH] examples/vm_power_manager: add missing <stdlib.h> header
+ include for strtol
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+strtol is defined in stdlib.h
+
+Fixes the following build failure:
+
+../examples/vm_power_manager/guest_cli/vm_power_cli_guest.c: In function ‘cmd_query_freq_list_parsed’:
+../examples/vm_power_manager/guest_cli/vm_power_cli_guest.c:208:42: error: implicit declaration of function ‘strtol’; did you mean ‘strtok’? [-Wimplicit-function-declaration]
+  208 |                 lcore_id = (unsigned int)strtol(res->cpu_num, &ep, 10);
+      |                                          ^~~~~~
+      |                                          strtok
+
+Fixes: 0e8f47491f090f44a4956429cb27f6942b6618b0 ("examples/vm_power: add command to query CPU frequency")
+Signed-off-by: Guillaume Gardet <guillaume.gardet@arm.com>
+[Thomas:
+- retrieve patch from
+https://build.opensuse.org/projects/openSUSE:42:Factory-Candidates-Check/packages/dpdk/files/0001-examples-vm_power_manager-add-missing-header.patch?expand=1
+- improve commit message]
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Upstream: https://mails.dpdk.org/archives/dev/2026-August/344552.html
+---
+ examples/vm_power_manager/guest_cli/vm_power_cli_guest.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/examples/vm_power_manager/guest_cli/vm_power_cli_guest.c b/examples/vm_power_manager/guest_cli/vm_power_cli_guest.c
+index 4114593cee..63a59c8b10 100644
+--- a/examples/vm_power_manager/guest_cli/vm_power_cli_guest.c
++++ b/examples/vm_power_manager/guest_cli/vm_power_cli_guest.c
+@@ -6,6 +6,7 @@
+ #include <stdint.h>
+ #include <string.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <termios.h>
+ 
+ #include <cmdline_rdline.h>
+-- 
+2.55.0
+
