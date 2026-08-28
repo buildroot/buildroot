@@ -13,6 +13,9 @@ BPFTOOL_LICENSE_FILES = LICENSE LICENSE.BSD-2-Clause LICENSE.GPL-2.0
 BPFTOOL_DEPENDENCIES = binutils elfutils
 HOST_BPFTOOL_DEPENDENCIES = host-elfutils host-pkgconf host-zlib
 
+# Disable the auto detection of features on the host system.
+HOST_BPFTOOL_MAKE_OPTS = FEATURE_TESTS=
+
 ifeq ($(BR2_PACKAGE_LIBCAP),y)
 BPFTOOL_DEPENDENCIES += libcap
 endif
@@ -28,7 +31,7 @@ endef
 
 define HOST_BPFTOOL_BUILD_CMDS
 	$(HOST_MAKE_ENV) $(HOST_CONFIGURE_OPTS) $(MAKE) \
-		-C $(@D)/src
+		-C $(@D)/src $(HOST_BPFTOOL_MAKE_OPTS)
 endef
 
 define BPFTOOL_INSTALL_TARGET_CMDS
