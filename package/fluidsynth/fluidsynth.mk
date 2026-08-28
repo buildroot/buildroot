@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FLUIDSYNTH_VERSION = 2.5.7
+FLUIDSYNTH_VERSION = 2.4.7
 FLUIDSYNTH_SITE = $(call github,FluidSynth,fluidsynth,v$(FLUIDSYNTH_VERSION))
 FLUIDSYNTH_LICENSE = LGPL-2.1+
 FLUIDSYNTH_LICENSE_FILES = LICENSE
@@ -46,12 +46,6 @@ else
 FLUIDSYNTH_CONF_OPTS += -Denable-libsndfile=0
 endif
 
-ifeq ($(BR2_PACKAGE_FLUIDSYNTH_NATIVE_DLS),y)
-FLUIDSYNTH_CONF_OPTS += -Denable-native-dls=1
-else
-FLUIDSYNTH_CONF_OPTS += -Denable-native-dls=0
-endif
-
 ifeq ($(BR2_PACKAGE_FLUIDSYNTH_PORTAUDIO),y)
 FLUIDSYNTH_CONF_OPTS += -Denable-portaudio=1
 FLUIDSYNTH_DEPENDENCIES += portaudio
@@ -73,11 +67,11 @@ else
 FLUIDSYNTH_CONF_OPTS += -Denable-readline=0
 endif
 
-ifeq ($(BR2_PACKAGE_FLUIDSYNTH_SDL3),y)
-FLUIDSYNTH_CONF_OPTS += -Denable-sdl3=1
-FLUIDSYNTH_DEPENDENCIES += sdl3
+ifeq ($(BR2_PACKAGE_FLUIDSYNTH_SDL2),y)
+FLUIDSYNTH_CONF_OPTS += -Denable-sdl2=1
+FLUIDSYNTH_DEPENDENCIES += sdl2
 else
-FLUIDSYNTH_CONF_OPTS += -Denable-sdl3=0
+FLUIDSYNTH_CONF_OPTS += -Denable-sdl2=0
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)

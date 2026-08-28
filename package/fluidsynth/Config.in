@@ -84,11 +84,15 @@ comment "pulseaudio support needs a toolchain w/ dynamic library, wchar, threads
 	depends on BR2_PACKAGE_PULSEAUDIO_HAS_ATOMIC
 	depends on BR2_STATIC_LIBS || !BR2_USE_MMU || !BR2_TOOLCHAIN_HAS_THREADS
 
-config BR2_PACKAGE_FLUIDSYNTH_SDL3
-	bool "sdl3"
-	select BR2_PACKAGE_SDL3
+config BR2_PACKAGE_FLUIDSYNTH_SDL2
+	bool "sdl2"
+	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_SDL2
 	help
-	  Enable SDL3 audio support.
+	  Enable SDL2 audio support.
+
+comment "SDL2 audio support needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
 
 comment "Misc options"
 
@@ -109,15 +113,6 @@ config BR2_PACKAGE_FLUIDSYNTH_FLOATS
 	help
 	  Enable 32-bit single precision float support, instead of
 	  64-bit double precision floats for DSP samples.
-
-config BR2_PACKAGE_FLUIDSYNTH_NATIVE_DLS
-	bool "Native DLS soundfont"
-	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # C++17
-	help
-	  Enable the native DLS soundfont format support.
-
-comment "native dls soundfont support needs gcc >= 7"
-	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_7
 
 config BR2_PACKAGE_FLUIDSYNTH_READLINE
 	bool "readline"
