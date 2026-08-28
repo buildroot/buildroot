@@ -1,0 +1,11 @@
+config BR2_PACKAGE_NETTEST
+	bool "nettest"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_RUSTC
+	help
+	  nettest measures download and upload throughput, latency,
+	  jitter and packet loss using the RMBT protocol. The same
+	  binary runs as either the client or the measurement server
+	  it tests against.
+
+	  https://github.com/specure/nettest
