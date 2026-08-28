@@ -112,6 +112,10 @@ ifeq ($(BR2_PACKAGE_LIBBPF),y)
 DPDK_DEPENDENCIES += libbpf
 endif
 
+ifeq ($(BR2_PACKAGE_LIBVIRT),y)
+DPDK_DEPENDENCIES += libvirt
+endif
+
 ifeq ($(BR2_PACKAGE_RDMA_CORE),y)
 DPDK_DEPENDENCIES += rdma-core
 endif
