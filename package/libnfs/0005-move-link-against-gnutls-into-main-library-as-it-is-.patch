@@ -1,0 +1,29 @@
+From 74437cb4e9d47daeeb3f851c5b14eb0d207ceb17 Mon Sep 17 00:00:00 2001
+From: fundawang <fundawang@yeah.net>
+Date: Sun, 26 Jan 2025 16:39:59 +0800
+Subject: [PATCH] move link against gnutls into main library, as it is
+ referenced by tls/libtls.la
+
+Upstream: 546c9ed8624403078ef993138b56dce4c3558523
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ utils/Makefile.am | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/utils/Makefile.am b/utils/Makefile.am
+index bd584b8..2ae7636 100644
+--- a/utils/Makefile.am
++++ b/utils/Makefile.am
+@@ -16,9 +16,6 @@ AM_CPPFLAGS = \
+ 	"-D_U_=__attribute__((unused))"
+ 
+ COMMON_LIBS = ../lib/libnfs.la $(LIBSOCKET)
+-if HAVE_TLS
+-COMMON_LIBS += -lgnutls
+-endif
+ 
+ nfs_cat_LDADD = $(COMMON_LIBS)
+ nfs_ls_LDADD = $(COMMON_LIBS)
+-- 
+2.55.0
+
