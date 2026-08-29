@@ -68,7 +68,7 @@ arches = {
         'prefix': 'arm',
     },
     'm68k-68xxx': {
-        'conditions': ['BR2_m68k_m68k'],
+        'conditions': ['BR2_m68k_m68k', 'BR2_USE_MMU'],
         'test_options': ['BR2_m68k', 'BR2_m68k_68040'],
         'prefix': 'm68k',
     },
@@ -156,7 +156,7 @@ arches = {
         'prefix': 'powerpc64le',
     },
     'riscv32-ilp32d': {
-        'conditions': ['BR2_riscv', 'BR2_riscv_g', 'BR2_RISCV_32', 'BR2_RISCV_ABI_ILP32D'],
+        'conditions': ['BR2_riscv', 'BR2_riscv_g', 'BR2_RISCV_32', 'BR2_RISCV_ABI_ILP32D', 'BR2_USE_MMU'],
         'prefix': 'riscv32',
     },
     'riscv64-lp64d': {
@@ -269,7 +269,7 @@ arches = {
         'prefix': 'i686',
     },
     'xtensa-lx60': {
-        'conditions': ['BR2_xtensa', 'BR2_XTENSA_CUSTOM', 'BR2_XTENSA_LITTLE_ENDIAN'],
+        'conditions': ['BR2_xtensa', 'BR2_XTENSA_CUSTOM', 'BR2_XTENSA_LITTLE_ENDIAN', 'BR2_USE_MMU'],
         'prefix': 'xtensa',
     },
 }
