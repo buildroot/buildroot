@@ -2223,6 +2223,7 @@ class TestExternalToolchainBootlinRiscv32ilp32dGlibcBleedingEdge(TestExternalToo
         BR2_riscv_g=y
         BR2_RISCV_32=y
         BR2_RISCV_ABI_ILP32D=y
+        BR2_USE_MMU=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_RISCV32_ILP32D_GLIBC_BLEEDING_EDGE=y
@@ -2240,6 +2241,7 @@ class TestExternalToolchainBootlinRiscv32ilp32dGlibcStable(TestExternalToolchain
         BR2_riscv_g=y
         BR2_RISCV_32=y
         BR2_RISCV_ABI_ILP32D=y
+        BR2_USE_MMU=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_RISCV32_ILP32D_GLIBC_STABLE=y
@@ -2257,6 +2259,7 @@ class TestExternalToolchainBootlinRiscv32ilp32dMuslBleedingEdge(TestExternalTool
         BR2_riscv_g=y
         BR2_RISCV_32=y
         BR2_RISCV_ABI_ILP32D=y
+        BR2_USE_MMU=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_RISCV32_ILP32D_MUSL_BLEEDING_EDGE=y
@@ -2274,6 +2277,7 @@ class TestExternalToolchainBootlinRiscv32ilp32dMuslStable(TestExternalToolchain)
         BR2_riscv_g=y
         BR2_RISCV_32=y
         BR2_RISCV_ABI_ILP32D=y
+        BR2_USE_MMU=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_RISCV32_ILP32D_MUSL_STABLE=y
@@ -2291,6 +2295,7 @@ class TestExternalToolchainBootlinRiscv32ilp32dUclibcBleedingEdge(TestExternalTo
         BR2_riscv_g=y
         BR2_RISCV_32=y
         BR2_RISCV_ABI_ILP32D=y
+        BR2_USE_MMU=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_RISCV32_ILP32D_UCLIBC_BLEEDING_EDGE=y
@@ -2308,6 +2313,7 @@ class TestExternalToolchainBootlinRiscv32ilp32dUclibcStable(TestExternalToolchai
         BR2_riscv_g=y
         BR2_RISCV_32=y
         BR2_RISCV_ABI_ILP32D=y
+        BR2_USE_MMU=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_RISCV32_ILP32D_UCLIBC_STABLE=y
@@ -3332,6 +3338,7 @@ class TestExternalToolchainBootlinXtensalx60UclibcBleedingEdge(TestExternalToolc
         BR2_xtensa=y
         BR2_XTENSA_CUSTOM=y
         BR2_XTENSA_LITTLE_ENDIAN=y
+        BR2_USE_MMU=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_XTENSA_LX60_UCLIBC_BLEEDING_EDGE=y
@@ -3348,6 +3355,7 @@ class TestExternalToolchainBootlinXtensalx60UclibcStable(TestExternalToolchain):
         BR2_xtensa=y
         BR2_XTENSA_CUSTOM=y
         BR2_XTENSA_LITTLE_ENDIAN=y
+        BR2_USE_MMU=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_XTENSA_LX60_UCLIBC_STABLE=y
