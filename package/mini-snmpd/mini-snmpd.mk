@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MINI_SNMPD_VERSION = 2.0
+MINI_SNMPD_VERSION = 2.1
 MINI_SNMPD_SITE = https://github.com/troglobit/mini-snmpd/releases/download/v$(MINI_SNMPD_VERSION)
 MINI_SNMPD_LICENSE = GPL-2.0
 MINI_SNMPD_LICENSE_FILES = COPYING
