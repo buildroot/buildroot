@@ -1,0 +1,36 @@
+From cd29aa61d299c82d82d3285215fc4fc65e4d4fb9 Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Sun, 30 Aug 2026 12:00:00 +0200
+Subject: [PATCH] Fix incomplete 'struct tm' type on uClibc
+
+Fix a build failure [1] reported by Buildroot autobuild for the
+mips/uClibc configuration:
+
+  Date.cc:98:28: error: return type 'struct trantor::tm' is incomplete
+     98 | struct tm Date::tmStruct() const
+        |                            ^~~~~
+
+Add the missing include to Date.h.
+
+[1] https://autobuild.buildroot.org/results/e48e0fc1b95a8ad5de964b1e6d12bc45ac39f0b4/
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://github.com/an-tao/trantor/pull/415
+---
+ trantor/utils/Date.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/trantor/trantor/utils/Date.h b/trantor/trantor/utils/Date.h
+index 4367d76e0305..41b02d355d14 100644
+--- a/trantor/trantor/utils/Date.h
++++ b/trantor/trantor/utils/Date.h
+@@ -16,6 +16,7 @@
+ 
+ #include <trantor/exports.h>
+ #include <stdint.h>
++#include <time.h>
+ #include <string>
+ 
+ namespace trantor
+-- 
+2.43.0
+
