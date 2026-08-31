@@ -11,6 +11,9 @@ DRACUT_LICENSE_FILES = COPYING
 DRACUT_CPE_ID_VALID = YES
 
 HOST_DRACUT_DEPENDENCIES = host-pkgconf host-kmod host-cross-ldd
+# Dracut is not a real autotools package, and the hand-written
+# ./configure script does not preserve LDFLAGS for make.
+HOST_DRACUT_MAKE_ENV = $(HOST_CONFIGURE_OPTS)
 HOST_DRACUT_INSTALL_OPTS = systemdsystemunitdir="" install
 
 ifeq ($(BR2_PACKAGE_HOST_RUSTC),y)
