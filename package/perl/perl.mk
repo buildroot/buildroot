@@ -32,6 +32,15 @@ define PERL_CROSS_EXTRACT
 endef
 PERL_POST_EXTRACT_HOOKS += PERL_CROSS_EXTRACT
 
+# We need to patch perl-cross, but perl-cross is extracted over the
+# target perl sources only (and not the host variant). So we apply the
+# patch only for the target case using a post patch hook.
+define PERL_CROSS_PATCH
+	$(APPLY_PATCHES) $(@D) $(PERL_PKGDIR)/perl-cross \
+		0001-configure-keep-_GNU_SOURCE-in-build-flags.patch
+endef
+PERL_POST_PATCH_HOOKS += PERL_CROSS_PATCH
+
 # Even though perl is not an autotools-package, it uses config.sub and
 # config.guess. Up-to-date versions of these files may be needed to build perl
 # on newer host architectures, so we borrow the hook which updates them from the
