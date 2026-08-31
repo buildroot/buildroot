@@ -112,6 +112,22 @@ config BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
 	depends on BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_USES_MUSL
 	depends on BR2_PACKAGE_HOST_RUSTC_ARCH_SUPPORTS
 
+# Not all the targets above provide 64-bit atomics: rustc sets
+# max_atomic_width = 32 for armv5te-unknown-linux-{gnu,musl}eabi and for
+# powerpc-unknown-linux-gnu, so core::sync::atomic::{AtomicU64,AtomicI64}
+# do not exist there. This can be checked with:
+#   rustc --print cfg --target <target> | grep target_has_atomic
+# Target rust packages whose crates use 64-bit atomics unconditionally,
+# i.e. without a cfg(target_has_atomic = "64") guard, should depend on
+# this option.
+config BR2_PACKAGE_HOST_RUSTC_TARGET_HAS_ATOMIC_U64
+	bool
+	# Excludes armv5te-unknown-linux-{gnu,musl}eabi and
+	# powerpc-unknown-linux-gnu. BR2_powerpc is 32-bit only:
+	# BR2_powerpc64 and BR2_powerpc64le are separate symbols, both
+	# selecting BR2_ARCH_IS_64, and are not affected.
+	default y if !BR2_ARM_CPU_ARMV5 && !BR2_powerpc
+
 config BR2_PACKAGE_HOST_RUSTC_ARCH
 	string
 	default "armv5te" if BR2_ARM_CPU_ARMV5
