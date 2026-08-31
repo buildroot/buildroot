@@ -51,7 +51,7 @@ endif
 OPENSSH_DEPENDENCIES = host-pkgconf zlib openssl
 
 # crypt() in libcrypt only required for sshd.
-ifeq ($(BR2_PACKAGE_OPENSSH_SERVER)$(BR2_PACKAGE_LIBXCRYPT),yy)
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
 OPENSSH_DEPENDENCIES += libxcrypt
 endif
 
