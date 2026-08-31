@@ -23,6 +23,10 @@ class TestMdnsd(infra.basetest.BRTest):
                                     "-net", "user"])
         self.emulator.login()
 
+        # Restart mdnsd after setting the date in emulator.login() setup.
+        cmd = "/etc/init.d/S50mdnsd restart"
+        self.assertRunOk(cmd, timeout=30)
+
         # We check the program can execute.
         self.assertRunOk("mdnsd -v")
 
