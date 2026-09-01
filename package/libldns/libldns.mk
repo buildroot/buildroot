@@ -23,6 +23,9 @@ LIBLDNS_CONF_OPTS = \
 	--without-pyldns \
 	--without-pyldnsx
 
+# 0001-fix-cve-2026-10846.patch
+LIBLDNS_IGNORE_CVES += CVE-2026-10846
+
 ifeq ($(BR2_PACKAGE_LIBOPENSSL),y)
 LIBLDNS_CONF_OPTS += --enable-dane-verify
 else
