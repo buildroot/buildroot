@@ -1,0 +1,195 @@
+From 0276640641f58936d0862507472b8d231ab23f42 Mon Sep 17 00:00:00 2001
+From: Max Kellermann <max@musicpd.org>
+Date: Fri, 26 Jun 2026 21:26:56 +0200
+Subject: [PATCH] support libfmt 12.2.0
+
+An API change to libfmt 12.2.0 changed the meaning of the <fmt/core.h>
+header to no longer provide fmt::format().
+
+Upstream: https://github.com/MusicPlayerDaemon/ncmpc/commit/b28f4a5987615ac3074440a5ee14ba55f5a03f99
+
+[Bernd: backported to 0.52]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/BasicMarquee.cxx     | 2 +-
+ src/ChatPage.cxx         | 3 +--
+ src/FileBrowserPage.cxx  | 1 +
+ src/KeyDefPage.cxx       | 2 ++
+ src/Main.cxx             | 3 +--
+ src/SearchPage.cxx       | 2 ++
+ src/TagListPage.cxx      | 2 ++
+ src/page/FindSupport.cxx | 2 +-
+ src/page/Page.cxx        | 2 ++
+ src/save_playlist.cxx    | 3 +--
+ src/screen.cxx           | 1 +
+ src/screen_client.cxx    | 2 +-
+ 12 files changed, 16 insertions(+), 9 deletions(-)
+
+diff --git a/src/BasicMarquee.cxx b/src/BasicMarquee.cxx
+index f25e33a6..9b887812 100644
+--- a/src/BasicMarquee.cxx
++++ b/src/BasicMarquee.cxx
+@@ -4,7 +4,7 @@
+ #include "BasicMarquee.hxx"
+ #include "util/LocaleString.hxx"
+ 
+-#include <fmt/core.h>
++#include <fmt/format.h>
+ 
+ #include <assert.h>
+ #include <string.h>
+diff --git a/src/ChatPage.cxx b/src/ChatPage.cxx
+index 6b1a1587..efc403f7 100644
+--- a/src/ChatPage.cxx
++++ b/src/ChatPage.cxx
+@@ -13,10 +13,9 @@
+ #include "client/mpdclient.hxx"
+ #include "util/StringAPI.hxx"
+ 
++#include <fmt/format.h>
+ #include <mpd/idle.h>
+ 
+-#include <fmt/core.h>
+-
+ #include <string.h>
+ #include <stdlib.h>
+ 
+diff --git a/src/FileBrowserPage.cxx b/src/FileBrowserPage.cxx
+index 0f510fe4..e6231bc1 100644
+--- a/src/FileBrowserPage.cxx
++++ b/src/FileBrowserPage.cxx
+@@ -19,6 +19,7 @@
+ #include "client/mpdclient.hxx"
+ #include "util/UriUtil.hxx"
+ 
++#include <fmt/format.h>
+ #include <mpd/client.h>
+ 
+ #include <string>
+diff --git a/src/KeyDefPage.cxx b/src/KeyDefPage.cxx
+index 123b0182..b5925e9c 100644
+--- a/src/KeyDefPage.cxx
++++ b/src/KeyDefPage.cxx
+@@ -18,6 +18,8 @@
+ #include "ui/TextListRenderer.hxx"
+ #include "util/SPrintf.hxx"
+ 
++#include <fmt/format.h>
++
+ #include <assert.h>
+ #include <errno.h>
+ #include <string.h>
+diff --git a/src/Main.cxx b/src/Main.cxx
+index 3f0c4da6..cdd8ac98 100644
+--- a/src/Main.cxx
++++ b/src/Main.cxx
+@@ -22,12 +22,11 @@
+ #include "ConfigFile.hxx"
+ #endif
+ 
++#include <fmt/format.h>
+ #include <mpd/client.h>
+ 
+ #include <curses.h>
+ 
+-#include <fmt/core.h>
+-
+ #include <assert.h>
+ #include <stdio.h>
+ #include <string.h>
+diff --git a/src/SearchPage.cxx b/src/SearchPage.cxx
+index 483a92e8..d4de6552 100644
+--- a/src/SearchPage.cxx
++++ b/src/SearchPage.cxx
+@@ -17,6 +17,8 @@
+ #include "client/mpdclient.hxx"
+ #include "util/StringAPI.hxx"
+ 
++#include <fmt/format.h>
++
+ #include <iterator>
+ 
+ #include <string.h>
+diff --git a/src/TagListPage.cxx b/src/TagListPage.cxx
+index bb73cd76..4b5c6fae 100644
+--- a/src/TagListPage.cxx
++++ b/src/TagListPage.cxx
+@@ -11,6 +11,8 @@
+ #include "client/mpdclient.hxx"
+ #include "util/StringUTF8.hxx"
+ 
++#include <fmt/format.h>
++
+ #include <algorithm>
+ 
+ #include <assert.h>
+diff --git a/src/page/FindSupport.cxx b/src/page/FindSupport.cxx
+index 9832dd3b..8664efb5 100644
+--- a/src/page/FindSupport.cxx
++++ b/src/page/FindSupport.cxx
+@@ -11,7 +11,7 @@
+ #include "ui/Options.hxx"
+ #include "co/InvokeTask.hxx"
+ 
+-#include <fmt/core.h>
++#include <fmt/format.h>
+ 
+ #define FIND_PROMPT  _("Find")
+ #define RFIND_PROMPT _("Find backward")
+diff --git a/src/page/Page.cxx b/src/page/Page.cxx
+index 6576e7b0..5186834c 100644
+--- a/src/page/Page.cxx
++++ b/src/page/Page.cxx
+@@ -6,6 +6,8 @@
+ #include "ui/Window.hxx"
+ #include "util/Exception.hxx"
+ 
++#include <fmt/format.h>
++
+ void
+ Page::OnClose() noexcept
+ {
+diff --git a/src/save_playlist.cxx b/src/save_playlist.cxx
+index cb248c56..b9a2278c 100644
+--- a/src/save_playlist.cxx
++++ b/src/save_playlist.cxx
+@@ -14,10 +14,9 @@
+ #include "client/mpdclient.hxx"
+ #include "co/InvokeTask.hxx"
+ 
++#include <fmt/format.h>
+ #include <mpd/client.h>
+ 
+-#include <fmt/core.h>
+-
+ #include <stdio.h>
+ 
+ #ifndef NCMPC_MINI
+diff --git a/src/screen.cxx b/src/screen.cxx
+index 4a50d4df..1ee0b0f9 100644
+--- a/src/screen.cxx
++++ b/src/screen.cxx
+@@ -28,6 +28,7 @@
+ #include "TabBar.hxx"
+ #endif
+ 
++#include <fmt/format.h>
+ #include <mpd/client.h>
+ 
+ ScreenManager::PageMap::iterator
+diff --git a/src/screen_client.cxx b/src/screen_client.cxx
+index 4466d476..1bbb1c74 100644
+--- a/src/screen_client.cxx
++++ b/src/screen_client.cxx
+@@ -7,7 +7,7 @@
+ #include "charset.hxx"
+ #include "Interface.hxx"
+ 
+-#include <fmt/core.h>
++#include <fmt/format.h>
+ 
+ void
+ screen_database_update(Interface &interface, struct mpdclient &c, const char *path)
+-- 
+2.47.3
+
