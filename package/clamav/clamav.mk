@@ -57,6 +57,9 @@ CLAMAV_IGNORE_CVES += CVE-2026-20339
 # 0012-libclamav-guard-pdf-hex-string-newline-skip-98.patch
 CLAMAV_IGNORE_CVES += CVE-2026-20346
 
+# 0013-libclamav-harden-mach-o-section-validation-96.patch
+CLAMAV_IGNORE_CVES += CVE-2026-20347
+
 CLAMAV_DEPENDENCIES = \
 	bzip2 \
 	host-pkgconf \
