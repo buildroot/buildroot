@@ -51,6 +51,9 @@ CLAMAV_IGNORE_CVES += CVE-2026-20244
 # 0010-libclamav-fix-gpt-partition-name-conversion-index-103.patch
 CLAMAV_IGNORE_CVES += CVE-2026-20345
 
+# 0011-libclamav-fix-pespin-rebuilt-section-size-overflow-101.patch
+CLAMAV_IGNORE_CVES += CVE-2026-20339
+
 CLAMAV_DEPENDENCIES = \
 	bzip2 \
 	host-pkgconf \
