@@ -30,6 +30,9 @@ CLAMAV_IGNORE_CVES += CVE-2026-20031
 # 0002-libclamav-fix-pespin-cleanup-bitmap-tracking-47.patch
 CLAMAV_IGNORE_CVES += CVE-2026-20217
 
+# 0003-libclamav-fix-aspack-triggered-rebuild-pe-overflow-49.patch
+CLAMAV_IGNORE_CVES += CVE-2026-20213
+
 CLAMAV_DEPENDENCIES = \
 	bzip2 \
 	host-pkgconf \
