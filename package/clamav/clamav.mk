@@ -23,6 +23,10 @@ CLAMAV_CPE_ID_VENDOR = clamav
 CLAMAV_SELINUX_MODULES = clamav
 # affects only Cisco devices
 CLAMAV_IGNORE_CVES += CVE-2016-1405
+
+# 0001-fix-possible-panic-when-scanning-some-html-files.patch
+CLAMAV_IGNORE_CVES += CVE-2026-20031
+
 CLAMAV_DEPENDENCIES = \
 	bzip2 \
 	host-pkgconf \
