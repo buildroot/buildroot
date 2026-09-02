@@ -27,6 +27,9 @@ CLAMAV_IGNORE_CVES += CVE-2016-1405
 # 0001-fix-possible-panic-when-scanning-some-html-files.patch
 CLAMAV_IGNORE_CVES += CVE-2026-20031
 
+# 0002-libclamav-fix-pespin-cleanup-bitmap-tracking-47.patch
+CLAMAV_IGNORE_CVES += CVE-2026-20217
+
 CLAMAV_DEPENDENCIES = \
 	bzip2 \
 	host-pkgconf \

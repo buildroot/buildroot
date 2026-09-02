@@ -1,0 +1,46 @@
+From: "Val S." <valsnyde@cisco.com>
+Date: Tue, 16 Jun 2026 11:43:04 -0400
+Subject: Libclamav: fix PESpin cleanup bitmap tracking (#47)
+
+The PESpin unpacker mixes heap-owned section buffers with pointers
+back into the original PE image. Its final cleanup loop is supposed
+to walk a copy of the ownership bitmap and free only the entries
+that were allocated by the unpacker.
+
+That loop checked bitmap but shifted bitman instead. When the low
+bit was set, bitmap never changed and the loop could free every
+entry in sects, including pointers into the input buffer. A crafted
+sample can drive this path after an allocation failure and crash in
+free() with an invalid pointer.
+
+Shift bitmap in the cleanup loop so the free decision advances one
+section at a time using the same working bitmap that the condition
+already tests. This matches the existing intent of saving bitmap as
+a disposable free bitmap copy and avoids touching the original
+bitman state.
+
+Credit: Atuin - Automated Vulnerability Discovery Engine, Tianchu Chen of Tencent Xuanwu Lab.
+
+CLAM-2961
+
+---
+Upstream: https://github.com/Cisco-Talos/clamav/commit/2410b002feb151500fa6cdee3233fe97c9fe865a
+CVE: CVE-2026-20217
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ libclamav/spin.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libclamav/spin.c b/libclamav/spin.c
+index a741fb83be..d0470b317a 100644
+--- a/libclamav/spin.c
++++ b/libclamav/spin.c
+@@ -508,7 +508,7 @@ int unspin(char *src, int ssize, struct cli_exe_section *sections, int sectcnt,
+     for (j = 0; j < sectcnt; j++) {
+         if (bitmap & 1)
+             free(sects[j]);
+-        bitman = bitman >> 1 & 0x7fffffff;
++        bitmap = bitmap >> 1 & 0x7fffffff;
+     }
+     free(sects);
+     return 1; /* :( */
