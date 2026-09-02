@@ -60,6 +60,9 @@ CLAMAV_IGNORE_CVES += CVE-2026-20346
 # 0013-libclamav-harden-mach-o-section-validation-96.patch
 CLAMAV_IGNORE_CVES += CVE-2026-20347
 
+# 0014-libclamav-enforce-xar-limits-against-inflated-toc-size.patch
+CLAMAV_IGNORE_CVES += CVE-2026-20348
+
 CLAMAV_DEPENDENCIES = \
 	bzip2 \
 	host-pkgconf \
