@@ -36,6 +36,9 @@ CLAMAV_IGNORE_CVES += CVE-2026-20213
 # 0004-libclamav-enforce-installshield-extraction-limits-55.patch
 CLAMAV_IGNORE_CVES += CVE-2026-20216
 
+# 0005-libclamav-fix-fsg-section-loop-underflow-51.patch
+CLAMAV_IGNORE_CVES += CVE-2026-20214
+
 CLAMAV_DEPENDENCIES = \
 	bzip2 \
 	host-pkgconf \

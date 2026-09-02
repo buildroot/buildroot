@@ -1,0 +1,40 @@
+From: "Val S." <valsnyde@cisco.com>
+Date: Wed, 17 Jun 2026 09:25:13 -0400
+Subject: Libclamav: fix FSG section loop underflow (#51)
+
+A malformed FSG sample can leave the recovered section count at
+zero in the v1.31 unpacker path. The code then allocates space for
+one section entry but initializes recovered RVAs with a loop bound
+that underflows, causing an out-of-bounds write past the end of the
+sections array.
+
+Fix the loop bound by iterating while t is strictly less than the
+section count. This preserves the intended behavior for valid
+nonzero counts and correctly performs zero iterations when no
+original sections were recovered.
+
+Credit: Trail of Bits, in collaboration with Anthropic
+
+CLAM-2966
+
+---
+Upstream: https://github.com/Cisco-Talos/clamav/commit/042bc35d0a89d6658de30ebc8494b3532e73dcc8
+CVE: CVE-2026-20214
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ libclamav/pe.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libclamav/pe.c b/libclamav/pe.c
+index 23f4c4ae0d..c894ec7ca8 100644
+--- a/libclamav/pe.c
++++ b/libclamav/pe.c
+@@ -3753,7 +3753,7 @@ int cli_scanpe(cli_ctx *ctx)
+         }
+ 
+         sections[0].rva = newedi;
+-        for (t = 0; t <= (uint32_t)sectcnt - 1; t++)
++        for (t = 0; t < (uint32_t)sectcnt; t++)
+             sections[t + 1].rva = (((support[t * 2] | (support[t * 2 + 1] << 8)) - 2) << 12) - EC32(peinfo->pe_opt.opt32.ImageBase);
+ 
+         if (!peinfo->sections[i + 1].rsz || !(src = fmap_need_off_once(map, peinfo->sections[i + 1].raw, ssize))) {
