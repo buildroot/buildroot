@@ -45,6 +45,9 @@ CLAMAV_IGNORE_CVES += CVE-2026-20243
 # 0007-libclamav-fix-7z-substream-count-overflow-53.patch
 CLAMAV_IGNORE_CVES += CVE-2026-20215
 
+# 0008-fix-32-bit-dmg-mish-size-checks-65.patch
+CLAMAV_IGNORE_CVES += CVE-2026-20244
+
 CLAMAV_DEPENDENCIES = \
 	bzip2 \
 	host-pkgconf \
