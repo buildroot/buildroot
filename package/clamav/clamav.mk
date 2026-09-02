@@ -48,6 +48,9 @@ CLAMAV_IGNORE_CVES += CVE-2026-20215
 # 0008-fix-32-bit-dmg-mish-size-checks-65.patch
 CLAMAV_IGNORE_CVES += CVE-2026-20244
 
+# 0010-libclamav-fix-gpt-partition-name-conversion-index-103.patch
+CLAMAV_IGNORE_CVES += CVE-2026-20345
+
 CLAMAV_DEPENDENCIES = \
 	bzip2 \
 	host-pkgconf \

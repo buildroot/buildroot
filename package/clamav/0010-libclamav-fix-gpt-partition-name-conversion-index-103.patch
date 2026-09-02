@@ -1,0 +1,37 @@
+From: "Val S." <valsnyde@cisco.com>
+Date: Tue, 28 Jul 2026 09:02:34 -0400
+Subject: Libclamav: fix GPT partition name conversion index (#103)
+
+The GPT partition parser converted the UTF-16 partition name with the outer
+partition loop index instead of the inner name loop index. A GPT with enough
+partition entries could read and write past the end of the stack-allocated
+partition entry while scanning disk images.
+
+Use the name loop index so each UTF-16 code unit is converted in bounds.
+
+Credit: Atuin - Automated Vulnerability Discovery Engine, Tianchu Chen of
+Tencent Xuanwu Lab.
+
+CLAM-2999
+
+---
+Upstream: https://github.com/Cisco-Talos/clamav/commit/434617ed00218dacdf3274dca5279f052c3f1d46
+CVE: CVE-2026-20345
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ libclamav/gpt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libclamav/gpt.c b/libclamav/gpt.c
+index c92cf6bc97..9cc05d42f8 100644
+--- a/libclamav/gpt.c
++++ b/libclamav/gpt.c
+@@ -303,7 +303,7 @@ static cl_error_t gpt_scan_partitions(cli_ctx *ctx, struct gpt_header hdr, size_
+         gpe.lastLBA    = le64_to_host(gpe.lastLBA);
+         gpe.attributes = le64_to_host(gpe.attributes);
+         for (j = 0; j < 36; ++j) {
+-            gpe.name[i] = le16_to_host(gpe.name[i]);
++            gpe.name[j] = le16_to_host(gpe.name[j]);
+         }
+ 
+         /* check that partition is not empty and within a valid location */
