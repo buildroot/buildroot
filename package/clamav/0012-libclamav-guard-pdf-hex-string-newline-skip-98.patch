@@ -1,0 +1,36 @@
+From: "Val S." <valsnyde@cisco.com>
+Date: Tue, 28 Jul 2026 09:05:37 -0400
+Subject: Libclamav: guard PDF hex string newline skip (#98)
+
+The PDF hex-string reader skips newlines immediately after the opening
+angle bracket. A malformed string can consume the remaining bounded input
+before the parser searches for the closing bracket.
+
+Return early when the bounded length is exhausted so the parser does not
+pass an underflowed length to memchr().
+
+Reported-by: Tristan (@TristanInSec)
+
+CLAM-3002
+
+---
+Upstream: https://github.com/Cisco-Talos/clamav/commit/354f71e192168b6c966c4d15122b455cbb2d6ecb
+CVE: CVE-2026-20346
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ libclamav/pdf.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/libclamav/pdf.c b/libclamav/pdf.c
+index 51b97a0a17..7769a6a6ec 100644
+--- a/libclamav/pdf.c
++++ b/libclamav/pdf.c
+@@ -2680,6 +2680,8 @@ static char *pdf_readstring(const char *q0, int len, const char *key, unsigned *
+             start = ++q;
+             len -= 1;
+         }
++        if (len <= 0)
++            return NULL;
+         q = memchr(q + 1, '>', len - 1);
+         if (!q)
+             return NULL;
