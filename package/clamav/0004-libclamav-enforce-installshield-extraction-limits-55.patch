@@ -1,0 +1,126 @@
+From: "Val S." <valsnyde@cisco.com>
+Date: Tue, 16 Jun 2026 23:51:14 -0400
+Subject: Libclamav: enforce InstallShield extraction limits (#55)
+
+A multi-chunk InstallShield payload could bypass the intended file
+size limits because the extractor checked zlib's per-stream total_out
+instead of the cumulative bytes written across all chunks. The
+extraction path also collapsed timeout and maxfiles limit hits to
+CL_BREAK, and the header parser trusted declared sizes that can be
+forged to skip scanning a small payload entirely.
+
+Fix this by enforcing maxfilesize and maxscansize against the
+cumulative output written while inflating and by propagating hard-stop
+limit errors out of is_extract_cab(). Keep the parser preflight, but
+only use cli_checklimits() for non-size checks before extraction so
+size decisions are based on actual inflated output instead of
+attacker-controlled metadata.
+
+Thanks to Mizu for reporting this issue.
+
+CLAM-2956
+
+---
+Upstream: https://github.com/Cisco-Talos/clamav/commit/52f38b9e14c379615b244874802ad57bf37483c4
+CVE: CVE-2026-20216
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ libclamav/ishield.c | 60 +++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 50 insertions(+), 10 deletions(-)
+
+diff --git a/libclamav/ishield.c b/libclamav/ishield.c
+index 53035c6398..50fb5813d0 100644
+--- a/libclamav/ishield.c
++++ b/libclamav/ishield.c
+@@ -658,10 +658,15 @@ static cl_error_t is_parse_hdr(cli_ctx *ctx, struct IS_CABSTUFF *c)
+                         if (file_size) {
+                             unsigned int j;
+                             cl_error_t cabret = CL_SUCCESS;
++                            cl_error_t limitret;
+ 
+-                            if (ctx->engine->maxfilesize && file_csize > ctx->engine->maxfilesize) {
+-                                cli_dbgmsg("is_parse_hdr: skipping file due to size limits (%lu vs %lu)\n", (unsigned long int)file_csize, (unsigned long int)ctx->engine->maxfilesize);
+-                                break;
++                            limitret = cli_checklimits("InstallShield", ctx, 0, 0, 0);
++                            if (limitret != CL_SUCCESS) {
++                                if (file_name != emptyname)
++                                    fmap_unneed_ptr(map, (void *)file_name, strlen(file_name) + 1);
++                                if (dir_name != emptyname)
++                                    fmap_unneed_ptr(map, (void *)dir_name, strlen(dir_name) + 1);
++                                return limitret;
+                             }
+ 
+                             for (j = 0; j < c->cabcnt && c->cabs[j].cabno != cabno; j++) {
+@@ -737,6 +742,7 @@ static void md5str(uint8_t *sum)
+ static cl_error_t is_extract_cab(cli_ctx *ctx, uint64_t off, uint64_t size, uint64_t csize)
+ {
+     cl_error_t ret = CL_SUCCESS;
++    cl_error_t abortret = CL_SUCCESS;
+     const uint8_t *inbuf;
+     uint8_t *outbuf;
+     char *tempfile;
+@@ -801,17 +807,51 @@ static cl_error_t is_extract_cab(cli_ctx *ctx, uint64_t off, uint64_t size, uint
+             zret        = inflate(&z, 0);
+             if (zret == Z_OK || zret == Z_STREAM_END || zret == Z_BUF_ERROR) {
+                 unsigned int umpd = IS_CABBUFSZ - z.avail_out;
+-                if (cli_writen(ofd, outbuf, umpd) != umpd)
++                uint64_t writelen = umpd;
++                cl_error_t limitret;
++
++                if (outsz > UINT64_MAX - writelen) {
++                    cli_dbgmsg("ishield_extract_cab: output size overflow guard hit\n");
+                     break;
+-                outsz += umpd;
+-                if (zret == Z_STREAM_END || z.avail_out == IS_CABBUFSZ /* FIXMEISHIELD: is the latter ok? */) {
++                }
++
++                limitret = cli_checklimits("InstallShield", ctx, outsz + writelen, 0, 0);
++                if (limitret == CL_ETIMEOUT || limitret == CL_EMAXFILES) {
++                    abortret = limitret;
++                    break;
++                }
++                if (limitret == CL_EMAXSIZE) {
++                    uint64_t allowed = writelen;
++
++                    if (ctx->engine->maxfilesize) {
++                        uint64_t remaining = (outsz < ctx->engine->maxfilesize) ? (ctx->engine->maxfilesize - outsz) : 0;
++                        if (allowed > remaining)
++                            allowed = remaining;
++                    }
++
++                    if (ctx->engine->maxscansize) {
++                        uint64_t remaining_scan = (ctx->scansize < ctx->engine->maxscansize) ? (ctx->engine->maxscansize - ctx->scansize) : 0;
++                        uint64_t remaining      = (outsz < remaining_scan) ? (remaining_scan - outsz) : 0;
++                        if (allowed > remaining)
++                            allowed = remaining;
++                    }
++
++                    cli_dbgmsg("ishield_extract_cab: trimming output file due to size limits (" STDu64 " vs " STDu64 ")\n",
++                               outsz + writelen,
++                               outsz + allowed);
++                    writelen = allowed;
++                }
++
++                if (writelen && cli_writen(ofd, outbuf, writelen) != writelen)
++                    break;
++                outsz += writelen;
++
++                if (writelen != umpd) {
+                     success = 1;
+                     break;
+                 }
+-                if (ctx->engine->maxfilesize && z.total_out > ctx->engine->maxfilesize) {
+-                    cli_dbgmsg("ishield_extract_cab: trimming output file due to size limits (%lu vs %lu)\n", z.total_out, (unsigned long int)ctx->engine->maxfilesize);
++                if (zret == Z_STREAM_END || z.avail_out == IS_CABBUFSZ /* FIXMEISHIELD: is the latter ok? */) {
+                     success = 1;
+-                    outsz   = size;
+                     break;
+                 }
+                 continue;
+@@ -837,5 +877,5 @@ static cl_error_t is_extract_cab(cli_ctx *ctx, uint64_t off, uint64_t size, uint
+     if (!ctx->engine->keeptmp)
+         if (cli_unlink(tempfile)) ret = CL_EUNLINK;
+     free(tempfile);
+-    return success ? ret : CL_BREAK;
++    return success ? ret : ((abortret != CL_SUCCESS) ? abortret : CL_BREAK);
+ }
