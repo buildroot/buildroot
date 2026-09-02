@@ -1,0 +1,40 @@
+From: "Val S." <valsnyde@cisco.com>
+Date: Thu, 18 Jun 2026 16:44:09 -0400
+Subject: Libclamav: fix 7z substream count overflow (#53)
+
+A malformed 7z archive can force SzReadSubStreamsInfo() to sum
+folder substream counts in a UInt32 accumulator until the total
+wraps. The parser then allocates arrays using the wrapped smaller
+count and later writes past the end of those buffers while filling
+substream size metadata.
+
+Fix the parser by rejecting archives whose total unpack-stream
+count would overflow UInt32 before the count is accumulated. This
+preserves the existing parsing flow while preventing the
+under-allocation that leads to the heap overflow.
+
+Credit: Trail of Bits, in collaboration with Anthropic
+
+CLAM-2967
+
+---
+Upstream: https://github.com/Cisco-Talos/clamav/commit/615f5f327861d5be57d7963c103ee1996657e544
+CVE: CVE-2026-20215
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ libclamav/7z/7zIn.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/libclamav/7z/7zIn.c b/libclamav/7z/7zIn.c
+index 13e89bfa13..646c4a1a1c 100644
+--- a/libclamav/7z/7zIn.c
++++ b/libclamav/7z/7zIn.c
+@@ -768,6 +768,8 @@ static SRes SzReadSubStreamsInfo(
+         UInt32 numStreams;
+         RINOK(SzReadNumber32(sd, &numStreams));
+         folders[i].NumUnpackStreams = numStreams;
++        if (*numUnpackStreams > UINT32_MAX - numStreams)
++          return SZ_ERROR_FAIL;
+         *numUnpackStreams += numStreams;
+       }
+       continue;

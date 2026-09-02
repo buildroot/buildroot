@@ -42,6 +42,9 @@ CLAMAV_IGNORE_CVES += CVE-2026-20214
 # 0006-fix-alz-parser-robustness-and-scan-coverage-63.patch
 CLAMAV_IGNORE_CVES += CVE-2026-20243
 
+# 0007-libclamav-fix-7z-substream-count-overflow-53.patch
+CLAMAV_IGNORE_CVES += CVE-2026-20215
+
 CLAMAV_DEPENDENCIES = \
 	bzip2 \
 	host-pkgconf \
