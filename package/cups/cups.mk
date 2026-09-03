@@ -45,6 +45,11 @@ endif
 ifeq ($(BR2_PACKAGE_DBUS),y)
 CUPS_CONF_OPTS += --enable-dbus
 CUPS_DEPENDENCIES += dbus
+define CUPS_INSTALL_DBUS
+	$(INSTALL) -m 0644 -D $(@D)/desktop/cups.conf \
+		$(TARGET_DIR)/usr/share/dbus-1/system.d/cups.conf
+endef
+CUPS_POST_INSTALL_TARGET_HOOKS += CUPS_INSTALL_DBUS
 else
 CUPS_CONF_OPTS += --disable-dbus
 endif
