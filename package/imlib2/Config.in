@@ -5,6 +5,7 @@ config BR2_PACKAGE_IMLIB2
 	bool "imlib2"
 	depends on !BR2_STATIC_LIBS # dlopen()
 	select BR2_PACKAGE_FREETYPE
+	select BR2_PACKAGE_ZLIB
 	help
 	  Imlib 2 is the successor to Imlib. This library provides
 	  routines to load, save and render images in various formats.

@@ -12,7 +12,7 @@ IMLIB2_LICENSE_FILES = COPYING COPYING-PLAIN
 IMLIB2_CPE_ID_VENDOR = enlightenment
 
 IMLIB2_INSTALL_STAGING = YES
-IMLIB2_DEPENDENCIES = host-pkgconf freetype
+IMLIB2_DEPENDENCIES = host-pkgconf freetype zlib
 IMLIB2_CONF_OPTS = --with-freetype-config=$(STAGING_DIR)/usr/bin/freetype-config
 
 ifeq ($(BR2_PACKAGE_IMLIB2_X),y)
