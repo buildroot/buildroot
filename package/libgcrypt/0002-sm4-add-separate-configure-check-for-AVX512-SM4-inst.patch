@@ -1,0 +1,108 @@
+From f0bc379e0f3585908707095db5d3c505e664726f Mon Sep 17 00:00:00 2001
+From: Jussi Kivilinna <jussi.kivilinna@iki.fi>
+Date: Sun, 30 Aug 2026 11:16:11 +0300
+Subject: [PATCH] sm4: add separate configure check for AVX512 SM4 instructions
+
+* cipher/sm4-intel-avx512-amd64.S: Check for
+HAVE_GCC_INLINE_ASM_SM4_AVX512 instead of HAVE_GCC_INLINE_ASM_SM4.
+* cipher/sm4.c (USE_INTEL_SM4_AVX512): Require USE_INTEL_SM4_AVX2 and
+HAVE_GCC_INLINE_ASM_SM4_AVX512.
+* configure.ac (gcry_cv_gcc_inline_asm_sm4_avx512)
+(HAVE_GCC_INLINE_ASM_SM4_AVX512): New.
+--
+
+Toolchain may support VEX encoded SM4 instructions but not EVEX encoded
+ones. Commit adds separate check for EVEX coding and gates SM4-AVX512
+implementation behind the new check.
+
+Reported in FreeBSD bugtracker:
+ https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=297987
+
+Signed-off-by: Jussi Kivilinna <jussi.kivilinna@iki.fi>
+
+Upstream: https://github.com/gpg/libgcrypt/commit/f0bc379e0f3585908707095db5d3c505e664726f
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ cipher/sm4-intel-avx512-amd64.S |  4 ++--
+ cipher/sm4.c                    |  8 +++-----
+ configure.ac                    | 24 ++++++++++++++++++++++++
+ 3 files changed, 29 insertions(+), 7 deletions(-)
+
+diff --git a/cipher/sm4-intel-avx512-amd64.S b/cipher/sm4-intel-avx512-amd64.S
+index c5eaa723..ac8076ec 100644
+--- a/cipher/sm4-intel-avx512-amd64.S
++++ b/cipher/sm4-intel-avx512-amd64.S
+@@ -23,7 +23,7 @@
+ #ifdef __x86_64
+ #if (defined(HAVE_COMPATIBLE_GCC_AMD64_PLATFORM_AS) || \
+      defined(HAVE_COMPATIBLE_GCC_WIN64_PLATFORM_AS)) && \
+-    defined(ENABLE_AVX512_SUPPORT) && defined(HAVE_GCC_INLINE_ASM_SM4)
++    defined(ENABLE_AVX512_SUPPORT) && defined(HAVE_GCC_INLINE_ASM_SM4_AVX512)
+ 
+ #include "asm-common-amd64.h"
+ 
+@@ -164,5 +164,5 @@ ELF(.size __sm4_intel_crypt_blk32,.-__sm4_intel_crypt_blk32;)
+ #define SM4_CRYPT_BLK32 __sm4_intel_crypt_blk32
+ #include "sm4-avx512-amd64.h"
+ 
+-#endif /*defined(ENABLE_AVX512_SUPPORT) && defined(HAVE_GCC_INLINE_ASM_SM4)*/
++#endif /*ENABLE_AVX512_SUPPORT && HAVE_GCC_INLINE_ASM_SM4_AVX512*/
+ #endif /*__x86_64*/
+diff --git a/cipher/sm4.c b/cipher/sm4.c
+index 482a7983..58aaea10 100644
+--- a/cipher/sm4.c
++++ b/cipher/sm4.c
+@@ -87,11 +87,9 @@
+ /* USE_INTEL_SM4_AVX512 indicates whether to compile with Intel SM4
+  * instructions (VSM4RNDS4) based AVX512 code. */
+ #undef USE_INTEL_SM4_AVX512
+-#if defined(ENABLE_AVX512_SUPPORT) && defined(HAVE_GCC_INLINE_ASM_SM4)
+-# if defined(__x86_64__) && (defined(HAVE_COMPATIBLE_GCC_AMD64_PLATFORM_AS) || \
+-     defined(HAVE_COMPATIBLE_GCC_WIN64_PLATFORM_AS))
+-#  define USE_INTEL_SM4_AVX512 1
+-# endif
++#if defined(USE_INTEL_SM4_AVX2) && defined(ENABLE_AVX512_SUPPORT) && \
++    defined(HAVE_GCC_INLINE_ASM_SM4_AVX512)
++# define USE_INTEL_SM4_AVX512 1
+ #endif
+ 
+ /* Assembly implementations use SystemV ABI, ABI conversion and additional
+diff --git a/configure.ac b/configure.ac
+index a5e8d683..ea7ea7ae 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1659,6 +1659,30 @@ if test "$gcry_cv_gcc_inline_asm_sm4" = "yes" ; then
+ fi
+ 
+ 
++#
++# Check whether GCC inline assembler supports EVEX encoded Intel SM4
++# instructions.
++#
++AC_CACHE_CHECK([whether GCC inline assembler supports AVX512 Intel SM4 instructions],
++       [gcry_cv_gcc_inline_asm_sm4_avx512],
++       [if test "$mpi_cpu_arch" != "x86" ||
++           test "$try_asm_modules" != "yes" ; then
++          gcry_cv_gcc_inline_asm_sm4_avx512="n/a"
++        else
++          gcry_cv_gcc_inline_asm_sm4_avx512=no
++          AC_LINK_IFELSE([AC_LANG_PROGRAM(
++          [[void a(void) {
++              __asm__("vsm4key4 %%zmm2, %%zmm1, %%zmm3\n\t":::"cc");
++              __asm__("vsm4rnds4 %%zmm2, %%zmm1, %%zmm3\n\t":::"cc");
++            }]], [ a(); ] )],
++          [gcry_cv_gcc_inline_asm_sm4_avx512=yes])
++        fi])
++if test "$gcry_cv_gcc_inline_asm_sm4_avx512" = "yes" ; then
++   AC_DEFINE(HAVE_GCC_INLINE_ASM_SM4_AVX512,1,
++     [Defined if inline assembler supports AVX512 Intel SM4 instructions])
++fi
++
++
+ #
+ # Check whether GCC inline assembler supports SSE4.1 instructions.
+ #
+-- 
+2.47.3
+
