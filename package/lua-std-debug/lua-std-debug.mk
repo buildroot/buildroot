@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LUA_STD_DEBUG_VERSION_UPSTREAM = 1.0.1
+LUA_STD_DEBUG_VERSION_UPSTREAM = 1.1.0
 LUA_STD_DEBUG_VERSION = $(LUA_STD_DEBUG_VERSION_UPSTREAM)-1
 LUA_STD_DEBUG_NAME_UPSTREAM = std._debug
 LUA_STD_DEBUG_SUBDIR = _debug-$(LUA_STD_DEBUG_VERSION_UPSTREAM)
