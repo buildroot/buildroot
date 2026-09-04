@@ -87,7 +87,6 @@ GLIBC_IGNORE_CVES += CVE-2026-77117
 # Fixed by glibc-2.41-158-gec116a0fbedcc860631e525e70b409cf295f27da
 GLIBC_IGNORE_CVES += CVE-2026-80489
 
-
 # glibc is part of the toolchain so disable the toolchain dependency
 GLIBC_ADD_TOOLCHAIN_DEPENDENCY = NO
 
