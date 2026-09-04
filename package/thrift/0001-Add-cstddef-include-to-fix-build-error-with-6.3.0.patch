@@ -1,0 +1,33 @@
+From ca2c2467c78d9140a7e260727cd3305bf3decd09 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Fri, 4 Sep 2026 19:49:59 +0200
+Subject: [PATCH] Add cstddef include to fix build error with 6.3.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+thrift-0.24.0/lib/cpp/src/thrift/transport/TBufferTransports.h:110:32:
+ error: ‘ptrdiff_t’ does not name a type
+
+Upstream: https://github.com/apache/thrift/pull/3801
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ lib/cpp/src/thrift/transport/TBufferTransports.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/cpp/src/thrift/transport/TBufferTransports.h b/lib/cpp/src/thrift/transport/TBufferTransports.h
+index b78e457b3..b0447b0bc 100644
+--- a/lib/cpp/src/thrift/transport/TBufferTransports.h
++++ b/lib/cpp/src/thrift/transport/TBufferTransports.h
+@@ -20,6 +20,7 @@
+ #ifndef _THRIFT_TRANSPORT_TBUFFERTRANSPORTS_H_
+ #define _THRIFT_TRANSPORT_TBUFFERTRANSPORTS_H_ 1
+ 
++#include <cstddef>
+ #include <cstdlib>
+ #include <cstring>
+ #include <limits>
+-- 
+2.47.3
+
