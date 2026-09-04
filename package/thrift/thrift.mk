@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-THRIFT_VERSION = 0.23.0
+THRIFT_VERSION = 0.24.0
 THRIFT_SITE = https://downloads.apache.org/thrift/$(THRIFT_VERSION)
 THRIFT_LICENSE = Apache-2.0, Public Domain (sha256.h)
 THRIFT_LICENSE_FILES = LICENSE
