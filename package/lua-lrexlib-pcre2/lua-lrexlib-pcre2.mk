@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LUA_LREXLIB_PCRE2_VERSION = 2.9.2-1
+LUA_LREXLIB_PCRE2_VERSION = 2.9.4-1
 LUA_LREXLIB_PCRE2_NAME_UPSTREAM = Lrexlib-PCRE2
 LUA_LREXLIB_PCRE2_SUBDIR = lrexlib
 LUA_LREXLIB_PCRE2_LICENSE = MIT
