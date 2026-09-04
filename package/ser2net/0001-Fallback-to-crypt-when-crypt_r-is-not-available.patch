@@ -1,0 +1,140 @@
+From 6af8ca88193b66b0309d9ca355d6c551e0fc1fbe Mon Sep 17 00:00:00 2001
+From: Mattia Narducci <mattianarducci1@gmail.com>
+Date: Fri, 14 Aug 2026 21:55:11 +0200
+Subject: [PATCH] Fallback to crypt() when crypt_r() is not available
+
+Use crypt(3) for hashed passwords on systems where libcrypt does not
+provide the reentrant crypt_r(3), eg. uClibc. Calls to crypt() are
+guarded by a global lock.
+
+Signed-off-by: Mattia Narducci <mattianarducci1@gmail.com>
+Signed-off-by: Corey Minyard <corey@minyard.net>
+
+Upstream: https://github.com/cminyard/ser2net/commit/6af8ca88193b66b0309d9ca355d6c551e0fc1fbe
+
+Signed-off-by: Mattia Narducci <mattianarducci1@gmail.com>
+---
+ auth.c       | 12 ++++++++++++
+ configure.ac | 11 ++++++-----
+ ser2net.c    | 14 ++++++++++++++
+ ser2net.h    |  4 ++++
+ 4 files changed, 36 insertions(+), 5 deletions(-)
+
+diff --git a/auth.c b/auth.c
+index 7e53069..1af057b 100644
+--- a/auth.c
++++ b/auth.c
+@@ -33,6 +33,10 @@
+ #include <gensio/gensio_list.h>
+ #include "ser2net.h"
+ 
++#ifndef HAVE_CRYPT_R
++#include <gensio/gensio_os_funcs_public.h>
++#endif
++
+ #if defined(USE_PAM)
+ #include <pwd.h>
+ #include <security/pam_appl.h>
+@@ -288,7 +292,9 @@ handle_password(struct gensio *net, const char *authdir, const char *password)
+     char readpw[256], *s;
+     int err;
+     bool hashed = true;
++#ifdef HAVE_CRYPT_R
+     struct crypt_data cdata;
++#endif
+     char *newhash;
+ 
+     len = sizeof(username);
+@@ -341,7 +347,13 @@ handle_password(struct gensio *net, const char *authdir, const char *password)
+ 	return GE_NOTSUP;
+     }
+ 
++#ifdef HAVE_CRYPT_R
+     newhash = crypt_r(password, readpw, &cdata);
++#else
++    gensio_os_funcs_lock(so, crypt_lock);
++    newhash = crypt(password, readpw);
++    gensio_os_funcs_unlock(so, crypt_lock);
++#endif
+     if (!newhash)
+ 	return GE_NOTSUP;
+ 
+diff --git a/configure.ac b/configure.ac
+index 1ac44f2..1814286 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -39,11 +39,12 @@ if test "x$use_pam" != "xno"; then
+     AC_DEFINE([USE_PAM], [], [Enable PAM support])
+ fi
+ 
+-have_crypt_r=no
+-AC_CHECK_LIB(crypt, crypt_r, [have_crypt_r=yes], [])
+-if test $have_crypt_r != "yes"; then
+-  AC_MSG_ERROR([No libcrypt with crypt_r()])
+-fi
++AC_CHECK_LIB(crypt, crypt_r,
++  [AC_DEFINE([HAVE_CRYPT_R], [1], [Define if you have crypt_r() in libcrypt])],
++  [AC_CHECK_LIB(crypt, crypt, [],
++    [AC_MSG_ERROR([No libcrypt with crypt_r() or crypt()])]
++  )]
++)
+ LIBS="$LIBS -lcrypt"
+ 
+ AC_ARG_WITH(sysfs-led-support,
+diff --git a/ser2net.c b/ser2net.c
+index 04cbb00..17e0c23 100644
+--- a/ser2net.c
++++ b/ser2net.c
+@@ -604,6 +604,9 @@ do_detach(void)
+ 
+ static struct gensio_lock *config_lock;
+ static struct gensio_lock *maint_lock;
++#ifndef HAVE_CRYPT_R
++struct gensio_lock *crypt_lock;
++#endif
+ 
+ static int in_config_read = 0;
+ 
+@@ -1011,6 +1014,14 @@ main(int argc, char *argv[])
+ 	return 1;
+     }
+ 
++#ifndef HAVE_CRYPT_R
++    crypt_lock = gensio_os_funcs_alloc_lock(so);
++    if (!crypt_lock) {
++	fprintf(stderr, "Could not alloc ser2net crypt lock\n");
++	return 1;
++    }
++#endif
++
+     err = init_dataxfer();
+     if (err) {
+ 	fprintf(stderr,
+@@ -1098,6 +1109,9 @@ main(int argc, char *argv[])
+     if (config_lines)
+ 	free(config_lines);
+ 
++#ifndef HAVE_CRYPT_R
++    gensio_os_funcs_free_lock(so, crypt_lock);
++#endif
+     gensio_os_funcs_free_lock(so, maint_lock);
+     gensio_os_funcs_free_lock(so, config_lock);
+     gensio_os_funcs_free(so);
+diff --git a/ser2net.h b/ser2net.h
+index 8bc9227..d9e361b 100644
+--- a/ser2net.h
++++ b/ser2net.h
+@@ -66,6 +66,10 @@ int sub_time(gensio_time *left, gensio_time *right);
+    integer was invalid.  Spaces are not handled. */
+ int scan_int(const char *str);
+ 
++#ifndef HAVE_CRYPT_R
++/* Used to avoid races in crypt() when crypt_r() is not available */
++extern struct gensio_lock *crypt_lock;
++#endif
+ /*
+  * Handle authorization events from accepters.
+  */
+-- 
+2.55.0
+

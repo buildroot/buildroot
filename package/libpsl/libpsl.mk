@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-LIBPSL_VERSION = 0.21.5
+LIBPSL_VERSION = 0.23.3
 LIBPSL_SITE = https://github.com/rockdaboot/libpsl/releases/download/$(LIBPSL_VERSION)
 LIBPSL_LICENSE = MIT, BSD-3-Clause
-LIBPSL_LICENSE_FILES = COPYING src/LICENSE.chromium
+LIBPSL_LICENSE_FILES = LICENSE src/LICENSE.chromium
 LIBPSL_CONF_OPTS = -Dbuiltin=true
 LIBPSL_DEPENDENCIES = host-pkgconf
 LIBPSL_INSTALL_STAGING = YES
