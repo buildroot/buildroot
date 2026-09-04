@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MUTT_VERSION = 2.3.2
+MUTT_VERSION = 2.4.1
 MUTT_SITE = http://ftp.mutt.org/pub/mutt
 MUTT_LICENSE = GPL-2.0+
 MUTT_LICENSE_FILES = GPL
