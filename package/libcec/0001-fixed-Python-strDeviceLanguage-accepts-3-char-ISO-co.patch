@@ -1,0 +1,66 @@
+From f53490e23037f17b68043f5e1ff2f4378d227d56 Mon Sep 17 00:00:00 2001
+From: Lars Op den Kamp <lars@opdenkamp.eu>
+Date: Mon, 13 Jul 2026 15:24:27 +0200
+Subject: [PATCH] fixed: Python strDeviceLanguage accepts 3-char ISO codes
+ (SWIG char[3] typemap)
+
+The SWIG default char[ANY] setter uses SWIG_AsCharArray, which reserves a
+byte for a NUL terminator. strDeviceLanguage is a raw, non-terminated
+char[3] holding a 3-character ISO 639-2 code, so a valid 3-char value needs
+4 bytes and overflowed the buffer, raising a TypeError; only 2-char codes
+fit. Add member-name-scoped in/memberin typemaps that copy the raw bytes
+(str or bytes) so 3-char codes assign correctly. Scoped by name so the
+NUL-terminated strDeviceName keeps the default behaviour.
+
+Upstream: https://github.com/Pulse-Eight/libcec/commit/f53490e23037f17b68043f5e1ff2f4378d227d56
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/libcec/libcec.i | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/src/libcec/libcec.i b/src/libcec/libcec.i
+index a01f9afc..520ff7af 100644
+--- a/src/libcec/libcec.i
++++ b/src/libcec/libcec.i
+@@ -15,6 +15,37 @@
+   $result = PyString_FromString($1.name);
+ }
+ 
++/////// libcec_configuration::strDeviceLanguage ///////
++// strDeviceLanguage is a raw, fixed-size char[3] that is NOT NUL-terminated (a
++// 3-character ISO 639-2 code). SWIG's default char[ANY] setter reserves a byte
++// for a terminator, so a valid 3-char code needs 4 bytes and overflows the
++// buffer, raising a TypeError; only 2-char codes fit. Copy the raw bytes
++// instead (accepting str or bytes), scoped to this member by name so the
++// NUL-terminated strDeviceName keeps the default behaviour.
++%typemap(in) char strDeviceLanguage[ANY] (char temp[$1_dim0]) {
++  char *cptr = 0; size_t csize = 0; int alloc = SWIG_OLDOBJ;
++  int res = SWIG_AsCharPtrAndSize($input, &cptr, &csize, &alloc);
++  if (!SWIG_IsOK(res)) {
++    %argument_fail(res, "char [$1_dim0]", $symname, $argnum);
++  }
++  {
++    /* csize counts the trailing NUL; strDeviceLanguage stores no terminator */
++    size_t slen = (csize > 0) ? csize - 1 : 0;
++    if (slen > (size_t)($1_dim0)) {
++      if (alloc == SWIG_NEWOBJ) %delete_array(cptr);
++      %argument_fail(SWIG_ValueError, "char [$1_dim0]", $symname, $argnum);
++    }
++    memset(temp, 0, $1_dim0);
++    if (slen) memcpy(temp, cptr, slen);
++  }
++  $1 = temp;
++  if (alloc == SWIG_NEWOBJ) %delete_array(cptr);
++}
++
++%typemap(memberin) char strDeviceLanguage[ANY] {
++  memcpy($1, $input, $1_dim0 * sizeof(char));
++}
++
+ /////// replace operator[]() ///////
+ 
+ // CEC::cec_datapacket::operator[]()
+-- 
+2.47.3
+
