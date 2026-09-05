@@ -1,0 +1,48 @@
+From 6c965463223ea46d0b7ae22586cadc150f719f84 Mon Sep 17 00:00:00 2001
+From: Jitka Plesnikova <jplesnik@redhat.com>
+Date: Tue, 11 Aug 2026 13:55:58 +0200
+Subject: [PATCH] python: update for SWIG 4.5
+
+SWIG 4.5.0 removed Python 2 compatibility macros (PyInt_, PyString_, SWIG_Python_str_*)
+from its runtime header pyhead.swg (see commit [1]). These macros mapped old Python 2
+C API names to their Python 3 equivalents. Packages that reference them in custom SWIG
+typemaps or pre-generated wrapper code now fail to compile.
+
+This patch replaces all occurrences with the corresponding Python 3 C API functions.
+The replacements are safe since the macros were already aliased to these exact functions
+in SWIG's Python 3 code path.
+
+[1] https://github.com/swig/swig/commit/79f7a2b7cb7ddc256eba09c8770133148025171d
+
+Upstream: http://developer.intra2net.com/mailarchive/html/libftdi/2026/msg00012.html
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ python/ftdi1.i | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/python/ftdi1.i b/python/ftdi1.i
+index fac4d16..31e17c6 100644
+--- a/python/ftdi1.i
++++ b/python/ftdi1.i
+@@ -91,7 +91,7 @@ char * str2charp_size(PyObject* pyObj, int * size)
+ "read_data(context) -> (return_code, buf)"
+ %enddef
+ %feature("autodoc", ftdi_read_data_docstring) ftdi_read_data;
+-%typemap(in,numinputs=1) (unsigned char *buf, int size) %{ $2 = PyInt_AsLong($input);$1 = (unsigned char*)malloc($2*sizeof(char)); %}
++%typemap(in,numinputs=1) (unsigned char *buf, int size) %{ $2 = PyLong_AsLong($input);$1 = (unsigned char*)malloc($2*sizeof(char)); %}
+ %typemap(argout,noblock=1) (unsigned char *buf, int size) {
+         if(result<0)
+                 $2=0;
+@@ -136,7 +136,7 @@ char * str2charp_size(PyObject* pyObj, int * size)
+     int ftdi_get_eeprom_value(struct ftdi_context *ftdi, enum ftdi_eeprom_value value_name, int* value);
+ %clear int* value;
+ 
+-%typemap(in,numinputs=1) (unsigned char *buf, int size) %{ $2 = PyInt_AsLong($input);$1 = (unsigned char*)malloc($2*sizeof(char)); %}
++%typemap(in,numinputs=1) (unsigned char *buf, int size) %{ $2 = PyLong_AsLong($input);$1 = (unsigned char*)malloc($2*sizeof(char)); %}
+ %typemap(argout,noblock=1) (unsigned char *buf, int size) {
+         if(result<0)
+                 $2=0;
+-- 
+2.55.0
+
