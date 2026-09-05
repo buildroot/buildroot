@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-SWIG_VERSION_MAJOR = 4.1
+SWIG_VERSION_MAJOR = 4.5
 SWIG_VERSION = $(SWIG_VERSION_MAJOR).1
-SWIG_SITE = http://downloads.sourceforge.net/project/swig/swig/swig-$(SWIG_VERSION)
+SWIG_SITE = https://downloads.sourceforge.net/project/swig/swig/swig-$(SWIG_VERSION)
 HOST_SWIG_DEPENDENCIES = host-bison host-pcre2
 HOST_SWIG_CONF_OPTS = \
 	--with-pcre \
