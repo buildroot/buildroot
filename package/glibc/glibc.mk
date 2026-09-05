@@ -7,7 +7,7 @@
 # Generate version string using:
 #   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master | cut -d '-' -f 2-
 # When updating the version, please also update localedef
-GLIBC_VERSION = 2.44-36-g2d5421ffca8893534d5e02ad38c28acd8e778fa3
+GLIBC_VERSION = 2.44-40-g30950ce64dbc29db0aedf1d46b6b8eb70b360f0c
 GLIBC_SITE = https://gitlab.com/gnutools/glibc.git
 GLIBC_SITE_METHOD = git
 
@@ -36,6 +36,9 @@ GLIBC_IGNORE_CVES += CVE-2026-77117
 
 # Fixed by 2.44-31-gcb61572ea3f773e1e1978f6c412cc36a30acdb0c
 GLIBC_IGNORE_CVES += CVE-2026-80489
+
+# Fixed by 2.44-39-g0b4e41fc51e6aba6216a908961b49b0622b47fa0
+GLIBC_IGNORE_CVES += CVE-2026-18374
 
 # This CVE is considered as not being security issues by
 # upstream glibc:
