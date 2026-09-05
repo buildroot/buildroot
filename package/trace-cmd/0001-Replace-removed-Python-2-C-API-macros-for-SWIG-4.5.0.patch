@@ -1,0 +1,32 @@
+From 797a541398bbbd55a29ac22ca3fc7271d6627aa5 Mon Sep 17 00:00:00 2001
+From: Jitka Plesnikova <jplesnik@redhat.com>
+Date: Sat, 5 Sep 2026 09:34:04 +0200
+Subject: [PATCH] Replace removed Python 2 C API macros for SWIG 4.5.0
+ compatibility
+
+Downloaded from Fedora:
+https://src.fedoraproject.org/rpms/trace-cmd/c/eff667a072e69238efc469775585b1b30c056187
+
+Upstream: https://bugzilla.kernel.org/show_bug.cgi?id=221966
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ python/ctracecmd.i | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/python/ctracecmd.i b/python/ctracecmd.i
+index 38564601..2525309e 100644
+--- a/python/ctracecmd.i
++++ b/python/ctracecmd.i
+@@ -218,7 +218,7 @@ static int python_callback(struct trace_seq *s,
+ 	result = PyObject_Call(context, arglist, NULL);
+ 	Py_XDECREF(arglist);
+ 	if (result && result != Py_None) {
+-		if (!PyInt_Check(result)) {
++		if (!PyLong_Check(result)) {
+ 			PyErr_SetString(PyExc_TypeError,
+ 					"callback must return int");
+ 			PyErr_Print();
+-- 
+2.47.3
+
