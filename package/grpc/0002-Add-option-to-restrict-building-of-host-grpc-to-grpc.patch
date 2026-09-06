@@ -15,7 +15,7 @@ Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Updated for 1.76.0:
 [build utf8_range_lib as it is now explicitly required]
 Signed-off-by: Michael Nosthoff <buildroot@heine.tech>
-[Bernd: rebased for 1.80.0]
+[Bernd: rebased for 1.83.1]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  CMakeLists.txt | 39 +++++++++++++++++++++++++++++++++------
@@ -138,8 +138,8 @@ index bc86c00463..08441ddbd2 100644
 +if(NOT gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
 +
  add_library(grpc++
-   src/cpp/client/call_credentials.cc
-   src/cpp/client/channel_cc.cc
+   src/core/client_channel/virtual_channel.cc
+   src/cpp/client/call_context_registry.cc
 @@ -5263,6 +5284,7 @@ if(gRPC_INSTALL)
    )
  endif()
@@ -155,8 +155,8 @@ index bc86c00463..08441ddbd2 100644
 +if(NOT gRPC_BUILD_PLUGIN_SUPPORT_ONLY)
 +
  add_library(grpc++_unsecure
-   src/cpp/client/call_credentials.cc
-   src/cpp/client/channel_cc.cc
+   src/core/client_channel/virtual_channel.cc
+   src/cpp/client/call_context_registry.cc
 @@ -6285,6 +6309,7 @@ if(gRPC_INSTALL)
    )
  endif()
@@ -202,7 +202,7 @@ index bc86c00463..08441ddbd2 100644
  if(gRPC_INSTALL)
    install(EXPORT gRPCTargets
 @@ -54105,6 +54105,8 @@
-   "-laddress_sorting -lupb_textformat_lib -lupb_reflection_lib -lupb_wire_lib -lupb_message_lib -lutf8_range_lib -lupb_mini_descriptor_lib -lupb_mini_table_lib -lupb_hash_lib -lupb_mem_lib -lupb_base_lib -lupb_lex_lib"
+   "-laddress_sorting -lupb_textformat_lib -lupb_reflection_lib -lupb_wire_lib -lupb_message_lib -lutf8_range_lib -lupb_descriptor_lib -lupb_mini_descriptor_lib -lupb_mini_table_lib -lupb_hash_lib -lupb_mem_lib -lupb_base_lib -lupb_lex_lib"
    "grpc++_unsecure.pc")
  
 +endif() # gRPC_BUILD_PLUGIN_SUPPORT_ONLY
