@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-SOFTHSM2_VERSION = 2.6.1
-SOFTHSM2_SOURCE = softhsm-$(SOFTHSM2_VERSION).tar.gz
-SOFTHSM2_SITE = https://github.com/opendnssec/opendnssec/releases/download/2.1.14
+SOFTHSM2_VERSION = 2.7.0
+SOFTHSM2_SITE = $(call github,softhsm,SoftHSMv2,$(SOFTHSM2_VERSION))
 SOFTHSM2_LICENSE = BSD-2-Clause
 SOFTHSM2_LICENSE_FILES = LICENSE
 SOFTHSM2_DEPENDENCIES = openssl
 SOFTHSM2_INSTALL_STAGING = YES
+SOFTHSM2_AUTORECONF = YES
 
 ifeq ($(BR2_PACKAGE_P11_KIT),y)
 SOFTHSM2_CONF_OPTS += \
