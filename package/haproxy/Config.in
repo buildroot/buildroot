@@ -7,6 +7,7 @@ config BR2_PACKAGE_HAPROXY_ARCH_SUPPORTS
 config BR2_PACKAGE_HAPROXY
 	bool "haproxy"
 	depends on BR2_PACKAGE_HAPROXY_ARCH_SUPPORTS
+	depends on !BR2_STATIC_LIBS
 	depends on BR2_USE_MMU # fork()
 	depends on BR2_TOOLCHAIN_HAS_SYNC_1 && BR2_TOOLCHAIN_HAS_SYNC_4
 	help
@@ -15,3 +16,7 @@ config BR2_PACKAGE_HAPROXY
 	  HTTP-based applications.
 
 	  http://www.haproxy.org
+
+comment "haproxy needs a toolchain w/ dynamic library"
+	depends on BR2_PACKAGE_HAPROXY_ARCH_SUPPORTS
+	depends on BR2_STATIC_LIBS
