@@ -1,0 +1,206 @@
+From: Arne Schwabe <arne@rfc2549.org>
+Date: Tue, 1 Sep 2026 13:35:09 +0200
+Subject: Ignore acks for packets that cannot be outstanding
+
+This ignores acks for pids outside the send window, i.e. for packets
+that have either not been sent out yet or already left the window.
+Nothing outside that window can be outstanding, so such acks can only
+be used to manipulate the state of the send buffer.
+
+Comparing the pid of an outstanding packet against the acked pid needs
+to be wraparound aware as well. Otherwise a peer can ack a pid from the
+lower half of the id space, which passes the window check above, and
+still increment n_acks on every outstanding packet, forcing an early
+retransmit after N_ACK_RETRANSMIT such acks.
+
+Github: OpenVPN/openvpn-private-issues#161
+Reported-By: Mark Bregman (Fox-IT) <mark.bregman@fox-it.com>
+CVE: 2026-84732
+Change-Id: I944478767b52a1b9bf6a65373ce0544c69cb1012
+Signed-off-by: Arne Schwabe <arne@rfc2549.org>
+Signed-off-by: Razvan Cojocaru <razvanc@mailbox.org>
+Acked-by: MaxF <max@max-fillinger.net>
+
+---
+Upstream: https://github.com/OpenVPN/openvpn/commit/d988ef4508e63b28c8e3efcb9f62eb8c836907fe
+CVE: CVE-2026-84732
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ src/openvpn/reliable.c                    | 37 ++++++++++++++++-
+ src/openvpn/reliable.h                    | 17 ++++++--
+ tests/unit_tests/openvpn/test_packet_id.c | 50 ++++++++++++++++++++++-
+ 3 files changed, 98 insertions(+), 6 deletions(-)
+
+diff --git a/src/openvpn/reliable.c b/src/openvpn/reliable.c
+index 230d6aca47e..ced438e481d 100644
+--- a/src/openvpn/reliable.c
++++ b/src/openvpn/reliable.c
+@@ -390,13 +390,35 @@ reliable_empty(const struct reliable *rel)
+     return true;
+ }
+ 
++int
++validate_packet_id_window(struct reliable *rel, packet_id_type pid)
++{
++    return reliable_pid_min(pid, rel->packet_id)
++           && reliable_pid_min(subtract_pid(rel->packet_id, RELIABLE_CAPACITY), pid);
++}
++
+ /* del acknowledged items from send buf */
+ void
+ reliable_send_purge(struct reliable *rel, const struct reliable_ack *ack)
+ {
++    unsigned int out_of_window = 0;
++    packet_id_type first_out_of_window = 0;
++
+     for (int i = 0; i < ack->len; ++i)
+     {
+         packet_id_type pid = ack->packet_id[i];
++
++
++        if (!validate_packet_id_window(rel, pid))
++        {
++            if (out_of_window == 0)
++            {
++                first_out_of_window = pid;
++            }
++            out_of_window++;
++            continue;
++        }
++
+         for (int j = 0; j < rel->size; ++j)
+         {
+             struct reliable_entry *e = &rel->array[j];
+@@ -417,16 +439,27 @@ reliable_send_purge(struct reliable *rel, const struct reliable_ack *ack)
+ #endif
+                 e->active = false;
+             }
+-            else if (e->active && e->packet_id < pid)
++
++            if (e->active && reliable_pid_min(e->packet_id, pid))
+             {
+                 /* We have received an ACK for a packet with a higher PID. Either
+                  * we have received ACKs out of or order or the packet has been
+                  * lost. We count the number of ACKs to determine if we should
+-                 * resend it early. */
++                 * resend it early. The comparison needs to be wraparound aware,
++                 * otherwise a peer can inflate n_acks with an ACK for a pid from
++                 * the lower half of the id space and force a retransmit. */
+                 e->n_acks++;
+             }
+         }
+     }
++
++    if (out_of_window > 0)
++    {
++        (void)first_out_of_window; /* dmsg might not generate code */
++        dmsg(D_REL_LOW, "ACK contained %u ids outside the send window, "
++                        "first was " packet_id_format,
++             out_of_window, (packet_id_print_type)first_out_of_window);
++    }
+ }
+ 
+ #ifdef ENABLE_DEBUG
+diff --git a/src/openvpn/reliable.h b/src/openvpn/reliable.h
+index af95bbc17a1..a85f2e97807 100644
+--- a/src/openvpn/reliable.h
++++ b/src/openvpn/reliable.h
+@@ -105,9 +105,9 @@ struct reliable
+ {
+     int size;
+     interval_t initial_timeout;
+-    packet_id_type packet_id;
+-    int offset; /**< Offset of the bufs in the reliable_entry array */
+-    bool hold;  /* don't xmit until reliable_schedule_now is called */
++    packet_id_type packet_id; /**< Packet ID for the next packet to be sent out. */
++    int offset;               /**< Offset of the bufs in the reliable_entry array */
++    bool hold;                /* don't xmit until reliable_schedule_now is called */
+     struct reliable_entry array[RELIABLE_CAPACITY];
+ };
+ 
+@@ -189,6 +189,17 @@ reliable_ack_empty(struct reliable_ack *ack)
+     return !ack->len;
+ }
+ 
++/**
++ * check that pid is inside the window of possible outstanding packets
++ * of size RELIABLE_CAPACITY, ie inside the range
++ * [rel->packet_id - RELIABLE_CAPACITY, rel->packet_id).
++ *
++ * rel->packet is the *next* packet id to be sent out, so it is not
++ * included in the valid range.
++ */
++int
++validate_packet_id_window(struct reliable *rel, packet_id_type pid);
++
+ /**
+  * Returns the number of packets that need to be acked.
+  *
+diff --git a/tests/unit_tests/openvpn/test_packet_id.c b/tests/unit_tests/openvpn/test_packet_id.c
+index 5dfd319ab9a..a5d50de4ae7 100644
+--- a/tests/unit_tests/openvpn/test_packet_id.c
++++ b/tests/unit_tests/openvpn/test_packet_id.c
+@@ -325,6 +325,53 @@ test_copy_acks_to_lru(void **state)
+     assert_memory_equal(mru_ack.packet_id, expected_ack.packet_id, sizeof(expected_ack.packet_id));
+ }
+ 
++static void
++test_packet_id_window(void **state)
++{
++    struct reliable rel = { 0 };
++    rel.packet_id = 1;
++
++    assert_true(validate_packet_id_window(&rel, 0));
++
++    /* packet id 1 is outside the window as it is the *next* packet id */
++    assert_false(validate_packet_id_window(&rel, 1));
++
++    /* wrapped around packet id, "-2" */
++    assert_true(validate_packet_id_window(&rel, 0xFFFFFFFD));
++
++    /* wrapped around packet id, "-10" */
++    assert_true(validate_packet_id_window(&rel, 0xFFFFFFF6));
++
++    /* wrapped around packet id, "-11" */
++    assert_false(validate_packet_id_window(&rel, 0xFFFFFFF5));
++    assert_false(validate_packet_id_window(&rel, 0x80000000));
++
++    rel.packet_id = 0x80000000;
++
++    /* near the signed/usigned integer area */
++    assert_false(validate_packet_id_window(&rel, 0x80000001));
++    assert_true(validate_packet_id_window(&rel, 0x7fffffff));
++    assert_true(validate_packet_id_window(&rel, 0x7ffffff5));
++    assert_false(validate_packet_id_window(&rel, 0x7ffffff4));
++
++    rel.packet_id = 0xFFFFFFFD;
++    assert_false(validate_packet_id_window(&rel, 0xFFFFFFFD));
++    assert_false(validate_packet_id_window(&rel, 0));
++    assert_false(validate_packet_id_window(&rel, 1));
++    assert_false(validate_packet_id_window(&rel, 0xFFFFFFFE));
++    assert_false(validate_packet_id_window(&rel, 0xFFFFFFFF));
++    assert_true(validate_packet_id_window(&rel, 0xFFFFFFF3));
++    assert_true(validate_packet_id_window(&rel, 0xFFFFFFF2));
++    assert_false(validate_packet_id_window(&rel, 0xFFFFFFF1));
++
++    rel.packet_id = 500;
++    assert_false(validate_packet_id_window(&rel, 501));
++    assert_true(validate_packet_id_window(&rel, 497));
++    assert_true(validate_packet_id_window(&rel, 500 - (RELIABLE_CAPACITY - 1)));
++    assert_false(validate_packet_id_window(&rel, 500 - RELIABLE_CAPACITY));
++}
++
++
+ int
+ main(void)
+ {
+@@ -346,7 +393,8 @@ main(void)
+                                         test_packet_id_write_teardown),
+ 
+         cmocka_unit_test(test_get_num_output_sequenced_available),
+-        cmocka_unit_test(test_copy_acks_to_lru)
++        cmocka_unit_test(test_copy_acks_to_lru),
++        cmocka_unit_test(test_packet_id_window)
+ 
+     };
+ 

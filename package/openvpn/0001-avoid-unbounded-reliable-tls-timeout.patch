@@ -1,0 +1,129 @@
+From: Arne Schwabe <arne@rfc2549.org>
+Date: Tue, 1 Sep 2026 13:35:09 +0200
+Subject: Avoid unbounded reliable TLS timeout
+
+Avoid an unbounded TLS retransmit timeout, which could potentially
+trigger an integer overflow.
+
+The maximum initial timeout is defined in reliable.h and used to
+constrain --tls-timeout, so that the relation between the option range
+and RELIABLE_MAX_TIMEOUT_SHIFT is explicit and checked at compile time.
+
+Github: OpenVPN/openvpn-private-issues#161
+Reported-By: Mark Bregman (Fox-IT) <mark.bregman@fox-it.com>
+CVE: 2026-84732
+Change-Id: Id8ac9c48a8f751b0df95c6436ad3fbff3c4ae4a6
+Signed-off-by: Arne Schwabe <arne@rfc2549.org>
+Signed-off-by: Razvan Cojocaru <razvanc@mailbox.org>
+Acked-by: MaxF <max@max-fillinger.net>
+
+---
+Upstream: https://github.com/OpenVPN/openvpn/commit/207ac5f47e46565881dcec385020ebdcb682caa4
+CVE: CVE-2026-84732
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ src/openvpn/options.c  |  9 ++++++++-
+ src/openvpn/reliable.c | 13 ++++++++++++-
+ src/openvpn/reliable.h | 41 ++++++++++++++++++++++++++---------------
+ 3 files changed, 46 insertions(+), 17 deletions(-)
+
+diff --git a/src/openvpn/options.c b/src/openvpn/options.c
+index 5f3f4e96028..7a649de8822 100644
+--- a/src/openvpn/options.c
++++ b/src/openvpn/options.c
+@@ -7548,7 +7548,14 @@ add_option(struct options *options, char *p[], bool is_inline, const char *file,
+     else if (streq(p[0], "tls-timeout") && p[1] && !p[2])
+     {
+         VERIFY_PERMISSION(OPT_P_TLS_PARMS);
+-        options->tls_timeout = positive_atoi(p[1], msglevel);
++        /* Constrain the timeout to not have problems with
++         * RELIABLE_MAX_TIMEOUT_SHIFT creating an overflow. 65k seconds
++         * timeout is already way too much anyway */
++        if (!atoi_constrained(p[1], &options->tls_timeout, "tls-timeout", 1,
++                              RELIABLE_MAX_INITIAL_TIMEOUT, msglevel))
++        {
++            goto err;
++        }
+     }
+     else if (streq(p[0], "reneg-bytes") && p[1] && !p[2])
+     {
+diff --git a/src/openvpn/reliable.c b/src/openvpn/reliable.c
+index 690e50d6d95..230d6aca47e 100644
+--- a/src/openvpn/reliable.c
++++ b/src/openvpn/reliable.c
+@@ -655,11 +655,22 @@ reliable_send(struct reliable *rel, int *opcode)
+             }
+         }
+     }
++
+     if (best)
+     {
++        /* The initial timeout is bounded by RELIABLE_MAX_INITIAL_TIMEOUT, so
++         * shifting it cannot overflow. */
++        static_assert(RELIABLE_MAX_INITIAL_TIMEOUT <= (INT_MAX >> RELIABLE_MAX_TIMEOUT_SHIFT),
++                      "initial reliable timeout overflows when shifted");
++        const interval_t max_timeout = rel->initial_timeout << RELIABLE_MAX_TIMEOUT_SHIFT;
++
+         /* exponential backoff */
+         best->next_try = local_now + best->timeout;
+-        best->timeout *= 2;
++        if (best->timeout < max_timeout)
++        {
++            best->timeout *= 2;
++        }
++
+         best->n_acks = 0;
+         *opcode = best->opcode;
+         dmsg(D_REL_DEBUG, "ACK reliable_send ID " packet_id_format " (size=%d to=%d)",
+diff --git a/src/openvpn/reliable.h b/src/openvpn/reliable.h
+index a5ed75cf0d0..af95bbc17a1 100644
+--- a/src/openvpn/reliable.h
++++ b/src/openvpn/reliable.h
+@@ -40,21 +40,32 @@
+  *  @{ */
+ 
+ 
+-#define RELIABLE_ACK_SIZE                       \
+-    8 /**< The maximum number of packet IDs     \
+-       *   waiting to be acknowledged which can \
+-       *   be stored in one \c reliable_ack     \
+-       *   structure. */
+-
+-#define RELIABLE_CAPACITY                      \
+-    12 /**< The maximum number of packets that \
+-        *   the reliability layer for one VPN  \
+-        *   tunnel in one direction can store. */
+-
+-#define N_ACK_RETRANSMIT                      \
+-    3 /**< We retry sending a packet early if \
+-       *   this many later packets have been  \
+-       *   ACKed. */
++#define RELIABLE_ACK_SIZE 8
++/**< The maximum number of packet IDs
++ *   waiting to be acknowledged which can
++ *   be stored in one \c reliable_ack
++ *   structure. */
++
++#define RELIABLE_CAPACITY 12
++/**< The maximum number of packets that
++ *   the reliability layer for one VPN
++ *   tunnel in one direction can store. */
++
++#define N_ACK_RETRANSMIT 3
++/**< We retry sending a packet early if
++ *   this many later packets have been
++ *   ACKed. */
++
++#define RELIABLE_MAX_TIMEOUT_SHIFT 6
++/**< Maximum shift or doubling in exponential backoff
++ * we allow. This is a safeguard against an unbounded
++ * exponential backoff. With the default timeout of 2s this
++ * equals 128s */
++
++#define RELIABLE_MAX_INITIAL_TIMEOUT (1 << 16)
++/**< Maximum initial timeout (--tls-timeout) we accept.
++ * Bounded so that shifting it by RELIABLE_MAX_TIMEOUT_SHIFT
++ * cannot overflow an int. */
+ 
+ /**
+  * The acknowledgment structure in which packet IDs are stored for later
