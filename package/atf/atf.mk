@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ATF_VERSION = 0.23
+ATF_VERSION = 0.25
 ATF_SITE = https://github.com/freebsd/atf/releases/download/atf-$(ATF_VERSION)
 ATF_INSTALL_STAGING = YES
 ATF_LICENSE = BSD-2-Clause, BSD-3-Clause

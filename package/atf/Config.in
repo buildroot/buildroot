@@ -1,6 +1,7 @@
 config BR2_PACKAGE_ATF
 	bool "atf"
 	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_10 # C++20
 	depends on BR2_USE_MMU # fork()
 	help
 	  ATF, or Automated Testing Framework, is a collection of
@@ -8,6 +9,6 @@ config BR2_PACKAGE_ATF
 
 	  https://github.com/freebsd/atf
 
-comment "atf needs a toolchain w/ C++"
-	depends on !BR2_INSTALL_LIBSTDCPP
+comment "atf needs a toolchain w/ C++, gcc >= 10"
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_GCC_AT_LEAST_10
 	depends on BR2_USE_MMU
