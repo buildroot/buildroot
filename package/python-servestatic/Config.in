@@ -1,0 +1,11 @@
+config BR2_PACKAGE_PYTHON_SERVESTATIC
+	bool "python-servestatic"
+	select BR2_PACKAGE_PYTHON_ASGIREF # runtime dependency
+	select BR2_PACKAGE_PYTHON3_ZLIB # runtime dependency for cli / servestatic.storage usage
+	help
+	  Production-grade static file server for Python WSGI and ASGI.
+
+	  ServeStatic runs standalone or as middleware for an existing
+	  WSGI, ASGI, or Django application.
+
+	  https://github.com/Archmonger/ServeStatic
