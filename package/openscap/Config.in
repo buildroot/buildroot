@@ -1,14 +1,10 @@
 config BR2_PACKAGE_OPENSCAP
 	bool "openscap"
-	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS  # libgcrypt
 	depends on !BR2_STATIC_LIBS # dlfcn.h
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_7 # libxmlsec1
 	depends on BR2_TOOLCHAIN_HAS_ATOMIC # libxmlsec1
 	select BR2_PACKAGE_LIBCURL
-	# In theory should build without crypto, but in practice it
-	# doesn't: https://github.com/OpenSCAP/openscap/issues/2310
-	select BR2_PACKAGE_LIBGCRYPT if !BR2_PACKAGE_LIBNSS
 	select BR2_PACKAGE_LIBXML2
 	select BR2_PACKAGE_LIBXSLT
 	select BR2_PACKAGE_LIBXMLSEC1
@@ -22,7 +18,6 @@ config BR2_PACKAGE_OPENSCAP
 	  https://github.com/OpenSCAP/openscap
 
 comment "openscap needs a toolchain w/ dynamic library, NPTL, gcc >= 7"
-	depends on BR2_PACKAGE_LIBGPG_ERROR_ARCH_SUPPORTS
 	depends on BR2_TOOLCHAIN_HAS_ATOMIC
 	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS_NPTL || \
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_7

@@ -1,0 +1,50 @@
+From 5b858d1786c025cbd50dfc284b252c3ee6dd99dc Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Date: Tue, 18 Aug 2026 09:38:05 +0200
+Subject: [PATCH] Do not use gcrypt cmake variables if gcrypt is not found
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Commit d12d820a9493 ("Fix build without crypto support") enabled
+building the crapi library without a crypto backend, but left the
+target_include_directories and target_compile_definitions calls
+unguarded. When no crypto library is available, the GCrypt find module
+leaves GCRYPT_INCLUDE_DIRS unset, so CMake fails at the generate step
+with:
+
+  CMake Error: The following variables are used in this project, but
+  they are set to NOTFOUND: GCRYPT_INCLUDE_DIR
+
+The test command provided at this time made the build successful because
+it provided -DCMAKE_DISABLE_FIND_PACKAGE_GCrypt=TRUE, but if no crypto
+backend is provided, it does not make sense to provide those cmake
+configuration options preventing dependency search manually.
+
+Guard both calls with a CRYPTO_FOUND check so they are only applied when
+an actual digest backend is present, even without providing
+-DCMAKE_DISABLE_FIND_PACKAGE_foo
+
+Upstream: https://github.com/OpenSCAP/openscap/commit/5b858d1786c025cbd50dfc284b252c3ee6dd99dc
+Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+---
+ src/OVAL/probes/crapi/CMakeLists.txt | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/OVAL/probes/crapi/CMakeLists.txt b/src/OVAL/probes/crapi/CMakeLists.txt
+index 3fb6f123c8d6..88cb916b6d96 100644
+--- a/src/OVAL/probes/crapi/CMakeLists.txt
++++ b/src/OVAL/probes/crapi/CMakeLists.txt
+@@ -8,5 +8,7 @@ file(GLOB_RECURSE CRAPI_HEADERS "*.h")
+ 
+ add_library(crapi_object OBJECT ${CRAPI_SOURCES} ${CRAPI_HEADERS})
+ set_oscap_generic_properties(crapi_object)
+-target_include_directories(crapi_object PUBLIC ${NSS_INCLUDE_DIRS} ${GCRYPT_INCLUDE_DIRS})
+-target_compile_definitions(crapi_object PUBLIC ${GCRYPT_DEFINITIONS})
++if (CRYPTO_FOUND)
++	target_include_directories(crapi_object PUBLIC ${NSS_INCLUDE_DIRS} ${GCRYPT_INCLUDE_DIRS})
++	target_compile_definitions(crapi_object PUBLIC ${GCRYPT_DEFINITIONS})
++endif()
+-- 
+2.55.0
+
