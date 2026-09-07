@@ -1,0 +1,41 @@
+From 1fd644054b06189871502b3fc02f98d97060125e Mon Sep 17 00:00:00 2001
+Message-ID: <1fd644054b06189871502b3fc02f98d97060125e.1788801670.git.baruch@tkos.co.il>
+From: Baruch Siach <baruch@tkos.co.il>
+Date: Mon, 7 Sep 2026 20:11:51 +0300
+Subject: [PATCH] defs.h: fix build with uClibc
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Commit ee5459531280f ("open: refactor sprint_open_modes64 to support
+multiple xlat tables") added a reference to va_list, but did not add the
+required header. This breaks build with uClibc:
+
+In file included from bjm.c:12:
+defs.h:1060:53: error: unknown type name ‘va_list’
+ 1060 |                                    enum xlat_style, va_list xlats);
+      |                                                     ^~~~~~~
+
+Include stdarg.h to fix the build.
+
+Upstream: https://github.com/strace/strace/pull/420
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+ src/defs.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/defs.h b/src/defs.h
+index 91aa32c085fe..3cdae04d19f2 100644
+--- a/src/defs.h
++++ b/src/defs.h
+@@ -24,6 +24,7 @@
+ # include <unistd.h>
+ # include <stdlib.h>
+ # include <stdio.h>
++# include <stdarg.h>
+ /* Open-coding isprint(ch) et al proved more efficient than calling
+  * generalized libc interface. We don't *want* to do non-ASCII anyway.
+  */
+-- 
+2.53.0
+
