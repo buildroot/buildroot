@@ -1,0 +1,57 @@
+From d12d820a9493b0a0ee1ad4b0aeaa87da28aa0080 Mon Sep 17 00:00:00 2001
+From: Eljees <yurytumanov.r@yandex.ru>
+Date: Mon, 27 Jul 2026 06:57:38 +0300
+Subject: [PATCH] Fix build without crypto support
+
+Upstream: https://github.com/OpenSCAP/openscap/commit/d12d820a9493b0a0ee1ad4b0aeaa87da28aa0080
+Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+---
+ src/CMakeLists.txt                   | 2 +-
+ src/OVAL/probes/CMakeLists.txt       | 2 +-
+ src/OVAL/probes/crapi/CMakeLists.txt | 7 ++++++-
+ 3 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 5d59bf3f036f..f31ce8040e0a 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -59,7 +59,7 @@ if (ENABLE_PROBES)
+ 		)
+ 	endif()
+ endif()
+-if (HAVE_MMAN_H AND (GCRYPT_FOUND OR NSS_FOUND))
++if (HAVE_MMAN_H)
+ 	list(APPEND OBJECTS_TO_LINK_AGAINST
+ 		$<TARGET_OBJECTS:crapi_object>
+ 	)
+diff --git a/src/OVAL/probes/CMakeLists.txt b/src/OVAL/probes/CMakeLists.txt
+index e505908f5842..25e3ca56a0c3 100644
+--- a/src/OVAL/probes/CMakeLists.txt
++++ b/src/OVAL/probes/CMakeLists.txt
+@@ -1,7 +1,7 @@
+ add_subdirectory("SEAP")
+ add_subdirectory("probe")
+ 
+-if (HAVE_MMAN_H AND CRYPTO_FOUND)
++if (HAVE_MMAN_H)
+ 	add_subdirectory("crapi")
+ endif()
+ 
+diff --git a/src/OVAL/probes/crapi/CMakeLists.txt b/src/OVAL/probes/crapi/CMakeLists.txt
+index 1f3e5a963bbf..3fb6f123c8d6 100644
+--- a/src/OVAL/probes/crapi/CMakeLists.txt
++++ b/src/OVAL/probes/crapi/CMakeLists.txt
+@@ -1,4 +1,9 @@
+-file(GLOB_RECURSE CRAPI_SOURCES "*.c")
++if (CRYPTO_FOUND)
++	file(GLOB_RECURSE CRAPI_SOURCES "*.c")
++else()
++	# crapi_init has a no-op implementation for builds without a digest backend.
++	set(CRAPI_SOURCES "crapi.c")
++endif()
+ file(GLOB_RECURSE CRAPI_HEADERS "*.h")
+ 
+ add_library(crapi_object OBJECT ${CRAPI_SOURCES} ${CRAPI_HEADERS})
+-- 
+2.55.0
+
