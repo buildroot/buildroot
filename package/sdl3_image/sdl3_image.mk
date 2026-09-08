@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SDL3_IMAGE_VERSION = 3.1.1
+SDL3_IMAGE_VERSION = 3.4.6
 SDL3_IMAGE_SITE = https://www.libsdl.org/projects/SDL_image/release
 SDL3_IMAGE_SOURCE = SDL3_image-$(SDL3_IMAGE_VERSION).tar.gz
 SDL3_IMAGE_LICENSE = Zlib
