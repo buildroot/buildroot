@@ -1,0 +1,27 @@
+From b49542dea03c4b895a860c393453ab8497dabfce Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Tue, 8 Sep 2026 12:52:02 +0200
+Subject: [PATCH] java/jni/client.c: include est/est_ossl_util.h
+
+Upstream: https://github.com/cisco/libest/pull/132#issuecomment-4749526125
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ java/jni/client.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/java/jni/client.c b/java/jni/client.c
+index c5bc28e..2c4663e 100644
+--- a/java/jni/client.c
++++ b/java/jni/client.c
+@@ -12,6 +12,7 @@
+ #include <stdint.h>
+ #include "jest.h"
+ #include <est/est.h>
++#include "est/est_ossl_util.h"
+ #include <openssl/x509v3.h>
+ #include <openssl/bio.h>
+ #include "safe_mem_lib.h"
+-- 
+2.47.3
+
