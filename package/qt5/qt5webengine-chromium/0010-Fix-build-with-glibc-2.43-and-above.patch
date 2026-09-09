@@ -1,0 +1,41 @@
+From bf8bd5512920b28468d99b9ce550f0617e57d7f4 Mon Sep 17 00:00:00 2001
+From: Peter Varga <pvarga@inf.u-szeged.hu>
+Date: Mon, 16 Feb 2026 16:12:58 +0100
+Subject: [PATCH] [sandbox] Fix build with glibc-2.43 and above
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes error:
+//sandbox/linux/system_headers/linux_seccomp.h:218:39: error: expected identifier before numeric constant
+  218 | #define SYS_SECCOMP                   1
+      |                                       ^
+error: expected ‘}’ before numeric constant
+
+See https://crbug.com/456218403
+
+Pick-to: 134-based 130-based 122-based
+Change-Id: I5f2ea6826650b9eff6b4defff694f24e301f7663
+Reviewed-on: https://codereview.qt-project.org/c/qt/qtwebengine-chromium/+/713181
+Reviewed-by: Moss Heim <moss.heim@qt.io>
+
+Upstream: https://github.com/qt/qtwebengine-chromium/commit/bf8bd5512920b28468d99b9ce550f0617e57d7f4
+
+[Bernd: backported patch]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ chromium/sandbox/linux/system_headers/linux_seccomp.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/chromium/sandbox/linux/system_headers/linux_seccomp.h b/chromium/sandbox/linux/system_headers/linux_seccomp.h
+index 8690a96eb01b..8988836508c7 100644
+--- a/chromium/sandbox/linux/system_headers/linux_seccomp.h
++++ b/chromium/sandbox/linux/system_headers/linux_seccomp.h
+@@ -6,6 +6,7 @@
+ #define SANDBOX_LINUX_SYSTEM_HEADERS_LINUX_SECCOMP_H_
+ 
+ #include <stdint.h>
++#include <signal.h>
+ 
+ #include "build/build_config.h"
+ 
