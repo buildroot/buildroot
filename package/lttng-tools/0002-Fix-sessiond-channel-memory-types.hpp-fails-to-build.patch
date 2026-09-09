@@ -1,0 +1,55 @@
+From e989cad2af408d93c386818cc87316b702f336b3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?J=C3=A9r=C3=A9mie=20Galarneau?=
+ <jeremie.galarneau@efficios.com>
+Date: Fri, 28 Aug 2026 21:32:40 +0000
+Subject: [PATCH] Fix: sessiond: channel-memory-types.hpp fails to build with
+ musl
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+OBSERVED ISSUE
+━━━━━━━━━━━━━━
+Building 2.16.0 against musl (on Yocto) fails with:
+
+  channel-memory-types.hpp:31:59: error: 'uid_t' has not been
+  declared; did you mean 'pid_t'?
+
+CAUSE
+━━━━━
+The header uses pid_t and uid_t without including <sys/types.h>.
+With glibc, those types leak in through the other included headers.
+musl's headers are seemingly stricter and don't declare them
+transitively.
+
+SOLUTION
+━━━━━━━━
+Include <sys/types.h>.
+
+Reported-by: Richard Purdie <richard.purdie@linuxfoundation.org>
+Fixes: #1445
+Change-Id: I291522a2110d7d927f062ab0131c35ed9e793ba5
+Signed-off-by: Jérémie Galarneau <jeremie.galarneau@efficios.com>
+
+Upstream: https://github.com/lttng/lttng-tools/commit/e989cad2af408d93c386818cc87316b702f336b3
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/bin/lttng-sessiond/channel-memory-types.hpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/bin/lttng-sessiond/channel-memory-types.hpp b/src/bin/lttng-sessiond/channel-memory-types.hpp
+index 554691201..2b5fcc962 100644
+--- a/src/bin/lttng-sessiond/channel-memory-types.hpp
++++ b/src/bin/lttng-sessiond/channel-memory-types.hpp
+@@ -16,6 +16,7 @@
+ #include <chrono>
+ #include <cstdint>
+ #include <functional>
++#include <sys/types.h>
+ #include <vector>
+ 
+ namespace lttng {
+-- 
+2.47.3
+
