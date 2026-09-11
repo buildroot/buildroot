@@ -10,9 +10,11 @@ Also, add the necessary defines in the makefile to expose
 LONG_BIT. Adding those defines end up requiring using <sys/select.h>
 as we're now using >= POSIX.1-2001 definitions of fd_set and friends.
 
+Upstream: https://github.com/kgoldman/ibmswtpm2/pull/16 (rejected)
+
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Signed-off-by: Vincent Fazio <vfazio@gmail.com>
-[Bernd: rebased for git rev 5452af422edeff70fcae8ea99dd28a0922051d7b]
+[Bernd: rebase for rev183-2026-08-26]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 [Fabrice: rebase for rev183-2024-03-27]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
@@ -37,7 +39,7 @@ index 5055560..48b1e16 100644
 -    || defined(__powerpc64__) || defined(__ppc64__)
 -#    define RADIX_BITS 64
 -#  elif defined(__i386__) || defined(__i386) || defined(i386) || defined(_WIN32) \
--    || defined(_M_IX86)
+-    || defined(_M_IX86) || defined(__PPC__)
 -#    define RADIX_BITS 32
 -#  elif defined(_M_ARM) || defined(__arm__) || defined(__thumb__)
 -#    define RADIX_BITS 32
@@ -61,7 +63,7 @@ diff --git a/src/TcpServerPosix.c b/src/TcpServerPosix.c
 index cad0402..6293cdd 100644
 --- a/src/TcpServerPosix.c
 +++ b/src/TcpServerPosix.c
-@@ -66,6 +66,7 @@
+@@ -67,6 +67,7 @@
  
  #include <stdio.h>
  #include <stdbool.h>
@@ -79,7 +81,7 @@ index f124e78..6ee128e 100644
  	-D_POSIX_			\
 +	-D_DEFAULT_SOURCE		\
 +	-D_XOPEN_SOURCE=500		\
- 	-DTPM_NUVOTON
+ 	-DTPM_NUVOTON $(CFLAGS)
  
  # add this line for big endian platforms
 -- 
