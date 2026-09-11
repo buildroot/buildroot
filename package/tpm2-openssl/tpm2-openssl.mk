@@ -4,12 +4,16 @@
 #
 ################################################################################
 
-TPM2_OPENSSL_VERSION = 1.2.0
+TPM2_OPENSSL_VERSION = 1.3.0
 TPM2_OPENSSL_SITE = https://github.com/tpm2-software/tpm2-openssl/releases/download/$(TPM2_OPENSSL_VERSION)
 TPM2_OPENSSL_LICENSE = BSD-3-Clause
 TPM2_OPENSSL_LICENSE_FILES = LICENSE
 TPM2_OPENSSL_INSTALL_STAGING = YES
 TPM2_OPENSSL_DEPENDENCIES = host-pkgconf openssl tpm2-tss
+
+# Need to disable -Werror to avoid warnings being treated as errors
+# with some gcc versions
+TPM2_OPENSSL_CONF_ENV = CFLAGS="$(TARGET_CFLAGS) -Wno-error"
 
 # Provide --with-modulesdir to avoid using abs_builddir and DESTDIR
 # (also defined as absolute path) at the same time to define modules
