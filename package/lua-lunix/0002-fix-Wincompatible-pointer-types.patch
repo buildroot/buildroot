@@ -1,0 +1,37 @@
+From: Francois Perrad <francois.perrad@gadz.org>
+Date: Wed, 9 Sep 2026 20:36:07 +0200
+Subject: [PATCH] fix -Wincompatible-pointer-types
+
+src/unix.c: In function 'unix_sigaction':
+src/unix.c:9721:32: error: assignment to '__sighandler_t' {aka 'void (*)(int)'} from incompatible pointer type 'void (*)(void)' [-Wincompatible-pointer-types]
+ 9791 |                 act.sa_handler = unixL_tosighandler(L, -1);
+      |                                ^
+In file included from src/unix.c:48:
+/usr/include/signal.h:72:16: note: '__sighandler_t' declared here
+   72 | typedef void (*__sighandler_t) (int);
+      |                ^~~~~~~~~~~~~~
+
+note: this warning is enabled by removing -std=gnu99 from CFLAGS
+
+Upstream: https://github.com/wahern/lunix/pull/25
+Signed-off-by: Francois Perrad <francois.perrad.86@gmail.com>
+---
+ src/unix.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lunix-rel-20220331/src/unix.c b/lunix-rel-20220331/src/unix.c
+index 2e0d77a..6d91e51 100644
+--- a/lunix-rel-20220331/src/unix.c
++++ b/lunix-rel-20220331/src/unix.c
+@@ -1278,7 +1278,7 @@ MAYBEUSED static void ts_timersub(struct timespec *r, struct timespec a, struct
+  * manipulated in C as type pointer-to-function. Accordingly, our code
+  * expects lua_touserdata to return pointer-to-pointer-to-function.
+  */
+-typedef void u_sighandler_t();
++typedef void u_sighandler_t(int);
+ 
+ MAYBEUSED static void sa_discard(int signo NOTUSED) {
+ 	return;
+-- 
+2.43.0
+
