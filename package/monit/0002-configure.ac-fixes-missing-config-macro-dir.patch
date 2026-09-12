@@ -10,7 +10,7 @@ Upstream: N/A (specific to buildroot)
 Signed-off-by: Jens Maus <mail@jens-maus.de>
 [Dario: make the patch to be applied with fuzz factor 0]
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-[Bernd: rebased against 5.34.2]
+[Bernd: rebased against 6.0.0]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 [Daniel: rebased against 5.35.2]
 Signed-off-by: Daniel Crowe <daniel.crowe@maxmine.com.au>
@@ -25,7 +25,7 @@ index 3a6cf4e6..477cdbaa 100644
 +++ b/configure.ac
 @@ -8,7 +8,7 @@ AC_PREREQ([2.53])
  # Example: 5.0_beta2
- AC_INIT([monit], [5.35.2], [monit-general@nongnu.org])
+ AC_INIT([monit], [6.0.0], [monit-general@nongnu.org])
  AC_CONFIG_AUX_DIR(config)
 -AC_CONFIG_MACRO_DIR([m4])
 +AC_CONFIG_MACRO_DIRS([m4 config])
