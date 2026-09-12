@@ -9,6 +9,7 @@ config BR2_PACKAGE_BCC
 	depends on BR2_USE_WCHAR # clang, python3
 	depends on BR2_TOOLCHAIN_HAS_THREADS # clang, python3
 	depends on !BR2_STATIC_LIBS # clang, python3
+	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_64735 # clang, llvm
 	select BR2_PACKAGE_CLANG
 	select BR2_PACKAGE_ELFUTILS
 	select BR2_PACKAGE_FLEX # needs FlexLexer.h
@@ -48,3 +49,8 @@ comment "bcc needs a glibc toolchain, C++, wchar, threads, dynamic libs, gcc >= 
 		|| !BR2_USE_WCHAR \
 		|| !BR2_TOOLCHAIN_HAS_THREADS \
 		|| BR2_STATIC_LIBS
+
+comment "bcc needs a toolchain not affected by GCC bug 64735"
+	depends on BR2_PACKAGE_LLVM_ARCH_SUPPORTS
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_HAS_GCC_BUG_64735
