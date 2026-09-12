@@ -3,7 +3,7 @@ config BR2_PACKAGE_RASDAEMON
 	depends on !BR2_STATIC_LIBS # libtraceevent
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_LIBTRACEEVENT
-	select BR2_PACKAGE_ARGP_STANDALONE if BR2_TOOLCHAIN_USES_UCLIBC || BR2_TOOLCHAIN_USES_MUSL
+	select BR2_PACKAGE_ARGP_STANDALONE if !BR2_TOOLCHAIN_USES_GLIBC
 	help
 	  rasdaemon is a tool that collects all hardware error events
 	  reported by the Linux Kernel from several sources (EDAC, MCE
