@@ -1,0 +1,118 @@
+From 0a9a94a4f212fea58792e35b195587a153919968 Mon Sep 17 00:00:00 2001
+From: Khem Raj <khem.raj@oss.qualcomm.com>
+Date: Thu, 30 Jul 2026 11:33:45 -0700
+Subject: [PATCH] Fix build with binutils 2.47
+
+binutils 2.47 removed the bfd_boolean compatibility define, together with
+the TRUE/FALSE macros that came along with it, see binutils commit
+1d95b744c069 ("Remove bfd_boolean definition from bfd").
+
+Use the C99 bool/false from <stdbool.h> instead, which is what the bfd
+API has been returning since binutils 2.36.
+
+While here, make _bfd_target_name a 'char const *' since that is the type
+of bfd_target::name; it is only ever read.
+
+Upstream-Status: Pending
+
+Signed-off-by: Khem Raj <khem.raj@oss.qualcomm.com>
+
+Downloaded from
+https://git.openembedded.org/meta-openembedded/commit/?id=a884b55acd042b8ab29c70952c0d8daff48a1468
+
+Upstream: https://sourceforge.net/p/oprofile/bugs/296/
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ libopagent/opagent.c   |  5 +++--
+ opjitconv/create_bfd.c | 13 +++++++------
+ 2 files changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/libopagent/opagent.c b/libopagent/opagent.c
+index f280880..c3d1af9 100644
+--- a/libopagent/opagent.c
++++ b/libopagent/opagent.c
+@@ -52,6 +52,7 @@
+ 
+ #include "config.h"
+ #include <stdio.h>
++#include <stdbool.h>
+ #include <errno.h>
+ #include <string.h>
+ #include <stdint.h>
+@@ -70,7 +71,7 @@
+ #include "jitdump.h"
+ 
+ // Declare BFD-related global variables.
+-static char * _bfd_target_name;
++static char const * _bfd_target_name;
+ static int _bfd_arch;
+ static unsigned int _bfd_mach;
+ 
+@@ -78,7 +79,7 @@ static unsigned int _bfd_mach;
+ static int define_bfd_vars(void)
+ {
+ 	bfd * bfd;
+-	bfd_boolean r;
++	bool r;
+ 	int len;
+ #define MAX_PATHLENGTH 2048
+ 	char mypath[MAX_PATHLENGTH];
+diff --git a/opjitconv/create_bfd.c b/opjitconv/create_bfd.c
+index da1e6d2..3124d88 100644
+--- a/opjitconv/create_bfd.c
++++ b/opjitconv/create_bfd.c
+@@ -20,6 +20,7 @@
+ 
+ #include <bfd.h>
+ #include <assert.h>
++#include <stdbool.h>
+ #include <stdint.h>
+ #include <stdio.h>
+ 
+@@ -65,7 +66,7 @@ static int fill_symtab(void)
+ 		syms[i] = s;
+ 	}
+ 	r = bfd_set_symtab(cur_bfd, syms, entry_count);
+-	if (r == FALSE) {
++	if (r == false) {
+ 		bfd_perror("bfd_set_symtab");
+ 		rc = OP_JIT_CONV_FAIL;
+ 	}
+@@ -88,11 +89,11 @@ asection * create_section(bfd * abfd, char const * section_name,
+ 		goto error;
+ 	}
+ 	op_bfd_set_section_vma(abfd, section, vma);
+-	if (op_bfd_set_section_size(abfd, section, size) == FALSE) {
++	if (op_bfd_set_section_size(abfd, section, size) == false) {
+ 		bfd_perror("bfd_set_section_size");
+ 		goto error;
+ 	}
+-	if (op_bfd_set_section_flags(abfd, section, flags) == FALSE) {
++	if (op_bfd_set_section_flags(abfd, section, flags) == false) {
+ 		bfd_perror("bfd_set_section_flags");
+ 		goto error;
+ 	}
+@@ -134,7 +135,7 @@ static int create_text_section(int start_idx, int end_idx)
+ int fill_section_content(bfd * abfd, asection * section,
+ 			 void const * b, file_ptr offset, size_t sz)
+ {
+-	if (bfd_set_section_contents(abfd, section, b, offset, sz) == FALSE) {
++	if (bfd_set_section_contents(abfd, section, b, offset, sz) == false) {
+ 		bfd_perror("bfd_set_section_contents");
+ 		return OP_JIT_CONV_FAIL;
+ 	}
+@@ -257,11 +258,11 @@ bfd * open_elf(char const * filename)
+ 		bfd_perror("bfd_openw");
+ 		goto error1;
+ 	}
+-	if (bfd_set_format(abfd, bfd_object) == FALSE) {
++	if (bfd_set_format(abfd, bfd_object) == false) {
+ 		bfd_perror("bfd_set_format");
+ 		goto error;
+ 	}
+-	if (bfd_set_arch_mach(abfd, dump_bfd_arch, dump_bfd_mach) == FALSE) {
++	if (bfd_set_arch_mach(abfd, dump_bfd_arch, dump_bfd_mach) == false) {
+ 		bfd_perror("bfd_set_arch_mach");
+ 		goto error;
+ 	}
