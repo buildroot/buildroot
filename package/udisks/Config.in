@@ -8,6 +8,7 @@ config BR2_PACKAGE_UDISKS
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # libblockdev -> cryptsetup -> json-c
 	depends on !BR2_STATIC_LIBS # polkit -> duktape
 	depends on !BR2_OPTIMIZE_FAST # polkit -> duktape
+	depends on BR2_USE_MMU # dbus, dbus-glib, libblockdev, polkit, util-linux libmount
 	select BR2_PACKAGE_DBUS
 	select BR2_PACKAGE_DBUS_GLIB
 	select BR2_PACKAGE_LIBATASMART
