@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-LIBCDIO_VERSION = 2.3.0
+LIBCDIO_VERSION = 2.4.0
 LIBCDIO_SOURCE = libcdio-$(LIBCDIO_VERSION).tar.bz2
 LIBCDIO_SITE = https://github.com/libcdio/libcdio/releases/download/$(LIBCDIO_VERSION)
 LIBCDIO_INSTALL_STAGING = YES
 LIBCDIO_LICENSE = GPL-3.0+
 LIBCDIO_LICENSE_FILES = COPYING
 LIBCDIO_CPE_ID_VENDOR = gnu
+LIBCDIO_CONF_ENV = ac_cv_path_HELP2MAN=""
 LIBCDIO_CONF_OPTS = --disable-example-progs --disable-cddb
 LIBCDIO_DEPENDENCIES = host-pkgconf
 
