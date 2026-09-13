@@ -17,12 +17,17 @@ config BR2_PACKAGE_OPENFPGALOADER_CMSIS
 	depends on BR2_PACKAGE_HAS_UDEV # hidapi
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # hidapi
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # hidapi -> libusb
+	depends on BR2_USE_MMU # hidapi
+	depends on BR2_USE_WCHAR # hidapi
 	select BR2_PACKAGE_HIDAPI
 	help
 	  openfpgaloader CMSIS-DAP support
 
-comment "openfpgaloader CMSIS-DAP needs udev /dev management and a toolchain w/ NPTL threads"
-	depends on !BR2_PACKAGE_HAS_UDEV || !BR2_TOOLCHAIN_HAS_THREADS_NPTL
+comment "openfpgaloader CMSIS-DAP needs udev /dev management and a toolchain w/ NPTL threads, gcc >= 4.9, wchar"
+	depends on BR2_USE_MMU
+	depends on !BR2_PACKAGE_HAS_UDEV || !BR2_TOOLCHAIN_HAS_THREADS_NPTL || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || \
+		!BR2_USE_WCHAR
 
 config BR2_PACKAGE_OPENFPGALOADER_LIBGPIOD
 	bool "libgpiod support"
