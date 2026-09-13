@@ -3,13 +3,17 @@ config BR2_PACKAGE_PYTHON_HID
 	depends on BR2_PACKAGE_HAS_UDEV # hidapi
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # hidapi
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # hidapi
+	depends on BR2_USE_MMU # hidapi
+	depends on BR2_USE_WCHAR # hidapi
 	select BR2_PACKAGE_HIDAPI
 	help
 	  ctypes bindings for hidapi.
 
 	  https://github.com/apmorton/pyhidapi
 
-comment "python-hid needs udev /dev management and a toolchain w/ NPTL, gcc >= 4.9"
+comment "python-hid needs udev /dev management and a toolchain w/ NPTL, gcc >= 4.9, wchar"
+	depends on BR2_USE_MMU
 	depends on !BR2_TOOLCHAIN_HAS_THREADS_NPTL || \
 		!BR2_PACKAGE_HAS_UDEV || \
-		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 || \
+		!BR2_USE_WCHAR
