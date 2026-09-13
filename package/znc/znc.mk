@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-ZNC_VERSION = 1.10.2
-ZNC_SITE = http://znc.in/releases/archive
+ZNC_VERSION = 1.10.3
+ZNC_SITE = https://files.asokolov.org
 ZNC_LICENSE = Apache-2.0
 ZNC_LICENSE_FILES = LICENSE
 ZNC_CPE_ID_VENDOR = znc
