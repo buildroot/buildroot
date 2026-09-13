@@ -1,7 +1,7 @@
 config BR2_PACKAGE_LIBMANETTE
 	bool "libmanette"
-	depends on BR2_USE_MMU # libglib2
-	depends on BR2_USE_WCHAR # libglib2 -> gettext
+	depends on BR2_USE_MMU # libglib2, hidapi
+	depends on BR2_USE_WCHAR # libglib2, hidapi
 	depends on BR2_PACKAGE_HAS_UDEV # hidapi
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL # hidapi
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_16
