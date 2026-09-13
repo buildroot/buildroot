@@ -87,7 +87,7 @@ config BR2_PACKAGE_WEBKITGTK_WAYLAND
 config BR2_PACKAGE_WEBKITGTK_SANDBOX
 	bool "sandboxing support"
 	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS # libseccomp
-	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12 # libseccomp
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17 # libseccomp
 	select BR2_PACKAGE_BUBBLEWRAP # runtime
 	select BR2_PACKAGE_XDG_DBUS_PROXY # runtime
 	select BR2_PACKAGE_LIBSECCOMP
@@ -95,9 +95,9 @@ config BR2_PACKAGE_WEBKITGTK_SANDBOX
 	  Enable sandboxing of the processes used for network operation,
 	  disk access, and Web content rendering.
 
-comment "sandboxing support needs a toolchain w/ headers >= 3.12"
+comment "sandboxing support needs a toolchain w/ headers >= 3.17"
 	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS
-	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_12
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_3_17
 
 config BR2_PACKAGE_WEBKITGTK_HTTPS
 	bool "HTTPS support"
