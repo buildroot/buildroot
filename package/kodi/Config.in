@@ -202,6 +202,7 @@ comment "nfs support needs a toolchain w/ threads support"
 
 config BR2_PACKAGE_KODI_MYSQL
 	bool "mysql"
+	depends on BR2_TOOLCHAIN_HAS_ATOMIC || BR2_TOOLCHAIN_HAS_SYNC_8 # mariadb
 	select BR2_PACKAGE_MARIADB
 	help
 	  Enable MySQL support
