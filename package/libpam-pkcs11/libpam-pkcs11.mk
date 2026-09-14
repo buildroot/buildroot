@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBPAM_PKCS11_VERSION = 0.6.13
+LIBPAM_PKCS11_VERSION = 0.6.14
 LIBPAM_PKCS11_SOURCE = pam_pkcs11-$(LIBPAM_PKCS11_VERSION).tar.gz
 LIBPAM_PKCS11_SITE = https://github.com/OpenSC/pam_pkcs11/archive/refs/tags
 LIBPAM_PKCS11_LICENSE = LGPL-2.1
