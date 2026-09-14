@@ -16,6 +16,7 @@ if BR2_PACKAGE_RPI_RGB_LED_MATRIX
 
 config BR2_PACKAGE_RPI_RGB_LED_MATRIX_IMAGE_VIEWER
 	bool "Build led-image-viewer"
+	depends on BR2_USE_MMU
 	select BR2_PACKAGE_GRAPHICSMAGICK
 	help
 	  The image viewer reads all kinds of image formats,
