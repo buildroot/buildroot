@@ -1,0 +1,31 @@
+From: Lasse Collin <lasse.collin@tukaani.org>
+Date: Wed, 9 Sep 2026 14:14:40 +0300
+Subject: liblzma: Make lzma_lz_decoder_init() safe to reinit after alloc failure
+
+If memory allocation fails and the resulting coder state is reused,
+ensure that memory allocation is attempted again. However, coders that
+are initialized via lzma_next_filter_init() shouldn't be reinitialized
+after failure; they should be cleaned up with lzma_next_end().
+
+Reported-by: GitHub user christos-cantina-security (christos-spearbit)
+(cherry picked from commit fe4d763d566a38ad61d4c5022520c25578a3a464)
+
+---
+Upstream: https://github.com/tukaani-project/xz/commit/0917f6d0f03d9add15dda27e0bf2ebfc22aaf67a
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ src/liblzma/lz/lz_decoder.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/liblzma/lz/lz_decoder.c b/src/liblzma/lz/lz_decoder.c
+index 92913f225..18669300e 100644
+--- a/src/liblzma/lz/lz_decoder.c
++++ b/src/liblzma/lz/lz_decoder.c
+@@ -276,6 +276,7 @@ lzma_lz_decoder_init(lzma_next_coder *next, const lzma_allocator *allocator,
+ 
+ 	// Allocate and initialize the dictionary.
+ 	if (coder->dict.size != alloc_size) {
++		coder->dict.size = 0;
+ 		lzma_free(coder->dict.buf, allocator);
+ 		coder->dict.buf = lzma_alloc(alloc_size, allocator);
+ 		if (coder->dict.buf == NULL)
