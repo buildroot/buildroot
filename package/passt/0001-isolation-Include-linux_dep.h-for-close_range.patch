@@ -1,0 +1,64 @@
+From defc25b9444c508d21badb6bc9a0b835ddd01126 Mon Sep 17 00:00:00 2001
+From: Huang Jing <rne.kou@icloud.com>
+Date: Sat, 8 Aug 2026 00:10:32 +0800
+Subject: [PATCH] isolation: Include linux_dep.h for close_range()
+
+Include linux_dep.h for close_range() usage in isolation.c. And now
+that the close_open_files() function which makes use of linux_dep.h
+has been moved from util.c to isolation.c, we can safely remove the
+header inclusion from util.c.
+
+Link: https://github.com/gentoo/gentoo/pull/46644
+Fixes: 0a510066e916 ("isolation: Move close_open_files() to isolate_fds()")
+Upstream: https://passt.top/passt/commit/?id=defc25b9444c508d21badb6bc9a0b835ddd01126
+Signed-off-by: Jing Huang <rne.kou@icloud.com>
+Reviewed-by: David Gibson <david@gibson.dropbear.id.au>
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+Signed-off-by: Joseph Kogut <joseph@anodize.com>
+---
+ Makefile    | 4 ++--
+ isolation.c | 1 +
+ util.c      | 1 -
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 77474d6..b315242 100644
+--- a/Makefile
++++ b/Makefile
+@@ -48,8 +48,8 @@ MANPAGES = passt.1 pasta.1 pesto.1 passt-repair.1
+ 
+ PASST_HEADERS = arch.h arp.h bitmap.h checksum.h conf.h dhcp.h dhcpv6.h \
+ 	epoll_ctl.h flow.h fwd.h fwd_rule.h flow_table.h icmp.h icmp_flow.h \
+-	inany.h iov.h ip.h isolation.h lineread.h log.h migrate.h ndp.h \
+-	netlink.h packet.h parse.h passt.h pasta.h pcap.h pif.h repair.h \
++	inany.h iov.h ip.h isolation.h lineread.h linux_dep.h log.h migrate.h \
++	ndp.h netlink.h packet.h parse.h passt.h pasta.h pcap.h pif.h repair.h \
+ 	serialise.h siphash.h tap.h tcp.h tcp_buf.h tcp_conn.h tcp_internal.h \
+ 	tcp_splice.h tcp_vu.h udp.h udp_flow.h udp_internal.h udp_vu.h util.h \
+ 	vhost_user.h virtio.h vu_common.h
+diff --git a/isolation.c b/isolation.c
+index 94cbe7f..a30b329 100644
+--- a/isolation.c
++++ b/isolation.c
+@@ -89,6 +89,7 @@
+ #include <linux/seccomp.h>
+ 
+ #include "util.h"
++#include "linux_dep.h"
+ #include "seccomp.h"
+ #include "passt.h"
+ #include "log.h"
+diff --git a/util.c b/util.c
+index bd4c6ca..28c32e4 100644
+--- a/util.c
++++ b/util.c
+@@ -27,7 +27,6 @@
+ #include <linux/errqueue.h>
+ #include <linux/in6.h>
+ 
+-#include "linux_dep.h"
+ #include "util.h"
+ #include "iov.h"
+ #include "passt.h"
+-- 
+2.55.0
