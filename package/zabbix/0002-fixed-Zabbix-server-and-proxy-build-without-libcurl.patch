@@ -1,0 +1,69 @@
+From 0a29a6b4cfa608e0c2e393125f60f4bbb271e8b8 Mon Sep 17 00:00:00 2001
+From: Artjoms Rimdjonoks <artjoms.rimdjonoks@zabbix.com>
+Date: Mon, 27 Apr 2026 12:36:47 +0300
+Subject: [PATCH] .......PS. [ZBX-27635] fixed Zabbix server and proxy build
+ without libcurl
+
+Merge in ZBX/zabbix from feature/ZBX-27635-7.5 to master
+
+* commit '142cefe8703dd25afaf8c7f05379d61136e773fd':
+  .......PS. [ZBX-27635] fixed or includes
+  .......PS. [ZBX-27635] updated include
+  .......PS. [ZBX-27635] added Changelog
+  .......PS. [ZBX-27635] fixed Zabbix server and proxy build without libcurl
+
+(cherry picked from commit e8333ca2128bf9ac2ab50ee1ee06445766b6192c)
+Upstream: https://github.com/zabbix/zabbix/commit/0a29a6b4cfa608e0c2e393125f60f4bbb271e8b8.patch
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ ChangeLog.d/bugfix/ZBX-27635        | 1 +
+ src/libs/zbxsysinfo/simple/simple.c | 5 ++++-
+ src/zabbix_js/Makefile.am           | 2 +-
+ 3 files changed, 6 insertions(+), 2 deletions(-)
+ create mode 100644 ChangeLog.d/bugfix/ZBX-27635
+
+diff --git a/ChangeLog.d/bugfix/ZBX-27635 b/ChangeLog.d/bugfix/ZBX-27635
+new file mode 100644
+index 000000000000..a8b07470a37d
+--- /dev/null
++++ b/ChangeLog.d/bugfix/ZBX-27635
+@@ -0,0 +1 @@
++.......PS. [ZBX-27635] fixed Zabbix server and proxy build without libcurl (arimdjonoks)
+diff --git a/src/libs/zbxsysinfo/simple/simple.c b/src/libs/zbxsysinfo/simple/simple.c
+index 599816c517a1..3bc324a08b1a 100644
+--- a/src/libs/zbxsysinfo/simple/simple.c
++++ b/src/libs/zbxsysinfo/simple/simple.c
+@@ -25,9 +25,12 @@
+ #include "zbxcomms.h"
+ #include "zbx_discoverer_constants.h"
+ 
++#if defined(HAVE_LIBCURL) || defined(HAVE_LDAP)
++#	include "zbxip.h"
++#endif
++
+ #ifdef HAVE_LIBCURL
+ #	include "zbxcurl.h"
+-#	include "zbxip.h"
+ #endif
+ 
+ #ifdef HAVE_LDAP
+diff --git a/src/zabbix_js/Makefile.am b/src/zabbix_js/Makefile.am
+index 1e4fd93d9fd2..2ef20fb9f911 100644
+--- a/src/zabbix_js/Makefile.am
++++ b/src/zabbix_js/Makefile.am
+@@ -9,7 +9,6 @@ zabbix_js_LDADD = \
+ 	$(top_srcdir)/src/libs/zbxembed/libzbxembed.a \
+ 	$(top_srcdir)/src/libs/zbxjson/libzbxjson.a \
+ 	$(top_srcdir)/src/libs/zbxregexp/libzbxregexp.a \
+-	$(top_srcdir)/src/libs/zbxalgo/libzbxalgo.a \
+ 	$(top_srcdir)/src/libs/zbxthreads/libzbxthreads.a \
+ 	$(top_srcdir)/src/libs/zbxmutexs/libzbxmutexs.a \
+ 	$(top_srcdir)/src/libs/zbxprof/libzbxprof.a \
+@@ -23,6 +22,7 @@ zabbix_js_LDADD = \
+ 	$(top_srcdir)/src/libs/zbxhttp/libzbxhttp.a \
+ 	$(top_srcdir)/src/libs/zbxvariant/libzbxvariant.a \
+ 	$(top_srcdir)/src/libs/zbxxml/libzbxxml.a \
++	$(top_srcdir)/src/libs/zbxalgo/libzbxalgo.a \
+ 	$(top_srcdir)/src/libs/zbxstr/libzbxstr.a \
+ 	$(top_srcdir)/src/libs/zbxnum/libzbxnum.a \
+ 	$(top_srcdir)/src/libs/zbxtime/libzbxtime.a \
