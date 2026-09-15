@@ -7,6 +7,7 @@ config BR2_PACKAGE_GERBERA
 	depends on BR2_INSTALL_LIBSTDCPP
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_USE_WCHAR # fmt
+	depends on !BR2_BINFMT_FLAT # icu
 	select BR2_PACKAGE_FMT
 	select BR2_PACKAGE_LIBICONV if !BR2_ENABLE_LOCALE
 	select BR2_PACKAGE_LIBUPNP if !BR2_PACKAGE_LIBNPUPNP
@@ -28,6 +29,7 @@ config BR2_PACKAGE_GERBERA
 
 comment "gerbera needs a toolchain w/ C++, dynamic library, threads, wchar, gcc >= 8"
 	depends on BR2_USE_MMU
+	depends on !BR2_BINFMT_FLAT
 	depends on BR2_TOOLCHAIN_HAS_ATOMIC
 	depends on !BR2_INSTALL_LIBSTDCPP || BR2_STATIC_LIBS || \
 		!BR2_TOOLCHAIN_HAS_THREADS || !BR2_USE_WCHAR || \
