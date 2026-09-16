@@ -1,0 +1,160 @@
+From 1a15fe33a48c52bfe26ea83e49f0d317a47da3ea Mon Sep 17 00:00:00 2001
+From: lexprfuncall <cshapiro@meta.com>
+Date: Mon, 27 Apr 2026 11:50:27 -0700
+Subject: [PATCH] Replace std::__throw_bad_alloc call with standard C++ (#2900)
+
+* Replace std::__throw_bad_alloc call with standard C++
+
+Since December of 2025, std::__throw_bad_alloc is no longer visible
+through #include <new> causing jemalloc build failures with gcc 16.
+As far as I can tell, all std::__throw_bad_alloc did was arrange to
+raise a std::bad_alloc exception if exceptions are enabled.  I am not
+sure whether its usage was truly meaningful in jemalloc since the call
+is wrapped in a try catch and any usage of try catch is considered an
+error when compiling with -fno-exceptions on gcc, at least.
+
+This change adds a check to configure.ac that determines whether
+exceptions are enabled by compiling a simple try catch that raises a
+std::bad_alloc exception.  If that test succeeds, the macro
+JEMALLOC_HAVE_CXX_EXCEPTIONS is defined, and jemalloc will raise an
+exception.  Otherwise, we call std::terminate() to abort.
+
+This was tested on FreeBSD with the gcc16 port with and without exceptions
+enabled.
+
+* Replace std::set_new_handler calls with std::get_new_handler
+
+Previously, std::set_new_handler was used as a workaround for
+compilers with only partial support for C++11.  Now that C++14 is a
+requirement to enable C++ support, we can assume std::get_new_handler
+is available.
+
+Upstream: https://github.com/jemalloc/jemalloc/commit/1a15fe33a48c52bfe26ea83e49f0d317a47da3ea
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ Makefile.in                                   |  6 +++--
+ configure.ac                                  | 23 +++++++++++++++++
+ .../internal/jemalloc_internal_defs.h.in      |  3 +++
+ src/jemalloc_cpp.cpp                          | 25 ++++++++++---------
+ 4 files changed, 43 insertions(+), 14 deletions(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index a93048d7b8..1f9d14f1f2 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -337,9 +337,11 @@ TESTS_INTEGRATION += \
+ endif
+ ifeq (@enable_cxx@, 1)
+ CPP_SRCS := $(srcroot)src/jemalloc_cpp.cpp
+-TESTS_INTEGRATION_CPP := $(srcroot)test/integration/cpp/basic.cpp \
+-	$(srcroot)test/integration/cpp/infallible_new_true.cpp \
++TESTS_INTEGRATION_CPP := $(srcroot)test/integration/cpp/basic.cpp
++ifeq (@enable_cxx_exceptions@, 1)
++TESTS_INTEGRATION_CPP += $(srcroot)test/integration/cpp/infallible_new_true.cpp \
+ 	$(srcroot)test/integration/cpp/infallible_new_false.cpp
++endif
+ else
+ CPP_SRCS :=
+ TESTS_INTEGRATION_CPP :=
+diff --git a/configure.ac b/configure.ac
+index 321a729012..d151829832 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -374,7 +374,30 @@ fi
+ if test "x$enable_cxx" = "x1"; then
+   AC_DEFINE([JEMALLOC_ENABLE_CXX], [ ], [ ])
+ fi
++if test "x$enable_cxx" = "x1"; then
++  dnl Now check whether the C++ compiler has exceptions enabled.
++  AC_LANG_PUSH([C++])
++  SAVED_CXXFLAGS="${CXXFLAGS}"
++  CXXFLAGS="${CXXFLAGS} ${EXTRA_CXXFLAGS}"
++  JE_COMPILABLE([C++ exception support], [
++#include <new>
++], [
++	try {
++		throw std::bad_alloc();
++	} catch (const std::bad_alloc &) {
++	}
++], [je_cv_cxx_exceptions])
++  CXXFLAGS="${SAVED_CXXFLAGS}"
++  AC_LANG_POP([C++])
++  if test "x${je_cv_cxx_exceptions}" = "xyes" ; then
++    AC_DEFINE([JEMALLOC_HAVE_CXX_EXCEPTIONS], [ ], [ ])
++    enable_cxx_exceptions="1"
++  else
++    enable_cxx_exceptions="0"
++  fi
++fi
+ AC_SUBST([enable_cxx])
++AC_SUBST([enable_cxx_exceptions])
+ AC_SUBST([CONFIGURE_CXXFLAGS])
+ AC_SUBST([SPECIFIED_CXXFLAGS])
+ AC_SUBST([EXTRA_CXXFLAGS])
+diff --git a/include/jemalloc/internal/jemalloc_internal_defs.h.in b/include/jemalloc/internal/jemalloc_internal_defs.h.in
+index 31ae2e8ed2..54d4da2032 100644
+--- a/include/jemalloc/internal/jemalloc_internal_defs.h.in
++++ b/include/jemalloc/internal/jemalloc_internal_defs.h.in
+@@ -465,6 +465,9 @@
+ /* Is C++ support being built? */
+ #undef JEMALLOC_ENABLE_CXX
+ 
++/* Are C++ exceptions enabled? */
++#undef JEMALLOC_HAVE_CXX_EXCEPTIONS
++
+ /* Performs additional size checks when defined. */
+ #undef JEMALLOC_OPT_SIZE_CHECKS
+ 
+diff --git a/src/jemalloc_cpp.cpp b/src/jemalloc_cpp.cpp
+index 4e838d3b51..ac109bb28e 100644
+--- a/src/jemalloc_cpp.cpp
++++ b/src/jemalloc_cpp.cpp
+@@ -1,4 +1,4 @@
+-#include <mutex>
++#include <exception>
+ #include <new>
+ // NOLINTBEGIN(misc-use-anonymous-namespace)
+ 
+@@ -78,29 +78,30 @@ handleOOM(std::size_t size, bool nothrow) {
+ 	void *ptr = nullptr;
+ 
+ 	while (ptr == nullptr) {
+-		std::new_handler handler;
+-		// GCC-4.8 and clang 4.0 do not have std::get_new_handler.
+-		{
+-			static std::mutex           mtx;
+-			std::lock_guard<std::mutex> lock(mtx);
+-
+-			handler = std::set_new_handler(nullptr);
+-			std::set_new_handler(handler);
+-		}
++		std::new_handler handler = std::get_new_handler();
+ 		if (handler == nullptr)
+ 			break;
+ 
++#ifdef JEMALLOC_HAVE_CXX_EXCEPTIONS
+ 		try {
+ 			handler();
+ 		} catch (const std::bad_alloc &) {
+ 			break;
+ 		}
++#else
++		handler();
++#endif
+ 
+ 		ptr = je_malloc(size);
+ 	}
+ 
+-	if (ptr == nullptr && !nothrow)
+-		std::__throw_bad_alloc();
++	if (ptr == nullptr && !nothrow) {
++#ifdef JEMALLOC_HAVE_CXX_EXCEPTIONS
++		throw std::bad_alloc();
++#else
++		std::terminate();
++#endif
++	}
+ 	return ptr;
+ }
+ 
