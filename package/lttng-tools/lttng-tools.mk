@@ -17,8 +17,6 @@ LTTNG_TOOLS_LICENSE_FILES = \
 	LICENSES/LGPL-2.1-only.txt \
 	LICENSES/MIT.txt
 LTTNG_TOOLS_DEPENDENCIES = liburcu libxml2 popt util-linux
-# We're patching configure.ac
-LTTNG_TOOLS_AUTORECONF = YES
 LTTNG_TOOLS_CONF_OPTS = \
 	--disable-man-pages \
 	--disable-tests \
