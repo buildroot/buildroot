@@ -21,7 +21,7 @@ MUPDF_DEPENDENCIES = \
 	lcms2 openjpeg \
 	zlib
 
-# libfreeglut/0001-Plug-memory-leak-that-happens-upon-error.patch
+# ../libfreeglut/0001-Plug-memory-leak-that-happens-upon-error.patch
 # Fix is in libfreeglut, but CVE applied to mupdf.
 MUPDF_IGNORE_CVES = \
 	CVE-2024-24258 \

@@ -8,7 +8,8 @@ glutAddSubMenu() is called the allocated menuEntry variable will
 leak. This commit postpones allocating menuEntry until after the
 error checks, thereby plugging the memory leak.
 
-This fixes CVE-2024-24258 and CVE-2024-24259.
+CVE: CVE-2024-24258
+CVE: CVE-2024-24259
 Upstream: https://github.com/freeglut/freeglut/commit/9ad320c1ad1a25558998ddfe47674511567fec57
 Signed-off-by: Raphaël Mélotte <raphael.melotte@mind.be>
 ---
