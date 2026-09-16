@@ -1,0 +1,45 @@
+From b35faee1224f5bccf759464e69f724a03421c8a9 Mon Sep 17 00:00:00 2001
+From: Arthur Gautier <arthur.gautier@arista.com>
+Date: Tue, 9 Jun 2026 21:52:07 -0700
+Subject: [PATCH] tpm2: fix GCC 15 stringop-overflow error in MakeIv
+
+When compiling with GCC 15 using `CFLAGS=-march=x86-64-v4`, the compiler's
+aggressively optimized vectorizer triggers a false-positive
+-Wstringop-overflow error. Because x86-64-v4 enables wide AVX-512 registers,
+the compiler misinterprets the loop unrolling and warns that a 64-byte
+vector write is overflowing the destination buffer:
+```
+  tpm2/TPMCmd/tpm/src/crypt/AlgorithmTests.c:158:17: error:
+  writing 64 bytes into a region of size 15 [-Werror=stringop-overflow=]
+    158 |             *iv = i;
+```
+
+This fixes the warning by marking the `iv` output pointer parameter as
+`volatile`. This inhibits the over-aggressive loop vectorization on this
+specific buffer, silencing the compiler error without changing the
+underlying logic.
+
+Signed-off-by: Arthur Gautier <arthur.gautier@arista.com>
+
+Source: https://github.com/stefanberger/libtpms/commit/2d9b00c4e42677cd0a9b67344f4d873ddc409a21
+Upstream: https://github.com/kgoldman/ibmswtpm2/pull/25
+
+[Bernd: rebased for ibm-sw-tpm2 package]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/AlgorithmTests.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/AlgorithmTests.c b/src/AlgorithmTests.c
+index e8549adca..28d8e780a 100644
+--- a/src/AlgorithmTests.c
++++ b/src/AlgorithmTests.c
+@@ -162,7 +162,7 @@
+ // Internal function to make the appropriate IV depending on the mode.
+ static UINT32 MakeIv(TPM_ALG_ID mode,  // IN: symmetric mode
+ 		     UINT32     size,  // IN: block size of the algorithm
+-		     BYTE*      iv     // OUT: IV to fill in
++		     volatile BYTE*      iv     // OUT: IV to fill in
+ 		     )
+ {
+     BYTE i;
