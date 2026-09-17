@@ -20,6 +20,14 @@ config BR2_X86_CPU_HAS_AVX
 config BR2_X86_CPU_HAS_AVX2
 	bool
 
+# BR2_X86_CPU_HAS_XOP is selected by the AMD Bulldozer family (bdver1
+# to bdver4), which is the only family implementing XOP. On those CPUs,
+# gcc also enables the equally Bulldozer-specific FMA4 and LWP
+# extensions (and TBM starting with bdver2). Those extensions were
+# dropped again with Zen.
+config BR2_X86_CPU_HAS_XOP
+	bool
+
 # BR2_X86_CPU_HAS_AVX512 implies the following AVX512 extensions:
 #   AVX512F, AVX512BW, AVX512CD, AVX512DQ, AVX512VL
 # This subset is common to Intel Xeon (excl Xeon Phi), AMD Zen 4, and
@@ -604,6 +612,7 @@ config BR2_x86_bulldozer
 	select BR2_X86_CPU_HAS_SSSE3
 	select BR2_X86_CPU_HAS_SSE4
 	select BR2_X86_CPU_HAS_SSE42
+	select BR2_X86_CPU_HAS_XOP
 config BR2_x86_piledriver
 	bool "piledriver"
 	select BR2_X86_CPU_HAS_MMX
@@ -613,6 +622,7 @@ config BR2_x86_piledriver
 	select BR2_X86_CPU_HAS_SSSE3
 	select BR2_X86_CPU_HAS_SSE4
 	select BR2_X86_CPU_HAS_SSE42
+	select BR2_X86_CPU_HAS_XOP
 config BR2_x86_steamroller
 	bool "steamroller"
 	select BR2_X86_CPU_HAS_MMX
@@ -622,6 +632,7 @@ config BR2_x86_steamroller
 	select BR2_X86_CPU_HAS_SSSE3
 	select BR2_X86_CPU_HAS_SSE4
 	select BR2_X86_CPU_HAS_SSE42
+	select BR2_X86_CPU_HAS_XOP
 	select BR2_ARCH_NEEDS_GCC_AT_LEAST_4_8
 config BR2_x86_excavator
 	bool "excavator"
@@ -634,6 +645,7 @@ config BR2_x86_excavator
 	select BR2_X86_CPU_HAS_SSE42
 	select BR2_X86_CPU_HAS_AVX
 	select BR2_X86_CPU_HAS_AVX2
+	select BR2_X86_CPU_HAS_XOP
 	select BR2_ARCH_NEEDS_GCC_AT_LEAST_4_9
 config BR2_x86_zen
 	bool "zen"
