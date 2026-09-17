@@ -1,0 +1,51 @@
+From 4bfeff8c67ad47b7bb0f3d78390789f6f2af5dd2 Mon Sep 17 00:00:00 2001
+From: Fujii Hironori <fujii@igalia.com>
+Date: Wed, 5 Aug 2026 07:18:26 -0700
+Subject: [PATCH] [CMake 4.4][WPE] _WEBKIT_TARGET_LINK_FRAMEWORK reports
+ "Unknown arguments specified" error
+ https://bugs.webkit.org/show_bug.cgi?id=321081
+
+Reviewed by Adrian Perez de Castro.
+
+CMake 4.4 reports the following error for WPE.
+
+> -- Using platform-specific CMakeLists: /run/build/webkitwpe/Source/JavaScriptCore/shell/PlatformWPE.cmake
+> CMake Error at Source/cmake/WebKitMacros.cmake:554 (if):
+>   if given arguments:
+>
+>     "(" "NOT" "_linked_into" ")" "OR" "(" "JavaScriptCore" "STREQUAL" ")" "OR" "(" "NOT" "IN_LIST" "jsc_FRAMEWORKS" ")"
+>
+>   Unknown arguments specified
+> Call Stack (most recent call first):
+>   Source/cmake/WebKitMacros.cmake:756 (_WEBKIT_TARGET_LINK_FRAMEWORK)
+>   Source/JavaScriptCore/shell/CMakeLists.txt:126 (WEBKIT_EXECUTABLE)
+
+Replaced `${_linked_into}` with `_linked_into`.
+
+* Source/cmake/WebKitMacros.cmake(_WEBKIT_TARGET_LINK_FRAMEWORK):
+
+Canonical link: https://commits.webkit.org/318630@main
+
+Upstream: https://github.com/WebKit/WebKit/commit/4bfeff8c67ad47b7bb0f3d78390789f6f2af5dd2
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ Source/cmake/WebKitMacros.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Source/cmake/WebKitMacros.cmake b/Source/cmake/WebKitMacros.cmake
+index 9d79754186cb..9cbd52cc981d 100644
+--- a/Source/cmake/WebKitMacros.cmake
++++ b/Source/cmake/WebKitMacros.cmake
+@@ -551,7 +551,7 @@ macro(_WEBKIT_TARGET_LINK_FRAMEWORK _target)
+         get_property(_linked_into GLOBAL PROPERTY ${framework}_LINKED_INTO)
+ 
+         # See if the target is linking a framework that the specified framework is already linked into
+-        if ((NOT _linked_into) OR (${framework} STREQUAL ${_linked_into}) OR (NOT ${_linked_into} IN_LIST ${_target}_FRAMEWORKS))
++        if ((NOT _linked_into) OR (framework STREQUAL _linked_into) OR (NOT _linked_into IN_LIST ${_target}_FRAMEWORKS))
+             list(APPEND ${_target}_PRIVATE_LIBRARIES WebKit::${framework})
+ 
+             # The WebKit:: alias targets do not propagate OBJECT libraries so the
+-- 
+2.47.3
+
