@@ -28,6 +28,8 @@ def handle_eval(db, filename, lineno, line):
         return
 
     # mimic package/pkg-generic.mk and package/pkg-virtual.mk
+    # They have ifeq ($$($$($(2)_KCONFIG_VAR)),y) so consider that a usage.
+    # Virtual packages have additional conditions.
     if '$(virtual-' in line:
         prefixes = ['BR2_PACKAGE_PROVIDES_', 'BR2_PACKAGE_HAS_']
         if filename.startswith('toolchain/'):
@@ -39,8 +41,13 @@ def handle_eval(db, filename, lineno, line):
         prefixes.append(prefix)
     elif '$(host-virtual-' in line:
         prefixes = ['BR2_PACKAGE_HOST_', 'BR2_PACKAGE_PROVIDES_HOST_', 'BR2_PACKAGE_HAS_HOST_']
+        # For host packages, we allow it to not be defined in Config.in.host, so
+        # consider the symbol as defined as well.
+        db.add_symbol_definition('BR2_PACKAGE_HOST_' + package, filename, lineno)
+        db.add_symbol_virtual('BR2_PACKAGE_HAS_HOST_' + package, filename, lineno)
     elif '$(host-' in line:
         prefixes = ['BR2_PACKAGE_HOST_']
+        db.add_symbol_definition('BR2_PACKAGE_HOST_' + package, filename, lineno)
     elif filename.startswith('boot/'):
         prefixes = [br.boot_prefix]
     elif filename.startswith('toolchain/'):
