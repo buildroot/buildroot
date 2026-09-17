@@ -22,10 +22,11 @@ config BR2_PACKAGE_HOST_QEMU_ARCH_SUPPORTS
 	default y if BR2_sparc64
 	default y if BR2_xtensa
 	default y if BR2_x86_64
-	depends on !BR2_x86_steamroller
-	# The Qemu TCG engine does not implement the AVX512
-	# instruction set, so binaries built for such CPUs cannot be
-	# emulated.
+	# The Qemu TCG engine implements neither the XOP instruction set
+	# nor the other Bulldozer-specific extensions (FMA4, TBM, LWP),
+	# and it does not implement the AVX512 instruction set either,
+	# so binaries built for such CPUs cannot be emulated.
+	depends on !BR2_X86_CPU_HAS_XOP
 	depends on !BR2_X86_CPU_HAS_AVX512
 	depends on !BR2_powerpc_620 && !BR2_powerpc_630
 
