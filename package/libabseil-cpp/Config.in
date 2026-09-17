@@ -14,6 +14,10 @@ config BR2_PACKAGE_LIBABSEIL_CPP_ARCH_SUPPORTS
 	default y if BR2_sparc || BR2_sparc64
 	default y if BR2_x86_64
 	depends on BR2_TOOLCHAIN_HAS_UCONTEXT
+	# absl/base/internal/direct_mmap.h only implements DirectMmap()
+	# with mmap2 for the o32 ABI on MIPS, and its 64-bit fallback
+	# fails to build with the n32 ABI, where long is 32-bit
+	depends on !BR2_MIPS_NABI32
 
 config BR2_PACKAGE_LIBABSEIL_CPP
 	bool "libabseil-cpp"
