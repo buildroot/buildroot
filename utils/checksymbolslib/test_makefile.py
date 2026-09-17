@@ -74,12 +74,15 @@ handle_eval = [
      {'add_symbol_usage': [
          call('BR2_PACKAGE_PROVIDES_HOST_FOO', 'package/foo/foo.mk', 18),
          call('BR2_PACKAGE_HAS_HOST_FOO', 'package/foo/foo.mk', 18),
-         call('BR2_PACKAGE_HOST_FOO', 'package/foo/foo.mk', 18)]}),
+         call('BR2_PACKAGE_HOST_FOO', 'package/foo/foo.mk', 18)],
+      'add_symbol_definition': [call('BR2_PACKAGE_HOST_FOO', 'package/foo/foo.mk', 18)],
+      'add_symbol_virtual': [call('BR2_PACKAGE_HAS_HOST_FOO', 'package/foo/foo.mk', 18)]}),
     ('host generic package',
      'package/foo/foo.mk',
      18,
      '$(eval $(host-package))',
-     {'add_symbol_usage': [call('BR2_PACKAGE_HOST_FOO', 'package/foo/foo.mk', 18)]}),
+     {'add_symbol_usage': [call('BR2_PACKAGE_HOST_FOO', 'package/foo/foo.mk', 18)],
+      'add_symbol_definition': [call('BR2_PACKAGE_HOST_FOO', 'package/foo/foo.mk', 18)]}),
     ('boot package',
      'boot/foo/foo.mk',
      18,
@@ -178,7 +181,9 @@ handle_usage = [
      {'add_symbol_usage': [
          call('BR2_PACKAGE_PROVIDES_HOST_FOO', 'package/foo/foo.mk', 18),
          call('BR2_PACKAGE_HAS_HOST_FOO', 'package/foo/foo.mk', 18),
-         call('BR2_PACKAGE_HOST_FOO', 'package/foo/foo.mk', 18)]}),
+         call('BR2_PACKAGE_HOST_FOO', 'package/foo/foo.mk', 18)],
+      'add_symbol_definition': [call('BR2_PACKAGE_HOST_FOO', 'package/foo/foo.mk', 18)],
+      'add_symbol_virtual': [call('BR2_PACKAGE_HAS_HOST_FOO', 'package/foo/foo.mk', 18)]}),
     ]
 
 

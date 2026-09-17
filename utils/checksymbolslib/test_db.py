@@ -156,8 +156,6 @@ def test_get_warnings_for_symbols_without_definition():
     db.add_symbol_usage_in_legacy('BR2_undef3', 'file', 3)
     db.add_symbol_usage('BR2_undef3', 'another', 1)
     db.add_symbol_legacy_usage('BR2_undef3', 'another', 2)
-    db.add_symbol_usage('BR2_PACKAGE_HOST_undef', 'file', 1)
-    db.add_symbol_usage('BR2_PACKAGE_HAS_HOST_undef', 'file', 1)
     db.add_symbol_usage('BR2_TARGET_ROOTFS_undef_XZ', 'file', 1)
     db.add_symbol_usage('BR2_GRAPH_ALT', 'file', 1)
     db.add_symbol_usage('BR2_EXTERNAL', 'file', 1)
@@ -170,8 +168,6 @@ def test_get_warnings_for_symbols_without_definition():
         'BR2_undef1': {'normal usage': {'file': [1]}},
         'BR2_undef2': {'legacy usage': {'file': [2]}},
         'BR2_undef3': {'usage inside legacy': {'file': [3]}, 'normal usage': {'another': [1]}, 'legacy usage': {'another': [2]}},
-        'BR2_PACKAGE_HOST_undef': {'normal usage': {'file': [1]}},
-        'BR2_PACKAGE_HAS_HOST_undef': {'normal usage': {'file': [1]}},
         'BR2_TARGET_ROOTFS_undef_XZ': {'normal usage': {'file': [1]}},
         'BR2_GRAPH_ALT': {'normal usage': {'file': [1]}},
         'BR2_EXTERNAL': {'normal usage': {'file': [1]}},
