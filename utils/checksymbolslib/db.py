@@ -122,8 +122,6 @@ class DB:
                 continue
             if legacy_definition in entries:
                 continue
-            if br.re_host_symbol.search(symbol):
-                continue
             if br.is_an_optional_symbol_for_a_roofts(symbol):
                 continue
             if symbol in br.symbols_defined_only_at_command_line:
