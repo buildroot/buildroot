@@ -1,0 +1,37 @@
+From 7f2a41eaff5a58cb0014dc2fc95438b6a0a55ee1 Mon Sep 17 00:00:00 2001
+From: "Alan T. DeKok" <aland@freeradius.org>
+Date: Fri, 5 Jun 2026 09:55:00 -0400
+Subject: [PATCH] skip psk checks when not supported. Fixes #5874
+
+Upstream: https://github.com/FreeRADIUS/freeradius-server/commit/7f2a41eaff5a58cb0014dc2fc95438b6a0a55ee1
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/main/tls.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/src/main/tls.c b/src/main/tls.c
+index 3018f34cc0..4f4cd0c280 100644
+--- a/src/main/tls.c
++++ b/src/main/tls.c
+@@ -524,12 +524,17 @@ tls_session_t *tls_new_client_session(TALLOC_CTX *ctx, fr_tls_server_conf_t *con
+ 	 *	if we're doing certificate auth, and not PSK.
+ 	 */
+ 	verify_mode = SSL_VERIFY_PEER;
++#ifdef PSK_MAX_IDENTITY_LEN
+ 	if (!conf->psk_identity) {
++#endif
+ 		RDEBUG2("(TLS) Requiring Server certificate");
+ 		verify_mode |= SSL_VERIFY_FAIL_IF_NO_PEER_CERT;
++
++#ifdef PSK_MAX_IDENTITY_LEN
+ 	} else {
+ 		RDEBUG2("(TLS) PSK configured -- verifying Server certificate if presented");
+ 	}
++#endif
+ 	SSL_set_verify(ssn->ssl, verify_mode, cbtls_verify);
+ 
+ 	SSL_set_ex_data(ssn->ssl, FR_TLS_EX_INDEX_CONF, (void *)conf);
+-- 
+2.47.3
+
