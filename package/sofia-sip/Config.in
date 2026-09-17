@@ -1,6 +1,7 @@
 config BR2_PACKAGE_SOFIA_SIP
 	bool "sofia-sip"
 	depends on BR2_TOOLCHAIN_HAS_THREADS
+	select BR2_PACKAGE_OPENSSL
 	help
 	  Sofia-SIP is an open-source SIP User-Agent library,
 	  compliant with the IETF RFC3261 specification (see the
