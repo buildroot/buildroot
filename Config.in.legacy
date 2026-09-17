@@ -146,6 +146,42 @@ endif
 
 comment "Legacy options removed in 2026.11"
 
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8801
+	bool "nxp-bt-wifi-firmware 8801 support removed"
+	select BR2_LEGACY
+	help
+	  The 8801 firmware is no longer available in the selected NXP
+	  firmware release.
+
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8997
+	bool "nxp-bt-wifi-firmware 8997 support removed"
+	select BR2_LEGACY
+	help
+	  The 8997 firmware is no longer available in the selected NXP
+	  firmware release.
+
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8997_SD
+	bool "nxp-bt-wifi-firmware 8997 SD support removed"
+	select BR2_LEGACY
+	help
+	  The 8997 firmware is no longer available in the selected NXP
+	  firmware release.
+
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8997_PCIE
+	bool "nxp-bt-wifi-firmware 8997 PCIe support removed"
+	select BR2_LEGACY
+	help
+	  The 8997 firmware is no longer available in the selected NXP
+	  firmware release.
+
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_IW610
+	bool "nxp-bt-wifi-firmware IW610 option renamed"
+	select BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_IW610_SD
+	select BR2_LEGACY
+	help
+	  The IW610 firmware option was renamed to distinguish SD and
+	  USB interfaces.
+
 config BR2_BINUTILS_VERSION_2_44_X
 	bool "binutils 2.44 has been removed"
 	select BR2_LEGACY

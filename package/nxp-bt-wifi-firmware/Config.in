@@ -7,35 +7,10 @@ config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE
 
 if BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE
 
-config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8801
-	bool "8801 (SD)"
-	help
-	  NXP 8801 module firmware files.
-
 config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8987
 	bool "8987 (SD)"
 	help
 	  NXP 8987 module firmware files.
-
-config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8997
-	bool "8997"
-	help
-	  NXP 8997 module firmware files.
-
-if BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8997
-
-choice
-	prompt "8997 WiFi interface"
-
-config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8997_SD
-	bool "SD"
-
-config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8997_PCIE
-	bool "PCIe"
-
-endchoice
-
-endif
 
 config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_9098
 	bool "9098"
@@ -62,8 +37,13 @@ config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_IW416
 	help
 	  NXP IW416 module firmware files.
 
-config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_IW610
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_IW610_SD
 	bool "IW610 (SD)"
+	help
+	  NXP IW610 module firmware files.
+
+config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_IW610_USB
+	bool "IW610 (USB)"
 	help
 	  NXP IW610 module firmware files.
 
