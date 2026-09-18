@@ -239,6 +239,17 @@ MissingCVEPatch = [
      {},
      'FOO_IGNORE_CVES += CVE-2000-1234\n',
      []),
+    ('invalid syntax in patch',
+     {'0001-some-fix.patch': 'CVE: FOO:123'},
+     '# 0001-some-fix.patch\n'
+     'FOO_IGNORE_CVES += FOO:123\n',
+     [['{}: patch file \'0001-some-fix.patch\' is missing \'CVE:\' tag',
+       '# 0001-some-fix.patch\n']]),
+    ('patches present with other identifier',
+     {'0001-some-fix.patch': 'CVE: GHSA-abcd-1234-efgh'},
+     '# 0001-some-fix.patch\n'
+     'FOO_IGNORE_CVES += GHSA-abcd-1234-efgh\n',
+     []),
     ]
 
 
