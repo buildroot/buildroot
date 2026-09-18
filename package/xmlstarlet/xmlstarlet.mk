@@ -9,7 +9,7 @@ XMLSTARLET_SITE = https://github.com/xmlstarlet/xmlstarlet/releases/download/$(X
 XMLSTARLET_LICENSE = MIT
 XMLSTARLET_LICENSE_FILES = COPYING
 
-XMLSTARLET_DEPENDENCIES += host-pkgconf libxml2 libxslt \
+XMLSTARLET_DEPENDENCIES = host-pkgconf libxml2 libxslt \
 	$(if $(BR2_PACKAGE_LIBICONV),libiconv)
 
 ifeq ($(BR2_STATIC_LIBS),y)
@@ -22,7 +22,7 @@ else
 XMLSTARLET_CONF_OPTS += --disable-static-libs
 endif
 
-HOST_XMLSTARLET_DEPENDENCIES += host-libxml2 host-libxslt host-pkgconf
+HOST_XMLSTARLET_DEPENDENCIES = host-libxml2 host-libxslt host-pkgconf
 
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))
