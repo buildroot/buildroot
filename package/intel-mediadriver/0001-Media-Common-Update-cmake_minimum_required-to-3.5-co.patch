@@ -11,7 +11,7 @@ This supports the compilation with cmake-4.0.0
 Signed-off-by: Rudi Heitbaum <rudi@heitbaum.com>
 Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
 Upstream: https://github.com/intel/media-driver/pull/1919
-[Bernd: rebased for version 26.2.1]
+[Bernd: rebased for version 26.3.5]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  Tools/MediaDriverTools/GenDmyHex/CMakeLists.txt          | 2 +-
@@ -20,7 +20,6 @@ Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
  Tools/MediaDriverTools/KrnToHex/CMakeLists.txt           | 2 +-
  Tools/MediaDriverTools/KrnToHex_IGA/CMakeLists.txt       | 2 +-
  cmrtlib/CMakeLists.txt                                   | 2 +-
- cmrtlib/linux/CMakeLists.txt                             | 2 +-
  media_driver/linux/ult/CMakeLists.txt                    | 2 +-
  media_driver/linux/ult/libdrm_mock/CMakeLists.txt        | 2 +-
  media_driver/linux/ult/ult_app/CMakeLists.txt            | 2 +-
@@ -92,19 +91,6 @@ index af622be19..40e4eba17 100644
 +cmake_minimum_required(VERSION 3.5)
  
  project(KrnToHex_IGA)
- 
-diff --git a/cmrtlib/linux/CMakeLists.txt b/cmrtlib/linux/CMakeLists.txt
-index b066138d9..df02bab2a 100644
---- a/cmrtlib/linux/CMakeLists.txt
-+++ b/cmrtlib/linux/CMakeLists.txt
-@@ -18,7 +18,7 @@
- # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- # OTHER DEALINGS IN THE SOFTWARE.
- 
--cmake_minimum_required(VERSION 2.8)
-+cmake_minimum_required(VERSION 3.5)
- include (${CMAKE_CURRENT_LIST_DIR}/cmrt_utils.cmake)
- 
  
 diff --git a/media_driver/linux/ult/CMakeLists.txt b/media_driver/linux/ult/CMakeLists.txt
 index 9fb5b39ee..f06b49011 100644
