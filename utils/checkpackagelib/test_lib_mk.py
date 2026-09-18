@@ -250,6 +250,38 @@ MissingCVEPatch = [
      '# 0001-some-fix.patch\n'
      'FOO_IGNORE_CVES += GHSA-abcd-1234-efgh\n',
      []),
+    ('CVE tag does not match ignored identifier',
+     {'0001-some-fix.patch': 'CVE: CVE-2000-1234'},
+     '# 0001-some-fix.patch\n'
+     'FOO_IGNORE_CVES += CVE-2001-1234\n',
+     [['{}: patch file \'0001-some-fix.patch\' \'CVE:\' tag(s) \'CVE-2000-1234\' '
+       'does not match the ignored identifier(s) \'CVE-2001-1234\'',
+       '# 0001-some-fix.patch\n']]),
+    ('multiple ignored identifiers, patch matches one',
+     {'0001-some-fix.patch': 'CVE: CVE-2000-1234'},
+     '# 0001-some-fix.patch\n'
+     'FOO_IGNORE_CVES += CVE-2000-1234 CVE-2001-1234\n',
+     [['{}: patch file \'0001-some-fix.patch\' \'CVE:\' tag(s) \'CVE-2000-1234\' '
+       'does not match the ignored identifier(s) \'CVE-2000-1234, CVE-2001-1234\'',
+       '# 0001-some-fix.patch\n']]),
+    ('multiple ignored identifiers, all referenced across patch',
+     {'0001-some-fix.patch': 'CVE: CVE-2000-1234\nCVE: CVE-2001-1234\n'},
+     '# 0001-some-fix.patch\n'
+     'FOO_IGNORE_CVES += CVE-2000-1234 CVE-2001-1234\n',
+     []),
+    ('multiple ignored identifiers, all referenced across multiple patches',
+     {'0001-some-fix.patch': 'CVE: CVE-2000-1234\nCVE: CVE-2001-1234',
+      '0002-other-fix.patch': 'CVE: CVE-2000-1234\nCVE: CVE-2001-1234'},
+     '# 0001-some-fix.patch\n'
+     '# 0002-other-fix.patch\n'
+     'FOO_IGNORE_CVES += CVE-2000-1234 CVE-2001-1234\n',
+     []),
+    ('ignored identifiers split across continuation lines',
+     {'0001-some-fix.patch': 'CVE: CVE-2000-1234\nCVE: CVE-2001-1234\n'},
+     '# 0001-some-fix.patch\n'
+     'FOO_IGNORE_CVES += CVE-2000-1234 \\\n'
+     '\tCVE-2001-1234\n',
+     []),
     ]
 
 
