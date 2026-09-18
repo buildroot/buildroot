@@ -130,7 +130,6 @@ class MissingCVEPatch(_CheckFunction):
     def check_patch_files(self):
         for patch_lineno, patch_name, patch_text in self.pending_patches:
             patch_file = self.package_dir / patch_name
-            self.pending_patch = None
 
             if not patch_file.is_file():
                 return ["{}:{}: patch file '{}' mentioned for ignored CVEs is missing"
