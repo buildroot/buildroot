@@ -121,7 +121,7 @@ class Indent(_CheckFunction):
 class MissingCVEPatch(_CheckFunction):
     PATCH_COMMENT = re.compile(r"^#\s*(\S+\.patch)\s*$")
     IGNORE_CVES = re.compile(r"^[A-Z0-9_]+_IGNORE_CVES\s*\+?=")
-    CVE_TAG_IN_PATCH = re.compile(r"^CVE: *CVE-\d+-\d+$")
+    CVE_TAG_IN_PATCH = re.compile(r"^CVE: *([\w-]+)$")
 
     def before(self):
         self.pending_patches = []
