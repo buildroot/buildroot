@@ -1,0 +1,64 @@
+From fdf43891c4cffd5f9a7776a6195a636988c7aed1 Mon Sep 17 00:00:00 2001
+From: Karl Smeltzer <karl.smeltzer@canonical.com>
+Date: Fri, 24 Jul 2026 12:55:06 -0700
+Subject: [PATCH] Use providers instead of the ENGINE API on OpenSSL 4 (est.h)
+
+OpenSSL 4.0 removes the ENGINE API, so the est_apps_startup() /
+est_apps_shutdown() macros in est.h no longer link: they call
+ENGINE_load_builtin_engines() / ENGINE_cleanup() and friends.
+
+Add OpenSSL >= 4.0 variants of both macros that load the default
+provider instead, keeping the existing variants for older versions,
+matching the HAVE_OLD_OPENSSL pattern already used in this header.
+
+Upstream: https://github.com/cisco/libest/pull/136
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/est/est.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/src/est/est.h b/src/est/est.h
+index ffbe85f..716dd7e 100644
+--- a/src/est/est.h
++++ b/src/est/est.h
+@@ -25,6 +25,9 @@
+ #include <openssl/engine.h>
+ #include <openssl/conf.h>
+ #include <openssl/srp.h>
++#if OPENSSL_VERSION_NUMBER >= 0x40000000L
++#include <openssl/provider.h>
++#endif
+ 
+ #ifdef  __cplusplus
+ extern "C" {
+@@ -829,6 +832,13 @@ LIBEST_API EST_ERROR est_disable_performance_timers(EST_CTX *ctx);
+          ENGINE_load_builtin_engines(); \
+          SSL_library_init(); \
+          SSL_load_error_strings(); } while (0)
++#elif OPENSSL_VERSION_NUMBER >= 0x40000000L
++#define est_apps_startup()               \
++    do { ERR_load_crypto_strings();      \
++         OpenSSL_add_all_algorithms();   \
++         OSSL_PROVIDER_load(NULL, "default"); \
++         SSL_library_init();             \
++         SSL_load_error_strings(); } while (0)
+ #else
+ #define est_apps_startup()               \
+     do { ERR_load_crypto_strings();      \
+@@ -854,6 +864,12 @@ LIBEST_API EST_ERROR est_disable_performance_timers(EST_CTX *ctx);
+          CRYPTO_cleanup_all_ex_data(); \
+          ERR_remove_thread_state(NULL); \
+          ERR_free_strings(); } while (0)
++#elif OPENSSL_VERSION_NUMBER >= 0x40000000L
++#define est_apps_shutdown() \
++    do { CONF_modules_unload(1); \
++         OBJ_cleanup(); EVP_cleanup(); \
++         CRYPTO_cleanup_all_ex_data(); \
++         ERR_free_strings(); } while (0)
+ #else
+ #define est_apps_shutdown() \
+     do { CONF_modules_unload(1); \
+-- 
+2.47.3
+

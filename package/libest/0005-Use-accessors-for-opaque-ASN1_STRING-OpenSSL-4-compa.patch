@@ -1,0 +1,60 @@
+From 59695d938e0d23dda2eda124164bc8909ab2ddf5 Mon Sep 17 00:00:00 2001
+From: Karl Smeltzer <karl.smeltzer@canonical.com>
+Date: Fri, 24 Jul 2026 12:54:56 -0700
+Subject: [PATCH] Use accessors for opaque ASN1_STRING (OpenSSL 4
+ compatibility)
+
+OpenSSL 4.0 makes ASN1_STRING (and its typedefs ASN1_OCTET_STRING /
+ASN1_BIT_STRING) opaque. This uses the ASN1_STRING_get0_data() and
+ASN1_STRING_length() accessors instead, while keeping the direct access
+under HAVE_OLD_OPENSSL.
+
+Upstream: https://github.com/cisco/libest/pull/136
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/est/est_client.c | 8 ++++++--
+ src/est/est_server.c | 4 ++++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/src/est/est_client.c b/src/est/est_client.c
+index 8dff9d9..06ca510 100644
+--- a/src/est/est_client.c
++++ b/src/est/est_client.c
+@@ -5313,11 +5313,15 @@ EST_ERROR verify_voucher (EST_CTX *ctx)
+         return (EST_ERR_CLIENT_BRSKI_VOUCHER_VERIFY_FAILED);
+     }
+ 
++#ifdef HAVE_OLD_OPENSSL
+     ctx->brski_retrieved_voucher = pkcs7->d.sign->contents->d.data->data;
+-    ctx->brski_retrieved_voucher_len = pkcs7->d.sign->contents->d.data->length;
++#else
++    ctx->brski_retrieved_voucher = (unsigned char *)ASN1_STRING_get0_data(pkcs7->d.sign->contents->d.data);
++#endif
++    ctx->brski_retrieved_voucher_len = ASN1_STRING_length(pkcs7->d.sign->contents->d.data);
+ 
+     EST_LOG_INFO("Voucher verify passed.  Voucher =\n %s",
+-                 pkcs7->d.sign->contents->d.data->data);
++                 ctx->brski_retrieved_voucher);
+     
+     return (EST_ERR_NONE);
+ }
+diff --git a/src/est/est_server.c b/src/est/est_server.c
+index d047b48..4b4d617 100644
+--- a/src/est/est_server.c
++++ b/src/est/est_server.c
+@@ -1133,7 +1133,11 @@ int est_tls_uid_auth (EST_CTX *ctx, SSL *ssl, X509_REQ *req)
+          */
+         tls_uid = est_get_tls_uid(ssl, &uid_len, 0);
+         if (tls_uid) {
++#ifdef HAVE_OLD_OPENSSL
+ 	    i = memcmp_s(tls_uid, uid_len, bs->data, uid_len, &diff);
++#else
++	    i = memcmp_s(tls_uid, uid_len, ASN1_STRING_get0_data(bs), uid_len, &diff);
++#endif
+             if (i == EOK && !diff) {
+                 EST_LOG_INFO("PoP is valid");
+                 rv = EST_ERR_NONE;
+-- 
+2.47.3
+
