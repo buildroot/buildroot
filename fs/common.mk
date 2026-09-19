@@ -215,6 +215,15 @@ TARGETS_ROOTFS += rootfs-$(1)
 PACKAGES += $$(filter-out rootfs-%,$$(ROOTFS_$(2)_FINAL_RECURSIVE_DEPENDENCIES))
 endif
 
+ifeq ($$(BR2_TARGET_ROOTFS_$(2)_VERITY),y)
+ROOTFS_$(2)_DEPENDENCIES += host-cryptsetup
+define ROOTFS_$(2)_VERITY_FORMAT
+	@$$(call MESSAGE,"Generating verity hash tree $$(@F).verity")
+	$(HOST_DIR)/sbin/veritysetup format --root-hash-file $$@.verity.root-hash $$(ROOTFS_$(2)_VERITY_EXTRA_ARGS) $$@ $$@.verity
+endef
+ROOTFS_$(2)_POST_GEN_HOOKS += ROOTFS_$(2)_VERITY_FORMAT
+endif
+
 # Check for legacy POST_TARGETS rules
 ifneq ($$(ROOTFS_$(2)_POST_TARGETS),)
 $$(error Filesystem $(1) uses post-target rules, which are no longer supported.\
