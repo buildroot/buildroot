@@ -146,6 +146,13 @@ endif
 
 comment "Legacy options removed in 2026.11"
 
+config BR2_PACKAGE_HEIRLOOM_MAILX
+	bool "heirloom-mailx has been removed"
+	select BR2_LEGACY
+	help
+	  The heirloom-mailx package has been removed because it is
+	  incompatible with OpenSSL >= 4.x
+
 config BR2_PACKAGE_NXP_BT_WIFI_FIRMWARE_8801
 	bool "nxp-bt-wifi-firmware 8801 support removed"
 	select BR2_LEGACY
