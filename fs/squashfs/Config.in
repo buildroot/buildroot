@@ -121,4 +121,27 @@ config BR2_TARGET_ROOTFS_SQUASHFS_COMP_OPTS
 	default "-Xcompression-level 22" if BR2_TARGET_ROOTFS_SQUASHFS4_ZSTD
 	depends on BR2_TARGET_ROOTFS_SQUASHFS_EXTREME_COMP
 
+config BR2_TARGET_ROOTFS_SQUASHFS_VERITY
+	bool "create verity hash data for root filesystem"
+	select BR2_PACKAGE_HOST_CRYPTSETUP
+	help
+	  Create verity hash tree for the root filesystem. This allows
+	  setting up a dm-verity device for the root filesystem, to
+	  ensure data integrity. The root hash must be provided from a
+	  trusted source, or with a kernel-verifiable signature.
+
+	  The verity hash image will be called rootfs.squashfs.verity,
+	  with the root hash in rootfs.squashfs.verity.root-hash.
+
+if BR2_TARGET_ROOTFS_SQUASHFS_VERITY
+
+config BR2_TARGET_ROOTFS_SQUASHFS_VERITY_EXTRA_ARGS
+	string "Additional arguments for veritysetup"
+	help
+	  Additional arguments for the "veritysetup format" call. Use
+	  this if you want to set options, e.g. the hash algorithm,
+	  instead of using defaults.
+
+endif # BR2_TARGET_ROOTFS_SQUASHFS_VERITY
+
 endif
