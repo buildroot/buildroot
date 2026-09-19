@@ -1,0 +1,15 @@
+config BR2_PACKAGE_CHAWAN
+	bool "chawan"
+	depends on BR2_USE_MMU
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_11
+	select BR2_PACKAGE_BROTLI
+	select BR2_PACKAGE_LIBSSH2
+	select BR2_PACKAGE_OPENSSL
+	help
+	  A TUI Web-Browser.
+
+	  https://chawan.net/
+
+comment "chawan needs a toolchain w/ gcc >= 11"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_11
