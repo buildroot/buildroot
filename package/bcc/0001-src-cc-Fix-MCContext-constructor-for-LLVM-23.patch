@@ -1,0 +1,38 @@
+From e5418ece42eb5bb322d220a2ff94f545d72a6f8a Mon Sep 17 00:00:00 2001
+From: Viktor Malik <viktor.malik@gmail.com>
+Date: Thu, 13 Aug 2026 08:22:00 +0200
+Subject: [PATCH] src/cc: Fix MCContext constructor for LLVM 23
+
+Two LLVM 23 patches [1,2] changed the MCContext constructor to take
+MCAsmInfo, MCRegisterInfo, and MCSubtargetInfo by a reference rather
+than by a pointer. Reflect the change in call of the constructor.
+
+[1] https://github.com/llvm/llvm-project/commit/13e98d834101efd1794cdd026377c508293ee21b
+[2] https://github.com/llvm/llvm-project/commit/d50631faad3003e73589528c83d3bbbad7ba72f1
+
+Upstream: https://github.com/iovisor/bcc/commit/dad0db93fd0f443b2a4f43bc2f23c621c9202516
+Signed-off-by: Viktor Malik <viktor.malik@gmail.com>
+Signed-off-by: Julien Olivain <ju.o@free.fr>
+---
+ src/cc/bcc_debug.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/cc/bcc_debug.cc b/src/cc/bcc_debug.cc
+index 2e53c44d..0812c4ab 100644
+--- a/src/cc/bcc_debug.cc
++++ b/src/cc/bcc_debug.cc
+@@ -148,7 +148,11 @@ void SourceDebugger::dump() {
+       T->createMCSubtargetInfo(TripleArg, "", ""));
+   MCObjectFileInfo MOFI;
+ #if LLVM_VERSION_MAJOR >= 13
++#if LLVM_VERSION_MAJOR >= 23
++  MCContext Ctx(TheTriple, *MAI, *MRI, *STI, nullptr);
++#else
+   MCContext Ctx(TheTriple, MAI.get(), MRI.get(), STI.get(), nullptr);
++#endif
+   Ctx.setObjectFileInfo(&MOFI);
+   MOFI.initMCObjectFileInfo(Ctx, false, false);
+ #else
+-- 
+2.55.0
+
