@@ -1,0 +1,38 @@
+From 33960e1a762667f890701775e184cbd06ee1bb66 Mon Sep 17 00:00:00 2001
+From: tony mancill <tmancill@debian.org>
+Date: Wed, 27 May 2026 06:13:20 -0700
+Subject: [PATCH] Address compiler errors when building against OpenSSL 4.0
+
+See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1137594
+
+Upstream: https://github.com/capnproto/capnproto/commit/33960e1a762667f890701775e184cbd06ee1bb66
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ c++/src/kj/compat/tls.c++ | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/c++/src/kj/compat/tls.c++ b/c++/src/kj/compat/tls.c++
+index 6affeb1f..87e308aa 100644
+--- a/c++/src/kj/compat/tls.c++
++++ b/c++/src/kj/compat/tls.c++
+@@ -1125,13 +1125,13 @@ kj::String TlsPeerIdentity::getCommonName() {
+     KJ_FAIL_REQUIRE("client did not provide a certificate") { return nullptr; }
+   }
+ 
+-  X509_NAME* subj = X509_get_subject_name(reinterpret_cast<X509*>(cert));
++  const X509_NAME* subj = X509_get_subject_name(reinterpret_cast<X509*>(cert));
+ 
+   int index = X509_NAME_get_index_by_NID(subj, NID_commonName, -1);
+   KJ_ASSERT(index != -1, "certificate has no common name?");
+-  X509_NAME_ENTRY* entry = X509_NAME_get_entry(subj, index);
++  const X509_NAME_ENTRY* entry = X509_NAME_get_entry(subj, index);
+   KJ_ASSERT(entry != nullptr);
+-  ASN1_STRING* data = X509_NAME_ENTRY_get_data(entry);
++  const ASN1_STRING* data = X509_NAME_ENTRY_get_data(entry);
+   KJ_ASSERT(data != nullptr);
+ 
+   unsigned char* out = nullptr;
+-- 
+2.47.3
+
