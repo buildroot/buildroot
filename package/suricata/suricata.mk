@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SURICATA_VERSION = 8.0.4
+SURICATA_VERSION = 8.0.7
 SURICATA_SITE = https://www.openinfosecfoundation.org/download
 SURICATA_LICENSE = GPL-2.0
 SURICATA_LICENSE_FILES = COPYING LICENSE
