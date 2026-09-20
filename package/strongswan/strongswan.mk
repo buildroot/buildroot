@@ -70,6 +70,13 @@ endif
 # setup piddir if BR2_PACKAGE_STRONGSWAN_PIDDIR is not empty
 STRONGSWAN_CONF_OPTS += $(if $(call qstrip,$(BR2_PACKAGE_STRONGSWAN_PIDDIR)),--with-piddir=$(BR2_PACKAGE_STRONGSWAN_PIDDIR))
 
+ifeq ($(BR2_PACKAGE_SYSTEMD),y)
+STRONGSWAN_DEPENDENCIES += systemd
+STRONGSWAN_CONF_OPTS += --enable-systemd
+else
+STRONGSWAN_CONF_OPTS += --disable-systemd
+endif
+
 ifeq ($(BR2_PACKAGE_STRONGSWAN_NONROOT),y)
 STRONGSWAN_CONF_OPTS += \
 	--with-user=charon \
