@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MROUTED_VERSION = 4.6
+MROUTED_VERSION = 4.7
 MROUTED_SITE = \
 	https://github.com/troglobit/mrouted/releases/download/$(MROUTED_VERSION)
 MROUTED_DEPENDENCIES = host-bison
@@ -13,7 +13,7 @@ MROUTED_LICENSE_FILES = LICENSE
 MROUTED_CPE_ID_VENDOR = troglobit
 
 define MROUTED_INSTALL_INIT_SYSV
-	$(INSTALL) -m 755 -D package/mrouted/S41mrouted \
+	$(INSTALL) -m 0755 -D package/mrouted/S41mrouted \
 		$(TARGET_DIR)/etc/init.d/S41mrouted
 endef
 
