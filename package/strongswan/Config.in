@@ -135,6 +135,10 @@ config BR2_PACKAGE_STRONGSWAN_EAP_AKA
 	bool "Enable EAP-AKA"
 	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
 
+config BR2_PACKAGE_STRONGSWAN_EAP_AKA_3GPP
+	bool "Enable EAP AKA backend plugin implementing 3GPP MILENAGE algorithms"
+	select BR2_PACKAGE_STRONGSWAN_EAP_AKA
+
 config BR2_PACKAGE_STRONGSWAN_EAP_AKA_3GPP2
 	bool "Enable EAP-AKA 3GPP2 algorithms"
 	default y if BR2_PACKAGE_STRONGSWAN_EAP # legacy
