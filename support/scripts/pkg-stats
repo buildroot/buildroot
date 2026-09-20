@@ -44,6 +44,11 @@ RM_API_STATUS_NOT_FOUND = 4
 
 HTTP_HEADERS = {'User-Agent': 'buildroot.org pkg-stats'}
 
+LATEST_SORT_GOOD = 3
+LATEST_SORT_ERROR = 2
+LATEST_SORT_UNKNOWN = 1
+LATEST_SORT_NEEDS_UPDATE = 0
+
 
 class Defconfig:
     def __init__(self, name, path):
@@ -766,7 +771,15 @@ addedCSSRules = [
 
 addedCSSRules.forEach(rule => styleSheet.insertRule(rule));
 
-function sortGrid(sortLabel){
+function byInnerText(el) {
+        return el.innerText;
+}
+
+function byIsLatest(el) {
+        return el.getAttribute('data-latest-sort');
+}
+
+function sortGrid(sortLabel, sortBy=byInnerText){
 	let i = 0;
 	let pkgSortArray = [], sortedPkgArray = [], pkgStringSortArray = [], pkgNumSortArray = [];
 	const git_hash_regex = /[a-f,0-9]/gi;
@@ -786,10 +799,10 @@ function sortGrid(sortLabel){
         columnValues.forEach((listing) => {
                 let sortArr = [];
                 sortArr[0] = listing.id.replace(sortLabel+"_", "");
-                if (!listing.innerText){
+                if (!sortBy(listing)) {
                         sortArr[1] = -1;
                 } else {
-                        sortArr[1] = listing.innerText;
+                        sortArr[1] = sortBy(listing);
                 };
                 pkgSortArray.push(sortArr);
         });
@@ -1011,14 +1024,20 @@ def dump_html_pkg(f, pkg):
     div_class = ["centered"]
     div_class.append(f'_{pkg_css_class}')
     div_class.append("latest_version data")
+    data_latest_sort = None
     if pkg.latest_version['status'] == RM_API_STATUS_ERROR:
         div_class.append("version-error")
+        data_latest_sort = LATEST_SORT_ERROR
     if pkg.latest_version['version'] is None:
         div_class.append("version-unknown")
+        if data_latest_sort != LATEST_SORT_ERROR:
+            data_latest_sort = LATEST_SORT_UNKNOWN
     elif pkg.latest_version['version'] != pkg.current_version:
         div_class.append("version-needs-update")
+        data_latest_sort = LATEST_SORT_NEEDS_UPDATE
     else:
         div_class.append("version-good")
+        data_latest_sort = LATEST_SORT_GOOD
 
     if pkg.latest_version['status'] == RM_API_STATUS_ERROR:
         latest_version_text = "<b>Error</b>"
@@ -1038,7 +1057,8 @@ def dump_html_pkg(f, pkg):
         else:
             latest_version_text += "found by guess"
 
-    f.write(f'  <div id="{data_field_id}" class="{" ".join(div_class)}">{latest_version_text}</div>\n')
+    f.write(f'  <div id="{data_field_id}" data-latest-sort="{data_latest_sort}" \
+        class="{" ".join(div_class)}">{latest_version_text}</div>\n')
 
     # Warnings
     data_field_id = f'warnings__{pkg_css_class}'
@@ -1170,7 +1190,7 @@ def dump_html_all_pkgs(f, packages):
      class="centered hash_file data label"><span>Hash file</span><span></span></div>
 <div style="grid-column: 8;" onclick="sortGrid(this.id)" id="current_version"
      class="centered current_version data label"><span>Current version</span><span></span></div>
-<div style="grid-column: 9;" onclick="sortGrid(this.id)" id="latest_version"
+<div style="grid-column: 9;" onclick="sortGrid(this.id, byIsLatest)" id="latest_version"
      class="centered latest_version data label"><span>Latest version</span><span></span></div>
 <div style="grid-column: 10;" onclick="sortGrid(this.id)" id="warnings"
      class="centered warnings data label"><span>Warnings</span><span></span></div>
