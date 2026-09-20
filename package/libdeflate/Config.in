@@ -1,7 +1,11 @@
 config BR2_PACKAGE_LIBDEFLATE
 	bool "libdeflate"
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_8 # C11
 	help
 	  Libdeflate is a heavily optimized library for DEFLATE/zlib/
 	  gzip compression and decompression
 
 	  https://github.com/ebiggers/libdeflate
+
+comment "libdeflate needs a toolchain w/ gcc >= 4.8"
+	depends on !BR2_TOOLCHAIN_GCC_AT_LEAST_4_8
