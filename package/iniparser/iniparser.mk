@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-INIPARSER_VERSION = 4.2.6
+INIPARSER_VERSION = 4.3.0
 INIPARSER_SITE = https://gitlab.com/iniparser/iniparser/-/archive/v$(INIPARSER_VERSION)
 INIPARSER_SOURCE = iniparser-v$(INIPARSER_VERSION).tar.gz
 INIPARSER_INSTALL_STAGING = YES
