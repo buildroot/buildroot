@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DISTRIBUTION_REGISTRY_VERSION = v3.0.0
+DISTRIBUTION_REGISTRY_VERSION = v3.1.1
 DISTRIBUTION_REGISTRY_SITE = https://github.com/distribution/distribution
 DISTRIBUTION_REGISTRY_SITE_METHOD = git
 
