@@ -1,0 +1,146 @@
+From 8e552683fa36fe9d09ee3e0909e600350d0bc3cb Mon Sep 17 00:00:00 2001
+From: Alexey Gladkov <legion@kernel.org>
+Date: Mon, 21 Sep 2026 12:15:00 +0200
+Subject: [PATCH] libkbdfile: Require dlopen and memfd_create for library
+ decompressors
+
+The library decompressors need dlopen() to load compression libraries
+and memfd_create() to hold decompressed data. Building them without
+these facilities can fail even though external decompression commands
+remain available.
+
+Enable the library backends and ELF note support only when both
+requirements are met, and apply the same condition to the ELF note
+test. Otherwise, retain the external-command fallback.
+
+Also restrict the libbz2 fallback probe to failed pkg-config lookups
+so that --without-bzip2 does not inadvertently enable bzip2 support.
+
+Link: https://github.com/legionus/kbd/issues/159
+Signed-off-by: Alexey Gladkov <legion@kernel.org>
+Upstream: https://github.com/legionus/kbd/commit/6ff3161c1e5d448920d412a269716cf42be155b5
+[Fiona: backport to 2.9.0]
+Signed-off-by: Fiona Klute <fiona.klute@gmx.de>
+---
+ configure.ac               | 19 ++++++++++++-------
+ src/libkbdfile/Makefile.am |  9 +++++++--
+ src/libkbdfile/elf-note.c  |  3 +++
+ 3 files changed, 22 insertions(+), 9 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 05cecab..0691167 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -81,7 +81,7 @@ AC_FUNC_STAT
+ AC_FUNC_MALLOC
+ AC_FUNC_REALLOC
+ AC_FUNC_STRERROR_R
+-AC_CHECK_FUNCS([alarm dup2 endpwent memset setlocale strcasecmp strerror \
++AC_CHECK_FUNCS([alarm dup2 endpwent memset setlocale strcasecmp strerror memfd_create \
+ 		strdup strndup strchr strrchr strspn strstr strtol])
+ 
+ AC_SEARCH_LIBS([timer_create], [rt])
+@@ -263,13 +263,18 @@ AS_IF([test "$VLOCK_PROG" = "yes"], [
+ ])
+ AM_CONDITIONAL(VLOCK, test "$VLOCK_PROG" = "yes")
+ 
++AS_IF([test "$enable_dlopen" = "yes" -a "$ac_cv_func_memfd_create" = "yes"],
++      [enable_kbdfile_elfnote=yes],
++      [enable_kbdfile_elfnote=no])
++AM_CONDITIONAL(USE_ELFNOTE, test "$enable_kbdfile_elfnote" = "yes")
++
+ AC_ARG_WITH([zlib],
+ 	[AS_HELP_STRING([--with-zlib],
+ 			[support zlib compression @<:@default=auto@:>@])],
+ 	[],
+ 	[: m4_divert_text([DEFAULTS], [with_zlib=yes])]
+ )
+-AS_IF([test "$with_zlib" != "no"],
++AS_IF([test "$with_zlib" != "no" -a "$enable_kbdfile_elfnote" = "yes"],
+ 	[PKG_CHECK_MODULES(ZLIB, zlib, [HAVE_ZLIB=yes], [HAVE_ZLIB=no])],
+ 	[HAVE_ZLIB=no]
+ )
+@@ -284,11 +289,11 @@ AC_ARG_WITH([bzip2],
+ 	[],
+ 	[: m4_divert_text([DEFAULTS], [with_bzip2=yes])]
+ )
+-AS_IF([test "$with_bzip2" != "no"],
+-	[PKG_CHECK_MODULES(BZIP2, bzip2, [HAVE_BZIP2=yes], [HAVE_BZIP2=no])],
++AS_IF([test "$with_bzip2" != "no" -a "$enable_kbdfile_elfnote" = "yes"],
++	[PKG_CHECK_MODULES(BZIP2, bzip2, [HAVE_BZIP2=yes], [HAVE_BZIP2=auto])],
+ 	[HAVE_BZIP2=no]
+ )
+-AS_IF([test "$HAVE_BZIP2" = "no"], [
++AS_IF([test "$HAVE_BZIP2" = "auto"], [
+ 	AC_CHECK_LIB(bz2, BZ2_bzDecompressInit, [
+ 		HAVE_BZIP2=yes
+ 		BZIP2_LIBS=-lbz2
+@@ -306,7 +311,7 @@ AC_ARG_WITH([lzma],
+ 	[],
+ 	[: m4_divert_text([DEFAULTS], [with_lzma=yes])]
+ )
+-AS_IF([test "$with_lzma" != "no"],
++AS_IF([test "$with_lzma" != "no" -a "$enable_kbdfile_elfnote" = "yes"],
+ 	[PKG_CHECK_MODULES(LZMA, liblzma, [HAVE_LZMA=yes], [HAVE_LZMA=no])],
+ 	[HAVE_LZMA=no]
+ )
+@@ -321,7 +326,7 @@ AC_ARG_WITH([zstd],
+ 	[],
+ 	[: m4_divert_text([DEFAULTS], [with_zstd=yes])]
+ )
+-AS_IF([test "$with_zstd" != "no"],
++AS_IF([test "$with_zstd" != "no" -a "$enable_kbdfile_elfnote" = "yes"],
+ 	[PKG_CHECK_MODULES(ZSTD, libzstd, [HAVE_ZSTD=yes], [HAVE_ZSTD=no])],
+ 	[HAVE_ZSTD=no]
+ )
+diff --git a/src/libkbdfile/Makefile.am b/src/libkbdfile/Makefile.am
+index 2511064..ebdb28d 100644
+--- a/src/libkbdfile/Makefile.am
++++ b/src/libkbdfile/Makefile.am
+@@ -10,14 +10,17 @@ headers = \
+ libkbdfile_la_SOURCES = \
+ 	$(headers) \
+ 	contextP.h \
+-	elf-note.h \
+-	elf-note.c \
+ 	init.c \
+ 	kbdfile.c
+ 
+ libkbdfile_la_LIBADD =
+ libkbdfile_la_CFLAGS =
+ 
++if USE_ELFNOTE
++libkbdfile_la_SOURCES += \
++	elf-note.h \
++	elf-note.c
++
+ if USE_ZLIB
+ libkbdfile_la_SOURCES += kbdfile-zlib.c
+ libkbdfile_la_CFLAGS += $(ZLIB_CFLAGS)
+@@ -38,6 +41,8 @@ libkbdfile_la_SOURCES += kbdfile-zstd.c
+ libkbdfile_la_CFLAGS += $(ZSTD_CFLAGS)
+ endif
+ 
++endif # USE_ELFNOTE
++
+ KBDFILE_CURRENT  = 1
+ KBDFILE_REVISION = 0
+ KBDFILE_AGE      = 0
+diff --git a/src/libkbdfile/elf-note.c b/src/libkbdfile/elf-note.c
+index 842be9d..bc4a684 100644
+--- a/src/libkbdfile/elf-note.c
++++ b/src/libkbdfile/elf-note.c
+@@ -6,7 +6,10 @@
+ #include <stdint.h>
+ #include <stdarg.h>
+ #include <errno.h>
++
++#ifdef HAVE_DLFCN_H
+ #include <dlfcn.h>
++#endif
+ 
+ #include "elf-note.h"
+ 
+-- 
+2.55.0
+
