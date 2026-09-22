@@ -31,6 +31,7 @@ NETWORK_MANAGER_CONF_OPTS = \
 	-Dqt=false \
 	-Diptables=/usr/sbin/iptables \
 	-Dip6tables=/usr/sbin/ip6tables \
+	-Dmodprobe=/sbin/modprobe \
 	-Difupdown=false \
 	-Dnm_cloud_setup=false \
 	-Dsession_tracking_consolekit=false
