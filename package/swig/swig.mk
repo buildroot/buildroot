@@ -30,18 +30,19 @@ endef
 
 HOST_SWIG_POST_INSTALL_HOOKS += HOST_SWIG_INSTALL_WRAPPER
 
-# CMake looks first at swig3.0, then swig2.0 and then swig. However,
-# when doing the search, it will look into the PATH for swig2.0 first,
-# and then for swig.
+# CMake looks first for swig4.0, then swig3.0 and swig2.0, and only
+# then for swig. However, it searches the whole PATH for one name before
+# trying the next one.
 # While the PATH contains first our $(HOST_DIR)/bin, it also contains
 # /usr/bin and other system directories. Therefore, if there is an
-# installed swig3.0 on the system, it will get the preference over the
-# swig installed in $(HOST_DIR)/bin, which isn't nice. To prevent
-# this from happening we create a symbolic link swig3.0 -> swig, so that
-# our swig always gets used.
+# installed swig4.0 or swig3.0 on the system, it will get the preference
+# over the swig installed in $(HOST_DIR)/bin, which isn't nice. To prevent
+# this from happening we create swig4.0 and swig3.0 symbolic links to
+# swig, so that our swig always gets used.
 
 define HOST_SWIG_INSTALL_SYMLINK
 	ln -fs swig $(HOST_DIR)/bin/swig$(SWIG_VERSION_MAJOR)
+	ln -fs swig $(HOST_DIR)/bin/swig4.0
 	ln -fs swig $(HOST_DIR)/bin/swig3.0
 endef
 
