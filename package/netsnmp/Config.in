@@ -43,6 +43,18 @@ config BR2_PACKAGE_NETSNMP_WITHOUT_MIB_MODULES
 	help
 	  Specify which MIB modules to exclude.
 
+config BR2_PACKAGE_NETSNMP_ENABLE_READ_ONLY
+	bool "Read-only agent"
+	depends on BR2_PACKAGE_NETSNMP_SERVER
+	help
+	  Remove all SET support from the agent, so it can be queried
+	  but never written to. Access control still needs to be
+	  configured, but a mistake there can no longer result in a
+	  writable agent.
+
+	  The client applications are unaffected, snmpset is still
+	  built when clients are enabled.
+
 config BR2_PACKAGE_NETSNMP_ENABLE_DEBUGGING
 	bool "Enable debugging code"
 	help

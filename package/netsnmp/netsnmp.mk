@@ -96,6 +96,10 @@ NETSNMP_CONF_OPTS += --disable-mib-loading
 NETSNMP_CONF_OPTS += --disable-mibs
 endif
 
+ifeq ($(BR2_PACKAGE_NETSNMP_ENABLE_READ_ONLY),y)
+NETSNMP_CONF_OPTS += --enable-read-only
+endif
+
 ifneq ($(BR2_PACKAGE_NETSNMP_ENABLE_DEBUGGING),y)
 NETSNMP_CONF_OPTS += --disable-debugging
 endif
