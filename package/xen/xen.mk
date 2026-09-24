@@ -24,6 +24,8 @@ ifeq ($(ARCH),aarch64)
 XEN_ARCH = arm64
 else ifeq ($(ARCH),arm)
 XEN_ARCH = arm32
+else ifeq ($(ARCH),x86_64)
+XEN_ARCH = x86_64
 endif
 
 XEN_CONF_OPTS = \
@@ -31,6 +33,21 @@ XEN_CONF_OPTS = \
 	--disable-ocamltools \
 	--with-initddir=/etc/init.d \
 	--disable-werror
+
+ifeq ($(BR2_x86_64),y)
+# SeaBIOS, OVMF and iPXE would be git-cloned at build time, and ROMBIOS
+# needs the bcc/as86/ld86 toolchain, so only build hvmloader. The PV shim
+# is a second, differently configured build of the hypervisor.
+XEN_CONF_OPTS += \
+	--disable-seabios \
+	--disable-ovmf \
+	--disable-ipxe \
+	--disable-rombios \
+	--disable-pvshim
+
+# hvmloader is 32-bit x86 firmware, loaded into HVM guests
+XEN_BIN_ARCH_EXCLUDE = /usr/lib/xen/boot
+endif
 
 # Xen 4.20+ would normally fetch qemu-xen via git at build time; we
 # pre-provide it via the qemu-xen package instead.
