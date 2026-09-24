@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-XEN_VERSION = 4.21.1
+XEN_VERSION = 4.22.0
 XEN_SITE = https://downloads.xenproject.org/release/xen/$(XEN_VERSION)
 XEN_SELINUX_MODULES = systemd udev xen
 XEN_LICENSE = GPL-2.0
