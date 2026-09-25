@@ -20,11 +20,26 @@
 #
 ################################################################################
 
+# Qt5 and Qt6 are mutually exclusive
+ifeq ($(BR2_PACKAGE_QT5),y)
+QT_VERSION_MAJOR = $(QT5_VERSION_MAJOR)
+QT_VERSION = $(QT5_VERSION)
+QT_BASE = qt5base
+QT_QMAKE = $(QT5_QMAKE)
+QT_CONF_FIXUP = QT5_QT_CONF_FIXUP
+else
+QT_VERSION_MAJOR = $(QT6_VERSION_MAJOR)
+QT_VERSION = $(QT6_VERSION)
+QT_BASE = qt6base
+QT_QMAKE = $(QT6_QMAKE)
+QT_CONF_FIXUP = QT6_QT_CONF_FIXUP
+endif
+
 #
 # Hook to sync Qt headers
 #
 define QT_HEADERS_SYNC_HOOK
-	sed -e '/^MODULE_VERSION/s/5\.15\.[3456789]/$(QT5_VERSION)/' -i \
+	sed -e '/^MODULE_VERSION/s/$(subst .,\.,$(QT_VERSION_MAJOR))\.[0-9]*/$(QT_VERSION)/' -i \
 		$($(PKG)_BUILDDIR)/.qmake.conf
 	touch $($(PKG)_BUILDDIR)/.git
 endef
@@ -45,15 +60,15 @@ define inner-qmake-package
 $(2)_INSTALL_STAGING_OPTS	?= install
 $(2)_INSTALL_TARGET_OPTS	?= $$($(2)_INSTALL_STAGING_OPTS)
 
-ifneq ($(1),qt5base)
-$(2)_DEPENDENCIES 		+= qt5base
+ifneq ($(1),$(QT_BASE))
+$(2)_DEPENDENCIES 		+= $(QT_BASE)
 endif
 
 ifeq ($$($(2)_SYNC_QT_HEADERS),YES)
 $(2)_PRE_CONFIGURE_HOOKS        += QT_HEADERS_SYNC_HOOK
 endif
 
-$(2)_POST_PREPARE_HOOKS += QT5_QT_CONF_FIXUP
+$(2)_POST_PREPARE_HOOKS += $(QT_CONF_FIXUP)
 
 #
 # Configure step. Only define it if not already defined by the package
@@ -62,7 +77,7 @@ $(2)_POST_PREPARE_HOOKS += QT5_QT_CONF_FIXUP
 ifndef $(2)_CONFIGURE_CMDS
 define $(2)_CONFIGURE_CMDS
 	cd $$($(2)_BUILDDIR) && \
-	$$(TARGET_MAKE_ENV) $$($(2)_CONF_ENV) $$(QT5_QMAKE) $$($(2)_CONF_OPTS)
+	$$(TARGET_MAKE_ENV) $$($(2)_CONF_ENV) $$(QT_QMAKE) $$($(2)_CONF_OPTS)
 endef
 endif
 
