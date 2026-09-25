@@ -22,5 +22,11 @@ define QT6_INSTALL_QT_CONF
 		$(QT6BASE_PKGDIR)/qt.conf.in > $(HOST_DIR)/bin/qt.conf
 endef
 
+ifeq ($(BR2_PER_PACKAGE_DIRECTORIES),y)
+define QT6_QT_CONF_FIXUP
+	$(QT6_INSTALL_QT_CONF)
+endef
+endif
+
 # Variable for other Qt applications to use
 QT6_QMAKE = $(HOST_DIR)/bin/qmake -spec devices/linux-buildroot-g++
