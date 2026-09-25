@@ -1,0 +1,33 @@
+From 66cd3bf8a9c19f03c5b0bf58031ab8176fb5608a Mon Sep 17 00:00:00 2001
+From: Jaipaul Cheernam <jaipaul.cheernam@est.tech>
+Date: Thu, 24 Sep 2026 14:59:26 +0000
+Subject: [PATCH] Fix 32-bit x86 build of hash.cc
+
+The x86 AES SIMD path in absl/hash/internal/hash.cc uses the 64-bit-only
+_mm_cvtsi128_si64 and _mm_extract_epi64 intrinsics but is gated only on
+__SSE4_2__ && __AES__, so 32-bit x86 builds fail to compile.
+
+Require __x86_64__/_M_X64 for that path, matching the existing guard in
+absl/crc/internal/crc32_x86_arm_combined_simd.h.
+
+Fixes: https://github.com/abseil/abseil-cpp/issues/2176
+Upstream: https://github.com/abseil/abseil-cpp/pull/2177
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ absl/hash/internal/hash.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/absl/hash/internal/hash.cc b/absl/hash/internal/hash.cc
+index 43cb561..ef85625 100644
+--- a/absl/hash/internal/hash.cc
++++ b/absl/hash/internal/hash.cc
+@@ -28,7 +28,8 @@
+ 
+ #ifdef ABSL_AES_INTERNAL_HAVE_X86_SIMD
+ #error ABSL_AES_INTERNAL_HAVE_X86_SIMD cannot be directly set
+-#elif defined(__SSE4_2__) && defined(__AES__)
++#elif defined(__SSE4_2__) && defined(__AES__) && \
++    (defined(__x86_64__) || defined(_M_X64))
+ #define ABSL_AES_INTERNAL_HAVE_X86_SIMD
+ #endif
+ 
