@@ -1,20 +1,22 @@
-From 712675fbd2a736df817fecd7bfb39055946ef85b Mon Sep 17 00:00:00 2001
+From 93c8fe7187d1f8b2b4a41829272ffefc717165be Mon Sep 17 00:00:00 2001
 From: Waldemar Brodkorb <wbx@openadk.org>
 Date: Sun, 13 Aug 2023 13:48:03 +0200
 Subject: [PATCH] disable PIE support
 
 Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
 Upstream: N/A Not upstreamable
+[Rebased on ntpsec-1.2.5]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 ---
  wscript | 1 -
  1 file changed, 1 deletion(-)
 
 diff --git a/wscript b/wscript
-index 292e3a45b..105c7eac2 100644
+index ba8939aff..bdc3a2748 100644
 --- a/wscript
 +++ b/wscript
-@@ -299,7 +299,6 @@ def configure(ctx):
- 
+@@ -291,7 +291,6 @@ def configure(ctx):
+ #       ('w_everything', "-Weverything"),  # clang
      cc_test_flags = [
          ('PIC', '-fPIC'),
 -        ('PIE', '-pie -fPIE'),
@@ -22,5 +24,5 @@ index 292e3a45b..105c7eac2 100644
          ('unused', '-Qunused-arguments'),
          # This is a useless warning on any architecture with a barrel
 -- 
-2.39.2
+2.55.0
 
