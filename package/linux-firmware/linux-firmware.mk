@@ -97,7 +97,8 @@ LINUX_FIRMWARE_FILES += \
 	rtl_bt/rtl8723bs_config.bin rtl_bt/rtl8723bs_fw.bin \
 	rtl_bt/rtl8723d_fw.bin rtl_bt/rtl8761a_fw.bin \
 	rtl_bt/rtl8761b_fw.bin rtl_bt/rtl8761b_config.bin \
-	rtl_bt/rtl8761bu_fw.bin rtl_bt/rtl8761bu_config.bin
+	rtl_bt/rtl8761bu_fw.bin rtl_bt/rtl8761bu_config.bin \
+	rtl_bt/rtl8761cu_fw.bin rtl_bt/rtl8761cu_config.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENSES/LICENCE.rtlwifi_firmware.txt
 endif
 
