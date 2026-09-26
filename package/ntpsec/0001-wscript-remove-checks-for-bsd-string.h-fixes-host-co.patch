@@ -1,4 +1,4 @@
-From 54fbeaa68a59f536819d1cfb2e9204176fbff54b Mon Sep 17 00:00:00 2001
+From 01d75b8d4624883133964deedc4c83e20adbee82 Mon Sep 17 00:00:00 2001
 From: Peter Seiderer <ps.report@gmx.net>
 Date: Thu, 16 Dec 2021 23:27:35 +0100
 Subject: [PATCH] wscript: remove checks for bsd/string.h, fixes host-compile
@@ -16,13 +16,15 @@ in case target libbsd is found:
   compilation terminated.
 
 Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+[Rebased on ntpsec-1.2.5]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 ---
  include/ntp_stdlib.h |  4 ----
  wscript              | 14 --------------
  2 files changed, 18 deletions(-)
 
 diff --git a/include/ntp_stdlib.h b/include/ntp_stdlib.h
-index fe4d78e5c..73d97084f 100644
+index 80e4765cf..c6cb04d04 100644
 --- a/include/ntp_stdlib.h
 +++ b/include/ntp_stdlib.h
 @@ -16,10 +16,6 @@
@@ -37,10 +39,10 @@ index fe4d78e5c..73d97084f 100644
  #define NTP_PRINTF(fmt, args) __attribute__((__format__(__printf__, fmt, args)))
  #else
 diff --git a/wscript b/wscript
-index 641073f00..aa04b1d1c 100644
+index 65592c997..ba8939aff 100644
 --- a/wscript
 +++ b/wscript
-@@ -660,19 +660,6 @@ int main(int argc, char **argv) {
+@@ -643,19 +643,6 @@ int main(int argc, char **argv) {
                         prerequisites=ft[1], use=ft[2],
                         mandatory=ft[3])
  
@@ -60,7 +62,7 @@ index 641073f00..aa04b1d1c 100644
      # Nobody uses the symbol, but this seems like a good sanity check.
      ctx.check_cc(header_name="stdbool.h", mandatory=True,
                   comment="Sanity check.")
-@@ -691,7 +678,6 @@ int main(int argc, char **argv) {
+@@ -674,7 +661,6 @@ int main(int argc, char **argv) {
      optional_headers = (
          "alloca.h",
          ("arpa/nameser.h", ["sys/types.h"]),
@@ -69,5 +71,5 @@ index 641073f00..aa04b1d1c 100644
          ("linux/if_addr.h", ["sys/socket.h"]),
          ("linux/rtnetlink.h", ["sys/socket.h"]),
 -- 
-2.34.1
+2.55.0
 

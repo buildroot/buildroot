@@ -1,4 +1,4 @@
-From 55c230d61ece7213506f1dccac76c21aefbade9e Mon Sep 17 00:00:00 2001
+From 19cba844e9df1ed3942d44a83cf7875bb52d9a33 Mon Sep 17 00:00:00 2001
 From: Bernd Kuhls <bernd@kuhls.net>
 Date: Mon, 27 Oct 2025 19:18:13 +0100
 Subject: [PATCH] refclock_gpsd: add build fix for gcc => 14.x
@@ -10,23 +10,26 @@ Subject: [PATCH] refclock_gpsd: add build fix for gcc => 14.x
 Upstream: https://gitlab.com/NTPsec/ntpsec/-/merge_requests/1484
 
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[Rebased on ntpsec-1.2.5 and fixed for changes from upstream commit
+ 5505260c ("Fix redefined _XOPEN_SOURCE warning in refclock_gpsd.c")]
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
 ---
  ntpd/refclock_gpsd.c | 2 ++
  1 file changed, 2 insertions(+)
 
 diff --git a/ntpd/refclock_gpsd.c b/ntpd/refclock_gpsd.c
-index a4a6f7095..a3995896a 100644
+index a316f724a..55d4dfe83 100644
 --- a/ntpd/refclock_gpsd.c
 +++ b/ntpd/refclock_gpsd.c
 @@ -59,6 +59,8 @@
   */
  
  
-+#define _XOPEN_SOURCE
++#define _XOPEN_SOURCE 700
 +#define _DEFAULT_SOURCE
  #include "config.h"
  #include "ntp.h"
  #include "ntp_types.h"
 -- 
-2.47.3
+2.55.0
 
