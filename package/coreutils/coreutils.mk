@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-COREUTILS_VERSION = 9.10
+COREUTILS_VERSION = 9.12
 COREUTILS_SITE = $(BR2_GNU_MIRROR)/coreutils
 COREUTILS_SOURCE = coreutils-$(COREUTILS_VERSION).tar.xz
 COREUTILS_LICENSE = GPL-3.0+
@@ -51,7 +51,6 @@ COREUTILS_CONF_ENV = ac_cv_c_restrict=no \
 	gl_cv_func_working_utimes=yes \
 	gl_cv_macro_MB_CUR_MAX_good=yes \
 	gl_cv_have_proc_uptime=yes \
-	utils_cv_localtime_cache=no \
 	PERL=missing \
 	MAKEINFO=true \
 	INSTALL_PROGRAM=$(INSTALL)
