@@ -1,0 +1,67 @@
+From 9dae8238db84a1ce2aeb61cce41af4718157172b Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Sun, 27 Sep 2026 12:03:53 +0200
+Subject: [PATCH] soup-init: only use dlopen() when dlfcn.h is available
+
+Commit 1296cbf983f0 ("soup-init: Use libdl instead of gmodule in
+`soup2_is_loaded` check") unconditionally includes <dlfcn.h> on
+non-Windows platforms. Static-only toolchains (e.g. uClibc-ng built
+without shared library support) don't provide this header, so the
+build fails:
+
+../libsoup/soup-init.c:21:10: fatal error: dlfcn.h: No such file or directory
+
+Check for dlfcn.h at configure time and skip the libsoup2 detection
+when it is not available. Without dynamic loading, libsoup2 cannot be
+loaded into the process at runtime anyway.
+
+Upstream: https://gitlab.gnome.org/GNOME/libsoup/-/merge_requests/571
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+Assisted-by: Claude:claude-opus-5
+---
+ libsoup/soup-init.c | 9 ++++++---
+ meson.build         | 4 ++++
+ 2 files changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/libsoup/soup-init.c b/libsoup/soup-init.c
+index 3392e8e..a57db6e 100644
+--- a/libsoup/soup-init.c
++++ b/libsoup/soup-init.c
+@@ -17,7 +17,7 @@
+ #include <windows.h>
+ 
+ HMODULE soup_dll;
+-#else
++#elif defined (HAVE_DLFCN_H)
+ #include <dlfcn.h>
+ #endif
+ 
+@@ -26,8 +26,11 @@ soup2_is_loaded (void)
+ {
+ 	gboolean result = FALSE;
+ 
+-	/* Skip on PE/COFF, as it doesn't have a flat symbol namespace */
+-#ifndef G_OS_WIN32
++	/* Skip on PE/COFF, as it doesn't have a flat symbol namespace,
++	 * and on platforms without dlopen() support (e.g. static-only
++	 * toolchains).
++	 */
++#if !defined (G_OS_WIN32) && defined (HAVE_DLFCN_H)
+ 	gpointer handle;
+ 	gpointer func;
+ 
+diff --git a/meson.build b/meson.build
+index 4422215..3140ceb 100644
+--- a/meson.build
++++ b/meson.build
+@@ -167,6 +167,10 @@ libpsl_required_version = '>= 0.20'
+ libpsl_dep = dependency('libpsl', version : libpsl_required_version,
+   fallback : ['libpsl', 'libpsl_dep'])
+ 
++if cc.has_header('dlfcn.h')
++    cdata.set('HAVE_DLFCN_H', '1')
++endif
++
+ if cc.has_function('gmtime_r', prefix : '#include <time.h>', args : default_source_flag)
+     cdata.set('HAVE_GMTIME_R', '1')
+ endif
