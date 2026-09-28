@@ -21,7 +21,7 @@ declare -a docker_opts=(
     --user "$(id -u):$(id -g)"
     --workdir "$(pwd)"
     --security-opt label=disable
-    --network host
+    --network "$([ "${NO_NETWORK:-0}" -eq 1 ] && echo none || echo host)"
 )
 
 declare -a mountpoints=(
