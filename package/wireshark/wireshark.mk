@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WIRESHARK_VERSION = 4.4.19
+WIRESHARK_VERSION = 4.6.9
 WIRESHARK_SOURCE = wireshark-$(WIRESHARK_VERSION).tar.xz
 WIRESHARK_SITE = https://www.wireshark.org/download/src/all-versions
 WIRESHARK_LICENSE = wireshark license
@@ -18,6 +18,7 @@ WIRESHARK_DEPENDENCIES = \
 	libgcrypt \
 	libglib2 \
 	libpcap \
+	libxml2 \
 	pcre2 \
 	speexdsp
 
@@ -100,13 +101,6 @@ WIRESHARK_CONF_OPTS += -DENABLE_LIBSSH=ON
 WIRESHARK_DEPENDENCIES += libssh
 else
 WIRESHARK_CONF_OPTS += -DENABLE_LIBSSH=OFF
-endif
-
-ifeq ($(BR2_PACKAGE_LIBXML2),y)
-WIRESHARK_CONF_OPTS += -DENABLE_LIBXML2=ON
-WIRESHARK_DEPENDENCIES += libxml2
-else
-WIRESHARK_CONF_OPTS += -DENABLE_LIBXML2=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_LUA_5_3)$(BR2_PACKAGE_LUA_5_4),y)
