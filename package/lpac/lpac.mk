@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LPAC_VERSION = 2.2.1
+LPAC_VERSION = 2.3.0
 LPAC_SITE = $(call github,estkme-group,lpac,v$(LPAC_VERSION))
 LPAC_LICENSE = LGPL-2.1+ (library), AGPL-3.0 (programs), MIT (cjson)
 LPAC_LICENSE_FILES = src/LICENSE euicc/LICENSE cjson/LICENSE
