@@ -1,6 +1,7 @@
 config BR2_PACKAGE_TCPREPLAY
 	bool "tcpreplay"
 	depends on BR2_USE_MMU # fork()
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_LIBPCAP
 	select BR2_PACKAGE_MUSL_FTS if !BR2_TOOLCHAIN_USES_GLIBC
 	help
@@ -8,3 +9,7 @@ config BR2_PACKAGE_TCPREPLAY
 	  saved with tcpdump or other tools which write pcap(3) files.
 
 	  http://tcpreplay.appneta.com/
+
+comment "tcpreplay needs a toolchain w/ threads"
+	depends on BR2_USE_MMU
+	depends on !BR2_TOOLCHAIN_HAS_THREADS

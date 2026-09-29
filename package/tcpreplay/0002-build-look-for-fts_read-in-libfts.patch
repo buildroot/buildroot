@@ -1,0 +1,77 @@
+From a829c8a247cfb688f6c2103d750f72a1f0fc348a Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Tue, 29 Sep 2026 11:33:40 +0200
+Subject: [PATCH] build: look for fts_read() in libfts
+
+On musl and uClibc, fts_*() is not part of the C library but provided
+by the standalone musl-fts library (libfts). Look for it there when
+it's neither in libc nor in libbsd, in both configure.ac and CMake.
+
+Without this, cross builds against these C libraries have to pass
+-lfts by hand, and with CMake that doesn't work for static builds, as
+CMAKE_EXE_LINKER_FLAGS ends up before the objects on the link line:
+
+  tcpreplay.c:(.text.startup+0x1e8): undefined reference to `fts_open'
+
+Upstream: https://github.com/appneta/tcpreplay/pull/1153
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+Assisted-by: Claude:claude-opus-5-5
+---
+ cmake/ConfigureChecks.cmake | 7 ++++++-
+ cmake/config.h.cmake        | 3 +++
+ configure.ac                | 5 +++--
+ 3 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/cmake/ConfigureChecks.cmake b/cmake/ConfigureChecks.cmake
+index 5b829a5d..b8c81aeb 100644
+--- a/cmake/ConfigureChecks.cmake
++++ b/cmake/ConfigureChecks.cmake
+@@ -365,12 +365,17 @@ if(NOT HAVE_INET_ADDR)
+     message(FATAL_ERROR "We need inet_addr.  See bug 26")
+ endif()
+ 
+-# Haiku: fts_*() lives in libbsd
++# Haiku: fts_*() lives in libbsd; musl and uClibc: in the standalone libfts
+ check_function_exists(fts_read HAVE_FTS_READ)
+ if(NOT HAVE_FTS_READ)
+     check_library_exists(bsd fts_read "" HAVE_LIBBSD)
+     if(HAVE_LIBBSD)
+         list(APPEND TCPR_SYSTEM_LIBS bsd)
++    else()
++        check_library_exists(fts fts_read "" HAVE_LIBFTS)
++        if(HAVE_LIBFTS)
++            list(APPEND TCPR_SYSTEM_LIBS fts)
++        endif()
+     endif()
+ endif()
+ 
+diff --git a/cmake/config.h.cmake b/cmake/config.h.cmake
+index 15531ca3..12084d28 100644
+--- a/cmake/config.h.cmake
++++ b/cmake/config.h.cmake
+@@ -232,6 +232,9 @@
+ /* Do we have libdnet? */
+ #cmakedefine HAVE_LIBDNET @HAVE_LIBDNET@
+ 
++/* Define to 1 if you have the 'fts' library (-lfts). */
++#cmakedefine HAVE_LIBFTS @HAVE_LIBFTS@
++
+ /* Define to 1 if you have the 'gen' library (-lgen). */
+ #cmakedefine HAVE_LIBGEN @HAVE_LIBGEN@
+ 
+diff --git a/configure.ac b/configure.ac
+index 20e4f465..00fd13bd 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -718,8 +718,9 @@ if test x$inet_addr = xno ; then
+     AC_MSG_ERROR([We need inet_addr.  See bug 26])
+ fi
+ 
+-dnl On Haiku fts_*() functions are in libbsd.
+-AC_CHECK_FUNC(fts_read,,[AC_CHECK_LIB(bsd, fts_read)])
++dnl On Haiku fts_*() functions are in libbsd, on musl and uClibc in the
++dnl standalone libfts (musl-fts).
++AC_CHECK_FUNC(fts_read,,[AC_CHECK_LIB(bsd, fts_read,,[AC_CHECK_LIB(fts, fts_read)])])
+ 
+ dnl #####################################################
+ dnl Checks for tuntap device support

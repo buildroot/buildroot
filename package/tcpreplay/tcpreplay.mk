@@ -4,40 +4,45 @@
 #
 ################################################################################
 
-TCPREPLAY_VERSION = 4.5.2
+TCPREPLAY_VERSION = 4.6.1
 TCPREPLAY_SITE = https://github.com/appneta/tcpreplay/releases/download/v$(TCPREPLAY_VERSION)
 TCPREPLAY_SOURCE = tcpreplay-$(TCPREPLAY_VERSION).tar.xz
 TCPREPLAY_LICENSE = GPL-3.0
 TCPREPLAY_LICENSE_FILES = docs/LICENSE
 TCPREPLAY_CPE_ID_VENDOR = broadcom
-TCPREPLAY_CONF_ENV = \
-	ac_cv_path_ac_pt_PCAP_CONFIG="$(STAGING_DIR)/usr/bin/pcap-config" \
-	LIBS="$(TCPREPLAY_LIBS)"
-TCPREPLAY_CONF_OPTS = --with-libpcap=$(STAGING_DIR)/usr \
-	--enable-pcapconfig
 TCPREPLAY_DEPENDENCIES = libpcap
+# The option parsers, tcpedit_stub.h and man pages are pre-generated in
+# the release tarball, so don't use autogen, python3 or asciidoctor from
+# the host.
+TCPREPLAY_CONF_OPTS = \
+	-DENABLE_PCAPCONFIG=ON \
+	-DPCAP_CONFIG_EXECUTABLE=$(STAGING_DIR)/usr/bin/pcap-config \
+	-DAUTOGEN_EXECUTABLE=OFF \
+	-DPYTHON3_EXECUTABLE=OFF \
+	-DASCIIDOCTOR_EXECUTABLE=OFF \
+	-DPCAPNAV_CONFIG_EXECUTABLE=OFF
 
 ifeq ($(BR2_TOOLCHAIN_USES_GLIBC),)
 TCPREPLAY_DEPENDENCIES += musl-fts
-TCPREPLAY_LIBS += -lfts
 endif
 
 ifeq ($(BR2_STATIC_LIBS),y)
-TCPREPLAY_CONF_OPTS += --enable-dynamic-link=no
-TCPREPLAY_LIBS += `$(STAGING_DIR)/usr/bin/pcap-config --static --libs`
+TCPREPLAY_CONF_OPTS += -DENABLE_STATIC_LINK=ON
+else
+TCPREPLAY_CONF_OPTS += -DENABLE_STATIC_LINK=OFF
 endif
 
 ifeq ($(BR2_PACKAGE_LIBDNET),y)
 TCPREPLAY_DEPENDENCIES += libdnet
-TCPREPLAY_CONF_OPTS += --with-libdnet=$(STAGING_DIR)/usr
+TCPREPLAY_CONF_OPTS += -DWITH_LIBDNET=$(STAGING_DIR)/usr
 else
-TCPREPLAY_CONF_OPTS += --without-libdnet
+TCPREPLAY_CONF_OPTS += -DWITH_LIBDNET=no
 endif
 
 ifeq ($(BR2_PACKAGE_TCPDUMP),y)
-TCPREPLAY_CONF_ENV += ac_cv_path_tcpdump_path=/usr/sbin/tcpdump
+TCPREPLAY_CONF_OPTS += -DWITH_TCPDUMP=/usr/sbin/tcpdump
 else
-TCPREPLAY_CONF_ENV += ac_cv_path_tcpdump_path=no
+TCPREPLAY_CONF_OPTS += -DWITH_TCPDUMP=no
 endif
 
-$(eval $(autotools-package))
+$(eval $(cmake-package))
