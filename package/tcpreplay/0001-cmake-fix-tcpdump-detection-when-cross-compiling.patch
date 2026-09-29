@@ -1,0 +1,43 @@
+From d7e8593b515e53f6f6b7e2df496955568146ecdd Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Tue, 29 Sep 2026 11:21:30 +0200
+Subject: [PATCH] cmake: fix tcpdump detection when cross compiling
+
+WITH_TCPDUMP names the tcpdump binary on the machine tcpreplay will run
+on. When cross compiling, that path doesn't exist on the build machine,
+so the EXISTS check always fails and --verbose gets disabled.
+
+Trust WITH_TCPDUMP when cross compiling, and accept WITH_TCPDUMP=no
+(like WITH_LIBDNET=no) to skip the host find_program() lookup, which
+would otherwise pick up the build machine's tcpdump.
+
+Upstream: https://github.com/appneta/tcpreplay/pull/1152
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+Assisted-by: Claude:claude-opus-5-5
+---
+ cmake/OptionalDeps.cmake | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/cmake/OptionalDeps.cmake b/cmake/OptionalDeps.cmake
+index 6c73a20e..5239630a 100644
+--- a/cmake/OptionalDeps.cmake
++++ b/cmake/OptionalDeps.cmake
+@@ -177,12 +177,16 @@ endif()
+ # tcpdump binary (--with-tcpdump → WITH_TCPDUMP)
+ # ---------------------------------------------------------------------------
+ set(HAVE_TCPDUMP "")
+-if(WITH_TCPDUMP)
++if(WITH_TCPDUMP STREQUAL "no")
++    set(TCPDUMP_PATH "")
++elseif(WITH_TCPDUMP)
+     set(TCPDUMP_PATH ${WITH_TCPDUMP})
+ else()
+     find_program(TCPDUMP_PATH tcpdump PATHS /usr/sbin /sbin /usr/local/sbin)
+ endif()
+-if(TCPDUMP_PATH AND EXISTS ${TCPDUMP_PATH})
++# When cross compiling, WITH_TCPDUMP is a path on the target, which can't
++# be checked for existence on the build machine.
++if(TCPDUMP_PATH AND (EXISTS "${TCPDUMP_PATH}" OR (CMAKE_CROSSCOMPILING AND WITH_TCPDUMP)))
+     set(HAVE_TCPDUMP 1)
+     message(STATUS "Using tcpdump in ${TCPDUMP_PATH}")
+ else()
