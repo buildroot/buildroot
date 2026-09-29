@@ -1,0 +1,41 @@
+From da763d37b2b275ef977e5a9bf4424bbe1fb2b22d Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Tue, 29 Sep 2026 11:33:40 +0200
+Subject: [PATCH] txring.h: fix build with musl
+
+Commit 78076385 ("txring: fix __GLIBC_MINOR typo and include the header
+that defines the TX_RING API (#1043)") made the libc check work, so
+non-glibc C libraries now include <linux/if_ether.h>. On musl, that
+clashes with <netinet/if_ether.h>, included later via sendpacket.h:
+
+  netinet/if_ether.h:122:1: error: redefinition of struct or union 'struct ethhdr'
+
+<net/ethernet.h> is available on all Linux C libraries, so use it
+unconditionally.
+
+Upstream: https://github.com/appneta/tcpreplay/pull/1154
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+Assisted-by: Claude:claude-opus-5-5
+---
+ src/common/txring.h | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/src/common/txring.h b/src/common/txring.h
+index 59dabd1a..0c1e4bfd 100644
+--- a/src/common/txring.h
++++ b/src/common/txring.h
+@@ -38,14 +38,8 @@
+ 
+ #ifdef HAVE_TX_RING
+ 
+-#if __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 1
+ #include <net/ethernet.h> /* the L2 protocols */
+ #include <linux/if_packet.h>
+-#else
+-#include <asm/types.h>
+-#include <linux/if_ether.h> /* The L2 protocols */
+-#include <linux/if_packet.h>
+-#endif
+ #include <pthread.h>
+ 
+ struct txring_s {
