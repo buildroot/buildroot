@@ -1,0 +1,48 @@
+From 54799216beac63a195cd6d34b22476fc15a80295 Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Wed, 30 Sep 2026 10:59:49 +0200
+Subject: [PATCH] drawbar: define explicit value for _XOPEN_SOURCE macro
+
+drawbar.c uses the wide-character curses function waddwstr(). ncurses
+only declares its wide-character API when NCURSES_WIDECHAR is set,
+which curses.h derives from the feature test macros:
+
+  #if defined(_XOPEN_SOURCE_EXTENDED) || \
+      (defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE - 0 >= 500))
+
+drawbar.c defines _XOPEN_SOURCE without a value, so _XOPEN_SOURCE - 0
+evaluates to 0 and the check fails.
+
+With glibc and uClibc this goes unnoticed, because their <features.h>
+redefines _XOPEN_SOURCE to 700 (and defines _XOPEN_SOURCE_EXTENDED)
+whenever _GNU_SOURCE is set. musl does not touch the application's
+feature test macros, so the empty definition reaches curses.h
+unchanged and the build fails:
+
+drawbar.c:2336:33: error: implicit declaration of function 'waddwstr'; did you mean 'waddstr'? [-Wimplicit-function-declaration]
+
+Define _XOPEN_SOURCE as 700, which matches the already explicit
+_POSIX_C_SOURCE value of 200809L (both refer to POSIX.1-2008).
+
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+Upstream: https://github.com/Atoptool/atop/pull/415
+---
+ drawbar.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drawbar.c b/drawbar.c
+index 651a81e..e4db0d6 100644
+--- a/drawbar.c
++++ b/drawbar.c
+@@ -104,7 +104,7 @@
+ // the other.
+ /////////////////////////////////////////////////////////////////////////////
+ #define _POSIX_C_SOURCE	200809L
+-#define _XOPEN_SOURCE
++#define _XOPEN_SOURCE	700
+ #define _GNU_SOURCE
+ #define _DEFAULT_SOURCE
+ 
+-- 
+2.34.1
+
