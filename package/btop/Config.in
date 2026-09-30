@@ -1,0 +1,36 @@
+config BR2_PACKAGE_BTOP
+	bool "btop"
+	depends on BR2_INSTALL_LIBSTDCPP
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_USE_WCHAR
+	depends on BR2_ENABLE_LOCALE
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_14
+	depends on !BR2_TOOLCHAIN_USES_UCLIBC # no quick_exit()
+	help
+	  Resource monitor that shows usage and stats for processor,
+	  memory, disks, network and processes.
+
+	  https://github.com/aristocratos/btop
+
+if BR2_PACKAGE_BTOP
+
+config BR2_PACKAGE_BTOP_GPU
+	bool "GPU monitoring support"
+	depends on !BR2_STATIC_LIBS # dlopen()
+	help
+	  Enable GPU monitoring. Intel i915 GPUs are accessed through
+	  the kernel perf interface. NVIDIA and AMD GPUs additionally
+	  require NVML and ROCm SMI respectively at runtime.
+
+comment "GPU monitoring needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS
+
+endif
+
+comment "btop needs a glibc or musl toolchain w/ C++, threads, wchar, locale, gcc >= 14"
+	depends on BR2_TOOLCHAIN_USES_UCLIBC \
+		|| !BR2_INSTALL_LIBSTDCPP \
+		|| !BR2_TOOLCHAIN_HAS_THREADS \
+		|| !BR2_USE_WCHAR \
+		|| !BR2_ENABLE_LOCALE \
+		|| !BR2_TOOLCHAIN_GCC_AT_LEAST_14
