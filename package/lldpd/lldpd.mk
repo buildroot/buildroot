@@ -61,6 +61,13 @@ else
 LLDPD_CONF_OPTS += --without-readline
 endif
 
+ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_19),y)
+define LLDPD_DROP_UAPI_FILES
+	rm -rf $(@D)/include/linux
+endef
+LLDPD_POST_PATCH_HOOKS += LLDPD_DROP_UAPI_FILES
+endif
+
 define LLDPD_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 0755 package/lldpd/S60lldpd \
 		$(TARGET_DIR)/etc/init.d/S60lldpd
