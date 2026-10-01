@@ -22,6 +22,7 @@ WEBKITGTK_CMAKE_BACKEND = ninja
 # Buildroot adds support for ccache through its
 # toolchain-wrapper, so tell webkitgtk not to mess with it.
 WEBKITGTK_CONF_ENV = WK_USE_CCACHE=NO
+WEBKITGTK_BUILD_ENV = WK_USE_CCACHE=NO
 
 WEBKITGTK_CONF_OPTS = \
 	-DENABLE_API_TESTS=OFF \
