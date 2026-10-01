@@ -1,0 +1,80 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?John=20H=C3=B6gberg?= <john@erlang.org>
+Date: Wed, 13 Dec 2023 16:34:04 +0100
+Subject: [PATCH] otp: Fix build on Yocto
+
+A workaround to avoid breaking "micro level process accounting on
+/proc/self" broke the build on Yocto. As this is a really ancient
+workaround (pre-2009) and the comment is unclear about what
+actually breaks, we'll try removing it to see if this is still a
+problem.
+
+Upstream: https://github.com/erlang/otp/commit/c38fc7c62e818273870340f3faf83cc3905e1cf1
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ erts/configure                    |  9 ---------
+ erts/emulator/sys/unix/sys_time.c | 10 ----------
+ make/autoconf/otp.m4              |  9 ---------
+ 3 files changed, 28 deletions(-)
+
+diff --git a/erts/configure b/erts/configure
+index 1d573b4..0b046dd 100755
+--- a/erts/configure
++++ b/erts/configure
+@@ -24417,15 +24417,6 @@ else $as_nop
+ /* end confdefs.h.  */
+ 
+ /* gethrvtime procfs ioctl test */
+-/* These need to be undef:ed to not break activation of
+- * micro level process accounting on /proc/self
+- */
+-#ifdef _LARGEFILE_SOURCE
+-#  undef _LARGEFILE_SOURCE
+-#endif
+-#ifdef _FILE_OFFSET_BITS
+-#  undef _FILE_OFFSET_BITS
+-#endif
+ #include <stdlib.h>
+ #include <unistd.h>
+ #include <string.h>
+diff --git a/erts/emulator/sys/unix/sys_time.c b/erts/emulator/sys/unix/sys_time.c
+index eb2c47b..f60e345 100644
+--- a/erts/emulator/sys/unix/sys_time.c
++++ b/erts/emulator/sys/unix/sys_time.c
+@@ -22,16 +22,6 @@
+ #  include "config.h"
+ #endif
+ 
+-/* These need to be undef:ed to not break activation of
+- * micro level process accounting on /proc/self 
+- */
+-#ifdef _LARGEFILE_SOURCE
+-#  undef _LARGEFILE_SOURCE
+-#endif
+-#ifdef _FILE_OFFSET_BITS
+-#  undef _FILE_OFFSET_BITS
+-#endif
+-
+ #include <stdlib.h>
+ #include "sys.h"
+ #include "global.h"
+diff --git a/make/autoconf/otp.m4 b/make/autoconf/otp.m4
+index f543101..984ee1a 100644
+--- a/make/autoconf/otp.m4
++++ b/make/autoconf/otp.m4
+@@ -2705,15 +2705,6 @@ dnl
+ AC_MSG_CHECKING([if gethrvtime works and how to use it])
+ AC_RUN_IFELSE([AC_LANG_SOURCE([[
+ /* gethrvtime procfs ioctl test */
+-/* These need to be undef:ed to not break activation of
+- * micro level process accounting on /proc/self 
+- */
+-#ifdef _LARGEFILE_SOURCE
+-#  undef _LARGEFILE_SOURCE
+-#endif
+-#ifdef _FILE_OFFSET_BITS
+-#  undef _FILE_OFFSET_BITS
+-#endif
+ #include <stdlib.h>
+ #include <unistd.h>
+ #include <string.h>
