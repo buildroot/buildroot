@@ -24,6 +24,7 @@ WPEWEBKIT_CMAKE_BACKEND = ninja
 # Buildroot adds support for ccache through its
 # toolchain-wrapper, so tell wpewebkit not to mess with it.
 WPEWEBKIT_CONF_ENV = WK_USE_CCACHE=NO
+WPEWEBKIT_BUILD_ENV = WK_USE_CCACHE=NO
 
 WPEWEBKIT_CONF_OPTS = \
 	-DPORT=WPE \
