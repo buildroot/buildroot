@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_CRAMJAM
+	bool "python-cramjam"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	help
+	  Python bindings to de/compression algorithms in Rust.
+	  Allows for using algorithms such as Snappy, without any
+	  system or other python dependencies.
+
+	  https://pypi.org/project/cramjam
