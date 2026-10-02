@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_SERIALX
+	bool "python-serialx"
+	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime
+	help
+	  Serial library with native synchronous and asynchronous
+	  support for Linux and other platforms.
+
+	  https://github.com/puddly/serialx
