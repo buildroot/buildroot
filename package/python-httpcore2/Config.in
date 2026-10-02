@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_HTTPCORE2
+	bool "python-httpcore2"
+	select BR2_PACKAGE_PYTHON_H11 # runtime
+	select BR2_PACKAGE_PYTHON_TRUSTSTORE # runtime
+	help
+	  A minimal low-level HTTP client.
+
+	  https://github.com/pydantic/httpx2
