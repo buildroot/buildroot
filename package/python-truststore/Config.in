@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PYTHON_TRUSTSTORE
+	bool "python-truststore"
+	select BR2_PACKAGE_CA_CERTIFICATES # runtime
+	select BR2_PACKAGE_PYTHON3_SSL # runtime
+	help
+	  Verify certificates using native system trust stores.
+
+	  https://github.com/sethmlarson/truststore
