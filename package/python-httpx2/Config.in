@@ -1,0 +1,11 @@
+config BR2_PACKAGE_PYTHON_HTTPX2
+	bool "python-httpx2"
+	select BR2_PACKAGE_PYTHON_ANYIO # runtime
+	select BR2_PACKAGE_PYTHON_HTTPCORE2 # runtime
+	select BR2_PACKAGE_PYTHON_IDNA # runtime
+	select BR2_PACKAGE_PYTHON_TRUSTSTORE # runtime
+	select BR2_PACKAGE_PYTHON3_ZLIB # runtime
+	help
+	  The next generation HTTP client.
+
+	  https://github.com/pydantic/httpx2
