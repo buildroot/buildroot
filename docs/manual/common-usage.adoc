@@ -214,7 +214,7 @@ Similarly to +pkg-stats+, CycloneDX SBOM's can be enriched with vulnerability
 analysis from the NVD database.
 
 ----
-make show | utils/generate-cyclonedx > sbom.cdx.json
+make show-info | utils/generate-cyclonedx > sbom.cdx.json
 cat sbom.cdx.json | support/scripts/cve-check --nvd-path dl/buildroot-nvd/
 ----
 
