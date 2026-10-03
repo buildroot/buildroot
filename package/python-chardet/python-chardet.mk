@@ -4,11 +4,12 @@
 #
 ################################################################################
 
-PYTHON_CHARDET_VERSION = 5.2.0
+PYTHON_CHARDET_VERSION = 7.6.0
 PYTHON_CHARDET_SOURCE = chardet-$(PYTHON_CHARDET_VERSION).tar.gz
-PYTHON_CHARDET_SITE = https://files.pythonhosted.org/packages/f3/0d/f7b6ab21ec75897ed80c17d79b15951a719226b9fababf1e40ea74d69079
-PYTHON_CHARDET_SETUP_TYPE = setuptools
-PYTHON_CHARDET_LICENSE = LGPL-2.1+
+PYTHON_CHARDET_SITE = https://files.pythonhosted.org/packages/b1/51/cd61c567092a6cec796144510a68aff158ebfc1df82950a45bae65f28413
+PYTHON_CHARDET_SETUP_TYPE = hatch
+PYTHON_CHARDET_LICENSE = 0BSD
 PYTHON_CHARDET_LICENSE_FILES = LICENSE
+PYTHON_CHARDET_DEPENDENCIES = host-python-hatch-vcs
 
 $(eval $(python-package))
