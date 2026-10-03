@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-AER_INJECT_VERSION = 9bd5e2c7886fca72f139cd8402488a2235957d41
+AER_INJECT_VERSION = 36d5b4f59b88c37d8ecba20b2302bddfe38f1ec2
 AER_INJECT_SITE = https://github.com/intel/aer-inject.git
 AER_INJECT_SITE_METHOD = git
 AER_INJECT_LICENSE = GPL-2.0
-AER_INJECT_LICENSE_FILES = README
+AER_INJECT_LICENSE_FILES = LICENSE
 AER_INJECT_DEPENDENCIES = host-flex host-bison
 
 define AER_INJECT_BUILD_CMDS
