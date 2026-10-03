@@ -1,0 +1,63 @@
+From 3cfe33f90aa3899dac3d4e933e3c1ee9ee21491d Mon Sep 17 00:00:00 2001
+From: "Arnold D. Robbins" <arnold@skeeve.com>
+Date: Tue, 14 Jul 2026 10:14:50 +0300
+Subject: [PATCH] Workaround fix for systems without MPFR and GMP.
+
+Upstream: https://cgit.git.savannah.gnu.org/cgit/gawk.git/commit/?id=bf85f8a3175af703597082d4c7e0abc2066a44d3
+https://lists.gnu.org/archive/html/bug-gawk/2026-10/msg00003.html
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ awk.h | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
+
+diff --git a/awk.h b/awk.h
+index dbad0d810..f4a84300f 100644
+--- a/awk.h
++++ b/awk.h
+@@ -406,17 +406,24 @@ typedef struct exp_node {
+ 		} nodep;
+ 
+ 		struct {
+-#ifdef HAVE_MPFR
+ 			union {
+ 				AWKNUM fltnum;
++#ifdef HAVE_MPFR
+ 				mpfr_t mpnum;
+ 				mpz_t mpi;
+-			} nm;
+-			int rndmode;
+ #else
+-			AWKNUM fltnum;
+-			int for_alignment_only;	// especially on 32-bit
+-#endif
++				// 7/2026:
++				// This is a workaround for systems that build
++				// gawk without MPFR and GMP.  The NODE struct
++				// desperately needs to be refactored.
++#if SIZEOF_VOID_P == 4
++				char alignment[28];
++#else	// SIZEOF_VOID_P != 4
++				char alignment[48];
++#endif	// SIZEOF_VOID_P != 4
++#endif	// HAVE_MPFR
++			} nm;
++			int rndmode;	// only used for MPFR.
+ 			char *sp;
+ 			size_t slen;
+ 			int idx;
+@@ -561,10 +568,8 @@ typedef struct exp_node {
+ #ifdef HAVE_MPFR
+ #define mpg_numbr	sub.val.nm.mpnum
+ #define mpg_i		sub.val.nm.mpi
+-#define numbr		sub.val.nm.fltnum
+-#else
+-#define numbr		sub.val.fltnum
+ #endif
++#define numbr		sub.val.nm.fltnum
+ #define typed_re	sub.val.typre
+ 
+ /*
+-- 
+2.47.3
+
