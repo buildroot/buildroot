@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PYTHON_OPENTELEMETRY_API
+	bool "python-opentelemetry-api"
+	select BR2_PACKAGE_PYTHON_TYPING_EXTENSIONS # runtime
+	help
+	  OpenTelemetry Python API.
+
+	  https://github.com/open-telemetry/opentelemetry-python
