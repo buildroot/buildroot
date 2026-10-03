@@ -10,6 +10,8 @@ SETSERIAL_SITE = https://snapshot.debian.org/archive/debian/20250307T084701Z/poo
 SETSERIAL_EXTRA_DOWNLOADS = setserial_$(SETSERIAL_VERSION)-57.debian.tar.xz
 SETSERIAL_LICENSE = GPL-2.0
 SETSERIAL_LICENSE_FILES = debian/copyright
+SETSERIAL_CPE_ID_VALID = YES
+
 # make all also builds setserial.cat which needs nroff
 SETSERIAL_MAKE_OPTS = setserial
 
