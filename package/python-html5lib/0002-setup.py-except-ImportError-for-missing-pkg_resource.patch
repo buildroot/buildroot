@@ -1,0 +1,36 @@
+From a29f42562056cca84108aadea37158f718fc8b92 Mon Sep 17 00:00:00 2001
+From: loqs <loqs@users.noreply.github.com>
+Date: Mon, 16 Mar 2026 22:33:37 +0000
+Subject: [PATCH] setup.py: except ImportError for missing pkg_resources
+
+Missing pkg_resources indicates setuptools 82 or newer which is more recent that than 18.5 so the version check using pkg_resources can safely be skipped.
+
+Upstream: https://github.com/html5lib/html5lib-python/pull/594
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ setup.py | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/setup.py b/setup.py
+index 30ee057..0aa584d 100644
+--- a/setup.py
++++ b/setup.py
+@@ -6,9 +6,12 @@ import sys
+ 
+ from os.path import join, dirname
+ from setuptools import setup, find_packages, __version__ as setuptools_version
+-from pkg_resources import parse_version
+ 
+-import pkg_resources
++try:
++    import pkg_resources
++    from pkg_resources import parse_version
++except ImportError:
++    pkg_resources = None
+ 
+ try:
+     import _markerlib.markers
+-- 
+2.47.3
+

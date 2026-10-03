@@ -1,0 +1,59 @@
+From 0bf746e3ed39d8b10b31ad292a19aa2d98e7058c Mon Sep 17 00:00:00 2001
+From: loqs <loqs@users.noreply.github.com>
+Date: Mon, 16 Mar 2026 22:38:32 +0000
+Subject: [PATCH] conftest.py: Replace pkg_resources use with packaging
+
+Upstream: https://github.com/html5lib/html5lib-python/pull/594
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ html5lib/tests/conftest.py | 22 +++++++++++++---------
+ requirements-test.txt      |  2 ++
+ 2 files changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/html5lib/tests/conftest.py b/html5lib/tests/conftest.py
+index fffeb50..a1f6b21 100644
+--- a/html5lib/tests/conftest.py
++++ b/html5lib/tests/conftest.py
+@@ -2,7 +2,12 @@ from __future__ import print_function
+ import os.path
+ import sys
+ 
+-import pkg_resources
++from packaging.requirements import Requirement
++from packaging.markers import Marker
++try:
++    from importlib import metadata
++except ImportError:
++    import importlib_metadata as metadata
+ import pytest
+ 
+ from .tree_construction import TreeConstructionFile
+@@ -63,17 +68,16 @@ def pytest_configure(config):
+                             spec, marker = line.strip().split(";", 1)
+                         else:
+                             spec, marker = line.strip(), None
+-                        req = pkg_resources.Requirement.parse(spec)
+-                        if marker and not pkg_resources.evaluate_marker(marker):
++                        req = Requirement(spec)
++                        if marker and not Marker(marker).evaluate():
+                             msgs.append("%s not available in this environment" % spec)
+                         else:
+                             try:
+-                                installed = pkg_resources.working_set.find(req)
+-                            except pkg_resources.VersionConflict:
+-                                msgs.append("Outdated version of %s installed, need %s" % (req.name, spec))
+-                            else:
+-                                if not installed:
+-                                    msgs.append("Need %s" % spec)
++                                installed = metadata.version(req.name)
++                                if not req.specifier.contains(installed, prereleases=True):
++                                    msgs.append("Outdated version of %s installed, need %s" % (req.name, spec))
++                            except metadata.PackageNotFoundError:
++                                msgs.append("Need %s" % spec)
+ 
+         # Check cElementTree
+         import xml.etree.ElementTree as ElementTree
+-- 
+2.47.3
+
