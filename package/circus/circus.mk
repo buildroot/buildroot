@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-CIRCUS_VERSION = 0.16.1
-CIRCUS_SITE = https://files.pythonhosted.org/packages/09/8a/44a0b6b35ecf5dcf22bf51e4bcf188ec9e7ab9dd4c14330ba1b8bea51102
-CIRCUS_SETUP_TYPE = setuptools
+CIRCUS_VERSION = 0.19.0
+CIRCUS_SITE = https://files.pythonhosted.org/packages/94/97/824bfce6949716ea93adcd5ff8aa4c277f40a735d7f644669674ec132ae4
+CIRCUS_SETUP_TYPE = flit
 CIRCUS_LICENSE = Apache-2.0
 CIRCUS_LICENSE_FILES = LICENSE
 
