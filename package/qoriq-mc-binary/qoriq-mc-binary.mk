@@ -4,7 +4,11 @@
 #
 ################################################################################
 
+ifeq ($(BR2_PACKAGE_QORIQ_MC_BINARY_TARGET_LX2160A),y)
+QORIQ_MC_BINARY_VERSION = 10.40.100
+else
 QORIQ_MC_BINARY_VERSION = 10.39.0
+endif
 QORIQ_MC_BINARY_SITE = $(call github,nxp-qoriq,qoriq-mc-binary,mc_release_$(QORIQ_MC_BINARY_VERSION))
 QORIQ_MC_BINARY_LICENSE = NXP Binary EULA
 QORIQ_MC_BINARY_LICENSE_FILES = LICENSE
