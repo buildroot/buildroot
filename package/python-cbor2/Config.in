@@ -1,6 +1,7 @@
 config BR2_PACKAGE_PYTHON_CBOR2
 	bool "python-cbor2"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
 	help
-	  Pure Python CBOR (de)serializer with extensive tag support.
+	  CBOR (de)serializer with extensive tag support.
 
 	  https://cbor2.readthedocs.io/
