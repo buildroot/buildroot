@@ -1,0 +1,42 @@
+From 52394387f94b798af3431cd16cc48b9f6ebcb53e Mon Sep 17 00:00:00 2001
+From: Evan Maddock <maddock.evan@vivaldi.net>
+Date: Mon, 8 Jun 2026 19:01:47 -0400
+Subject: [PATCH] build: Migrate from pkg_resources to importlib
+
+Setuptools 82 removed the `pkg_resources` module.
+The replacement is `importlib`. This fixes the use
+of the removed module.
+
+Signed-off-by: Evan Maddock <maddock.evan@vivaldi.net>
+
+Upstream: https://github.com/python-xlib/python-xlib/pull/290
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ setup.py | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/setup.py b/setup.py
+index 71bdb08..6086f54 100644
+--- a/setup.py
++++ b/setup.py
+@@ -1,12 +1,13 @@
+ # Distutils script for python-xlib
+ 
+-from pkg_resources import parse_requirements
++from importlib.metadata import version
+ from setuptools import (__version__ as setuptools_version, setup)
+ 
+ 
+ # Check setuptools is recent enough to support `setup.cfg`.
+-setuptools_require = next(parse_requirements('setuptools>=30.3.0'))
+-assert setuptools_version in setuptools_require, '{} is required'.format(setuptools_require)
++installed_version = version('setuptools')
++setuptools_require = '30.3.0'
++assert setuptools_version >= setuptools_require, 'setuptools >= {} is required'.format(setuptools_require)
+ 
+ 
+ setup(
+-- 
+2.47.3
+
