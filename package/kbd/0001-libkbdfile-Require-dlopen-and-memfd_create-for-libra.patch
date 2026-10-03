@@ -21,17 +21,20 @@ Signed-off-by: Alexey Gladkov <legion@kernel.org>
 Upstream: https://github.com/legionus/kbd/commit/6ff3161c1e5d448920d412a269716cf42be155b5
 [Fiona: backport to 2.9.0]
 Signed-off-by: Fiona Klute <fiona.klute@gmx.de>
+[Francois: backport to 2.10.0]
+Signed-off-by: Francois Perrad <francois.perrad.86@gmail.com>
 ---
- configure.ac               | 19 ++++++++++++-------
- src/libkbdfile/Makefile.am |  9 +++++++--
- src/libkbdfile/elf-note.c  |  3 +++
- 3 files changed, 22 insertions(+), 9 deletions(-)
+ configure.ac                 | 19 ++++++++++++-------
+ src/libkbdfile/Makefile.am   |  9 +++++++--
+ src/libkbdfile/elf-note.c    |  3 +++
+ tests/libkbdfile/Makefile.am |  5 ++++-
+ 4 files changed, 26 insertions(+), 10 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 05cecab..0691167 100644
+index ffd67fe..e1a78f3 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -81,7 +81,7 @@ AC_FUNC_STAT
+@@ -85,7 +85,7 @@ AC_FUNC_STAT
  AC_FUNC_MALLOC
  AC_FUNC_REALLOC
  AC_FUNC_STRERROR_R
@@ -40,7 +43,7 @@ index 05cecab..0691167 100644
  		strdup strndup strchr strrchr strspn strstr strtol])
  
  AC_SEARCH_LIBS([timer_create], [rt])
-@@ -263,13 +263,18 @@ AS_IF([test "$VLOCK_PROG" = "yes"], [
+@@ -267,13 +267,18 @@ AS_IF([test "$VLOCK_PROG" = "yes"], [
  ])
  AM_CONDITIONAL(VLOCK, test "$VLOCK_PROG" = "yes")
  
@@ -60,7 +63,7 @@ index 05cecab..0691167 100644
  	[PKG_CHECK_MODULES(ZLIB, zlib, [HAVE_ZLIB=yes], [HAVE_ZLIB=no])],
  	[HAVE_ZLIB=no]
  )
-@@ -284,11 +289,11 @@ AC_ARG_WITH([bzip2],
+@@ -288,11 +293,11 @@ AC_ARG_WITH([bzip2],
  	[],
  	[: m4_divert_text([DEFAULTS], [with_bzip2=yes])]
  )
@@ -75,7 +78,7 @@ index 05cecab..0691167 100644
  	AC_CHECK_LIB(bz2, BZ2_bzDecompressInit, [
  		HAVE_BZIP2=yes
  		BZIP2_LIBS=-lbz2
-@@ -306,7 +311,7 @@ AC_ARG_WITH([lzma],
+@@ -310,7 +315,7 @@ AC_ARG_WITH([lzma],
  	[],
  	[: m4_divert_text([DEFAULTS], [with_lzma=yes])]
  )
@@ -84,7 +87,7 @@ index 05cecab..0691167 100644
  	[PKG_CHECK_MODULES(LZMA, liblzma, [HAVE_LZMA=yes], [HAVE_LZMA=no])],
  	[HAVE_LZMA=no]
  )
-@@ -321,7 +326,7 @@ AC_ARG_WITH([zstd],
+@@ -325,7 +330,7 @@ AC_ARG_WITH([zstd],
  	[],
  	[: m4_divert_text([DEFAULTS], [with_zstd=yes])]
  )
@@ -94,7 +97,7 @@ index 05cecab..0691167 100644
  	[HAVE_ZSTD=no]
  )
 diff --git a/src/libkbdfile/Makefile.am b/src/libkbdfile/Makefile.am
-index 2511064..ebdb28d 100644
+index ea7aaf2..d301ca6 100644
 --- a/src/libkbdfile/Makefile.am
 +++ b/src/libkbdfile/Makefile.am
 @@ -10,14 +10,17 @@ headers = \
@@ -107,7 +110,7 @@ index 2511064..ebdb28d 100644
  	kbdfile.c
  
  libkbdfile_la_LIBADD =
- libkbdfile_la_CFLAGS =
+ libkbdfile_la_CFLAGS = $(AM_CFLAGS)
  
 +if USE_ELFNOTE
 +libkbdfile_la_SOURCES += \
@@ -141,6 +144,27 @@ index 842be9d..bc4a684 100644
  
  #include "elf-note.h"
  
+diff --git a/tests/libkbdfile/Makefile.am b/tests/libkbdfile/Makefile.am
+index cf31f3f..0b1f516 100644
+--- a/tests/libkbdfile/Makefile.am
++++ b/tests/libkbdfile/Makefile.am
+@@ -22,12 +22,15 @@ noinst_PROGRAMS = \
+ 	libkbdfile-test02 \
+ 	libkbdfile-test03 \
+ 	libkbdfile-test14 \
+-	libkbdfile-test16 \
+ 	$(NULL)
+ 
++if USE_ELFNOTE
++noinst_PROGRAMS += libkbdfile-test16
++
+ libkbdfile_test16_SOURCES = \
+ 	libkbdfile-test16.c \
+ 	$(top_srcdir)/src/libkbdfile/elf-note.c
++endif
+ 
+ libkbdfile_test16_LDADD = \
+ 	$(top_builddir)/src/libcommon/libcommon.a \
 -- 
 2.55.0
 

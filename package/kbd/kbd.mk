@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-KBD_VERSION = 2.9.0
+KBD_VERSION = 2.10.0
 KBD_SOURCE = kbd-$(KBD_VERSION).tar.xz
 KBD_SITE = $(BR2_KERNEL_MIRROR)/linux/utils/kbd
 KBD_CONF_OPTS = \
@@ -14,7 +14,7 @@ KBD_DEPENDENCIES = \
 	$(TARGET_NLS_DEPENDENCIES) \
 	host-pkgconf
 
-# 0002-libkbdfile-Require-dlopen-and-memfd_create-for-libra.patch
+# 0001-libkbdfile-Require-dlopen-and-memfd_create-for-libra.patch
 # modifies configure.ac and src/libkbdfile/Makefile.am
 KBD_AUTORECONF = YES
 
