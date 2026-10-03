@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-NETWORK_MANAGER_VERSION_MAJOR = 1.56
-NETWORK_MANAGER_VERSION = $(NETWORK_MANAGER_VERSION_MAJOR).0
+NETWORK_MANAGER_VERSION_MAJOR = 1.58
+NETWORK_MANAGER_VERSION = $(NETWORK_MANAGER_VERSION_MAJOR).1
 NETWORK_MANAGER_SOURCE = NetworkManager-$(NETWORK_MANAGER_VERSION).tar.xz
 NETWORK_MANAGER_SITE = https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/releases/$(NETWORK_MANAGER_VERSION)/downloads
 NETWORK_MANAGER_INSTALL_STAGING = YES
@@ -34,17 +34,14 @@ NETWORK_MANAGER_CONF_OPTS = \
 	-Dmodprobe=/sbin/modprobe \
 	-Difupdown=false \
 	-Dnm_cloud_setup=false \
-	-Dsession_tracking_consolekit=false
+	-Dsession_tracking_consolekit=false \
+	-Dclat=false
 
 ifeq ($(BR2_PACKAGE_AUDIT),y)
 NETWORK_MANAGER_DEPENDENCIES += audit
 NETWORK_MANAGER_CONF_OPTS += -Dlibaudit=yes
 else
 NETWORK_MANAGER_CONF_OPTS += -Dlibaudit=no
-endif
-
-ifeq ($(BR2_PACKAGE_DHCP_CLIENT),y)
-NETWORK_MANAGER_CONF_OPTS += -Ddhclient=/sbin/dhclient
 endif
 
 ifeq ($(BR2_PACKAGE_DHCPCD),y)
@@ -153,6 +150,7 @@ NETWORK_MANAGER_CONF_OPTS += \
 	-Dsession_tracking=systemd \
 	-Dsuspend_resume=systemd
 ifneq ($(BR2_PACKAGE_SYSTEMD_INITRD),y)
+NETWORK_MANAGER_CONF_OPTS += -Dsystemdsystemgeneratordir=no
 define NETWORK_MANAGER_CLEAN_INITRD
 	rm -f $(TARGET_DIR)/usr/lib/systemd/system/NetworkManager-*initrd.service
 endef
@@ -164,6 +162,7 @@ NETWORK_MANAGER_CONF_OPTS += \
 	-Dconfig_logging_backend_default=syslog \
 	-Dsession_tracking=no \
 	-Dsuspend_resume=consolekit \
+	-Dsystemdsystemgeneratordir=no \
 	-Dsystemdsystemunitdir=no
 endif
 
