@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-ACPICA_VERSION = 20251212
+ACPICA_VERSION = 20260930
 ACPICA_SOURCE = acpica-unix-$(ACPICA_VERSION).tar.gz
-ACPICA_SITE = https://github.com/acpica/acpica/releases/download/$(ACPICA_VERSION)
+ACPICA_SITE = https://github.com/open-acpica/acpica/releases/download/$(ACPICA_VERSION)
 ACPICA_LICENSE = BSD-3-Clause or GPL-2.0
-ACPICA_LICENSE_FILES = source/include/acpi.h
+ACPICA_LICENSE_FILES = LICENSE.BSD-3-Clause LICENSE.GPL-2.0-only
 ACPICA_DEPENDENCIES = host-bison host-flex
 HOST_ACPICA_DEPENDENCIES = host-bison host-flex
 
