@@ -4,10 +4,10 @@
 #
 ################################################################################
 
-PYTHON_CRC_VERSION = 7.1.0
+PYTHON_CRC_VERSION = 8.0.0
 PYTHON_CRC_SOURCE = crc-$(PYTHON_CRC_VERSION).tar.gz
-PYTHON_CRC_SITE = https://files.pythonhosted.org/packages/7e/e6/c3488c35ecae290751466252e5ea01ef50fc67bfc1a9aba43983329b7025
-PYTHON_CRC_SETUP_TYPE = poetry
+PYTHON_CRC_SITE = https://files.pythonhosted.org/packages/48/b8/79b2c41836b5f8503342956ef31218059159a3f556c31e76ef5c14233d4b
+PYTHON_CRC_SETUP_TYPE = hatch
 PYTHON_CRC_LICENSE = BSD-2-Clause
 PYTHON_CRC_LICENSE_FILES = LICENSE.txt
 
