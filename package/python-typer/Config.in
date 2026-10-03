@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PYTHON_TYPER
+	bool "python-typer"
+	select BR2_PACKAGE_PYTHON_ANNOTATED_DOC # runtime
+	select BR2_PACKAGE_PYTHON_RICH # runtime
+	select BR2_PACKAGE_PYTHON_SHELLINGHAM # runtime
+	help
+	  Build command-line interfaces using Python type hints.
+
+	  https://github.com/fastapi/typer
