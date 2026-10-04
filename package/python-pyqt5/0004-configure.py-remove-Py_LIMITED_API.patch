@@ -1,0 +1,37 @@
+From 2fbf73d6678e956a6240a6518371ea4bde158bb6 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 4 Oct 2026 14:34:24 +0200
+Subject: [PATCH] configure.py: remove Py_LIMITED_API
+
+PyWeakref_GetRef is needed since python 3.15 and used by patch 0003 to
+fix build errors, but PyWeakref_GetRef is only available when
+Py_LIMITED_API+0 >= 0x030D0000:
+https://github.com/python/cpython/blob/v3.15.0rc3/Include/weakrefobject.h#L32
+
+To fix the build error we remove the define set by configure.py.
+
+Upstream: not applicable, file was removed upstream:
+https://salsa.debian.org/python-team/packages/pyqt5/-/blob/debian/5.15.11+dfsg-7/ChangeLog#L33
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.py | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/configure.py b/configure.py
+index a3450ca3..14e4e925 100644
+--- a/configure.py
++++ b/configure.py
+@@ -2673,9 +2673,6 @@ target.files = $$PY_MODULE
+ 
+     if metadata.qpy_lib:
+         # This is the easiest way to make sure it is set for handwritten code.
+-        if not target_config.py_debug:
+-            pro_lines.append('DEFINES += Py_LIMITED_API=0x03040000')
+-
+         pro_lines.append('INCLUDEPATH += %s' %
+                 qmake_quote(os.path.relpath(source_path('qpy', mname), mname)))
+ 
+-- 
+2.47.3
+

@@ -1,0 +1,185 @@
+From: Phil Thompson <phil@riverbankcomputing.com>
+Date: Mon, 13 Jul 2026 16:38:52 +0100
+Subject: Support for Python v3.15
+
+The project can now be built with Python v3.15 (where the limited ABI
+version targeted will be v3.13).
+
+(cherry picked from commit 3aa6092c44cd17a3afcd9f8ca879c4e40d2662d1)
+
+Upstream: https://salsa.debian.org/python-team/packages/pyqt5/-/blob/1c7499d1d4d79737ae367ec263a9be71ce2b76ee/debian/patches/Support-for-Python-v3.15.patch
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ project.py                             |  8 +++++++
+ qpy/QtCore/qpycore_pyqtproperty.cpp    |  2 +-
+ qpy/QtCore/qpycore_pyqtslot.cpp        | 44 ++++++++++++++++++++++++++--------
+ qpy/QtCore/qpycore_qobject_helpers.cpp | 11 +++++----
+ 4 files changed, 49 insertions(+), 16 deletions(-)
+
+diff --git a/project.py b/project.py
+index 9a3721f..f2143ac 100644
+--- a/project.py
++++ b/project.py
+@@ -111,6 +111,14 @@ del find_qt
+ 
+         return dunder_init
+ 
++    def get_limited_abi_version(self):
++        """ Return the version number of the limited ABI to use. """
++
++        # We use PyWeakref_GetObject() which was removed from the limited API
++        # in Python v3.15.  It's replacement, PyWeakref_GetRef() was added to
++        # the limited ABI in Python v3.13.
++        return (3, 13, 0) if sys.hexversion >= 0x030f0000 else None
++
+     def get_options(self):
+         """ Return the sequence of configurable options. """
+ 
+diff --git a/qpy/QtCore/qpycore_pyqtproperty.cpp b/qpy/QtCore/qpycore_pyqtproperty.cpp
+index d173d51..0245134 100644
+--- a/qpy/QtCore/qpycore_pyqtproperty.cpp
++++ b/qpy/QtCore/qpycore_pyqtproperty.cpp
+@@ -575,7 +575,7 @@ static PyObject *pyqtProperty_reset(PyObject *self, PyObject *reset)
+ static qpycore_pyqtProperty *clone(qpycore_pyqtProperty *orig)
+ {
+     qpycore_pyqtProperty *pp = (qpycore_pyqtProperty *)PyType_GenericNew(
+-            Py_TYPE(orig), 0, 0);
++            Py_TYPE((PyObject *)orig), 0, 0);
+ 
+     if (pp)
+     {
+diff --git a/qpy/QtCore/qpycore_pyqtslot.cpp b/qpy/QtCore/qpycore_pyqtslot.cpp
+index 26f4022..22a7d0c 100644
+--- a/qpy/QtCore/qpycore_pyqtslot.cpp
++++ b/qpy/QtCore/qpycore_pyqtslot.cpp
+@@ -101,7 +101,9 @@ PyQtSlot::Result PyQtSlot::invoke(void **qargs, PyObject *self, void *result,
+     else
+     {
+         // Use the value we have if one wasn't supplied.
+-        if (!self)
++        if (self)
++            Py_INCREF(self);
++        else
+             self = instance();
+ 
+         // If self is NULL then we didn't have a method in the first place.
+@@ -112,12 +114,18 @@ PyQtSlot::Result PyQtSlot::invoke(void **qargs, PyObject *self, void *result,
+ 
+         // See if the instance has gone (which isn't an error).
+         if (self == Py_None)
++        {
++            Py_DECREF(self);
+             return PyQtSlot::Ignored;
++        }
+ 
+         // If the receiver wraps a C++ object then ignore the call if it no
+         // longer exists.
+         if (!no_receiver_check && PyObject_TypeCheck(self, sipSimpleWrapper_Type) && !sipGetAddress((sipSimpleWrapper *)self))
++        {
++            Py_DECREF(self);
+             return PyQtSlot::Ignored;
++        }
+ 
+         sipMethodDef callable_m;
+ 
+@@ -128,6 +136,7 @@ PyQtSlot::Result PyQtSlot::invoke(void **qargs, PyObject *self, void *result,
+ #endif
+ 
+         callable = sipFromMethod(&callable_m);
++        Py_DECREF(self);
+     }
+ 
+     // Convert the C++ arguments to Python objects.
+@@ -188,12 +197,11 @@ bool PyQtSlot::operator==(PyObject *callable) const
+         if (other)
+             return false;
+ 
+-        return (mfunc == callable_m.pm_function
+-                && instance() == callable_m.pm_self
+-#if PY_MAJOR_VERSION < 3
+-                && mclass == callable_m.pm_class
+-#endif
+-                );
++        PyObject *instance_obj = instance();
++        bool res = (mfunc == callable_m.pm_function && instance_obj == callable_m.pm_self);
++        Py_XDECREF(instance_obj);
++
++        return res;
+     }
+ 
+     if (!other)
+@@ -214,14 +222,30 @@ bool PyQtSlot::operator==(PyObject *callable) const
+ }
+ 
+ 
+-// Get the instance object.
++// Get a strong reference to the instance object, otherwise return NULL or a
++// strong reference to Py_None.
+ PyObject *PyQtSlot::instance() const
+ {
++    PyObject *instance_obj;
++
+     // Use the weak reference if possible.
+     if (mself_wr)
+-        return PyWeakref_GetObject(mself_wr);
++    {
++#if PY_VERSION_HEX >= 0x030f0000
++        if (PyWeakref_GetRef(mself_wr, &instance_obj) < 0)
++            instance_obj = NULL;
++#else
++        instance_obj = PyWeakref_GetObject(mself_wr);
++        Py_XINCREF(instance_obj);
++#endif
++    }
++    else
++    {
++        instance_obj = mself;
++        Py_XINCREF(instance_obj);
++    }
+ 
+-    return mself;
++    return instance_obj;
+ }
+ 
+ 
+diff --git a/qpy/QtCore/qpycore_qobject_helpers.cpp b/qpy/QtCore/qpycore_qobject_helpers.cpp
+index f72105c..7b756ec 100644
+--- a/qpy/QtCore/qpycore_qobject_helpers.cpp
++++ b/qpy/QtCore/qpycore_qobject_helpers.cpp
+@@ -50,7 +50,7 @@ static int qt_metacall_worker(sipSimpleWrapper *pySelf, PyTypeObject *pytype,
+ const QMetaObject *qpycore_qobject_metaobject(sipSimpleWrapper *pySelf,
+         sipTypeDef *base)
+ {
+-    sipWrapperType *wt = (pySelf ? (sipWrapperType *)Py_TYPE(pySelf) : 0);
++    sipWrapperType *wt = (pySelf ? (sipWrapperType *)Py_TYPE((PyObject *)pySelf) : 0);
+ 
+     return qpycore_get_qmetaobject(wt, base);
+ }
+@@ -64,7 +64,8 @@ int qpycore_qobject_qt_metacall(sipSimpleWrapper *pySelf, sipTypeDef *base,
+     if (!pySelf)
+         return -1;
+ 
+-    return qt_metacall_worker(pySelf, Py_TYPE(pySelf), base, _c, _id, _a);
++    return qt_metacall_worker(pySelf, Py_TYPE((PyObject *)pySelf), base, _c,
++            _id, _a);
+ }
+ 
+ 
+@@ -236,13 +237,13 @@ bool qpycore_qobject_qt_metacast(sipSimpleWrapper *pySelf,
+ 
+     // We only need to look at the MRO if the object is a wrapped type (rather
+     // than a user sub-class).
+-    if (base_pytype != Py_TYPE(pySelf))
++    if (base_pytype != Py_TYPE((PyObject *)pySelf))
+     {
+         PyObject *mro;
+ 
+ #if PY_VERSION_HEX >= 0x03040000
+-        mro = PyObject_GetAttr((PyObject *)Py_TYPE(pySelf),
+-                qpycore_dunder_mro);
++        mro = PyObject_GetAttr(
++                (PyObject *)Py_TYPE((PyObject *)pySelf), qpycore_dunder_mro);
+         Q_ASSERT(mro);
+ #else
+         mro = Py_TYPE(pySelf)->tp_mro;
