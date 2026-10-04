@@ -41,11 +41,6 @@ menu "core python3 modules"
 
 comment "The following modules are unusual or require extra libraries"
 
-config BR2_PACKAGE_PYTHON3_2TO3
-	bool "2to3 module"
-	help
-	  code translation from python 2 to 3
-
 config BR2_PACKAGE_PYTHON3_BERKELEYDB
 	bool "berkeleydb"
 	select BR2_PACKAGE_BERKELEYDB

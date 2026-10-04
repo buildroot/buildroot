@@ -75,12 +75,6 @@ endif
 
 PYTHON3_INSTALL_STAGING = YES
 
-ifeq ($(BR2_PACKAGE_PYTHON3_2TO3),y)
-PYTHON3_CONF_OPTS += --enable-lib2to3
-else
-PYTHON3_CONF_OPTS += --disable-lib2to3
-endif
-
 ifeq ($(BR2_PACKAGE_PYTHON3_BERKELEYDB),y)
 PYTHON3_DEPENDENCIES += berkeleydb
 else

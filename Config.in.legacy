@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2026.11"
 
+config BR2_PACKAGE_PYTHON3_2TO3
+	bool "python module 2to3 has been removed"
+	select BR2_LEGACY
+	help
+	  The python module 2to3 has been removed upstream
+
 config BR2_PACKAGE_LIBCPPRESTSDK
 	bool "libcpprestsdk has been removed"
 	select BR2_LEGACY
