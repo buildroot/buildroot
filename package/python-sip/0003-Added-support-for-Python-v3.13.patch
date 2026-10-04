@@ -1,0 +1,56 @@
+From 7a345846465304d311c717c27940223700aef0ef Mon Sep 17 00:00:00 2001
+From: Phil Thompson <phil@riverbankcomputing.com>
+Date: Fri, 24 May 2024 14:08:26 +0100
+Subject: [PATCH] Added support for Python v3.13
+
+Eliminated all compiler warnings on all platforms when building the `sip`
+module.
+
+Removed calls to all deprecated parts of the Python API.
+
+Resolves #22
+
+Upstream: https://github.com/Python-SIP/sip/commit/51f3e60007f54fb5a96d649d16e36195022c00a8
+
+[Bernd: backported to 4.19.25]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ siplib/qtlib.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/siplib/qtlib.c b/siplib/qtlib.c
+index e166529f..258aae09 100644
+--- a/siplib/qtlib.c
++++ b/siplib/qtlib.c
+@@ -132,11 +132,26 @@ PyObject *sip_api_invoke_slot_ex(const sipSlot *slot, PyObject *sigargs,
+         Py_INCREF(sref);
+     }
+     else if (slot -> weakSlot == NULL)
++    {
+         sref = NULL;
+-    else if ((sref = PyWeakref_GetObject(slot -> weakSlot)) == NULL)
+-        return NULL;
++    }
+     else
++    {
++#if PY_VERSION_HEX >= 0x030d0000
++        if (PyWeakref_GetRef(slot->weakSlot, &sref) < 0)
++            return NULL;
++        if (sref == NULL)
++        {
++            sref = Py_None;
++            Py_INCREF(sref);
++        }
++#else
++        if ((sref = PyWeakref_GetObject(slot->weakSlot)) == NULL)
++            return NULL;
++
+         Py_INCREF(sref);
++#endif
++    }
+ 
+     if (sref == Py_None)
+     {
+-- 
+2.47.3
+
