@@ -146,6 +146,12 @@ endif
 
 comment "Legacy options removed in 2026.08"
 
+config BR2_PACKAGE_PYTHON3_2TO3
+	bool "python module 2to3 has been removed"
+	select BR2_LEGACY
+	help
+	  The python module 2to3 has been removed upstream
+
 config BR2_PACKAGE_FLUIDSYNTH_SDL2
 	bool "fluidsynth sdl2 audio support removed"
 	select BR2_LEGACY
