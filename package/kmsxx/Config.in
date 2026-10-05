@@ -16,6 +16,13 @@ config BR2_PACKAGE_KMSXX
 
 if BR2_PACKAGE_KMSXX
 
+config BR2_PACKAGE_KMSXX_PYKMS
+	bool "Enable Python bindings"
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_PYTHON_PYBIND
+	help
+	  This option enables the pykms python bindings.
+
 config BR2_PACKAGE_KMSXX_INSTALL_TESTS
 	bool "Install test programs"
 	help
