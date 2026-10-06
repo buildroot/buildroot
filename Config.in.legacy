@@ -146,6 +146,15 @@ endif
 
 comment "Legacy options removed in 2026.11"
 
+config BR2_PACKAGE_SZIP
+	bool "szip has been removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_LIBAEC
+	help
+	  The szip package has been removed, as it is no longer
+	  maintained upstream. libaec, which provides a drop-in
+	  replacement libsz library, has been selected instead.
+
 config BR2_PACKAGE_PYTHON3_2TO3
 	bool "python module 2to3 has been removed"
 	select BR2_LEGACY
