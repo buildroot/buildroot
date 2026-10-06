@@ -1,0 +1,53 @@
+From 2638789b7048e17aba7cc8674305f36bd349c795 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Mon, 14 Sep 2026 17:31:24 +0200
+Subject: [PATCH] fix more c++17 that made it in
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Patch was inspired by https://github.com/arvidn/libtorrent/pull/4805
+and fixes a build error with gcc-9.3.0
+
+buildroot/output/build/libtorrent-rasterbar-2.1.1/src/torrent_info.cpp:855:16:
+ error: function ‘libtorrent::torrent_info& libtorrent::torrent_info::operator=(libtorrent::torrent_info&&)’
+ defaulted on its redeclaration with an exception-specification that
+ differs from the implicit exception-specification ‘’
+
+Upstream: https://github.com/arvidn/libtorrent/pull/8869
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ include/libtorrent/torrent_info.hpp | 2 +-
+ src/torrent_info.cpp                | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/libtorrent/torrent_info.hpp b/include/libtorrent/torrent_info.hpp
+index 8843179a2..add61c2d7 100644
+--- a/include/libtorrent/torrent_info.hpp
++++ b/include/libtorrent/torrent_info.hpp
+@@ -213,7 +213,7 @@ TORRENT_VERSION_NAMESPACE_4
+ 
+ 		// hidden
+ 		torrent_info& operator=(torrent_info const&) = delete;
+-		torrent_info& operator=(torrent_info&&) noexcept;
++		torrent_info& operator=(torrent_info&&);
+ 
+ 		// The file_storage object contains the information on how to map the
+ 		// pieces to files. It is separated from the torrent_info object as the
+diff --git a/src/torrent_info.cpp b/src/torrent_info.cpp
+index 0a4b90b04..6fe584c39 100644
+--- a/src/torrent_info.cpp
++++ b/src/torrent_info.cpp
+@@ -856,7 +856,7 @@ namespace {
+ TORRENT_VERSION_NAMESPACE_4
+ 
+ 	torrent_info::torrent_info(torrent_info const&) = default;
+-	torrent_info& torrent_info::operator=(torrent_info&&) noexcept = default;
++	torrent_info& torrent_info::operator=(torrent_info&&) = default;
+ 
+ #if TORRENT_ABI_VERSION < 4
+ 	void torrent_info::remap_files(file_storage const& f)
+-- 
+2.47.3
+
