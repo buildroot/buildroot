@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LUVI_VERSION = v2.15.0
+LUVI_VERSION = 102-g9fa6c141abf24a5a7fe49ca39335210fa1be3ab4
 LUVI_SITE = https://github.com/luvit/luvi.git
 LUVI_SITE_METHOD = git
 LUVI_GIT_SUBMODULES = YES
