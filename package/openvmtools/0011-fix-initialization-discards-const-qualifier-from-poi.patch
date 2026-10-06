@@ -1,0 +1,148 @@
+From ba2005c94cc9ebe1b09f83e8c70ef9f0d0b5a353 Mon Sep 17 00:00:00 2001
+From: Rudi Heitbaum <rudi@heitbaum.com>
+Date: Mon, 26 Jan 2026 11:55:03 +0000
+Subject: [PATCH] fix initialization discards 'const' qualifier from pointer
+ target type
+
+Since glibc-2.43:
+
+For ISO C23, the functions bsearch, memchr, strchr, strpbrk, strrchr,
+strstr, wcschr, wcspbrk, wcsrchr, wcsstr and wmemchr that return
+pointers into their input arrays now have definitions as macros that
+return a pointer to a const-qualified type when the input argument is
+a pointer to a const-qualified type.
+
+https://lists.gnu.org/archive/html/info-gnu/2026-01/msg00005.html
+
+Signed-off-by: Rudi Heitbaum <rudi@heitbaum.com>
+
+Upstream: https://github.com/vmware/open-vm-tools/pull/783
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ lib/hgfs/hgfsEscape.c            | 6 +++---
+ lib/hgfsServer/hgfsServerLinux.c | 2 +-
+ lib/misc/strutil.c               | 7 ++++---
+ lib/nicInfo/nicInfoPosix.c       | 2 +-
+ libvmtools/i18n.c                | 2 +-
+ services/plugins/vix/vixTools.c  | 2 +-
+ 6 files changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/lib/hgfs/hgfsEscape.c b/lib/hgfs/hgfsEscape.c
+index c4d39b12d..212ea1c79 100644
+--- a/lib/hgfs/hgfsEscape.c
++++ b/lib/hgfs/hgfsEscape.c
+@@ -175,7 +175,7 @@ HgfsAddEscapeCharacter(char const * bufIn,      // IN: input name
+    HgfsEscapeContext *escapeContext = (HgfsEscapeContext *)context;
+    uint32 charactersToCopy;
+    uint32 outputSpace;
+-   char* illegal;
++   const char* illegal;
+    Bool result = TRUE;
+ 
+    ASSERT(offset >= escapeContext->processedOffset); // Scanning forward
+@@ -573,7 +573,7 @@ HgfsIsEscapeSequence(char const *bufIn,   // IN: input name
+                      uint32 length)       // IN: length of the name in characters
+ {
+    if (bufIn[offset] == HGFS_ESCAPE_CHAR && offset > 0) {
+-      char *substitute;
++      const char *substitute;
+       if (bufIn[offset - 1] == HGFS_ESCAPE_SUBSTITUE_CHAR && offset > 1) {
+          /*
+           * Possibly a valid sequence, check it must be preceded with a substitute
+@@ -887,7 +887,7 @@ HgfsEscapeUndoComponent(char   *bufIn,             // IN: Characters to be unesc
+       size_t offset = escapePointer - bufIn;
+ 
+       if (HgfsIsEscapeSequence(bufIn, offset, sizeIn)) {
+-         char* substitute = strchr(HGFS_SUBSTITUTE_CHARS, bufIn[offset - 1]);
++         const char* substitute = strchr(HGFS_SUBSTITUTE_CHARS, bufIn[offset - 1]);
+          if (substitute != NULL) {
+             bufIn[offset - 1] = HGFS_ILLEGAL_CHARS[substitute - HGFS_SUBSTITUTE_CHARS];
+          } else if (bufIn[offset - 1] == HGFS_ESCAPE_SUBSTITUE_CHAR) {
+diff --git a/lib/hgfsServer/hgfsServerLinux.c b/lib/hgfsServer/hgfsServerLinux.c
+index 6ed49e2b7..00bed5684 100644
+--- a/lib/hgfsServer/hgfsServerLinux.c
++++ b/lib/hgfsServer/hgfsServerLinux.c
+@@ -1366,7 +1366,7 @@ static void
+ HgfsGetHiddenAttr(char const *fileName,         // IN:  Input filename
+                   HgfsFileAttrInfo *attr)       // OUT: Struct to copy into
+ {
+-   char *baseName;
++   const char *baseName;
+ 
+    ASSERT(fileName);
+    ASSERT(attr);
+diff --git a/lib/misc/strutil.c b/lib/misc/strutil.c
+index 4fc6502e4..4be63b7b8 100644
+--- a/lib/misc/strutil.c
++++ b/lib/misc/strutil.c
+@@ -1454,6 +1454,7 @@ StrUtil_ReplaceAll(const char *orig, // IN
+     char *result;
+     const char *current;
+     char *tmp;
++    const char *tmp2;
+     size_t lenWhat;
+     size_t lenWith;
+     size_t occurrences = 0;
+@@ -1467,8 +1468,8 @@ StrUtil_ReplaceAll(const char *orig, // IN
+     lenWith = strlen(with);
+ 
+     current = orig;
+-    while ((tmp = strstr(current, what)) != NULL) {
+-       current = tmp + lenWhat;
++    while ((tmp2 = strstr(current, what)) != NULL) {
++       current = tmp2 + lenWhat;
+        ++occurrences;
+     }
+ 
+@@ -1695,7 +1696,7 @@ StrUtilHasListItem(char const *list,                               // IN:
+                    char const *item,                               // IN:
+                    int (*ncmp)(char const *, char const*, size_t)) // IN:
+ {
+-   char *foundDelim;
++   const char *foundDelim;
+    int itemLen = strlen(item);
+ 
+    if (list == NULL) {
+diff --git a/lib/nicInfo/nicInfoPosix.c b/lib/nicInfo/nicInfoPosix.c
+index 6f20547b2..a387e377b 100644
+--- a/lib/nicInfo/nicInfoPosix.c
++++ b/lib/nicInfo/nicInfoPosix.c
+@@ -267,7 +267,7 @@ static Bool
+ IpEntryMatchesDevice(const char *devName,
+                      const char *label)
+ {
+-   char *p;
++   const char *p;
+    size_t n;
+ 
+    if ((p = strchr(label, ':')) != NULL) {
+diff --git a/libvmtools/i18n.c b/libvmtools/i18n.c
+index 3085f72d7..f61406d14 100644
+--- a/libvmtools/i18n.c
++++ b/libvmtools/i18n.c
+@@ -698,7 +698,7 @@ VMTools_BindTextDomain(const char *domain,
+        * If we couldn't find the catalog file for the user's language, see if
+        * we can find a more generic language (e.g., for "en_US", also try "en").
+        */
+-      char *sep = Str_Strrchr(lang, '_');
++      const char *sep = Str_Strrchr(lang, '_');
+       if (sep != NULL) {
+          if (usrlang == NULL) {
+             usrlang = Util_SafeStrdup(lang);
+diff --git a/services/plugins/vix/vixTools.c b/services/plugins/vix/vixTools.c
+index b2079a10d..6a8498ffb 100644
+--- a/services/plugins/vix/vixTools.c
++++ b/services/plugins/vix/vixTools.c
+@@ -925,7 +925,7 @@ VixToolsBuildUserEnvironmentTable(const char * const *envp)   // IN: optional
+    for (; NULL != *envp; envp++) {
+       char *name;
+       char *value;
+-      char *whereToSplit;
++      const char *whereToSplit;
+       size_t nameLen;
+ 
+       whereToSplit = strchr(*envp, '=');
+-- 
+2.47.3
+

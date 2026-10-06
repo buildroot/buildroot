@@ -1,4 +1,4 @@
-From bf1eafb07297711baf9320b1edcca8a3376f117d Mon Sep 17 00:00:00 2001
+From c51e6ceb7f1443603e9713d297b0386db91f524e Mon Sep 17 00:00:00 2001
 From: Natanael Copa <ncopa@alpinelinux.org>
 Date: Wed, 18 Nov 2015 09:03:00 +0000
 Subject: [PATCH] Use configure test for struct timespec
@@ -10,16 +10,20 @@ Signed-off-by: Natanael Copa <ncopa@alpinelinux.org>
 [Retrieved from:
 http://cgit.openembedded.org/meta-openembedded/tree/meta-oe/recipes-support/open-vm-tools/open-vm-tools/0005-Use-configure-test-for-struct-timespec.patch?h=sumo]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[rebased against stable-12.3.0]
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+[Bernd: rebased against stable-13.0.10]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
- open-vm-tools/configure.ac           | 1 +
- open-vm-tools/lib/include/hgfsUtil.h | 8 +-------
+ configure.ac           | 1 +
+ lib/include/hgfsUtil.h | 8 +-------
  2 files changed, 2 insertions(+), 7 deletions(-)
 
-Index: open-vm-tools/configure.ac
-===================================================================
---- open-vm-tools.orig/configure.ac
-+++ open-vm-tools/configure.ac
-@@ -1127,6 +1127,7 @@ AC_TYPE_OFF_T
+diff --git a/configure.ac b/configure.ac
+index 89b0bd8db..0ba2f6658 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1393,6 +1393,7 @@ AC_TYPE_OFF_T
  AC_TYPE_PID_T
  AC_TYPE_SIZE_T
  AC_CHECK_MEMBERS([struct stat.st_rdev])
@@ -27,10 +31,10 @@ Index: open-vm-tools/configure.ac
  AC_HEADER_TIME
  AC_STRUCT_TM
  AC_C_VOLATILE
-Index: open-vm-tools/lib/include/hgfsUtil.h
-===================================================================
---- open-vm-tools.orig/lib/include/hgfsUtil.h
-+++ open-vm-tools/lib/include/hgfsUtil.h
+diff --git a/lib/include/hgfsUtil.h b/lib/include/hgfsUtil.h
+index 609f4c000..a3a022d42 100644
+--- a/lib/include/hgfsUtil.h
++++ b/lib/include/hgfsUtil.h
 @@ -53,13 +53,7 @@
  #      include <time.h>
  #   endif
@@ -46,3 +50,6 @@ Index: open-vm-tools/lib/include/hgfsUtil.h
  struct timespec {
     time_t tv_sec;
     long   tv_nsec;
+-- 
+2.47.3
+

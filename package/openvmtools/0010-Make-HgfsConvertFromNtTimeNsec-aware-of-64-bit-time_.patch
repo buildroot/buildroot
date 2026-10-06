@@ -1,0 +1,51 @@
+From bedbcfcf347ff1a11d1a54f8f780f560e4b241a4 Mon Sep 17 00:00:00 2001
+From: Stefan Agner <stefan@agner.ch>
+Date: Tue, 5 Sep 2023 15:03:56 +0200
+Subject: [PATCH] Make HgfsConvertFromNtTimeNsec aware of 64-bit time_t on i386
+
+I verified that this function behaves as expected on x86_64, i386 with
+32-bit time_t, and i386 with 64-bit time_t for the following values of
+ntTtime:
+
+UNIX_EPOCH-1, UNIX_EPOCH, UNIX_EPOCH+1, UNIX_S32_MAX-1, UNIX_S32_MAX,
+UNIX_S32_MAX+1, UNIX_S32_MAX*2+1
+
+I did not verify whether the use of Div643264 is optimal, performance
+wise.
+
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+[rebased against stable-12.3.0]
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+[Bernd: rebased against stable-13.0.10]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ lib/hgfs/hgfsUtil.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/lib/hgfs/hgfsUtil.c b/lib/hgfs/hgfsUtil.c
+index fcd7fb726..f86061562 100644
+--- a/lib/hgfs/hgfsUtil.c
++++ b/lib/hgfs/hgfsUtil.c
+@@ -131,13 +131,15 @@ HgfsConvertFromNtTimeNsec(struct timespec *unixTime, // OUT: Time in UNIX format
+       Div643232(ntTime - UNIX_EPOCH, 10000000, &sec, &nsec);
+       unixTime->tv_sec = sec;
+       unixTime->tv_nsec = nsec * 100;
+-
+-      return 0;
++   } else {
++      Div643264(ntTime - UNIX_EPOCH, 10000000, &sec64, &nsec);
++      unixTime->tv_sec = sec64;
++      unixTime->tv_nsec = nsec * 100;
+    }
+-#endif
+-
++#else
+    unixTime->tv_sec = (ntTime - UNIX_EPOCH) / 10000000;
+    unixTime->tv_nsec = ((ntTime - UNIX_EPOCH) % 10000000) * 100;
++#endif // __i386__
+ 
+    return 0;
+ }
+-- 
+2.47.3
+

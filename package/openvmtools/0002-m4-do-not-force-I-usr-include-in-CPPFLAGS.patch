@@ -1,0 +1,36 @@
+From 4c45151dd99e4025be5d9e85e49c1af3e951cc9d Mon Sep 17 00:00:00 2001
+From: Stefan Agner <stefan@agner.ch>
+Date: Tue, 5 Sep 2023 13:14:04 +0200
+Subject: [PATCH] m4: do not force -I/usr/include in CPPFLAGS
+
+This is so horribly broken for cross-compilation. :-(
+
+Signed-off-by: "Yann E. MORIN" <yann.morin.1998@free.fr>
+[rebased against stable-12.3.0]
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+[Bernd: rebased against stable-13.0.10]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ m4/vmtools.m4 | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/m4/vmtools.m4 b/m4/vmtools.m4
+index 055b39d9b..d281f81d1 100644
+--- a/m4/vmtools.m4
++++ b/m4/vmtools.m4
+@@ -279,10 +279,10 @@ AC_DEFUN([AC_VMW_DEFAULT_FLAGS],[
+       if test "$os" = freebsd; then
+          CUSTOM_$1_CPPFLAGS="-I/usr/local/include"
+       else
+-         CUSTOM_$1_CPPFLAGS="-I/usr/include"
++         CUSTOM_$1_CPPFLAGS=" "
+       fi
+       if test -n "$2"; then
+-         CUSTOM_$1_CPPFLAGS="${CUSTOM_$1_CPPFLAGS}/$2"
++         : CUSTOM_$1_CPPFLAGS="${CUSTOM_$1_CPPFLAGS}/$2"
+       fi
+    fi
+ ])
+-- 
+2.47.3
+

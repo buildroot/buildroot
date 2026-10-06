@@ -1,4 +1,4 @@
-From bfd12cf73d81919843383598e4a9e64c6e5fd97a Mon Sep 17 00:00:00 2001
+From 34b3bfcbb8162a96b5a65a6864f736dff1ccd70b Mon Sep 17 00:00:00 2001
 From: Khem Raj <raj.khem@gmail.com>
 Date: Fri, 21 Nov 2025 00:29:10 -0800
 Subject: [PATCH] glib_stubs: avoid GLib g_free macro redefinition error
@@ -9,13 +9,13 @@ inside the function signature and breaking the build.
 
 Undefine the macro before defining the stub.
 
-Upstream-Status: Pending
 Signed-off-by: Khem Raj <raj.khem@gmail.com>
 
 Upstream: https://github.com/vmware/open-vm-tools/pull/779
-Signed-off-by: John Ernberg <j@j-ernberg.se>
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
- open-vm-tools/lib/rpcChannel/glib_stubs.c | 3 +++
+ lib/rpcChannel/glib_stubs.c | 3 +++
  1 file changed, 3 insertions(+)
 
 diff --git a/lib/rpcChannel/glib_stubs.c b/lib/rpcChannel/glib_stubs.c
@@ -32,3 +32,6 @@ index c32deb073..cb89c6a87 100644
  void g_free(void *p) { free(p); }
  
  void g_mutex_init(GMutex *mutex) { }
+-- 
+2.47.3
+

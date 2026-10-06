@@ -1,4 +1,4 @@
-From 6cc1c22cc30320f56da552a76bd956db8f255b6a Mon Sep 17 00:00:00 2001
+From bb3b5f66bb71aa7d7af0e58ec0a5992e08814d5e Mon Sep 17 00:00:00 2001
 From: Natanael Copa <ncopa@alpinelinux.org>
 Date: Wed, 18 Nov 2015 10:05:07 +0000
 Subject: [PATCH] Use configure to test for feature instead of platform
@@ -18,23 +18,25 @@ The features we test for are:
 
 This is needed for musl libc.
 
-Signed-off-by: Natanael Copa <ncopa@alpinelinux.org>
-[Retrieved (and slightly updated) from:
-http://cgit.openembedded.org/meta-openembedded/tree/meta-oe/recipes-support/open-vm-tools/open-vm-tools/0007-Use-configure-to-test-for-feature-instead-of-platfor.patch?h=sumo]
-Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
-[Dario: make the patch to be applied with fuzz factor 0]
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
----
- open-vm-tools/configure.ac               |  4 ++++
- open-vm-tools/lib/misc/idLinux.c         | 30 ++++++++++++++----------------
- open-vm-tools/lib/nicInfo/nicInfoPosix.c |  8 ++++++--
- 3 files changed, 24 insertions(+), 18 deletions(-)
+Refit patch of open-vm-tools/lib/nicInfo/nicInfoPosix.c
 
-Index: open-vm-tools/configure.ac
-===================================================================
---- open-vm-tools.orig/configure.ac
-+++ open-vm-tools/configure.ac
-@@ -940,6 +940,7 @@
+Signed-off-by: Natanael Copa <ncopa@alpinelinux.org>
+Signed-off-by: Randy MacLeod <randy.macleod@windriver.com>
+[rebased against stable-12.3.0]
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+[Bernd: rebased against stable-13.0.10]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.ac               |  4 ++++
+ lib/misc/idLinux.c         | 30 ++++++++++++++----------------
+ lib/nicInfo/nicInfoPosix.c |  6 +++++-
+ 3 files changed, 23 insertions(+), 17 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 0ba2f6658..31d61c154 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1121,6 +1121,7 @@ AC_CHECK_FUNCS(
  
  AC_CHECK_FUNCS([ecvt])
  AC_CHECK_FUNCS([fcvt])
@@ -42,7 +44,7 @@ Index: open-vm-tools/configure.ac
  
  AC_CHECK_FUNC([mkdtemp], [have_mkdtemp=yes])
  
-@@ -1149,10 +1150,13 @@
+@@ -1330,10 +1331,13 @@ fi
  ###
  
  AC_CHECK_HEADERS([crypt.h])
@@ -56,10 +58,10 @@ Index: open-vm-tools/configure.ac
  AC_CHECK_HEADERS([sys/inttypes.h])
  AC_CHECK_HEADERS([sys/io.h])
  AC_CHECK_HEADERS([sys/param.h]) # Required to make the sys/user.h check work correctly on FreeBSD
-Index: open-vm-tools/lib/misc/idLinux.c
-===================================================================
---- open-vm-tools.orig/lib/misc/idLinux.c
-+++ open-vm-tools/lib/misc/idLinux.c
+diff --git a/lib/misc/idLinux.c b/lib/misc/idLinux.c
+index 3d7d1e303..0e12ac5bd 100644
+--- a/lib/misc/idLinux.c
++++ b/lib/misc/idLinux.c
 @@ -27,12 +27,9 @@
  #include <sys/syscall.h>
  #include <string.h>
@@ -74,7 +76,7 @@ Index: open-vm-tools/lib/misc/idLinux.c
  #ifdef __APPLE__
  #include <sys/socket.h>
  #include <TargetConditionals.h>
-@@ -1025,31 +1022,32 @@
+@@ -1025,24 +1022,23 @@ Id_EndSuperUser(uid_t uid)  // IN:
  static Bool
  IdIsSetUGid(void)
  {
@@ -108,10 +110,11 @@ Index: open-vm-tools/lib/misc/idLinux.c
 +#elif HAVE___SECURE_GETENV
     static const char envName[] = "VMW_SETUGID_TEST";
  
-    if (setenv(envName, "1", TRUE) == -1) {
-       return TRUE; /* Conservative */
+    /*
+@@ -1062,7 +1058,9 @@ IdIsSetUGid(void)
+       return secure_getenv(envName) == NULL;
     }
-    return __secure_getenv(envName) == NULL;
+    return TRUE;
 -#endif
 +#else
 +   /* Android does not have a secure_getenv, so be conservative. */
@@ -119,10 +122,10 @@ Index: open-vm-tools/lib/misc/idLinux.c
  #endif
  }
  #endif
-Index: open-vm-tools/lib/nicInfo/nicInfoPosix.c
-===================================================================
---- open-vm-tools.orig/lib/nicInfo/nicInfoPosix.c
-+++ open-vm-tools/lib/nicInfo/nicInfoPosix.c
+diff --git a/lib/nicInfo/nicInfoPosix.c b/lib/nicInfo/nicInfoPosix.c
+index 0135e6a09..6f20547b2 100644
+--- a/lib/nicInfo/nicInfoPosix.c
++++ b/lib/nicInfo/nicInfoPosix.c
 @@ -35,9 +35,13 @@
  #include <sys/stat.h>
  #include <errno.h>
@@ -138,15 +141,6 @@ Index: open-vm-tools/lib/nicInfo/nicInfoPosix.c
  # include <net/if.h>
  #endif
  #ifndef NO_DNET
-@@ -499,10 +503,7 @@
-  *
-  ******************************************************************************
-  */
--#if defined(__FreeBSD__) || \
--    defined(__APPLE__) || \
--    defined(USERWORLD) || \
--    (defined(__linux__) && defined(NO_DNET))
-+#if defined(NO_DNET) && defined(HAVE_GETIFADDRS)
- 
- char *
- GuestInfoGetPrimaryIP(void)
+-- 
+2.47.3
+

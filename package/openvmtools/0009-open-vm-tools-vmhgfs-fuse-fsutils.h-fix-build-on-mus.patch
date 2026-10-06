@@ -1,4 +1,4 @@
-From 0a5032669951ffd6735c294a6f309b0ec6667ea5 Mon Sep 17 00:00:00 2001
+From 84adbc466ed1ae2b87b383880ff724324866f59b Mon Sep 17 00:00:00 2001
 From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 Date: Sun, 8 Mar 2020 18:49:00 +0100
 Subject: [PATCH] open-vm-tools/vmhgfs-fuse/fsutils.h: fix build on musl
@@ -18,12 +18,14 @@ Fixes:
 
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 [Upstream status: not sent yet (upstream is not reactive on third patch]
+[Bernd: rebased against stable-13.0.10]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  vmhgfs-fuse/fsutil.h | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/vmhgfs-fuse/fsutil.h b/vmhgfs-fuse/fsutil.h
-index 34b6d489..a94f9fbb 100644
+index 34b6d489a..a94f9fbb1 100644
 --- a/vmhgfs-fuse/fsutil.h
 +++ b/vmhgfs-fuse/fsutil.h
 @@ -32,7 +32,8 @@
@@ -37,5 +39,5 @@ index 34b6d489..a94f9fbb 100644
  #endif
  
 -- 
-2.25.0
+2.47.3
 

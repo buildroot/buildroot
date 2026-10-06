@@ -1,0 +1,133 @@
+From 23e25f489bc054b90ebfaed0b9726544ad5a6aba Mon Sep 17 00:00:00 2001
+From: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+Date: Mon, 30 Sep 2019 13:32:35 +0200
+Subject: [PATCH] Rename poll.h into vm_poll.h to fix build failure on musl
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+musl libc redirects include of sys/poll.h to poll.h. But since poll.h is
+also a local header file, the musl libc header is never included. This
+leads to the following build failure:
+
+In file included from asyncsocket.c:73:0:
+.../host/i586-buildroot-linux-musl/sysroot/usr/include/sys/poll.h:1:2: warning: #warning redirecting incorrect #include <sys/poll.h> to <poll.h> [-Wcpp]
+ #warning redirecting incorrect #include <sys/poll.h> to <poll.h>
+asyncsocket.c: In function ‘AsyncTCPSocketPollWork’:
+asyncsocket.c:2537:13: error: invalid use of undefined type ‘struct pollfd’
+          pfd[i].fd = asock[i]->fd;
+             ^
+asyncsocket.c:2537:13: error: dereferencing pointer to incomplete type ‘struct pollfd’
+asyncsocket.c:2538:13: error: invalid use of undefined type ‘struct pollfd’
+          pfd[i].events = read ? POLLIN : POLLOUT;
+             ^
+asyncsocket.c:2538:33: error: ‘POLLIN’ undeclared (first use in this function); did you mean ‘POLL_IN’?
+          pfd[i].events = read ? POLLIN : POLLOUT;
+
+So rename poll.h into vm_poll.h as suggested by srowe in
+https://github.com/vmware/open-vm-tools/issues/359#issuecomment-533529956
+
+Fixes:
+ - http://autobuild.buildroot.org/results/4f575ef42bbc4387a07e396205052b2da081c64d
+
+Fix #359
+
+Upstream: https://github.com/vmware/open-vm-tools/pull/383
+
+Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[rebased against stable-12.3.0]
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+[Bernd: rebased against stable-13.0.10]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ lib/asyncsocket/asyncsocket.c     | 4 ++--
+ lib/hgfsServer/hgfsServer.c       | 2 +-
+ lib/include/asyncsocket.h         | 2 +-
+ lib/include/pollImpl.h            | 2 +-
+ lib/include/{poll.h => vm_poll.h} | 0
+ lib/rpcIn/rpcin.c                 | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+ rename lib/include/{poll.h => vm_poll.h} (100%)
+
+diff --git a/lib/asyncsocket/asyncsocket.c b/lib/asyncsocket/asyncsocket.c
+index d61777601..3f75b85ad 100644
+--- a/lib/asyncsocket/asyncsocket.c
++++ b/lib/asyncsocket/asyncsocket.c
+@@ -70,8 +70,8 @@
+ #else
+ #include <stddef.h>
+ #include <ctype.h>
++#include <poll.h>
+ #include <sys/types.h>
+-#include <sys/poll.h>
+ #include <sys/socket.h>
+ #include <sys/un.h>
+ #include <netdb.h>
+@@ -87,7 +87,7 @@
+ #include "random.h"
+ #include "asyncsocket.h"
+ #include "asyncSocketBase.h"
+-#include "poll.h"
++#include "vm_poll.h"
+ #include "log.h"
+ #include "err.h"
+ #include "hostinfo.h"
+diff --git a/lib/hgfsServer/hgfsServer.c b/lib/hgfsServer/hgfsServer.c
+index c7b4cdd0f..d6e0cdc0e 100644
+--- a/lib/hgfsServer/hgfsServer.c
++++ b/lib/hgfsServer/hgfsServer.c
+@@ -51,7 +51,7 @@
+ #include "hgfsDirNotify.h"
+ #include "hgfsThreadpool.h"
+ #include "userlock.h"
+-#include "poll.h"
++#include "vm_poll.h"
+ #include "mutexRankLib.h"
+ #include "vm_basic_asm.h"
+ #include "unicodeOperations.h"
+diff --git a/lib/include/asyncsocket.h b/lib/include/asyncsocket.h
+index 57d491570..283e2d796 100644
+--- a/lib/include/asyncsocket.h
++++ b/lib/include/asyncsocket.h
+@@ -177,7 +177,7 @@ typedef struct AsyncSocket AsyncSocket;
+  * Or the client can specify its favorite poll class and locking behavior.
+  * Use of IVmdbPoll is only supported for regular sockets and for Attach.
+  */
+-#include "poll.h"
++#include "vm_poll.h"
+ struct IVmdbPoll;
+ typedef struct AsyncSocketPollParams {
+    int flags;               /* Default 0, only POLL_FLAG_NO_BULL is valid */
+diff --git a/lib/include/pollImpl.h b/lib/include/pollImpl.h
+index 46442e556..8bc669970 100644
+--- a/lib/include/pollImpl.h
++++ b/lib/include/pollImpl.h
+@@ -44,7 +44,7 @@
+ #define INCLUDE_ALLOW_USERLEVEL
+ #include "includeCheck.h"
+ 
+-#include "poll.h"
++#include "vm_poll.h"
+ #include "vm_basic_asm.h"
+ 
+ #if defined(__cplusplus)
+diff --git a/lib/include/poll.h b/lib/include/vm_poll.h
+similarity index 100%
+rename from lib/include/poll.h
+rename to lib/include/vm_poll.h
+diff --git a/lib/rpcIn/rpcin.c b/lib/rpcIn/rpcin.c
+index f1709fe03..c1a5dfdba 100644
+--- a/lib/rpcIn/rpcin.c
++++ b/lib/rpcIn/rpcin.c
+@@ -57,7 +57,7 @@
+ 
+ #if defined(VMTOOLS_USE_VSOCKET)
+ #  include <glib.h>
+-#  include "poll.h"
++#  include "vm_poll.h"
+ #  include "asyncsocket.h"
+ #  include "vmci_defs.h"
+ #include "dataMap.h"
+-- 
+2.47.3
+

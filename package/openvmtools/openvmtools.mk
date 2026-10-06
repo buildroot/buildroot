@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-OPENVMTOOLS_VERSION_MAJOR = 11.3.5
-OPENVMTOOLS_VERSION = $(OPENVMTOOLS_VERSION_MAJOR)-18557794
+OPENVMTOOLS_VERSION_MAJOR = 13.1.0
+OPENVMTOOLS_VERSION = $(OPENVMTOOLS_VERSION_MAJOR)-25218885
 OPENVMTOOLS_SITE = https://github.com/vmware/open-vm-tools/releases/download/stable-$(OPENVMTOOLS_VERSION_MAJOR)
 OPENVMTOOLS_SOURCE = open-vm-tools-$(OPENVMTOOLS_VERSION).tar.gz
 OPENVMTOOLS_LICENSE = LGPL-2.1
@@ -17,18 +17,13 @@ OPENVMTOOLS_CPE_ID_PRODUCT = tools
 # previously connected to this CVE ID because of a typo, is at CVE-2022-31693
 OPENVMTOOLS_IGNORE_CVES += CVE-2021-31693
 
-# 0013-Properly-check-authorization-on-incoming-guestOps-re.patch
-OPENVMTOOLS_IGNORE_CVES += CVE-2022-31676
-
-# 0014-CVE-2025-22247-1100-1225-VGAuth-updates.patch
-OPENVMTOOLS_IGNORE_CVES += CVE-2025-22247
-
 # configure.ac is patched
 OPENVMTOOLS_AUTORECONF = YES
 OPENVMTOOLS_CONF_OPTS = --with-dnet \
 	--without-icu --without-x --without-gtk2 \
 	--without-gtkmm --without-kernel-modules \
-	--disable-deploypkg --without-xerces
+	--disable-deploypkg --without-xerces \
+	--disable-vgauth --disable-containerinfo
 OPENVMTOOLS_CONF_ENV += \
 	CUSTOM_DNET_CPPFLAGS=" " \
 	LIBS=$(TARGET_NLS_LIBS)
@@ -39,7 +34,10 @@ OPENVMTOOLS_DEPENDENCIES = \
 	$(TARGET_NLS_DEPENDENCIES)
 
 ifeq ($(BR2_PACKAGE_LIBTIRPC),y)
+OPENVMTOOLS_CONF_OPTS += --with-tirpc
 OPENVMTOOLS_DEPENDENCIES += libtirpc
+else
+OPENVMTOOLS_CONF_OPTS += --without-tirpc
 endif
 
 ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
@@ -48,7 +46,11 @@ endif
 
 # When libfuse is available, openvmtools can build vmblock-fuse, so
 # make sure that libfuse gets built first
-ifeq ($(BR2_PACKAGE_LIBFUSE),y)
+ifeq ($(BR2_PACKAGE_LIBFUSE3),y)
+OPENVMTOOLS_CONF_OPTS += --with-fuse=fuse3
+OPENVMTOOLS_DEPENDENCIES += libfuse3
+else ifeq ($(BR2_PACKAGE_LIBFUSE),y)
+OPENVMTOOLS_CONF_OPTS += --with-fuse=fuse
 OPENVMTOOLS_DEPENDENCIES += libfuse
 endif
 

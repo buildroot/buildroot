@@ -1,22 +1,26 @@
-From a0983d84185f04c4e40778fe951fde4439894882 Mon Sep 17 00:00:00 2001
+From 4421d88ca9248173baa8eb4fcd563e6705f8aeb0 Mon Sep 17 00:00:00 2001
 From: Khem Raj <raj.khem@gmail.com>
 Date: Sun, 16 Jul 2017 07:37:03 -0700
-Subject: [PATCH] Remove assumptions about glibc being only libc
- implementation on linux
+Subject: [PATCH] Remove assumptions about glibc being only libc implementation
+ on linux
 
 Signed-off-by: Khem Raj <raj.khem@gmail.com>
 [Retrieved (and updated to work on current version) from:
 http://cgit.openembedded.org/meta-openembedded/tree/meta-oe/recipes-support/open-vm-tools/open-vm-tools/0001-Remove-assumptions-about-glibc-being-only-libc-imple.patch?h=sumo]
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
+[rebased against stable-12.3.0]
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+[Bernd: rebased against stable-13.0.10]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
- open-vm-tools/lib/file/fileIOPosix.c      | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ lib/file/fileIOPosix.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: open-vm-tools/lib/file/fileIOPosix.c
-===================================================================
---- open-vm-tools.orig/lib/file/fileIOPosix.c
-+++ open-vm-tools/lib/file/fileIOPosix.c
-@@ -205,7 +205,7 @@ static AlignedPool alignedPool;
+diff --git a/lib/file/fileIOPosix.c b/lib/file/fileIOPosix.c
+index 4dedb08fc..1e16f06bd 100644
+--- a/lib/file/fileIOPosix.c
++++ b/lib/file/fileIOPosix.c
+@@ -204,7 +204,7 @@ static AlignedPool alignedPool;
   * are not available in any header file.
   */
  
@@ -25,3 +29,6 @@ Index: open-vm-tools/lib/file/fileIOPosix.c
     #if defined(_FILE_OFFSET_BITS) && (_FILE_OFFSET_BITS == 64)
        /*
         * We want preadv/pwritev. But due to FOB=64, the symbols are -64.
+-- 
+2.47.3
+
