@@ -1,0 +1,48 @@
+From 101aacaf82d250bfb8e581e002b2c380869080ef Mon Sep 17 00:00:00 2001
+From: Bruno Thomsen <bruno.thomsen@gmail.com>
+Date: Sat, 11 Apr 2026 17:06:10 +0200
+Subject: [PATCH] signature: use ASN1_STRING_get0_data and ASN1_STRING_length
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Use ASN1_STRING_get0_data() and ASN1_STRING_length() functions
+allow an ASN1_STRING structure to be manipulated. Avoid errors
+like this when compiling against OpenSSL 4.0:
+
+error: invalid use of incomplete typedef ‘ASN1_OCTET_STRING’ {aka ‘struct asn1_string_st’}
+
+Signed-off-by: Bruno Thomsen <bruno.thomsen@gmail.com>
+
+Upstream: https://github.com/rauc/rauc/commit/101aacaf82d250bfb8e581e002b2c380869080ef
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/signature.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/signature.c b/src/signature.c
+index d2acac6b..91be7bb7 100644
+--- a/src/signature.c
++++ b/src/signature.c
+@@ -1344,7 +1344,7 @@ gboolean cms_get_unverified_manifest(GBytes *sig, GBytes **manifest, GError **er
+ 				"missing manifest in inline signature");
+ 		goto out;
+ 	}
+-	if (!(*content)->data || ((*content)->length <= 0)) {
++	if ((ASN1_STRING_get0_data(*content) == NULL) || (ASN1_STRING_length(*content) <= 0)) {
+ 		g_set_error(
+ 				error,
+ 				R_SIGNATURE_ERROR,
+@@ -1353,7 +1353,7 @@ gboolean cms_get_unverified_manifest(GBytes *sig, GBytes **manifest, GError **er
+ 		goto out;
+ 	}
+ 
+-	tmp = g_bytes_new((*content)->data, (*content)->length);
++	tmp = g_bytes_new(ASN1_STRING_get0_data(*content), ASN1_STRING_length(*content));
+ 	if (!tmp) {
+ 		g_set_error_literal(
+ 				error,
+-- 
+2.47.3
+
