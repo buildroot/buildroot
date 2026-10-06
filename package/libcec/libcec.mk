@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-LIBCEC_VERSION = 7.1.1
+LIBCEC_VERSION = 8.1.7
 LIBCEC_SITE = $(call github,Pulse-Eight,libcec,libcec-$(LIBCEC_VERSION))
 LIBCEC_LICENSE = GPL-2.0+
 LIBCEC_LICENSE_FILES = LICENSE.md
 
 LIBCEC_INSTALL_STAGING = YES
-LIBCEC_DEPENDENCIES = host-pkgconf libplatform
+LIBCEC_DEPENDENCIES = host-pkgconf
 
 ifeq ($(BR2_PACKAGE_HAS_LIBUDEV),y)
 LIBCEC_DEPENDENCIES += libudev
