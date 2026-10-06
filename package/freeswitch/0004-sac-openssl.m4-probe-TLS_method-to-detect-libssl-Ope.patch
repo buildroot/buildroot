@@ -1,0 +1,38 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Bradley Reid <130598986+bereizy@users.noreply.github.com>
+Date: Fri, 2 Oct 2026 09:43:47 -0400
+Subject: [PATCH] sac-openssl.m4: probe TLS_method to detect libssl (OpenSSL 4)
+
+SAC_OPENSSL decides whether libssl is usable with
+AC_CHECK_LIB(ssl, TLSv1_method). OpenSSL 4.0 removed the fixed-version
+method functions, so the probe fails there, HAVE_TLS is cleared and -lssl
+is not added to LIBS. With #3185 applied configure then succeeds but the
+build stops when linking mod_sofia's test program:
+
+  undefined reference to symbol 'SSL_CTX_check_private_key@@OPENSSL_4.0.0'
+
+TLS_method is available from OpenSSL 1.1.0 on.
+
+Upstream: https://github.com/signalwire/freeswitch/pull/3211
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ build/config/sac-openssl.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/build/config/sac-openssl.m4 b/build/config/sac-openssl.m4
+index 289d3e132e..76ba9f2f22 100644
+--- a/build/config/sac-openssl.m4
++++ b/build/config/sac-openssl.m4
+@@ -30,7 +30,7 @@ else
+       	HAVE_OPENSSL=0
+       	AC_MSG_WARN(OpenSSL crypto library was not found))
+ 
+-      AC_CHECK_LIB(ssl, TLSv1_method,,
++      AC_CHECK_LIB(ssl, TLS_method,,
+       	HAVE_TLS=0
+       	AC_MSG_WARN(OpenSSL protocol library was not found))
+      ],[AC_MSG_WARN(OpenSSL include files were not found)],[#include <openssl/safestack.h>])
+-- 
+2.47.3
+

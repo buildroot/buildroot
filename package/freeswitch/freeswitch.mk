@@ -7,6 +7,9 @@
 FREESWITCH_VERSION = 1.11.3
 FREESWITCH_SOURCE = freeswitch-$(FREESWITCH_VERSION).-release.tar.xz
 FREESWITCH_SITE = https://files.freeswitch.org/freeswitch-releases
+# 0004-sac-openssl.m4-probe-TLS_method-to-detect-libssl-Ope.patch
+# 0005-Build-System-Fix-build-against-OpenSSL-4-3185.patch
+FREESWITCH_AUTORECONF = YES
 # External modules need headers/libs from staging
 FREESWITCH_INSTALL_STAGING = YES
 FREESWITCH_LICENSE = MPL-1.1, \

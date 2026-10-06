@@ -1,0 +1,67 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Andrey Volk <andywolk@gmail.com>
+Date: Thu, 24 Sep 2026 00:31:38 +0300
+Subject: [PATCH] [Build-System] Fix build against OpenSSL 4 (#3185)
+
+Upstream: https://github.com/signalwire/freeswitch/commit/fd1cab5117cd4c711293439354885a559ef783bb
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ configure.ac           |  6 +++++-
+ src/switch_core_cert.c | 13 ++++++++++---
+ 2 files changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index ae42b22f6f..16af18ce2d 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1726,7 +1726,11 @@ if test x$HAVE_OPENSSL = x1; then
+ 	openssl_CFLAGS="$openssl_CFLAGS -DHAVE_OPENSSL";
+ 	APR_ADDTO(SWITCH_AM_CFLAGS, -DHAVE_OPENSSL)
+ 	AC_CHECK_LIB(ssl, SSL_CTX_set_tlsext_use_srtp, AC_DEFINE_UNQUOTED(HAVE_OPENSSL_DTLS_SRTP, 1, HAVE_OPENSSL_DTLS_SRTP), AC_MSG_ERROR([OpenSSL >= 1.0.1e and associated developement headers required]))
+-	AC_CHECK_LIB(ssl, DTLSv1_method, AC_DEFINE_UNQUOTED(HAVE_OPENSSL_DTLS, 1, HAVE_OPENSSL_DTLS), AC_MSG_ERROR([OpenSSL >= 1.0.1e and associaed developement headers required]))
++	dnl DTLS_method is what the code calls from OpenSSL 1.1.0 on; DTLSv1_method is
++	dnl the pre 1.1.0 spelling, deprecated since and gone from OpenSSL 4.
++	AC_CHECK_LIB(ssl, DTLS_method, AC_DEFINE_UNQUOTED(HAVE_OPENSSL_DTLS, 1, HAVE_OPENSSL_DTLS),
++		[AC_CHECK_LIB(ssl, DTLSv1_method, AC_DEFINE_UNQUOTED(HAVE_OPENSSL_DTLS, 1, HAVE_OPENSSL_DTLS),
++			AC_MSG_ERROR([OpenSSL >= 1.0.1e and associated development headers required]))])
+ 	AC_CHECK_LIB(ssl, DTLSv1_2_method, AC_DEFINE_UNQUOTED(HAVE_OPENSSL_DTLSv1_2_method, 1, [DTLS version 1.2 is available]))
+ else
+ 	AC_MSG_ERROR([OpenSSL >= 1.0.1e and associated developement headers required])
+diff --git a/src/switch_core_cert.c b/src/switch_core_cert.c
+index 218016e63b..174a2b1809 100644
+--- a/src/switch_core_cert.c
++++ b/src/switch_core_cert.c
+@@ -496,7 +496,12 @@ static int mkcert(X509 **x509p, EVP_PKEY **pkeyp, int bits, int serial, int days
+ 	X509_gmtime_adj(X509_get_notAfter(x), (long)60*60*24*days);
+ 	X509_set_pubkey(x, pk);
+ 
+-	name = X509_get_subject_name(x);
++	/* OpenSSL 4 hands out the certificate's own name as const, so build one
++	 * here and set it instead of filling in the one inside the certificate.
++	 */
++	if ((name = X509_NAME_new()) == NULL) {
++		goto err;
++	}
+ 
+ 	/* This function creates and adds the entry, working out the
+ 	 * correct string type and performing checks on its length.
+@@ -505,11 +510,13 @@ static int mkcert(X509 **x509p, EVP_PKEY **pkeyp, int bits, int serial, int days
+ 	X509_NAME_add_entry_by_txt(name, "C", MBSTRING_ASC, (unsigned char *)"US", -1, -1, 0);
+ 	X509_NAME_add_entry_by_txt(name, "CN", MBSTRING_ASC, (unsigned char *)"FreeSWITCH", -1, -1, 0);
+ 
+-
+ 	/* Its self signed so set the issuer name to be the same as the
+- 	 * subject.
++	 * subject. Both calls copy the name, so ours is ours to free.
+ 	 */
++	X509_set_subject_name(x, name);
+ 	X509_set_issuer_name(x, name);
++	X509_NAME_free(name);
++	name = NULL;
+ 
+ #if OPENSSL_VERSION_NUMBER >= 0x30000000
+ 	if (!X509_sign(x, pk, EVP_sha256())) {
+-- 
+2.47.3
+
