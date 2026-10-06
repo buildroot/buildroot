@@ -1,0 +1,10 @@
+config BR2_PACKAGE_LIBAEC
+	bool "libaec"
+	select BR2_HOST_CMAKE_AT_LEAST_3_26
+	help
+	  libaec provides fast lossless compression of 1 up to 32 bit
+	  wide signed or unsigned integers (samples). It implements
+	  Golomb-Rice compression method under the BSD license and
+	  includes a free drop-in replacement for the SZIP library.
+
+	  https://github.com/Deutsches-Klimarechenzentrum/libaec
