@@ -1,0 +1,94 @@
+From cbe701c4cf200978f6332156d3b9889cf7c4984e Mon Sep 17 00:00:00 2001
+From: Heikki Vatiainen <hvn@radiatorsoftware.com>
+Date: Wed, 17 Jun 2026 10:02:11 +0300
+Subject: [PATCH] Add Changes for OPenSSL 4 support and update tests.
+
+Update the test helper module for better detection of available TLS versions
+with OpenSSL 4. Otherwise some of the tests with older TLS methods may be
+skipped even though they are available with OpenSSL 4.
+
+Upstream: https://github.com/radiator-software/p5-net-ssleay/pull/553/changes/cbe701c4cf200978f6332156d3b9889cf7c4984e
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ Changes                | 20 ++++++++++++++++++++
+ inc/Test/Net/SSLeay.pm | 19 +++++++++++++++++++
+ 2 files changed, 39 insertions(+)
+
+diff --git a/Changes b/Changes
+index 09113fe..ff75ff2 100644
+--- a/Changes
++++ b/Changes
+@@ -1,5 +1,25 @@
+ Revision history for Perl extension Net::SSLeay.
+ 
++1.97_01 ????-??-??
++	- Support for OpenSSL 4.0.0. Contributed by Michal Josef Špaček.
++	  - Net::SSLeay specific functions CTX_tlsv1_new(),
++	    CTX_tlsv1_1_new() and CTX_tlsv1_2_new() with OpenSSL 4.0.0
++	    and later are emulated using TLS_method() with
++	    SSL_CTX_set_min_proto_version() and
++	    SSL_CTX_set_max_proto_version() for backward
++	    compatibility. It is recommended to use
++	    Net::SSLeay::CTX_new() with
++	    Net::SSLeay::CTX_set_min_proto_version() and
++	    Net::SSLeay::CTX_set_max_proto_version() instead.
++	  - TLSv1_method, TLSv1_server_method and TLSv1_client_method,
++	    TLSv1_1_method, TLSv1_1_server_method and
++	    TLSv1_1_client_method, TLSv1_2_method,
++	    TLSv1_2_server_method and TLSv1_2_client_method are
++	    removed in OpenSSL 4.0.0. Use TLS_method() with
++	    CTX_set_min_proto_version() and
++	    CTX_set_max_proto_version() instead.
++	  - CTX_v3_new() is removed with OpenSSL 4.0.0 and later.
++
+ 1.96 2026-03-21
+ 	- New stable release incorporating all changes from developer releases
+ 	  1.95_01 to 1.95_03.
+diff --git a/inc/Test/Net/SSLeay.pm b/inc/Test/Net/SSLeay.pm
+index ce0b03e..ddcc421 100644
+--- a/inc/Test/Net/SSLeay.pm
++++ b/inc/Test/Net/SSLeay.pm
+@@ -38,6 +38,8 @@ my $data_path = catfile( dirname(__FILE__), '..', '..', '..', 't', 'data' );
+ 
+ my $initialised = 0;
+ 
++# All version-specific methods were removed in OpenSSL 4.0. This list
++# may be updated once the library is loaded and its version is known.
+ my %protos = (
+     'TLSv1.3' => {
+         constant      => \&Net::SSLeay::TLS1_3_VERSION,
+@@ -104,6 +106,15 @@ sub _libssl_fatal {
+ sub _load_net_ssleay {
+     eval { require Net::SSLeay; 1; } or croak $EVAL_ERROR;
+ 
++    if (Net::SSLeay::OPENSSL_VERSION_NUMBER() >= 0x40000000) {
++	$protos{'TLSv1.2'}->{constant} = \&Net::SSLeay::TLS1_2_VERSION;
++	$protos{'TLSv1.2'}->{constant_type} = 'version';
++	$protos{'TLSv1.1'}->{constant} = \&Net::SSLeay::TLS1_1_VERSION;
++	$protos{'TLSv1.1'}->{constant_type} = 'version';
++	$protos{'TLSv1'}->{constant} = \&Net::SSLeay::TLS1_VERSION;
++	$protos{'TLSv1'}->{constant_type} = 'version';
++    }
++
+     return 1;
+ }
+ 
+@@ -369,6 +380,14 @@ sub is_protocol_usable {
+             or _libssl_fatal('Failed to create SSL_CTX object');
+     }
+ 
++    # Security level functions were added in OpenSSL 1.1.0. Since then
++    # the default value of security level and the security level
++    # definitions have updated between the OpenSSL versions. Use level
++    # zero so that the library doesn't hide any of the protocols from
++    # us.
++    Net::SSLeay::CTX_set_security_level($ctx, 0)
++	if defined &Net::SSLeay::CTX_set_security_level;
++
+     my $ssl = Net::SSLeay::new($ctx)
+         or _libssl_fatal('Failed to create SSL structure');
+ 
+-- 
+2.47.3
+

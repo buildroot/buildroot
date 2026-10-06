@@ -1,0 +1,197 @@
+From 780c7ad4803d0fc8e755bb86e589f84898e65040 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Michal=20Josef=20=C5=A0pa=C4=8Dek?= <mspacek@redhat.com>
+Date: Tue, 14 Apr 2026 14:08:00 +0200
+Subject: [PATCH] OpenSSL 4.0.0 remove support for some TLS functions
+
+Removes fixed version TLS methods
+(https://github.com/openssl/openssl/pull/30128)
+
+Upstream: https://github.com/radiator-software/p5-net-ssleay/pull/553/changes/780c7ad4803d0fc8e755bb86e589f84898e65040
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ SSLeay.xs          | 51 ++++++++++++++++++++++++++++++++++++++++------
+ lib/Net/SSLeay.pod | 17 +++++++++-------
+ 2 files changed, 55 insertions(+), 13 deletions(-)
+
+diff --git a/SSLeay.xs b/SSLeay.xs
+index 5407fa1..ad996d5 100644
+--- a/SSLeay.xs
++++ b/SSLeay.xs
+@@ -2472,7 +2472,7 @@ SSL_CTX_v23_new()
+      OUTPUT:
+      RETVAL
+ 
+-#if !defined(OPENSSL_NO_TLS1_METHOD)
++#if !defined(OPENSSL_NO_TLS1_METHOD) && OPENSSL_VERSION_NUMBER < 0x40000000L
+ 
+ SSL_CTX *
+ SSL_CTX_tlsv1_new()
+@@ -2481,9 +2481,22 @@ SSL_CTX_tlsv1_new()
+      OUTPUT:
+      RETVAL
+ 
++#elif OPENSSL_VERSION_NUMBER >= 0x40000000L
++
++SSL_CTX *
++SSL_CTX_tlsv1_new()
++     CODE:
++     RETVAL = SSL_CTX_new(TLS_method());
++     if (RETVAL) {
++          SSL_CTX_set_min_proto_version(RETVAL, TLS1_VERSION);
++          SSL_CTX_set_max_proto_version(RETVAL, TLS1_VERSION);
++     }
++     OUTPUT:
++     RETVAL
++
+ #endif
+ 
+-#if (OPENSSL_VERSION_NUMBER >= 0x10001001L && !defined(OPENSSL_NO_TLS1_1_METHOD)) /* OpenSSL 1.0.1-beta1 */
++#if (OPENSSL_VERSION_NUMBER >= 0x10001001L && OPENSSL_VERSION_NUMBER < 0x40000000L && !defined(OPENSSL_NO_TLS1_1_METHOD)) /* OpenSSL 1.0.1-beta1 */
+ 
+ SSL_CTX *
+ SSL_CTX_tlsv1_1_new()
+@@ -2492,9 +2505,22 @@ SSL_CTX_tlsv1_1_new()
+      OUTPUT:
+      RETVAL
+ 
++#elif OPENSSL_VERSION_NUMBER >= 0x40000000L
++
++SSL_CTX *
++SSL_CTX_tlsv1_1_new()
++     CODE:
++     RETVAL = SSL_CTX_new(TLS_method());
++     if (RETVAL) {
++          SSL_CTX_set_min_proto_version(RETVAL, TLS1_1_VERSION);
++          SSL_CTX_set_max_proto_version(RETVAL, TLS1_1_VERSION);
++     }
++     OUTPUT:
++     RETVAL
++
+ #endif
+ 
+-#if (OPENSSL_VERSION_NUMBER >= 0x10001001L && !defined(OPENSSL_NO_TLS1_2_METHOD)) /* OpenSSL 1.0.1-beta1 */
++#if (OPENSSL_VERSION_NUMBER >= 0x10001001L && OPENSSL_VERSION_NUMBER < 0x40000000L && !defined(OPENSSL_NO_TLS1_2_METHOD)) /* OpenSSL 1.0.1-beta1 */
+ 
+ SSL_CTX *
+ SSL_CTX_tlsv1_2_new()
+@@ -2503,6 +2529,19 @@ SSL_CTX_tlsv1_2_new()
+      OUTPUT:
+      RETVAL
+ 
++#elif OPENSSL_VERSION_NUMBER >= 0x40000000L
++
++SSL_CTX *
++SSL_CTX_tlsv1_2_new()
++     CODE:
++     RETVAL = SSL_CTX_new(TLS_method());
++     if (RETVAL) {
++          SSL_CTX_set_min_proto_version(RETVAL, TLS1_2_VERSION);
++          SSL_CTX_set_max_proto_version(RETVAL, TLS1_2_VERSION);
++     }
++     OUTPUT:
++     RETVAL
++
+ #endif
+ 
+ SSL_CTX *
+@@ -5616,7 +5655,7 @@ SSLv23_server_method()
+ const SSL_METHOD *
+ SSLv23_client_method()
+ 
+-#if !defined(OPENSSL_NO_TLS1_METHOD)
++#if !defined(OPENSSL_NO_TLS1_METHOD) && OPENSSL_VERSION_NUMBER < 0x40000000L
+ 
+ const SSL_METHOD *
+ TLSv1_method()
+@@ -5629,7 +5668,7 @@ TLSv1_client_method()
+ 
+ #endif
+ 
+-#if (OPENSSL_VERSION_NUMBER >= 0x10001001L && !defined(OPENSSL_NO_TLS1_1_METHOD)) /* OpenSSL 1.0.1-beta1 */
++#if (OPENSSL_VERSION_NUMBER >= 0x10001001L && OPENSSL_VERSION_NUMBER < 0x40000000L && !defined(OPENSSL_NO_TLS1_1_METHOD)) /* OpenSSL 1.0.1-beta1 */
+ 
+ const SSL_METHOD *
+ TLSv1_1_method()
+@@ -5642,7 +5681,7 @@ TLSv1_1_client_method()
+ 
+ #endif
+ 
+-#if (OPENSSL_VERSION_NUMBER >= 0x10001001L && !defined(OPENSSL_NO_TLS1_2_METHOD)) /* OpenSSL 1.0.1-beta1 */
++#if (OPENSSL_VERSION_NUMBER >= 0x10001001L && OPENSSL_VERSION_NUMBER < 0x40000000L && !defined(OPENSSL_NO_TLS1_2_METHOD)) /* OpenSSL 1.0.1-beta1 */
+ 
+ const SSL_METHOD *
+ TLSv1_2_method()
+diff --git a/lib/Net/SSLeay.pod b/lib/Net/SSLeay.pod
+index 554fd11..d947ad3 100644
+--- a/lib/Net/SSLeay.pod
++++ b/lib/Net/SSLeay.pod
+@@ -1575,7 +1575,7 @@ Check openssl doc L<https://www.openssl.org/docs/manmaster/man3/SSL_CTX_new.html
+ 
+ =item * TLSv1_method, TLSv1_server_method and TLSv1_client_method
+ 
+-B<COMPATIBILITY:> Requires OpenSSL or LibreSSL built with support for TLSv1. Server and client methods not available in Net-SSLeay-1.82 and before.
++B<COMPATIBILITY:> Requires OpenSSL or LibreSSL built with support for TLSv1. Server and client methods not available in Net-SSLeay-1.82 and before. Not available in OpenSSL 4.0.0 and later. Use L</TLS_method> with L</CTX_set_min_proto_version> and L</CTX_set_max_proto_version> instead.
+ 
+ Returns SSL_METHOD structure corresponding to TLSv1 method, the return value can be later used as a param of L</CTX_new_with_method>.
+ 
+@@ -1587,7 +1587,7 @@ Check openssl doc L<https://www.openssl.org/docs/manmaster/man3/SSL_CTX_new.html
+ 
+ =item * TLSv1_1_method, TLSv1_1_server_method and TLSv1_1_client_method
+ 
+-B<COMPATIBILITY:> Requires OpenSSL >= 1.0.1 or LibreSSL built with support for TLSv1.1. Server and client methods not available in Net-SSLeay-1.82 and before.
++B<COMPATIBILITY:> Requires OpenSSL >= 1.0.1 or LibreSSL built with support for TLSv1.1. Server and client methods not available in Net-SSLeay-1.82 and before. Not available in OpenSSL 4.0.0 and later. Use L</TLS_method> with L</CTX_set_min_proto_version> and L</CTX_set_max_proto_version> instead.
+ 
+ Returns SSL_METHOD structure corresponding to TLSv1_1 method, the return value can be later used as a param of L</CTX_new_with_method>.
+ 
+@@ -1599,7 +1599,7 @@ Check openssl doc L<https://www.openssl.org/docs/manmaster/man3/SSL_CTX_new.html
+ 
+ =item * TLSv1_2_method, TLSv1_2_server_method and TLSv1_2_client_method
+ 
+-B<COMPATIBILITY:> Requires OpenSSL >= 1.0.1 or LibreSSL built with support for TLSv1.2. Server and client methods not available in Net-SSLeay-1.82 and before.
++B<COMPATIBILITY:> Requires OpenSSL >= 1.0.1 or LibreSSL built with support for TLSv1.2. Server and client methods not available in Net-SSLeay-1.82 and before. Not available in OpenSSL 4.0.0 and later. Use L</TLS_method> with L</CTX_set_min_proto_version> and L</CTX_set_max_proto_version> instead.
+ 
+ Returns SSL_METHOD structure corresponding to TLSv1_2 method, the return value can be later used as a param of L</CTX_new_with_method>.
+ 
+@@ -2998,7 +2998,7 @@ Creates a new SSL_CTX object - based on SSLv3_method() - as framework to establi
+ 
+ =item * CTX_tlsv1_new
+ 
+-B<COMPATIBILITY:> Requires OpenSSL or LibreSSL built with support for TLSv1.
++B<COMPATIBILITY:> Requires OpenSSL or LibreSSL built with support for TLSv1. In OpenSSL 4.0.0 and later, this function is emulated using L</TLS_method> with L</CTX_set_min_proto_version> and L</CTX_set_max_proto_version> for backward compatibility. It is recommended to use L</CTX_new> with L</CTX_set_min_proto_version> and L</CTX_set_max_proto_version> instead.
+ 
+ Creates a new SSL_CTX object - based on C<TLSv1_method()> - as a framework for establishing connections using TLSv1.
+ 
+@@ -3008,7 +3008,7 @@ Creates a new SSL_CTX object - based on C<TLSv1_method()> - as a framework for e
+ 
+ =item * CTX_tlsv1_1_new
+ 
+-B<COMPATIBILITY:> Requires OpenSSL >= 1.0.1 or LibreSSL built with support for TLSv1.1.
++B<COMPATIBILITY:> Requires OpenSSL >= 1.0.1 or LibreSSL built with support for TLSv1.1. In OpenSSL 4.0.0 and later, this function is emulated using L</TLS_method> with L</CTX_set_min_proto_version> and L</CTX_set_max_proto_version> for backward compatibility. It is recommended to use L</CTX_new> with L</CTX_set_min_proto_version> and L</CTX_set_max_proto_version> instead.
+ 
+ Creates a new SSL_CTX object - based on C<TLSv1_1_method()> - as a framework for establishing connections using TLSv1.1.
+ 
+@@ -3018,7 +3018,7 @@ Creates a new SSL_CTX object - based on C<TLSv1_1_method()> - as a framework for
+ 
+ =item * CTX_tlsv1_2_new
+ 
+-B<COMPATIBILITY:> Requires OpenSSL >= 1.0.1 or LibreSSL built with support for TLSv1.2.
++B<COMPATIBILITY:> Requires OpenSSL >= 1.0.1 or LibreSSL built with support for TLSv1.2. In OpenSSL 4.0.0 and later, this function is emulated using L</TLS_method> with L</CTX_set_min_proto_version> and L</CTX_set_max_proto_version> for backward compatibility. It is recommended to use L</CTX_new> with L</CTX_set_min_proto_version> and L</CTX_set_max_proto_version> instead.
+ 
+ Creates a new SSL_CTX object - based on C<TLSv1_2_method()> - as a framework for establishing connections using TLSv1.2.
+ 
+@@ -3035,7 +3035,10 @@ Creates a new SSL_CTX object based on $meth method
+     #
+     # returns: value corresponding to openssl's SSL_CTX structure (0 on failure)
+ 
+-    # example
++    # example (recommended, available since OpenSSL 1.1.0)
++    my $ctx = Net::SSLeay::CTX_new_with_method(&Net::SSLeay::TLS_method);
++
++    # example (TLSv1_method not available in OpenSSL 4.0.0+)
+     my $ctx = Net::SSLeay::CTX_new_with_method(&Net::SSLeay::TLSv1_method);
+ 
+ Check openssl doc L<https://www.openssl.org/docs/manmaster/man3/SSL_CTX_new.html>
+-- 
+2.47.3
+

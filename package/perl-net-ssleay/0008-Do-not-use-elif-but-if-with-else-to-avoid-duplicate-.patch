@@ -1,0 +1,83 @@
+From 99281b981ebd1d1367d4e871290ca84cfb295339 Mon Sep 17 00:00:00 2001
+From: Heikki Vatiainen <hvn@radiatorsoftware.com>
+Date: Wed, 17 Jun 2026 11:02:50 +0300
+Subject: [PATCH] Do not use #elif but #if with #else to avoid duplicate
+ definitions in XS.
+
+Perl XS parser seems not to understand C preproceessor #elif. Using #if with
+
+ Warning: duplicate function definition 'CTX_tlsv1_new' detected in SSLeay.xs, line 2493
+ Warning: duplicate function definition 'CTX_tlsv1_1_new' detected in SSLeay.xs, line 2517
+ Warning: duplicate function definition 'CTX_tlsv1_2_new' detected in SSLeay.xs, line 2541
+
+This was seen with Perl 5.42.0 but more may not be the cae with more recent
+Perl versions.
+
+Upstream: https://github.com/radiator-software/p5-net-ssleay/pull/553/changes/99281b981ebd1d1367d4e871290ca84cfb295339
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ SSLeay.xs | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/SSLeay.xs b/SSLeay.xs
+index 2567d81..bf722a4 100644
+--- a/SSLeay.xs
++++ b/SSLeay.xs
+@@ -2487,7 +2487,8 @@ SSL_CTX_tlsv1_new()
+      OUTPUT:
+      RETVAL
+ 
+-#elif OPENSSL_VERSION_NUMBER >= 0x40000000L
++#else
++#if (OPENSSL_VERSION_NUMBER >= 0x40000000L)
+ 
+ SSL_CTX *
+ SSL_CTX_tlsv1_new()
+@@ -2501,6 +2502,7 @@ SSL_CTX_tlsv1_new()
+      RETVAL
+ 
+ #endif
++#endif
+ 
+ #if (OPENSSL_VERSION_NUMBER >= 0x10001001L && OPENSSL_VERSION_NUMBER < 0x40000000L && !defined(OPENSSL_NO_TLS1_1_METHOD)) /* OpenSSL 1.0.1-beta1 */
+ 
+@@ -2511,7 +2513,8 @@ SSL_CTX_tlsv1_1_new()
+      OUTPUT:
+      RETVAL
+ 
+-#elif OPENSSL_VERSION_NUMBER >= 0x40000000L
++#else
++#if (OPENSSL_VERSION_NUMBER >= 0x40000000L)
+ 
+ SSL_CTX *
+ SSL_CTX_tlsv1_1_new()
+@@ -2525,6 +2528,7 @@ SSL_CTX_tlsv1_1_new()
+      RETVAL
+ 
+ #endif
++#endif
+ 
+ #if (OPENSSL_VERSION_NUMBER >= 0x10001001L && OPENSSL_VERSION_NUMBER < 0x40000000L && !defined(OPENSSL_NO_TLS1_2_METHOD)) /* OpenSSL 1.0.1-beta1 */
+ 
+@@ -2535,7 +2539,8 @@ SSL_CTX_tlsv1_2_new()
+      OUTPUT:
+      RETVAL
+ 
+-#elif OPENSSL_VERSION_NUMBER >= 0x40000000L
++#else
++#if (OPENSSL_VERSION_NUMBER >= 0x40000000L)
+ 
+ SSL_CTX *
+ SSL_CTX_tlsv1_2_new()
+@@ -2549,6 +2554,7 @@ SSL_CTX_tlsv1_2_new()
+      RETVAL
+ 
+ #endif
++#endif
+ 
+ SSL_CTX *
+ SSL_CTX_new_with_method(meth)
+-- 
+2.47.3
+

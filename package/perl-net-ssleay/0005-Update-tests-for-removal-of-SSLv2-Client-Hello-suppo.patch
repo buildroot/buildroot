@@ -1,0 +1,66 @@
+From 1a5837fa489836f0dfc411d3a0c4d955ce8fab8c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Michal=20Josef=20=C5=A0pa=C4=8Dek?= <mspacek@redhat.com>
+Date: Tue, 14 Apr 2026 14:48:51 +0200
+Subject: [PATCH] Update tests for removal of SSLv2 Client Hello support in
+ OpenSSL 4.0.0
+
+Upstream: https://github.com/radiator-software/p5-net-ssleay/pull/553/changes/1a5837fa489836f0dfc411d3a0c4d955ce8fab8c
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ t/local/48_client_hello_callback.t | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/t/local/48_client_hello_callback.t b/t/local/48_client_hello_callback.t
+index d99122c..110d769 100644
+--- a/t/local/48_client_hello_callback.t
++++ b/t/local/48_client_hello_callback.t
+@@ -5,13 +5,15 @@ use Test::Net::SSLeay qw(
+     can_fork data_file_path initialise_libssl new_ctx tcp_socket
+ );
+ 
++my $has_sslv2_hello;
+ BEGIN {
+     if (not defined &Net::SSLeay::CTX_set_client_hello_cb) {
+         plan skip_all => "No SSL_CTX_set_client_hello_cb()";
+     } elsif (not can_fork()) {
+         plan skip_all => "fork() not supported on this system";
+     } else {
+-        plan tests => 41;
++        $has_sslv2_hello = Net::SSLeay::SSLeay() < 0x40000000;
++        plan tests => $has_sslv2_hello ? 41 : 30;
+     }
+ }
+ 
+@@ -172,7 +174,7 @@ my @cb_tests = (
+     # argument passed to the callback
+     # true if the callback function triggers croak()
+     # true if the client needs to test that ALPN alert (120) is received
+-    [ \&client_hello_cb_v2hello_detection, undef, 0 ],
++    ($has_sslv2_hello ? [ \&client_hello_cb_v2hello_detection, undef, 0 ] : ()),
+     [ \&client_hello_cb_getters, undef, 0 ],
+     [ \&client_hello_cb_value_passing, \$cb_test_arg, 0 ],
+     [ \&client_hello_cb_alert_alpn, undef, 0, 'alerts'],
+@@ -248,8 +250,8 @@ my @results;
+     };
+ 
+     # Start with SSLv2 ClientHello detection test. Send a canned SSLv2
+-    # ClientHello.
+-    {
++    # ClientHello. Removed in OpenSSL 4.0.0.
++    if ($has_sslv2_hello) {
+ 	my $s_clientv2 = $server->connect();
+ 	my $clientv2_hello = get_sslv2_hello();
+ 	syswrite($s_clientv2, $clientv2_hello, length $clientv2_hello);
+@@ -306,7 +308,7 @@ my @results;
+ waitpid $pid, 0;
+ push @results, [$? == 0, 'Client: server exited with 0'];
+ END {
+-  Test::More->builder->current_test(37);
++  Test::More->builder->current_test($has_sslv2_hello ? 37 : 27);
+   ok( $_->[0], $_->[1] ) for (@results);
+ }
+ 
+-- 
+2.47.3
+

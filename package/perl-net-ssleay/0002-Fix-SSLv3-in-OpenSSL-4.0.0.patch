@@ -1,0 +1,39 @@
+From 361b3adc1dd09f70be7bd8972992626a3240b58d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Michal=20Josef=20=C5=A0pa=C4=8Dek?= <mspacek@redhat.com>
+Date: Tue, 14 Apr 2026 12:37:39 +0200
+Subject: [PATCH] Fix SSLv3 in OpenSSL 4.0.0
+
+Support for SSLv3 was removed.
+
+Upstream: https://github.com/radiator-software/p5-net-ssleay/pull/553/changes/361b3adc1dd09f70be7bd8972992626a3240b58d
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ SSLeay.xs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/SSLeay.xs b/SSLeay.xs
+index 0ed7d96..5407fa1 100644
+--- a/SSLeay.xs
++++ b/SSLeay.xs
+@@ -2454,7 +2454,7 @@ SSL_CTX_v2_new()
+ 
+ #endif
+ #endif
+-#ifndef OPENSSL_NO_SSL3
++#if !defined(OPENSSL_NO_SSL3) && OPENSSL_VERSION_NUMBER < 0x40000000L
+ 
+ SSL_CTX *
+ SSL_CTX_v3_new()
+@@ -5600,7 +5600,7 @@ SSLv2_method()
+ #endif
+ #endif
+ 
+-#ifndef OPENSSL_NO_SSL3
++#if !defined(OPENSSL_NO_SSL3) && OPENSSL_VERSION_NUMBER < 0x40000000L
+ 
+ const SSL_METHOD *
+ SSLv3_method()
+-- 
+2.47.3
+
