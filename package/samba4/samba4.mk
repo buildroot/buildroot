@@ -199,8 +199,10 @@ define SAMBA4_INSTALL_INIT_SYSV
 endef
 
 ifeq ($(BR2_INIT_SYSTEMD),y)
-SAMBA4_CONF_OPTS += --systemd-install-services
+SAMBA4_CONF_OPTS += --systemd-install-services --with-systemd
 SAMBA4_DEPENDENCIES += systemd
+else
+SAMBA4_CONF_OPTS += --without-systemd
 endif
 
 define SAMBA4_INSTALL_INIT_SYSTEMD
