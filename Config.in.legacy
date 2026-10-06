@@ -227,6 +227,13 @@ config BR2_PACKAGE_WESTON_SHELL_FULLSCREEN
 	help
 	  Weston fullscreen shell option was removed in v16.0.0.
 
+config BR2_PACKAGE_LIBPLATFORM
+	bool "libplatform removed"
+	select BR2_LEGACY
+	help
+	  libplatform was no longer maintained upstream, so it has
+	  been dropped.
+
 comment "Legacy options removed in 2026.08"
 
 config BR2_PACKAGE_FLUIDSYNTH_SDL2
