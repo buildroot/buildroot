@@ -20,6 +20,7 @@ endif
 
 ifeq ($(BR2_PACKAGE_KMSXX_PYKMS),y)
 KMSXX_CONF_OPTS += -Dpykms=enabled
+KMSXX_DEPENDENCIES += python3 python-pybind
 else
 KMSXX_CONF_OPTS += -Dpykms=disabled
 endif
