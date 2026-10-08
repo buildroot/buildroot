@@ -4,25 +4,21 @@
 #
 ################################################################################
 
-ZLOG_VERSION = 1.2.18
+ZLOG_VERSION = 1.2.20
 ZLOG_SITE = $(call github,HardySimpson,zlog,$(ZLOG_VERSION))
 ZLOG_LICENSE = Apache-2.0
 ZLOG_LICENSE_FILES = LICENSE
 ZLOG_CPE_ID_VALID = YES
 ZLOG_INSTALL_STAGING = YES
 
-define ZLOG_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE1) \
-		CC="$(TARGET_CC) $(TARGET_CFLAGS) $(TARGET_LDFLAGS)" \
-		WARNINGS="" -C $(@D) all
-endef
+# CMakeLists.txt refuses an in source build, as it would overwrite the hand
+# written makefiles that are part of the source tree
+ZLOG_SUPPORTS_IN_SOURCE_BUILD = NO
 
-define ZLOG_INSTALL_STAGING_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) PREFIX=$(STAGING_DIR)/usr -C $(@D) install
-endef
+ZLOG_CONF_OPTS = -DZLOG_WERROR=OFF
 
-define ZLOG_INSTALL_TARGET_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) PREFIX=$(TARGET_DIR)/usr -C $(@D) install
-endef
+ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)
+ZLOG_CONF_OPTS += -DCMAKE_SHARED_LINKER_FLAGS=-latomic
+endif
 
-$(eval $(generic-package))
+$(eval $(cmake-package))
