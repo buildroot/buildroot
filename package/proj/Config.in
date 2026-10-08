@@ -4,6 +4,7 @@ config BR2_PACKAGE_PROJ
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_7 # C++11
 	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
 	depends on BR2_USE_WCHAR
+	select BR2_HOST_CMAKE_AT_LEAST_3_22
 	select BR2_PACKAGE_SQLITE
 	help
 	  proj.4 is a standard UNIX filter function which converts
