@@ -50,7 +50,7 @@ FIREWALLD_CONF_OPTS += \
 	--with-iptables-restore=/usr/sbin/iptables-restore \
 	--with-iptables=/usr/sbin/iptables
 else
-FIREWALLD_CONF_OPTS += -without-iptables
+FIREWALLD_CONF_OPTS += --without-iptables
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD),y)
