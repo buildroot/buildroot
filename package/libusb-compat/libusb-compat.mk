@@ -20,5 +20,19 @@ LIBUSB_COMPAT_CONF_ENV += \
 			   |sed -r -e '/\(SONAME\)/!d; s/.*\[(.+)\]$$/\1/'`
 endif
 
+ifeq ($(BR2_PACKAGE_LIBUSB_COMPAT_EXAMPLES),y)
+LIBUSB_COMPAT_CONF_OPTS += --enable-examples-build
+# Examples are not installed by upstream, and their names conflict
+# with other packages (e.g. lsusb, testlibusb), so install them in a
+# package-specific directory.
+define LIBUSB_COMPAT_INSTALL_TARGET_EXAMPLES
+	$(foreach example,lsusb testlibusb hotplug_monitor,
+		$(INSTALL) -D -m0755 $(@D)/examples/$(example) \
+			$(TARGET_DIR)/usr/libexec/libusb-compat/examples/$(example)
+	)
+endef
+LIBUSB_COMPAT_POST_INSTALL_TARGET_HOOKS += LIBUSB_COMPAT_INSTALL_TARGET_EXAMPLES
+endif
+
 $(eval $(autotools-package))
 $(eval $(host-autotools-package))

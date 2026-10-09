@@ -5,3 +5,14 @@ config BR2_PACKAGE_LIBUSB_COMPAT
 	  libusb-0.1 compatibility layer for libusb-1.0.
 
 	  http://libusb.info/
+
+if BR2_PACKAGE_LIBUSB_COMPAT
+
+config BR2_PACKAGE_LIBUSB_COMPAT_EXAMPLES
+	bool "build libusb-compat examples"
+	help
+	  Build and install the libusb-compat example programs (lsusb,
+	  testlibusb and hotplug_monitor) in
+	  /usr/libexec/libusb-compat/examples.
+
+endif
