@@ -1,0 +1,83 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Kamil Konieczny <kamil.konieczny@linux.intel.com>
+Date: Thu, 8 Oct 2026 13:14:35 +0200
+Subject: [PATCH] lib/igt_platform_filter: Fix musl build
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+When using musl C libs, stdout/stderr are read-only vars and
+compilation reports errors, for example:
+
+../lib/igt_platform_filter.c: In function ‘igt_platform_filter_dump_to_file’:
+../lib/igt_platform_filter.c:551:16: error: assignment of read-only variable ‘stdout’
+  551 |         stdout = f;
+
+Also man stdout points out:
+Since the symbols stdin, stdout, and stderr are specified to be
+macros, assigning to them is nonportable.
+
+As this function do not have any user, just remove it.
+
+Cc: Vitaly Prosyak <vitaly.prosyak@amd.com>
+Cc: Jesse Zhang <jesse.zhang@amd.com>
+Reported-by: Bernd Kuhls <bernd@kuhls.net>
+Closes: https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/work_items/211
+Signed-off-by: Kamil Konieczny <kamil.konieczny@linux.intel.com>
+Reviewed-by: Vitaly Prosyak <vitaly.prosyak@amd.com>
+Reviewed-by: Andrzej Hajda <andrzej.hajda@intel.com>
+
+Upstream: https://patchwork.freedesktop.org/patch/758622/?series=175702&rev=2
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ lib/igt_platform_filter.c | 33 ---------------------------------
+ 1 file changed, 33 deletions(-)
+
+diff --git a/lib/igt_platform_filter.c b/lib/igt_platform_filter.c
+index 15b4e9690..9ccc0eadc 100644
+--- a/lib/igt_platform_filter.c
++++ b/lib/igt_platform_filter.c
+@@ -527,39 +527,6 @@ void igt_platform_filter_dump(void)
+ 	igt_info("═══════════════════════════════════════════════════════════════════\n\n");
+ }
+ 
+-/**
+- * igt_platform_filter_dump_to_file:
+- * @filename: Path to output file
+- *
+- * Dump platform filtering configuration to a file.
+- *
+- * Returns: 0 on success, -1 on error
+- */
+-int igt_platform_filter_dump_to_file(const char *filename)
+-{
+-	FILE *old_stdout;
+-	FILE *f;
+-
+-	f = fopen(filename, "w");
+-	if (!f) {
+-		igt_warn("Failed to open %s for writing\n", filename);
+-		return -1;
+-	}
+-
+-	/* Redirect stdout to file */
+-	old_stdout = stdout;
+-	stdout = f;
+-
+-	igt_platform_filter_dump();
+-
+-	/* Restore stdout */
+-	stdout = old_stdout;
+-	fclose(f);
+-
+-	igt_info("Platform filter configuration dumped to: %s\n", filename);
+-	return 0;
+-}
+-
+ /**
+  * igt_platform_filter_is_initialized:
+  *
+-- 
+2.47.3
+
