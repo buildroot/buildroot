@@ -21,6 +21,12 @@ if BR2_LINUX_KERNEL
 config BR2_LINUX_NEEDS_MODULES
 	bool
 
+config BR2_LINUX_KERNEL_LATEST_SERIES
+	# Helper symbol to indicate if one of the "latest" kernel
+	# (either the very latest one or from a longterm supported series)
+	# has been selected
+	bool
+
 #
 # Version selection. We provide the choice between:
 #
@@ -35,12 +41,44 @@ choice
 config BR2_LINUX_KERNEL_LATEST_VERSION
 	bool "Latest version (7.2)"
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_7_2 if BR2_KERNEL_HEADERS_AS_KERNEL
+	select BR2_LINUX_KERNEL_LATEST_SERIES
+
+config BR2_LINUX_KERNEL_LATEST_6_18
+	bool "Long term 6.18"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_18 if BR2_KERNEL_HEADERS_AS_KERNEL
+	select BR2_LINUX_KERNEL_LATEST_SERIES
+
+config BR2_LINUX_KERNEL_LATEST_6_12
+	bool "Long term 6.12"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_12 if BR2_KERNEL_HEADERS_AS_KERNEL
+	select BR2_LINUX_KERNEL_LATEST_SERIES
+
+config BR2_LINUX_KERNEL_LATEST_6_6
+	bool "Long term 6.6"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_12 if BR2_KERNEL_HEADERS_AS_KERNEL
+	select BR2_LINUX_KERNEL_LATEST_SERIES
+
+config BR2_LINUX_KERNEL_LATEST_6_1
+	bool "Long term 6.1"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_1 if BR2_KERNEL_HEADERS_AS_KERNEL
+	select BR2_LINUX_KERNEL_LATEST_SERIES
+
+config BR2_LINUX_KERNEL_LATEST_5_15
+	bool "Long term 5.15"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_15 if BR2_KERNEL_HEADERS_AS_KERNEL
+	select BR2_LINUX_KERNEL_LATEST_SERIES
+
+config BR2_LINUX_KERNEL_LATEST_5_10
+	bool "Long term 5.10"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10 if BR2_KERNEL_HEADERS_AS_KERNEL
+	select BR2_LINUX_KERNEL_LATEST_SERIES
 
 config BR2_LINUX_KERNEL_LATEST_CIP_VERSION
 	bool "Latest CIP SLTS version (5.10.254-cip72)"
 	# Support was introduced in Linux 5.19
 	depends on !BR2_loongarch64
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10 if BR2_KERNEL_HEADERS_AS_KERNEL
+	select BR2_LINUX_KERNEL_LATEST_SERIES
 	help
 	  CIP launched in the spring of 2016 to address the needs of
 	  organizations in industries such as power generation and
@@ -63,6 +101,7 @@ config BR2_LINUX_KERNEL_LATEST_CIP_RT_VERSION
 	# Support was introduced in Linux 5.19
 	depends on !BR2_loongarch64
 	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10 if BR2_KERNEL_HEADERS_AS_KERNEL
+	select BR2_LINUX_KERNEL_LATEST_SERIES
 	help
 	  Same as the CIP version, but this is the PREEMPT_RT realtime
 	  variant.
@@ -144,6 +183,12 @@ config BR2_LINUX_KERNEL_CUSTOM_REPO_GIT_SUBMODULES
 config BR2_LINUX_KERNEL_VERSION
 	string
 	default "7.2.9" if BR2_LINUX_KERNEL_LATEST_VERSION
+	default "6.18.55" if BR2_LINUX_KERNEL_LATEST_6_18
+	default "6.12.112" if BR2_LINUX_KERNEL_LATEST_6_12
+	default "6.6.158" if BR2_LINUX_KERNEL_LATEST_6_6
+	default "6.1.189" if BR2_LINUX_KERNEL_LATEST_6_1
+	default "5.15.222" if BR2_LINUX_KERNEL_LATEST_5_15
+	default "5.10.271" if BR2_LINUX_KERNEL_LATEST_5_10
 	default "5.10.254-cip72" if BR2_LINUX_KERNEL_LATEST_CIP_VERSION
 	default "5.10.254-cip72-rt32" if BR2_LINUX_KERNEL_LATEST_CIP_RT_VERSION
 	default BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE \
@@ -189,9 +234,7 @@ config BR2_LINUX_KERNEL_USE_ARCH_DEFAULT_CONFIG
 	# requires host-openssl, so select it for the latest kernel
 	# version and the latest CIP version.
 	# This is mainly needed to fix autobuilder testing.
-	select BR2_LINUX_KERNEL_NEEDS_HOST_OPENSSL if \
-	       BR2_LINUX_KERNEL_LATEST_VERSION || \
-	       BR2_LINUX_KERNEL_LATEST_CIP_VERSION
+	select BR2_LINUX_KERNEL_NEEDS_HOST_OPENSSL if BR2_LINUX_KERNEL_LATEST_SERIES
 	help
 	  This option will use the default configuration for the
 	  selected architecture. I.e, it is equivalent to running
