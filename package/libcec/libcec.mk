@@ -30,4 +30,9 @@ LIBCEC_CONF_OPTS += -DHAVE_GIT_BIN="" \
 	-DHAVE_HOSTNAME_BIN="" \
 	-DHAVE_UNAME_BIN=""
 
+# uses linux/cec.h, which was added in 4.10
+ifeq ($(BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_10),y)
+LIBCEC_CONF_OPTS += -DHAVE_LINUX_API=ON
+endif
+
 $(eval $(cmake-package))
