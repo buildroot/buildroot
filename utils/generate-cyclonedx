@@ -529,9 +529,9 @@ def br2_root_deps(show_info_dict, virtual=False) -> list:
 
 def main():
     parser = argparse.ArgumentParser(
-        description='''Create a CycloneDX SBoM for the Buildroot configuration.
-            Example usage: make show-info | utils/generate-cyclonedx > sbom.json
-        ''',
+        description="Create a CycloneDX SBoM for the Buildroot configuration.",
+        usage="make show-info | utils/%(prog)s > sbom.json",
+        epilog="For more information see https://buildroot.org/downloads/manual/manual.html#_generating_cyclonedx_sbom",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     parser.add_argument("-i", "--in-file", nargs="?", type=argparse.FileType("r"),
