@@ -529,23 +529,24 @@ def br2_root_deps(show_info_dict, virtual=False) -> list:
 
 def main():
     parser = argparse.ArgumentParser(
-            description='''Create a CycloneDX SBoM for the Buildroot configuration.
-                Example usage: make show-info | utils/generate-cyclonedx > sbom.json
-            '''
-        )
+        description='''Create a CycloneDX SBoM for the Buildroot configuration.
+            Example usage: make show-info | utils/generate-cyclonedx > sbom.json
+        ''',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
     parser.add_argument("-i", "--in-file", nargs="?", type=argparse.FileType("r"),
                         default=(None if sys.stdin.isatty() else sys.stdin))
     parser.add_argument("-o", "--out-file", nargs="?", type=argparse.FileType("w"),
                         default=sys.stdout)
-    parser.add_argument("--virtual", default=False, action='store_true',
+    parser.add_argument("--virtual", action='store_true',
                         help="This option includes virtual packages to the CycloneDX output")
     parser.add_argument("--project-name", type=str, default="buildroot",
-                        help="Specify the project name to use in the SBOM metadata (default:'buildroot')")
+                        help="Specify the project name to use in the SBOM metadata")
     parser.add_argument("--project-version", type=str, default=f"{BR2_VERSION_FULL}",
-                        help="Specify the project version to use in the SBOM metadata (default: builroot version)")
+                        help="Specify the project version to use in the SBOM metadata")
     parser.add_argument("--cdx-version", type=str, default=DEFAULT_CYCLONEDX_VERSION,
                         choices=["1.6", "1.6.1", "1.6.2", "1.7", "1.7.1"],
-                        help=f"Set CycloneDX version (default: {DEFAULT_CYCLONEDX_VERSION})")
+                        help="Set CycloneDX version")
 
     args = parser.parse_args()
 
