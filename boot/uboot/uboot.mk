@@ -34,7 +34,7 @@ UBOOT_SITE = $(call qstrip,$(BR2_TARGET_UBOOT_CUSTOM_REPO_URL))
 UBOOT_SITE_METHOD = svn
 else
 # Handle stable official U-Boot versions
-UBOOT_SITE = https://ftp.denx.de/pub/u-boot
+UBOOT_SITE = https://git.u-boot-project.org/u-boot/u-boot/-/releases/v$(UBOOT_VERSION)/downloads
 UBOOT_SOURCE = u-boot-$(UBOOT_VERSION).tar.bz2
 endif
 
