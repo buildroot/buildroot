@@ -1,0 +1,43 @@
+From 2e902dccb925f1f185836bbad2284e2879550cb3 Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Sun, 11 Oct 2026 16:25:53 +0200
+Subject: [PATCH] Revert "linuxthreads: add dummy for pthread_atfork"
+
+This reverts commit 9e38e0aa45cca21d5023d0af94377f0e1e41d2f4.
+
+As reported on the uClibc-ng mailinglist by Thomas Petazzoni
+this dummy without proper prototype is breaking util-linux
+compilation. My usecase in 2017 was curl+libressl. Since then
+I moved from libressl to libopenssl and that works fine without
+pthread_atfork(). Tested with curl in Qemu for RISCV64 noMMU flat.
+
+Upstream: https://gogs.waldemar-brodkorb.de/oss/uclibc-ng/commit/2e902dccb925f1f185836bbad2284e2879550cb3
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+---
+ libpthread/linuxthreads/ptfork.c | 12 ------------
+ 1 file changed, 12 deletions(-)
+
+diff --git a/libpthread/linuxthreads/ptfork.c b/libpthread/linuxthreads/ptfork.c
+index a1bad3d54..74d630830 100644
+--- a/libpthread/linuxthreads/ptfork.c
++++ b/libpthread/linuxthreads/ptfork.c
+@@ -150,16 +150,4 @@ static pid_t __fork(void)
+ strong_alias(__fork,fork)
+ strong_alias(__fork,vfork)
+ 
+-#else
+-
+-/* We can't support pthread_atfork without MMU, since we don't have
+-   fork(), and we can't offer the correct semantics for vfork().
+-   But instead of failing, just provide a dummy */
+-int pthread_atfork(void (*prepare)(void),
+-                  void (*parent)(void),
+-                  void (*child)(void))
+-{
+-  return 0;
+-}
+-
+ #endif
+-- 
+2.47.3
+
