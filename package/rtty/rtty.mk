@@ -4,15 +4,11 @@
 #
 ################################################################################
 
-RTTY_VERSION = 9.0.4
+RTTY_VERSION = 9.2.1
 RTTY_SITE = https://github.com/zhaojh329/rtty/releases/download/v$(RTTY_VERSION)
 RTTY_LICENSE = MIT
 RTTY_LICENSE_FILES = LICENSE
-RTTY_DEPENDENCIES = libev
-
-ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
-RTTY_DEPENDENCIES += libxcrypt
-endif
+RTTY_DEPENDENCIES = host-pkgconf inih libev
 
 ifeq ($(BR2_PACKAGE_MBEDTLS),y)
 RTTY_DEPENDENCIES += mbedtls
@@ -22,7 +18,7 @@ RTTY_CONF_OPTS += \
 	-DUSE_OPENSSL=OFF \
 	-DUSE_WOLFSSL=OFF
 else ifeq ($(BR2_PACKAGE_OPENSSL),y)
-RTTY_DEPENDENCIES += host-pkgconf openssl
+RTTY_DEPENDENCIES += openssl
 RTTY_CONF_OPTS += \
 	-DSSL_SUPPORT=ON \
 	-DUSE_MBEDTLS=OFF \
