@@ -8,7 +8,7 @@ Python's find_library(). find_library() fails on systems
 without library cache mechanism.
 
 Taken from pyudev issue 117 discussion:
-https://github.com/pyudev/pyudev/pull/117
+Upstream: https://github.com/pyudev/pyudev/pull/117
 
 Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
 [Marcin: adjust to 0.22.0]
@@ -17,6 +17,8 @@ Signed-off-by: Marcin Niestroj <m.niestroj@grinn-global.com>
 Signed-off-by: Fabrice Fontaine <fontaine.fabrice@gmail.com>
 [Bernd: rebased for version 0.24.4]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[James: rebased for version 0.24.5]
+Signed-off-by: James Hilliard <james.hilliard1@gmail.com>
 ---
  src/pyudev/_ctypeslib/utils.py | 8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
@@ -25,10 +27,10 @@ diff --git a/src/pyudev/_ctypeslib/utils.py b/src/pyudev/_ctypeslib/utils.py
 index 9dffb3c..aa9942f 100644
 --- a/src/pyudev/_ctypeslib/utils.py
 +++ b/src/pyudev/_ctypeslib/utils.py
-@@ -24,7 +24,7 @@
+@@ -23,7 +23,7 @@
+ .. moduleauthor::  Anne Mulhern  <amulhern@redhat.com>
  """
  
- # isort: STDLIB
 -from ctypes import CDLL
 +from ctypes import cdll, CDLL
  from ctypes.util import find_library
@@ -50,4 +52,3 @@ index 9dffb3c..aa9942f 100644
          function = getattr(lib, funcname, None)
 -- 
 2.29.1
-
