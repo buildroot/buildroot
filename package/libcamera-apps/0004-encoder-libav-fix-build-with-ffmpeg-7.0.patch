@@ -1,0 +1,37 @@
+From 1a4860f36cffe167965351b7a59be46d7a7ae5ec Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sat, 10 Oct 2026 23:58:02 +0200
+Subject: [PATCH] encoder: libav: fix build with ffmpeg 7.0
+
+Adjust the version check according to ffmpeg docs:
+
+https://code.ffmpeg.org/FFmpeg/FFmpeg/src/tag/n9.0.2/doc/APIchanges#L446
+"2024-09-08 - 3305767560a - lavc 61.13.100 - avcodec.h
+  Add avcodec_get_supported_config() and enum AVCodecConfig; deprecate
+  AVCodec.pix_fmts, AVCodec.sample_fmts, AVCodec.supported_framerates,
+  AVCodec.supported_samplerates and AVCodec.ch_layouts."
+
+Upstream: not applicable, support for older ffmpeg versions was removed:
+https://github.com/raspberrypi/rpicam-apps/commit/cbe9921eeddd8e1c2e5798102f485baea5de3f65
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ encoder/libav_encoder.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/encoder/libav_encoder.cpp b/encoder/libav_encoder.cpp
+index 31f5e55..8e24e7d 100644
+--- a/encoder/libav_encoder.cpp
++++ b/encoder/libav_encoder.cpp
+@@ -321,7 +321,7 @@ void LibAvEncoder::initAudioOutCodec(VideoOptions const *options, StreamInfo con
+ 
+ 	codec_ctx_[AudioOut]->sample_rate = options->Get().audio_samplerate ? options->Get().audio_samplerate
+ 																  : stream_[AudioIn]->codecpar->sample_rate;
+-#if LIBAVCODEC_VERSION_MAJOR < 61
++#if (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(61, 13, 100))
+ 	codec_ctx_[AudioOut]->sample_fmt = codec->sample_fmts[0];
+ #else
+ 	const enum AVSampleFormat *sample_fmts = nullptr;
+-- 
+2.47.3
+

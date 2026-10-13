@@ -1,0 +1,48 @@
+From d67bc17a420b6c3519d4cfa24b4b4e5c7293165b Mon Sep 17 00:00:00 2001
+From: Naushir Patuck <naush@raspberrypi.com>
+Date: Wed, 8 Oct 2025 10:51:46 +0100
+Subject: [PATCH] encoder: libav: Updates for ffmpeg v7.1
+
+Fix some API breakages change for ffmpeg v7.1 packaged with Trixie.
+
+Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
+
+Upstream: https://github.com/raspberrypi/rpicam-apps/commit/d67bc17a420b6c3519d4cfa24b4b4e5c7293165b
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ encoder/libav_encoder.cpp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/encoder/libav_encoder.cpp b/encoder/libav_encoder.cpp
+index 10c00e0..ba8b9fe 100644
+--- a/encoder/libav_encoder.cpp
++++ b/encoder/libav_encoder.cpp
+@@ -337,13 +337,13 @@ void LibAvEncoder::initAudioOutCodec(VideoOptions const *options, StreamInfo con
+ #if LIBAVCODEC_VERSION_MAJOR < 61
+ 	codec_ctx_[AudioOut]->sample_fmt = codec->sample_fmts[0];
+ #else
+-	enum AVSampleFormat **sample_fmts = nullptr;
++	const enum AVSampleFormat *sample_fmts = nullptr;
+ 	avcodec_get_supported_config(codec_ctx_[AudioOut], codec, AV_CODEC_CONFIG_SAMPLE_FORMAT, 0,
+ 								 (const void **)&sample_fmts, nullptr);
+ 	if (!sample_fmts)
+ 		throw std::runtime_error("libav: no supported sample formats for audio codec");
+ 	else
+-		codec_ctx_[AudioOut]->sample_fmt = (*sample_fmts)[0];
++		codec_ctx_[AudioOut]->sample_fmt = sample_fmts[0];
+ #endif
+ 
+ 	codec_ctx_[AudioOut]->bit_rate = options->Get().audio_bitrate.bps();
+@@ -652,7 +652,7 @@ void LibAvEncoder::audioThread()
+ 	uint32_t out_channels = codec_ctx_[AudioOut]->ch_layout.nb_channels;
+ #endif
+ 
+-	SwrContext *conv;
++	SwrContext *conv = nullptr;
+ 	AVAudioFifo *fifo;
+ 
+ #if LIBAVUTIL_VERSION_MAJOR < 57
+-- 
+2.47.3
+
