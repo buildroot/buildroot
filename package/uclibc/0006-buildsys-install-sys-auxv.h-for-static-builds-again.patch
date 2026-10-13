@@ -1,0 +1,57 @@
+From 6dc9f06a0330f11171f76f4b831724c02642f11f Mon Sep 17 00:00:00 2001
+From: ramin <lordrasmus@gmail.com>
+Date: Mon, 12 Oct 2026 16:30:56 +0200
+Subject: [PATCH] buildsys: install sys/auxv.h for static builds again
+
+getauxval() has not needed ld.so since 227b7c825 and 737a0edf4 ("Make
+getauxval work with static linking", "Support non-cached entries in
+getauxval", v1.0.52): _dl_auxvt and _dl_auxv_start are defined in
+libc/misc/elf/dl-support.c for the static libc, and __uClibc_main calls
+_dl_aux_init() on that path too.  The static libc.a carries getauxval,
+__getauxval, _dl_aux_init, _dl_auxvt and _dl_auxv_start.
+
+Its header is still withheld, though.  df81bd1e2 ("getauxval: remove
+header for static builds") put sys/auxv.h next to dlfcn.h in the
+HEADERS_RM line that applies when HAVE_SHARED is unset, as a way around
+the link error of the day -- a package that probed for getauxval would
+not find a declaration and would take its fallback path.  That error is
+gone and the workaround outlived it: a static sysroot installs 70 of the
+71 headers in include/sys, and the one missing is auxv.h.
+
+So a static configuration of, say, openssl fails with "sys/auxv.h: No
+such file or directory", which reads like a missing feature rather than
+a withheld declaration.
+
+Measured on riscv64 with a static configuration and gcc 10.5.0: with the
+header installed, a
+statically linked program answers AT_PAGESZ as 4096, matching
+sysconf(_SC_PAGESIZE), returns every entry of /proc/self/auxv unchanged,
+and reports ENOENT for a type that was not passed -- both for a type
+inside the cached range and for one above it, which takes the search
+over the whole vector.
+
+dlfcn.h and bits/dlfcn.h stay removed.
+
+Upstream: https://gogs.waldemar-brodkorb.de/oss/uclibc-ng/commit/6dc9f06a0330f11171f76f4b831724c02642f11f
+Signed-off-by: Ramin Moussavi <lordrasmus@gmail.com>
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+---
+ Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 3b28fbf60..72865863d 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -257,7 +257,7 @@ HEADERS_RM- := \
+ ifeq ($(UCLIBC_STRICT_HEADERS),y)
+ HEADERS_RM- += sgtty.h
+ endif
+-HEADERS_RM-$(HAVE_SHARED)                    += dlfcn.h bits/dlfcn.h sys/auxv.h
++HEADERS_RM-$(HAVE_SHARED)                    += dlfcn.h bits/dlfcn.h
+ HEADERS_RM-$(PTHREADS_DEBUG_SUPPORT)         += thread_db.h
+ HEADERS_RM-$(UCLIBC_HAS_ARGP)                += argp.h
+ HEADERS_RM-$(UCLIBC_HAS_BSD_ERR)             += err.h
+-- 
+2.47.3
+
