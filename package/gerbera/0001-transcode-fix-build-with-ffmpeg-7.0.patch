@@ -1,0 +1,60 @@
+From 56bb6e877794c1209e1930e851b8b8642b4b26ba Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sat, 10 Oct 2026 23:37:15 +0200
+Subject: [PATCH] transcode: fix build with ffmpeg 7.0
+
+Fixes build error with ffmpeg 7.0.3:
+
+src/transcoding/transcode_int_util.cc: In member function
+ 'int StreamContext::createEncoder(AVStream*, AVFormatContext*)':
+src/transcoding/transcode_int_util.cc:608:17: error:
+ 'AV_CODEC_CONFIG_PIX_FORMAT' was not declared in this scope
+src/transcoding/transcode_int_util.cc:607:19: error:
+ 'avcodec_get_supported_config' was not declared in this scope;
+ did you mean 'avcodec_get_hw_config'?
+src/transcoding/transcode_int_util.cc:638:17: error:
+ 'AV_CODEC_CONFIG_SAMPLE_FORMAT' was not declared in this scope
+src/transcoding/transcode_int_util.cc:637:19: error:
+ 'avcodec_get_supported_config' was not declared in this scope;
+ did you mean 'avcodec_get_hw_config'?
+
+Adjust the version check according to ffmpeg docs:
+
+https://code.ffmpeg.org/FFmpeg/FFmpeg/src/tag/n9.0.2/doc/APIchanges#L446
+"2024-09-08 - 3305767560a - lavc 61.13.100 - avcodec.h
+  Add avcodec_get_supported_config() and enum AVCodecConfig; deprecate
+  AVCodec.pix_fmts, AVCodec.sample_fmts, AVCodec.supported_framerates,
+  AVCodec.supported_samplerates and AVCodec.ch_layouts."
+
+Upstream: https://github.com/gerbera/gerbera/commit/73fa1638958fae7db0579b694983164b10946b8d
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/transcoding/transcode_int_util.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/transcoding/transcode_int_util.cc b/src/transcoding/transcode_int_util.cc
+index 014942ab9..89964615c 100644
+--- a/src/transcoding/transcode_int_util.cc
++++ b/src/transcoding/transcode_int_util.cc
+@@ -619,7 +619,7 @@ int StreamContext::createEncoder(
+             enc_ctx->sample_aspect_ratio = settings.aspectRatio;
+ 
+             // Set first supported pixel format
+-#if (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(61, 0, 0))
++#if (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(61, 13, 100))
+             /* take first format from list of supported formats */
+             if (encoder->pix_fmts)
+                 enc_ctx->pix_fmt = encoder->pix_fmts[0];
+@@ -652,7 +652,7 @@ int StreamContext::createEncoder(
+ #endif
+ 
+             // Set first supported sample format
+-#if (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(61, 0, 0))
++#if (LIBAVCODEC_VERSION_INT < AV_VERSION_INT(61, 13, 100))
+             if (encoder->sample_fmts)
+                 enc_ctx->sample_fmt = encoder->sample_fmts[0];
+ #else
+-- 
+2.47.3
+
