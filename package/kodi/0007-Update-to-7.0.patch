@@ -1,0 +1,338 @@
+From fd9fdfd70e4b9e4783de1b6ca11f1925217af559 Mon Sep 17 00:00:00 2001
+From: Stephan Sundermann <stephansundermann@gmail.com>
+Date: Thu, 11 Apr 2024 17:11:32 +0200
+Subject: [PATCH] Update to 7.0
+
+Upstream: https://github.com/xbmc/xbmc/pull/24972#event-12966390666
+
+Patch was cherry-picked from upstream tree:
+https://github.com/xbmc/xbmc/commits/0e935f9edb30fd905f14230af653930b5fe139e8/
+
+[Bernd: removed fixes in xbmc/cdrip/, they are incompatible with ffmpeg
+        6.1, they will be re-added with the bump of ffmpeg to 7.0]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ cmake/modules/FindFFMPEG.cmake                |  16 +--
+ tools/buildsteps/windows/ffmpeg_options.txt   |   1 -
+ tools/depends/target/ffmpeg/CMakeLists.txt    |   6 +-
+ tools/depends/target/ffmpeg/FFMPEG-VERSION    |   4 +-
+ .../ActiveAE/ActiveAEResampleFFMPEG.cpp       | 110 +++++++++---------
+ .../DVDDemuxers/DVDDemuxFFmpeg.cpp            |  71 +----------
+ 6 files changed, 67 insertions(+), 141 deletions(-)
+
+diff --git a/cmake/modules/FindFFMPEG.cmake b/cmake/modules/FindFFMPEG.cmake
+index 6c6bf973de..6bd05e9f3d 100644
+--- a/cmake/modules/FindFFMPEG.cmake
++++ b/cmake/modules/FindFFMPEG.cmake
+@@ -163,14 +163,14 @@ if(WITH_FFMPEG)
+   set(REQUIRED_FFMPEG_VERSION undef)
+ else()
+   # required ffmpeg library versions
+-  set(REQUIRED_FFMPEG_VERSION 6.0.0)
+-  set(_avcodec_ver ">=60.2.100")
+-  set(_avfilter_ver ">=9.3.100")
+-  set(_avformat_ver ">=60.3.100")
+-  set(_avutil_ver ">=58.2.100")
+-  set(_postproc_ver ">=57.1.100")
+-  set(_swresample_ver ">=4.10.100")
+-  set(_swscale_ver ">=7.1.100")
++  set(REQUIRED_FFMPEG_VERSION 7.0.0)
++  set(_avcodec_ver ">=61.3.100")
++  set(_avfilter_ver ">=10.1.100")
++  set(_avformat_ver ">=61.1.100")
++  set(_avutil_ver ">=59.8.100")
++  set(_postproc_ver ">=58.1.100")
++  set(_swresample_ver ">=5.1.100")
++  set(_swscale_ver ">=8.1.100")
+ endif()
+ 
+ # Allows building with external ffmpeg not found in system paths,
+diff --git a/tools/buildsteps/windows/ffmpeg_options.txt b/tools/buildsteps/windows/ffmpeg_options.txt
+index 5034ff26c4..776c0b4b35 100644
+--- a/tools/buildsteps/windows/ffmpeg_options.txt
++++ b/tools/buildsteps/windows/ffmpeg_options.txt
+@@ -1,5 +1,4 @@
+ --disable-avdevice
+---disable-crystalhd
+ --disable-cuda
+ --disable-cuvid
+ --disable-devices
+diff --git a/tools/depends/target/ffmpeg/CMakeLists.txt b/tools/depends/target/ffmpeg/CMakeLists.txt
+index 0bbc23540a..86d7db1bba 100644
+--- a/tools/depends/target/ffmpeg/CMakeLists.txt
++++ b/tools/depends/target/ffmpeg/CMakeLists.txt
+@@ -92,14 +92,12 @@ elseif(CORE_SYSTEM_NAME STREQUAL android)
+     list(APPEND ffmpeg_conf --extra-cflags=-mno-stackrealign)
+   endif()
+ elseif(CORE_SYSTEM_NAME STREQUAL darwin_embedded)
+-  list(APPEND ffmpeg_conf --disable-crystalhd
+-                          --enable-videotoolbox
++  list(APPEND ffmpeg_conf --enable-videotoolbox
+                           --disable-filter=yadif_videotoolbox
+                           --target-os=darwin
+               )
+ elseif(CORE_SYSTEM_NAME STREQUAL osx)
+-  list(APPEND ffmpeg_conf --disable-crystalhd
+-                          --enable-videotoolbox
++  list(APPEND ffmpeg_conf --enable-videotoolbox
+                           --target-os=darwin
+                           --disable-securetransport
+               )
+diff --git a/tools/depends/target/ffmpeg/FFMPEG-VERSION b/tools/depends/target/ffmpeg/FFMPEG-VERSION
+index f2ba09402e..60b8887de3 100644
+--- a/tools/depends/target/ffmpeg/FFMPEG-VERSION
++++ b/tools/depends/target/ffmpeg/FFMPEG-VERSION
+@@ -1,5 +1,5 @@
+ LIBNAME=ffmpeg
+-VERSION=6.0.1
++VERSION=7.0.1
+ ARCHIVE=$(LIBNAME)-$(VERSION).tar.gz
+-SHA512=945e34840092dc0fd3824eb1af2be79868af2afb4fe13159b19a9bcfc464cc4d53243c13ff065199290e9393ddbf4b1c5c8abccf83a31a31d6c7490e499fd1fc
++SHA512=43b639b0bc0597e95dea2dce3e925f4b71ca8c4d9eadaef614941053e287f2d5c2e78d95413f0f7142da0f6ea1dbf443457e4fa1c2296cd8cf4081c185ed9c04
+ 
+diff --git a/xbmc/cores/AudioEngine/Engines/ActiveAE/ActiveAEResampleFFMPEG.cpp b/xbmc/cores/AudioEngine/Engines/ActiveAE/ActiveAEResampleFFMPEG.cpp
+index e897cbd3ea..6fce0af981 100644
+--- a/xbmc/cores/AudioEngine/Engines/ActiveAE/ActiveAEResampleFFMPEG.cpp
++++ b/xbmc/cores/AudioEngine/Engines/ActiveAE/ActiveAEResampleFFMPEG.cpp
+@@ -66,51 +66,7 @@ bool CActiveAEResampleFFMPEG::Init(SampleConfig dstConfig, SampleConfig srcConfi
+   AVChannelLayout dstChLayout = {};
+   AVChannelLayout srcChLayout = {};
+ 
+-  av_channel_layout_from_mask(&dstChLayout, m_dst_chan_layout);
+-  av_channel_layout_from_mask(&srcChLayout, m_src_chan_layout);
+-
+-  int ret = swr_alloc_set_opts2(&m_pContext, &dstChLayout, m_dst_fmt, m_dst_rate, &srcChLayout,
+-                                m_src_fmt, m_src_rate, 0, NULL);
+-
+-  if (ret)
+-  {
+-    CLog::Log(LOGERROR, "CActiveAEResampleFFMPEG::Init - create context failed");
+-    return false;
+-  }
+-
+-  if(quality == AE_QUALITY_HIGH)
+-  {
+-    av_opt_set_double(m_pContext, "cutoff", 1.0, 0);
+-    av_opt_set_int(m_pContext,"filter_size", 256, 0);
+-  }
+-  else if(quality == AE_QUALITY_MID)
+-  {
+-    // 0.97 is default cutoff so use (1.0 - 0.97) / 2.0 + 0.97
+-    av_opt_set_double(m_pContext, "cutoff", 0.985, 0);
+-    av_opt_set_int(m_pContext,"filter_size", 64, 0);
+-  }
+-  else if(quality == AE_QUALITY_LOW)
+-  {
+-    av_opt_set_double(m_pContext, "cutoff", 0.97, 0);
+-    av_opt_set_int(m_pContext,"filter_size", 32, 0);
+-  }
+-
+-  if (m_dst_fmt == AV_SAMPLE_FMT_S32 || m_dst_fmt == AV_SAMPLE_FMT_S32P)
+-  {
+-    av_opt_set_int(m_pContext, "output_sample_bits", m_dst_bits, 0);
+-  }
+-
+-  // tell resampler to clamp float values
+-  // not required for sink stage (remapLayout == true)
+-  if ((m_dst_fmt == AV_SAMPLE_FMT_FLT || m_dst_fmt == AV_SAMPLE_FMT_FLTP) &&
+-      (m_src_fmt == AV_SAMPLE_FMT_FLT || m_src_fmt == AV_SAMPLE_FMT_FLTP) &&
+-      !remapLayout && normalize)
+-  {
+-     av_opt_set_double(m_pContext, "rematrix_maxval", 1.0, 0);
+-  }
+-
+-  av_opt_set_double(m_pContext, "center_mix_level", centerMix, 0);
+-
++  bool hasMatrix = false;
+   if (remapLayout)
+   {
+     // one-to-one mapping of channels
+@@ -120,28 +76,19 @@ bool CActiveAEResampleFFMPEG::Init(SampleConfig dstConfig, SampleConfig srcConfi
+     m_dst_chan_layout = 0;
+     for (unsigned int out=0; out<remapLayout->Count(); out++)
+     {
+-      m_dst_chan_layout += ((uint64_t)1) << out;
++      m_dst_chan_layout += static_cast<uint64_t>(1) << out;
+       int idx = CAEUtil::GetAVChannelIndex((*remapLayout)[out], m_src_chan_layout);
+       if (idx >= 0)
+       {
+         m_rematrix[out][idx] = 1.0;
+       }
+     }
+-
+-    av_opt_set_int(m_pContext, "out_channel_count", m_dst_channels, 0);
+-    av_opt_set_int(m_pContext, "out_channel_layout", m_dst_chan_layout, 0);
+-
+-    if (swr_set_matrix(m_pContext, (const double*)m_rematrix, AE_CH_MAX) < 0)
+-    {
+-      CLog::Log(LOGERROR, "CActiveAEResampleFFMPEG::Init - setting channel matrix failed");
+-      return false;
+-    }
++    hasMatrix = true;
+   }
+   // stereo upmix
+   else if (upmix && m_src_channels == 2 && m_dst_channels > 2)
+   {
+     memset(m_rematrix, 0, sizeof(m_rematrix));
+-    av_channel_layout_uninit(&dstChLayout);
+     av_channel_layout_from_mask(&dstChLayout, m_dst_chan_layout);
+     for (int out=0; out<m_dst_channels; out++)
+     {
+@@ -171,15 +118,64 @@ bool CActiveAEResampleFFMPEG::Init(SampleConfig dstConfig, SampleConfig srcConfi
+       }
+     }
+ 
++    hasMatrix = true;
+     av_channel_layout_uninit(&dstChLayout);
++  }
++
++  av_channel_layout_from_mask(&dstChLayout, m_dst_chan_layout);
++  av_channel_layout_from_mask(&srcChLayout, m_src_chan_layout);
++
++  int ret = swr_alloc_set_opts2(&m_pContext, &dstChLayout, m_dst_fmt, m_dst_rate, &srcChLayout,
++                                m_src_fmt, m_src_rate, 0, NULL);
++
++  if (ret)
++  {
++    CLog::Log(LOGERROR, "CActiveAEResampleFFMPEG::Init - create context failed");
++    return false;
++  }
+ 
+-    if (swr_set_matrix(m_pContext, (const double*)m_rematrix, AE_CH_MAX) < 0)
++  if (hasMatrix)
++  {
++    if (swr_set_matrix(m_pContext, reinterpret_cast<const double*>(m_rematrix), AE_CH_MAX) < 0)
+     {
+       CLog::Log(LOGERROR, "CActiveAEResampleFFMPEG::Init - setting channel matrix failed");
+       return false;
+     }
+   }
+ 
++  if (quality == AE_QUALITY_HIGH)
++  {
++    av_opt_set_double(m_pContext, "cutoff", 1.0, 0);
++    av_opt_set_int(m_pContext, "filter_size", 256, 0);
++  }
++  else if (quality == AE_QUALITY_MID)
++  {
++    // 0.97 is default cutoff so use (1.0 - 0.97) / 2.0 + 0.97
++    av_opt_set_double(m_pContext, "cutoff", 0.985, 0);
++    av_opt_set_int(m_pContext, "filter_size", 64, 0);
++  }
++  else if (quality == AE_QUALITY_LOW)
++  {
++    av_opt_set_double(m_pContext, "cutoff", 0.97, 0);
++    av_opt_set_int(m_pContext, "filter_size", 32, 0);
++  }
++
++  if (m_dst_fmt == AV_SAMPLE_FMT_S32 || m_dst_fmt == AV_SAMPLE_FMT_S32P)
++  {
++    av_opt_set_int(m_pContext, "output_sample_bits", m_dst_bits, 0);
++  }
++
++  // tell resampler to clamp float values
++  // not required for sink stage (remapLayout == true)
++  if ((m_dst_fmt == AV_SAMPLE_FMT_FLT || m_dst_fmt == AV_SAMPLE_FMT_FLTP) &&
++      (m_src_fmt == AV_SAMPLE_FMT_FLT || m_src_fmt == AV_SAMPLE_FMT_FLTP) && !remapLayout &&
++      normalize)
++  {
++    av_opt_set_double(m_pContext, "rematrix_maxval", 1.0, 0);
++  }
++
++  av_opt_set_double(m_pContext, "center_mix_level", centerMix, 0);
++
+   if(swr_init(m_pContext) < 0)
+   {
+     CLog::Log(LOGERROR, "CActiveAEResampleFFMPEG::Init - init resampler failed");
+diff --git a/xbmc/cores/VideoPlayer/DVDDemuxers/DVDDemuxFFmpeg.cpp b/xbmc/cores/VideoPlayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
+index 1aebc3dcbc..174df53f16 100644
+--- a/xbmc/cores/VideoPlayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
++++ b/xbmc/cores/VideoPlayer/DVDDemuxers/DVDDemuxFFmpeg.cpp
+@@ -376,74 +376,7 @@ bool CDVDDemuxFFmpeg::Open(const std::shared_ptr<CDVDInputStream>& pInput, bool
+     if (iformat == nullptr)
+     {
+       // let ffmpeg decide which demuxer we have to open
+-      bool trySPDIFonly = (m_pInput->GetContent() == "audio/x-spdif-compressed");
+-
+-      if (!trySPDIFonly)
+-        av_probe_input_buffer(m_ioContext, &iformat, strFile.c_str(), NULL, 0, 0);
+-
+-      // Use the more low-level code in case we have been built against an old
+-      // FFmpeg without the above av_probe_input_buffer(), or in case we only
+-      // want to probe for spdif (DTS or IEC 61937) compressed audio
+-      // specifically, or in case the file is a wav which may contain DTS or
+-      // IEC 61937 (e.g. ac3-in-wav) and we want to check for those formats.
+-      if (trySPDIFonly || (iformat && strcmp(iformat->name, "wav") == 0))
+-      {
+-        AVProbeData pd;
+-        int probeBufferSize = 32768;
+-        std::unique_ptr<uint8_t[]> probe_buffer (new uint8_t[probeBufferSize + AVPROBE_PADDING_SIZE]);
+-
+-        // init probe data
+-        pd.buf = probe_buffer.get();
+-        pd.filename = strFile.c_str();
+-
+-        // read data using avformat's buffers
+-        pd.buf_size = avio_read(m_ioContext, pd.buf, probeBufferSize);
+-        if (pd.buf_size <= 0)
+-        {
+-          CLog::Log(LOGERROR, "{} - error reading from input stream, {}", __FUNCTION__,
+-                    CURL::GetRedacted(strFile));
+-          return false;
+-        }
+-        memset(pd.buf + pd.buf_size, 0, AVPROBE_PADDING_SIZE);
+-
+-        // restore position again
+-        avio_seek(m_ioContext , 0, SEEK_SET);
+-
+-        // the advancedsetting is for allowing the user to force outputting the
+-        // 44.1 kHz DTS wav file as PCM, so that an A/V receiver can decode
+-        // it (this is temporary until we handle 44.1 kHz passthrough properly)
+-        if (trySPDIFonly || (iformat && strcmp(iformat->name, "wav") == 0 && !CServiceBroker::GetSettingsComponent()->GetAdvancedSettings()->m_VideoPlayerIgnoreDTSinWAV))
+-        {
+-          // check for spdif and dts
+-          // This is used with wav files and audio CDs that may contain
+-          // a DTS or AC3 track padded for S/PDIF playback. If neither of those
+-          // is present, we assume it is PCM audio.
+-          // AC3 is always wrapped in iec61937 (ffmpeg "spdif"), while DTS
+-          // may be just padded.
+-          const AVInputFormat* iformat2 = av_find_input_format("spdif");
+-          if (iformat2 && iformat2->read_probe(&pd) > AVPROBE_SCORE_MAX / 4)
+-          {
+-            iformat = iformat2;
+-          }
+-          else
+-          {
+-            // not spdif or no spdif demuxer, try dts
+-            iformat2 = av_find_input_format("dts");
+-
+-            if (iformat2 && iformat2->read_probe(&pd) > AVPROBE_SCORE_MAX / 4)
+-            {
+-              iformat = iformat2;
+-            }
+-            else if (trySPDIFonly)
+-            {
+-              // not dts either, return false in case we were explicitly
+-              // requested to only check for S/PDIF padded compressed audio
+-              CLog::Log(LOGDEBUG, "{} - not spdif or dts file, falling back", __FUNCTION__);
+-              return false;
+-            }
+-          }
+-        }
+-      }
++      av_probe_input_buffer(m_ioContext, &iformat, strFile.c_str(), NULL, 0, 0);
+ 
+       if (!iformat)
+       {
+@@ -1353,7 +1286,7 @@ bool CDVDDemuxFFmpeg::SeekTime(double time, bool backwards, double* startpts)
+ 
+     if (ret >= 0)
+     {
+-      if (m_pFormatContext->iformat->read_seek)
++      if (!(m_pFormatContext->iformat->flags & AVFMT_NOTIMESTAMPS))
+         m_seekToKeyFrame = true;
+       m_currentPts = DVD_NOPTS_VALUE;
+     }
+-- 
+2.47.3
+

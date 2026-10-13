@@ -1,0 +1,98 @@
+From 8ab7d9781db412374796d80966828f35037d995c Mon Sep 17 00:00:00 2001
+From: Stephan Sundermann <stephansundermann@gmail.com>
+Date: Thu, 11 Apr 2024 17:13:36 +0200
+Subject: [PATCH] Remove deprecated use of FF_API_INTERLACED_FRAME
+
+Upstream: https://github.com/xbmc/xbmc/pull/24972#event-12966390666
+
+Patch was cherry-picked from upstream tree:
+https://github.com/xbmc/xbmc/commits/0e935f9edb30fd905f14230af653930b5fe139e8/
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ .../DVDCodecs/Video/DVDVideoCodecDRMPRIME.cpp            | 5 +++--
+ .../VideoPlayer/DVDCodecs/Video/DVDVideoCodecFFmpeg.cpp  | 9 +++++----
+ xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.cpp         | 6 ++++--
+ xbmc/cores/VideoPlayer/DVDCodecs/Video/VTB.cpp           | 2 +-
+ 4 files changed, 13 insertions(+), 9 deletions(-)
+
+diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecDRMPRIME.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecDRMPRIME.cpp
+index eb2943bb8c..4da0722d5c 100644
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecDRMPRIME.cpp
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecDRMPRIME.cpp
+@@ -582,8 +582,9 @@ void CDVDVideoCodecDRMPRIME::SetPictureParams(VideoPicture* pVideoPicture)
+ 
+   pVideoPicture->iRepeatPicture = 0;
+   pVideoPicture->iFlags = 0;
+-  pVideoPicture->iFlags |= m_pFrame->interlaced_frame ? DVP_FLAG_INTERLACED : 0;
+-  pVideoPicture->iFlags |= m_pFrame->top_field_first ? DVP_FLAG_TOP_FIELD_FIRST : 0;
++  pVideoPicture->iFlags |= m_pFrame->flags & AV_FRAME_FLAG_INTERLACED ? DVP_FLAG_INTERLACED : 0;
++  pVideoPicture->iFlags |=
++      m_pFrame->flags & AV_FRAME_FLAG_TOP_FIELD_FIRST ? DVP_FLAG_TOP_FIELD_FIRST : 0;
+   pVideoPicture->iFlags |= m_pFrame->data[0] ? 0 : DVP_FLAG_DROPPED;
+ 
+   if (m_codecControlFlags & DVD_CODEC_CTRL_DROP)
+diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecFFmpeg.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecFFmpeg.cpp
+index d66378fa07..9586d211e9 100644
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecFFmpeg.cpp
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/DVDVideoCodecFFmpeg.cpp
+@@ -792,12 +792,12 @@ CDVDVideoCodec::VCReturn CDVDVideoCodecFFmpeg::GetPicture(VideoPicture* pVideoPi
+   }
+   m_dropCtrl.Process(framePTS, m_pCodecContext->skip_frame > AVDISCARD_DEFAULT);
+ 
+-  if (m_pDecodedFrame->key_frame)
++  if (m_pDecodedFrame->flags & AV_FRAME_FLAG_KEY)
+   {
+     m_started = true;
+     m_iLastKeyframe = m_pCodecContext->has_b_frames + 2;
+   }
+-  if (m_pDecodedFrame->interlaced_frame)
++  if (m_pDecodedFrame->flags & AV_FRAME_FLAG_INTERLACED)
+     m_interlaced = true;
+   else
+     m_interlaced = false;
+@@ -1013,8 +1013,9 @@ bool CDVDVideoCodecFFmpeg::GetPictureCommon(VideoPicture* pVideoPicture)
+ 
+   pVideoPicture->iRepeatPicture = 0.5 * m_pFrame->repeat_pict;
+   pVideoPicture->iFlags = 0;
+-  pVideoPicture->iFlags |= m_pFrame->interlaced_frame ? DVP_FLAG_INTERLACED : 0;
+-  pVideoPicture->iFlags |= m_pFrame->top_field_first ? DVP_FLAG_TOP_FIELD_FIRST: 0;
++  pVideoPicture->iFlags |= m_pFrame->flags & AV_FRAME_FLAG_INTERLACED ? DVP_FLAG_INTERLACED : 0;
++  pVideoPicture->iFlags |=
++      m_pFrame->flags & AV_FRAME_FLAG_TOP_FIELD_FIRST ? DVP_FLAG_TOP_FIELD_FIRST : 0;
+ 
+   if (m_codecControlFlags & DVD_CODEC_CTRL_DROP)
+   {
+diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.cpp
+index fb7606e0d0..a62fa6273d 100644
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.cpp
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.cpp
+@@ -3068,8 +3068,10 @@ bool CFFmpegPostproc::AddPicture(CVaapiDecodedPicture &inPic)
+   m_pFilterFrameIn->height = m_config.vidHeight;
+   m_pFilterFrameIn->linesize[0] = image.pitches[0];
+   m_pFilterFrameIn->linesize[1] = image.pitches[1];
+-  m_pFilterFrameIn->interlaced_frame = (inPic.DVDPic.iFlags & DVP_FLAG_INTERLACED) ? 1 : 0;
+-  m_pFilterFrameIn->top_field_first = (inPic.DVDPic.iFlags & DVP_FLAG_TOP_FIELD_FIRST) ? 1 : 0;
++  if (inPic.DVDPic.iFlags & DVP_FLAG_INTERLACED)
++    m_pFilterFrameIn->flags |= AV_FRAME_FLAG_INTERLACED;
++  if (inPic.DVDPic.iFlags & DVP_FLAG_TOP_FIELD_FIRST)
++    m_pFilterFrameIn->flags |= AV_FRAME_FLAG_TOP_FIELD_FIRST;
+ 
+   if (inPic.DVDPic.pts == DVD_NOPTS_VALUE)
+     m_pFilterFrameIn->pts = AV_NOPTS_VALUE;
+diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/VTB.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/Video/VTB.cpp
+index 1f71f643d2..567d63559d 100644
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/VTB.cpp
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/VTB.cpp
+@@ -196,7 +196,7 @@ CDVDVideoCodec::VCReturn CDecoder::Decode(AVCodecContext* avctx, AVFrame* frame)
+ 
+   if(frame)
+   {
+-    if (frame->interlaced_frame)
++    if (frame->flags & AV_FRAME_FLAG_INTERLACED)
+       return CDVDVideoCodec::VC_FATAL;
+ 
+     if (m_renderBuffer)
+-- 
+2.47.3
+
