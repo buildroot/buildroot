@@ -1,6 +1,8 @@
 config BR2_PACKAGE_NETTEST
 	bool "nettest"
 	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS
+	# i386: needs SSE2 for the ring crate
+	depends on !(BR2_i386 && !BR2_X86_CPU_HAS_SSE2)
 	select BR2_PACKAGE_HOST_RUSTC
 	help
 	  nettest measures download and upload throughput, latency,
