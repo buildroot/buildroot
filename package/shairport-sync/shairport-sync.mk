@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SHAIRPORT_SYNC_VERSION = 4.3.7
+SHAIRPORT_SYNC_VERSION = 5.6
 SHAIRPORT_SYNC_SITE = $(call github,mikebrady,shairport-sync,$(SHAIRPORT_SYNC_VERSION))
 
 SHAIRPORT_SYNC_LICENSE = MIT, BSD-3-Clause
@@ -54,11 +54,21 @@ SHAIRPORT_SYNC_CONF_OPTS += --without-convolution
 endif
 
 ifeq ($(BR2_PACKAGE_SHAIRPORT_SYNC_AIRPLAY2),y)
-# host-vim needed for xxd
-SHAIRPORT_SYNC_DEPENDENCIES += libplist libsodium libgcrypt ffmpeg util-linux host-vim
+# host-libplist needed for plistutil, host-vim needed for xxd
+SHAIRPORT_SYNC_DEPENDENCIES += libplist libsodium libgcrypt ffmpeg util-linux \
+	host-libplist host-vim
 SHAIRPORT_SYNC_CONF_OPTS += --with-airplay-2
 else
 SHAIRPORT_SYNC_CONF_OPTS += --without-airplay-2
+endif
+
+# Classic AirPlay needs an ALAC decoder: FFmpeg if available, otherwise
+# the bundled Hammerton decoder (always built in before 5.6).
+ifeq ($(BR2_PACKAGE_FFMPEG),y)
+SHAIRPORT_SYNC_DEPENDENCIES += ffmpeg
+SHAIRPORT_SYNC_CONF_OPTS += --with-ffmpeg --without-hammerton
+else
+SHAIRPORT_SYNC_CONF_OPTS += --without-ffmpeg --with-hammerton
 endif
 
 ifeq ($(BR2_PACKAGE_SHAIRPORT_SYNC_DBUS),y)
