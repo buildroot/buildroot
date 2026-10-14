@@ -15,5 +15,7 @@ LIBPLIST_CPE_ID_VENDOR = libimobiledevice
 # Disable building Python bindings, because it requires host-cython, which
 # is not packaged in Buildroot at all.
 LIBPLIST_CONF_OPTS = --without-cython
+HOST_LIBPLIST_CONF_OPTS = --without-cython
 
 $(eval $(autotools-package))
+$(eval $(host-autotools-package))
