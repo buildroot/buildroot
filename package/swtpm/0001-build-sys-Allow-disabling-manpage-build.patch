@@ -1,0 +1,63 @@
+From 43eff71dc1673c252352c584e129e5bce312d173 Mon Sep 17 00:00:00 2001
+From: Fiona Klute <fiona.klute@gmx.de>
+Date: Wed, 14 Oct 2026 17:46:51 +0200
+Subject: [PATCH] build-sys: Allow disabling manpage build
+
+In builds for embedded systems (e.g. Buildroot) manpages are not
+needed, and building them adds a dependency on pod2man. Allow passing
+"--disable-docs" to configure to disable building manpages.
+
+Signed-off-by: Fiona Klute <fiona.klute@gmx.de>
+Upstream: https://github.com/stefanberger/swtpm/pull/1186
+---
+ Makefile.am  | 5 ++++-
+ configure.ac | 6 ++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 5dfaa6b..f7d15fe 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -6,11 +6,14 @@
+ 
+ SUBDIRS   = \
+ 	include \
+-	man \
+ 	samples \
+ 	src \
+ 	tests
+ 
++if ENABLE_DOCS
++SUBDIRS += man
++endif # ENABLE_DOCS
++
+ ACLOCAL_AMFLAGS = -I m4
+ 
+ EXTRA_DIST = \
+diff --git a/configure.ac b/configure.ac
+index 188b1a2..7156a21 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -509,6 +509,11 @@ if test "x$enable_sanitizers" = "xyes"; then
+ 	CFLAGS="$save_CFLAGS"
+ fi
+ 
++AC_ARG_ENABLE([docs],
++    [AS_HELP_STRING([--disable-docs], [Disable building documentation])],,
++    [enable_docs=yes])
++AM_CONDITIONAL(ENABLE_DOCS, [test "$enable_docs" = "yes"])
++
+ AC_ARG_WITH([tss-user],
+             AS_HELP_STRING([--with-tss-user=TSS_USER],[The tss user to use]),
+             [TSS_USER="$withval"],
+@@ -662,6 +667,7 @@ printf "TPM 2 profile support : yes\n"
+ echo
+ echo "Version to build  : $PACKAGE_VERSION"
+ echo "Crypto library    : $cryptolib"
++echo "Documentation     : $enable_docs"
+ echo
+ echo "        MY_CFLAGS = $MY_CFLAGS"
+ echo " HARDENING_CFLAGS = $HARDENING_CFLAGS"
+-- 
+2.55.0
+
