@@ -13,8 +13,10 @@ AM33X_CM3_LICENSE_FILES = License.txt
 
 # The build command below will use the standard cross-compiler (normally
 # build for Cortex-A8, to build the FW for the Cortex-M3.
+# The code base predates C23 and defines its own bool/true/false, so
+# force an older C standard to build with gcc >= 15.
 define AM33X_CM3_BUILD_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) CC="$(TARGET_CC)" CROSS_COMPILE="$(TARGET_CROSS)" -C $(@D) all
+	$(TARGET_MAKE_ENV) $(MAKE) CC="$(TARGET_CC) -std=gnu11" CROSS_COMPILE="$(TARGET_CROSS)" -C $(@D) all
 endef
 
 define AM33X_CM3_INSTALL_TARGET_CMDS
