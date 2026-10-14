@@ -136,6 +136,7 @@ config BR2_PACKAGE_MENDER_UPDATE_MODULES_PODMAN
 	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14  # podman
 	depends on BR2_TOOLCHAIN_HAS_THREADS  # podman
 	depends on BR2_USE_WCHAR  # podman
+	depends on !BR2_STATIC_LIBS # podman
 	select BR2_PACKAGE_JQ # runtime
 	select BR2_PACKAGE_PODMAN
 	help
@@ -151,7 +152,7 @@ config BR2_PACKAGE_MENDER_UPDATE_MODULES_PODMAN
 
 	  https://github.com/mendersoftware/mender-update-modules/tree/master/podman
 
-comment "podman support needs a toolchain w/ headers >= 4.14, threads, wchar"
+comment "podman support needs a toolchain w/ headers >= 4.14, threads, wchar, dynamic library"
 	depends on BR2_USE_MMU
 	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
 	depends on BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS || BR2_PACKAGE_CRUN
@@ -160,7 +161,8 @@ comment "podman support needs a toolchain w/ headers >= 4.14, threads, wchar"
 	depends on BR2_PACKAGE_LIBSECCOMP_ARCH_SUPPORTS
 	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_14 \
 		|| !BR2_TOOLCHAIN_HAS_THREADS \
-		|| !BR2_USE_WCHAR
+		|| !BR2_USE_WCHAR \
+		|| BR2_STATIC_LIBS
 
 config BR2_PACKAGE_MENDER_UPDATE_MODULES_REBOOT
 	bool "reboot"
