@@ -208,6 +208,7 @@ config BR2_PACKAGE_MENDER_UPDATE_MODULES_RPM
 	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
 	depends on BR2_PACKAGE_LUA && !BR2_PACKAGE_LUA_5_1
 	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_USE_MMU # rpm
 	select BR2_PACKAGE_RPM
 	help
 	  The Rpm Update Module updates software on the device using
@@ -220,6 +221,7 @@ config BR2_PACKAGE_MENDER_UPDATE_MODULES_RPM
 	  https://github.com/mendersoftware/mender-update-modules/tree/master/rpm
 
 comment "rpm needs a toolchain w/ dynamic library, threads and lua >= 5.3"
+	depends on BR2_USE_MMU
 	depends on !BR2_TOOLCHAIN_HAS_THREADS || BR2_STATIC_LIBS \
 		|| !BR2_PACKAGE_LUA || BR2_PACKAGE_LUA_5_1
 	depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
@@ -228,6 +230,7 @@ config BR2_PACKAGE_MENDER_UPDATE_MODULES_SWU
 	bool "swupdate"
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # swupdate
+	depends on BR2_USE_MMU # swupdate
 	select BR2_PACKAGE_JQ # runtime
 	select BR2_PACKAGE_SWUPDATE
 	help
@@ -240,6 +243,7 @@ config BR2_PACKAGE_MENDER_UPDATE_MODULES_SWU
 	  https://github.com/mendersoftware/mender-update-modules/tree/master/swu
 
 comment "swupdate support needs a toolchain w/ dynamic library"
+	depends on BR2_USE_MMU
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4
 	depends on BR2_STATIC_LIBS
 
