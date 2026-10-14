@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBCURL_VERSION = 8.22.0
+LIBCURL_VERSION = 8.23.0
 LIBCURL_SOURCE = curl-$(LIBCURL_VERSION).tar.xz
 LIBCURL_SITE = https://curl.se/download
 LIBCURL_DEPENDENCIES = host-pkgconf \
@@ -161,7 +161,6 @@ LIBCURL_CONF_OPTS += \
 	--enable-imap \
 	--enable-pop3 \
 	--enable-rtsp \
-	--enable-smb \
 	--enable-smtp \
 	--enable-telnet \
 	--enable-tftp
@@ -172,7 +171,6 @@ LIBCURL_CONF_OPTS += \
 	--disable-imap \
 	--disable-pop3 \
 	--disable-rtsp \
-	--disable-smb \
 	--disable-smtp \
 	--disable-telnet \
 	--disable-tftp
