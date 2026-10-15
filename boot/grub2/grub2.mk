@@ -40,8 +40,9 @@ GRUB2_IGNORE_CVES += CVE-2025-0689
 
 # 0050-fs-Prevent-overflows-when-allocating-memory-for-arra.patch
 # (yes, two CVEs are fixed by this patch)
-GRUB2_IGNORE_CVES += CVE-2025-0678
-GRUB2_IGNORE_CVES += CVE-2025-1125
+GRUB2_IGNORE_CVES += \
+	CVE-2025-0678 \
+	CVE-2025-1125
 
 # 0074-Constant-time-grub_crypto_memcmp.patch
 GRUB2_IGNORE_CVES += CVE-2024-56738
