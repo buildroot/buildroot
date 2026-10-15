@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RANGER_VERSION = 1.9.3
+RANGER_VERSION = 1.9.4
 RANGER_SITE = https://ranger.github.io
 RANGER_SETUP_TYPE = setuptools
 RANGER_LICENSE = GPL-3.0
