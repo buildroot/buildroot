@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-SNAGBOOT_VERSION = 2.6.1
+SNAGBOOT_VERSION = 3.0.1
 SNAGBOOT_SITE = $(call github,bootlin,snagboot,v$(SNAGBOOT_VERSION))
 SNAGBOOT_LICENSE = GPL-2.0
 SNAGBOOT_LICENSE_FILES = LICENSE
@@ -17,8 +17,7 @@ HOST_SNAGBOOT_DEPENDENCIES = \
 	host-python-tftpy \
 	host-python-crccheck \
 	host-python-pylibfdt \
-	host-python-packaging \
-	host-python-pyfatfs
+	host-python-packaging
 
 # We do not install the dependencies for the snagfactory GUI
 define SNAGBOOT_REMOVE_SNAGFACTORY
