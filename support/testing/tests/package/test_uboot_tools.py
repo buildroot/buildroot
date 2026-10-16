@@ -96,7 +96,7 @@ class TestHostUbootTools(infra.basetest.BRHostPkgTest):
         keydir = Path(self.builddir) / "keys"
         keydir.mkdir(exist_ok=True)
 
-        # We generate a prublic/private key pair to sign the image.
+        # We generate a public/private key pair to sign the image.
         cmd = [
             "host/bin/openssl", "req", "-batch", "-new", "-x509", "-nodes",
             "-newkey", "rsa:2048", "-keyout", str(keydir / "dev.key"),
@@ -150,7 +150,7 @@ class TestHostUbootTools(infra.basetest.BRHostPkgTest):
         ]
         infra.run_cmd_on_host(self.builddir, cmd)
 
-        # We check again the siganute, and expect a failure.
+        # We check again the signature, and expect a failure.
         cmd = [
             "host/bin/fit_check_sign", "-f", "signed.fit",
             "-k", "test-key.dtb",
