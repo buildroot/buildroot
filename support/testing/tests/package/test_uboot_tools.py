@@ -38,7 +38,10 @@ class TestUbootTools(infra.basetest.BRTest):
         BR2_PACKAGE_UBOOT_TOOLS=y
         BR2_PACKAGE_UBOOT_TOOLS_DUMPIMAGE=y
         BR2_PACKAGE_UBOOT_TOOLS_FIT_SUPPORT=y
+        BR2_PACKAGE_UBOOT_TOOLS_FIT_SIGNATURE_SUPPORT=y
+        BR2_PACKAGE_UBOOT_TOOLS_FIT_CHECK_SIGN=y
         BR2_PACKAGE_UBOOT_TOOLS_MKIMAGE=y
+        BR2_PACKAGE_LIBOPENSSL_BIN=y
         BR2_ROOTFS_OVERLAY="{rootfs_overlay}"
         BR2_TARGET_ROOTFS_CPIO=y
         # BR2_TARGET_ROOTFS_TAR is not set
@@ -67,6 +70,65 @@ class TestUbootTools(infra.basetest.BRTest):
                 self.assertEqual(expected[h], reported[h])
         # Python does not have built-in CRC16 support, just check it is present
         self.assertIn("crc16-ccitt", reported)
+
+        keydir = "/tmp/keys"
+        self.assertRunOk(f"mkdir {keydir}")
+        # We generate a public/private key pair to sign the image.
+        self.assertRunOk(
+            "openssl req -batch -new -x509 -nodes "
+            f"-newkey rsa:2048 -keyout {keydir}/dev.key "
+            f"-out {keydir}/dev.crt -subj '/CN=Buildroot FIT test'",
+            timeout=30)
+
+        # We compile the empty dtb that will be used to store the
+        # public key.
+        self.assertRunOk(
+            f"dtc -I dts -O dtb -p 0x1000 -o test-key.dtb /{KEY_DTS.name}")
+
+        # We sign the image and write the public key in our key
+        # storage dtb.
+        self.assertRunOk(
+            f"mkimage -f /{SIGNED_ITS.name} -k {keydir} -K test-key.dtb "
+            "-r signed.fit")
+
+        # We check there is a signature present in the FIT image.
+        out, exit_code = self.emulator.run(
+            "fdtget -t bx signed.fit "
+            "/configurations/config-1/signature-1 value",
+            -1)
+        self.assertEqual(
+            exit_code,
+            0,
+            "\nFailed to run: {}\noutput was:\n{}".format(cmd, '  '+'\n  '.join(out))
+        )
+        self.assertEqual(len(out[0].split()), 256)
+
+        # We check the key is marked as required for the configuration.
+        out, exit_code = self.emulator.run(
+            "fdtget -t s test-key.dtb /signature/key-dev required", -1)
+        self.assertEqual(
+            exit_code,
+            0,
+            "\nFailed to run: {}\noutput was:\n{}".format(cmd, '  '+'\n  '.join(out))
+        )
+        self.assertEqual(out[0], "conf")
+
+        # We actually check the signature is valid.
+        self.assertRunOk("fit_check_sign -f signed.fit -k test-key.dtb")
+
+        # We "corrupt" the signature, by setting it to zero.
+        self.assertRunOk(
+            "fdtput -t bx signed.fit "
+            "/configurations/config-1/signature-1 value 00")
+
+        # We check again the signature, and expect a failure.
+        out, exit_code = self.emulator.run(
+            "fit_check_sign -f signed.fit -k test-key.dtb", -1)
+        self.assertNotEqual(
+            exit_code,
+            0,
+            "\nfit_check_sign did not fail as expected: {}\noutput was:\n{}".format(cmd, '  '+'\n  '.join(out))
+        )
 
 
 class TestHostUbootTools(infra.basetest.BRHostPkgTest):
