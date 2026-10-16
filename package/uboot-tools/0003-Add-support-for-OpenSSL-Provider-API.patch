@@ -29,6 +29,8 @@ Signed-off-by: Eddie Kovsky <ewk@edkovsky.org>
 Upstream: https://github.com/u-boot/u-boot/pull/918
 
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+[Fiona: apply fix from https://lists.u-boot-project.org/pipermail/u-boot/2026-August/629348.html to make pkcs11 provider optional]
+Signed-off-by: Fiona Klute (othermo GmbH) <fiona.klute@gmx.de>
 ---
  lib/aes/aes-encrypt.c |   4 +-
  lib/rsa/rsa-sign.c    | 102 +++++++++++++++++++++++++++++++++++++++---
@@ -149,10 +151,10 @@ index 0e38c9e802f..f456f3c58e6 100644
 +	EVP_PKEY *private_key = NULL;
 +	OSSL_STORE_CTX *store;
 +
-+	if (!OSSL_PROVIDER_try_load(NULL, "pkcs11", true))
-+		ERR(1, "OSSL_PROVIDER_try_load(pkcs11)");
 +	if (!OSSL_PROVIDER_try_load(NULL, "default", true))
 +		ERR(1, "OSSL_PROVIDER_try_load(default)");
++	if (!OSSL_PROVIDER_try_load(NULL, "pkcs11", true))
++		ERR_clear_error();
 +
 +	store = OSSL_STORE_open(path, NULL, NULL, NULL, NULL);
 +	ERR(!store, "OSSL_STORE_open");
