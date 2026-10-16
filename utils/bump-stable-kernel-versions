@@ -27,7 +27,7 @@ echo "${latest_version} -> ${latest_release_version}"
 
 updated_files_list=()
 updated_releases_list=''
-updated_versions='Update the latest kernel releases to:'
+updated_versions=()
 
 update_linux_hash() {
     HASHFILE="$1"
@@ -85,7 +85,7 @@ update_linux_hash() {
                 fi
 
                 updated_releases_list="${updated_releases_list} ${release_version}.x"
-                updated_versions="${updated_versions}\n - ${old_version} -> ${new_version}"
+                updated_versions+=("${old_version} -> ${new_version}")
             fi
         else
             # Different line: Reset hash list and just copy this line over as is.
@@ -111,7 +111,8 @@ if [ -n "${updated_releases_list}" ]; then
     git commit --verbose --edit --signoff --file=<( {
         echo "{linux, linux-headers}: bump${updated_releases_list//.x /.x, } series"
         echo
-        echo "${updated_versions}"
+        echo 'Update the latest kernel releases to:'
+        printf ' - %s\n' "${updated_versions[@]}"
     } )
 else
     echo '>>> Nothing happened.'
