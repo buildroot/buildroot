@@ -32,3 +32,10 @@ How to boot
 
 Insert flash drive to the USB connector furthest away from the IR
 receiver and power up board. The system will boot automatically.
+
+A serial console is available on the GPIO header with the following
+pinout:
+
+- TX: pin 3
+- RX: pin 5
+- Ground: pin 6
