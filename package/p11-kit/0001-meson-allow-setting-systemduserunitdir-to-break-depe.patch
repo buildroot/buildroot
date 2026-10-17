@@ -1,0 +1,61 @@
+From 709e37f781e50ef981d337249c574a9255691665 Mon Sep 17 00:00:00 2001
+From: Fiona Klute <fiona.klute@gmx.de>
+Date: Sat, 17 Oct 2026 14:33:02 +0200
+Subject: [PATCH] meson: allow setting systemduserunitdir to break dependency
+ loop
+
+The dependency on systemd is only used to retrieve systemduserunitdir,
+not otherwise needed during build. However, p11-kit is also an
+(optional) dependency of systemd, creating a dependency loop.
+
+This patch allows setting systemduserunitdir directly to break the
+dependency loop. If set, the given value is used unconditionally
+without checking for systemd, otherwise systemd is detected as before.
+
+Signed-off-by: Fiona Klute <fiona.klute@gmx.de>
+Upstream: https://github.com/p11-glue/p11-kit/pull/788
+---
+ meson.build       | 11 ++++++++---
+ meson_options.txt |  4 ++++
+ 2 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 38cf81b..9e76d62 100644
+--- a/meson.build
++++ b/meson.build
+@@ -456,9 +456,14 @@ conf.set_quoted('TRUST_PATHS', trust_paths)
+ # systemd
+ 
+ with_systemd = false
+-systemd = dependency('systemd', required: get_option('systemd'))
+-if systemd.found()
+-  systemduserunitdir = systemd.get_variable(pkgconfig : 'systemduserunitdir')
++systemduserunitdir = get_option('systemduserunitdir')
++if systemduserunitdir == ''
++  systemd = dependency('systemd', required: get_option('systemd'))
++  if systemd.found()
++    systemduserunitdir = systemd.get_variable(pkgconfig : 'systemduserunitdir')
++    with_systemd = true
++  endif
++else
+   with_systemd = true
+ endif
+ 
+diff --git a/meson_options.txt b/meson_options.txt
+index c1f2362..a7c0553 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -46,6 +46,10 @@ option('systemd', type : 'feature',
+        value : 'auto',
+        description : 'Use systemd socket activation')
+ 
++option('systemduserunitdir', type : 'string',
++       value : '',
++       description : 'Override default location for systemd user units')
++
+ option('bashcompdir', type : 'string',
+        value : '',
+        description : 'Override default location for bash completion files')
+-- 
+2.55.0
+
