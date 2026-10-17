@@ -6,6 +6,14 @@ s805x SoC (quad A53), 512MB/1GB DDR4 and a 16MB SPI NOR flash:
 
 https://libre.computer/products/boards/aml-s805x-ac/
 
+Ensure the the bootloader in the SPI flash is up-to-date. Updates are
+available at:
+
+https://boot.libre.computer/release/aml-s805x-ac/
+
+To update, write aml-s805x-ac-spiflash.img to a USB flash drive and
+boot it as described below.
+
 How to build it
 ===============
 
