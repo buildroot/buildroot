@@ -98,7 +98,7 @@ for h_file in "${h_files[@]}"; do
 done
 
 # shellcheck disable=SC2086  # nb_h_files is a non-empty int
-if [ ${nb_h_files} -eq 0 ]; then
+if [ ${nb_h_files} -eq 0 ] && [ "$BR2_DOWNLOAD_FORCE_CHECK_HASHES" != y ]; then
     printf "WARNING: no hash file for %s\n" "${base}" >&2
     exit 0
 fi
