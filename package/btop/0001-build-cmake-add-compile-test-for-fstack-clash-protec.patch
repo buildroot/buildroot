@@ -1,0 +1,56 @@
+From f7b5ba16d3662ca036c6b1724fe741b28f29106a Mon Sep 17 00:00:00 2001
+From: Fengwei Tan <tfx2001@outlook.com>
+Date: Sun, 18 Oct 2026 16:37:11 +0800
+Subject: [PATCH] build(cmake): add compile test for -fstack-clash-protection
+
+On ARM Thumb-1 targets, GCC front end accepts -fstack-clash-protection,
+but fails to compile actual code:
+
+  format.h:960:36: sorry, unimplemented: '-fstack-check=specific' for Thumb-1
+
+Add a compile test with large stack allocation to trigger the compiler
+to emit stack-clash protection code, verifying whether the flag works
+correctly.
+
+Apple Clang ignores -fstack-clash-protection and emits a warning, so
+skip this flag on Apple platforms.
+
+Upstream: https://github.com/aristocratos/btop/pull/1918
+Signed-off-by: Fengwei Tan <tfx2001@outlook.com>
+---
+ CMakeLists.txt | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3398196..0be6365 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -134,10 +134,23 @@ endif()
+ target_compile_options(libbtop PUBLIC -Wall -Wextra -Wpedantic)
+ 
+ include(CheckCXXCompilerFlag)
+-
+-if(NOT APPLE)
++include(CMakePushCheckState)
++
++cmake_push_check_state(RESET)
++set(CMAKE_REQUIRED_FLAGS "-fstack-clash-protection")
++check_cxx_source_compiles("
++  int main(int argc, char *argv[]) {
++    char buf[16384], *src = argv[0], *dst = buf;
++    while ((*dst++ = *src++) != 0) {}
++    return buf[argc];
++  }
++" HAS_FSTACK_CLASH_PROTECTION)
++cmake_pop_check_state()
++
++if(NOT APPLE AND HAS_FSTACK_CLASH_PROTECTION)
+   target_compile_options(libbtop PUBLIC -fstack-clash-protection)
+ endif()
++
+ check_cxx_compiler_flag(-fstack-protector HAS_FSTACK_PROTECTOR)
+ if(HAS_FSTACK_PROTECTOR)
+   target_compile_options(libbtop PUBLIC -fstack-protector)
+-- 
+2.56.0
+
