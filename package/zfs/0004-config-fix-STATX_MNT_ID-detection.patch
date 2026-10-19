@@ -1,0 +1,41 @@
+From 2b930f63f85c11ad2f8c7f0bfbc5c7337ee5b1a5 Mon Sep 17 00:00:00 2001
+From: Rob Norris <rob.norris@truenas.com>
+Date: Fri, 13 Mar 2026 03:58:54 +1100
+Subject: [PATCH] config: fix STATX_MNT_ID detection
+
+statx(2) requires _GNU_SOURCE to be defined in order for sys/stat.h to
+produce a definition for struct statx and the STATX_* defines. We get
+that at compile time because we pass -D_GNU_SOURCE through to
+everything, but in the configure check we aren't setting _GNU_SOURCE, so
+we don't find STATX_MNT_ID, and so don't set HAVE_STATX_MNT_ID.
+
+(This was fine before ccf5a8a6fc, because linux/stat.h does not require
+_GNU_SOURCE).
+
+Simple fix: in the check, define _GNU_SOURCE before including
+sys/stat.h.
+
+Sponsored-by: TrueNAS
+Reviewed-by: Ameer Hamza <ahamza@ixsystems.com>
+Reviewed-by: Brian Behlendorf <behlendorf1@llnl.gov>
+Signed-off-by: Rob Norris <rob.norris@truenas.com>
+Closes #18312
+
+Upstream: https://github.com/openzfs/zfs/commit/2b930f63f85c11ad2f8c7f0bfbc5c7337ee5b1a5
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ config/user-statx.m4 | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/config/user-statx.m4 b/config/user-statx.m4
+index b2441631c824..d359f48b8579 100644
+--- a/config/user-statx.m4
++++ b/config/user-statx.m4
+@@ -14,6 +14,7 @@ AC_DEFUN([ZFS_AC_CONFIG_USER_STATX], [
+ 			AC_MSG_CHECKING([for STATX_MNT_ID])
+ 			AC_COMPILE_IFELSE([
+ 				AC_LANG_PROGRAM([[
++					#define _GNU_SOURCE
+ 					#include <sys/stat.h>
+ 				]], [[
+ 					struct statx stx;

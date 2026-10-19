@@ -14,6 +14,11 @@ ZFS_CPE_ID_PRODUCT = openzfs
 
 ZFS_DEPENDENCIES = libaio openssl udev util-linux zlib libcurl linux
 
+# 0002-validate-mountpoint-on-path-based-unmount-using-statx.patch
+# 0003-linux-use-sys-stat-h-instead-of-linux-stat-h.patch
+# 0004-config-fix-STATX_MNT_ID-detection.patch
+ZFS_AUTORECONF = YES
+
 # sysvinit installs only a commented-out modules-load.d/ config file
 ZFS_CONF_OPTS = \
 	--with-linux=$(LINUX_DIR) \
