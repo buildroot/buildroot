@@ -517,6 +517,12 @@ async def fixup_config(sysinfo, configfile):
         if optstr in configlines:
             configlines.remove(optstr)
 
+    # fmlib and fmc cannot build without NXP-provided kernel sources
+    for opt in ["FMLIB", "FMC"]:
+        optstr = 'BR2_PACKAGE_%s=y\n' % opt
+        if optstr in configlines:
+            configlines.remove(optstr)
+
     with open(configfile, "w+") as configf:
         configf.writelines(configlines)
 
