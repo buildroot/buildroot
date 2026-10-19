@@ -1,0 +1,37 @@
+From 217748476403a1e5726a921cedb674e7ffbc952e Mon Sep 17 00:00:00 2001
+From: Thomas A Caswell <tcaswell@gmail.com>
+Date: Thu, 21 Dec 2023 14:20:52 -0500
+Subject: [PATCH] MNT: use int instead of long in cython code (#19725)
+
+https://github.com/cython/cython/pull/5830 /
+d7e95912b6ed7d20e190fbf1aecb9f2a997d479 in cython removed
+long as a valid type in favor of int.
+
+Upstream: https://github.com/scipy/scipy/commit/217748476403a1e5726a921cedb674e7ffbc952e
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ scipy/_lib/_ccallback_c.pyx | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/scipy/_lib/_ccallback_c.pyx b/scipy/_lib/_ccallback_c.pyx
+index 59ba74369267..6c493dac7c9c 100644
+--- a/scipy/_lib/_ccallback_c.pyx
++++ b/scipy/_lib/_ccallback_c.pyx
+@@ -58,7 +58,7 @@ def get_raw_capsule(func_obj, name_obj, context_obj):
+     elif context_obj is None:
+         context = NULL
+     else:
+-        context = PyLong_AsVoidPtr(long(context_obj))
++        context = PyLong_AsVoidPtr(int(context_obj))
+ 
+     if PyCapsule_CheckExact(func_obj):
+         capsule_name = PyCapsule_GetName(func_obj)
+@@ -70,7 +70,7 @@ def get_raw_capsule(func_obj, name_obj, context_obj):
+         if name == NULL:
+             name = capsule_name
+     else:
+-        func = PyLong_AsVoidPtr(long(func_obj))
++        func = PyLong_AsVoidPtr(int(func_obj))
+ 
+     if name == NULL:
+         name_copy = name
