@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DROGON_VERSION = v1.9.13
+DROGON_VERSION = v1.9.14
 DROGON_SITE = https://github.com/drogonframework/drogon
 DROGON_SITE_METHOD = git
 DROGON_GIT_SUBMODULES = YES
