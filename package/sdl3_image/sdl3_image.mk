@@ -19,7 +19,8 @@ SDL3_IMAGE_CONF_OPTS = \
 	-DSDLIMAGE_DEPS_SHARED=OFF \
 	-DSDLIMAGE_SAMPLES=OFF \
 	-DSDLIMAGE_TESTS=OFF \
-	-DSDLIMAGE_INSTALL_MAN=OFF
+	-DSDLIMAGE_INSTALL_MAN=OFF \
+	-DSDLIMAGE_STRICT=ON
 
 # Without jpeg, JPEG support falls back to the bundled stb_image
 # decoder rather than being dropped.
