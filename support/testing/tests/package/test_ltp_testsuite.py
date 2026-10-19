@@ -1,4 +1,3 @@
-import json
 import os
 
 import infra.basetest
@@ -8,7 +7,6 @@ class TestLtpTestsuite(infra.basetest.BRTest):
     config = infra.basetest.BASIC_TOOLCHAIN_CONFIG + \
         """
         BR2_PACKAGE_LTP_TESTSUITE=y
-        BR2_PACKAGE_PYTHON3=y
         BR2_TARGET_ROOTFS_EXT2=y
         BR2_TARGET_ROOTFS_EXT2_4=y
         BR2_TARGET_ROOTFS_EXT2_SIZE="600M"
@@ -23,24 +21,19 @@ class TestLtpTestsuite(infra.basetest.BRTest):
                            options=["-drive", f"file={drive},if=scsi,format=raw"])
         self.emulator.login()
 
-        ltp_root = "/usr/lib/ltp-testsuite"
-        report_file = "/tmp/ltp-report.json"
-
         # We run a reduced number of tests (read syscall tests) for a
-        # fast execution. See "kirk --help" for option details.
-        cmd = f"LTPROOT={ltp_root}"
-        cmd += f" {ltp_root}/kirk"
-        cmd += " --sut host"
-        cmd += " --framework ltp"
-        cmd += " --run-suite syscalls"
-        cmd += " --run-pattern '^read0[0-9]*'"
-        cmd += f" --json-report {report_file}"
-        self.assertRunOk(cmd, timeout=30)
+        # fast execution. See "runltp --help" for option details.
+        cmd = "/usr/lib/ltp-testsuite/runltp"
+        cmd += " -p -q"
+        cmd += " -s ^read0[0-9]*"
+        cmd += " -l /tmp/ltp.log"
+        cmd += " -o /tmp/ltp.output"
+        cmd += " -C /tmp/ltp.failed"
+        cmd += " -T /tmp/ltp.tconf"
+        self.assertRunOk(cmd)
 
-        # We print the LTP report and check there was at least one
-        # passed test and zero failure in our selection.
-        out, ret = self.emulator.run(f"cat {report_file} && echo")
+        # We print the LTP run log and check there was zero failure in
+        # our test selection.
+        out, ret = self.emulator.run("cat /tmp/ltp.log")
         self.assertEqual(ret, 0)
-        report = json.loads("".join(out))
-        self.assertEqual(report['stats']['failed'], 0)
-        self.assertGreater(report['stats']['passed'], 0)
+        self.assertIn("Total Failures: 0", out)
