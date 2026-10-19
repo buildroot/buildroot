@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-XTERM_VERSION = 410
+XTERM_VERSION = 412
 XTERM_SOURCE = xterm-$(XTERM_VERSION).tgz
-XTERM_SITE = http://invisible-mirror.net/archives/xterm
+XTERM_SITE = https://invisible-mirror.net/archives/xterm
 XTERM_DEPENDENCIES = ncurses xlib_libXaw host-pkgconf
 XTERM_LICENSE = MIT
 XTERM_LICENSE_FILES = COPYING
