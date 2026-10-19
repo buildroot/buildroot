@@ -1,0 +1,77 @@
+From 34afbb97cc9915ad5976ddc869a539e897545722 Mon Sep 17 00:00:00 2001
+From: Ralf Gommers <ralf.gommers@gmail.com>
+Date: Tue, 10 Oct 2023 00:27:02 +0200
+Subject: [PATCH] ENH: meson: implement BLAS/LAPACK auto-detection and many CI jobs [wheel build]
+
+This reimplements the auto-detection and many of the switches that
+`numpy.distutils` offered. Beyond that, it implements several new
+features:
+
+- Auto-detect the symbol suffix for ILP64 OpenBLAS (can be none or
+  `64_`)
+- MKL ILP64 support, threading control, and use of the layered library
+  model for MKL >=2023.0
+- FlexiBLAS support (LP64 and ILP64)
+- Support for the upcoming standard in Reference LAPACK for `_64` ILP64
+  symbol suffix convention.
+- A test suite for BLAS/LAPACK libraries, covering:
+
+    - OpenBLAS: LP64, ILP64 detected via pkg-config and with a "system
+                dependency" (i.e., custom code inside Meson)
+    - MKL: LP64, ILP64 (layered) and LP64 (SDL)
+    - Accelerate: LP64, ILP64 on macOS >=13.3
+    - FlexiBLAS: LP64, ILP64 on Fedora
+    - ATLAS (LP64, via pkg-config only)
+    - BLIS (LP64, via pkg-config only)
+    - plain libblas/liblapack (Netlib, LP64 only)
+
+The list of libraries that is tried with the default 'auto' setting
+excludes a couple of libraries, because they're either no longer
+developed (ATLAS), not mature (libflame), or can't be tested and
+may be re-added later (ArmPL, ssl2). Those libraries can still be
+quite easily used via pkg-config.
+
+The new CI jobs are running by default right now. Once things settle
+down, the plan is to disable them by default and allow triggering
+them via a `[blas ci]` command in the commit message (just like for
+wheel builds).
+
+Docs will be included in a separate PR with the pending rewrite of
+all the build/install docs. For now, the CI jobs and the
+`meson_options.txt` file serve as guidance for how to use this.
+
+Note that the test suite contains a few hacks, because of packaging
+bugs for MKL on PyPI (broken .pc files) and BLIS (missing .pc file in
+Debian).
+
+Upstream: https://github.com/numpy/numpy/commit/34afbb97cc9915ad5976ddc869a539e897545722
+[thomas: backport subset of upstream commit.
+  Only the part that fix the 2025.02.x scipy version LAPACK detection.
+
+ Fixes:
+    numpy/meson.build:203:49: ERROR: Could not get pkg-config variable
+    and no default provided for <PkgConfigDependency lapack: True None>
+]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ numpy/meson.build | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/numpy/meson.build b/numpy/meson.build
+--- a/numpy/meson.build
++++ b/numpy/meson.build
+@@ -198,10 +198,10 @@
+   if dep.found()
+     conf_data.set(name + '_VERSION', dep.version())
+     conf_data.set(name + '_TYPE_NAME', dep.type_name())
+-    conf_data.set(name + '_INCLUDEDIR', dep.get_variable('includedir'))
+-    conf_data.set(name + '_LIBDIR', dep.get_variable('libdir'))
+-    conf_data.set(name + '_OPENBLAS_CONFIG', dep.get_variable('openblas_config'))
+-    conf_data.set(name + '_PCFILEDIR', dep.get_variable('pcfiledir'))
++    conf_data.set(name + '_INCLUDEDIR', dep.get_variable('includedir', default_value: 'unknown'))
++    conf_data.set(name + '_LIBDIR', dep.get_variable('libdir', default_value: 'unknown'))
++    conf_data.set(name + '_OPENBLAS_CONFIG', dep.get_variable('openblas_config', default_value: 'unknown'))
++    conf_data.set(name + '_PCFILEDIR', dep.get_variable('pcfiledir', default_value: 'unknown'))
+   endif
+ endforeach
+ 
