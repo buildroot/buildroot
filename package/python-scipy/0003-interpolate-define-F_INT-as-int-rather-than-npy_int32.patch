@@ -1,0 +1,50 @@
+From 53796772ed735c1564863fc7ca8d902acb628167 Mon Sep 17 00:00:00 2001
+From: Ralf Gommers <ralf.gommers@gmail.com>
+Date: Thu, 22 Feb 2024 09:10:46 +0100
+Subject: [PATCH] MAINT: interpolate: define `F_INT` as `int` rather than
+ `npy_int32`
+
+This fixes an incompatible pointer issue that shows up as a warning in
+Windows CI jobs, and is reported to break the build with GCC 14 on
+Fedora 40 in gh-19993.
+
+Using `#define F_INT int` is done in several other submodules; this
+was the only instance of using `npy_int32`.
+
+Closes gh-19993
+
+Upstream: https://github.com/scipy/scipy/commit/fdf3b908eeb93203c1847c6fb4efd12e88c37ce5
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ scipy/interpolate/src/_fitpackmodule.c | 4 ++--
+ scipy/interpolate/src/fitpack.pyf      | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/scipy/interpolate/src/_fitpackmodule.c b/scipy/interpolate/src/_fitpackmodule.c
+index 0e913d1c7e43..dc79b2b28833 100644
+--- a/scipy/interpolate/src/_fitpackmodule.c
++++ b/scipy/interpolate/src/_fitpackmodule.c
+@@ -28,8 +28,8 @@ static PyObject *fitpack_error;
+ 
+ #else
+ 
+-#define F_INT npy_int32
+-#define F_INT_NPY NPY_INT32
++#define F_INT int
++#define F_INT_NPY NPY_INT
+ #define F_INT_MAX NPY_MAX_INT32
+ #if NPY_BITSOF_SHORT == 32
+ #define F_INT_PYFMT   "h"
+diff --git a/scipy/interpolate/src/fitpack.pyf b/scipy/interpolate/src/fitpack.pyf
+index 08cb0c141c98..a9535a83f479 100644
+--- a/scipy/interpolate/src/fitpack.pyf
++++ b/scipy/interpolate/src/fitpack.pyf
+@@ -16,7 +16,7 @@ python module dfitpack ! in
+ #ifdef HAVE_ILP64
+ typedef npy_int64 F_INT;
+ #else
+-typedef npy_int32 F_INT;
++typedef int F_INT;
+ #endif
+ 
+ static double dmax(double* seq, F_INT len) {
