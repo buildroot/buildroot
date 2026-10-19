@@ -1,6 +1,11 @@
 config BR2_PACKAGE_QORIQ_RESTOOL
 	bool "qoriq-restool"
 	depends on BR2_aarch64 || BR2_aarch64_be
+	depends on !BR2_STATIC_LIBS # dtc
+	select BR2_PACKAGE_BUSYBOX_SHOW_OTHERS if BR2_PACKAGE_BUSYBOX # bash
+	select BR2_PACKAGE_BASH
+	select BR2_PACKAGE_DTC
+	select BR2_PACKAGE_DTC_PROGRAMS
 	help
 	  The DPAA2 architecture in Layerscape SoCs consists of
 	  networking resources that can be assembled into various
@@ -19,3 +24,7 @@ config BR2_PACKAGE_QORIQ_RESTOOL
 	  that specified in the boot-time DPL file.
 
 	  https://github.com/nxp-qoriq/restool
+
+comment "qoriq-restool needs a toolchain w/ dynamic library"
+	depends on BR2_aarch64 || BR2_aarch64_be
+	depends on BR2_STATIC_LIBS
