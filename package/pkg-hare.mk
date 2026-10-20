@@ -49,10 +49,9 @@ ifndef $(2)_BUILD_CMDS
 # but in real world, the target "all" is not always the default one
 define $(2)_BUILD_CMDS
 	if grep "^all:" $$($(2)_SRCDIR)Makefile > /dev/null; then \
-		$(MAKE) -C $$($(2)_SRCDIR) HARE="$$(HARE_RUN_CMD)" HAREFLAGS="$$(HARE_ARCH_OPT) $$(HARE_LIBDIR_OPT)" all; \
-	else \
-		$(MAKE) -C $$($(2)_SRCDIR) HARE="$$(HARE_RUN_CMD)" HAREFLAGS="$$(HARE_ARCH_OPT) $$(HARE_LIBDIR_OPT)"; \
-	fi
+		target=all ; \
+	fi ; \
+	$(MAKE) -C $$($(2)_SRCDIR) HARE="$$(HARE_RUN_CMD)" HAREFLAGS="$$(HARE_ARCH_OPT) $$(HARE_LIBDIR_OPT)" $${target}
 endef
 endif
 
