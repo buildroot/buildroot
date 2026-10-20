@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-GRUB2_VERSION = 2.14
-GRUB2_SITE = $(BR2_GNU_MIRROR)/grub
+GRUB2_VERSION = 2.16
+GRUB2_SITE = https://gitlab.freedesktop.org/api/v4/projects/26558/packages/generic/source-assets/grub-$(GRUB2_VERSION)
 GRUB2_SOURCE = grub-$(GRUB2_VERSION).tar.xz
 GRUB2_LICENSE = GPL-3.0+
 GRUB2_LICENSE_FILES = COPYING
