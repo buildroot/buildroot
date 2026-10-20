@@ -224,13 +224,21 @@ endif
 
 # Mainline U-Boot versions can create the i.MX specific boot images
 # and need some NXP firmware blobs.
+ifneq ($(BR2_TARGET_UBOOT_NEEDS_IMX_FIRMWARE)$(BR2_TARGET_UBOOT_NEEDS_IMX_ELE_FIRMWARE),)
+
 ifeq ($(BR2_TARGET_UBOOT_NEEDS_IMX_FIRMWARE),y)
 UBOOT_DEPENDENCIES += firmware-imx
-UBOOT_IMX_FW_FILES = \
+UBOOT_IMX_FW_FILES += \
 	$(if $(BR2_PACKAGE_FIRMWARE_IMX_NEEDS_HDMI_FW),signed_hdmi_imx8m.bin) \
 	$(if $(BR2_PACKAGE_FIRMWARE_IMX_LPDDR4),lpddr4*.bin) \
 	$(if $(BR2_PACKAGE_FIRMWARE_IMX_DDR4),ddr4*.bin) \
 	$(if $(BR2_PACKAGE_FIRMWARE_IMX_DDR3),ddr3*.bin)
+endif
+
+ifeq ($(BR2_TARGET_UBOOT_NEEDS_IMX_ELE_FIRMWARE),y)
+UBOOT_DEPENDENCIES += firmware-ele-imx
+UBOOT_IMX_FW_FILES += $(FIRMWARE_ELE_IMX_AHAB_CONTAINER_IMAGE)
+endif
 
 define UBOOT_COPY_IMX_FW_FILES
 	$(foreach fw,$(UBOOT_IMX_FW_FILES),\

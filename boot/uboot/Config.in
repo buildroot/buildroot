@@ -351,6 +351,15 @@ config BR2_TARGET_UBOOT_NEEDS_IMX_FIRMWARE
 	  This option makes sure that the i.MX firmwares are copied into
 	  the U-Boot source directory.
 
+config BR2_TARGET_UBOOT_NEEDS_IMX_ELE_FIRMWARE
+	bool "U-Boot needs firmware-ele-imx"
+	depends on BR2_PACKAGE_FIRMWARE_ELE_IMX
+	help
+	  Some i.MX8/i.MX9 platforms encapsulate NXP specific firmware
+	  for the EdgeLock Secure Enclave inside U-Boot.
+	  This option makes sure that the i.MX EdgeLock Secure Enclave
+	  firmware is copied into the U-Boot source directory.
+
 config BR2_TARGET_UBOOT_NEEDS_ROCKCHIP_RKBIN
 	bool "U-Boot needs rockchip-rkbin"
 	depends on BR2_PACKAGE_ROCKCHIP_RKBIN
