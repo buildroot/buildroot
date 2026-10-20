@@ -2,7 +2,7 @@
 #
 # We mimic the .sdcard NXP's image format:
 # * the SD card must have 32 kB free space at the beginning,
-# * U-Boot is integrated into imx9-boot-sd.bin and is dumped as is,
+# * U-Boot is integrated into flash.bin and is dumped as is,
 # * a FAT partition at offset 8MB is containing Image and DTB files
 # * a single root filesystem partition is required (ext2, ext3 or ext4)
 #
@@ -24,7 +24,7 @@ image sdcard.img {
 
 	partition imx-boot {
 		in-partition-table = "no"
-		image = "imx9-boot-sd.bin"
+		image = "flash.bin"
 		offset = %IMXOFFSET%
 	}
 

@@ -31,11 +31,11 @@ main ()
 
 	"${HOST_DIR}/bin/mkimage_imx8" -soc IMX9 -append "${BINARIES_DIR}/ahab-container.img" -c \
 		-ap "${BINARIES_DIR}/u-boot-spl-ddr.bin" a55 ${SPL_LOAD_ADDR} \
-		-out "${BINARIES_DIR}/imx9-boot-sd.bin"
+		-out "${BINARIES_DIR}/flash.bin"
 
-	flashbin_size="$(wc -c "${BINARIES_DIR}/imx9-boot-sd.bin" | awk '{print $1}')"
+	flashbin_size="$(wc -c "${BINARIES_DIR}/flash.bin" | awk '{print $1}')"
 	pad_cnt=$(($((flashbin_size + 0x400 - 1)) / 0x400))
-	dd if="${BINARIES_DIR}/u-boot-atf-container.img" of="${BINARIES_DIR}/imx9-boot-sd.bin" bs=1K seek=${pad_cnt}
+	dd if="${BINARIES_DIR}/u-boot-atf-container.img" of="${BINARIES_DIR}/flash.bin" bs=1K seek=${pad_cnt}
 
 	exit $?
 }

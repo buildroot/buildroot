@@ -22,9 +22,9 @@ You will find in output/images/ the following files:
   - bl31.bin
   - boot.vfat
   - ddr_fw.bin
+  - flash.bin
   - Image
   - imx91-11x11-evk.dtb
-  - imx9-boot-sd.bin
   - lpddr4_pmu_train_fw.bin
   - rootfs.ext2
   - rootfs.ext4
