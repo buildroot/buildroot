@@ -1,0 +1,35 @@
+From 9e9ea4c131fcd611ae5a91c7f6a4d9cf63043442 Mon Sep 17 00:00:00 2001
+From: Mamoru TASAKA <mtasaka@fedoraproject.org>
+Date: Tue, 14 Jan 2025 18:00:03 +0900
+Subject: [PATCH] FIX: function argument fix for C23 conformance
+
+C23 now regards function declaration without a parameter list
+as that with no parameter (i.e. having `(void)`).
+
+Specify parameter list explicitly to make code C23
+conformant.
+
+Closes #106 .
+
+Upstream: https://github.com/lxde/libfm/commit/dff442bd58b61c8afdf8cbd17f918bcaed40ddc2
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/base/fm-dummy-monitor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/base/fm-dummy-monitor.c b/src/base/fm-dummy-monitor.c
+index 6ece1fcc..cf1bcf89 100644
+--- a/src/base/fm-dummy-monitor.c
++++ b/src/base/fm-dummy-monitor.c
+@@ -37,7 +37,7 @@
+ 
+ G_DEFINE_TYPE(FmDummyMonitor, fm_dummy_monitor, G_TYPE_FILE_MONITOR);
+ 
+-static gboolean cancel()
++static gboolean cancel(GFileMonitor *)
+ {
+     return TRUE;
+ }
+-- 
+2.56.0
+
