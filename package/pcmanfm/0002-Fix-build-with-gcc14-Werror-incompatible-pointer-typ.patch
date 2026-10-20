@@ -1,0 +1,40 @@
+From b97c630af9794c0f87bf3b8a0b77531b034d31a7 Mon Sep 17 00:00:00 2001
+From: Mamoru TASAKA <mtasaka@fedoraproject.org>
+Date: Fri, 26 Jul 2024 12:13:32 +0900
+Subject: [PATCH] Fix build with gcc14 -Werror=incompatible-pointer-types
+
+gcc14 now defaults to -Werror=incompatible-pointer-types.
+
+Add required casts to the returned pointers.
+
+Upstream: https://github.com/lxde/pcmanfm/commit/12abd7e179adb9e31d999824048a5f40f90218fd
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/desktop.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/desktop.c b/src/desktop.c
+index 0686a59..b358f50 100644
+--- a/src/desktop.c
++++ b/src/desktop.c
+@@ -1267,7 +1267,7 @@ static AtkObject *fm_desktop_accessible_ref_selection(AtkSelection *selection,
+         item = items->data;
+         if (item->item->is_selected)
+             if (i-- == 0)
+-                return g_object_ref(item);
++                return (AtkObject *)g_object_ref(item);
+     }
+     return NULL;
+ }
+@@ -1454,7 +1454,7 @@ static AtkObject *fm_desktop_accessible_ref_child(AtkObject *accessible,
+     item = g_list_nth_data(priv->items, index);
+     if (!item)
+         return NULL;
+-    return g_object_ref(item);
++    return (AtkObject *)g_object_ref(item);
+ }
+ 
+ static void fm_desktop_accessible_initialize(AtkObject *accessible, gpointer data)
+-- 
+2.56.0
+
