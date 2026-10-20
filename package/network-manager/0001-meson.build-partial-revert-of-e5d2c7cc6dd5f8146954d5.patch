@@ -1,0 +1,50 @@
+From 57c96b61de76ab6fca79e075076c5d2e35fc1229 Mon Sep 17 00:00:00 2001
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Tue, 20 Oct 2026 15:27:21 +0200
+Subject: [PATCH] meson.build: partial revert of
+ e5d2c7cc6dd5f8146954d52855fff36febd03d5b
+
+Commit e5d2c7cc6dd5f8146954d52855fff36febd03d5b ("meson: fix
+cross-compilation issues") fixed some cross-compilation issues, but
+one of the change is incorrect:
+
+   jansson_libdir = jansson_dep.get_variable(pkgconfig: 'libdir')
+-  res = run_command(find_program('eu-readelf', 'readelf'), '-d', join_paths(jansson_libdir, 'libjansson.so'), check: false)
++  jansson_sysroot = meson.is_cross_build() ? meson.get_external_property('sys_root', '') : ''
++  res = run_command(find_program('eu-readelf', 'readelf'), '-d', jansson_sysroot + join_paths(jansson_libdir, 'libjansson.so'), check: false)
+
+This change is not correct as jansson_dep.get_variable(pkgconfig:
+'libdir') will already return a properly sysroot prepended path,
+assumming the pkg-config used is properly configured for
+cross-compilation (i.e the PKG_CONFIG_SYSROOT_DIR environment variable
+is set and points to the sysroot):
+
+The above change breaks the cross-compilation in Buildroot, which
+properly uses pkg-config with PKG_CONFIG_SYSROOT_DIR as we now have a
+path to jansson.so that has the sysroot path twice:
+
+  /home/thomas/buildroot/all/output-all/host/aarch64-buildroot-linux-gnu/sysroot/home/thomas/buildroot/all/output-all/host/aarch64-buildroot-linux-gnu/sysroot/usr/lib/libjansson.so
+
+Upstream: https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/merge_requests/2575
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ meson.build | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index 5345a650a0..cc1460460c 100644
+--- a/meson.build
++++ b/meson.build
+@@ -296,8 +296,7 @@ config_h.set10('WITH_JANSSON', jansson_dep.found())
+ jansson_msg = 'no'
+ if jansson_dep.found()
+   jansson_libdir = jansson_dep.get_variable(pkgconfig: 'libdir')
+-  jansson_sysroot = meson.is_cross_build() ? meson.get_external_property('sys_root', '') : ''
+-  res = run_command(find_program('eu-readelf', 'readelf'), '-d', jansson_sysroot + join_paths(jansson_libdir, 'libjansson.so'), check: false)
++  res = run_command(find_program('eu-readelf', 'readelf'), '-d', join_paths(jansson_libdir, 'libjansson.so'), check: false)
+   jansson_soname = ''
+   foreach line: res.stdout().split('\n')
+     if line.strip().contains('SONAME')
+-- 
+2.56.0
+
