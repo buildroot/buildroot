@@ -89,6 +89,14 @@ else
 DOVECOT_CONF_OPTS += --without-pam
 endif
 
+# Lua support needs the Lua >= 5.2 API (luaL_Stream, luaL_tolstring...)
+ifeq ($(BR2_PACKAGE_LUA)$(BR2_PACKAGE_LUA_5_1),y)
+DOVECOT_CONF_OPTS += --with-lua=yes
+DOVECOT_DEPENDENCIES += lua
+else
+DOVECOT_CONF_OPTS += --without-lua
+endif
+
 ifeq ($(BR2_PACKAGE_OPENLDAP),y)
 DOVECOT_CONF_OPTS += --with-ldap=yes
 DOVECOT_DEPENDENCIES += openldap
