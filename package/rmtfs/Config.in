@@ -1,0 +1,17 @@
+config BR2_PACKAGE_RMTFS
+	bool "rmtfs"
+	depends on BR2_PACKAGE_HAS_UDEV
+	depends on BR2_TOOLCHAIN_HAS_THREADS
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_15 # qrtr
+	select BR2_PACKAGE_QRTR
+	help
+	  Remote file system service for the modem of Qualcomm SoCs:
+	  serves the modem's EFS partitions (modemst1, modemst2, fsg,
+	  fsc) over QRTR and the rmtfs shared memory. Without it the
+	  modem firmware stalls at boot.
+
+	  https://github.com/linux-msm/rmtfs
+
+comment "rmtfs needs udev /dev management and a toolchain w/ threads, headers >= 4.15"
+	depends on !BR2_PACKAGE_HAS_UDEV || !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_15

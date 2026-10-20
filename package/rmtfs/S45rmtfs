@@ -1,0 +1,58 @@
+#!/bin/sh
+
+DAEMON="rmtfs"
+PIDFILE="/var/run/$DAEMON.pid"
+# -P: find the EFS partitions by GPT label; add -s to let rmtfs also
+# start the modem remoteproc, -r for read-only EFS.
+RMTFS_ARGS="-P"
+
+# shellcheck disable=SC1090
+[ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
+
+start() {
+	printf 'Starting %s: ' "$DAEMON"
+	# No rmtfs shared memory: not a Qualcomm modem, nothing to serve
+	if [ ! -e /dev/qcom_rmtfs_mem1 ]; then
+		echo "SKIP"
+		return 0
+	fi
+	# shellcheck disable=SC2086 # we need the word splitting
+	start-stop-daemon -S -q -b -m -p "$PIDFILE" -x "/usr/bin/$DAEMON" \
+		-- $RMTFS_ARGS
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+stop() {
+	printf 'Stopping %s: ' "$DAEMON"
+	start-stop-daemon -K -q -p "$PIDFILE"
+	status=$?
+	if [ "$status" -eq 0 ]; then
+		rm -f "$PIDFILE"
+		echo "OK"
+	else
+		echo "FAIL"
+	fi
+	return "$status"
+}
+
+restart() {
+	stop
+	sleep 1
+	start
+}
+
+case "$1" in
+start|stop|restart)
+	"$1";;
+reload)
+	restart;;
+*)
+	echo "Usage: $0 {start|stop|restart|reload}"
+	exit 1
+esac
