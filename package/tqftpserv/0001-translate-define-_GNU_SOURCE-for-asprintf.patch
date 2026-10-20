@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Igor Opaniuk <igor.opaniuk@oss.qualcomm.com>
+Date: Mon, 19 Oct 2026 22:02:59 +0200
+Subject: [PATCH] translate: define _GNU_SOURCE for asprintf()
+
+asprintf() is a GNU extension. glibc and musl declare it in their
+default mode, uClibc-ng only with _GNU_SOURCE, so with uClibc-ng
+translate.c fails to build (an error with GCC 14 and later):
+
+  translate.c:298:15: error: implicit declaration of function 'asprintf'
+
+Define _GNU_SOURCE before the includes, as xz-decompress.c and
+zstd-decompress.c already do.
+
+Assisted-by: Claude:claude-opus-5-5
+Signed-off-by: Igor Opaniuk <igor.opaniuk@oss.qualcomm.com>
+Upstream: https://github.com/linux-msm/tqftpserv/pull/56
+---
+ translate.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/translate.c b/translate.c
+index 246b82d..19fdd48 100644
+--- a/translate.c
++++ b/translate.c
+@@ -2,6 +2,7 @@
+ /*
+  * Copyright (c) 2019, Linaro Ltd.
+  */
++#define _GNU_SOURCE /* asprintf() */
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ #include <dirent.h>
+-- 
+2.53.0
+

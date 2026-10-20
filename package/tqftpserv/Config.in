@@ -1,0 +1,14 @@
+config BR2_PACKAGE_TQFTPSERV
+	bool "tqftpserv"
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_15 # qrtr
+	select BR2_PACKAGE_QRTR
+	help
+	  TFTP server over QRTR for the remote processors of Qualcomm
+	  SoCs: hands the modem the files it asks for, e.g. the WLAN
+	  firmware, from /lib/firmware. Serves xz or zstd compressed
+	  files when xz or zstd is enabled.
+
+	  https://github.com/linux-msm/tqftpserv
+
+comment "tqftpserv needs a toolchain w/ headers >= 4.15"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_15
