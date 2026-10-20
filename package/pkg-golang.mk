@@ -146,6 +146,17 @@ ifeq ($(BR2_aarch64),y)
 $(2)_EXTLDFLAGS += -fuse-ld=bfd
 endif
 
+ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB)$(BR2_PACKAGE_HOST_GO_TARGET_CGO_LINKING_SUPPORTS),yy)
+# On ARMv5, runtime/cgo calls helpers such as __sync_synchronize that
+# come from libgcc.a. With BR2_ARM_INSTRUCTIONS_THUMB, libgcc.a is built
+# as Thumb code while Go emits ARM code. A call between the two must
+# switch the processor to the other instruction set, which Go's
+# internal linker cannot do: it aborts on the R_ARM_THM_CALL relocation.
+# The external linker (GNU ld) can, by rewriting the call to BLX or
+# routing it through a small stub, so use it.
+$(2)_LDFLAGS += -linkmode=external
+endif
+
 ifneq ($$($(2)_EXTLDFLAGS),)
 $(2)_LDFLAGS += -extldflags '$$($(2)_EXTLDFLAGS)'
 endif
