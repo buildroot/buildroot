@@ -13,7 +13,7 @@ LIBFM_LICENSE_FILES = COPYING src/extra/fm-xml-file.c
 LIBFM_INSTALL_STAGING = YES
 # We're patching src/modules/Makefile.am
 LIBFM_AUTORECONF = YES
-LIBFM_CONF_OPTS = --with-gtk=3
+LIBFM_CONF_OPTS = --with-gtk=3 --disable-old-actions
 
 ifeq ($(BR2_PACKAGE_LIBEXIF),y)
 LIBFM_CONF_OPTS += --enable-exif
