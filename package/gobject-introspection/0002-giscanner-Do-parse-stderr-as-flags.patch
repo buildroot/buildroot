@@ -1,0 +1,56 @@
+From 5685062db8924fe0a58a9a2a3f435217614dcc9f Mon Sep 17 00:00:00 2001
+From: Franciszek Stachura <fbstachura@gmail.com>
+Date: Thu, 20 Aug 2026 20:23:16 +0200
+Subject: [PATCH] giscanner: Do parse stderr as flags
+
+check_output in pkgconfig.py returns stdout with stderr. If pkg-config
+prints something to stderr (ex. dynamic linker warnings, or warnings
+from program passed in PKG_CONFIG), it may get parsed as flags and
+passed to the compiler.
+
+Do not capture stderr in check_output at all.
+
+Upstream: https://gitlab.gnome.org/GNOME/gobject-introspection/-/merge_requests/561
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ giscanner/pkgconfig.py          |  2 +-
+ tests/scanner/test_pkgconfig.py | 10 ++++++++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/giscanner/pkgconfig.py b/giscanner/pkgconfig.py
+index 39db41d61..19c5953ea 100644
+--- a/giscanner/pkgconfig.py
++++ b/giscanner/pkgconfig.py
+@@ -31,7 +31,7 @@ def check_output(flags, ignore_errors, command=None):
+     argv = command[:]
+     argv.extend(flags)
+     try:
+-        return subprocess.check_output(argv, universal_newlines=True, stderr=subprocess.STDOUT)
++        return subprocess.check_output(argv, universal_newlines=True)
+     except subprocess.CalledProcessError as e:
+         output = e.output or ''
+         if ignore_errors:
+diff --git a/tests/scanner/test_pkgconfig.py b/tests/scanner/test_pkgconfig.py
+index 8b654e38e..5da0eb4fc 100644
+--- a/tests/scanner/test_pkgconfig.py
++++ b/tests/scanner/test_pkgconfig.py
+@@ -104,6 +104,16 @@ class PkgConfigTest(unittest.TestCase):
+             flags = pkgconfig.cflags(['bar-3.0'], command=command)
+             self.assertEqual(flags, ['-DLOG="HELLO"'])
+ 
++    def test_pkgconfig_stderr(self):
++        s = """
++        import sys
++        print('warning: test', file=sys.stderr)
++        print('-ltest')
++        """
++        with pkg_config_script(s) as command:
++            flags = pkgconfig.cflags(['foo-2.0'], command=command)
++            self.assertEqual(flags, ['-ltest'])
++
+ 
+ if __name__ == '__main__':
+     unittest.main()
+-- 
+GitLab
+
