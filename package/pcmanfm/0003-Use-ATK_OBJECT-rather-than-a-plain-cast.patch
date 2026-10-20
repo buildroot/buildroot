@@ -1,0 +1,36 @@
+From 3ae0e8d2e26e6ee5836df76b4db3378b7b61c8e8 Mon Sep 17 00:00:00 2001
+From: Adam Sampson <ats@offog.org>
+Date: Fri, 11 Jul 2025 13:59:56 +0100
+Subject: [PATCH] Use ATK_OBJECT rather than a plain cast
+
+Upstream: https://github.com/lxde/pcmanfm/commit/cb2e81e4e545ff26dd6a410ccc52366cc98ba858
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+---
+ src/desktop.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/desktop.c b/src/desktop.c
+index b358f50..28b19ca 100644
+--- a/src/desktop.c
++++ b/src/desktop.c
+@@ -1267,7 +1267,7 @@ static AtkObject *fm_desktop_accessible_ref_selection(AtkSelection *selection,
+         item = items->data;
+         if (item->item->is_selected)
+             if (i-- == 0)
+-                return (AtkObject *)g_object_ref(item);
++                return ATK_OBJECT(g_object_ref(item));
+     }
+     return NULL;
+ }
+@@ -1454,7 +1454,7 @@ static AtkObject *fm_desktop_accessible_ref_child(AtkObject *accessible,
+     item = g_list_nth_data(priv->items, index);
+     if (!item)
+         return NULL;
+-    return (AtkObject *)g_object_ref(item);
++    return ATK_OBJECT(g_object_ref(item));
+ }
+ 
+ static void fm_desktop_accessible_initialize(AtkObject *accessible, gpointer data)
+-- 
+2.56.0
+
