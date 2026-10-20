@@ -71,13 +71,6 @@ config BR2_TARGET_EDK2_PLATFORM_ARM_VIRT_QEMU_KERNEL
 	  the Linux boot protocol. It can therefore be loaded by a
 	  previous bootloader like ARM Trusted Firmware or OP-TEE.
 
-config BR2_TARGET_EDK2_PLATFORM_ARM_SGI575
-	bool "ARM SGI-575"
-	depends on BR2_aarch64
-	help
-	  Platform configuration for ARM SGI-575 on ARM's
-	  Fixed Virtual Platform (FVP).
-
 config BR2_TARGET_EDK2_PLATFORM_ARM_VEXPRESS_FVP_AARCH64
 	bool "ARM VExpress FVP Aarch64"
 	depends on BR2_aarch64
@@ -144,7 +137,6 @@ config BR2_TARGET_EDK2_FD_NAME
 	default "QEMU_EFI" if BR2_TARGET_EDK2_PLATFORM_ARM_VIRT_QEMU
 	default "QEMU_EFI" if BR2_TARGET_EDK2_PLATFORM_ARM_VIRT_QEMU_KERNEL
 	default "QEMU_EFI" if BR2_TARGET_EDK2_PLATFORM_OVMF_LOONGARCH64
-	default "BL33_AP_UEFI" if BR2_TARGET_EDK2_PLATFORM_ARM_SGI575
 	default "FVP_AARCH64_EFI" if BR2_TARGET_EDK2_PLATFORM_ARM_VEXPRESS_FVP_AARCH64
 	default "ARMADA_EFI" if BR2_TARGET_EDK2_PLATFORM_SOLIDRUN_ARMADA80X0MCBIN
 

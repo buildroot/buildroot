@@ -98,17 +98,6 @@ class TestEdk2BuildArmVirtQemuKernel(TestEdk2BuildBase):
         self.assertBinariesExist("QEMU_EFI.fd", "QEMU_VARS.fd")
 
 
-class TestEdk2BuildArmSgi575(TestEdk2BuildBase):
-    config = TestEdk2BuildBase.base_config + \
-        """
-        BR2_aarch64=y
-        BR2_TARGET_EDK2_PLATFORM_ARM_SGI575=y
-        """
-
-    def test_run(self) -> None:
-        self.assertBinariesExist("BL33_AP_UEFI.fd")
-
-
 class TestEdk2BuildArmVexpressFvpAarch64(TestEdk2BuildBase):
     config = TestEdk2BuildBase.base_config + \
         """

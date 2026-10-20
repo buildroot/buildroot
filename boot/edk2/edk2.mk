@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EDK2_VERSION = edk2-stable202602
+EDK2_VERSION = edk2-stable202608
 EDK2_SITE = https://github.com/tianocore/edk2
 EDK2_SITE_METHOD = git
 EDK2_LICENSE = BSD-2-Clause-Patent
@@ -75,12 +75,6 @@ EDK2_PACKAGE_NAME = ArmVirtPkg
 EDK2_PLATFORM_NAME = ArmVirtQemuKernel
 EDK2_BUILD_DIR = $(EDK2_PLATFORM_NAME)-AArch64
 
-else ifeq ($(BR2_TARGET_EDK2_PLATFORM_ARM_SGI575),y)
-EDK2_ARCH = AARCH64
-EDK2_PACKAGE_NAME = Platform/ARM/SgiPkg/Sgi575
-EDK2_PLATFORM_NAME = Sgi575
-EDK2_BUILD_DIR = $(EDK2_PLATFORM_NAME)
-
 else ifeq ($(BR2_TARGET_EDK2_PLATFORM_ARM_VEXPRESS_FVP_AARCH64),y)
 EDK2_ARCH = AARCH64
 EDK2_PACKAGE_NAME = Platform/ARM/VExpressPkg
@@ -142,10 +136,10 @@ EDK2_BUILD_ENV += \
 	PYTHON_COMMAND=$(HOST_DIR)/bin/python3 \
 	IASL_PREFIX=$(HOST_DIR)/bin/ \
 	NASM_PREFIX=$(HOST_DIR)/bin/ \
-	GCC5_$(EDK2_ARCH)_PREFIX=$(TARGET_CROSS)
+	GCC_$(EDK2_ARCH)_PREFIX=$(TARGET_CROSS)
 
 EDK2_BUILD_OPTS += \
-	-t GCC5 \
+	-t GCC \
 	-n $(BR2_JLEVEL) \
 	-a $(EDK2_ARCH) \
 	-b $(EDK2_BUILD_TYPE) \
@@ -162,7 +156,7 @@ define EDK2_BUILD_CMDS
 endef
 
 define EDK2_INSTALL_IMAGES_CMDS
-	cp -f $(@D)/Build/$(EDK2_BUILD_DIR)/$(EDK2_BUILD_TYPE)_GCC5/FV/*.fd $(BINARIES_DIR)
+	cp -f $(@D)/Build/$(EDK2_BUILD_DIR)/$(EDK2_BUILD_TYPE)_GCC/FV/*.fd $(BINARIES_DIR)
 endef
 
 $(eval $(generic-package))
