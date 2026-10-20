@@ -1,0 +1,16 @@
+config BR2_PACKAGE_QRTR
+	bool "qrtr"
+	depends on BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_15 # linux/qrtr.h control packets
+	help
+	  Userspace for the Qualcomm IPC Router (QRTR), the transport
+	  used to talk to the remote processors (modem, ADSP, ...) of
+	  Qualcomm SoCs: the libqrtr library and the qrtr-cfg and
+	  qrtr-lookup tools.
+
+	  The QRTR name service runs in the kernel since Linux 5.7,
+	  so the userspace qrtr-ns daemon is not installed.
+
+	  https://github.com/linux-msm/qrtr
+
+comment "qrtr needs a toolchain w/ headers >= 4.15"
+	depends on !BR2_TOOLCHAIN_HEADERS_AT_LEAST_4_15
