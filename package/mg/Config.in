@@ -1,6 +1,7 @@
 config BR2_PACKAGE_MG
 	bool "mg"
 	depends on BR2_USE_MMU # fork()
+	depends on BR2_USE_WCHAR
 	help
 	  Emacs-like text editor (260 kiB)
 
@@ -16,3 +17,7 @@ config BR2_PACKAGE_MG
 	  and, in particular, no requirement on ncurses or termcap.
 
 	  https://github.com/troglobit/mg/
+
+comment "mg needs a toolchain w/ wchar"
+	depends on BR2_USE_MMU
+	depends on !BR2_USE_WCHAR
