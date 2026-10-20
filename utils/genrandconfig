@@ -99,7 +99,46 @@ class SystemInfo:
         return not missing_requirements
 
 
-async def fixup_config(sysinfo, configfile):
+def is_secondary_config(configlines):
+    """Identify secondary configurations.
+
+    This function identifies configurations considered as
+    "secondary". This classification can be used to skip those less
+    frequent configurations.
+
+    Returns: 'True' if the configuration is considered as "secondary",
+    or 'False' otherwise.
+    """
+
+    secondary_configs = [
+        # Secondary architectures (including all CPUs)
+        "arcle", "armeb", "aarch64_be", "hppa", "loongarch64", "m68k",
+        "microblazeel", "microblazebe", "mips", "mipsel", "mips64",
+        "or1k", "powerpc", "powerpc64", "s390x", "sh", "sparc",
+        "sparc64", "xtensa",
+        # Secondary CPUs:
+        # Armv4 CPUs:
+        "arm920t", "arm922t", "fa526", "strongarm",
+        # Older 32bit CPUs before i686:
+        "x86_c3", "x86_geode", "x86_i486", "x86_i586",
+        "x86_pentium_mmx", "x86_winchip2", "x86_winchip_c6",
+        "x86_x1000",
+        # All RISC-V 32-bit:
+        "RISCV_32"
+    ]
+    for cfg in secondary_configs:
+        if f"BR2_{cfg}=y\n" in configlines:
+            return True
+
+    # We also mark RISC-V 64-bit noMMU as secondary
+    if "BR2_RISCV_64=y\n" in configlines and \
+       "BR2_RISCV_USE_MMU=y\n" not in configlines:
+        return True
+
+    return False
+
+
+async def fixup_config(sysinfo, configfile, skip_secondary_configs=True):
     """Finalize the configuration and reject any problematic combinations
 
     This function returns 'True' when the configuration has been
@@ -112,6 +151,9 @@ async def fixup_config(sysinfo, configfile):
         configlines = configf.readlines()
 
     ROOTFS_SIZE = '5G'
+
+    if skip_secondary_configs and is_secondary_config(configlines):
+        return False
 
     # libffi not available on ARMv7-M, but propagating libffi arch
     # dependencies in Buildroot is really too much work, so we handle
@@ -530,6 +572,9 @@ async def gen_config(args):
     else:
         configfile = os.path.join(args.outputdir, ".config")
 
+    # Skip secondary configurations 90% of the time
+    skip_secondary_configs = randint(0, 9) != 0
+
     # Now, generate the random selection of packages, and fixup
     # things if needed.
     # Safe-guard, in case we can not quickly come to a valid
@@ -553,7 +598,7 @@ async def gen_config(args):
         if ret:
             return ret
 
-        if await fixup_config(sysinfo, configfile):
+        if await fixup_config(sysinfo, configfile, skip_secondary_configs):
             print("  configuration valid")
             break
 
