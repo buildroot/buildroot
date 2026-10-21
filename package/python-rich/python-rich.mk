@@ -10,5 +10,7 @@ PYTHON_RICH_SITE = https://files.pythonhosted.org/packages/c0/8f/0722ca900cc807c
 PYTHON_RICH_SETUP_TYPE = poetry
 PYTHON_RICH_LICENSE = MIT
 PYTHON_RICH_LICENSE_FILES = LICENSE
+HOST_PYTHON_RICH_DEPENDENCIES = host-python-markdown-it-py host-python-pygments
 
 $(eval $(python-package))
+$(eval $(host-python-package))
