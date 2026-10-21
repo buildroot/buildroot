@@ -1,0 +1,36 @@
+From a768091a0001cf4e6fb24885daec68d8c48e1cde Mon Sep 17 00:00:00 2001
+From: Reuben Roessler <reuben.roessler@canonical.com>
+Date: Wed, 21 Oct 2026 21:33:52 +0200
+Subject: [PATCH] Fix build with OpenSSL 4.0
+
+Patch was suggested by Reuben Roessler:
+https://github.com/xmrig/xmrig/pull/3808#discussion_r3799768416
+
+Upstream: https://github.com/xmrig/xmrig/pull/3808
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/base/net/tls/TlsGen.cpp | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/base/net/tls/TlsGen.cpp b/src/base/net/tls/TlsGen.cpp
+index ad2e648b..a5306789 100644
+--- a/src/base/net/tls/TlsGen.cpp
++++ b/src/base/net/tls/TlsGen.cpp
+@@ -114,10 +114,12 @@ bool xmrig::TlsGen::generate_x509(const char *commonName)
+     X509_gmtime_adj(X509_get_notBefore(m_x509), 0);
+     X509_gmtime_adj(X509_get_notAfter(m_x509), 315360000L);
+ 
+-    auto name = X509_get_subject_name(m_x509);
++    auto name = X509_NAME_new();
+     X509_NAME_add_entry_by_txt(name, "CN", MBSTRING_ASC, reinterpret_cast<const uint8_t *>(commonName), -1, -1, 0);
+ 
++    X509_set_subject_name(m_x509, name);
+     X509_set_issuer_name(m_x509, name);
++    X509_NAME_free(name);
+ 
+     return X509_sign(m_x509, m_pkey, EVP_sha256());
+ }
+-- 
+2.47.3
+
