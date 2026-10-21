@@ -12,3 +12,4 @@ PYTHON_MDURL_LICENSE = MIT
 PYTHON_MDURL_LICENSE_FILES = LICENSE
 
 $(eval $(python-package))
+$(eval $(host-python-package))
