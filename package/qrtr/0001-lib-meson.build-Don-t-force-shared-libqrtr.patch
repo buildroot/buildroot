@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Luca Weiss <luca.weiss@fairphone.com>
+Date: Thu, 16 Apr 2026 09:08:41 +0200
+Subject: [PATCH] lib: meson.build: Don't force shared libqrtr
+
+Allow the build system to build a static version of libqrtr when the
+user requests it.
+
+As per meson manual:
+> You should use this [library()] instead of shared_library(),
+> static_library() or both_libraries() most of the time.
+
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+Upstream: https://github.com/linux-msm/qrtr/commit/f83bb6c1a87a4a030e36796b4ca9240b0321e15d
+---
+ lib/meson.build | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/lib/meson.build b/lib/meson.build
+index aab46cb..faaf7d1 100644
+--- a/lib/meson.build
++++ b/lib/meson.build
+@@ -3,10 +3,10 @@
+ pkg = import('pkgconfig')
+ 
+ libqrtr_srcs = ['logging.c', 'qmi.c', 'qrtr.c']
+-libqrtr = shared_library('qrtr',
+-                         libqrtr_srcs,
+-                         version: meson.project_version(),
+-                         include_directories : inc,
+-                         install: true)
++libqrtr = library('qrtr',
++                  libqrtr_srcs,
++                  version: meson.project_version(),
++                  include_directories : inc,
++                  install: true)
+ 
+ pkg.generate(libqrtr)
+-- 
+2.53.0
+
