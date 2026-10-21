@@ -11,5 +11,7 @@ PYTHON_TYPER_SLIM_SETUP_TYPE = pep517
 PYTHON_TYPER_SLIM_LICENSE = MIT
 PYTHON_TYPER_SLIM_LICENSE_FILES = LICENSE
 PYTHON_TYPER_SLIM_DEPENDENCIES = host-python-pdm-backend
+HOST_PYTHON_TYPER_SLIM_DEPENDENCIES = host-python-pdm-backend host-python-typer
 
 $(eval $(python-package))
+$(eval $(host-python-package))
