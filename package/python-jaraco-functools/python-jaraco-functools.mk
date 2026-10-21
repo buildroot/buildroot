@@ -13,5 +13,10 @@ PYTHON_JARACO_FUNCTOOLS_SETUP_TYPE = setuptools
 PYTHON_JARACO_FUNCTOOLS_DEPENDENCIES = \
 	host-python-coherent-licensed \
 	host-python-setuptools-scm
+HOST_PYTHON_JARACO_FUNCTOOLS_DEPENDENCIES = \
+	host-python-coherent-licensed \
+	host-python-more-itertools \
+	host-python-setuptools-scm
 
 $(eval $(python-package))
+$(eval $(host-python-package))
