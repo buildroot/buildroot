@@ -10,5 +10,7 @@ PYTHON_MARKDOWN_IT_PY_SITE = https://files.pythonhosted.org/packages/06/ff/78412
 PYTHON_MARKDOWN_IT_PY_SETUP_TYPE = flit
 PYTHON_MARKDOWN_IT_PY_LICENSE = MIT
 PYTHON_MARKDOWN_IT_PY_LICENSE_FILES = LICENSE LICENSE.markdown-it
+HOST_PYTHON_MARKDOWN_IT_PY_DEPENDENCIES = host-python-mdurl
 
 $(eval $(python-package))
+$(eval $(host-python-package))
