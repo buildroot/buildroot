@@ -34,6 +34,9 @@ MUSL_IGNORE_CVES += CVE-2026-6042
 # 0006-qsort-fix-shift-UB-in-shl-and-shr.patch
 MUSL_IGNORE_CVES += CVE-2026-40200
 
+# 0007-regex-avoid-int-overflow-in-regcomp.patch
+MUSL_IGNORE_CVES += CVE-2026-107891
+
 # musl does not build with LTO, so explicitly disable it
 # when using a compiler that may have support for LTO
 ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_4_7),y)
