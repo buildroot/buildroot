@@ -11,5 +11,11 @@ PYTHON_TYPER_SETUP_TYPE = pep517
 PYTHON_TYPER_LICENSE = MIT, BSD-3-Clause (vendored click)
 PYTHON_TYPER_LICENSE_FILES = LICENSE typer/_click/LICENSE.txt
 PYTHON_TYPER_DEPENDENCIES = host-python-pdm-backend
+HOST_PYTHON_TYPER_DEPENDENCIES = \
+	host-python-annotated-doc \
+	host-python-pdm-backend \
+	host-python-rich \
+	host-python-shellingham
 
 $(eval $(python-package))
+$(eval $(host-python-package))
