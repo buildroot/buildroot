@@ -14,3 +14,4 @@ PYTHON_PYGMENTS_CPE_ID_PRODUCT = pygments
 PYTHON_PYGMENTS_SETUP_TYPE = hatch
 
 $(eval $(python-package))
+$(eval $(host-python-package))
