@@ -14,7 +14,7 @@ import json
 import os
 from collections import defaultdict
 from pathlib import Path
-from typing import Iterator
+from typing import Iterator, List, Tuple
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -148,7 +148,7 @@ def cyclonedx_licenses(lic_list):
     }
 
 
-def extract_cves_from_header(header: str) -> list[str]:
+def extract_cves_from_header(header: str) -> List[str]:
     """Extract CVE identifiers from the patch header.
 
     Args:
@@ -219,7 +219,7 @@ def read_patch_file(patch_path: Path) -> str:
         return f.read()
 
 
-def cyclonedx_patches(comp_ref: str, patch_list: list[str]):
+def cyclonedx_patches(comp_ref: str, patch_list: List[str]):
     """Translate a list of patches from the show-info JSON to a list of
     patches in CycloneDX format.
 
@@ -285,7 +285,7 @@ def cyclonedx_patches(comp_ref: str, patch_list: list[str]):
     }
 
 
-def parse_uris(uris: list[str]) -> Iterator[tuple[list[str], str]]:
+def parse_uris(uris: List[str]) -> Iterator[Tuple[List[str], str]]:
     """Parse download URIs into (schemes, url) tuples.
 
     Splits the Buildroot URI format "scheme[|scheme]+url" and yields all
@@ -295,7 +295,7 @@ def parse_uris(uris: list[str]) -> Iterator[tuple[list[str], str]]:
     Args:
         uris (list): Array of URI strings from the show-info output.
     Yields:
-        tuple[list[str], str]: (schemes, url) for each usable URI.
+        Tuple[List[str], str]: (schemes, url) for each usable URI.
     """
     for uri in uris:
         scheme, _, stripped_uri = uri.partition("+")
