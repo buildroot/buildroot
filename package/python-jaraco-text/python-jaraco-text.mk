@@ -11,5 +11,13 @@ PYTHON_JARACO_TEXT_SETUP_TYPE = setuptools
 PYTHON_JARACO_TEXT_LICENSE = MIT
 PYTHON_JARACO_TEXT_LICENSE_FILES = LICENSE
 PYTHON_JARACO_TEXT_DEPENDENCIES = host-python-coherent-licensed host-python-setuptools-scm
+HOST_PYTHON_JARACO_TEXT_DEPENDENCIES = \
+	host-python-coherent-licensed \
+	host-python-jaraco-context \
+	host-python-jaraco-functools \
+	host-python-more-itertools \
+	host-python-setuptools-scm \
+	host-python-typer-slim
 
 $(eval $(python-package))
+$(eval $(host-python-package))
