@@ -12,3 +12,4 @@ PYTHON_SHELLINGHAM_LICENSE = ISC
 PYTHON_SHELLINGHAM_LICENSE_FILES = LICENSE
 
 $(eval $(python-package))
+$(eval $(host-python-package))
