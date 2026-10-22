@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NUTTCP_VERSION = 6.1.2
+NUTTCP_VERSION = 8.2.2
 NUTTCP_SITE = http://nuttcp.net/nuttcp
 NUTTCP_SOURCE = nuttcp-$(NUTTCP_VERSION).tar.bz2
 NUTTCP_LICENSE = GPL-2.0
