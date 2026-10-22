@@ -1,12 +1,12 @@
-From 0cc510655874362bc95c608021ef7921ae389559 Mon Sep 17 00:00:00 2001
+From dbba660298c09171be82b4eeb01352922089a60a Mon Sep 17 00:00:00 2001
 From: Yegor Yefremov <yegorslists@googlemail.com>
-Date: Thu, 22 Oct 2026 22:16:32 +0200
+Date: Fri, 23 Oct 2026 00:16:42 +0200
 Subject: [PATCH] Fix build without ASYNC_IO with GCC >= 15
 
-Without ASYNC_IO (e.g. the linux-noaio target), the async_*() stubs
-are declared and defined without parameter lists. GCC 15 defaults to
-C23, where an empty parameter list means the function takes no
-arguments, so the build fails:
+Without ASYNC_IO (e.g. the linux-noaio target), the async_*() and
+end_async() stubs are declared and defined without parameter lists.
+GCC 15 defaults to C23, where an empty parameter list means the
+function takes no arguments, so the build fails:
 
 iozone.c:8150:32: error: too many arguments to function 'async_write_no_copy'; expected 0, have 7
 iozone.c:9126:31: error: too many arguments to function 'async_read_no_copy'; expected 0, have 8
@@ -19,31 +19,36 @@ Upstream: sent to capps@iozone.org
 Assisted-by: Claude:claude-opus-5-5
 Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
 ---
- src/current/iozone.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ src/current/iozone.c | 33 ++++++++++++++++++---------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
 
 diff --git a/src/current/iozone.c b/src/current/iozone.c
-index 8de26cf..5542714 100755
+index 41e0684..6200168 100755
 --- a/src/current/iozone.c
 +++ b/src/current/iozone.c
-@@ -1332,11 +1332,11 @@ size_t async_write_no_copy(struct cache *,long long ,char *,long long,long long,
+@@ -1331,14 +1331,13 @@ size_t async_write(struct cache *,long long, char *, long long, off64_t, long lo
+ size_t async_write_no_copy(struct cache *,long long ,char *,long long,long long,long long,char *);
  #else
  long long *gc=0;
- void async_init(long long **,int,int);
+-/* void async_init(long long **,int,int);*/
+-void async_init();
 -int async_read();
 -int async_read_no_copy();
 -size_t async_write();
 -size_t async_write_no_copy();
 -void async_release();
+-void end_async();
++void async_init(long long **,int,int);
 +int async_read(long long *, long long , char *, off64_t, long long, long long, off64_t, long long);
 +int async_read_no_copy(long long *, long long, char **, off64_t, long long, long long, off64_t, long long);
 +size_t async_write(long long *,long long, char *, long long, off64_t, long long);
 +size_t async_write_no_copy(long long *,long long ,char *,long long,long long,long long,char *);
 +void async_release(long long *);
++void end_async(long long *);
  #endif
  void do_float(int, double, int, int);
  int create_xls(char *);
-@@ -20144,37 +20144,41 @@ long long length;
+@@ -20126,43 +20125,47 @@ long long length;
  
  #ifndef ASYNC_IO
  int
@@ -71,6 +76,13 @@ index 8de26cf..5542714 100755
  	exit(171);
  }
  void
+-end_async()
++end_async(long long *gc)
+ {
+ 	printf("Your system does not support async I/O\n");
+ 	exit(172);
+ }
+ void
 -async_init()
 +async_init(long long **gc, int fd, int flag)
  {
@@ -91,6 +103,3 @@ index 8de26cf..5542714 100755
  {
  	printf("Your system does not support async I/O\n");
  	exit(173);
--- 
-2.34.1
-

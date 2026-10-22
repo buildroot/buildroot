@@ -25,10 +25,10 @@ https://github.com/openembedded/meta-openembedded/blob/walnascar/meta-oe/recipes
  1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/src/current/makefile b/src/current/makefile
-index bd66a4e..ba5759f 100755
+index 98c5368..497583f 100755
 --- a/src/current/makefile
 +++ b/src/current/makefile
-@@ -171,7 +171,7 @@ hpux_no_ansi:	iozone_hpux_no.o  libbif.o
+@@ -173,7 +173,7 @@ hpux_no_ansi:	iozone_hpux_no.o  libbif.o
  #
  # GNU 'C' compiler Linux build with threads, largefiles, async I/O 
  #
@@ -37,7 +37,7 @@ index bd66a4e..ba5759f 100755
  	$(CC)  $(CFLAGS) $(LDFLAGS) iozone_linux.o libasync.o libbif.o \
  		-lpthread -lrt -o iozone
  	$(CC)  $(CFLAGS) -Dlinux fileop_linux.o -o fileop
-@@ -198,7 +198,7 @@ linux-noth: iozone_linux-noth.o libbif.o fileop_linux.o pit_server.o
+@@ -215,7 +215,7 @@ linux-generic: iozone_linux-generic.o libasync.o libbif.o fileop_linux.o pit_ser
  #
  # GNU 'C' compiler Linux build for powerpc chip with threads, largefiles, async I/O 
  #
@@ -46,7 +46,7 @@ index bd66a4e..ba5759f 100755
  	$(CC) -O3 $(LDFLAGS) iozone_linux-powerpc.o libasync.o \
  		libbif.o -lpthread  -lrt -o iozone
  	$(CC)  -O3 -Dlinux fileop_linux-ppc.o -o fileop
-@@ -206,7 +206,7 @@ linux-powerpc: iozone_linux-powerpc.o  libbif.o libasync.o fileop_linux-ppc.o pi
+@@ -223,7 +223,7 @@ linux-powerpc: iozone_linux-powerpc.o  libbif.o libasync.o fileop_linux-ppc.o pi
  #
  # GNU 'C' compiler Linux build for sparc chip with threads, largefiles, async I/O 
  #
@@ -55,7 +55,7 @@ index bd66a4e..ba5759f 100755
  	$(CC) -O3 $(LDFLAGS) iozone_linux-sparc.o libasync.o libbif.o \
  		-lpthread -lrt -o iozone
  	$(CC) -O3 -Dlinux fileop_linux.o -o fileop
-@@ -215,7 +215,7 @@ linux-sparc: iozone_linux-sparc.o  libbif.o libasync.o fileop_linux.o pit_server
+@@ -232,7 +232,7 @@ linux-sparc: iozone_linux-sparc.o  libbif.o libasync.o fileop_linux.o pit_server
  #
  # GNU 'C' compiler Linux build with threads, largefiles, async I/O 
  #
@@ -64,7 +64,7 @@ index bd66a4e..ba5759f 100755
  	$(CC) -O3 $(LDFLAGS) iozone_linux-ia64.o libbif.o libasync.o \
  		-lrt -lpthread -o iozone
  	$(CC)  -O3 -Dlinux fileop_linux-ia64.o -o fileop
-@@ -224,7 +224,7 @@ linux-ia64:	iozone_linux-ia64.o  libbif.o libasync.o fileop_linux-ia64.o pit_ser
+@@ -241,7 +241,7 @@ linux-ia64:	iozone_linux-ia64.o  libbif.o libasync.o fileop_linux-ia64.o pit_ser
  #
  # GNU 'C' compiler Linux build for powerpc chip with threads, largefiles, async I/O 
  #
@@ -73,7 +73,7 @@ index bd66a4e..ba5759f 100755
  	$(CC) -O3 -Dunix -DHAVE_ANSIC_C -DSHARED_MEM -DASYNC_IO \
  		-D_LARGEFILE64_SOURCE -Dlinux \
  		iozone_linux-powerpc64.o libasync.o libbif.o -lpthread \
-@@ -235,7 +235,7 @@ linux-powerpc64: iozone_linux-powerpc64.o  libbif.o libasync.o fileop_linux-ppc6
+@@ -252,7 +252,7 @@ linux-powerpc64: iozone_linux-powerpc64.o  libbif.o libasync.o fileop_linux-ppc6
  #
  # GNU 'C' compiler Linux build with threads, largefiles, async I/O
  #
@@ -82,7 +82,7 @@ index bd66a4e..ba5759f 100755
  	$(CC) -O3 $(LDFLAGS) iozone_linux-arm.o libbif.o libasync.o \
  		-lrt -lpthread -o iozone
  	$(CC) -O3 -Dlinux fileop_linux-arm.o -o fileop
-@@ -267,7 +267,7 @@ endif
+@@ -295,7 +295,7 @@ endif
  #
  # GNU 'C' compiler Linux build with threads, largefiles, async I/O 
  #
@@ -91,7 +91,7 @@ index bd66a4e..ba5759f 100755
  	$(CC)  -O3 $(LDFLAGS) iozone_linux-AMD64.o libbif.o libasync.o \
  		-lrt -lpthread -o iozone
  	$(CC)  -O3 -Dlinux fileop_linux-AMD64.o -o fileop
-@@ -276,7 +276,7 @@ linux-AMD64:	iozone_linux-AMD64.o  libbif.o libasync.o fileop_linux-AMD64.o pit_
+@@ -304,7 +304,7 @@ linux-AMD64:	iozone_linux-AMD64.o  libbif.o libasync.o fileop_linux-AMD64.o pit_
  #
  # GNU 'C' compiler Linux build with S/390, threads, largfiles, async I/O
  #
@@ -100,7 +100,7 @@ index bd66a4e..ba5759f 100755
  	$(CC)  -O2 $(LDFLAGS) -lpthread -lrt iozone_linux-s390.o \
  		libbif.o libasync.o -o iozone
  	$(CC)  -O3 -Dlinux fileop_linux-s390.o -o fileop
-@@ -285,7 +285,7 @@ linux-S390:	iozone_linux-s390.o libbif.o libasync.o fileop_linux-s390.o pit_serv
+@@ -313,7 +313,7 @@ linux-S390:	iozone_linux-s390.o libbif.o libasync.o fileop_linux-s390.o pit_serv
  #
  # GNU 'C' compiler Linux build with S/390, threads, largfiles, async I/O
  #
@@ -109,6 +109,3 @@ index bd66a4e..ba5759f 100755
  	$(CC)  -O2 $(LDFLAGS) -lpthread -lrt iozone_linux-s390x.o \
  		libbif.o libasync.o -o iozone
  	$(CC)  -O3 -Dlinux fileop_linux-s390x.o -o fileop
--- 
-2.51.0
-

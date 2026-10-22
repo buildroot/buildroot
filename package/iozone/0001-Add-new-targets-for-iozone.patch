@@ -1,4 +1,4 @@
-From 015b6fa0c4a503ae822e6cf787de82e09bc44511 Mon Sep 17 00:00:00 2001
+From 0d6e519d6cf4b7b2550d136d17f198d363fb0150 Mon Sep 17 00:00:00 2001
 From: Gustavo Zacarias <gustavo@zacarias.com.ar>
 Date: Sun, 10 Oct 2021 10:15:26 +0200
 Subject: [PATCH] Add new targets for iozone:
@@ -17,10 +17,10 @@ Signed-off-by: Romain Naour <romain.naour@smile.fr>
  1 file changed, 47 insertions(+), 9 deletions(-)
 
 diff --git a/src/current/makefile b/src/current/makefile
-index 24a391e..bd66a4e 100755
+index 32aa57e..98c5368 100755
 --- a/src/current/makefile
 +++ b/src/current/makefile
-@@ -172,10 +172,28 @@ hpux_no_ansi:	iozone_hpux_no.o  libbif.o
+@@ -174,10 +174,28 @@ hpux_no_ansi:	iozone_hpux_no.o  libbif.o
  # GNU 'C' compiler Linux build with threads, largefiles, async I/O 
  #
  linux:	iozone_linux.o libasync.o libbif.o fileop_linux.o pit_server.o
@@ -50,9 +50,9 @@ index 24a391e..bd66a4e 100755
 +	$(CC)  $(CFLAGS) -Dlinux fileop_linux.o -o fileop
 +	$(CC)  $(CFLAGS) -Dlinux pit_server.o -o pit_server
  
- #
- # GNU 'C' compiler Linux build for powerpc chip with threads, largefiles, async I/O 
-@@ -841,13 +859,33 @@ iozone_linux.o:	iozone.c libbif.c libasync.c
+ # Generic GNU/Clang Linux cross-compile build with threads, largefiles, async I/O.
+ # Honors the toolchain's $(CC), $(CFLAGS) and $(LDFLAGS); the data model (32- vs
+@@ -881,13 +899,33 @@ iozone_linux.o:	iozone.c libbif.c libasync.c
  	@echo ""
  	@echo "Building iozone for Linux"
  	@echo ""
@@ -91,7 +91,7 @@ index 24a391e..bd66a4e 100755
  
  fileop_AIX.o:	fileop.c
  	@echo ""
-@@ -951,7 +989,7 @@ fileop_linux.o:	fileop.c
+@@ -991,7 +1029,7 @@ fileop_linux.o:	fileop.c
  	@echo ""
  	@echo "Building fileop for Linux"
  	@echo ""
@@ -100,6 +100,3 @@ index 24a391e..bd66a4e 100755
  
  fileop_openbsd.o:	fileop.c
  	@echo ""
--- 
-2.51.0
-
