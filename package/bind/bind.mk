@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BIND_VERSION = 9.20.29
+BIND_VERSION = 9.20.30
 BIND_SOURCE= bind-$(BIND_VERSION).tar.xz
 BIND_SITE = https://ftp.isc.org/isc/bind9/$(BIND_VERSION)
 BIND_INSTALL_STAGING = YES
