@@ -6,22 +6,30 @@
 
 LINUX_TOOLS += pci
 
-PCI_MAKE_OPTS = $(LINUX_MAKE_FLAGS) LDFLAGS="$(TARGET_LDFLAGS)"
+# Linux 6.14 moved the PCI endpoint tests into Kselftests.
+PCI_SRCDIR = $(strip $(if $(wildcard $(LINUX_DIR)/tools/testing/selftests/pci_endpoint/Makefile),\
+	$(LINUX_DIR)/tools/testing/selftests/pci_endpoint,$(LINUX_DIR)/tools/pci))
+
+PCI_MAKE_OPTS = $(LINUX_MAKE_FLAGS) \
+	OUTPUT=$(PCI_SRCDIR)/ \
+	LDFLAGS="$(TARGET_LDFLAGS)" \
+	LDLIBS="-lrt -lm"
 
 define PCI_BUILD_CMDS
-	$(Q)if ! grep install $(LINUX_DIR)/tools/pci/Makefile >/dev/null 2>&1 ; then \
+	$(Q)if test ! -f $(PCI_SRCDIR)/Makefile ; then \
 		echo "Your kernel version is too old and does not have install section in the pci tools." ; \
 		echo "At least kernel 4.20 must be used." ; \
 		exit 1 ; \
 	fi
 
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(LINUX_DIR)/tools/pci \
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(PCI_SRCDIR) \
 		$(PCI_MAKE_OPTS)
 endef
 
 define PCI_INSTALL_TARGET_CMDS
-	$(TARGET_MAKE_ENV) $(MAKE) -C $(LINUX_DIR)/tools/pci \
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(PCI_SRCDIR) \
 		$(PCI_MAKE_OPTS) \
 		DESTDIR=$(TARGET_DIR) \
+		INSTALL_PATH=$(TARGET_DIR)/usr/lib/kselftests/pci_endpoint \
 		install
 endef
