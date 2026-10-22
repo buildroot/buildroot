@@ -1,0 +1,55 @@
+From db600f40c51f0e612085f19351df3f9ad963bb5f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Tim=20R=C3=BChsen?= <tim.ruehsen@gmx.de>
+Date: Wed, 23 Sep 2026 12:02:24 +0200
+Subject: [PATCH] Fix compilation of legacy TCP Fast Open code branch
+
+* .gitlab-ci.yml: Add libwget compilation with -DTEST_LEGACY_TFO_API.
+* libwget/net.c: Use legacy code branch if TEST_LEGACY_TFO_API is set,
+  (wget_tcp_write): Fix two compilation errors.
+
+Fixes https://github.com/rockdaboot/wget2/issues/391
+
+Upstream: https://gitlab.com/gnuwget/wget2/-/commit/db600f40c51f0e612085f19351df3f9ad963bb5f
+
+[Bernd: removed .gitlab-ci.yml part from patch]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ .gitlab-ci.yml |  3 +++
+ libwget/net.c  | 10 +++++-----
+ 2 files changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/libwget/net.c b/libwget/net.c
+index 1cd7188c..fb7227bf 100644
+--- a/libwget/net.c
++++ b/libwget/net.c
+@@ -55,10 +55,10 @@
+ 
+ #if defined __APPLE__ && defined __MACH__ && defined CONNECT_DATA_IDEMPOTENT && defined CONNECT_RESUME_ON_READ_WRITE
+ # define TCP_FASTOPEN_OSX
+-#elif defined TCP_FASTOPEN_CONNECT // since Linux 4.11
+-# define TCP_FASTOPEN_LINUX_411
++#elif defined TCP_FASTOPEN_CONNECT && !defined TEST_LEGACY_TFO_API
++# define TCP_FASTOPEN_LINUX_411 // for Linux 4.11+: newer client API
+ #elif defined TCP_FASTOPEN && defined MSG_FASTOPEN
+-# define TCP_FASTOPEN_LINUX
++# define TCP_FASTOPEN_LINUX // for Linux 3.7+: legacy client API
+ #endif
+ 
+ #include <wget.h>
+@@ -993,11 +993,11 @@ ssize_t wget_tcp_write(wget_tcp *tcp, const char *buf, size_t count)
+ 				/* fallback from fastopen, e.g. when fastopen is disabled in system */
+ 				tcp->tcp_fastopen = 0;
+ 
+-				set_socket_timeout(sockfd, tcp->connect_timeout);
++				set_socket_timeout(tcp->sockfd, tcp->connect_timeout);
+ 
+ 				int rc = connect(tcp->sockfd, tcp->connect_addrinfo->ai_addr, tcp->connect_addrinfo->ai_addrlen);
+ 
+-				set_socket_timeout(sockfd, tcp->timeout);
++				set_socket_timeout(tcp->sockfd, tcp->timeout);
+ 
+ 				if (rc < 0
+ 					&& errno != EAGAIN
+-- 
+2.47.3
+

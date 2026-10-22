@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WGET2_VERSION = 2.2.1
+WGET2_VERSION = 2.3.0
 WGET2_SITE = $(BR2_GNU_MIRROR)/wget
 WGET2_DEPENDENCIES = host-pkgconf
 WGET2_LICENSE = GPL-3.0+, LGPL-3.0+
