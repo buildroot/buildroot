@@ -296,6 +296,12 @@ async def fixup_config(sysinfo, configfile, skip_secondary_configs=True):
        'BR2_LINUX_KERNEL_IMAGE_TARGET_CUSTOM=y\n' in configlines:
         configlines.remove('BR2_LINUX_KERNEL_IMAGE_TARGET_CUSTOM=y\n')
 
+    # RTLA only available since 5.19
+    if ('BR2_LINUX_KERNEL_LATEST_5_10=y\n' in configlines or
+        'BR2_LINUX_KERNEL_LATEST_5_15=y\n' in configlines) and \
+       'BR2_PACKAGE_LINUX_TOOLS_RTLA=y\n' in configlines:
+        configlines.remove('BR2_PACKAGE_LINUX_TOOLS_RTLA=y\n')
+
     if 'BR2_PACKAGE_LINUX_BACKPORTS=y\n' in configlines and \
        'BR2_PACKAGE_LINUX_BACKPORTS_USE_CUSTOM_CONFIG=y\n' in configlines and \
        'BR2_PACKAGE_LINUX_BACKPORTS_CUSTOM_CONFIG_FILE=""\n' in configlines:
