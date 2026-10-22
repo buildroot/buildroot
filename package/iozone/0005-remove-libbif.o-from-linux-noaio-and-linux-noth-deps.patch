@@ -1,0 +1,48 @@
+From 3bfbc2fe58400d32aabbceaa19a4348981931d9d Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Thu, 22 Oct 2026 22:59:56 +0200
+Subject: [PATCH] remove libbif.o from linux-noaio and linux-noth deps
+
+libbif.o is built by the iozone_linux-noaio.o and iozone_linux-noth.o
+rules, with -DHAVE_ANSIC_C. Listing it as a prerequisite of the
+linux-noaio and linux-noth targets lets make build it in parallel with
+its built-in rule, without -DHAVE_ANSIC_C, so the K&R code path is
+used, which fails with GCC >= 15 (C23):
+
+libbif.c:191:1: error: number of arguments doesn't match prototype
+libbif.c:193:9: error: too many arguments to function 'do_eof'; expected 0, have 1
+
+Do the same as the previous patch did for the linux targets.
+
+Upstream: N/A, linux-noaio and linux-noth are Buildroot-specific targets
+Assisted-by: Claude:claude-opus-5-5
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ src/current/makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/current/makefile b/src/current/makefile
+index ba5759f..168fe93 100755
+--- a/src/current/makefile
++++ b/src/current/makefile
+@@ -180,7 +180,7 @@ linux:	iozone_linux.o fileop_linux.o pit_server.o
+ #
+ # GNU 'C' compiler Linux build with threads, largefiles
+ #
+-linux-noaio: iozone_linux-noaio.o libbif.o fileop_linux.o pit_server.o
++linux-noaio: iozone_linux-noaio.o fileop_linux.o pit_server.o
+ 	$(CC)  $(CFLAGS) $(LDFLAGS) iozone_linux-noaio.o libbif.o \
+ 		-lpthread -lrt -o iozone
+ 	$(CC)  $(CFLAGS) -Dlinux fileop_linux.o -o fileop
+@@ -189,7 +189,7 @@ linux-noaio: iozone_linux-noaio.o libbif.o fileop_linux.o pit_server.o
+ #
+ # GNU 'C' compiler Linux build with largefiles
+ #
+-linux-noth: iozone_linux-noth.o libbif.o fileop_linux.o pit_server.o
++linux-noth: iozone_linux-noth.o fileop_linux.o pit_server.o
+ 	$(CC)  $(CFLAGS) $(LDFLAGS) iozone_linux-noth.o libbif.o \
+ 		-lrt -o iozone
+ 	$(CC)  $(CFLAGS) -Dlinux fileop_linux.o -o fileop
+-- 
+2.34.1
+
