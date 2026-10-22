@@ -1,5 +1,28 @@
 2026.08.1, released October 22, 2026
 
+	Changes with potentially large impact:
+
+	- PHP had two very serious vulnerabilities: CVE-2026-109618,
+	  CVE-2026-109619. If you use PHP, upgrading is *strongly* recommended.
+
+	- Some trusted certificates from the eMudhra CA have known private keys.
+	  This means that it is extremely easy to masquerade as whatever host
+	  and public key infrastructure cannot be trusted at all. See
+	  https://emudhra.we-have-a-problem.com/ for more information.
+
+	  The ca-certificates and python-certifi packages have been updated to
+	  remove the root certificate that signs the vulnerable intermediate
+	  certificates. If you use ca-certificates to validate TLS connections,
+	  upgrading is *strongly* recommended.
+
+	  Note that some packages bundle their own set of root certificates,
+	  including libnss, nodejs, and dozens of Go and Rust packages. These
+	  have *not* been updated in this release.
+
+	- BR2_DOWNLOAD_FORCE_CHECK_HASHES=y is supposed to make the build fail
+	  if any download cannot be successfully verified against a known
+	  hash. It did not do that if there is no hash file at all.
+
 	Important / security related fixes:
 
 	apache: CVE-2026-42356, CVE-2026-42528, CVE-2026-46729, CVE-2026-47360,
