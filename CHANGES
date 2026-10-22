@@ -2095,6 +2095,224 @@
 	- netsnmp: unexpected header length in /proc/net/snmp...
 	  https://gitlab.com/buildroot.org/buildroot/-/issues/110
 
+2025.02.19, released October 22, 2026
+
+	Changes with potentially large impact:
+
+	- PHP had two very serious vulnerabilities: CVE-2026-109618,
+	  CVE-2026-109619. If you use PHP, upgrading is *strongly* recommended.
+
+	- Some trusted certificates from the eMudhra CA have known private keys.
+	  This means that it is extremely easy to masquerade as whatever host
+	  and public key infrastructure cannot be trusted at all. See
+	  https://emudhra.we-have-a-problem.com/ for more information.
+
+	  The ca-certificates and python-certifi packages have been updated to
+	  remove the root certificate that signs the vulnerable intermediate
+	  certificates. If you use ca-certificates to validate TLS connections,
+	  upgrading is *strongly* recommended.
+
+	  Note that some packages bundle their own set of root certificates,
+	  including libnss, nodejs, and dozens of Go and Rust packages. These
+	  have *not* been updated in this release.
+
+	- BR2_DOWNLOAD_FORCE_CHECK_HASHES=y is supposed to make the build fail
+	  if any download cannot be successfully verified against a known
+	  hash. It did not do that if there is no hash file at all.
+
+	- Wireshark was bumped from 4.2 to 4.4, which may have
+	  incompatibilities.
+
+	Important / security related fixes:
+
+	apache: CVE-2026-42356, CVE-2026-42528, CVE-2026-46729, CVE-2026-47360,
+	  CVE-2026-48005, CVE-2026-56153, CVE-2026-56154, CVE-2026-56449,
+	  CVE-2026-57941, CVE-2026-58415, CVE-2026-59685, CVE-2026-59797,
+	  CVE-2026-63045, CVE-2026-63292, CVE-2026-63686, CVE-2026-63718,
+	  CVE-2026-73636, CVE-2026-73637, CVE-2026-79768, CVE-2026-93546
+	bind: CVE-2026-19033, CVE-2026-19662, CVE-2026-19666, CVE-2026-19667,
+	  CVE-2026-19668, CVE-2026-19941, CVE-2026-75029, CVE-2026-76163,
+	  CVE-2026-77119, CVE-2026-77692, CVE-2026-78301, CVE-2026-80274,
+	  CVE-2026-81563, CVE-2026-81736
+	bubblewrap: CVE-2026-87766
+	ca-certificates: (no CVE assigned)
+	cannelloni: CVE-2026-37539
+	expat: CVE-2026-102633, CVE-2026-77214, CVE-2026-93990
+	gawk: CVE-2023-4156
+	gcc-initial: CVE-2019-15847
+	ghostscript: (no CVE assigned)
+	glibc: CVE-2026-8674, CVE-2026-89092, CVE-2026-97399
+	go: CVE-2026-56857, CVE-2026-56866, CVE-2026-78659, CVE-2026-78660,
+	  CVE-2026-78663, CVE-2026-78667, CVE-2026-78669, CVE-2026-94439,
+	  CVE-2026-94440, CVE-2026-94444, CVE-2026-94447, CVE-2026-94448,
+	  CVE-2026-97030, CVE-2026-97031, CVE-2026-97032
+	gpsd: CVE-2026-58459
+	htop: CVE-2008-5076
+	kbd: CVE-2011-0460
+	libheif: GHSA-4rv4-953r-p24q, GHSA-9c75-9g8r-4728, GHSA-fqpw-fj22-78w4,
+	  GHSA-prgh-72vc-3xmc, GHSA-q492-cfcm-895h, GHSA-qwpf-5wf7-r996,
+	  GHSA-r7gr-2xm2-23wf, GHSA-rhgw-q5g8-xjh2, GHSA-v8qw-hwjv-44hw,
+	  GHSA-vg7w-rp49-4fc2, GHSA-xrp2-63fq-jm8q
+	libopenssl: CVE-2026-35189, CVE-2026-35191, CVE-2026-42772,
+	  CVE-2026-54872, CVE-2026-54873, CVE-2026-54875, CVE-2026-72897,
+	  CVE-2026-75804, CVE-2026-75805, CVE-2026-75806, CVE-2026-77696,
+	  CVE-2026-84782, CVE-2026-84784
+	libpcap: CVE-2026-0799, CVE-2026-18238, CVE-2026-18313, CVE-2026-31911,
+	  CVE-2026-31912, CVE-2026-6244, CVE-2026-6554
+	libpng: CVE-2026-46675
+	libseccomp: GHSA-2hqh-5c36-grrm, GHSA-46fr-jh49-xvhx,
+	  GHSA-4q85-33p6-j5g6
+	lldpd: CVE-2026-46433
+	m4: CVE-2008-1687
+	mbedtls: CVE-2026-25832, CVE-2026-35336, CVE-2026-49300,
+	  CVE-2026-50579, CVE-2026-50580, CVE-2026-50581, CVE-2026-50583,
+	  CVE-2026-50584, CVE-2026-50585, CVE-2026-50586, CVE-2026-50587,
+	  CVE-2026-50588, CVE-2026-50640, CVE-2026-50713, CVE-2026-54435,
+	  CVE-2026-54441, CVE-2026-73064, CVE-2026-73096
+	nano: CVE-2026-6843
+	ntpsec: CVE-2026-18321
+	openvpn: CVE-2026-84471, CVE-2026-84732
+	patchelf: CVE-2022-44940
+	pcre2: GHSA-2p8c-ff85-vh9x, GHSA-3r4p-g7gg-ppmf, GHSA-9qww-pwc4-77qq,
+	  GHSA-fmgr-6ggq-9859, GHSA-q7rw-r7qq-2hx6, GHSA-q8g2-wprr-34m9,
+	  GHSA-r9hj-j2rw-4q3m
+	php: CVE-2026-109618, CVE-2026-109619, GHSA-6wmf-4rv5-p3rp,
+	  GHSA-w8hw-w9fx-j79w
+	python-twisted: CVE-2026-42304
+	python3: CVE-2026-15310, CVE-2026-15806, CVE-2026-17084,
+	  CVE-2026-19445, CVE-2026-19553, CVE-2026-19672, CVE-2026-82049,
+	  CVE-2026-87910
+	qt6declarative: CVE-2025-14576
+	qt6svg: CVE-2021-45930
+	seatd: CVE-2021-41387
+	tcpreplay: GHSA-27v4-xhfx-g2rx, GHSA-2wmf-4p77-784q,
+	  GHSA-4hqm-8v2c-9pwj, GHSA-5cjx-62pj-pmgq, GHSA-5q26-7fxx-v8fh,
+	  GHSA-777w-9599-w8g4, GHSA-fwcr-mqg6-hqmx, GHSA-jj65-mrgg-f5fx,
+	  GHSA-m655-53p4-6qm8, GHSA-m6w7-8497-g9c9, GHSA-p3f2-88rg-9mch,
+	  GHSA-p7xp-4gj2-x56c, GHSA-pfqg-243f-8q25, GHSA-pjh6-6hrw-vcwr,
+	  GHSA-pmmx-m8p5-969j, GHSA-v8c4-9w98-9v6v, GHSA-ww62-mxv7-pg55
+	thrift: CVE-2026-41608, CVE-2026-61373, CVE-2026-61374, CVE-2026-63772,
+	  CVE-2026-66054, CVE-2026-66055, CVE-2026-66081, CVE-2026-66331,
+	  CVE-2026-66837, CVE-2026-66858, CVE-2026-66859, CVE-2026-82458,
+	  CVE-2026-82459, CVE-2026-83632, CVE-2026-83663, CVE-2026-83745,
+	  CVE-2026-85086, CVE-2026-85087, CVE-2026-85088, CVE-2026-85476,
+	  CVE-2026-85483, CVE-2026-85493, CVE-2026-85494, CVE-2026-86535,
+	  CVE-2026-86536, CVE-2026-86537, CVE-2026-87117, CVE-2026-90440,
+	  CVE-2026-91135, CVE-2026-91137, CVE-2026-92834, CVE-2026-93925,
+	  CVE-2026-93926, CVE-2026-94633, CVE-2026-94634, CVE-2026-94635,
+	  CVE-2026-94636, CVE-2026-94637, CVE-2026-94638, CVE-2026-94639,
+	  CVE-2026-94642, CVE-2026-94644, CVE-2026-94645, CVE-2026-94646,
+	  CVE-2026-94648, CVE-2026-94650, CVE-2026-94651, CVE-2026-94652,
+	  CVE-2026-94653, CVE-2026-94654, CVE-2026-94655, CVE-2026-94656,
+	  CVE-2026-94657, CVE-2026-94658, CVE-2026-96277, CVE-2026-96286,
+	  CVE-2026-96287, CVE-2026-96288, CVE-2026-96289, CVE-2026-96292,
+	  CVE-2026-96294, CVE-2026-96990
+	tor: TROVE-2026-012, TROVE-2026-030, TROVE-2026-032, TROVE-2026-033,
+	  TROVE-2026-034, TROVE-2026-035, TROVE-2026-036, TROVE-2026-038,
+	  TROVE-2026-041, TROVE-2026-042, TROVE-2026-043, TROVE-2026-050,
+	  TROVE-2026-051, TROVE-2026-052, TROVE-2026-053, TROVE-2026-056,
+	  TROVE-2026-058, TROVE-2026-062, TROVE-2026-064, TROVE-2026-067
+	tpm2-tools: GHSA-gwfg-w3jr-xh66, GHSA-qp88-8f4j-wv7q,
+	  GHSA-v7w4-4gc9-qcgv
+	turbolua: (no CVE assigned)
+	unbound: CVE-2026-77860, CVE-2026-77955, CVE-2026-78227,
+	  CVE-2026-80225, CVE-2026-81634, CVE-2026-81642, CVE-2026-82717,
+	  CVE-2026-82720, CVE-2026-85501
+	vlc: (no CVE assigned)
+	wireshark: CVE-2025-11626, CVE-2025-13499, CVE-2025-13946,
+	  CVE-2026-0959, CVE-2026-0960, CVE-2026-0961, CVE-2026-0962,
+	  CVE-2026-15163, CVE-2026-15164, CVE-2026-15166, CVE-2026-15167,
+	  CVE-2026-15168, CVE-2026-15169, CVE-2026-15170, CVE-2026-15171,
+	  CVE-2026-15172, CVE-2026-15174, CVE-2026-3201, CVE-2026-3203,
+	  CVE-2026-5299, CVE-2026-5401, CVE-2026-5403, CVE-2026-5404,
+	  CVE-2026-5405, CVE-2026-5406, CVE-2026-5407, CVE-2026-5408,
+	  CVE-2026-5409, CVE-2026-5653, CVE-2026-5654, CVE-2026-5656,
+	  CVE-2026-5657, CVE-2026-6519, CVE-2026-6520, CVE-2026-6521,
+	  CVE-2026-6522, CVE-2026-6523, CVE-2026-6524, CVE-2026-6527,
+	  CVE-2026-6529, CVE-2026-6530, CVE-2026-6531, CVE-2026-6532,
+	  CVE-2026-6533, CVE-2026-6534, CVE-2026-6535, CVE-2026-6537,
+	  CVE-2026-6538, CVE-2026-6868, CVE-2026-6869, CVE-2026-6870,
+	  CVE-2026-76879, CVE-2026-76880, CVE-2026-76881, CVE-2026-76882,
+	  CVE-2026-76883, CVE-2026-76884, CVE-2026-76885, CVE-2026-76886,
+	  CVE-2026-76887, CVE-2026-76888, CVE-2026-76889, CVE-2026-76890,
+	  CVE-2026-76891, CVE-2026-76917, CVE-2026-76918, CVE-2026-76919,
+	  CVE-2026-76920, CVE-2026-76921, CVE-2026-76922, CVE-2026-76923,
+	  CVE-2026-76924, CVE-2026-76926, CVE-2026-76927, CVE-2026-76928,
+	  CVE-2026-76929, CVE-2026-95387, CVE-2026-95388, CVE-2026-95389,
+	  CVE-2026-95392, CVE-2026-95393, CVE-2026-95394, CVE-2026-95395,
+	  CVE-2026-96415, CVE-2026-96416, CVE-2026-96417, CVE-2026-96418,
+	  CVE-2026-96419, CVE-2026-96421, CVE-2026-96422, CVE-2026-96423,
+	  wnpa-sec-2026-100, wnpa-sec-2026-101, wnpa-sec-2026-102,
+	  wnpa-sec-2026-103, wnpa-sec-2026-104, wnpa-sec-2026-105,
+	  wnpa-sec-2026-106, wnpa-sec-2026-107, wnpa-sec-2026-108,
+	  wnpa-sec-2026-109, wnpa-sec-2026-110, wnpa-sec-2026-93,
+	  wnpa-sec-2026-96, wnpa-sec-2026-97, wnpa-sec-2026-98,
+	  wnpa-sec-2026-99
+	wolfssl: CVE-2026-15442, CVE-2026-89102, CVE-2026-89133,
+	  CVE-2026-89134, CVE-2026-89135, CVE-2026-89136, CVE-2026-93302,
+	  CVE-2026-93304, CVE-2026-94417, CVE-2026-94418, CVE-2026-94419
+	xdg-dbus-proxy: GHSA-r7hp-698j-2h6c
+	xkeyboard-config: CVE-2012-0064
+	xlib_libXfont2: CVE-2026-44950, CVE-2026-59679
+	xz: GHSA-5qpq-xqfv-j9pg
+	zabbix: CVE-2026-23920, CVE-2026-23921
+	znc: CVE-2026-82373
+
+	Toolchain:
+
+	- glibc: bump to version 2.41-163
+	- linux-headers: bump to 5.10.271, 5.15.222, 6.1.189, 6.6.158, 6.12.112
+
+	Infrastructure updates/fixes:
+
+	- utils/generate-cyclonedx: mark host packages as excluded
+	- utils/generate-cyclonedx: support schema version choice 1.6, 1.6.1,
+	  1.6.2, 1.7, 1.7.1
+	- arch: x86: add support for XOP instruction set
+	- package/pkg-autotools.mk: also handle libtool 2.6.x
+	- utils/docker-run: mount and pass BR2_EXTERNAL dirs
+	- enforce BR2_DOWNLOAD_FORCE_CHECK_HASHES=y for missing hash files
+	- utils/docker-run: add NO_NETWORK variable
+	- checkpackagelib: improve CVE handling
+	- support/docker/Dockerfile: make $HOME folder read-only
+	- utils/getdeveloperlib.py: fix regexp used to find package infra
+	- utils/checkpackagelib: support other identifiers than CVE
+	- utils/checkpackagelib: check IGNORE_CVES identifiers match patch
+	  trailers
+	- New runtime tests: tests_flat_stacksize, test_erlang, test_squid,
+	  test_bubblewrap, test_harfbuzz, test_sqlitecpp
+	- runtime tests: fix TestPythonPy3NetworkmanagerGoi, TestLtpTestsuite
+	- runtime tests: test_generate_cyclonedx: additional tests for scp and
+	  for vulnerabilities of packages with multiple possible versions
+	- utils/check-symbols: check for undefined host symbols
+	- pkg-stats: sort latest version by state
+	- utils/genrandconfig: reject qemu user mode on hosts with large pages
+
+	Removed packages: ola
+
+	Updated / fixed packages: apache, asterisk, bcc, bind, binutils, boost,
+	  bubblewrap, ca-certificates, cannelloni, chrony, clamav, cpp-httplib,
+	  dhcpcd, e2fsprogs, edk2, erlang, exim, expat, falcosecurity-libs,
+	  fcft, flutter-engine, gawk, gcc-initial, gerbera, ghostscript, glibc,
+	  glslsandbox-player, gnu-efi, gnuradio, go, gpsd, grub2, gumbo-parser,
+	  haproxy, haveged, hidapi, htop, hwdata, i2pd, ibrcommon, inadyn,
+	  intel-mediasdk, intel-vpl-gpu-rt, iproute2, ivi-homescreen, kbd,
+	  kodi, libabseil-cpp, libarchive, libest, libgphoto2, libgtk3,
+	  libheif, libmpeg2, libopenssl, libpcap, libpng, libseccomp, libssh,
+	  linux, linux-headers, linux-tools, lldpd, luvi, lvm2, m4, mali-t76x,
+	  mbedtls, mpg123, mrouted, nano, netdata, netsnmp, network-manager,
+	  nfs-utils, ntpsec, openjdk, openjdk-bin, openvpn, patchelf, pcre2,
+	  php, pulseview, python-certifi, python-googleapis-common-protos,
+	  python-grpcio, python-grpcio-reflection, python-numpy, python-scipy,
+	  python-twisted, python3, qemu, qt5cinex, qt6declarative, qt6svg,
+	  rpi-rgb-led-matrix, rtl8812au-aircrack-ng, screen, seatd, setserial,
+	  shadowsocks-libev, skopeo, sound-theme-borealis, sqlitecpp,
+	  strongswan, stunnel, swig, sysprof, tcpreplay, tensorflow-lite,
+	  thrift, tor, tpm2-tools, turbolua, tzdata, udisks, unbound,
+	  util-linux, util-linux-libs, vboot-utils, vlc, webkitgtk, wireshark,
+	  wolfssl, wpewebkit, xdg-dbus-proxy, xen, xkeyboard-config,
+	  xlib_libXfont2, xz, zabbix, zfs, znc
+
 2025.02.18, released September 10, 2026
 
 	Important / security related fixes:
