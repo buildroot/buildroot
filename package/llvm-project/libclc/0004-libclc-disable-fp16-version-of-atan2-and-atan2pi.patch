@@ -1,0 +1,56 @@
+From cd0452f7a695165706fe5df85073f86baa46abd4 Mon Sep 17 00:00:00 2001
+From: Karol Herbst <kherbst@redhat.com>
+Date: Wed, 22 Jul 2026 17:00:36 +0200
+Subject: [PATCH] libclc: disable fp16 version of atan2 and atan2pi
+
+Fixes math_brute_force/test_bruteforce atan2 atan2pi for half
+
+Upstream: https://gitlab.freedesktop.org/karolherbst/mesa-libclc/-/commit/cd0452f7a695165706fe5df85073f86baa46abd4
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ libclc/opencl/lib/generic/math/atan2.cl   | 8 ++++++++
+ libclc/opencl/lib/generic/math/atan2pi.cl | 8 ++++++++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/libclc/opencl/lib/generic/math/atan2.cl b/libclc/opencl/lib/generic/math/atan2.cl
+index 2bbac43..640e5a3 100644
+--- a/libclc/opencl/lib/generic/math/atan2.cl
++++ b/libclc/opencl/lib/generic/math/atan2.cl
+@@ -8,6 +8,14 @@
+ 
+ #include "clc/math/clc_atan2.h"
+ 
++#define __CLC_FLOAT_ONLY
++#define __CLC_FUNCTION atan2
++#define __CLC_BODY "clc/shared/binary_def.inc"
++
++#include "clc/math/gentype.inc"
++
++#undef __CLC_FLOAT_ONLY
++#define __CLC_DOUBLE_ONLY
+ #define __CLC_FUNCTION atan2
+ #define __CLC_BODY "clc/shared/binary_def.inc"
+ 
+diff --git a/libclc/opencl/lib/generic/math/atan2pi.cl b/libclc/opencl/lib/generic/math/atan2pi.cl
+index 2d37e01..be848ae 100644
+--- a/libclc/opencl/lib/generic/math/atan2pi.cl
++++ b/libclc/opencl/lib/generic/math/atan2pi.cl
+@@ -8,6 +8,14 @@
+ 
+ #include "clc/math/clc_atan2pi.h"
+ 
++#define __CLC_FLOAT_ONLY
++#define __CLC_FUNCTION atan2pi
++#define __CLC_BODY "clc/shared/binary_def.inc"
++
++#include "clc/math/gentype.inc"
++
++#undef __CLC_FLOAT_ONLY
++#define __CLC_DOUBLE_ONLY
+ #define __CLC_FUNCTION atan2pi
+ #define __CLC_BODY "clc/shared/binary_def.inc"
+ 
+-- 
+2.47.3
+

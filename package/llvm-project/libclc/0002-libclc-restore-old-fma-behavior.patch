@@ -1,0 +1,65 @@
+From f55c425b7277bc7178729a4c4335a5ec404d03dc Mon Sep 17 00:00:00 2001
+From: Karol Herbst <kherbst@redhat.com>
+Date: Wed, 22 Jul 2026 14:51:19 +0200
+Subject: [PATCH] libclc: restore old fma behavior
+
+Upstream: https://gitlab.freedesktop.org/karolherbst/mesa-libclc/-/commit/f55c425b7277bc7178729a4c4335a5ec404d03dc
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ libclc/clc/lib/spirv/math/clc_fma.inc | 8 ++++----
+ libclc/opencl/lib/generic/math/fma.cl | 2 +-
+ libclc/opencl/lib/spirv/math/fma.cl   | 3 ++-
+ 3 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/libclc/clc/lib/spirv/math/clc_fma.inc b/libclc/clc/lib/spirv/math/clc_fma.inc
+index 42b1cf9..9efdcc4 100644
+--- a/libclc/clc/lib/spirv/math/clc_fma.inc
++++ b/libclc/clc/lib/spirv/math/clc_fma.inc
+@@ -8,9 +8,9 @@
+ 
+ _CLC_DEF _CLC_OVERLOAD __CLC_GENTYPE __clc_fma(__CLC_GENTYPE a, __CLC_GENTYPE b,
+                                                __CLC_GENTYPE c) {
+-#if __CLC_FPSIZE == 32
+-  if (!__clc_runtime_has_hw_fma32())
+-    return __clc_sw_fma(a, b, c);
+-#endif
++//#if __CLC_FPSIZE == 32
++//  if (!__clc_runtime_has_hw_fma32())
++//    return __clc_sw_fma(a, b, c);
++//#endif
+   return __builtin_elementwise_fma(a, b, c);
+ }
+diff --git a/libclc/opencl/lib/generic/math/fma.cl b/libclc/opencl/lib/generic/math/fma.cl
+index 281ee83..a31864f 100644
+--- a/libclc/opencl/lib/generic/math/fma.cl
++++ b/libclc/opencl/lib/generic/math/fma.cl
+@@ -8,7 +8,7 @@
+ 
+ #include "clc/math/clc_fma.h"
+ 
+-#define __CLC_FUNCTION fma
++#define __CLC_FUNCTION clc_sw_fma
+ #define __CLC_BODY "clc/shared/ternary_def.inc"
+ 
+ #include "clc/math/gentype.inc"
+diff --git a/libclc/opencl/lib/spirv/math/fma.cl b/libclc/opencl/lib/spirv/math/fma.cl
+index b5a44af..ab955a9 100644
+--- a/libclc/opencl/lib/spirv/math/fma.cl
++++ b/libclc/opencl/lib/spirv/math/fma.cl
+@@ -6,10 +6,11 @@
+ //
+ //===----------------------------------------------------------------------===//
+ 
+-#include "clc/math/clc_fma.h"
++#include "clc/internal/math/clc_sw_fma.h"
+ 
+ #define __CLC_FLOAT_ONLY
+ #define __CLC_FUNCTION fma
++#define __CLC_IMPL_FUNCTION(x) __clc_sw_fma
+ #define __CLC_BODY "clc/shared/ternary_def.inc"
+ 
+ #include "clc/math/gentype.inc"
+-- 
+2.47.3
+

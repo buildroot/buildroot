@@ -1,0 +1,37 @@
+Restore libclc.pc
+
+Revert the upstream removal of libclc.pc
+https://github.com/llvm/llvm-project/pull/185654
+
+which is needed by mesa3d to detect libclc.
+
+Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/40601#note_3639151
+
+Downloaded from
+https://aur.archlinux.org/cgit/aur.git/tree/revert-10644a1-v3.patch?h=libclc-minimal-git
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+
+diff -uraN llvm-project/libclc/CMakeLists.txt llvm-project.new/libclc/CMakeLists.txt
+--- llvm-project/libclc/CMakeLists.txt	2026-06-05 23:42:11.119610382 +0200
++++ llvm-project.new/libclc/CMakeLists.txt	2026-06-05 23:43:45.639449958 +0200
+@@ -123,6 +123,9 @@
+   endif()
+ endforeach()
+ 
++configure_file( libclc.pc.in libclc.pc @ONLY )
++install( FILES ${CMAKE_CURRENT_BINARY_DIR}/libclc.pc DESTINATION "${CMAKE_INSTALL_DATADIR}/pkgconfig" )
++
+ # Determine the clang target triple.
+ set(clang_triple ${LIBCLC_TARGET})
+ 
+diff -uraN llvm-project/libclc/libclc.pc.in llvm-project.new/libclc/libclc.pc.in
+--- llvm-project/libclc/libclc.pc.in	1970-01-01 01:00:00.000000000 +0100
++++ llvm-project.new/libclc/libclc.pc.in	2026-06-05 23:21:12.849811269 +0200
+@@ -0,0 +1,6 @@
++libexecdir=@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATADIR@/clc
++
++Name: libclc
++Description: Library requirements of the OpenCL C programming language
++Version: @PROJECT_VERSION@
++Libs: -L${libexecdir}

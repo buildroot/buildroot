@@ -1,0 +1,36 @@
+From 0fdefef847d704b0162cacdbafe01350f4531a61 Mon Sep 17 00:00:00 2001
+From: Karol Herbst <kherbst@redhat.com>
+Date: Wed, 22 Jul 2026 13:36:59 +0200
+Subject: [PATCH] libclc: disable use of SPV_KHR_fma extension
+
+Upstream: https://gitlab.freedesktop.org/karolherbst/mesa-libclc/-/commit/0fdefef847d704b0162cacdbafe01350f4531a61
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ libclc/cmake/modules/AddLibclc.cmake | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/libclc/cmake/modules/AddLibclc.cmake b/libclc/cmake/modules/AddLibclc.cmake
+index d84101f..82aa563 100644
+--- a/libclc/cmake/modules/AddLibclc.cmake
++++ b/libclc/cmake/modules/AddLibclc.cmake
+@@ -165,7 +165,7 @@ function(libclc_add_library target_name)
+     if(LIBCLC_USE_SPIRV_BACKEND)
+       add_custom_command(OUTPUT ${builtins_lib}
+         COMMAND ${CMAKE_CLC_COMPILER} -c --target=${ARG_TRIPLE}
+-                -mllvm --spirv-ext=+SPV_KHR_fma
++                -mllvm
+                 -x ir -o ${builtins_lib} ${linked_bc}
+         DEPENDS ${linked_bc}
+       )
+@@ -173,7 +173,6 @@ function(libclc_add_library target_name)
+       add_custom_command(OUTPUT ${builtins_lib}
+         COMMAND ${llvm-spirv_exe}
+                 --spirv-max-version=1.1
+-                --spirv-ext=+SPV_KHR_fma
+                 -o ${builtins_lib} ${linked_bc}
+         DEPENDS ${linked_bc}
+       )
+-- 
+2.47.3
+

@@ -1,0 +1,49 @@
+From 534609b129e3473b07f8d063c1c7259a07cce93b Mon Sep 17 00:00:00 2001
+From: Karol Herbst <kherbst@redhat.com>
+Date: Mon, 20 Jul 2026 16:12:30 +0200
+Subject: [PATCH] libclc: add __clc_mesa_libclc_version
+
+Allows us to detect if we got our own libclc binaries at runtime.
+
+Upstream: https://gitlab.freedesktop.org/karolherbst/mesa-libclc/-/commit/534609b129e3473b07f8d063c1c7259a07cce93b
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ libclc/opencl/lib/spirv/CMakeLists.txt |  1 +
+ libclc/opencl/lib/spirv/version.cl     | 12 ++++++++++++
+ 2 files changed, 13 insertions(+)
+ create mode 100644 opencl/lib/spirv/version.cl
+
+diff --git a/libclc/opencl/lib/spirv/CMakeLists.txt b/libclc/opencl/lib/spirv/CMakeLists.txt
+index 6e9e28e..715642c 100644
+--- a/libclc/opencl/lib/spirv/CMakeLists.txt
++++ b/libclc/opencl/lib/spirv/CMakeLists.txt
+@@ -5,6 +5,7 @@ endif()
+ 
+ # Non-Vulkan SPIR-V uses a curated subset of generic builtins.
+ libclc_add_sources(${LIBCLC_OPENCL_TARGET} FILES
++  version.cl
+   math/fma.cl
+ )
+ 
+diff --git a/libclc/opencl/lib/spirv/version.cl b/libclc/opencl/lib/spirv/version.cl
+new file mode 100644
+index 0000000..96a3410
+--- /dev/null
++++ b/libclc/opencl/lib/spirv/version.cl
+@@ -0,0 +1,12 @@
++//===----------------------------------------------------------------------===//
++//
++// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
++// See https://llvm.org/LICENSE.txt for license information.
++// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
++//
++//===----------------------------------------------------------------------===//
++
++#include <clc/opencl/opencl-base.h>
++
++/* XXYYZZPP */
++_CLC_DEF uint __clc_mesa_libclc_version() { return 0x23010000; }
+-- 
+2.47.3
+

@@ -1,0 +1,80 @@
+From 298976d4ddad1c7e0472647bcb50e1336a1bfd1a Mon Sep 17 00:00:00 2001
+From: Karol Herbst <kherbst@redhat.com>
+Date: Sat, 25 Jul 2026 18:03:18 +0200
+Subject: [PATCH] libclc: fix tgamma precision issues due to lack of fma
+
+The current tgamma implementation isn't precise enough when certain mads
+are implemented as unfused.
+
+Upstream: https://gitlab.freedesktop.org/karolherbst/mesa-libclc/-/commit/298976d4ddad1c7e0472647bcb50e1336a1bfd1a
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ libclc/clc/lib/generic/math/clc_tgamma.cl  |  1 +
+ libclc/clc/lib/generic/math/clc_tgamma.inc | 14 +++++++-------
+ 2 files changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/libclc/clc/lib/generic/math/clc_tgamma.cl b/libclc/clc/lib/generic/math/clc_tgamma.cl
+index 7e34ac6..c474b68 100644
+--- a/libclc/clc/lib/generic/math/clc_tgamma.cl
++++ b/libclc/clc/lib/generic/math/clc_tgamma.cl
+@@ -13,6 +13,7 @@
+ #include "clc/math/clc_copysign.h"
+ #include "clc/math/clc_exp.h"
+ #include "clc/math/clc_fabs.h"
++#include "clc/math/clc_fma.h"
+ #include "clc/math/clc_mad.h"
+ #include "clc/math/clc_powr.h"
+ #include "clc/math/clc_recip_fast.h"
+diff --git a/libclc/clc/lib/generic/math/clc_tgamma.inc b/libclc/clc/lib/generic/math/clc_tgamma.inc
+index 0b8c354..e49540c 100644
+--- a/libclc/clc/lib/generic/math/clc_tgamma.inc
++++ b/libclc/clc/lib/generic/math/clc_tgamma.inc
+@@ -30,14 +30,14 @@ _CLC_DEF _CLC_OVERLOAD _CLC_CONST __CLC_GENTYPE __clc_tgamma(__CLC_FLOATN x) {
+       n = 1.0f;
+ 
+       while (y > 2.5f) {
+-        n = __clc_mad(n, y, -n);
++        n = __clc_fma(n, y, -n);
+         y = y - 1.0f;
+-        n = __clc_mad(n, y, -n);
++        n = __clc_fma(n, y, -n);
+         y = y - 1.0f;
+       }
+ 
+       if (y > 1.5f) {
+-        n = __clc_mad(n, y, -n);
++        n = __clc_fma(n, y, -n);
+         y = y - 1.0f;
+       }
+ 
+@@ -49,14 +49,14 @@ _CLC_DEF _CLC_OVERLOAD _CLC_CONST __CLC_GENTYPE __clc_tgamma(__CLC_FLOATN x) {
+       d = x;
+ 
+       while (y < -1.5f) {
+-        d = __clc_mad(d, y, d);
++        d = __clc_fma(d, y, d);
+         y = y + 1.0f;
+-        d = __clc_mad(d, y, d);
++        d = __clc_fma(d, y, d);
+         y = y + 1.0f;
+       }
+ 
+       if (y < -0.5f) {
+-        d = __clc_mad(d, y, d);
++        d = __clc_fma(d, y, d);
+         y = y + 1.0f;
+       }
+ 
+@@ -70,7 +70,7 @@ _CLC_DEF _CLC_OVERLOAD _CLC_CONST __CLC_GENTYPE __clc_tgamma(__CLC_FLOATN x) {
+     __CLC_FLOATN p4 = __clc_mad(y, p3, -0x1.4fcfd6p-1f);
+     __CLC_FLOATN qt = __clc_mad(y, p4, 0x1.2788ccp-1f);
+ 
+-    ret = n / __clc_mad(d, y * qt, d);
++    ret = n / __clc_fma(d, y * qt, d);
+     ret = x == 0.0f ? __clc_copysign(__CLC_GENTYPE_INF, x) : ret;
+     ret = (x < 0.0f && __clc_fract_is_zero(x)) ? FLT_NAN : ret;
+   } else {
+-- 
+2.47.3
+
