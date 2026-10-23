@@ -16,6 +16,8 @@ ifeq ($(BR2_aarch64),y)
 CHAWAN_TARGET_ARCH = arm64
 else ifeq ($(BR2_i386),y)
 CHAWAN_TARGET_ARCH = i386
+else ifeq ($(BR2_powerpc64le),y)
+CHAWAN_TARGET_ARCH = powerpc64el
 else ifeq ($(BR2_x86_64),y)
 CHAWAN_TARGET_ARCH = amd64
 else
