@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-PYTHON_VCS_VERSIONING_VERSION = 2.5.0
+PYTHON_VCS_VERSIONING_VERSION = 2.6.0
 PYTHON_VCS_VERSIONING_SOURCE = vcs_versioning-$(PYTHON_VCS_VERSIONING_VERSION).tar.gz
-PYTHON_VCS_VERSIONING_SITE = https://files.pythonhosted.org/packages/6f/a0/6977bb418312ad30f27e522c5040604d4bbf7e40ccd5a11d333afe549354
+PYTHON_VCS_VERSIONING_SITE = https://files.pythonhosted.org/packages/ad/e7/2a691db7d076b75d099fdba1a14cd966931f2aeb591e77f6d22f15097326
 PYTHON_VCS_VERSIONING_SETUP_TYPE = setuptools
 PYTHON_VCS_VERSIONING_LICENSE = MIT
 PYTHON_VCS_VERSIONING_LICENSE_FILES = LICENSE.txt
