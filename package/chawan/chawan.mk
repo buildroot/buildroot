@@ -14,6 +14,8 @@ CHAWAN_DEPENDENCIES = brotli host-nim libssh2 openssl
 
 ifeq ($(BR2_aarch64),y)
 CHAWAN_TARGET_ARCH = arm64
+else ifeq ($(BR2_i386),y)
+CHAWAN_TARGET_ARCH = i386
 else ifeq ($(BR2_x86_64),y)
 CHAWAN_TARGET_ARCH = amd64
 else
