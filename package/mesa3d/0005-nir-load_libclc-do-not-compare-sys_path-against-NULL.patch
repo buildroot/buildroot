@@ -1,4 +1,4 @@
-From f5011f50a7e9c3f8dc208e16a4bd3aadbd6fdae8 Mon Sep 17 00:00:00 2001
+From 1219dc3f7fe83b1f7f200190bf02a86ab57b3d4f Mon Sep 17 00:00:00 2001
 From: Karol Herbst <kherbst@redhat.com>
 Date: Tue, 22 Sep 2026 13:53:43 +0200
 Subject: [PATCH] nir/load_libclc: do not compare sys_path against NULL
@@ -11,14 +11,13 @@ Part-of: <https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/44624>
 
 Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/commit/1219dc3f7fe83b1f7f200190bf02a86ab57b3d4f
 
-[Bernd: backported to 26.1.8]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
- src/compiler/clc/nir_load_libclc.c | 84 ++++++++++++++----------------
- 1 file changed, 39 insertions(+), 45 deletions(-)
+ src/compiler/clc/nir_load_libclc.c | 76 ++++++++++++++----------------
+ 1 file changed, 35 insertions(+), 41 deletions(-)
 
 diff --git a/src/compiler/clc/nir_load_libclc.c b/src/compiler/clc/nir_load_libclc.c
-index 4cb92bdb257..46beaf51cdf 100644
+index edcd13b3b26..913dd8ff7a7 100644
 --- a/src/compiler/clc/nir_load_libclc.c
 +++ b/src/compiler/clc/nir_load_libclc.c
 @@ -145,20 +145,18 @@ map_clc_data(struct clc_data *clc)
@@ -69,7 +68,7 @@ index 4cb92bdb257..46beaf51cdf 100644
  #endif
  }
  
-@@ -198,33 +194,31 @@ open_clc_data(struct clc_data *clc, unsigned ptr_bit_size)
+@@ -198,34 +194,32 @@ open_clc_data(struct clc_data *clc, unsigned ptr_bit_size)
     }
  
  #ifdef DYNAMIC_LIBCLC_PATH
@@ -77,7 +76,10 @@ index 4cb92bdb257..46beaf51cdf 100644
 -      int fd = open(clc->file->sys_path, O_RDONLY);
 -      if (fd < 0)
 -         return false;
--
++   int fd = open(clc->file->sys_path, O_RDONLY);
++   if (fd < 0)
++      return false;
+ 
 -      struct stat stat;
 -      int ret = fstat(fd, &stat);
 -      if (ret < 0) {
@@ -85,46 +87,40 @@ index 4cb92bdb257..46beaf51cdf 100644
 -         close(fd);
 -         return false;
 -      }
--
++   struct stat stat;
++   int ret = fstat(fd, &stat);
++   if (ret < 0) {
++      fprintf(stderr, "fstat failed on %s: %m\n", clc->file->sys_path);
++      close(fd);
++      return false;
++   }
+ 
 -      clc->fd = fd;
 -      clc->size = stat.st_size;
--
++   clc->fd = fd;
++   clc->size = stat.st_size;
+ 
 -      if (!map_clc_data(clc)) {
+-         close_clc_data(clc);
 -         return false;
 -      }
--
++   if (!map_clc_data(clc)) {
++      close_clc_data(clc);
++      return false;
++   }
+ 
 -      blake3_hasher ctx;
 -      _mesa_blake3_init(&ctx);
 -      _mesa_blake3_update(&ctx, clc->data, clc->size);
 -      _mesa_blake3_final(&ctx, clc->cache_key);
--
++   blake3_hasher ctx;
++   _mesa_blake3_init(&ctx);
++   _mesa_blake3_update(&ctx, clc->data, clc->size);
++   _mesa_blake3_final(&ctx, clc->cache_key);
+ 
 -      return true;
 -   }
-+  int fd = open(clc->file->sys_path, O_RDONLY);
-+  if (fd < 0)
-+     return false;
-+
-+  struct stat stat;
-+  int ret = fstat(fd, &stat);
-+  if (ret < 0) {
-+     fprintf(stderr, "fstat failed on %s: %m\n", clc->file->sys_path);
-+     close(fd);
-+     return false;
-+  }
-+
-+  clc->fd = fd;
-+  clc->size = stat.st_size;
-+
-+  if (!map_clc_data(clc)) {
-+     return false;
-+  }
-+
-+  blake3_hasher ctx;
-+  _mesa_blake3_init(&ctx);
-+  _mesa_blake3_update(&ctx, clc->data, clc->size);
-+  _mesa_blake3_final(&ctx, clc->cache_key);
-+
-+  return true;
++   return true;
  #endif
  
     return false;

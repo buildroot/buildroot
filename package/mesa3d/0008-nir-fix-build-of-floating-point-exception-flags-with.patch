@@ -1,0 +1,84 @@
+From 0c567be6b8782b1fe3ed6f1e7499856bf6af9f6a Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Fri, 23 Oct 2026 21:33:52 +0200
+Subject: [PATCH] nir: fix build of floating point exception flags with
+ toolchains lacking fenv support
+
+uClibc-ng supports C99 Floating-point on a restricted set of platforms:
+https://github.com/wbx-github/uclibc-ng/blob/v1.0.59/extra/Configs/Config.in.arch#L163
+
+causing build errors on the other supported platforms:
+
+src/compiler/nir/nir_constant_expressions.c:24:10: fatal error:
+ fenv.h: No such file or directory
+
+Check for fenv.h and guard the fenv code added by commit
+https://gitlab.freedesktop.org/mesa/mesa/-/commit/6351df29e2d99a982dbfed931b23a76defca0132
+with ifdef's.
+
+Upstream: https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/45569
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ meson.build                                  | 2 +-
+ src/compiler/nir/nir_constant_expressions.py | 6 ++++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index 5f19ef921a6..9c57445edb6 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1613,7 +1613,7 @@ endif
+ 
+ foreach h : ['xlocale.h', 'linux/futex.h', 'endian.h', 'dlfcn.h', 'sys/shm.h',
+              'cet.h', 'pthread_np.h', 'poll.h', 'sys/inotify.h',
+-             'linux/udmabuf.h']
++             'linux/udmabuf.h', 'fenv.h']
+   if cc.check_header(h)
+     pre_args += '-DHAVE_@0@'.format(h.to_upper().underscorify())
+   endif
+diff --git a/src/compiler/nir/nir_constant_expressions.py b/src/compiler/nir/nir_constant_expressions.py
+index c4ae87db1a7..23f4aa6adbb 100644
+--- a/src/compiler/nir/nir_constant_expressions.py
++++ b/src/compiler/nir/nir_constant_expressions.py
+@@ -55,7 +55,9 @@ template = """\
+  * IN THE SOFTWARE.
+  */
+ 
++#ifdef HAVE_FENV_H
+ #include <fenv.h>
++#endif
+ #include <math.h>
+ #include "util/rounding.h" /* for _mesa_roundeven */
+ #include "util/half_float.h"
+@@ -660,6 +662,7 @@ nir_eval_const_opcode(nir_op op, nir_const_value *dest, nir_component_mask_t *ou
+                       nir_const_value **src,
+                       unsigned float_controls_execution_mode)
+ {
++#ifdef HAVE_FENV_H
+    /* Temporarily disable floating point exception flags while we
+     * evaluate shader constants. This avoids games unexpectedly crashing while
+     * we evalute shader math on the cpu if they have the exeption flags turn
+@@ -673,6 +676,7 @@ nir_eval_const_opcode(nir_op op, nir_const_value *dest, nir_component_mask_t *ou
+ #endif
+    if (unlikely(had_flags))
+       feholdexcept(&__nir_const_fenv);
++#endif
+ 
+    nir_component_mask_t poison;
+ 
+@@ -689,9 +693,11 @@ nir_eval_const_opcode(nir_op op, nir_const_value *dest, nir_component_mask_t *ou
+    if (out_poison)
+       *out_poison = poison;
+ 
++#ifdef HAVE_FENV_H
+    /* Restore floating point exception flags */
+    if (unlikely(had_flags))
+       fesetenv(&__nir_const_fenv);
++#endif
+ }"""
+ 
+ from mako.template import Template
+-- 
+2.47.3
+
