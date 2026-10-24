@@ -1,0 +1,92 @@
+From 7eedb693023c1218aa633aaaec266af1b9b01175 Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Sat, 24 Oct 2026 15:29:30 +0200
+Subject: [PATCH] include: linux: drop bundled copy of types.h
+
+The bundled include/linux/types.h is a copy of the kernel UAPI header
+from v3.1-rc3. Since the build uses -I../include, it shadows the system
+<linux/types.h>.
+
+Kernel UAPI headers v7.3 changed arm64's asm/sigcontext.h, included via
+<signal.h>, to use the __u128 type from linux/types.h:
+
+  - __uint128_t vregs[32];
+  + __u128 vregs[32];
+
+The stale copy lacks __u128, so the build fails on arm64:
+
+  asm/sigcontext.h:81:9: error: unknown type name '__u128'; did you mean '__u32'?
+
+The system header provides everything the bundled copy did (the
+__aligned_u64 and __sum16 types used by iptables have been available
+since well before v3.10), so drop it, as was done for ebtables.
+
+Link: https://lore.kernel.org/netfilter-devel/CAD04=wrZafKknWixGGRZWtYD_ydfdL4Uk39s_RkwZ6WUEVATKg@mail.gmail.com/
+Assisted-by: Claude:claude-opus-5-5
+Upstream: https://lore.kernel.org/netfilter-devel/20261024135509.4097035-1-yegorslists@googlemail.com/
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ include/linux/types.h | 51 -------------------------------------------
+ 1 file changed, 51 deletions(-)
+ delete mode 100644 include/linux/types.h
+
+diff --git a/include/linux/types.h b/include/linux/types.h
+deleted file mode 100644
+index 630cd3bb..00000000
+--- a/include/linux/types.h
++++ /dev/null
+@@ -1,51 +0,0 @@
+-#ifndef _LINUX_TYPES_H
+-#define _LINUX_TYPES_H
+-
+-#include <asm/types.h>
+-
+-#ifndef __ASSEMBLY__
+-
+-#include <linux/posix_types.h>
+-
+-
+-/*
+- * Below are truly Linux-specific types that should never collide with
+- * any application/library that wants linux/types.h.
+- */
+-
+-#ifdef __CHECKER__
+-#define __bitwise__ __attribute__((bitwise))
+-#else
+-#define __bitwise__
+-#endif
+-#ifdef __CHECK_ENDIAN__
+-#define __bitwise __bitwise__
+-#else
+-#define __bitwise
+-#endif
+-
+-typedef __u16 __bitwise __le16;
+-typedef __u16 __bitwise __be16;
+-typedef __u32 __bitwise __le32;
+-typedef __u32 __bitwise __be32;
+-typedef __u64 __bitwise __le64;
+-typedef __u64 __bitwise __be64;
+-
+-typedef __u16 __bitwise __sum16;
+-typedef __u32 __bitwise __wsum;
+-
+-/*
+- * aligned_u64 should be used in defining kernel<->userspace ABIs to avoid
+- * common 32/64-bit compat problems.
+- * 64-bit values align to 4-byte boundaries on x86_32 (and possibly other
+- * architectures) and to 8-byte boundaries on 64-bit architetures.  The new
+- * aligned_64 type enforces 8-byte alignment so that structs containing
+- * aligned_64 values have the same alignment on 32-bit and 64-bit architectures.
+- * No conversions are necessary between 32-bit user-space and a 64-bit kernel.
+- */
+-#define __aligned_u64 __u64 __attribute__((aligned(8)))
+-#define __aligned_be64 __be64 __attribute__((aligned(8)))
+-#define __aligned_le64 __le64 __attribute__((aligned(8)))
+-
+-#endif /*  __ASSEMBLY__ */
+-#endif /* _LINUX_TYPES_H */
+-- 
+2.34.1
+
