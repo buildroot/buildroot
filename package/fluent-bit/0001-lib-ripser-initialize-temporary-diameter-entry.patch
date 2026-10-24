@@ -1,0 +1,31 @@
+From 83086bf5092d76c2fffbcd7f0cb671083bf0a3c3 Mon Sep 17 00:00:00 2001
+From: Aaron Mestdagh <aaron.mestdagh@barco.com>
+Date: Thu, 8 Oct 2026 11:52:22 +0200
+Subject: [PATCH] lib: ripser: initialize temporary diameter entry
+
+GCC 6 does not accept implicit default construction of diameter_entry_t.
+The temporary is assigned before use, so initialize it with Ripser's existing
+invalid-index sentinel.
+
+Upstream: https://github.com/fluent/fluent-bit/commit/56df8d278c927b2e7b81d28d7c08128fd7ded167
+Signed-off-by: Aaron Mestdagh <aaron.mestdagh@barco.com>
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+---
+ lib/ripser-1.2.1/ripser.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/ripser-1.2.1/ripser.cpp b/lib/ripser-1.2.1/ripser.cpp
+index 6bddf7271..b9ccc89d6 100644
+--- a/lib/ripser-1.2.1/ripser.cpp
++++ b/lib/ripser-1.2.1/ripser.cpp
+@@ -183,6 +183,7 @@ value_t get_diameter(const index_diameter_t& i) { return i.second; }
+ 
+ struct diameter_entry_t : std::pair<value_t, entry_t> {
+ 	using std::pair<value_t, entry_t>::pair;
++	diameter_entry_t() : std::pair<value_t, entry_t>() {}
+ 	diameter_entry_t(value_t _diameter, index_t _index, coefficient_t _coefficient)
+ 	    : diameter_entry_t(_diameter, make_entry(_index, _coefficient)) {}
+ 	diameter_entry_t(const diameter_index_t& _diameter_index, coefficient_t _coefficient)
+-- 
+2.43.0
+
