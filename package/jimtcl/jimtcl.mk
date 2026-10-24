@@ -71,6 +71,8 @@ define JIMTCL_INSTALL_STAGING_CMDS
 		cp -a $(@D)/$$i $(STAGING_DIR)/usr/include/ || exit 1 ; \
 	done; \
 	$(call JIMTCL_INSTALL_LIB,$(STAGING_DIR))
+	$(INSTALL) -m 0644 -D $(@D)/jimtcl.pc \
+		$(STAGING_DIR)/usr/lib/pkgconfig/jimtcl.pc
 endef
 
 define JIMTCL_INSTALL_TARGET_CMDS
