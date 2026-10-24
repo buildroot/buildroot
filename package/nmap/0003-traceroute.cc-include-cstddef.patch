@@ -1,0 +1,82 @@
+From 445573b27f3997b7eae456e849f003f18de5349e Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 6 Sep 2026 11:41:29 +0200
+Subject: [PATCH] traceroute.cc: include cstddef
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Adding this include fixes a build error seen with an old buildroot
+toolchain based on gcc-6.3.0/glibc-2.25:
+
+traceroute.cc: In function ‘bool parse_encapsulated_reply(const u8*, unsigned int, Reply*)’:
+traceroute.cc:1084:24: error: expected primary-expression before ‘struct’
+     if (len < offsetof(struct icmp, icmp_id) + 2)
+                        ^~~~~~
+In file included from struct_ip.h:56:0,
+                 from traceroute.cc:113:
+traceroute.cc:1084:37: error: ‘icmp_hun’ was not declared in this scope
+     if (len < offsetof(struct icmp, icmp_id) + 2)
+                                     ^
+traceroute.cc:1084:44: error: ‘offsetof’ was not declared in this scope
+     if (len < offsetof(struct icmp, icmp_id) + 2)
+                                            ^
+traceroute.cc:1091:52: error: expected primary-expression before ‘struct’
+     if (len < sizeof(struct icmpv6_hdr) + offsetof(struct icmpv6_msg_echo, icmpv6_seq) + 2)
+                                                    ^~~~~~
+traceroute.cc:1091:76: error: ‘icmpv6_seq’ was not declared in this scope
+     if (len < sizeof(struct icmpv6_hdr) + offsetof(struct icmpv6_msg_echo, icmpv6_seq) + 2)
+                                                                            ^~~~~~~~~~
+traceroute.cc:1091:86: error: ‘offsetof’ was not declared in this scope
+     if (len < sizeof(struct icmpv6_hdr) + offsetof(struct icmpv6_msg_echo, icmpv6_seq) + 2)
+                                                                                      ^
+traceroute.cc:1098:24: error: expected primary-expression before ‘struct’
+     if (len < offsetof(struct tcp_hdr, th_sport) + 2) return false;
+                        ^~~~~~
+traceroute.cc:1098:40: error: ‘th_sport’ was not declared in this scope
+     if (len < offsetof(struct tcp_hdr, th_sport) + 2) return false;
+                                        ^~~~~~~~
+traceroute.cc:1098:48: error: ‘offsetof’ was not declared in this scope
+     if (len < offsetof(struct tcp_hdr, th_sport) + 2) return false;
+                                                ^
+traceroute.cc:1102:24: error: expected primary-expression before ‘struct’
+     if (len < offsetof(struct udp_hdr, uh_sport) + 2) return false;
+                        ^~~~~~
+traceroute.cc:1102:40: error: ‘uh_sport’ was not declared in this scope
+     if (len < offsetof(struct udp_hdr, uh_sport) + 2) return false;
+                                        ^~~~~~~~
+traceroute.cc:1102:48: error: ‘offsetof’ was not declared in this scope
+     if (len < offsetof(struct udp_hdr, uh_sport) + 2) return false;
+                                                ^
+traceroute.cc:1106:24: error: expected primary-expression before ‘struct’
+     if (len < offsetof(struct sctp_hdr, sh_sport) + 2) return false;
+                        ^~~~~~
+traceroute.cc:1106:41: error: ‘sh_sport’ was not declared in this scope
+     if (len < offsetof(struct sctp_hdr, sh_sport) + 2) return false;
+                                         ^~~~~~~~
+traceroute.cc:1106:49: error: ‘offsetof’ was not declared in this scope
+     if (len < offsetof(struct sctp_hdr, sh_sport) + 2) return false;
+                                                 ^
+
+Upstream: https://github.com/nmap/nmap/pull/3473
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ traceroute.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/traceroute.cc b/traceroute.cc
+index 231de10fc..5b040ce2d 100644
+--- a/traceroute.cc
++++ b/traceroute.cc
+@@ -122,6 +122,7 @@ individually.
+ #include <dnet.h>
+ 
+ #include <algorithm>
++#include <cstddef>
+ #include <list>
+ #include <map>
+ #include <set>
+-- 
+2.47.3
+
