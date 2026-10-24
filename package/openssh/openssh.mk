@@ -36,7 +36,9 @@ define OPENSSH_PERMISSIONS
 	/var/empty d 755 root root - - - - -
 endef
 
-ifeq ($(BR2_powerpc64le),y)
+# -fzero-call-used-regs=used is not supported on powerpc64le and makes
+# gcc ICE on MIPS before R6
+ifneq ($(BR2_powerpc64le)$(BR2_TOOLCHAIN_HAS_GCC_BUG_104820),)
 OPENSSH_CONF_ENV += ossh_cv_cflag__fzero_call_used_regs_used=no
 endif
 
