@@ -1,0 +1,83 @@
+From a8a0b4c50768fb8bbcbd1683d020a31ad2bb0cad Mon Sep 17 00:00:00 2001
+From: Marc Schink <dev@zapb.de>
+Date: Tue, 2 Jul 2024 17:14:22 +0200
+Subject: [PATCH] configure: Use pkg-config for jimtcl
+
+The jimtcl project supports pkg-config, use it for a simpler
+configuration of compiler and linker flags and to enforce the minimum
+required package version.
+
+Since the jimtcl pkg-config file is not available on all systems, use
+AC_CHECK_HEADER() as fallback.
+
+Change-Id: I6fdcc818a8fdd205a126b0a46356434dbe890226
+Upstream: https://github.com/openocd-org/openocd/commit/a8a0b4c50768fb8bbcbd1683d020a31ad2bb0cad
+Signed-off-by: Marc Schink <dev@zapb.de>
+Reviewed-on: https://review.openocd.org/c/openocd/+/8383
+Reviewed-by: Antonio Borneo <borneo.antonio@gmail.com>
+Tested-by: jenkins
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ Makefile.am     |  2 ++
+ configure.ac    | 10 ++++++++++
+ src/Makefile.am |  4 ++++
+ 3 files changed, 16 insertions(+)
+
+diff --git a/Makefile.am b/Makefile.am
+index 647b571cfa..2230e628f8 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -48,6 +48,8 @@ AM_CPPFLAGS = $(HOST_CPPFLAGS)\
+ if INTERNAL_JIMTCL
+ AM_CPPFLAGS += -I$(top_srcdir)/jimtcl \
+ 			   -I$(top_builddir)/jimtcl
++else
++AM_CPPFLAGS += $(JIMTCL_CFLAGS)
+ endif
+ EXTRA_DIST += \
+ 	BUGS \
+diff --git a/configure.ac b/configure.ac
+index becc531b0d..b7aed245e6 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -594,6 +594,15 @@ AS_IF([test "x$use_internal_jimtcl" = "xyes"], [
+   ], [
+     AC_MSG_ERROR([jimtcl not found, run git submodule init and git submodule update.])
+   ])
++], [
++  PKG_CHECK_MODULES([JIMTCL], [jimtcl >= 0.79], [
++      have_jimtcl_pkg_config=yes
++    ], [
++      have_jimtcl_pkg_config=no
++      AC_CHECK_HEADER([jim.h], [], [
++        AC_MSG_ERROR([jimtcl is required but not found via pkg-config and system includes])
++      ])
++  ])
+ ])
+ 
+ AS_IF([test "x$build_remote_bitbang" = "xyes"], [
+@@ -781,6 +790,7 @@ AM_CONDITIONAL([DMEM], [test "x$build_dmem" = "xyes"])
+ AM_CONDITIONAL([HAVE_CAPSTONE], [test "x$enable_capstone" != "xno"])
+ 
+ AM_CONDITIONAL([INTERNAL_JIMTCL], [test "x$use_internal_jimtcl" = "xyes"])
++AM_CONDITIONAL([HAVE_JIMTCL_PKG_CONFIG], [test "x$have_jimtcl_pkg_config" = "xyes"])
+ AM_CONDITIONAL([INTERNAL_LIBJAYLINK], [test "x$use_internal_libjaylink" = "xyes"])
+ 
+ # Look for environ alternatives.  Possibility #1: is environ in unistd.h or stdlib.h?
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 6d79cd6311..4d1c1a2509 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -17,8 +17,12 @@ bin_PROGRAMS += %D%/openocd
+ if INTERNAL_JIMTCL
+ %C%_openocd_LDADD += $(top_builddir)/jimtcl/libjim.a
+ else
++if HAVE_JIMTCL_PKG_CONFIG
++%C%_openocd_LDADD += $(JIMTCL_LIBS)
++else
+ %C%_openocd_LDADD += -ljim
+ endif
++endif
+ 
+ %C%_libopenocd_la_CPPFLAGS =
+ 
