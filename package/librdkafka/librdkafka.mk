@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBRDKAFKA_VERSION = 2.13.2
+LIBRDKAFKA_VERSION = 2.16.0
 LIBRDKAFKA_SITE = $(call github,confluentinc,librdkafka,v$(LIBRDKAFKA_VERSION))
 LIBRDKAFKA_LICENSE = BSD-2-Clause
 LIBRDKAFKA_LICENSE_FILES = LICENSES.txt

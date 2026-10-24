@@ -1,19 +1,25 @@
-From 4584734fc039e06dea71c94045283f3108c7fae8 Mon Sep 17 00:00:00 2001
+From 184ab88b6911e128319ae5ee75b6a7444af2982e Mon Sep 17 00:00:00 2001
 From: Thomas Devoogdt <thomas@devoogdt.com>
 Date: Sun, 15 Feb 2026 20:41:10 +0100
 Subject: [PATCH] CMakeLists.txt: allow compilation without C++ support
 
-$ CXX=/bin/false cmake . && make
+Only require a C compiler by default, and enable C++ only when a C++
+compiler is found (check_language). When it is missing, skip src-cpp,
+the C++ examples and the tests (which need C++), and default
+RDKAFKA_BUILD_TESTS to OFF. Explicitly enabling the tests without a C++
+compiler is a configure error.
+
+Verified with: CXX=/bin/false cmake . && make
 
 Upstream: https://github.com/confluentinc/librdkafka/pull/5311
 Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
 ---
- CMakeLists.txt          | 25 ++++++++++++++++++++-----
+ CMakeLists.txt          | 30 +++++++++++++++++++++++++-----
  examples/CMakeLists.txt | 30 ++++++++++++++++++++----------
- 2 files changed, 40 insertions(+), 15 deletions(-)
+ 2 files changed, 45 insertions(+), 15 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index f3d05bad..7676f897 100644
+index 1e3c4450..c9c65c2e 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -3,7 +3,15 @@ cmake_minimum_required(VERSION 3.5)
@@ -33,16 +39,21 @@ index f3d05bad..7676f897 100644
  
  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/packaging/cmake/Modules/")
  
-@@ -181,7 +189,7 @@ endif()
+@@ -181,7 +189,12 @@ endif()
  
  option(RDKAFKA_BUILD_STATIC "Build static rdkafka library" OFF)
  option(RDKAFKA_BUILD_EXAMPLES "Build examples" ON)
 -option(RDKAFKA_BUILD_TESTS "Build tests" ON)
-+option(RDKAFKA_BUILD_TESTS "Build tests" CMAKE_CXX_COMPILER)
++if(CMAKE_CXX_COMPILER)
++  set(build_tests_default ON)
++else()
++  set(build_tests_default OFF)
++endif()
++option(RDKAFKA_BUILD_TESTS "Build tests" ${build_tests_default})
  if(WIN32)
      option(WITHOUT_WIN32_CONFIG "Avoid including win32_config.h on cmake builds" ON)
  endif(WIN32)
-@@ -279,13 +287,20 @@ install(
+@@ -279,13 +292,20 @@ install(
  )
  
  add_subdirectory(src)
@@ -63,11 +74,11 @@ index f3d05bad..7676f897 100644
 +    enable_testing()
 +    add_subdirectory(tests)
 +  else()
-+    message(FATAL_ERROR "Building tests needs C++ suport")
++    message(FATAL_ERROR "Building tests needs C++ support")
 +  endif()
  endif()
 diff --git a/examples/CMakeLists.txt b/examples/CMakeLists.txt
-index 91851d2c..28ce6e79 100644
+index d9ce7ac2..a71cd136 100644
 --- a/examples/CMakeLists.txt
 +++ b/examples/CMakeLists.txt
 @@ -5,8 +5,10 @@ endif(WIN32)
@@ -110,7 +121,7 @@ index 91851d2c..28ce6e79 100644
  
  add_executable(misc misc.c ${win32_sources})
  target_link_libraries(misc PUBLIC rdkafka)
-@@ -73,7 +81,9 @@ if(NOT WIN32)
+@@ -73,8 +81,10 @@ if(NOT WIN32)
      add_executable(rdkafka_complex_consumer_example rdkafka_complex_consumer_example.c)
      target_link_libraries(rdkafka_complex_consumer_example PUBLIC rdkafka)
  
@@ -121,7 +132,8 @@ index 91851d2c..28ce6e79 100644
 +        target_link_libraries(kafkatest_verifiable_client PUBLIC rdkafka++)
 +    endif(CMAKE_CXX_COMPILER)
  
- endif(NOT WIN32)
+     add_executable(share_consumer share_consumer.c)
+     target_link_libraries(share_consumer PUBLIC rdkafka)
 -- 
 2.43.0
 

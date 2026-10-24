@@ -1,0 +1,158 @@
+From 476e962d5da476093f98a76b2c605e852fbc41cb Mon Sep 17 00:00:00 2001
+From: Thomas Devoogdt <thomas@devoogdt.com>
+Date: Sat, 24 Oct 2026 15:22:59 +0200
+Subject: [PATCH] Guard fenv.h usage behind HAVE_FENV (#5650)
+
+fenv.h is not available on some toolchains (e.g. uClibc without FENV
+support), which broke the build since the FPE check was added to the
+histogram unit test.
+
+Detect fenv.h at configure time (configure.self and CMake) and only use
+it when available.
+
+Upstream: https://github.com/confluentinc/librdkafka/pull/5651
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+---
+ CHANGELOG.md                                    |  4 ++++
+ CMakeLists.txt                                  |  2 ++
+ configure.self                                  |  8 ++++++++
+ packaging/cmake/config.h.in                     |  1 +
+ packaging/cmake/try_compile/fenv_test.c         |  6 ++++++
+ packaging/cmake/try_compile/rdkafka_setup.cmake | 11 +++++++++++
+ src/rdhdrhistogram.c                            |  6 ++++++
+ 7 files changed, 38 insertions(+)
+ create mode 100644 packaging/cmake/try_compile/fenv_test.c
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index bf450191..eff77118 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -57,6 +57,10 @@ callers retry them instead of treating them as a hard failure.
+ 
+ ### General fixes
+ 
++* Issues: #5650.
++  Fix build failure on platforms without `fenv.h` (e.g., uClibc toolchains without FENV support).
++  `fenv.h` is now detected at configure time (`HAVE_FENV`) and only used by the histogram unit test when available.
++  Happening since 2.16.0.
+ * Issues: #5600.
+   Fix re-bootstrap cases that never reached a bootstrap broker while the learned brokers were still connected, or kept an already connected bootstrap broker.
+   The client kept asking the very brokers that reported its metadata as stale. Learned and bootstrap brokers are now decommissioned when a re-bootstrap sequence starts, so the bootstrap servers are re-created and connected again, re-resolving their addresses, and only they are used until a Metadata response rebuilds the broker list. The transaction coordinator is reset too when its broker is decommissioned, so the coordinator connection is re-established and its address re-resolved, as already done for the group coordinator. Queued messages are handed back to their partitions and re-sent once new leaders are known. Admin requests in flight on a decommissioned broker now fail with `RD_KAFKA_RESP_ERR__TRANSPORT` (previously
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1e3c4450..393c4242 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -195,6 +195,7 @@ endif(WIN32)
+ # * HAVE_ATOMICS_64_SYNC
+ # * HAVE_REGEX
+ # * HAVE_STRNDUP
++# * HAVE_FENV
+ # * HAVE_PTHREAD_SETNAME_GNU
+ # * HAVE_PTHREAD_SETNAME_DARWIN
+ # * HAVE_PTHREAD_SETNAME_FREEBSD
+@@ -224,6 +225,7 @@ set(GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
+ # * WITH_SASL
+ # * HAVE_REGEX
+ # * HAVE_STRNDUP
++# * HAVE_FENV
+ # * HAVE_PTHREAD_SETNAME_GNU
+ # * HAVE_PTHREAD_SETNAME_DARWIN
+ # * HAVE_PTHREAD_SETNAME_FREEBSD
+diff --git a/configure.self b/configure.self
+index 13a2c284..a2c4bf4f 100644
+--- a/configure.self
++++ b/configure.self
+@@ -226,6 +226,14 @@ int foo (void) {
+    return getentropy((void *)seed, sizeof(seed));
+ }"
+ 
++    # Check if fenv.h is available (isn't on uClibc without FENV support)
++    mkl_compile_check "fenv" "HAVE_FENV" disable CC "" \
++"#include <fenv.h>
++int foo (void) {
++   feclearexcept(FE_DIVBYZERO | FE_INVALID);
++   return fetestexcept(FE_DIVBYZERO | FE_INVALID);
++}"
++
+     # Check if strndup() is available (isn't on Solaris 10)
+     mkl_compile_check "strndup" "HAVE_STRNDUP" disable CC "" \
+ "#include <string.h>
+diff --git a/packaging/cmake/config.h.in b/packaging/cmake/config.h.in
+index d09a56f9..8ae6cec2 100644
+--- a/packaging/cmake/config.h.in
++++ b/packaging/cmake/config.h.in
+@@ -46,6 +46,7 @@
+ #cmakedefine01 HAVE_STRNDUP
+ #cmakedefine01 HAVE_RAND_R
+ #cmakedefine01 HAVE_GETENTROPY
++#cmakedefine01 HAVE_FENV
+ #cmakedefine01 HAVE_PTHREAD_SETNAME_GNU
+ #cmakedefine01 HAVE_PTHREAD_SETNAME_DARWIN
+ #cmakedefine01 HAVE_PTHREAD_SETNAME_FREEBSD
+diff --git a/packaging/cmake/try_compile/fenv_test.c b/packaging/cmake/try_compile/fenv_test.c
+new file mode 100644
+index 00000000..b6f2be2d
+--- /dev/null
++++ b/packaging/cmake/try_compile/fenv_test.c
+@@ -0,0 +1,6 @@
++#include <fenv.h>
++
++int main() {
++        feclearexcept(FE_DIVBYZERO | FE_INVALID);
++        return fetestexcept(FE_DIVBYZERO | FE_INVALID);
++}
+diff --git a/packaging/cmake/try_compile/rdkafka_setup.cmake b/packaging/cmake/try_compile/rdkafka_setup.cmake
+index ca9bc93e..9352dcae 100644
+--- a/packaging/cmake/try_compile/rdkafka_setup.cmake
++++ b/packaging/cmake/try_compile/rdkafka_setup.cmake
+@@ -22,6 +22,17 @@ try_compile(
+     "${TRYCOMPILE_SRC_DIR}/getentropy_test.c"
+ )
+ 
++set(_fenv_link_libs "")
++if(NOT WIN32)
++    set(_fenv_link_libs "-lm")
++endif()
++try_compile(
++    HAVE_FENV
++    "${CMAKE_CURRENT_BINARY_DIR}/try_compile"
++    "${TRYCOMPILE_SRC_DIR}/fenv_test.c"
++    LINK_LIBRARIES ${_fenv_link_libs}
++)
++
+ try_compile(
+     HAVE_PTHREAD_SETNAME_GNU
+     "${CMAKE_CURRENT_BINARY_DIR}/try_compile"
+diff --git a/src/rdhdrhistogram.c b/src/rdhdrhistogram.c
+index 2466b098..3fa319a6 100644
+--- a/src/rdhdrhistogram.c
++++ b/src/rdhdrhistogram.c
+@@ -73,7 +73,9 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <math.h>
++#if HAVE_FENV
+ #include <fenv.h>
++#endif
+ 
+ #include "rdhdrhistogram.h"
+ #include "rdunittest.h"
+@@ -662,11 +664,15 @@ static int ut_unitmagnitude_overflow(void) {
+         rd_hdr_histogram_t *hdr;
+         int r;
+ 
++#if HAVE_FENV
+         feclearexcept(FE_DIVBYZERO | FE_INVALID);
++#endif
+         hdr = rd_hdr_histogram_new(0, 200, 4);
++#if HAVE_FENV
+         RD_UT_ASSERT(
+             !fetestexcept(FE_DIVBYZERO | FE_INVALID),
+             "rd_hdr_histogram_new(0,...) raised an FP exception (#4949)");
++#endif
+ 
+         r = rd_hdr_histogram_record(hdr, 11);
+         RD_UT_ASSERT(r, "record(11) failed\n");
+-- 
+2.43.0
+
