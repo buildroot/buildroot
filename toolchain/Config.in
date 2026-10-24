@@ -210,6 +210,16 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_104028
 	bool
 	default y if BR2_m68k
 
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=104820
+# ICE: on MIPS: in int_mode_for_mode, at stor-layout.cc:408 during
+# RTL pass: zero_call_used_regs. MIPS before R6 also rejects
+# -fzero-call-used-regs=used in functions using the hi/lo registers.
+# This bug still exists in gcc = 15.3.0
+config BR2_TOOLCHAIN_HAS_GCC_BUG_104820
+	bool
+	default y if (BR2_mips || BR2_mipsel || BR2_mips64 || BR2_mips64el) \
+		&& !BR2_MIPS_CPU_MIPS32R6 && !BR2_MIPS_CPU_MIPS64R6
+
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=107728
 # https://sourceware.org/bugzilla/show_bug.cgi?id=29621
 config BR2_TOOLCHAIN_HAS_GCC_BUG_107728
