@@ -1,0 +1,47 @@
+From 6b2fd8c0691426be9e8d36276e5f3a8153fa3262 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Fri, 23 Oct 2026 08:03:18 +0200
+Subject: [PATCH] CThreadImplLinux: uClibc-ng provides gettid()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+https://github.com/xbmc/xbmc/commit/b5b2be7121f750b5f27d205e2b11ce0179b388cf
+added gettid() back in 2022 for older glibc and all uClibc versions.
+
+uClibc-ng added gettid() in version 1.0.56:
+https://github.com/wbx-github/uclibc-ng/commit/47c15dbb50f07be1ef5a1ffc9559205584078fbc
+
+causing a build error now:
+
+/builds/bkuhls/buildroot/br-test-pkg/bootlin-x86-64-uclibc/build/kodi-22.0rc1-Piers/xbmc/platform/linux/threads/ThreadImplLinux.cpp:
+ In constructor ‘CThreadImplLinux::CThreadImplLinux(std::thread::native_handle_type)’:
+/builds/bkuhls/buildroot/br-test-pkg/bootlin-x86-64-uclibc/build/kodi-22.0rc1-Piers/xbmc/platform/linux/threads/ThreadImplLinux.cpp:76:43:
+ error: call of overloaded ‘gettid()’ is ambiguous
+
+To fix the problem the kodi implementation of gettid() should only be
+used for older glibc versions.
+
+Upstream: https://github.com/xbmc/xbmc/pull/30055
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ xbmc/platform/linux/threads/ThreadImplLinux.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/xbmc/platform/linux/threads/ThreadImplLinux.cpp b/xbmc/platform/linux/threads/ThreadImplLinux.cpp
+index 8c7edbb591..ebf4ebe82b 100644
+--- a/xbmc/platform/linux/threads/ThreadImplLinux.cpp
++++ b/xbmc/platform/linux/threads/ThreadImplLinux.cpp
+@@ -52,7 +52,7 @@ constexpr int ThreadPriorityToNativePriority(const ThreadPriority& priority)
+   }
+ }
+ 
+-#if !defined(TARGET_ANDROID) && (defined(__GLIBC__) || defined(__UCLIBC__))
++#if !defined(TARGET_ANDROID) && defined(__GLIBC__) && !defined(__UCLIBC__)
+ #if defined(__UCLIBC__) || !__GLIBC_PREREQ(2, 30)
+ static pid_t gettid()
+ {
+-- 
+2.47.3
+
