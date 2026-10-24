@@ -1,0 +1,138 @@
+From a92938c5d7bbb5a918937657a8940dc6072929ca Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Sat, 24 Oct 2026 10:28:49 +0200
+Subject: [PATCH] build: honor default_library for the installed
+ libraries
+
+The installed libraries (libgpiod, libgpiodcxx, libgpiod-glib and
+libgpiodbus) are built with both_libraries(), so the shared variant is
+always built, even with -Ddefault_library=static. When the toolchain
+or the environment requests a fully static link (e.g. LDFLAGS=-static,
+as done by Buildroot for static-only builds), linking the shared
+library then fails:
+
+  FAILED: lib/libgpiod.so.3.1.2
+  [...] crtbeginT.o: relocation R_ARC_32_ME against `__TMC_END__' can not be used when making a shared object; recompile with -fPIC
+
+Use library() instead, which follows default_library, and set
+default_library=both in the project's default options, so that a
+default build still installs both the shared and static libraries. As
+library() returns an object behaving like the shared library when both
+are built, the users of these objects (link_with, pkgconfig.generate,
+generate_gir, full_path) keep working as before.
+
+With a default build, the only change in the installed files is that
+libgpiotools, already declared with library(), is now also installed as
+a static library, like the other libraries.
+
+Fixes: 97bab4cc87dd ("build: replace autotools with meson & ninja")
+Assisted-by: Claude:claude-opus-5-5
+Upstream: https://lore.kernel.org/linux-gpio/20261024123124.3700266-1-yegorslists@googlemail.com/
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ bindings/cxx/meson.build  | 3 +--
+ bindings/glib/meson.build | 3 +--
+ dbus/lib/meson.build      | 3 +--
+ lib/meson.build           | 3 +--
+ meson.build               | 1 +
+ 5 files changed, 5 insertions(+), 8 deletions(-)
+
+diff --git a/bindings/cxx/meson.build b/bindings/cxx/meson.build
+index 92625b5..a23c70a 100644
+--- a/bindings/cxx/meson.build
++++ b/bindings/cxx/meson.build
+@@ -3,7 +3,7 @@
+ 
+ cxx_inc = include_directories('.', '../../include')
+ 
+-libgpiodcxx_both = both_libraries('gpiodcxx',
++libgpiodcxx_lib = library('gpiodcxx',
+   sources: [
+     'chip.cpp',
+     'chip-info.cpp',
+@@ -29,7 +29,6 @@ libgpiodcxx_both = both_libraries('gpiodcxx',
+   soversion: libgpiodcxx_soversion,
+   install: true,
+ )
+-libgpiodcxx_lib = libgpiodcxx_both.get_shared_lib()
+ 
+ install_headers('gpiod.hpp')
+ 
+diff --git a/bindings/glib/meson.build b/bindings/glib/meson.build
+index 0ccd8e8..17e071c 100644
+--- a/bindings/glib/meson.build
++++ b/bindings/glib/meson.build
+@@ -61,7 +61,7 @@ glib_public_headers = files(
+ 
+ glib_inc = include_directories('.', '../../include')
+ 
+-libgpiod_glib_both = both_libraries('gpiod-glib',
++libgpiod_glib_lib = library('gpiod-glib',
+   sources: glib_sources + [gen_enum_c, gen_enum_h],
+   include_directories: glib_inc,
+   c_args: ['-DG_LOG_DOMAIN="gpiod-glib"', '-DGPIODGLIB_COMPILATION'] + profiling_c_args,
+@@ -71,7 +71,6 @@ libgpiod_glib_both = both_libraries('gpiod-glib',
+   soversion: libgpiod_glib_soversion,
+   install: true,
+ )
+-libgpiod_glib_lib = libgpiod_glib_both.get_shared_lib()
+ 
+ install_headers('gpiod-glib.h')
+ 
+diff --git a/dbus/lib/meson.build b/dbus/lib/meson.build
+index 9acf5e1..12cff4a 100644
+--- a/dbus/lib/meson.build
++++ b/dbus/lib/meson.build
+@@ -14,7 +14,7 @@ generated_dbus = gnome.gdbus_codegen('generated-gpiodbus',
+ 
+ dbus_lib_inc = include_directories('.', '../../include')
+ 
+-libgpiodbus_both = both_libraries('gpiodbus',
++libgpiodbus_lib = library('gpiodbus',
+   sources: ['gpiodbus.h', generated_dbus],
+   include_directories: dbus_lib_inc,
+   c_args: ['-DG_LOG_DOMAIN="gpiodbus"'],
+@@ -22,7 +22,6 @@ libgpiodbus_both = both_libraries('gpiodbus',
+   soversion: 1,
+   install: true,
+ )
+-libgpiodbus_lib = libgpiodbus_both.get_shared_lib()
+ 
+ install_data('io.gpiod1.xml',
+   install_dir: get_option('datadir') / 'dbus-1' / 'interfaces',
+diff --git a/lib/meson.build b/lib/meson.build
+index ea1d92c..fb09b71 100644
+--- a/lib/meson.build
++++ b/lib/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-or-later
+ # SPDX-FileCopyrightText: 2026 Qualcomm Technologies, Inc. and/or its subsidiaries
+ 
+-libgpiod_both = both_libraries('gpiod',
++libgpiod_lib = library('gpiod',
+   sources: [
+     'chip.c',
+     'chip-info.c',
+@@ -22,7 +22,6 @@ libgpiod_both = both_libraries('gpiod',
+   soversion: libgpiod_soversion,
+   install: true,
+ )
+-libgpiod_lib = libgpiod_both.get_shared_lib()
+ 
+ pkgconfig = import('pkgconfig')
+ pkgconfig.generate(libgpiod_lib,
+diff --git a/meson.build b/meson.build
+index 7045d29..7633702 100644
+--- a/meson.build
++++ b/meson.build
+@@ -6,6 +6,7 @@ project('libgpiod', 'c',
+   license: 'LGPL-2.1-or-later',
+   default_options: [
+     'c_std=gnu89',
++    'default_library=both',
+     'cpp_std=gnu++17',
+     'warning_level=2',
+   ],
+-- 
+2.34.1
+
