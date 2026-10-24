@@ -1,0 +1,42 @@
+From da89dfce2da4c68ef3a7f89a4fba1cd6f861e363 Mon Sep 17 00:00:00 2001
+From: fossdd <fossdd@pwned.life>
+Date: Sat, 22 Feb 2025 22:52:11 +0100
+Subject: [PATCH] [UDMABufferObject] Use sysconf(_SC_PAGESIZE) to retrieve page
+ size
+
+getpagesize() is deprecated and legacy since POSIX.1-2001 and is not available
+on architectures where PAGESIZE is not defined. Instead query the
+current page size at runtime.
+
+Upstream: https://github.com/xbmc/xbmc/commit/da89dfce2da4c68ef3a7f89a4fba1cd6f861e363
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ xbmc/utils/UDMABufferObject.cpp | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/xbmc/utils/UDMABufferObject.cpp b/xbmc/utils/UDMABufferObject.cpp
+index 2b8336bcea..f6ba81c18f 100644
+--- a/xbmc/utils/UDMABufferObject.cpp
++++ b/xbmc/utils/UDMABufferObject.cpp
+@@ -23,8 +23,6 @@
+ namespace
+ {
+ 
+-const auto PAGESIZE = getpagesize();
+-
+ int RoundUp(int num, int factor)
+ {
+   return num + factor - 1 - (num - 1) % factor;
+@@ -93,7 +91,7 @@ bool CUDMABufferObject::CreateBufferObject(uint32_t format, uint32_t width, uint
+ bool CUDMABufferObject::CreateBufferObject(uint64_t size)
+ {
+   // Must be rounded to the system page size
+-  m_size = RoundUp(size, PAGESIZE);
++  m_size = RoundUp(size, sysconf(_SC_PAGESIZE));
+ 
+   m_memfd = memfd_create("kodi", MFD_CLOEXEC | MFD_ALLOW_SEALING);
+   if (m_memfd < 0)
+-- 
+2.47.3
+
