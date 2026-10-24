@@ -1,0 +1,41 @@
+From 936a08b682e761afba98ef3800265add951201fc Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Thu, 22 Oct 2026 13:55:32 +0200
+Subject: [PATCH] wchar.h: declare wcsdup() for POSIX.1-2008
+
+wcsdup() is part of POSIX.1-2008, and glibc declares it under
+__USE_XOPEN2K8, but uClibc-ng only declares it under __USE_GNU.
+
+As a consequence, code that doesn't define _GNU_SOURCE (for example
+hidapi's Linux hidraw backend) gets an implicit declaration of wcsdup().
+With GCC >= 14 this is an error:
+
+  hid.c:116:32: error: implicit declaration of function 'wcsdup'; did you mean 'wcscmp'? [-Wimplicit-function-declaration]
+
+and with older compilers the returned pointer is silently truncated to
+int on 64-bit targets.
+
+Move the declaration under __USE_XOPEN2K8, which is also enabled by
+default (_DEFAULT_SOURCE) and by _GNU_SOURCE.
+
+Assisted-by: Claude:claude-opus-5-5
+Upstream: https://github.com/wbx-github/uclibc-ng/commit/936a08b682e761afba98ef3800265add951201fc
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ include/wchar.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/wchar.h b/include/wchar.h
+index 2e6ff77c0..0056f93da 100644
+--- a/include/wchar.h
++++ b/include/wchar.h
+@@ -210,7 +210,9 @@ extern size_t wcsxfrm_l (wchar_t *__s1, const wchar_t *__s2,
+ libc_hidden_proto(wcsxfrm_l)
+ 
+ #endif /* __UCLIBC_HAS_XLOCALE__ */
++#endif
+ 
++#ifdef __USE_XOPEN2K8
+ /* Duplicate S, returning an identical malloc'd string.  */
+ extern wchar_t *wcsdup (const wchar_t *__s) __THROW __attribute_malloc__;
+ #endif
