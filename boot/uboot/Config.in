@@ -379,6 +379,19 @@ config BR2_TARGET_UBOOT_USE_BINMAN
 
 	  https://docs.u-boot.org/en/v2026.10/develop/package/binman.html
 
+if BR2_TARGET_UBOOT_USE_BINMAN
+
+config BR2_TARGET_UBOOT_BINMAN_NEEDS_HOST_PYTHON_PKG_RESOURCES
+	bool "binman needs host-python-pkg-resources"
+	help
+	  In U-Boot versions before 2025.10 binman uses the Python
+	  module pkg_resources, which used to be provided by
+	  python-setuptools before version 82.0.0. Select this option
+	  to use backported pkg_resources when building old U-Boot
+	  versions.
+
+endif
+
 menu "U-Boot binary format"
 
 config BR2_TARGET_UBOOT_FORMAT_AIS
