@@ -11,7 +11,9 @@ Build
 
 First, configure Buildroot for the i.MX 91 FRDM board:
 
-    make freescale_imx91frdm_defconfig
+    make imx91frdm_defconfig (mainline)
+Or:
+    make freescale_imx91frdm_defconfig (vendor BSP)
 
 Build all components:
 
