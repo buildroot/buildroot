@@ -1,0 +1,39 @@
+From 8ed8318d146598cb1c189f051ce7196daf1bb424 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sat, 12 Sep 2026 13:22:13 +0200
+Subject: [PATCH] lib/object.h: include openssl/err.h
+
+Fixes build error with OpenSSL 4.1.0-alpha1:
+
+lib/object.c: In function 'PEM_read_bio_TSSPRIVKEY_OBJ':
+lib/object.c:28:1: error: implicit declaration of function 'ERR_raise' [-Wimplicit-function-declaration]
+   28 | IMPLEMENT_PEM_read_bio(TSSPRIVKEY_OBJ, TSSPRIVKEY_OBJ, TSSPRIVKEY_OBJ_PEM_STRING,
+
+lib/object.c:28:1: error: 'ERR_LIB_PEM' undeclared (first use in this function)
+   28 | IMPLEMENT_PEM_read_bio(TSSPRIVKEY_OBJ, TSSPRIVKEY_OBJ, TSSPRIVKEY_OBJ_PEM_STRING,
+
+lib/object.c:28:1: error: 'ERR_R_ASN1_LIB' undeclared (first use in this function)
+   28 | IMPLEMENT_PEM_read_bio(TSSPRIVKEY_OBJ, TSSPRIVKEY_OBJ, TSSPRIVKEY_OBJ_PEM_STRING,
+
+Upstream: https://github.com/tpm2-software/tpm2-tools/commit/c2b2c4e5cdc5bbc61779eb4271d5c317efb8c067
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ lib/object.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/lib/object.h b/lib/object.h
+index b48b55b3..2c4102fc 100644
+--- a/lib/object.h
++++ b/lib/object.h
+@@ -6,6 +6,7 @@
+ #include "tpm2_util.h"
+ 
+ #include <openssl/pem.h>
++#include <openssl/err.h>
+ #include <openssl/bio.h>
+ #include <openssl/asn1.h>
+ #include <openssl/asn1t.h>
+-- 
+2.47.3
+
