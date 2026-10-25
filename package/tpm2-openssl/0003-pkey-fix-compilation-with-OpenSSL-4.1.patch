@@ -1,0 +1,88 @@
+From 9cc4cbe25702fc95c536dfb6723ae454e0039faf Mon Sep 17 00:00:00 2001
+From: Moritz Buhl <moritz.buhl@infineon.com>
+Date: Tue, 1 Sep 2026 09:58:28 +0200
+Subject: [PATCH] pkey: fix compilation with OpenSSL 4.1
+
+Avoid deprecated OpenSSL functions, add fallback defines for older
+versions:
+src/tpm2-provider-pkey.c:91:5: error: 'ASN1_STRING_set' is deprecated:
+Since OpenSSL 4.1; use ASN1_STRING_set1_data() or ASN1_STRING_set1_string()
+[-Werror,-Wdeprecated-declarations]
+src/tpm2-provider-pkey.c:165:41: error: 'ASN1_STRING_length' is deprecated:
+Since OpenSSL 4.1; use ASN1_STRING_get_length()
+[-Werror,-Wdeprecated-declarations]
+
+Add missing header:
+src/tpm2-provider-pkey.c:32:1: error: call to undeclared function 'ERR_raise';
+ISO C99 and later do not support implicit function declarations
+[-Wimplicit-function-declaration]
+
+Signed-off-by: Moritz Buhl <moritz.buhl@infineon.com>
+
+Upstream: https://github.com/tpm2-software/tpm2-openssl/commit/9cc4cbe25702fc95c536dfb6723ae454e0039faf
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/tpm2-provider-pkey.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
+
+diff --git a/src/tpm2-provider-pkey.c b/src/tpm2-provider-pkey.c
+index 84a5532..0d1d3f9 100644
+--- a/src/tpm2-provider-pkey.c
++++ b/src/tpm2-provider-pkey.c
+@@ -2,6 +2,8 @@
+ 
+ #include <string.h>
+ 
++#include <openssl/err.h>
++#include <openssl/opensslv.h>
+ #include <openssl/pem.h>
+ #include <openssl/rand.h>
+ 
+@@ -9,6 +11,14 @@
+ 
+ #include "tpm2-provider-pkey.h"
+ 
++#if OPENSSL_VERSION_NUMBER >= 0x40100000
++#define TPM2_ASN1_STRING_get_length(x)		ASN1_STRING_get_length(x)
++#define TPM2_ASN1_STRING_set1_data(s, d, l)	ASN1_STRING_set1_data(s, d, l)
++#else
++#define TPM2_ASN1_STRING_get_length(x)		ASN1_STRING_length(x)
++#define TPM2_ASN1_STRING_set1_data(s, d, l)	ASN1_STRING_set(s, d, l)
++#endif
++
+ typedef struct {
+     ASN1_OBJECT *type;
+     ASN1_BOOLEAN emptyAuth;
+@@ -88,8 +98,8 @@ tpm2_keydata_write(const TPM2_KEYDATA *keydata, BIO *bout, TPM2_PKEY_FORMAT form
+         BN_set_word(bn_parent, TPM2_RH_OWNER);
+ 
+     BN_to_ASN1_INTEGER(bn_parent, tpk->parent);
+-    ASN1_STRING_set(tpk->privkey, &privbuf[0], privbuf_len);
+-    ASN1_STRING_set(tpk->pubkey, &pubbuf[0], pubbuf_len);
++    TPM2_ASN1_STRING_set1_data(tpk->privkey, &privbuf[0], privbuf_len);
++    TPM2_ASN1_STRING_set1_data(tpk->pubkey, &pubbuf[0], pubbuf_len);
+ 
+     switch (format) {
+     case KEY_FORMAT_PEM:
+@@ -162,13 +172,13 @@ tpm2_keydata_read(BIO *bin, TPM2_KEYDATA *keydata, TPM2_PKEY_FORMAT format)
+         goto error;
+ 
+     if (Tss2_MU_TPM2B_PRIVATE_Unmarshal(ASN1_STRING_get0_data(tpk->privkey),
+-                                        ASN1_STRING_length(tpk->privkey), NULL,
+-                                        &keydata->priv))
++                                        TPM2_ASN1_STRING_get_length(tpk->privkey),
++                                        NULL, &keydata->priv))
+         goto error;
+ 
+     if (Tss2_MU_TPM2B_PUBLIC_Unmarshal(ASN1_STRING_get0_data(tpk->pubkey),
+-                                       ASN1_STRING_length(tpk->pubkey), NULL,
+-                                       &keydata->pub))
++                                       TPM2_ASN1_STRING_get_length(tpk->pubkey),
++                                       NULL, &keydata->pub))
+         goto error;
+ 
+     res = 1;
+-- 
+2.47.3
+

@@ -1,0 +1,118 @@
+From ec1d2d1380521e9718552c2d0191d6aa26481ed5 Mon Sep 17 00:00:00 2001
+From: Petr Gotthard <petr.gotthard@advantech.cz>
+Date: Sat, 25 Apr 2026 20:06:16 +0200
+Subject: [PATCH] fix loading of parent handles in TPM TSS2 keys
+
+Fixes: #152
+
+Upstream: https://github.com/tpm2-software/tpm2-openssl/commit/ec1d2d1380521e9718552c2d0191d6aa26481ed5
+
+[backported without new tests]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ Makefile.am                           |  2 ++
+ src/tpm2-provider-pkey.c              | 38 ++++++++++++++++++---------
+ test/rsa_encodeobject_check.sh        | 27 +++++++++++++++++++
+ test/rsa_encodeobject_check_parent.sh | 29 ++++++++++++++++++++
+ 4 files changed, 84 insertions(+), 12 deletions(-)
+ create mode 100755 test/rsa_encodeobject_check.sh
+ create mode 100755 test/rsa_encodeobject_check_parent.sh
+
+diff --git a/src/tpm2-provider-pkey.c b/src/tpm2-provider-pkey.c
+index f739c17..97fb4dd 100644
+--- a/src/tpm2-provider-pkey.c
++++ b/src/tpm2-provider-pkey.c
+@@ -53,6 +53,8 @@ int
+ tpm2_keydata_write(const TPM2_KEYDATA *keydata, BIO *bout, TPM2_PKEY_FORMAT format)
+ {
+     TSSPRIVKEY *tpk = NULL;
++    BIGNUM *bn_parent = NULL;
++    int res = 0;
+ 
+     uint8_t privbuf[sizeof(keydata->priv)];
+     uint8_t pubbuf[sizeof(keydata->pub)];
+@@ -74,13 +76,18 @@ tpm2_keydata_write(const TPM2_KEYDATA *keydata, BIO *bout, TPM2_PKEY_FORMAT form
+     if (!tpk->type)
+         goto error;
+ 
+-    // note the ASN1_INTEGER_set is not reliable for uin32_t on 32-bit machines
+     tpk->emptyAuth = ! !keydata->emptyAuth;
++
++    // note the ASN1_INTEGER_set is not reliable for uin32_t on 32-bit machines
++    if (!(bn_parent = BN_new()))
++        goto error;
++
+     if (keydata->parent != 0)
+-        ASN1_INTEGER_set_uint64(tpk->parent, keydata->parent);
++        BN_set_word(bn_parent, keydata->parent);
+     else
+-        ASN1_INTEGER_set_uint64(tpk->parent, TPM2_RH_OWNER);
++        BN_set_word(bn_parent, TPM2_RH_OWNER);
+ 
++    BN_to_ASN1_INTEGER(bn_parent, tpk->parent);
+     ASN1_STRING_set(tpk->privkey, &privbuf[0], privbuf_len);
+     ASN1_STRING_set(tpk->pubkey, &pubbuf[0], pubbuf_len);
+ 
+@@ -95,11 +102,11 @@ tpm2_keydata_write(const TPM2_KEYDATA *keydata, BIO *bout, TPM2_PKEY_FORMAT form
+         goto error;
+     }
+ 
+-    TSSPRIVKEY_free(tpk);
+-    return 1;
++    res = 1;
+ error:
++    BN_free(bn_parent);
+     TSSPRIVKEY_free(tpk);
+-    return 0;
++    return res;
+ }
+ 
+ /** Deserialize TPM2_KEYDATA from disk
+@@ -114,9 +121,11 @@ error:
+ int
+ tpm2_keydata_read(BIO *bin, TPM2_KEYDATA *keydata, TPM2_PKEY_FORMAT format)
+ {
+-    uint64_t parent;
++    BIGNUM *bn_parent = NULL;
++    TPM2_HANDLE parent;
+     TSSPRIVKEY *tpk = NULL;
+     char type_oid[64];
++    int res = 0;
+ 
+     switch (format) {
+     case KEY_FORMAT_PEM:
+@@ -135,9 +144,14 @@ tpm2_keydata_read(BIO *bin, TPM2_KEYDATA *keydata, TPM2_PKEY_FORMAT format)
+     keydata->emptyAuth = (tpk->emptyAuth != V_ASN1_UNDEF && tpk->emptyAuth);
+ 
+     // the ASN1_INTEGER_get on a 32-bit machine will fail for numbers of UINT32_MAX
+-    if (!ASN1_INTEGER_get_uint64(&parent, tpk->parent))
++    if (!(bn_parent = ASN1_INTEGER_to_BN(tpk->parent, NULL)))
+         goto error;
+ 
++    if (BN_is_negative(bn_parent))
++        parent = ASN1_INTEGER_get(tpk->parent);
++    else
++        parent = BN_get_word(bn_parent);
++
+     if (parent == 0)
+         keydata->parent = TPM2_RH_OWNER;
+     else if (parent <= UINT32_MAX)
+@@ -159,11 +173,11 @@ tpm2_keydata_read(BIO *bin, TPM2_KEYDATA *keydata, TPM2_PKEY_FORMAT format)
+                                        &keydata->pub))
+         goto error;
+ 
++    res = 1;
++error:
++    BN_free(bn_parent);
+     TSSPRIVKEY_free(tpk);
+-    return 1;
+- error:
+-    TSSPRIVKEY_free(tpk);
+-    return 0;
++    return res;
+ }
+ 
+ static const TPM2B_PUBLIC primaryRsaTemplate = {
+-- 
+2.47.3
+
