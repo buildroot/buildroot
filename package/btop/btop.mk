@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BTOP_VERSION = 1.4.7
+BTOP_VERSION = 1.4.8
 BTOP_SITE = $(call github,aristocratos,btop,v$(BTOP_VERSION))
 BTOP_LICENSE = Apache-2.0, MIT with exception (fmt)
 BTOP_LICENSE_FILES = LICENSE include/fmt/LICENSE.rst
