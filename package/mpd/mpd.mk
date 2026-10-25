@@ -27,6 +27,10 @@ MPD_CONF_OPTS = \
 	-Dsidplay=disabled \
 	-Dsnapcast=false
 
+ifeq ($(BR2_ENABLE_RUNTIME_DEBUG),)
+MPD_CXXFLAGS = $(TARGET_CXXFLAGS) -DNDEBUG
+endif
+
 ifeq ($(BR2_PACKAGE_EXPAT),y)
 MPD_DEPENDENCIES += expat
 MPD_CONF_OPTS += -Dexpat=enabled
