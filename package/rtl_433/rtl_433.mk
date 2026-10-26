@@ -4,14 +4,11 @@
 #
 ################################################################################
 
-RTL_433_VERSION = 25.02
+RTL_433_VERSION = 25.12
 RTL_433_SITE = $(call github,merbanan,rtl_433,$(RTL_433_VERSION))
 RTL_433_LICENSE = GPL-2.0+
 RTL_433_LICENSE_FILES = COPYING
 RTL_433_CPE_ID_VALID = YES
-
-# 0002-Fix-overflow-in-rfraw-test-data-parsing.patch
-RTL_433_IGNORE_CVES += CVE-2025-34450
 
 # Force Release build to remove ASAN.
 RTL_433_CONF_OPTS = \
