@@ -4,23 +4,19 @@
 #
 ################################################################################
 
-CCID_VERSION = 1.5.2
-CCID_SOURCE = ccid-$(CCID_VERSION).tar.bz2
+CCID_VERSION = 1.8.4
+CCID_SOURCE = ccid-$(CCID_VERSION).tar.xz
 CCID_SITE = https://ccid.apdu.fr/files
 CCID_LICENSE = LGPL-2.1+
 CCID_LICENSE_FILES = COPYING
 CCID_INSTALL_STAGING = YES
-CCID_DEPENDENCIES = pcsc-lite host-pkgconf libusb
-CCID_CONF_OPTS = --enable-usbdropdir=/usr/lib/pcsc/drivers
+CCID_DEPENDENCIES = pcsc-lite host-flex host-pkgconf libusb zlib
 
 ifeq ($(BR2_PACKAGE_HAS_UDEV),y)
-define CCID_INSTALL_UDEV_RULES
-	if test -d $(TARGET_DIR)/etc/udev/rules.d ; then \
-		cp $(@D)/src/92_pcscd_ccid.rules $(TARGET_DIR)/etc/udev/rules.d/ ; \
-	fi;
-endef
-
-CCID_POST_INSTALL_TARGET_HOOKS += CCID_INSTALL_UDEV_RULES
+CCID_DEPENDENCIES += udev
+CCID_CONF_OPTS += -Dudev-rules=true
+else
+CCID_CONF_OPTS += -Dudev-rules=false
 endif
 
-$(eval $(autotools-package))
+$(eval $(meson-package))

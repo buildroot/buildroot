@@ -6,6 +6,7 @@ config BR2_PACKAGE_CCID
 	depends on !BR2_STATIC_LIBS # pcsc-lite
 	select BR2_PACKAGE_PCSC_LITE
 	select BR2_PACKAGE_LIBUSB
+	select BR2_PACKAGE_ZLIB
 	help
 	  PC/SC driver for USB CCID smart card readers
 
