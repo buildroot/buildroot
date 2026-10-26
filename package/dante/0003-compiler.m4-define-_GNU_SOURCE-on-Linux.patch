@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Mon, 26 Oct 2026 14:58:11 +0100
+Subject: [PATCH] compiler.m4: define _GNU_SOURCE on Linux
+
+Since 1.4.4, the sched_setaffinity check defines _GNU_SOURCE before
+including <sched.h>, but the actual build does not. On musl,
+cpu_set_t is only declared with _GNU_SOURCE, so the check succeeds,
+HAVE_SCHED_SETAFFINITY is set, and the build fails:
+
+  ../include/sockd.h:1604:4: error: unknown type name 'cpu_set_t'
+
+Define _GNU_SOURCE on Linux, so the build uses the same feature set
+as the check.
+
+Assisted-by: Claude:claude-opus-5-5
+Upstream: sent to dante-bugs@inet.no on 2026-10-26 (no public archive),
+  Message-Id: <20261026141309.1892005-1-yegorslists@googlemail.com>
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ compiler.m4 | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/compiler.m4 b/compiler.m4
+index afd1939..3546f87 100644
+--- a/compiler.m4
++++ b/compiler.m4
+@@ -28,6 +28,8 @@ case $host in
+     *-*-linux-*)
+ 	CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ }-D_XOPEN_SOURCE=600 -D_XOPEN_SOURCE_EXTENDED"
+ 	CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ }-D_BSD_SOURCE -D_DEFAULT_SOURCE"
++	#for cpu_set_t on musl, matching the sched_setaffinity check
++	CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ }-D_GNU_SOURCE"
+ 	;;
+ 
+     *-*-aix*)
