@@ -1,0 +1,56 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Mon, 26 Oct 2026 14:41:24 +0100
+Subject: [PATCH] Fix build with C23 compilers on non-glibc systems
+
+C23 (the default since GCC 15) treats an empty parameter list as
+(void). The bundled getopt only prototypes getopt() when
+__GNU_LIBRARY__ is defined and declares getenv() without parameters,
+so building against e.g. musl fails:
+
+  unistd.h:127:5: error: conflicting types for 'getopt'; have 'int(int,  char * const*, const char *)'
+  ./include/getopt/getopt.h:150:12: note: previous declaration of 'getopt' with type 'int(void)'
+  getopt.c:404:21: error: too many arguments to function 'getenv'; expected 0, have 1
+
+Always use the full POSIX prototype for getopt() and give getenv() its
+standard prototype.
+
+Upstream: https://sourceforge.net/p/ccrypt/patches/7/
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ src/getopt.c                | 2 +-
+ src/include/getopt/getopt.h | 7 -------
+ 2 files changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/src/getopt.c b/src/getopt.c
+index 23ab9c3..9974486 100644
+--- a/src/getopt.c
++++ b/src/getopt.c
+@@ -209,7 +209,7 @@ static char *posixly_correct;
+    whose names are inconsistent.  */
+ 
+ #ifndef getenv
+-extern char *getenv ();
++extern char *getenv (const char *);
+ #endif
+ 
+ static char *
+diff --git a/src/include/getopt/getopt.h b/src/include/getopt/getopt.h
+index 1abae0f..d8b4edd 100644
+--- a/src/include/getopt/getopt.h
++++ b/src/include/getopt/getopt.h
+@@ -141,14 +141,7 @@ struct option
+    `getopt'.  */
+ 
+ #if defined __STDC__ && __STDC__
+-# ifdef __GNU_LIBRARY__
+-/* Many other libraries have conflicting prototypes for getopt, with
+-   differences in the consts, in stdlib.h.  To avoid compilation
+-   errors, only prototype getopt for the GNU C library.  */
+ extern int getopt (int argc, char *const *argv, const char *__shortopts);
+-# else /* not __GNU_LIBRARY__ */
+-extern int getopt ();
+-# endif /* __GNU_LIBRARY__ */
+ 
+ # ifndef __need_getopt
+ extern int getopt_long (int argc, char *const *argv, const char *shortopts,
