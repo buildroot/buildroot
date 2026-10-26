@@ -1,0 +1,33 @@
+From 4c98e386fd91fa7306ba88d609748d21902c7eea Mon Sep 17 00:00:00 2001
+From: Ross Burton <ross.burton@arm.com>
+Date: Thu, 22 Oct 2026 14:09:08 +0100
+Subject: [PATCH] tests/serializer: reproducible_mtime should be an int
+
+The mtime argument is an integer not a string, so parse it with int().
+
+Passing a string breaks piglit with Python 3.14.9, which does integer
+bound checks on the specified mtime.
+
+Upstream: https://gitlab.freedesktop.org/mesa/piglit/-/merge_requests/1269
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ tests/serializer.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/serializer.py b/tests/serializer.py
+index 5ee9a1578..f7fdadf43 100644
+--- a/tests/serializer.py
++++ b/tests/serializer.py
+@@ -140,7 +140,7 @@ def serializer(name, profile, outfile):
+     tree = et.ElementTree(root)
+     reproducible_mtime = None
+     if 'SOURCE_DATE_EPOCH' in os.environ:
+-        reproducible_mtime=os.environ['SOURCE_DATE_EPOCH']
++        reproducible_mtime=int(os.environ['SOURCE_DATE_EPOCH'])
+     with gzip.GzipFile(outfile, 'wb', mtime=reproducible_mtime) as f:
+         tree.write(f, encoding='utf-8', xml_declaration=True)
+ 
+-- 
+2.47.3
+
