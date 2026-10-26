@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-NQPTP_VERSION = 1.2.4
+NQPTP_VERSION = 1.2.9
 NQPTP_SITE = $(call github,mikebrady,nqptp,$(NQPTP_VERSION))
 NQPTP_LICENSE = GPL-2.0
 NQPTP_LICENSE_FILES = LICENSE
