@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-TCPREPLAY_VERSION = 4.6.1
+TCPREPLAY_VERSION = 4.6.2
 TCPREPLAY_SITE = https://github.com/appneta/tcpreplay/releases/download/v$(TCPREPLAY_VERSION)
 TCPREPLAY_SOURCE = tcpreplay-$(TCPREPLAY_VERSION).tar.xz
 TCPREPLAY_LICENSE = GPL-3.0
-TCPREPLAY_LICENSE_FILES = docs/LICENSE
+TCPREPLAY_LICENSE_FILES = LICENSE
 TCPREPLAY_CPE_ID_VENDOR = broadcom
 TCPREPLAY_DEPENDENCIES = libpcap
 # The option parsers, tcpedit_stub.h and man pages are pre-generated in
