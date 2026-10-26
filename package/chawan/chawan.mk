@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CHAWAN_VERSION = 0.4.4
+CHAWAN_VERSION = 0.5.1
 CHAWAN_SITE = https://git.sr.ht/~bptato/chawan/archive
 CHAWAN_SOURCE = v$(CHAWAN_VERSION).tar.gz
 CHAWAN_LICENSE = Unlicense
@@ -31,6 +31,9 @@ CHAWAN_MAKE_OPTS = \
 	--gcc.exe:$(TARGET_CROSS)gcc \
 	--gcc.linkerexe:$(TARGET_CROSS)gcc" \
 	PREFIX="/usr"
+
+# fixes a runtime issue: init.jsb is missing otherwise
+CHAWAN_MAKE_OPTS += embed_startup=0
 
 define CHAWAN_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(MAKE) $(CHAWAN_MAKE_OPTS) -C $(@D) all
