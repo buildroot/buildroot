@@ -33,6 +33,10 @@ ifeq ($(BR2_i386)$(BR2_x86_64),y)
 X265_DEPENDENCIES += host-nasm
 endif
 
+ifeq ($(BR2_i386),y)
+X265_CONF_OPTS += -DEXTRA_LINK_FLAGS=-Wl,-z,notext
+endif
+
 # disable altivec, it has build issues
 # https://bitbucket.org/multicoreware/x265/issues/320/
 ifeq ($(BR2_powerpc64)$(BR2_powerpc64le),y)
