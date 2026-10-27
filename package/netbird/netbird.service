@@ -1,0 +1,17 @@
+[Unit]
+Description=NetBird mesh network client
+ConditionFileIsExecutable=/usr/bin/netbird
+After=network.target syslog.target
+
+[Service]
+StartLimitInterval=5
+StartLimitBurst=10
+ExecStart=/usr/bin/netbird service run --log-file console
+StandardOutput=journal
+StandardError=journal
+Restart=always
+RestartSec=120
+EnvironmentFile=-/etc/sysconfig/netbird
+
+[Install]
+WantedBy=multi-user.target

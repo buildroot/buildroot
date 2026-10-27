@@ -1,0 +1,10 @@
+config BR2_PACKAGE_NETBIRD
+	bool "netbird"
+	depends on BR2_PACKAGE_HOST_GO_TARGET_ARCH_SUPPORTS
+	select BR2_PACKAGE_HOST_GO
+	help
+	  Connect your devices into a secure WireGuard-based
+	  overlay network with SSO, MFA and granular access
+	  controls.
+
+	  https://github.com/netbirdio/netbird
