@@ -1,0 +1,71 @@
+From de97b2d195bf7b29db119313f4dcdd90b499eecf Mon Sep 17 00:00:00 2001
+From: Peter Seiderer <ps.report@gmx.net>
+Date: Tue, 27 Oct 2026 17:53:21 +0100
+Subject: [PATCH] CMakeLists.txt: fix grpc compile without third_party
+ downloads
+
+- comment out  protobuf_generate_grpc_cpp_with_import_path_correction lines
+  with external dependencies (to fix compile failure because of missing
+  files)
+
+Fixes:
+
+  CMake Error at CMakeLists.txt:601 (file):
+    file COPY cannot find
+    ".../build/host-grpc-1.84.1/third_party/grpc-proto/grpc/channelz/v1/channelz.proto":
+    No such file or directory.
+  Call Stack (most recent call first):
+    CMakeLists.txt:710 (protobuf_generate_grpc_cpp_with_import_path_correction)
+
+  CMake Error at CMakeLists.txt:601 (file):
+    file COPY cannot find
+    ".../build/host-grpc-1.84.1/third_party/grpc-proto/grpc/reflection/v1/reflection.proto":
+    No such file or directory.
+  Call Stack (most recent call first):
+    CMakeLists.txt:713 (protobuf_generate_grpc_cpp_with_import_path_correction)
+
+  CMake Error at CMakeLists.txt:601 (file):
+    file COPY cannot find
+    ".../build/host-grpc-1.84.1/third_party/grpc-proto/grpc/reflection/v1alpha/reflection.proto":
+    No such file or directory.
+  Call Stack (most recent call first):
+    CMakeLists.txt:716 (protobuf_generate_grpc_cpp_with_import_path_correction)
+
+Upstream: N/A Buildroot specific.
+Signed-off-by: Peter Seiderer <ps.report@gmx.net>
+---
+ CMakeLists.txt | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 44bf4d2972..36c37b8cb4 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -707,15 +707,15 @@ protobuf_generate_grpc_cpp_with_import_path_correction(
+ protobuf_generate_grpc_cpp_with_import_path_correction(
+   src/proto/grpc/lookup/v1/rls_config.proto src/proto/grpc/lookup/v1/rls_config.proto
+ )
+-protobuf_generate_grpc_cpp_with_import_path_correction(
+-  third_party/grpc-proto/grpc/channelz/v1/channelz.proto grpc/channelz/v1/channelz.proto
+-)
+-protobuf_generate_grpc_cpp_with_import_path_correction(
+-  third_party/grpc-proto/grpc/reflection/v1/reflection.proto grpc/reflection/v1/reflection.proto
+-)
+-protobuf_generate_grpc_cpp_with_import_path_correction(
+-  third_party/grpc-proto/grpc/reflection/v1alpha/reflection.proto grpc/reflection/v1alpha/reflection.proto
+-)
++#protobuf_generate_grpc_cpp_with_import_path_correction(
++#  third_party/grpc-proto/grpc/channelz/v1/channelz.proto grpc/channelz/v1/channelz.proto
++#)
++#protobuf_generate_grpc_cpp_with_import_path_correction(
++#  third_party/grpc-proto/grpc/reflection/v1/reflection.proto grpc/reflection/v1/reflection.proto
++#)
++#protobuf_generate_grpc_cpp_with_import_path_correction(
++#  third_party/grpc-proto/grpc/reflection/v1alpha/reflection.proto grpc/reflection/v1alpha/reflection.proto
++#)
+ 
+ # This enables CMake to build the project without requiring submodules
+ # in the third_party directory as long as test builds are disabled.
+-- 
+2.56.0
+
