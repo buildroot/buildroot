@@ -1,0 +1,61 @@
+From e0480a47e95a0d74c826926ae6bfef14fc8d988f Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Tue, 27 Oct 2026 08:47:29 +0100
+Subject: [PATCH] cmake: openssl: only link libatomic if it is available
+
+Commit 09aade8c9 ("cmake: openssl: Added check for atomic library")
+adds -latomic to CMAKE_REQUIRED_LIBRARIES whenever 64-bit atomics
+don't work out of the box, without checking that libatomic exists.
+
+Some toolchains don't provide libatomic at all, e.g. GCC toolchains
+built without thread support, as libatomic relies on pthreads. On such
+a toolchain for a CPU without native 64-bit atomics (e.g. ARMv5), every
+OpenSSL API probe then fails to link:
+
+  ld: cannot find -latomic: No such file or directory
+
+so lws believes it deals with a pre-1.1 OpenSSL and the build fails:
+
+  include/libwebsockets/lws-genhash.h:93:18: error: field 'ctx' has incomplete type
+     93 |         HMAC_CTX ctx;
+        |                  ^~~
+
+Only use libatomic if linking against it makes the 64-bit atomics
+test pass.
+
+Assisted-by: Claude:claude-opus-5-5
+Upstream: sent to Andy Green <andy@warmcat.com> on 2026-10-27
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ lib/tls/CMakeLists.txt | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/lib/tls/CMakeLists.txt b/lib/tls/CMakeLists.txt
+index d91c3dab6..9060d32fe 100644
+--- a/lib/tls/CMakeLists.txt
++++ b/lib/tls/CMakeLists.txt
+@@ -564,10 +564,17 @@ if (DEFINED LIB_LIST)
+ endif()
+ if(UNIX AND (CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID MATCHES "Clang"))
+   check_c_source_compiles("int main() { long long x = 0; __atomic_fetch_add(&x, 1, __ATOMIC_SEQ_CST); return 0; }" HAVE_WORKING_ATOMIC_64)
+-  if(HAVE_WORKING_ATOMIC_64)
+-    set(LWS_ATOMIC_LIB "")
+-  else()
+-    set(LWS_ATOMIC_LIB atomic)
++  set(LWS_ATOMIC_LIB "")
++  if(NOT HAVE_WORKING_ATOMIC_64)
++    # libatomic is not always available (eg, toolchains without threads),
++    # only use it if it actually provides the 64-bit atomics
++    set(CMAKE_REQUIRED_LIBRARIES_SAVE ${CMAKE_REQUIRED_LIBRARIES})
++    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} atomic)
++    check_c_source_compiles("int main() { long long x = 0; __atomic_fetch_add(&x, 1, __ATOMIC_SEQ_CST); return 0; }" HAVE_WORKING_ATOMIC_64_WITH_LIBATOMIC)
++    set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES_SAVE})
++    if(HAVE_WORKING_ATOMIC_64_WITH_LIBATOMIC)
++      set(LWS_ATOMIC_LIB atomic)
++    endif()
+   endif()
+ endif()
+ if (UNIX AND NOT (${CMAKE_SYSTEM_NAME} MATCHES "QNX"))
+-- 
+2.34.1
+
