@@ -125,6 +125,24 @@ comment "ipk support needs a toolchain w/ wchar"
 	depends on BR2_USE_MMU
 	depends on !BR2_USE_WCHAR
 
+config BR2_PACKAGE_MENDER_UPDATE_MODULES_PERSISTENT_APP
+	bool "persistent-app"
+	help
+	  The Persistent App Update Module installs files to a
+	  user-defined directory on the persistent data partition,
+	  ensuring deployments survive rootfs A/B updates.
+
+	  This module uses the data-partition software filesystem
+	  namespace, which means version tracking in mender
+	  show-provides persists across system updates. When a
+	  rootfs update clears rootfs-image.* provides, the
+	  data-partition.* provides remain intact.
+
+	  The module supports rollback by maintaining backups on
+	  the same persistent partition.
+
+	  https://github.com/mendersoftware/mender-update-modules/tree/master/persistent-app
+
 config BR2_PACKAGE_MENDER_UPDATE_MODULES_PODMAN
 	bool "podman"
 	depends on BR2_USE_MMU  # podman
