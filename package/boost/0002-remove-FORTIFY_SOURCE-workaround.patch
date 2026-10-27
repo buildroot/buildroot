@@ -1,0 +1,74 @@
+From b3d87da5f87e2907ed004edf1c72ad3942ff1165 Mon Sep 17 00:00:00 2001
+From: Christopher Kohlhoff <chris@kohlhoff.com>
+Date: Wed, 5 Aug 2026 16:07:19 +0200
+Subject: [PATCH] Remove _FORTIFY_SOURCE workaround.
+
+This commit unintentionally fixed a compile error when programs
+include the asio.hpp header with gcc versions >= 15.
+
+```
+In function ‘void* memcpy(void*, const void*, size_t)’,
+
+inlined from ‘static boost::asio::ip::basic_resolver_results<InternetProtocol>
+    boost::asio::ip::basic_resolver_results<InternetProtocol>::create(boost::asio::detail::addrinfo_type*,
+    const std::string&, const std::string&) [with InternetProtocol = boost::asio::ip::tcp]’
+    at /usr/include/boost/asio/ip/basic_resolver_results.hpp:147:15:
+
+/usr/include/bits/string_fortified.h:29:33:
+    error: ‘void* __builtin___memcpy_chk(void*, const void*, unsigned int, unsigned int)’
+    forming offset [28, 128] is out of the bounds [0, 28] of object ‘endpoint’ with type
+    ‘boost::asio::ip::tcp::endpoint’ {aka ‘boost::asio::ip::basic_endpoint<boost::asio::ip::tcp>’}
+    [-Werror=array-bounds=]
+```
+
+
+Original patch commit message:
+```
+The previous workaround for _FORTIFY_SOURCE warnings increased the size
+of all IP endpoint objects. Instead, try fixing the warning at the point
+where it occurs, by limiting the length memcpy-ed while processing the
+addrinfo results from getaddrinfo.
+```
+
+Upstream: https://github.com/boostorg/asio/commit/b2478a9ba9ed76d7c858419e3f677cc454591d45
+Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
+---
+ boost/asio/ip/basic_resolver_results.hpp | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/boost/asio/ip/basic_resolver_results.hpp b/boost/asio/ip/basic_resolver_results.hpp
+index 0127473e2..87fa3fadf 100644
+--- a/boost/asio/ip/basic_resolver_results.hpp
++++ b/boost/asio/ip/basic_resolver_results.hpp
+@@ -141,14 +141,20 @@ public:
+       if (address_info->ai_family == BOOST_ASIO_OS_DEF(AF_INET)
+           || address_info->ai_family == BOOST_ASIO_OS_DEF(AF_INET6))
+       {
+-        using namespace std; // For memcpy.
+-        typename InternetProtocol::endpoint endpoint;
+-        endpoint.resize(static_cast<std::size_t>(address_info->ai_addrlen));
+-        memcpy(endpoint.data(), address_info->ai_addr,
+-            address_info->ai_addrlen);
+-        results.values_->push_back(
+-            basic_resolver_entry<InternetProtocol>(endpoint,
+-              actual_host_name, service_name));
++        const std::size_t expected_size =
++          address_info->ai_family == BOOST_ASIO_OS_DEF(AF_INET)
++            ? sizeof(boost::asio::detail::sockaddr_in4_type)
++            : sizeof(boost::asio::detail::sockaddr_in6_type);
++        if (address_info->ai_addrlen >= expected_size)
++        {
++          using namespace std; // For memcpy.
++          typename InternetProtocol::endpoint endpoint;
++          endpoint.resize(expected_size);
++          memcpy(endpoint.data(), address_info->ai_addr, expected_size);
++          results.values_->push_back(
++              basic_resolver_entry<InternetProtocol>(endpoint,
++                actual_host_name, service_name));
++        }
+       }
+       address_info = address_info->ai_next;
+     }
+-- 
+2.55.0
+
