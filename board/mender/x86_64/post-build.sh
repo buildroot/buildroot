@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -e
-DEVICE_TYPE="buildroot-x86_64"
+COMPATIBLE_TYPES="buildroot-x86_64"
 
 parse_args() {
     local o O opts
-    o='a:o:d:'
-    O='artifact-name:,data-part-size:,device-type:'
+    o='a:o:c:'
+    O='artifact-name:,data-part-size:,compatible-types:'
     opts="$(getopt -o "${o}" -l "${O}" -- "${@}")"
     eval set -- "${opts}"
     while [ ${#} -gt 0 ]; do
@@ -14,8 +14,8 @@ parse_args() {
             # Ignored to have same options as other scripts
             shift 2
             ;;
-        (-d|--device-type)
-            DEVICE_TYPE="${2}"; shift 2
+        (-c|--compatible-types)
+            COMPATIBLE_TYPES="${2}"; shift 2
             ;;
         (-a|--artifact-name)
             # Ignored to have same options as other scripts
@@ -42,7 +42,7 @@ mender_fixup() {
 main() {
     parse_args "${@}"
     mender_fixup
-    echo "device_type=${DEVICE_TYPE}" > "${TARGET_DIR}/etc/mender/device_type"
+    echo "device_type=${COMPATIBLE_TYPES}" > "${TARGET_DIR}/etc/mender/device_type"
 }
 
 main "${@}"

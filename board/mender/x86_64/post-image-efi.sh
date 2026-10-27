@@ -3,14 +3,14 @@ set -e
 BOARD_DIR="$(realpath "$(dirname "$0")")"
 DATA_PART="${BINARIES_DIR}"/data-part
 DATA_PART_SIZE="32M"
-DEVICE_TYPE="buildroot-x86_64"
+COMPATIBLE_TYPES="buildroot-x86_64"
 ARTIFACT_NAME="1.0"
 
 # Parse arguments.
 parse_args() {
     local o O opts
-    o='a:o:d:'
-    O='artifact-name:,data-part-size:,device-type:'
+    o='a:o:c:'
+    O='artifact-name:,data-part-size:,compatible-types:'
     opts="$(getopt -o "${o}" -l "${O}" -- "${@}")"
     eval set -- "${opts}"
     while [ ${#} -gt 0 ]; do
@@ -18,8 +18,8 @@ parse_args() {
         (-o|--data-part-size)
             DATA_PART_SIZE="${2}"; shift 2
             ;;
-        (-d|--device-type)
-            DEVICE_TYPE="${2}"; shift 2
+        (-c|--compatible-types)
+            COMPATIBLE_TYPES="${2}"; shift 2
             ;;
         (-a|--artifact-name)
             ARTIFACT_NAME="${2}"; shift 2
@@ -55,7 +55,7 @@ generate_mender_bootstrap_artifact() {
     write bootstrap-artifact \
     --compression none \
     --artifact-name "${ARTIFACT_NAME}" \
-    --device-type "${DEVICE_TYPE}" \
+    --compatible-types "${COMPATIBLE_TYPES}" \
     --provides "rootfs-image.version:${ARTIFACT_NAME}" \
     --provides "rootfs-image.checksum:${img_checksum}" \
     --clears-provides "rootfs-image.*" \
@@ -65,14 +65,14 @@ generate_mender_bootstrap_artifact() {
 
 # Create a mender image.
 generate_mender_image() {
-    echo "Creating ${BINARIES_DIR}/${DEVICE_TYPE}-${ARTIFACT_NAME}.mender"
+    echo "Creating ${BINARIES_DIR}/${COMPATIBLE_TYPES}-${ARTIFACT_NAME}.mender"
     "${HOST_DIR}/bin/mender-artifact" \
         write rootfs-image \
         --compression none \
-        -t "${DEVICE_TYPE}" \
+        -c "${COMPATIBLE_TYPES}" \
         -n "${BR2_VERSION}" \
         -f "${BINARIES_DIR}/rootfs.ext2" \
-        -o "${BINARIES_DIR}/${DEVICE_TYPE}-${ARTIFACT_NAME}.mender"
+        -o "${BINARIES_DIR}/${COMPATIBLE_TYPES}-${ARTIFACT_NAME}.mender"
 }
 
 generate_image() {
