@@ -4,14 +4,14 @@
 #
 ################################################################################
 
-DOCKER_ENGINE_VERSION = 28.5.2
-DOCKER_ENGINE_SITE = $(call github,moby,moby,v$(DOCKER_ENGINE_VERSION))
+DOCKER_ENGINE_VERSION = 29.9.2
+DOCKER_ENGINE_SITE = $(call github,moby,moby,docker-v$(DOCKER_ENGINE_VERSION))
 
 DOCKER_ENGINE_LICENSE = Apache-2.0
 DOCKER_ENGINE_LICENSE_FILES = LICENSE
 
-DOCKER_ENGINE_DEPENDENCIES = host-pkgconf libseccomp
-DOCKER_ENGINE_GOMOD = github.com/docker/docker
+DOCKER_ENGINE_DEPENDENCIES = host-pkgconf libseccomp nftables
+DOCKER_ENGINE_GOMOD = github.com/moby/moby/v2
 
 DOCKER_ENGINE_CPE_ID_VENDOR = mobyproject
 DOCKER_ENGINE_CPE_ID_PRODUCT = moby
@@ -25,7 +25,6 @@ DOCKER_ENGINE_LDFLAGS = \
 
 DOCKER_ENGINE_TAGS = cgo exclude_graphdriver_zfs
 DOCKER_ENGINE_BUILD_TARGETS = cmd/dockerd cmd/docker-proxy
-DOCKER_ENGINE_BUILD_OPTS += -mod=vendor -modfile=vendor.mod
 
 ifeq ($(BR2_PACKAGE_LIBAPPARMOR),y)
 DOCKER_ENGINE_DEPENDENCIES += libapparmor
