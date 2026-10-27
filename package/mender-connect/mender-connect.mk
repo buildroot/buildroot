@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-MENDER_CONNECT_VERSION = 3.0.0
+MENDER_CONNECT_VERSION = 3.1.0
 MENDER_CONNECT_SITE = $(call github,mendersoftware,mender-connect,$(MENDER_CONNECT_VERSION))
 MENDER_CONNECT_LICENSE = Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, MIT
 
@@ -17,11 +17,11 @@ MENDER_CONNECT_LICENSE_FILES = \
 	vendor/github.com/pkg/errors/LICENSE \
 	vendor/github.com/vmihailenco/msgpack/v5/LICENSE \
 	vendor/github.com/vmihailenco/tagparser/v2/LICENSE \
-	vendor/github.com/pmezard/go-difflib/LICENSE \
+	vendor/github.com/russross/blackfriday/v2/LICENSE.txt \
+	vendor/github.com/stretchr/testify/internal/difflib/LICENSE \
 	vendor/golang.org/x/sys/LICENSE \
-	vendor/golang.org/x/net/LICENSE \
 	vendor/github.com/gorilla/websocket/LICENSE \
-	vendor/github.com/davecgh/go-spew/LICENSE \
+	vendor/github.com/stretchr/testify/internal/spew/LICENSE \
 	vendor/github.com/creack/pty/LICENSE \
 	vendor/github.com/go-ozzo/ozzo-validation/v4/LICENSE \
 	vendor/github.com/satori/go.uuid/LICENSE \
@@ -29,7 +29,9 @@ MENDER_CONNECT_LICENSE_FILES = \
 	vendor/github.com/stretchr/objx/LICENSE \
 	vendor/github.com/stretchr/testify/LICENSE \
 	vendor/github.com/urfave/cli/v2/LICENSE \
-	vendor/gopkg.in/yaml.v3/LICENSE
+	vendor/go.yaml.in/yaml/v3/LICENSE \
+	vendor/github.com/cpuguy83/go-md2man/v2/LICENSE.md \
+	vendor/github.com/shurcooL/sanitized_anchor_name/LICENSE
 
 MENDER_CONNECT_DEPENDENCIES = \
 	dbus \
