@@ -4,6 +4,7 @@ config BR2_PACKAGE_DROGON
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_11 # C++17/20
 	depends on BR2_TOOLCHAIN_HAS_THREADS
 	depends on BR2_USE_MMU # fork()
+	depends on BR2_USE_WCHAR # std::codecvt_utf8<wchar_t>
 	select BR2_PACKAGE_JSONCPP
 	select BR2_PACKAGE_UTIL_LINUX
 	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
@@ -45,8 +46,8 @@ config BR2_PACKAGE_DROGON_YAML_CONFIG
 
 endif
 
-comment "drogon needs a toolchain w/ C++, threads, gcc >= 11"
+comment "drogon needs a toolchain w/ C++, threads, wchar, gcc >= 11"
 	depends on BR2_USE_MMU
 	depends on !BR2_INSTALL_LIBSTDCPP || \
 		!BR2_TOOLCHAIN_GCC_AT_LEAST_11 || \
-		!BR2_TOOLCHAIN_HAS_THREADS
+		!BR2_TOOLCHAIN_HAS_THREADS || !BR2_USE_WCHAR
