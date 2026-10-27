@@ -21,7 +21,7 @@ Bernd Kuhls <bernd.kuhls@t-online.de>.
 
 Upstream: https://bitbucket.org/multicoreware/x265_git/pull-requests/26
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-[Bernd: rebased for 4.1]
+[Bernd: rebased for 4.3]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  source/CMakeLists.txt              | 6 +++---
@@ -32,7 +32,7 @@ diff --git a/source/CMakeLists.txt b/source/CMakeLists.txt
 index c14489ea6..fa331e8af 100755
 --- a/source/CMakeLists.txt
 +++ b/source/CMakeLists.txt
-@@ -270,14 +270,14 @@ if(GCC)
+@@ -321,14 +321,14 @@ if(GCC)
      endif()
      if(ARM AND CROSS_COMPILE_ARM)
          message(STATUS "cross compile arm")
