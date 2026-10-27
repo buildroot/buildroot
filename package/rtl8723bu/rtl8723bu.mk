@@ -4,13 +4,14 @@
 #
 ################################################################################
 
-RTL8723BU_VERSION = ac3d2f564bdf6816f1e3a3384524dc1a966f78a3
+RTL8723BU_VERSION = 8292ef94965fb61d3052ff2bf068fcd830e665c1
 RTL8723BU_SITE = $(call github,benetti-engineering,rtl8723bu,$(RTL8723BU_VERSION))
 RTL8723BU_LICENSE = GPL-2.0, proprietary (*.bin firmware blobs)
 
 RTL8723BU_MODULE_MAKE_OPTS = \
 	KVER=$(LINUX_VERSION_PROBED) \
-	KSRC=$(LINUX_DIR)
+	KSRC=$(LINUX_DIR) \
+	USER_EXTRA_CFLAGS="-Wno-error"
 
 define RTL8723BU_LINUX_CONFIG_FIXUPS
 	$(call KCONFIG_ENABLE_OPT,CONFIG_NET)
