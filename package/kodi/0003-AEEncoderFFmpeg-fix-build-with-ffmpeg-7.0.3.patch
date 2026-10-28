@@ -1,0 +1,67 @@
+From ef8efad6a36cd9c11e672324638acd54d0fd94d3 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 11 Oct 2026 14:04:52 +0200
+Subject: [PATCH] AEEncoderFFmpeg: fix build with ffmpeg 7.0.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The minimum ffmpeg version supported by Kodi Piers is 7.0:
+https://github.com/xbmc/xbmc/blob/22.0rc1-Piers/cmake/modules/FindFFMPEG.cmake#L307
+
+Building with ffmpeg 7.0.3 fails:
+
+xbmc/cores/AudioEngine/Encoders/AEEncoderFFmpeg.cpp:130:53:
+ error: ‘AV_CODEC_CONFIG_CHANNEL_LAYOUT’ was not declared in this scope;
+ did you mean ‘AV_CODEC_CAP_CHANNEL_CONF’?
+
+xbmc/cores/AudioEngine/Encoders/AEEncoderFFmpeg.cpp:130:5:
+ error: ‘avcodec_get_supported_config’ was not declared in this scope;
+ did you mean ‘avcodec_get_hw_config’?
+
+because the broken code was added in ffmpeg 7.1:
+
+https://code.ffmpeg.org/FFmpeg/FFmpeg/src/tag/n7.1.5/doc/APIchanges#L28
+
+2024-09-08 - 3305767560a - lavc 61.13.100 - avcodec.h
+  Add avcodec_get_supported_config() and enum AVCodecConfig; deprecate
+  AVCodec.pix_fmts, AVCodec.sample_fmts, AVCodec.supported_framerates,
+  AVCodec.supported_samplerates and AVCodec.ch_layouts.
+
+Upstream: https://github.com/xbmc/xbmc/pull/29794
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ xbmc/cores/AudioEngine/Encoders/AEEncoderFFmpeg.cpp | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/xbmc/cores/AudioEngine/Encoders/AEEncoderFFmpeg.cpp b/xbmc/cores/AudioEngine/Encoders/AEEncoderFFmpeg.cpp
+index 6a7013bc5f..61ba83d6aa 100644
+--- a/xbmc/cores/AudioEngine/Encoders/AEEncoderFFmpeg.cpp
++++ b/xbmc/cores/AudioEngine/Encoders/AEEncoderFFmpeg.cpp
+@@ -122,6 +122,7 @@ bool CAEEncoderFFmpeg::Initialize(AEAudioFormat& format, bool allow_planar_input
+   m_CodecCtx->bit_rate = m_BitRate;
+   m_CodecCtx->sample_rate = format.m_sampleRate;
+ 
++#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 13, 100)
+   uint64_t channelLayout = AV_CH_LAYOUT_5POINT1_BACK;
+   if (format.m_channelLayout.IsLayoutValid())
+   {
+@@ -141,9 +142,14 @@ bool CAEEncoderFFmpeg::Initialize(AEAudioFormat& format, bool allow_planar_input
+     format.m_channelLayout = layouts[best];
+     channelLayout = CAEUtil::GetAVChannelLayout(format.m_channelLayout);
+   }
++#endif
+ 
+   av_channel_layout_uninit(&m_CodecCtx->ch_layout);
++#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(61, 13, 100)
+   av_channel_layout_from_mask(&m_CodecCtx->ch_layout, channelLayout);
++#else
++  av_channel_layout_from_mask(&m_CodecCtx->ch_layout, AV_CH_LAYOUT_5POINT1_BACK);
++#endif
+ 
+   const AVSampleFormat* sampleFmts = nullptr;
+   int numFmts = 0;
+-- 
+2.47.3
+

@@ -1,0 +1,117 @@
+From 9246b16aa144fe7b258e54a00c9d9df3a521c671 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 11 Oct 2026 13:35:47 +0200
+Subject: [PATCH] VAAPI: fix build with ffmpeg 7.1.5
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The minimum ffmpeg version supported by Kodi Piers is 7.0:
+https://github.com/xbmc/xbmc/blob/22.0rc1-Piers/cmake/modules/FindFFMPEG.cmake#L307
+
+Building with ffmpeg 7.1.5 fails:
+
+../../../../../../xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.cpp:
+ In member function 'virtual bool VAAPI::CDecoder::Open(AVCodecContext*,
+ AVCodecContext*, AVPixelFormat)':
+
+../../../../../../xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.cpp:659:81:
+ error: 'AV_PIX_FMT_Y216' was not declared in this scope;
+ did you mean 'AV_PIX_FMT_Y210'?
+
+../../../../../../xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.cpp:670:81:
+ error: 'AV_PIX_FMT_XV48' was not declared in this scope;
+ did you mean 'AV_PIX_FMT_NV42'?
+
+../../../../../../xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.cpp:698:73:
+ error: 'AV_PIX_FMT_XV48' was not declared in this scope;
+ did you mean 'AV_PIX_FMT_NV42'?
+
+xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.h:470:46:
+ error: ‘AV_PIX_FMT_Y216’ was not declared in this scope;
+ did you mean ‘AV_PIX_FMT_Y210’?
+
+because the broken code was added in ffmpeg 8.0:
+
+https://code.ffmpeg.org/FFmpeg/FFmpeg/src/tag/n8.0.3/doc/APIchanges#L159
+2024-10-26 - e02a3b40a5e - lavu 59.46.100 - pixfmt.h
+  Add AV_PIX_FMT_XV48.
+
+https://code.ffmpeg.org/FFmpeg/FFmpeg/src/tag/n8.0.3/doc/APIchanges#L176
+2024-10-23 - f462ba05f54 - lavu 59.45.100 - pixfmt.h
+  Add AV_PIX_FMT_Y216.
+
+Upstream: https://github.com/xbmc/xbmc/pull/29794
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.cpp | 12 ++++++++++++
+ xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.h   |  4 ++++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.cpp b/xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.cpp
+index 121fc3625f..a177cd1659 100644
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.cpp
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.cpp
+@@ -656,7 +656,11 @@ bool CDecoder::Open(AVCodecContext* avctx, AVCodecContext* mainctx, const enum A
+         profile = VAProfileHEVCMain422_10;
+       else if (avctx->profile == AV_PROFILE_HEVC_REXT && m_vaapiConfig.bitDepth == 12 &&
+                chroma == 422 &&
++#if LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(59, 45, 100)
+                (m_capFormats.Supports(AV_PIX_FMT_Y212) || m_capFormats.Supports(AV_PIX_FMT_Y216)))
++#else
++               m_capFormats.Supports(AV_PIX_FMT_Y212))
++#endif
+         profile = VAProfileHEVCMain422_12;
+       else if (avctx->profile == AV_PROFILE_HEVC_REXT && m_vaapiConfig.bitDepth == 8 &&
+                chroma == 444 &&
+@@ -667,7 +671,11 @@ bool CDecoder::Open(AVCodecContext* avctx, AVCodecContext* mainctx, const enum A
+         profile = VAProfileHEVCMain444_10;
+       else if (avctx->profile == AV_PROFILE_HEVC_REXT && m_vaapiConfig.bitDepth == 12 &&
+                chroma == 444 &&
++#if LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(59, 46, 100)
+                (m_capFormats.Supports(AV_PIX_FMT_XV36) || m_capFormats.Supports(AV_PIX_FMT_XV48)))
++#else
++               m_capFormats.Supports(AV_PIX_FMT_XV36))
++#endif
+         profile = VAProfileHEVCMain444_12;
+       break;
+     }
+@@ -694,8 +702,12 @@ bool CDecoder::Open(AVCodecContext* avctx, AVCodecContext* mainctx, const enum A
+         profile = VAProfileVP9Profile1;
+       else if (avctx->profile == AV_PROFILE_VP9_3 && chroma == 444 &&
+                ((m_vaapiConfig.bitDepth == 10 && m_capFormats.Supports(AV_PIX_FMT_XV30)) ||
++#if LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(59, 46, 100)
+                 (m_vaapiConfig.bitDepth == 12 && (m_capFormats.Supports(AV_PIX_FMT_XV36) ||
+                                                   m_capFormats.Supports(AV_PIX_FMT_XV48)))))
++#else
++                (m_vaapiConfig.bitDepth == 12 && (m_capFormats.Supports(AV_PIX_FMT_XV36)))))
++#endif
+         profile = VAProfileVP9Profile3;
+       break;
+     }
+diff --git a/xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.h b/xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.h
+index daf553e33b..93cd546283 100644
+--- a/xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.h
++++ b/xbmc/cores/VideoPlayer/DVDCodecs/Video/VAAPI.h
+@@ -467,13 +467,17 @@ inline constexpr VaFormatEntry kVaFormatTable[] = {
+     {VA_FOURCC_P016, VA_RT_FORMAT_YUV420_12, AV_PIX_FMT_P016},
+     {VA_FOURCC_Y210, VA_RT_FORMAT_YUV422_10, AV_PIX_FMT_Y210},
+     {VA_FOURCC_Y212, VA_RT_FORMAT_YUV422_12, AV_PIX_FMT_Y212},
++#if LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(59, 45, 100)
+     {VA_FOURCC_Y216, VA_RT_FORMAT_YUV422_12, AV_PIX_FMT_Y216},
++#endif
+     {VA_FOURCC_AYUV, VA_RT_FORMAT_YUV444, AV_PIX_FMT_VUYA},
+     {VA_FOURCC_XYUV, VA_RT_FORMAT_YUV444, AV_PIX_FMT_VUYX},
+     {VA_FOURCC_Y410, VA_RT_FORMAT_YUV444_10, AV_PIX_FMT_XV30},
+     {VA_FOURCC_Y412, VA_RT_FORMAT_YUV444_12, AV_PIX_FMT_XV36},
++#if LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(59, 46, 100)
+     {VA_FOURCC_Y416, VA_RT_FORMAT_YUV444_12, AV_PIX_FMT_XV48},
+ #endif
++#endif
+ };
+ 
+ /*!
+-- 
+2.47.3
+

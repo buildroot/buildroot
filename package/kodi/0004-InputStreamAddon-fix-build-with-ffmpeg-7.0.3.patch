@@ -1,0 +1,49 @@
+From 835f5c9a02c64d2f8170487e756efa438d5106cb Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Sun, 11 Oct 2026 14:14:32 +0200
+Subject: [PATCH] InputStreamAddon: fix build with ffmpeg 7.0.3
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The minimum ffmpeg version supported by Kodi Piers is 7.0:
+https://github.com/xbmc/xbmc/blob/22.0rc1-Piers/cmake/modules/FindFFMPEG.cmake#L307
+
+Building with ffmpeg 7.0.3 fails:
+
+xbmc/cores/VideoPlayer/DVDInputStreams/InputStreamAddon.cpp:514:25:
+ error: ‘AVDOVIDecoderConfigurationRecord’ {aka ‘struct
+ AVDOVIDecoderConfigurationRecord’} has no member named
+ ‘dv_md_compression’
+
+because the broken code was added in ffmpeg 7.1:
+
+https://code.ffmpeg.org/FFmpeg/FFmpeg/src/tag/n7.1.5/doc/APIchanges#L64
+
+2024-07-28 - cbea92c84d4 - lavu 59.30.100 - dovi_meta.h
+  Add AVDOVIDecoderConfigurationRecord.dv_md_compression.
+
+Upstream: https://github.com/xbmc/xbmc/pull/29794
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ xbmc/cores/VideoPlayer/DVDInputStreams/InputStreamAddon.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/xbmc/cores/VideoPlayer/DVDInputStreams/InputStreamAddon.cpp b/xbmc/cores/VideoPlayer/DVDInputStreams/InputStreamAddon.cpp
+index ea1937a582..46cb5da0c4 100644
+--- a/xbmc/cores/VideoPlayer/DVDInputStreams/InputStreamAddon.cpp
++++ b/xbmc/cores/VideoPlayer/DVDInputStreams/InputStreamAddon.cpp
+@@ -511,7 +511,9 @@ KODI_HANDLE CInputStreamAddon::cb_get_stream_transfer(KODI_HANDLE handle,
+       videoStream->dovi.bl_present_flag = stream->m_dvccMetadata->m_blPresentFlag;
+       videoStream->dovi.dv_bl_signal_compatibility_id =
+           stream->m_dvccMetadata->m_dvBlSignalCompatibilityId;
++#if LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(59, 30, 100)
+       videoStream->dovi.dv_md_compression = stream->m_dvccMetadata->m_dvMdCompression;
++#endif
+     }
+     //@}
+ 
+-- 
+2.47.3
+
