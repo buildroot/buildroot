@@ -16,6 +16,18 @@ config BR2_PACKAGE_MENDER_UPDATE_MODULES
 
 if BR2_PACKAGE_MENDER_UPDATE_MODULES
 
+config BR2_PACKAGE_MENDER_UPDATE_MODULES_BANNER
+	bool "banner"
+	help
+	  The Banner Update Module manages the system's message of
+	  the day (MOTD) displayed when users log in via SSH or
+	  console. It uses metadata-driven updates to change the
+	  banner text without requiring any file payload, supports
+	  rollback functionality, and operates without requiring
+	  system reboots.
+
+	  https://github.com/mendersoftware/mender-update-modules/tree/master/banner
+
 config BR2_PACKAGE_MENDER_UPDATE_MODULES_DFU
 	bool "DFU"
 	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libusb
