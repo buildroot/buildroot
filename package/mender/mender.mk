@@ -4,107 +4,107 @@
 #
 ################################################################################
 
-MENDER_VERSION = 3.5.3
-MENDER_SITE = $(call github,mendersoftware,mender,$(MENDER_VERSION))
-MENDER_LICENSE = Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, MIT, OLDAP-2.8
+MENDER_VERSION = 5.2.0
+MENDER_SITE = https://github.com/mendersoftware/mender/releases/download/$(MENDER_VERSION)
+MENDER_LICENSE = Apache-2.0, BSL-1.0, BSD-3-Clause, CC0-1.0, MIT, Unlicense
 MENDER_CPE_ID_VENDOR = northern.tech
-# CVE-2024-46948 only affects mender-server
-MENDER_IGNORE_CVES = CVE-2024-46948
 
 # Vendor license paths generated with:
 #    awk '{print $2}' LIC_FILES_CHKSUM.sha256 | grep vendor
 MENDER_LICENSE_FILES = \
 	LICENSE \
 	LIC_FILES_CHKSUM.sha256 \
-	vendor/github.com/mendersoftware/mender-artifact/LICENSE \
-	vendor/github.com/mendersoftware/openssl/LICENSE \
-	vendor/github.com/minio/sha256-simd/LICENSE \
-	vendor/github.com/mendersoftware/progressbar/LICENSE \
-	vendor/github.com/pkg/errors/LICENSE \
-	vendor/github.com/godbus/dbus/LICENSE \
-	vendor/github.com/gorilla/websocket/LICENSE \
-	vendor/github.com/klauspost/compress/LICENSE \
-	vendor/github.com/pmezard/go-difflib/LICENSE \
-	vendor/golang.org/x/sys/LICENSE \
-	vendor/github.com/bmatsuo/lmdb-go/LICENSE.md \
-	vendor/github.com/remyoudompheng/go-liblzma/LICENSE \
-	vendor/golang.org/x/term/LICENSE \
-	vendor/github.com/davecgh/go-spew/LICENSE \
-	vendor/github.com/klauspost/pgzip/LICENSE \
-	vendor/github.com/klauspost/compress/internal/snapref/LICENSE \
-	vendor/github.com/klauspost/compress/zstd/internal/xxhash/LICENSE.txt \
-	vendor/github.com/klauspost/cpuid/v2/LICENSE \
-	vendor/github.com/sirupsen/logrus/LICENSE \
-	vendor/github.com/stretchr/testify/LICENSE \
-	vendor/github.com/ungerik/go-sysfs/LICENSE \
-	vendor/github.com/urfave/cli/v2/LICENSE \
-	vendor/github.com/stretchr/objx/LICENSE \
-	vendor/gopkg.in/yaml.v3/LICENSE \
-	vendor/github.com/mattn/go-isatty/LICENSE \
-	vendor/github.com/bmatsuo/lmdb-go/LICENSE.mdb.md
+	src/common/vendor/json/LICENSE.MIT \
+	src/common/vendor/json/docs/mkdocs/docs/home/license.md \
+	src/common/vendor/tiny-process-library/LICENSE \
+	src/common/vendor/yaml-cpp/LICENSE \
+	src/common/vendor/lmdbxx/UNLICENSE \
+	src/common/vendor/expected/COPYING \
+	src/common/vendor/optional-lite/LICENSE.txt \
+	src/common/vendor/yaml-cpp/test/googletest-1.16.0/LICENSE
 
-MENDER_DEPENDENCIES = host-pkgconf openssl
+MENDER_DEPENDENCIES += \
+	host-pkgconf \
+	boost \
+	dbus \
+	libarchive \
+	libglib2 \
+	lmdb \
+	openssl \
+	systemd
 
-MENDER_LDFLAGS = -X github.com/mendersoftware/mender/conf.Version=$(MENDER_VERSION)
-
-MENDER_UPDATE_MODULES_FILES = directory single-file
+MENDER_INSTALL_TARGET_OPTS = \
+	install-bin \
+	install-dbus \
+	install-dbus-service-files \
+	install-identity-scripts \
+	install-inventory-network-scripts \
+	install-inventory-scripts \
+	install-modules \
+	install-rootfs-image-module \
+	install-systemd
 
 define MENDER_INSTALL_CONFIG_FILES
-	$(INSTALL) -d -m 755 $(TARGET_DIR)/etc/mender/scripts
-	echo -n "3" > $(TARGET_DIR)/etc/mender/scripts/version
-
 	$(INSTALL) -D -m 0644 $(MENDER_PKGDIR)/mender.conf \
 		$(TARGET_DIR)/etc/mender/mender.conf
-	$(INSTALL) -D -m 0644 $(MENDER_PKGDIR)/server.crt \
-		$(TARGET_DIR)/etc/mender/server.crt
 
-	$(INSTALL) -D -m 0755 $(@D)/support/mender-device-identity \
-		$(TARGET_DIR)/usr/share/mender/identity/mender-device-identity
-	$(foreach f,bootloader-integration hostinfo network os rootfs-type, \
-		$(INSTALL) -D -m 0755 $(@D)/support/mender-inventory-$(f) \
-			$(TARGET_DIR)/usr/share/mender/inventory/mender-inventory-$(f)
-	)
+	$(INSTALL) -D -m 0644 $(@D)/support/demo.crt \
+		$(TARGET_DIR)/etc/mender/server.crt
 
 	$(INSTALL) -D -m 0755 $(MENDER_PKGDIR)/device_type \
 			$(TARGET_DIR)/etc/mender/device_type
 
-	mkdir -p $(TARGET_DIR)/var/lib/mender
-	$(foreach f,$(MENDER_UPDATE_MODULES_FILES), \
-		$(INSTALL) -D -m 0755 $(@D)/support/modules/$(notdir $(f)) \
-			$(TARGET_DIR)/usr/share/mender/modules/v3/$(notdir $(f))
-	)
+	mkdir -p $(TARGET_DIR)/var/lib
 endef
-
 MENDER_POST_INSTALL_TARGET_HOOKS += MENDER_INSTALL_CONFIG_FILES
+
+# The vendored tiny-process-library and yaml-cpp are built as part of
+# mender but never installed, so always link them statically.
+MENDER_CONF_OPTS += \
+	-DBUILD_SHARED_LIBS=OFF \
+	-DMENDER_EMBED_MENDER_AUTH=OFF \
+	-DMENDER_USE_DBUS=ON \
+	-DMENDER_VERSION=$(MENDER_VERSION)
+
+ifeq ($(BR2_PACKAGE_GZIP),y)
+MENDER_DEPENDENCIES += gzip
+MENDER_CONF_OPTS += -DMENDER_ARTIFACT_GZIP_COMPRESSION=ON
+else
+MENDER_CONF_OPTS += -DMENDER_ARTIFACT_GZIP_COMPRESSION=OFF
+endif
 
 ifeq ($(BR2_PACKAGE_XZ),y)
 MENDER_DEPENDENCIES += xz
+MENDER_CONF_OPTS += -DMENDER_ARTIFACT_LZMA_COMPRESSION=ON
 else
-MENDER_TAGS += nolzma
+MENDER_CONF_OPTS += -DMENDER_ARTIFACT_LZMA_COMPRESSION=OFF
 endif
 
-ifeq ($(BR2_PACKAGE_DBUS)$(BR2_PACKAGE_LIBGLIB2),yy)
-MENDER_DEPENDENCIES += libglib2
-define MENDER_INSTALL_DBUS_AUTHENTICATION_MANAGER_CONF
-	$(INSTALL) -D -m 0755 $(@D)/support/dbus/io.mender.AuthenticationManager.conf \
-		$(TARGET_DIR)/etc/dbus-1/system.d/io.mender.AuthenticationManager.conf
-
-	$(INSTALL) -D -m 0755 $(@D)/support/dbus/io.mender.UpdateManager.conf \
-		$(TARGET_DIR)/etc/dbus-1/system.d/io.mender.UpdateManager.conf
-endef
-MENDER_POST_INSTALL_TARGET_HOOKS += MENDER_INSTALL_DBUS_AUTHENTICATION_MANAGER_CONF
+ifeq ($(BR2_PACKAGE_ZSTD),y)
+MENDER_DEPENDENCIES += zstd
+MENDER_CONF_OPTS += -DMENDER_ARTIFACT_ZSTD_COMPRESSION=ON
 else
-MENDER_TAGS += nodbus
+MENDER_CONF_OPTS += -DMENDER_ARTIFACT_ZSTD_COMPRESSION=OFF
 endif
 
-define MENDER_INSTALL_INIT_SYSTEMD
-	$(INSTALL) -D -m 0644 $(MENDER_PKGDIR)/mender-client.service \
-		$(TARGET_DIR)/usr/lib/systemd/system/mender-client.service
+define MENDER_INSTALL_MODULES_GEN
+	$(MAKE) -C $(@D) DESTDIR=$(HOST_DIR) install-modules-gen
+endef
+MENDER_POST_INSTALL_TARGET_HOOKS += MENDER_INSTALL_MODULES_GEN
+
+define MENDER_INSTALL_TARGET_CMDS
+	$(TARGET_MAKE_ENV) $(MAKE) -C $(@D) DESTDIR=$(TARGET_DIR) $(MENDER_INSTALL_TARGET_OPTS)
 endef
 
-define MENDER_INSTALL_INIT_SYSV
-	$(INSTALL) -D -m 755 $(MENDER_PKGDIR)/S42mender \
-		$(TARGET_DIR)/etc/init.d/S42mender
+# Needed for rootfs-image-module
+define  MENDER_BUSYBOX_CONFIG_FIXUPS
+	$(call KCONFIG_ENABLE_OPT,CONFIG_FLOCK)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_STAT)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_FEATURE_STAT_FORMAT)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_FEATURE_SYNC_FANCY)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_WGET)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_FEATURE_WGET_HTTPS)
+	$(call KCONFIG_ENABLE_OPT,CONFIG_FEATURE_WGET_OPENSSL)
 endef
 
-$(eval $(golang-package))
+$(eval $(cmake-package))

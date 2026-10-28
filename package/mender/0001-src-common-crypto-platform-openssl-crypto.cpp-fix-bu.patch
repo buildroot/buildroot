@@ -1,0 +1,69 @@
+From dcc218c6857e080e760b4a9c04acc79390151eb3 Mon Sep 17 00:00:00 2001
+From: Adam Duskett <adam.duskett@amarulasolutions.com>
+Date: Wed, 28 Oct 2026 12:07:07 +0100
+Subject: [PATCH] src/common/crypto/platform/openssl/crypto.cpp: fix build
+ without engine support
+
+OpenSSL 4.0 removed ENGINE support entirely and always defines
+OPENSSL_NO_ENGINE. Its engine.h still declares the ENGINE_* functions
+for source compatibility, but only provides stub definitions when
+OPENSSL_ENGINE_STUBS is defined, so linking mender-auth fails with:
+
+  undefined reference to `ENGINE_by_id'
+  undefined reference to `ENGINE_free'
+  undefined reference to `ENGINE_init'
+  undefined reference to `ENGINE_load_builtin_engines'
+  undefined reference to `ENGINE_load_private_key'
+
+The same happens with OpenSSL 3.x configured with no-engine.
+
+Guard the ENGINE calls with OPENSSL_NO_ENGINE, and return an error
+from LoadFromHSMEngine() when an SSL engine is configured but not
+available.
+
+Upstream: https://github.com/mendersoftware/mender/pull/2037
+Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
+---
+ src/common/crypto/platform/openssl/crypto.cpp | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/src/common/crypto/platform/openssl/crypto.cpp b/src/common/crypto/platform/openssl/crypto.cpp
+index b31e6c8..5f6a4b9 100644
+--- a/src/common/crypto/platform/openssl/crypto.cpp
++++ b/src/common/crypto/platform/openssl/crypto.cpp
+@@ -103,9 +103,11 @@ auto bn_free = [](BIGNUM *bn) {
+ 	}
+ };
+ auto engine_free_func = [](ENGINE *e) {
++#ifndef OPENSSL_NO_ENGINE
+ 	if (e) {
+ 		ENGINE_free(e);
+ 	}
++#endif // OPENSSL_NO_ENGINE
+ };
+ 
+ auto password_callback = [](char *buf, int size, int rwflag, void *u) {
+@@ -153,6 +155,12 @@ string GetOpenSSLErrorMessage() {
+ }
+ 
+ ExpectedPrivateKey LoadFromHSMEngine(const Args &args) {
++#ifdef OPENSSL_NO_ENGINE
++	return expected::unexpected(MakeError(
++		SetupError,
++		"Failed to get the " + args.ssl_engine
++			+ " engine. OpenSSL was built without engine support"));
++#else
+ 	log::Trace("Loading the private key from HSM");
+ 
+ 	ENGINE_load_builtin_engines();
+@@ -190,6 +198,7 @@ ExpectedPrivateKey LoadFromHSMEngine(const Args &args) {
+ 	auto handle = unique_ptr<OpenSSLResourceHandle, void (*)(OpenSSLResourceHandle *)>(
+ 		new OpenSSLResourceHandle {std::move(engine)}, resource_handle_free_func);
+ 	return std::make_unique<PrivateKey>(std::move(private_key), std::move(handle));
++#endif // OPENSSL_NO_ENGINE
+ }
+ 
+ #ifdef MENDER_CRYPTO_OPENSSL_LEGACY
+-- 
+2.56.0
+
