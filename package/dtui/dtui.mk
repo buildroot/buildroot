@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DTUI_VERSION = 3.0.0
+DTUI_VERSION = 3.1.1
 DTUI_SITE = $(call github,Troels51,dtui,v$(DTUI_VERSION))
 
 DTUI_LICENSE = MIT
