@@ -53,12 +53,12 @@ Optional arguments:
 
 The login prompt will appear in the serial window.
 
-Tested with QEMU 4.1.1 on Fedora 31
+Tested with QEMU 10.2.2 on Fedora 44
 
 Creating a mender-artifact
 ========================
 
-The mender artifact is created in output/images/buildroot-x86_64-1.0.mender
+The mender artifact is created in output/images/1.0.mender
 
 You may wish to change --artifact-name=1.0 to a name that best suits your
 particular needs, as this option changes the mender artifact name.
