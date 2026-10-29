@@ -2,45 +2,45 @@
 
 <link href="css/lts.css" rel="stylesheet">
 
-<div id="headerwrap" class="br-lts-header">
-  <div class="container">
+<div class="bg-primary py-5">
+  <div class="container py-5">
     <div class="row">
-      <div class="col-sm-12 centered">
-	<h1>Buildroot LTS<br>
-	  <small>3-year long-term support with security fixes</small></h1>
+      <div class="col-sm-12 text-center">
+	<h1 class="display-1 fw-bold text-white">Buildroot LTS<br>
+	  <small class="d-block mt-3 display-6 text-white-50">3-year long-term support with security fixes</small></h1>
       </div>
     </div>
   </div>
 </div>
 
-<div class="container br-lts-main">
+<div class="container br-lts-main my-5">
 <div class="row">
-<div class="col-lg-10 col-lg-offset-1 col-md-12 col-sm-12 col-xs-12">
+<div class="col-lg-10 offset-lg-1 col-md-12 col-sm-12 col-12">
 
-    <div id="objectives" class="panel panel-primary">
-    <div class="panel-heading">LTS Objectives</div>
-    <div class="panel-body">
+    <div id="objectives" class="card mb-4">
+    <div class="card-header text-bg-primary rounded-top">LTS Objectives</div>
+    <div class="card-body">
 
-    <div class="br-lts-item-row">
-        <div class="br-lts-item-number">1</div>
-        <div class="br-lts-item-content">
-            <h3 class="br-lts-item-title">
+    <div class="list-group list-group-flush">
+    <div class="list-group-item d-flex gap-3 py-3">
+        <span class="badge rounded-pill text-bg-primary fs-5 align-self-start">1</span>
+        <div>
+            <h3 class="h4 text-body-secondary">
                 3-year LTS support
             </h3>
-            <p>
+            <p class="mb-0">
             Starting with version <code>2025.02</code>, the LTS support has been extended to
             <strong>3 years</strong>, replacing the previous 1-year cycle.
             </p>
         </div>
     </div>
-
-    <div class="br-lts-item-row">
-        <div class="br-lts-item-number">2</div>
-        <div class="br-lts-item-content">
-            <h3 class="br-lts-item-title">
+    <div class="list-group-item d-flex gap-3 py-3">
+        <span class="badge rounded-pill text-bg-primary fs-5 align-self-start">2</span>
+        <div>
+            <h3 class="h4 text-body-secondary">
                 Vulnerability tracking & reporting
             </h3>
-            <p>
+            <p class="mb-0">
             Tracking of the vulnerabilities affecting Buildroot
             is available at
             <a href="https://security.buildroot.org/">security.buildroot.org</a>.
@@ -50,41 +50,39 @@
             </p>
         </div>
     </div>
-
-    <div class="br-lts-item-row">
-        <div class="br-lts-item-number">3</div>
-        <div class="br-lts-item-content">
-            <h3 class="br-lts-item-title">
+    <div class="list-group-item d-flex gap-3 py-3">
+        <span class="badge rounded-pill text-bg-primary fs-5 align-self-start">3</span>
+        <div>
+            <h3 class="h4 text-body-secondary">
                 Sponsored LTS stewards
             </h3>
-            <p>
+            <p class="mb-0">
             To ensure a consistent release cadence and maintenance
             workflow, paid LTS stewards are assigned to the weekly LTS
             maintenance tasks.
             </p>
         </div>
     </div>
-
-    <div class="br-lts-item-row">
-        <div class="br-lts-item-number">4</div>
-        <div class="br-lts-item-content">
-            <h3 class="br-lts-item-title">
+    <div class="list-group-item d-flex gap-3 py-3">
+        <span class="badge rounded-pill text-bg-primary fs-5 align-self-start">4</span>
+        <div>
+            <h3 class="h4 text-body-secondary">
                 Dedicated backports
             </h3>
-            <p>
+            <p class="mb-0">
             Vulnerability fixes applied to the <code>master</code> branch will be
             prioritized for backporting to stable branches.
             </p>
         </div>
     </div>
-
+    </div>
 
     </div>
     </div>
 
-    <div id="releases" class="panel panel-primary">
-    <div class="panel-heading">Releases</div>
-    <div class="panel-body">
+    <div id="releases" class="card mb-4">
+    <div class="card-header text-bg-primary rounded-top">Releases</div>
+    <div class="card-body">
 
     <p>
     The Buildroot LTS sponsorship initiative has evolved from a more
@@ -96,71 +94,110 @@
     </p>
 
 
-    <div class="br-lts-chart">
-        <div class="br-lts-chart-head">
-            <div class="br-lts-head-spacer"></div>
-            <div class="br-lts-chart-head-label br-lts-span-year">2025</div>
-            <div class="br-lts-chart-head-label br-lts-span-year">2026</div>
-            <div class="br-lts-chart-head-label br-lts-span-year">2027</div>
-        </div>
-
-        <div class="br-lts-chart-row">
-            <div class="br-lts-chart-label">2025.02</div>
-            <div class="br-lts-bar br-lts-bar--long br-lts-col-start-2">3 Years Support (LTS)</div>
-        </div>
-
-        <div class="br-lts-chart-row">
-            <div class="br-lts-chart-label">2025.05</div>
-            <div class="br-lts-bar br-lts-col-start-3">3 mo</div>
-        </div>
-
-        <div class="br-lts-chart-row">
-            <div class="br-lts-chart-label">2025.08</div>
-            <div class="br-lts-bar br-lts-col-start-4">3 mo</div>
-        </div>
-
-        <div class="br-lts-chart-row">
-            <div class="br-lts-chart-label">2025.11</div>
-            <div class="br-lts-bar br-lts-col-start-5">3 mo</div>
-        </div>
-
-        <div class="br-lts-chart-row">
-            <div class="br-lts-chart-label">2026.02</div>
-            <div class="br-lts-bar br-lts-col-start-6">3 mo</div>
-        </div>
-
-        <div class="br-lts-chart-row">
-            <div class="br-lts-chart-label">2026.05</div>
-            <div class="br-lts-bar br-lts-col-start-7">3 mo</div>
-        </div>
-
-        <div class="br-lts-chart-row">
-            <div class="br-lts-chart-label">2026.08</div>
-            <div class="br-lts-bar br-lts-col-start-8">3 mo</div>
-        </div>
-
-        <div class="br-lts-chart-row">
-            <div class="br-lts-chart-label">2026.11</div>
-            <div class="br-lts-bar br-lts-col-start-9">3 mo</div>
-        </div>
-
-        <div class="br-lts-chart-row">
-            <div class="br-lts-chart-label">2027.02</div>
-            <div class="br-lts-bar br-lts-bar--long br-lts-col-start-10">3 Years Support (LTS)</div>
-        </div>
-
-        <div class="br-lts-chart-row br-lts-chart-row--faded">
-            <div class="br-lts-chart-label">...</div>
-        </div>
+    <div class="card mt-3">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col" class="w-100">
+                <div class="row g-0 text-center">
+                  <div class="col-4">2025</div>
+                  <div class="col-4">2026</div>
+                  <div class="col-4">2027</div>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="text-nowrap">2025.02</th>
+              <td>
+                <div class="row g-0">
+                  <div class="col-12 px-1"><span class="badge text-bg-warning d-block text-truncate">3 Years Support (LTS)</span></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="text-nowrap">2025.05</th>
+              <td>
+                <div class="row g-0">
+                  <div class="col-1 offset-1 px-1"><span class="badge text-bg-primary d-block text-truncate">3 mo</span></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="text-nowrap">2025.08</th>
+              <td>
+                <div class="row g-0">
+                  <div class="col-1 offset-2 px-1"><span class="badge text-bg-primary d-block text-truncate">3 mo</span></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="text-nowrap">2025.11</th>
+              <td>
+                <div class="row g-0">
+                  <div class="col-1 offset-3 px-1"><span class="badge text-bg-primary d-block text-truncate">3 mo</span></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="text-nowrap">2026.02</th>
+              <td>
+                <div class="row g-0">
+                  <div class="col-1 offset-4 px-1"><span class="badge text-bg-primary d-block text-truncate">3 mo</span></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="text-nowrap">2026.05</th>
+              <td>
+                <div class="row g-0">
+                  <div class="col-1 offset-5 px-1"><span class="badge text-bg-primary d-block text-truncate">3 mo</span></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="text-nowrap">2026.08</th>
+              <td>
+                <div class="row g-0">
+                  <div class="col-1 offset-6 px-1"><span class="badge text-bg-primary d-block text-truncate">3 mo</span></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="text-nowrap">2026.11</th>
+              <td>
+                <div class="row g-0">
+                  <div class="col-1 offset-7 px-1"><span class="badge text-bg-primary d-block text-truncate">3 mo</span></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="text-nowrap">2027.02</th>
+              <td>
+                <div class="row g-0">
+                  <div class="col-4 offset-8 px-1"><span class="badge text-bg-warning d-block text-truncate">3 Years Support (LTS)</span></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="text-nowrap text-body-secondary">...</th>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
 
     </div>
     </div>
 
-    <div id="organization" class="panel panel-primary">
-    <div class="panel-heading">How we work</div>
-    <div class="panel-body">
+    <div id="organization" class="card mb-4">
+    <div class="card-header text-bg-primary rounded-top">How we work</div>
+    <div class="card-body">
 
     <p>
     Each week, the LTS stewards define the set of commits to
@@ -191,103 +228,131 @@
     <a href="https://gitlab.com/buildroot.org/buildroot-lts-tools/-/blob/main/tools/README.md">documentation</a>.
     </p>
 
-    <div class="br-lts-chart br-lts-chart--wide-labels">
-        <div class="br-lts-chart-head">
-            <div class="br-lts-head-spacer"></div>
-            <div class="br-lts-chart-head-label br-lts-span-day">Monday</div>
-            <div class="br-lts-chart-head-label br-lts-span-day">Tuesday</div>
-            <div class="br-lts-chart-head-label br-lts-span-day">Wednesday</div>
-            <div class="br-lts-chart-head-label br-lts-span-day">Thursday</div>
-            <div class="br-lts-chart-head-label br-lts-span-day">Friday</div>
-            <div class="br-lts-chart-head-label br-lts-span-day">...</div>
-        </div>
-
-        <div class="br-lts-chart-row br-lts-chart-row--tall">
-            <div class="br-lts-chart-label">Freeze weekly commit set from master</div>
-            <div class="br-lts-bar br-lts-col-start-2"></div>
-        </div>
-
-        <div class="br-lts-chart-row br-lts-chart-row--tall">
-            <div class="br-lts-chart-label">Apply branch specific patches</div>
-            <div class="br-lts-bar br-lts-col-start-2"></div>
-        </div>
-
-        <div class="br-lts-chart-row br-lts-chart-row--tall">
-            <div class="br-lts-chart-label">Analysis & commit annotation</div>
-            <div class="br-lts-bar br-lts-bar--span-6 br-lts-col-start-2"></div>
-        </div>
-
-        <div class="br-lts-chart-row br-lts-chart-row--tall">
-            <div class="br-lts-chart-label">Cherry picking to staging branch</div>
-            <div class="br-lts-bar br-lts-bar--span-2 br-lts-col-start-7"></div>
-        </div>
-
-        <div class="br-lts-chart-row br-lts-chart-row--tall">
-            <div class="br-lts-chart-label">Push to upstream branch</div>
-            <div class="br-lts-bar br-lts-bar--span-2 br-lts-col-start-9"></div>
-        </div>
-
-        <div class="br-lts-chart-row br-lts-chart-row--tall">
-            <div class="br-lts-chart-label">Update vulns</div>
-            <div class="br-lts-bar br-lts-bar--span-2 br-lts-col-start-10"></div>
-        </div>
+    <div class="card mt-3">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead>
+            <tr>
+              <th scope="col" class="w-25"></th>
+              <th scope="col">
+                <div class="row g-0 text-center">
+                  <div class="col-2"><span class="d-none d-md-inline">Monday</span><span class="d-md-none">Mon</span></div>
+                  <div class="col-2"><span class="d-none d-md-inline">Tuesday</span><span class="d-md-none">Tue</span></div>
+                  <div class="col-2"><span class="d-none d-md-inline">Wednesday</span><span class="d-md-none">Wed</span></div>
+                  <div class="col-2"><span class="d-none d-md-inline">Thursday</span><span class="d-md-none">Thu</span></div>
+                  <div class="col-2"><span class="d-none d-md-inline">Friday</span><span class="d-md-none">Fri</span></div>
+                  <div class="col-2">...</div>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Freeze weekly commit set from master</th>
+              <td>
+                <div class="row g-0">
+                  <div class="col-1 px-1"><span class="badge text-bg-primary d-block text-truncate">&nbsp;</span></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Apply branch specific patches</th>
+              <td>
+                <div class="row g-0">
+                  <div class="col-1 px-1"><span class="badge text-bg-primary d-block text-truncate">&nbsp;</span></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Analysis & commit annotation</th>
+              <td>
+                <div class="row g-0">
+                  <div class="col-6 px-1"><span class="badge text-bg-primary d-block text-truncate">&nbsp;</span></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Cherry picking to staging branch</th>
+              <td>
+                <div class="row g-0">
+                  <div class="col-2 offset-5 px-1"><span class="badge text-bg-primary d-block text-truncate">&nbsp;</span></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Push to upstream branch</th>
+              <td>
+                <div class="row g-0">
+                  <div class="col-2 offset-7 px-1"><span class="badge text-bg-primary d-block text-truncate">&nbsp;</span></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Update vulns</th>
+              <td>
+                <div class="row g-0">
+                  <div class="col-2 offset-8 px-1"><span class="badge text-bg-primary d-block text-truncate">&nbsp;</span></div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     </div>
     </div>
 
-    <div id="benefits" class="panel panel-primary">
-    <div class="panel-heading">Sponsorship benefits</div>
-    <div class="panel-body">
+    <div id="benefits" class="card mb-4">
+    <div class="card-header text-bg-primary rounded-top">Sponsorship benefits</div>
+    <div class="card-body">
 
-    <div class="br-lts-item-row">
-        <div class="br-lts-item-number">1</div>
-        <div class="br-lts-item-content">
-            <h3 class="br-lts-item-title">
+    <div class="list-group list-group-flush">
+    <div class="list-group-item d-flex gap-3 py-3">
+        <span class="badge rounded-pill text-bg-primary fs-5 align-self-start">1</span>
+        <div>
+            <h3 class="h4 text-body-secondary">
                 Long-term sustainability
             </h3>
-            <p>
+            <p class="mb-0">
                 Sponsors ensure the long-term sustainability of the Buildroot
                 LTS effort with dedicated stewards assigned to tasks such as
                 backporting, security monitoring and LTS releases.
             </p>
         </div>
     </div>
-
-    <div class="br-lts-item-row">
-        <div class="br-lts-item-number">2</div>
-        <div class="br-lts-item-content">
-            <h3 class="br-lts-item-title">
+    <div class="list-group-item d-flex gap-3 py-3">
+        <span class="badge rounded-pill text-bg-primary fs-5 align-self-start">2</span>
+        <div>
+            <h3 class="h4 text-body-secondary">
                 Recognition of your sponsorship
             </h3>
-            <p>
+            <p class="mb-0">
                 Sponsors can be publicly acknowledged on the Buildroot website.
                 Sponsors may provide a logo linking to a webpage of their
                 choice.
             </p>
         </div>
     </div>
-
-    <div class="br-lts-item-row">
-        <div class="br-lts-item-number">3</div>
-        <div class="br-lts-item-content">
-            <h3 class="br-lts-item-title">
+    <div class="list-group-item d-flex gap-3 py-3">
+        <span class="badge rounded-pill text-bg-primary fs-5 align-self-start">3</span>
+        <div>
+            <h3 class="h4 text-body-secondary">
                 Direct interaction with LTS stewards
             </h3>
-            <p>
+            <p class="mb-0">
                 Sponsors may submit queries and requests regarding
                 Buildroot LTS and security updates.
             </p>
         </div>
     </div>
-
-    <div class="br-lts-item-row">
-        <div class="br-lts-item-number">4</div>
-        <div class="br-lts-item-content">
-            <h3 class="br-lts-item-title">
+    <div class="list-group-item d-flex gap-3 py-3">
+        <span class="badge rounded-pill text-bg-primary fs-5 align-self-start">4</span>
+        <div>
+            <h3 class="h4 text-body-secondary">
                 Assignment of priorities for package tracking
             </h3>
-            <p>
+            <p class="mb-0">
                 Buildroot integrates more than 2000 open source packages,
                 many of which do not offer long-term stable releases or
                 security updates.
@@ -299,14 +364,13 @@
             </p>
         </div>
     </div>
-
-    <div class="br-lts-item-row">
-        <div class="br-lts-item-number">5</div>
-        <div class="br-lts-item-content">
-            <h3 class="br-lts-item-title">
+    <div class="list-group-item d-flex gap-3 py-3">
+        <span class="badge rounded-pill text-bg-primary fs-5 align-self-start">5</span>
+        <div>
+            <h3 class="h4 text-body-secondary">
                 Testing of your packages
             </h3>
-            <p>
+            <p class="mb-0">
                 To make sure the packages of interest to the sponsors don't
                 include regressions between releases.
                 Sponsors may submit a list of packages to be tested
@@ -314,14 +378,13 @@
             </p>
         </div>
     </div>
-
-    <div class="br-lts-item-row">
-        <div class="br-lts-item-number">6</div>
-        <div class="br-lts-item-content">
-            <h3 class="br-lts-item-title">
+    <div class="list-group-item d-flex gap-3 py-3">
+        <span class="badge rounded-pill text-bg-primary fs-5 align-self-start">6</span>
+        <div>
+            <h3 class="h4 text-body-secondary">
                 Personalized security reports
             </h3>
-            <p>
+            <p class="mb-0">
                 Sponsors receive personalized security reports for their
                 Buildroot packages in the form of
                 <a href="https://security.buildroot.org/">security.buildroot.org</a>
@@ -329,21 +392,23 @@
             </p>
         </div>
     </div>
-
     </div>
     </div>
+    </div>
 
-    <div id="sponsor" class="panel panel-primary">
-    <div class="panel-heading">Sponsor now!</div>
-    <div class="panel-body">
+    <div id="sponsor" class="card mb-4">
+    <div class="card-header text-bg-primary rounded-top">Sponsor now!</div>
+    <div class="card-body">
     <p>
     Interested ? Contact us at
     <a href="mailto:buildroot-lts@buildroot.org?subject=[buildroot-lts] Sponsorship information&body=Thanks for showing interest in the Buildroot LTS Sponsorship. We would appreciate if you could introduce yourself and your company by answering the following questions: in which products do you use Buildroot ? How are you using Buildroot ? How many different configurations do you have ? How long do you support your products ?">buildroot-lts@buildroot.org</a>
     to learn more about the different sponsorship tiers and get all the
     details about the sponsorship.
     </p>
-    <a class="btn btn-success btn-lg" href="mailto:buildroot-lts@buildroot.org?subject=[buildroot-lts] Sponsorship information&body=Thanks for showing interest in the Buildroot LTS Sponsorship. We would appreciate if you could introduce yourself and your company by answering the following questions: in which products do you use Buildroot ? How are you using Buildroot ? How many different configurations do you have ? How long do you support your products ?">
-      <span class="glyphicon glyphicon-envelope"></span>&nbsp; Contact us</a>
+    <div class="text-center">
+      <a class="btn btn-success btn-lg" href="mailto:buildroot-lts@buildroot.org?subject=[buildroot-lts] Sponsorship information&body=Thanks for showing interest in the Buildroot LTS Sponsorship. We would appreciate if you could introduce yourself and your company by answering the following questions: in which products do you use Buildroot ? How are you using Buildroot ? How many different configurations do you have ? How long do you support your products ?">
+        <span class="bi bi-envelope-fill"></span>&nbsp; Contact us</a>
+    </div>
     </div>
     </div>
 

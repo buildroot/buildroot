@@ -70,7 +70,7 @@ function showTooltip(elem, msg) {
 let clipboard = new Clipboard('.btn');
 
 $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
+  $('[data-bs-toggle="tooltip"]').tooltip()
 });
 
 clipboard.on('success', function(e) {
@@ -97,7 +97,7 @@ jQuery(document).ready(function($) {
     let url = window.location.href;
     // Get the basename of the URL
     url = url.split(/[\\/]/).pop();
-    $('.nav a[href="/' + url + '"]').parent().addClass('active');
+    $('.navbar-nav a.nav-link[href="/' + url + '"]').addClass('active bg-light');
 
     load_activity("/new.atom");
 

@@ -1,37 +1,45 @@
 <!--#include file="header.html" -->
 
-<div id="headerwrap">
+<div class="bg-primary py-5">
   <div class="container">
-    <div class="row">
-      <div class="col-sm-6">
-	<img class="img-responsive center-block" src="images/logo.png" alt="" style="max-width:300px">
+<div class="row justify-content-center">
+<div class="col-xxl-10">
+    <div class="row align-items-center">
+      <div class="col-md-6">
+	<img class="img-fluid mx-auto d-block" src="images/logo.png" alt="" style="max-width:300px">
       </div><!-- /col-lg-6 -->
-      <div class="col-sm-6">
-	<h1>Buildroot<br>
-	  <small>Making Embedded Linux Easy</small></h1>
-	<div class="col-sm-6" style="margin-top:1em; padding-left:0px;">
-	  <a class="btn btn-default btn-lg" style="width:100%;" href="#about"><span class="glyphicon glyphicon-info-sign"></span>&nbsp; Learn more</a>
-	</div>
-	<div class="col-sm-6" style="margin-top:1em; padding-left:0px;">
-	  <a class="btn btn-default btn-lg" style="width:100%; margin-bottom: 20px;" href="/download.html"><span class="glyphicon glyphicon-cloud-download"></span>&nbsp; Download</a>
+      <div class="col-md-6">
+	<h1 class="display-3 fw-bold text-white">Buildroot<br>
+	  <small class="d-block mt-2 fs-2 fw-normal text-white-50">Making Embedded Linux Easy</small></h1>
+	<div class="row g-3 mt-1">
+	  <div class="col-lg-6">
+	    <a class="btn btn-secondary btn-lg w-100" href="#about"><span class="bi bi-info-circle-fill"></span>&nbsp; Learn more</a>
+	  </div>
+	  <div class="col-lg-6">
+	    <a class="btn btn-secondary btn-lg w-100" href="/download.html"><span class="bi bi-cloud-download-fill"></span>&nbsp; Download</a>
+	  </div>
 	</div>
       </div><!-- /col-lg-6 -->
     </div><!-- /row -->
-  </div><!-- /container -->
-</div><!-- /headerwrap -->
+  </div>
+</div>
+</div><!-- /container -->
+</div>
 
 <a name="about"></a>
 <div class="container">
-  <div class="row mt centered">
-    <div class="col-lg-8 col-lg-offset-2">
-      <h1>Buildroot is a simple, efficient and easy-to-use tool to
+<div class="row justify-content-center">
+<div class="col-xxl-10">
+  <div class="row my-5 text-center">
+    <div class="col-lg-8 offset-lg-2">
+      <h1 class="fw-light">Buildroot is a simple, efficient and easy-to-use tool to
 	generate embedded Linux systems through cross-compilation.</h1>
     </div>
   </div><!-- /row -->
 
-  <div class="row mt centered">
+  <div class="row my-5 text-center">
     <div class="col-md-4">
-      <div class="flip-container center-block" ontouchstart="this.classList.toggle('hover');">
+      <div class="flip-container mx-auto" ontouchstart="this.classList.toggle('hover');">
 	<div class="flipper">
 	  <div class="front">
 	    <img src="images/tux-flat.png" width="180" alt="">
@@ -42,13 +50,13 @@
 	</div>
       </div>
 
-      <h4>Can handle everything</h4>
+      <h4 class="mt-3 text-body-secondary">Can handle everything</h4>
       <p>Cross-compilation toolchain, root filesystem generation,
 	kernel image compilation and bootloader compilation.</p>
     </div><!--/col-lg-4 -->
 
     <div class="col-md-4">
-      <div class="flip-container center-block" ontouchstart="this.classList.toggle('hover');">
+      <div class="flip-container mx-auto" ontouchstart="this.classList.toggle('hover');">
 	<div class="flipper">
 	  <div class="front">
 	    <img src="images/hammer.png" width="180" alt="">
@@ -59,7 +67,7 @@
 	</div>
       </div>
 
-      <h4>Is very easy</h4>
+      <h4 class="mt-3 text-body-secondary">Is very easy</h4>
       <p>Thanks to its kernel-like menuconfig, gconfig and
 	xconfig configuration interfaces, building a basic system with
 	Buildroot is easy and typically takes 15-30 minutes.</p>
@@ -67,7 +75,7 @@
     </div><!--/col-lg-4 -->
 
     <div class="col-md-4">
-      <div class="flip-container center-block" ontouchstart="this.classList.toggle('hover');">
+      <div class="flip-container mx-auto" ontouchstart="this.classList.toggle('hover');">
 	<div class="flipper">
 	  <div class="front">
 	    <img src="images/gift.png" width="180" alt="">
@@ -78,85 +86,103 @@
 	</div>
       </div>
 
-      <h4>Supports several thousand packages</h4>
+      <h4 class="mt-3 text-body-secondary">Supports several thousand packages</h4>
       <p>X.org stack, Gtk3, Qt 5, GStreamer, Webkit, Kodi, a large number of network-related and system-related utilities are supported.</p>
 
     </div><!--/col-lg-4 -->
   </div><!-- /row -->
   <hr>
+</div>
+</div>
 </div><!-- /container -->
 
 <div class="container">
-  <div class="row mt centered">
-    <div class="col-lg-6 col-lg-offset-3">
-      <h1>Buildroot is for Everyone.</h1>
-      <h3>Has a simple structure that makes it easy to understand and extend. It relies only on the well-known Makefile language.</h3>
+<div class="row justify-content-center">
+<div class="col-xxl-10">
+  <div class="row my-5 text-center">
+    <div class="col-lg-6 offset-lg-3">
+      <h1 class="fw-light">Buildroot is for Everyone.</h1>
+      <h3 class="text-body-secondary">Has a simple structure that makes it easy to understand and extend. It relies only on the well-known Makefile language.</h3>
     </div>
   </div><!-- /row -->
 
-  <div class="row mt centered">
-    <div class="col-lg-8 col-lg-offset-2">
-      <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+  <div class="row my-5 text-center">
+    <div class="col-lg-8 offset-lg-2">
+      <div id="carousel-example-generic" class="carousel carousel-dark slide" data-bs-ride="carousel">
 	<!-- Wrapper for slides -->
 	<div class="carousel-inner">
-	  <div class="item active">
-	    <img src="images/nconfig.png" alt="">
+	  <div class="carousel-item active">
+	    <img class="d-block mx-auto img-fluid" src="images/nconfig.png" alt="">
 	  </div>
-	  <div class="item">
-	    <img src="images/menuconfig.png" alt="">
+	  <div class="carousel-item">
+	    <img class="d-block mx-auto img-fluid" src="images/menuconfig.png" alt="">
 	  </div>
-	  <div class="item">
-	    <img src="images/xconfig.png" alt="">
+	  <div class="carousel-item">
+	    <img class="d-block mx-auto img-fluid" src="images/xconfig.png" alt="">
 	  </div>
 	</div>
 	<!-- Indicators -->
-	<ol class="carousel-indicators" style="margin-top:10px">
-	  <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-	  <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-	  <li data-target="#carousel-example-generic" data-slide-to="2"></li>
-	</ol>
+	<div class="carousel-indicators">
+	  <button type="button" data-bs-target="#carousel-example-generic" data-bs-slide-to="0" class="active" aria-current="true" aria-label="nconfig"></button>
+	  <button type="button" data-bs-target="#carousel-example-generic" data-bs-slide-to="1" aria-label="menuconfig"></button>
+	  <button type="button" data-bs-target="#carousel-example-generic" data-bs-slide-to="2" aria-label="xconfig"></button>
+	</div>
       </div>
     </div><!-- /col-lg-8 -->
   </div><!-- /row -->
+</div>
+</div>
 </div><!-- /container -->
 
 <div class="container">
-  <div class="row mt centered">
-    <div class="col-lg-6 col-lg-offset-3">
-      <h1>Our recent activity.</h1>
-      <h3>Buildroot is an open source project: many developers contribute to it daily.</h3>
+<div class="row justify-content-center">
+<div class="col-xxl-10">
+  <div class="row my-5 text-center">
+    <div class="col-lg-6 offset-lg-3">
+      <h1 class="fw-light">Our recent activity.</h1>
+      <h3 class="text-body-secondary">Buildroot is an open source project: many developers contribute to it daily.</h3>
     </div>
   </div><!-- /row -->
+</div>
+</div>
 </div><!-- /container -->
 
 <div class="container">
+<div class="row justify-content-center">
+<div class="col-xxl-10">
   <div class="row">
     <div class="col-sm-6">
-      <div class="panel panel-primary">
-	<div class="panel-heading"><a href="https://gitlab.com/buildroot.org/buildroot/"><h5>Recent commits</h5></a></div>
-	<div class="panel-box panel-body ellipsis" id="commit-activity">
+      <div class="card mb-4">
+	<div class="card-header text-bg-primary rounded-top"><a class="link-light" href="https://gitlab.com/buildroot.org/buildroot/">Recent commits</a></div>
+	<div class="panel-box card-body ellipsis" id="commit-activity">
 	</div>
       </div>
     </div>
     <div class="col-sm-6" >
-      <div class="panel panel-primary">
-	<div class="panel-heading"><a href="https://lore.kernel.org/buildroot/"><h5>Recent discussions</h5></a></div>
-	<div class="panel-box panel-body ellipsis" id="mailing-list-activity">
+      <div class="card mb-4">
+	<div class="card-header text-bg-primary rounded-top"><a class="link-light" href="https://lore.kernel.org/buildroot/">Recent discussions</a></div>
+	<div class="panel-box card-body ellipsis" id="mailing-list-activity">
 	</div>
       </div>
     </div>
   </div>
+</div>
+</div>
 </div><!-- /container -->
 
 <div class="container">
-  <div class="row mt centered">
-    <div class="col-lg-6 col-lg-offset-3">
-      <h1>Security</h1>
-      <h3>To report a security vulnerability, please send an email to
+<div class="row justify-content-center">
+<div class="col-xxl-10">
+  <div class="row my-5 text-center">
+    <div class="col-lg-6 offset-lg-3">
+      <h1 class="fw-light">Security</h1>
+      <h3 class="text-body-secondary">To report a security vulnerability, please send an email to
 	<a href="mailto:security@buildroot.org">security@buildroot.org</a>.</h3>
     </div>
   </div><!-- /row -->
   <hr>
+</div>
+</div>
 </div><!-- /container -->
 
 <!--#include file="footer.html" -->

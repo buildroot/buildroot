@@ -17,47 +17,42 @@
 
 	<title>Buildroot - Making Embedded Linux Easy</title>
 
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/paper/bootstrap.min.css" integrity="sha256-LxKiHTQko0DUCUSgrIK23SYMymvfuj8uxXmblBvVWm0=" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.8/materia/bootstrap.min.css" integrity="sha512-lR3pptsOFflVTuIszkLNcibNkPReN2dEA/t1U1++B3/wPEZL4pysMdYsQfaMefLI/X2fjvk5AeaHVBcFoVO2mA==" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css" integrity="sha512-t7Few9xlddEmgd3oKZQahkNI4dS6l80+eGEzFQiqtyVYdvcSG2D3Iub77R20BdotfRPA9caaRkg1tyaJiPmO0g==" crossorigin="anonymous">
 	<link href="css/main.css" rel="stylesheet">
-
-	<!--[if lt IE 9]>
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.0/html5shiv.js" integrity="sha256-jHqcBHBWM2erADB7T7m7MFLQon8LlOY7ncC7jDaUScs=" crossorigin="anonymous"></script>
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.3.0/respond.min.js" integrity="sha256-g2lnLPqUkGXj7GDW+Zy47+O2ph+Ur1cmtdklVqkj+kg=" crossorigin="anonymous"></script>
-	<![endif]-->
 </head>
 
-<body>
+<body class="bg-body-tertiary">
 	<!-- Fixed navbar -->
-	<div class="navbar navbar-default navbar-fixed-top">
+	<nav class="navbar navbar-expand-xl bg-primary sticky-top py-0" data-bs-theme="dark">
 		<div class="container">
-		<div class="navbar-header">
-		  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-		  </button>
-		  <a class="navbar-brand" href="/"><b>Buildroot</b></a>
-		</div>
-		<div class="navbar-collapse collapse">
-			<ul class="nav navbar-nav navbar-right">
-				<li><a href="/news.html">
-					<span class="glyphicon glyphicon-star"></span> News</a></li>
-				<li><a href="/docs.html">
-					<span class="glyphicon glyphicon-book"></span> Documentation</a></li>
-				<li><a href="/support.html">
-					<span class="glyphicon glyphicon-question-sign"></span> Support</a></li>
-				<li><a href="/contribute.html">
-					<span class="glyphicon glyphicon-share"></span> Contribute</a></li>
-				<li><a href="/lts.html">
-					<span class="glyphicon glyphicon-send"></span> LTS</a></li>
-				<li><a href="/sponsors.html">
-					<span class="glyphicon glyphicon-usd"></span> Sponsors</a></li>
-				<li><a href="/association.html">
-					<span class="glyphicon glyphicon-resize-small"></span> Association</a></li>
-				<li><a id="menubutton" class="btn btn-success btn-shrink" href="/download.html">
-					<span class="glyphicon glyphicon-cloud-download"></span>
-					<span class="text-shrink" >Download</span></a></li>
+		<div class="row flex-grow-1 justify-content-center g-0">
+		<div class="col-xxl-10 d-flex flex-wrap align-items-center justify-content-between">
+		<a class="navbar-brand py-2" href="/"><b>Buildroot</b></a>
+		<button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-main" aria-controls="navbar-main" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbar-main">
+			<ul class="navbar-nav ms-auto">
+				<li class="nav-item"><a class="nav-link fw-light px-2" href="/news.html">
+					<span class="bi bi-star-fill"></span> News</a></li>
+				<li class="nav-item"><a class="nav-link fw-light px-2" href="/docs.html">
+					<span class="bi bi-book-fill"></span> Documentation</a></li>
+				<li class="nav-item"><a class="nav-link fw-light px-2" href="/support.html">
+					<span class="bi bi-question-circle-fill"></span> Support</a></li>
+				<li class="nav-item"><a class="nav-link fw-light px-2" href="/contribute.html">
+					<span class="bi bi-share-fill"></span> Contribute</a></li>
+				<li class="nav-item"><a class="nav-link fw-light px-2" href="/lts.html">
+					<span class="bi bi-send-fill"></span> LTS</a></li>
+				<li class="nav-item"><a class="nav-link fw-light px-2" href="/sponsors.html">
+					<span class="bi bi-currency-dollar"></span> Sponsors</a></li>
+				<li class="nav-item"><a class="nav-link fw-light px-2" href="/association.html">
+					<span class="bi bi-arrows-angle-contract"></span> Association</a></li>
+				<li class="nav-item align-self-xl-center"><a class="btn btn-success ms-xl-3 my-2 my-xl-0" href="/download.html">
+					<span class="bi bi-cloud-download-fill"></span> Download</a></li>
 			</ul>
-		</div><!--/.nav-collapse -->
+		</div><!--/.navbar-collapse -->
 		</div>
-	</div>
+		</div>
+		</div>
+	</nav>
