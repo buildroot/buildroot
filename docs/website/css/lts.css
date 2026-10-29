@@ -1,26 +1,7 @@
-@font-face {
-  font-family: "Compagnon Light";
-  src: url("/fonts/compagnon-light.woff") format("woff");
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Terminal Grotesque";
-  src: url("/fonts/terminal-grotesque.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
-    --br-blue: #2b7de0;
+    --br-blue: #3498db;
     --br-grid: #dceeff;
     --br-yellow: #dcb045;
-    --font-pixel: "Terminal Grotesque", sans-serif;
-    --font-serif: "Compagnon Light", serif;
-    --br-grid-size: 40px;
 }
 
 @keyframes slideDownFade {
@@ -40,234 +21,109 @@
 }
 
 /**
- * Header with the grid pattern background used by the Buildroot LTS
- *   graphical chart
+ * Header, based on the website #headerwrap
  */
 .br-lts-header {
-    margin-top: 50px;
-    position: relative;
-    width: 100%;
-    min-height: 400px;
-    background-color: #ffffff;
-    overflow: hidden;
-    border-bottom: 4px solid var(--br-blue);
     display: flex;
-    justify-content: center;
-    padding: 40px 20px;
+    align-items: center;
+    padding-top: 80px;
+    padding-bottom: 40px;
 }
 
-.br-lts-header-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image:
-        linear-gradient(var(--br-grid) 2px, transparent 2px),
-        linear-gradient(90deg, var(--br-grid) 2px, transparent 2px);
-    background-size: 120px 120px;
-    z-index: 1;
-    pointer-events: none;
-}
-
-.br-lts-header-content {
-    position: relative;
-    z-index: 10;
-    max-width: 1200px;
-    display: flex;
-    flex-direction: column;
-}
-
-.br-lts-header-title {
-    color: var(--br-blue);
-    font-family: var(--font-pixel);
-    font-size: 8rem;
-    display: inline-block;
-    background: white;
-    padding: 10px;
-    margin: 10px;
-    border: 2px solid var(--br-blue);
-    box-shadow: 6px 6px 0 var(--br-blue);
-
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+#headerwrap.br-lts-header h1 {
+    font-size: 90px;
     opacity: 0;
     animation: slideDownFade 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-.br-lts-header-title:nth-of-type(2) {
-    font-size: 6rem;
-    line-height: 6rem;
-    animation-delay: 0.2s;
-}
-
-.br-lts-header-title:hover {
-    background-color: var(--br-blue);
-    color: #ffffff;
-    box-shadow: 8px 8px 0 var(--br-grid);
-    transform: translateY(-2px) translateX(-2px);
-}
-
-/**
- * <main> wrapper.
- */
-.br-lts-main {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
-
-/**
- * Custom dotted separator using the BR-LTS theme.
- */
-.br-lts-separator {
-    width: 100%;
-    max-width: 900px;
-    height: 10px;
-    border-bottom: 2px dotted var(--br-blue);
-    margin: 10px 0;
-}
-
-/**
- * Intersection subtitle <div> with grid background
- */
-.br-lts-section-header {
-    position: relative;
-    width: 40%;
-    height: calc(var(--br-grid-size) * 3);
-    background-color: #fff;
-    display: flex;
-    align-items: center;
-    padding-left: var(--br-grid-size);
-    margin: var(--br-grid-size) 0;
-    border: 2px solid var(--br-grid);
-
-    text-decoration: none;
-    scroll-margin-top: 20px; /* Offset for jump to anchor */
+.br-lts-header h1 small {
+    display: block;
+    margin-top: 20px;
+    font-size: 39px;
 }
 
 @media screen and (max-width: 768px) {
-  .br-lts-section-header {
-    width: 100%;
-  }
+    #headerwrap.br-lts-header h1 {
+        font-size: 56px;
+    }
+
+    .br-lts-header h1 small {
+        font-size: 26px;
+    }
 }
 
-.br-lts-section-header:hover {
-    border: 2px solid var(--br-blue);
-    box-shadow: 6px 6px 0 var(--br-blue);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+/**
+ * Content wrapper.
+ */
+.br-lts-main {
+    margin-top: 40px;
+    margin-bottom: 40px;
 }
 
-.br-lts-section-header .br-lts-bg-grid {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image:
-        linear-gradient(var(--br-grid) 2px, transparent 2px),
-        linear-gradient(90deg, var(--br-grid) 2px, transparent 2px);
-    background-size: var(--br-grid-size) var(--br-grid-size);
-    background-position: -1px -1px;
-    z-index: 1;
-    pointer-events: none;
-}
-
-.br-lts-section-header .br-lts-title-box {
-    position: relative;
-    z-index: 10;
-    background-color: #fff;
-    border: 2px solid var(--br-blue);
-    color: var(--br-blue);
-    font-family: var(--font-pixel);
-    font-weight: 400;
-    font-style: normal;
-    font-size: 24px;
-    line-height: 1;
-    padding: 10px 15px;
-}
-
-.br-lts-section-header .br-lts-decoration-dot {
-    position: absolute;
-    z-index: 10;
-    width: 10px;
-    height: 10px;
-    background-color: var(--br-yellow);
-    border-radius: 50%;
-    bottom: 0;
-    left: 0;
-    transform: translate(-50%, 50%);
+.br-lts-main .panel {
+    scroll-margin-top: 80px; /* Offset for jump to anchor */
 }
 
 /**
  * Numbered titled list.
- * The number is spanning on the left.
+ * The number is a round badge on the left.
  * The content is on this right.
  */
 .br-lts-item-row {
     display: flex;
-    gap: 25px;
-    max-width: 900px;
-    position: relative;
+    gap: 20px;
+    padding: 15px 0;
+}
+
+.br-lts-item-row + .br-lts-item-row {
+    border-top: 1px solid #eee;
 }
 
 .br-lts-item-number {
-    font-family: var(--font-pixel);
-    color: var(--br-yellow);
-    font-size: 160px;
-    line-height: 0.8;
     flex-shrink: 0;
-    user-select: none;
-    margin-top: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--br-blue);
+    color: #fff;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 48px;
     text-align: center;
-    width: 60px;
-}
-
-.br-lts-item-content {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding-top: 5px;
+    user-select: none;
 }
 
 .br-lts-item-title {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 300;
-    font-size: 42px;
-    line-height: 1.1;
-    color: var(--br-blue);
-    letter-spacing: 1px;
-}
-
-.br-lts-item-text {
-    font-family: var(--font-mono);
-    font-size: 16px;
-    line-height: 1.4;
-    color: #333;
-    max-width: 750px;
+    margin-top: 8px;
 }
 
 /**
  * 'timeline' grid to represent how tasks are expanding across time.
  */
 .br-lts-chart {
+    --br-lts-label-width: 120px;
     display: grid;
-    grid-template-columns: 120px repeat(12, 1fr);
+    grid-template-columns: var(--br-lts-label-width) repeat(12, minmax(45px, 1fr));
     gap: 0;
     width: 100%;
-    max-width: 1000px;
     background-color: #fff;
-    border: 2px solid var(--br-blue);
-    box-shadow: 6px 6px 0 var(--br-blue);
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    margin: 20px 0;
     position: relative;
     overflow-x: auto;
+}
+
+.br-lts-chart:last-child {
+    margin-bottom: 0;
 }
 
 .br-lts-chart::before {
     content: "";
     position: absolute;
     top: 45px;
-    left: 120px;
+    left: var(--br-lts-label-width);
     right: 0;
     bottom: 0;
     background-size: calc(100% / 12) 100%;
@@ -278,7 +134,7 @@
 .br-lts-chart-head {
     grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: 120px repeat(12, 1fr);
+    grid-template-columns: var(--br-lts-label-width) repeat(12, minmax(45px, 1fr));
     border-bottom: 2px solid var(--br-blue);
     background-color: color-mix(in srgb, var(--br-blue) 6%, white);
     font-weight: bold;
@@ -289,9 +145,9 @@
 .br-lts-chart-head-label {
     text-align: center;
     padding: 10px;
-    border-left: 2px solid var(--br-grid);
-    font-family: var(--font-pixel);
-    font-size: 20px;
+    border-left: 1px solid var(--br-grid);
+    font-size: 18px;
+    font-weight: 400;
     color: var(--br-blue);
 }
 
@@ -302,7 +158,7 @@
 .br-lts-chart-row {
     grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: 120px repeat(12, 1fr);
+    grid-template-columns: var(--br-lts-label-width) repeat(12, minmax(45px, 1fr));
     align-items: center;
     height: 50px;
     border-bottom: 1px dashed #ddd;
@@ -313,8 +169,18 @@
 
 .br-lts-chart-row:last-child { border-bottom: none; }
 
+.br-lts-chart--wide-labels {
+    --br-lts-label-width: 240px;
+}
+
+@media screen and (max-width: 768px) {
+    .br-lts-chart--wide-labels {
+        --br-lts-label-width: 140px;
+    }
+}
+
 .br-lts-chart-row--tall {
-    height: 100px;
+    height: 64px;
 }
 
 .br-lts-chart-row--faded {
@@ -337,6 +203,7 @@
     align-items: center;
     background-color: #fff;
     font-size: 14px;
+    line-height: 1.3;
     transition: color 0.2s ease, background-color 0.2s ease;
 }
 
@@ -347,6 +214,7 @@
 
 .br-lts-bar {
     height: 24px;
+    margin: 0 4px;
     border-radius: 4px;
     display: flex;
     align-items: center;
