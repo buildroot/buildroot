@@ -1,51 +1,58 @@
-function display_activity(result, activity) {
-    let loaded = 0;
-    let nb_display = 8;
-    let container;
-    if (result==null) return;
-    for (let i = 0; i < result.feed.entry.length; i++) {
-        let entry = result.feed.entry[i];
-        if (activity==="commit" && entry.title.toString().indexOf("git commit") !== -1) {
-            container = document.getElementById("commit-activity");
-        } else if (activity==="mailing-list" && entry.title.toString().indexOf("git commit") === -1) {
-            container = document.getElementById("mailing-list-activity");
-        } else {
-            continue;
+const NB_ACTIVITY = 8;
+
+function display_activity(container, items) {
+    if (container == null) return;
+    for (let i = 0; i < NB_ACTIVITY; i++) {
+        let p = document.createElement("p");
+        p.className = "text-truncate mb-2";
+        p.textContent = "\u00a0";
+        if (i < items.length) {
+            p.textContent = "";
+            let link = document.createElement("a");
+            let d = new Date(items[i].date);
+            link.textContent = '[' + d.toLocaleDateString() + '] ' + items[i].title;
+            link.title = items[i].title;
+            link.href = items[i].url;
+            p.appendChild(link);
         }
-        loaded += 1
-        if (loaded > nb_display)
-            break;
-        let div = document.createElement("p");
-        let link = document.createElement("a");
-        let d = new Date(entry.updated);
-        let data = '[' + d.toLocaleDateString() + '] ' + entry.title;
-        data = data.replace("Re: ","");
-        data = data.replace("[Buildroot] ","");
-        let text = document.createTextNode(data);
-        link.appendChild(text);
-        link.title = entry.title;
-        link.href = entry.link._href;
-        div.appendChild(link);
-        container.appendChild(div);
-    }
-    for (let i = 0; i < (nb_display - loaded); i++) {
-        container.appendChild(document.createElement("p"));
+        container.appendChild(p);
     }
 }
 
-function load_activity(feedurl) {
+function load_commit_activity(apiurl) {
+    let container = document.getElementById("commit-activity");
+    if (container == null) return;
     $.ajax({
-      url: feedurl
+        url: apiurl,
+        dataType: "json"
     })
-    .done(function(data){
-        let x2js = new X2JS();
-        let result = x2js.xml_str2json(data.documentElement.outerHTML);
-        display_activity(result, "commit");
-        display_activity(result, "mailing-list");
+    .done(function(commits) {
+        display_activity(container, commits.map(function(c) {
+            return { date: c.committed_date, title: c.title, url: c.web_url };
+        }));
     });
 }
 
-
+function load_mailing_list_activity(feedurl) {
+    let container = document.getElementById("mailing-list-activity");
+    if (container == null) return;
+    $.ajax({
+        url: feedurl,
+        dataType: "xml"
+    })
+    .done(function(feed) {
+        let items = [];
+        $(feed).find("entry").slice(0, NB_ACTIVITY).each(function() {
+            let title = $(this).children("title").text();
+            items.push({
+                date: $(this).children("updated").text(),
+                title: title.replace("Re: ", "").replace("[Buildroot] ", ""),
+                url: $(this).children("link").attr("href")
+            });
+        });
+        display_activity(container, items);
+    });
+}
 
 function google_analytics() {
     let _gaq = _gaq || [];
@@ -99,7 +106,8 @@ jQuery(document).ready(function($) {
     url = url.split(/[\\/]/).pop();
     $('.navbar-nav a.nav-link[href="/' + url + '"]').addClass('active bg-light');
 
-    load_activity("/new.atom");
+    load_commit_activity("https://gitlab.com/api/v4/projects/buildroot.org%2Fbuildroot/repository/commits?ref_name=master&per_page=" + NB_ACTIVITY);
+    load_mailing_list_activity("/new.atom");
 
     $('#slides').html('<iframe src="https://docs.google.com/gview?url=http://bootlin.com/doc/training/buildroot/buildroot-slides.pdf&embedded=true" style="position:absolute; width:100%; height:100%; top:0; left:0;" frameborder="0"></iframe>')
 });
