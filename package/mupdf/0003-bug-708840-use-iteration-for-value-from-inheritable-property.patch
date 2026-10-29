@@ -1,0 +1,42 @@
+From b2f2939d403eba6d5ddba40e3981f3baa06f0796 Mon Sep 17 00:00:00 2001
+From: Tor Andersson <tor.andersson@artifex.com>
+Date: Mon, 15 Sep 2025 16:32:05 +0200
+Subject: [PATCH] Bug 708840: Use iteration for
+ value_from_inheritable_property.
+
+Avoid needless recursion.
+
+(cherry picked from commit 70b71ab22e6de4d4c44cd301c88231f623a4e94e)
+Upstream: https://github.com/ArtifexSoftware/mupdf/commit/70b71ab22e6de4d4c44cd301c88231f623a4e94e
+CVE: CVE-2025-71382
+Signed-off-by: Raphaël Mélotte <raphael.melotte@mind.be>
+---
+ source/html/css-apply.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/source/html/css-apply.c b/source/html/css-apply.c
+index 070383b0f..65f86b470 100644
+--- a/source/html/css-apply.c
++++ b/source/html/css-apply.c
+@@ -792,15 +792,14 @@ is_inheritable_property(int name)
+ static fz_css_value *
+ value_from_inheritable_property(fz_css_match *match, int name)
+ {
+-	fz_css_value *value = match->value[name];
+-	if (match->up)
++	while (match)
+ 	{
+-		if (value && !strcmp(value->data, "inherit"))
+-			return value_from_inheritable_property(match->up, name);
+-		if (!value)
+-			return value_from_inheritable_property(match->up, name);
++		fz_css_value *value = match->value[name];
++		if (value && strcmp(value->data, "inherit") != 0)
++			return value;
++		match = match->up;
+ 	}
+-	return value;
++	return NULL;
+ }
+ 
+ static fz_css_value *
