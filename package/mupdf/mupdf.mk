@@ -30,6 +30,9 @@ MUPDF_IGNORE_CVES = \
 # 0001-Fix-incorrect-error-case-free-of-pixmap.patch
 MUPDF_IGNORE_CVES += CVE-2026-25556
 
+# 0002-bug-708521-avoid-recursive-cycle-while-stripping-outlines.patch
+MUPDF_IGNORE_CVES += CVE-2025-46206
+
 # mupdf doesn't use CFLAGS and LIBS but XCFLAGS and XLIBS instead.
 # with USE_SYSTEM_LIBS it will try to use system libraries instead of the bundled ones.
 MUPDF_MAKE_ENV = $(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) \

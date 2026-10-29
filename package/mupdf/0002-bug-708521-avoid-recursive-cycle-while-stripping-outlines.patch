@@ -1,0 +1,108 @@
+From 8ff422f81230ff46878f36fc87ddbcbe60d28243 Mon Sep 17 00:00:00 2001
+From: Sebastian Rasmussen <sebras@gmail.com>
+Date: Sat, 10 May 2025 23:26:47 +0200
+Subject: [PATCH] Bug 708521: Avoid recursive cycle while stripping outlines.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This is a backport that combines two upstream commits:
+- 0ec7e4d2201bb6df217e01c17396d36297abf9ac
+  ("Bug 708521: Avoid recursive cycle while stripping outlines.")
+- f84bb9fbe8abea011d500d28d90e3c31c576a209
+  ("Bug 708541: Fix cycle detection in pdf_rearrange_pages.")
+
+[Backport: use FZ_ERROR_GENERIC, as FZ_ERROR_FORMAT does not exist
+in 1.23.x; keep the fz_page declarations that this branch still uses.]
+
+Upstream: https://github.com/ArtifexSoftware/mupdf/commit/0ec7e4d2201bb6df217e01c17396d36297abf9ac
+Upstream: https://github.com/ArtifexSoftware/mupdf/commit/f84bb9fbe8abea011d500d28d90e3c31c576a209
+CVE: CVE-2025-46206
+Signed-off-by: Raphaël Mélotte <raphael.melotte@mind.be>
+---
+ source/pdf/pdf-clean-file.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/source/pdf/pdf-clean-file.c b/source/pdf/pdf-clean-file.c
+index 20ebfa0f0..d00ec595f 100644
+--- a/source/pdf/pdf-clean-file.c
++++ b/source/pdf/pdf-clean-file.c
+@@ -129,9 +129,9 @@ static int strip_stale_annot_refs(fz_context *ctx, pdf_obj *field, int page_coun
+ 	}
+ }
+ 
+-static int strip_outlines(fz_context *ctx, pdf_document *doc, pdf_obj *outlines, int page_count, int *page_object_nums, pdf_obj *names_list);
++static int strip_outlines(fz_context *ctx, pdf_document *doc, pdf_obj *outlines, int page_count, int *page_object_nums, pdf_obj *names_list, pdf_mark_bits *marks);
+ 
+-static int strip_outline(fz_context *ctx, pdf_document *doc, pdf_obj *outlines, int page_count, int *page_object_nums, pdf_obj *names_list, pdf_obj **pfirst, pdf_obj **plast)
++static int strip_outline(fz_context *ctx, pdf_document *doc, pdf_obj *outlines, int page_count, int *page_object_nums, pdf_obj *names_list, pdf_obj **pfirst, pdf_obj **plast, pdf_mark_bits *marks)
+ {
+ 	pdf_obj *prev = NULL;
+ 	pdf_obj *first = NULL;
+@@ -144,7 +144,7 @@ static int strip_outline(fz_context *ctx, pdf_document *doc, pdf_obj *outlines,
+ 
+ 		/* Strip any children to start with. This takes care of
+ 		 * First/Last/Count for us. */
+-		nc = strip_outlines(ctx, doc, current, page_count, page_object_nums, names_list);
++		nc = strip_outlines(ctx, doc, current, page_count, page_object_nums, names_list, marks);
+ 
+ 		if (!dest_is_valid(ctx, current, page_count, page_object_nums, names_list))
+ 		{
+@@ -195,7 +195,7 @@ static int strip_outline(fz_context *ctx, pdf_document *doc, pdf_obj *outlines,
+ 	return count;
+ }
+ 
+-static int strip_outlines(fz_context *ctx, pdf_document *doc, pdf_obj *outlines, int page_count, int *page_object_nums, pdf_obj *names_list)
++static int strip_outlines(fz_context *ctx, pdf_document *doc, pdf_obj *outlines, int page_count, int *page_object_nums, pdf_obj *names_list, pdf_mark_bits *marks)
+ {
+ 	int nc;
+ 	pdf_obj *first;
+@@ -204,11 +204,14 @@ static int strip_outlines(fz_context *ctx, pdf_document *doc, pdf_obj *outlines,
+ 	if (outlines == NULL)
+ 		return 0;
+ 
++	if (pdf_mark_bits_set(ctx, marks, outlines))
++		fz_throw(ctx, FZ_ERROR_GENERIC, "Cycle detected in outlines");
++
+ 	first = pdf_dict_get(ctx, outlines, PDF_NAME(First));
+ 	if (first == NULL)
+ 		nc = 0;
+ 	else
+-		nc = strip_outline(ctx, doc, first, page_count, page_object_nums, names_list, &first, &last);
++		nc = strip_outline(ctx, doc, first, page_count, page_object_nums, names_list, &first, &last, marks);
+ 
+ 	if (nc == 0)
+ 	{
+@@ -238,6 +241,7 @@ static void pdf_rearrange_pages_imp(fz_context *ctx, pdf_document *doc, int coun
+ 	int pagecount, i;
+ 	int *page_object_nums = NULL;
+ 	fz_page *page, *next;
++	pdf_mark_bits *marks = NULL;
+ 
+ 	/* Keep only pages/type and (reduced) dest entries to avoid
+ 	 * references to unretained pages */
+@@ -252,6 +256,7 @@ static void pdf_rearrange_pages_imp(fz_context *ctx, pdf_document *doc, int coun
+ 	fz_var(allfields);
+ 	fz_var(page_object_nums);
+ 	fz_var(kids);
++	fz_var(marks);
+ 
+ 	fz_try(ctx)
+ 	{
+@@ -396,13 +401,15 @@ static void pdf_rearrange_pages_imp(fz_context *ctx, pdf_document *doc, int coun
+ 				pdf_dict_del(ctx, f, PDF_NAME(A));
+ 		}
+ 
+-		if (strip_outlines(ctx, doc, outlines, pagecount, page_object_nums, names_list) == 0)
++		marks = pdf_new_mark_bits(ctx, doc);
++		if (strip_outlines(ctx, doc, outlines, pagecount, page_object_nums, names_list, marks) == 0)
+ 		{
+ 			pdf_dict_del(ctx, root, PDF_NAME(Outlines));
+ 		}
+ 	}
+ 	fz_always(ctx)
+ 	{
++		pdf_drop_mark_bits(ctx, marks);
+ 		fz_free(ctx, page_object_nums);
+ 		pdf_drop_obj(ctx, allfields);
+ 		pdf_drop_obj(ctx, root);
