@@ -1,0 +1,28 @@
+From c19c82e46affe8d4070f5514a3a307258f9dfbd9 Mon Sep 17 00:00:00 2001
+From: Tor Andersson <tor.andersson@artifex.com>
+Date: Mon, 9 Feb 2026 17:44:05 +0100
+Subject: [PATCH] Bug 709108: Don't print raw font name to terminal.
+
+Use %q to format the font name as a quoted string.
+
+(cherry picked from commit 0f17d789fe8c29b41e47663be82514aaca3a4dfb)
+Upstream: https://github.com/ArtifexSoftware/mupdf/commit/0f17d789fe8c29b41e47663be82514aaca3a4dfb
+CVE: CVE-2026-40505
+Signed-off-by: Raphaël Mélotte <raphael.melotte@mind.be>
+---
+ source/tools/pdfinfo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/source/tools/pdfinfo.c b/source/tools/pdfinfo.c
+index bc4c07edc..ab4e66301 100644
+--- a/source/tools/pdfinfo.c
++++ b/source/tools/pdfinfo.c
+@@ -717,7 +717,7 @@ printinfo(fz_context *ctx, globals *glo, char *filename, int show, int page)
+ 		fz_write_printf(ctx, out, "Fonts (%d):\n", glo->fonts);
+ 		for (i = 0; i < glo->fonts; i++)
+ 		{
+-			fz_write_printf(ctx, out, PAGE_FMT_zu "%s '%s' %s%s(%d 0 R)\n",
++			fz_write_printf(ctx, out, PAGE_FMT_zu "%s %q %s%s(%d 0 R)\n",
+ 				glo->font[i].page,
+ 				pdf_to_num(ctx, glo->font[i].pageref),
+ 				pdf_to_name(ctx, glo->font[i].u.font.subtype),

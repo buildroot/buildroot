@@ -36,6 +36,9 @@ MUPDF_IGNORE_CVES += CVE-2025-46206
 # 0003-bug-708840-use-iteration-for-value-from-inheritable-property.patch
 MUPDF_IGNORE_CVES += CVE-2025-71382
 
+# 0004-bug-709108-don-t-print-raw-font-name-to-terminal.patch
+MUPDF_IGNORE_CVES += CVE-2026-40505
+
 # mupdf doesn't use CFLAGS and LIBS but XCFLAGS and XLIBS instead.
 # with USE_SYSTEM_LIBS it will try to use system libraries instead of the bundled ones.
 MUPDF_MAKE_ENV = $(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) \
