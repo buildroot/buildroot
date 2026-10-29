@@ -69,20 +69,13 @@ function google_analytics() {
     s.parentNode.insertBefore(ga, s);
 }
 
-function showTooltip(elem, msg) {
-    elem.setAttribute('class', 'btn tooltipped tooltipped-s');
-    elem.setAttribute('aria-label', msg);
-}
-
 let clipboard = new Clipboard('.btn');
-
-$(function () {
-  $('[data-bs-toggle="tooltip"]').tooltip()
-});
 
 clipboard.on('success', function(e) {
     e.clearSelection();
-    $(e.trigger).tooltip('show');
+    let tooltip = bootstrap.Tooltip.getOrCreateInstance(e.trigger);
+    tooltip.show();
+    setTimeout(function() { tooltip.hide(); }, 1500);
 });
 
 $(function() {
@@ -92,7 +85,7 @@ $(function() {
       target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
       if (target.length) {
         $('html,body').animate({
-          scrollTop: target.offset().top
+          scrollTop: target.offset().top - $('.navbar').outerHeight()
         }, 1000);
         return false;
       }
