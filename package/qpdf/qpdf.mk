@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QPDF_VERSION = 12.3.2
+QPDF_VERSION = 12.4.2
 QPDF_SITE = https://github.com/qpdf/qpdf/releases/download/v$(QPDF_VERSION)
 QPDF_INSTALL_STAGING = YES
 QPDF_LICENSE = Apache-2.0 or Artistic-2.0
