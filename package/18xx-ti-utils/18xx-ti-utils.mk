@@ -5,7 +5,7 @@
 ################################################################################
 
 18XX_TI_UTILS_VERSION = R8.8
-18XX_TI_UTILS_SITE = https://git.ti.com/cgit/wilink8-wlan/18xx-ti-utils
+18XX_TI_UTILS_SITE = https://github.com/beagleboard/18xx-ti-utils.git
 18XX_TI_UTILS_SITE_METHOD = git
 18XX_TI_UTILS_DEPENDENCIES = libnl
 18XX_TI_UTILS_LICENSE = BSD-3-Clause
