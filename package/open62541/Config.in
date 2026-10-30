@@ -71,24 +71,17 @@ config BR2_PACKAGE_OPEN62541_DISCOVERY
 
 config BR2_PACKAGE_OPEN62541_JSON_ENCODING
 	bool "json encoding"
+	default y
 	help
-	  Enable JSON encoding
+	  Enable JSON encoding. This is also needed for event
+	  monitoring support.
 
 config BR2_PACKAGE_OPEN62541_PUBSUB
 	bool "publish/subscribe"
 	help
-	  Enable the experimental OPC UA PubSub support. The option
-	  will include the PubSub UDP multicast plugin.
+	  Enable the OPC UA PubSub support.
 
 if BR2_PACKAGE_OPEN62541_PUBSUB
-
-config BR2_PACKAGE_OPEN62541_PUBSUB_DELTAFRAMES
-	bool "publish/subscribe deltaframes"
-	help
-	  The PubSub messages differentiate between keyframe (all
-	  published values contained) and deltaframe (only changed
-	  values contained) messages. Deltaframe messages creation
-	  consumes some additional resources.
 
 config BR2_PACKAGE_OPEN62541_PUBSUB_INFORMATIONMODEL
 	bool "publish/subscribe information model"
@@ -97,20 +90,6 @@ config BR2_PACKAGE_OPEN62541_PUBSUB_INFORMATIONMODEL
 	help
 	  Enable the information model representation of the PubSub
 	  configuration.
-
-if BR2_PACKAGE_OPEN62541_PUBSUB_INFORMATIONMODEL
-
-config BR2_PACKAGE_OPEN62541_PUBSUB_INFORMATIONMODEL_METHODS
-	bool "publish/subscribe information model methods"
-	help
-	  Enable PubSub informationmodel methods
-
-endif
-
-config BR2_PACKAGE_OPEN62541_PUBSUB_ETH_UADP
-	bool "publish/subscribe UADP"
-	help
-	  Enable publish/subscribe UADP over Ethernet
 
 endif # BR2_PACKAGE_OPEN62541_PUBSUB
 
