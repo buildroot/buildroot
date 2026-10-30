@@ -13,7 +13,11 @@ config BR2_PACKAGE_LIBABSEIL_CPP_ARCH_SUPPORTS
 	default y if BR2_sh
 	default y if BR2_sparc || BR2_sparc64
 	default y if BR2_x86_64
-	depends on BR2_TOOLCHAIN_HAS_UCONTEXT
+	# Only the ucontext data structures are used, not the
+	# {get,make,set}context functions, so musl is supported, except
+	# on 32-bit powerpc, where the glibc mcontext_t layout is assumed.
+	depends on BR2_TOOLCHAIN_HAS_UCONTEXT || BR2_TOOLCHAIN_USES_MUSL
+	depends on !(BR2_powerpc && BR2_TOOLCHAIN_USES_MUSL)
 	# absl/base/internal/direct_mmap.h only implements DirectMmap()
 	# with mmap2 for the o32 ABI on MIPS, and its 64-bit fallback
 	# fails to build with the n32 ABI, where long is 32-bit
