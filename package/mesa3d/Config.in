@@ -155,6 +155,7 @@ config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_I915
 	  Support for i915-based Intel GPUs.
 
 comment "i915 driver needs llvm"
+	depends on BR2_i386 || BR2_x86_64
 	depends on !BR2_PACKAGE_MESA3D_LLVM
 
 config BR2_PACKAGE_MESA3D_GALLIUM_DRIVER_IRIS
