@@ -1,0 +1,48 @@
+From d32fb4da510c91ba3596fad8d3d73074b1b287ac Mon Sep 17 00:00:00 2001
+From: James Hilliard <james.hilliard1@gmail.com>
+Date: Sun, 18 Oct 2026 12:37:23 -0600
+Subject: [PATCH] Skip Python installation paths for build-tree Python
+
+Upstream: https://github.com/python-pillow/Pillow/pull/10236
+[Angelo: drop the docs/releasenotes/13.1.0.rst change, the file is not
+in the 13.0.0 release]
+Signed-off-by: Angelo Compagnucci <angelo.compagnucci@gmail.com>
+---
+ setup.py | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
+
+diff --git a/setup.py b/setup.py
+index 2d02cf129ca..7de22bb78eb 100644
+--- a/setup.py
++++ b/setup.py
+@@ -572,16 +572,20 @@ def build_extensions(self) -> None:
+                 for d in os.environ[k].split(os.path.pathsep):
+                     _add_directory(library_dirs, d)
+ 
+-        _add_directory(
+-            library_dirs,
+-            (sys.prefix == sys.base_prefix and sysconfig.get_config_var("LIBDIR"))
+-            or os.path.join(sys.prefix, "lib"),
+-        )
+-        _add_directory(
+-            include_dirs,
+-            (sys.prefix == sys.base_prefix and sysconfig.get_config_var("INCLUDEDIR"))
+-            or os.path.join(sys.prefix, "include"),
+-        )
++        if not sysconfig.is_python_build():
++            _add_directory(
++                library_dirs,
++                (sys.prefix == sys.base_prefix and sysconfig.get_config_var("LIBDIR"))
++                or os.path.join(sys.prefix, "lib"),
++            )
++            _add_directory(
++                include_dirs,
++                (
++                    sys.prefix == sys.base_prefix
++                    and sysconfig.get_config_var("INCLUDEDIR")
++                )
++                or os.path.join(sys.prefix, "include"),
++            )
+ 
+         #
+         # add platform directories

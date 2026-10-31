@@ -4,8 +4,8 @@
 #
 ################################################################################
 
-PYTHON_PILLOW_VERSION = 12.3.0
-PYTHON_PILLOW_SITE = https://files.pythonhosted.org/packages/1c/3d/bb7fca845737cf9d7dbde16ed1843984665ff2e0a518f5db43e77ec540b9
+PYTHON_PILLOW_VERSION = 13.0.0
+PYTHON_PILLOW_SITE = https://files.pythonhosted.org/packages/ce/a4/9cc30690a394a8305e8be4c9036aa16d0dfddadd09079860b582f562496d
 PYTHON_PILLOW_SOURCE = pillow-$(PYTHON_PILLOW_VERSION).tar.gz
 PYTHON_PILLOW_LICENSE = MIT-CMU
 PYTHON_PILLOW_LICENSE_FILES = LICENSE
@@ -43,9 +43,9 @@ endif
 
 ifeq ($(BR2_PACKAGE_LIBAVIF),y)
 PYTHON_PILLOW_DEPENDENCIES += libavif
-PYTHON_PILLOW_BUILD_OPTS += -Clibavif=enable
+PYTHON_PILLOW_BUILD_OPTS += -Cavif=enable
 else
-PYTHON_PILLOW_BUILD_OPTS += -Clibavif=disable
+PYTHON_PILLOW_BUILD_OPTS += -Cavif=disable
 endif
 
 ifeq ($(BR2_PACKAGE_LIBXCB),y)
