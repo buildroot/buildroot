@@ -20,8 +20,9 @@ Fixes:
   673 |                         controls_.set(controls::rpi::ScalerCrops, libcamera::Span<const Rectangle>(crops.data(), crops.size()));
       |                                                 ^~~
 
-Upstream: https://github.com/raspberrypi/rpicam-apps/pull/827
+Upstream: https://github.com/raspberrypi/rpicam-apps/pull/827 (rejected)
 
+[Bernd: rebased for 1.14.0]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  core/rpicam_app.cpp | 2 ++
@@ -31,7 +32,7 @@ diff --git a/core/rpicam_app.cpp b/core/rpicam_app.cpp
 index bed69c0..1db784f 100644
 --- a/core/rpicam_app.cpp
 +++ b/core/rpicam_app.cpp
-@@ -637,6 +637,7 @@ void RPiCamApp::StartCamera()
+@@ -640,6 +640,7 @@ void RPiCamApp::StartCamera()
  	// This makes all the Request objects that we shall need.
  	makeRequests();
  
@@ -39,9 +40,9 @@ index bed69c0..1db784f 100644
  	// Build a list of initial controls that we must set in the camera before starting it.
  	// We don't overwrite anything the application may have set before calling us.
  	if (!controls_.get(controls::ScalerCrop) && !controls_.get(controls::rpi::ScalerCrops))
-@@ -672,6 +673,7 @@ void RPiCamApp::StartCamera()
+@@ -675,6 +676,7 @@ void RPiCamApp::StartCamera()
  		else
- 			controls_.set(controls::rpi::ScalerCrops, libcamera::Span<const Rectangle>(crops.data(), crops.size()));
+ 			controls_.set(controls::rpi::ScalerCrops, std::span<const Rectangle>(crops.data(), crops.size()));
  	}
 +#endif
  
