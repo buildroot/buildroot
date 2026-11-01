@@ -1,5 +1,6 @@
 config BR2_PACKAGE_PYTHON_SNAPPY
 	bool "python-snappy"
+	depends on BR2_PACKAGE_HOST_RUSTC_TARGET_ARCH_SUPPORTS # python-cramjam
 	select BR2_PACKAGE_PYTHON_CRAMJAM # runtime
 	help
 	  Python library for the snappy compression library from
