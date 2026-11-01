@@ -1,0 +1,157 @@
+From 9fdd2cdfaf3662740fbac6a406cc7c451c7ec0b4 Mon Sep 17 00:00:00 2001
+From: Andrey Volk <andywolk@gmail.com>
+Date: Wed, 28 Oct 2026 18:27:37 +0300
+Subject: [PATCH] [mod_av] Add support for FFmpeg 8 (#3250)
+
+Upstream: https://github.com/signalwire/freeswitch/commit/9fdd2cdfaf3662740fbac6a406cc7c451c7ec0b4
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ src/mod/applications/mod_av/avcodec.c  | 17 ++++++++++----
+ src/mod/applications/mod_av/avformat.c | 32 ++++++++++++++++++--------
+ src/mod/applications/mod_av/mod_av.h   |  1 +
+ 3 files changed, 36 insertions(+), 14 deletions(-)
+
+diff --git a/src/mod/applications/mod_av/avcodec.c b/src/mod/applications/mod_av/avcodec.c
+index a9d449b562..20f9abe719 100644
+--- a/src/mod/applications/mod_av/avcodec.c
++++ b/src/mod/applications/mod_av/avcodec.c
+@@ -42,6 +42,13 @@
+ #include <libavutil/opt.h>
+ #include <libavutil/imgutils.h>
+ 
++/* AV_PROFILE_* replaced FF_PROFILE_* in FFmpeg 6.1, FFmpeg 8 removed the latter */
++#ifndef AV_PROFILE_H264_BASELINE
++#define AV_PROFILE_H264_BASELINE FF_PROFILE_H264_BASELINE
++#define AV_PROFILE_H264_MAIN FF_PROFILE_H264_MAIN
++#define AV_PROFILE_H264_HIGH FF_PROFILE_H264_HIGH
++#endif
++
+ int SLICE_SIZE = (SWITCH_DEFAULT_VIDEO_SIZE + 100);
+ 
+ #define H264_NALU_BUFFER_SIZE 65536
+@@ -530,7 +537,7 @@ static void init_profile(avcodec_profile_t *aprofile, const char *name)
+ 	aprofile->decoder_thread_count = avcodec_globals.dec_threads;
+ 
+ 	if (!strcasecmp(name, "H264")) {
+-		aprofile->ctx.profile = FF_PROFILE_H264_BASELINE;
++		aprofile->ctx.profile = AV_PROFILE_H264_BASELINE;
+ 		aprofile->ctx.level = 31;
+ #ifdef AV_CODEC_FLAG_PSNR
+ 		aprofile->ctx.flags |= AV_CODEC_FLAG_PSNR;
+@@ -2071,7 +2078,7 @@ static void parse_profile(avcodec_profile_t *aprofile, switch_xml_t profile)
+ 
+ 	ctx = &aprofile->ctx;
+ 
+-	ctx->profile = FF_PROFILE_H264_BASELINE;
++	ctx->profile = AV_PROFILE_H264_BASELINE;
+ 	ctx->level = 31;
+ 
+ 	for (param = switch_xml_child(profile, "param"); param; param = param->next) {
+@@ -2094,11 +2101,11 @@ static void parse_profile(avcodec_profile_t *aprofile, switch_xml_t profile)
+ 
+ 			if (ctx->profile == 0 && !strcasecmp(aprofile->name, "H264")) {
+ 				if (!strcasecmp(value, "baseline")) {
+-					ctx->profile = FF_PROFILE_H264_BASELINE;
++					ctx->profile = AV_PROFILE_H264_BASELINE;
+ 				} else if (!strcasecmp(value, "main")) {
+-					ctx->profile = FF_PROFILE_H264_MAIN;
++					ctx->profile = AV_PROFILE_H264_MAIN;
+ 				} else if (!strcasecmp(value, "high")) {
+-					ctx->profile = FF_PROFILE_H264_HIGH;
++					ctx->profile = AV_PROFILE_H264_HIGH;
+ 				}
+ 			}
+ 		} else if (!strcmp(name, "level")) {
+diff --git a/src/mod/applications/mod_av/avformat.c b/src/mod/applications/mod_av/avformat.c
+index d617a52dfe..92ec9ed9cf 100644
+--- a/src/mod/applications/mod_av/avformat.c
++++ b/src/mod/applications/mod_av/avformat.c
+@@ -281,6 +281,24 @@ GCC_DIAG_ON(deprecated-declarations)
+ #endif
+ }
+ 
++static inline int av_get_ticks_per_frame(AVCodecContext *c)
++{
++#if (LIBAVCODEC_VERSION_MAJOR < LIBAVCODEC_8_V)
++	int ticks;
++
++GCC_DIAG_OFF(deprecated-declarations)
++	ticks = c->ticks_per_frame;
++GCC_DIAG_ON(deprecated-declarations)
++
++	return ticks;
++#else
++	/* FFmpeg 8 removed ticks_per_frame, which decoders of field based codecs set to 2 */
++	const AVCodecDescriptor *desc = avcodec_descriptor_get(c->codec_id);
++
++	return (desc && (desc->props & AV_CODEC_PROP_FIELDS)) ? 2 : 1;
++#endif
++}
++
+ static char *const get_error_text(const int error, char *error_buffer, switch_size_t error_buflen)
+ {
+ 	av_strerror(error, error_buffer, error_buflen);
+@@ -637,12 +655,14 @@ static switch_status_t add_stream(av_file_context_t *context, MediaStream *mst,
+ 		c->rc_initial_buffer_occupancy = buffer_bytes * 8;
+ 
+ 		if (codec_id == AV_CODEC_ID_H264) {
++#if (LIBAVCODEC_VERSION_MAJOR < LIBAVCODEC_8_V) /* FFmpeg 8 removed ticks_per_frame */
+ #if ((LIBAVFORMAT_VERSION_MAJOR == LIBAVFORMAT_6_V && LIBAVFORMAT_VERSION_MINOR >= LIBAVFORMAT_61_V) || LIBAVFORMAT_VERSION_MAJOR == LIBAVFORMAT_7_V)
+ GCC_DIAG_OFF(deprecated-declarations)
+ #endif
+ 			c->ticks_per_frame = 2;
+ #if ((LIBAVFORMAT_VERSION_MAJOR == LIBAVFORMAT_6_V && LIBAVFORMAT_VERSION_MINOR >= LIBAVFORMAT_61_V) || LIBAVFORMAT_VERSION_MAJOR == LIBAVFORMAT_7_V)
+ GCC_DIAG_ON(deprecated-declarations)
++#endif
+ #endif
+ 
+ 			c->flags|=AV_CODEC_FLAG_LOOP_FILTER;   // flags=+loop
+@@ -1431,7 +1451,7 @@ static switch_status_t open_input_file(av_file_context_t *context, switch_file_h
+ 		switch_goto_status(SWITCH_STATUS_FALSE, err);
+ 	}
+ 
+-#if (LIBAVFORMAT_VERSION_MAJOR == LIBAVFORMAT_7_V)
++#if (LIBAVFORMAT_VERSION_MAJOR >= LIBAVFORMAT_7_V)
+ 	handle->seekable = !(context->fc->iformat->flags & AVFMT_NOTIMESTAMPS);
+ #else
+ 	handle->seekable = context->fc->iformat->read_seek2 ? 1 : (context->fc->iformat->read_seek ? 1 : 0);
+@@ -3240,21 +3260,15 @@ static switch_status_t av_file_read_video(switch_file_handle_t *handle, switch_f
+ 
+ 	if ((c = av_get_codec_context(mst)) && c->time_base.num) {
+ 		cp = av_stream_get_parser(st);
+-#if ((LIBAVFORMAT_VERSION_MAJOR == LIBAVFORMAT_6_V && LIBAVFORMAT_VERSION_MINOR >= LIBAVFORMAT_61_V) || LIBAVFORMAT_VERSION_MAJOR == LIBAVFORMAT_7_V)
+-GCC_DIAG_OFF(deprecated-declarations)
+-#endif
+-		ticks = cp ? cp->repeat_pict + 1 : c->ticks_per_frame;
++		ticks = cp ? cp->repeat_pict + 1 : av_get_ticks_per_frame(c);
+ 		// mst->next_pts += ((int64_t)AV_TIME_BASE * st->codec->time_base.num * ticks) / st->codec->time_base.den;
+ 	}
+ 
+ 	if (!context->video_start_time) {
+ 		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_DEBUG1, "start: %" SWITCH_INT64_T_FMT " ticks: %d ticks_per_frame: %d st num:%d st den:%d codec num:%d codec den:%d start: %" SWITCH_TIME_T_FMT ", duration:%" SWITCH_INT64_T_FMT " nb_frames:%" SWITCH_INT64_T_FMT " q2d:%f\n",
+-			context->video_start_time, ticks, c ? c->ticks_per_frame : -1, st->time_base.num, st->time_base.den, c ? c->time_base.num : -1, c ? c->time_base.den : -1,
++			context->video_start_time, ticks, c ? av_get_ticks_per_frame(c) : -1, st->time_base.num, st->time_base.den, c ? c->time_base.num : -1, c ? c->time_base.den : -1,
+ 			st->start_time, st->duration == AV_NOPTS_VALUE ? context->fc->duration / AV_TIME_BASE * 1000 : st->duration, st->nb_frames, av_q2d(st->time_base));
+ 	}
+-#if ((LIBAVFORMAT_VERSION_MAJOR == LIBAVFORMAT_6_V && LIBAVFORMAT_VERSION_MINOR >= LIBAVFORMAT_61_V) || LIBAVFORMAT_VERSION_MAJOR == LIBAVFORMAT_7_V)
+-GCC_DIAG_ON(deprecated-declarations)
+-#endif
+ 
+  again:
+ 
+diff --git a/src/mod/applications/mod_av/mod_av.h b/src/mod/applications/mod_av/mod_av.h
+index 8152a77a81..92a6caaaa3 100644
+--- a/src/mod/applications/mod_av/mod_av.h
++++ b/src/mod/applications/mod_av/mod_av.h
+@@ -43,6 +43,7 @@
+ #define LIBAVCODEC_V 59 /* FFmpeg version >= 5.1 */
+ #define LIBAVCODEC_6_V 60 /* FFmpeg version >= 6.0 */
+ #define LIBAVCODEC_7_V 61 /* FFmpeg version >= 7.0 */
++#define LIBAVCODEC_8_V 62 /* FFmpeg version >= 8.0 */
+ #define LIBAVCODEC_61_V 31 /* FFmpeg version >= 6.1 */
+ #define LIBAVFORMAT_V 59 /* FFmpeg version >= 5.1 */
+ #define LIBAVFORMAT_6_V 60 /* FFmpeg version >= 6.0 */
+-- 
+2.47.3
+
