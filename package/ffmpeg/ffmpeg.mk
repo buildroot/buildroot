@@ -586,6 +586,9 @@ endif
 FFMPEG_CFLAGS = $(TARGET_CFLAGS)
 FFMPEG_LDFLAGS = $(TARGET_LDFLAGS)
 
+# workaround for static_assert on uclibc-ng < 1.0.42
+FFMPEG_CFLAGS += -Dstatic_assert=_Static_assert
+
 ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_85180),y)
 FFMPEG_CONF_OPTS += --disable-optimizations
 FFMPEG_CFLAGS += -O0
