@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FFMPEG_VERSION = 7.0.3
+FFMPEG_VERSION = 9.0.2
 FFMPEG_SOURCE = ffmpeg-$(FFMPEG_VERSION).tar.xz
 FFMPEG_SITE = https://ffmpeg.org/releases
 FFMPEG_INSTALL_STAGING = YES
@@ -15,6 +15,15 @@ ifeq ($(BR2_PACKAGE_FFMPEG_GPL),y)
 FFMPEG_LICENSE += and GPL-2.0+
 FFMPEG_LICENSE_FILES += COPYING.GPLv2
 endif
+
+FFMPEG_EXTRA_DOWNLOADS = \
+	https://github.com/xbmc/xbmc/raw/refs/tags/22.0rc1-Piers/tools/depends/target/ffmpeg/001-ffmpeg-all-libpostproc-plugin.patch
+
+define FFMPEG_APPLY_POSTPROC_PATCH
+	$(APPLY_PATCHES) $(@D) $(FFMPEG_DL_DIR) \
+		001-ffmpeg-all-libpostproc-plugin.patch
+endef
+FFMPEG_PRE_PATCH_HOOKS += FFMPEG_APPLY_POSTPROC_PATCH
 
 FFMPEG_CPE_ID_VENDOR = ffmpeg
 
@@ -52,9 +61,7 @@ FFMPEG_CONF_OPTS = \
 	--disable-libvo-amrwbenc \
 	--disable-symver \
 	--disable-doc \
-	--disable-mmal \
-	--disable-omx \
-	--disable-omx-rpi
+	--disable-mmal
 
 FFMPEG_DEPENDENCIES += host-pkgconf
 

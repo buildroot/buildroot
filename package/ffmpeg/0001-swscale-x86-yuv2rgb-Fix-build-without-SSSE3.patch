@@ -7,11 +7,11 @@ commit fc6a5883d6af8cae0e96af84dda0ad74b360a084 breaks build on
 x86_64 CPUs which do not have SSSE3, e.g. AMD Phenom-II
 
 Signed-off-by: Michael Niedermayer <michael@niedermayer.cc>
-[bernd.kuhls@t-online.de:
-  - retrieved from upstream patchwork:
-    https://patchwork.ffmpeg.org/project/ffmpeg/patch/20200223122256.23402-1-michael@niedermayer.cc/
-]
-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+
+Upstream: https://patchwork.ffmpeg.org/project/ffmpeg/patch/20200223122256.23402-1-michael@niedermayer.cc/
+
+[Bernd: rebased for 9.0]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 [yann.morin.1998@free.fr: fix reference top patchwork and SoB order]
 Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
 ---
@@ -19,25 +19,25 @@ Signed-off-by: Yann E. MORIN <yann.morin.1998@free.fr>
  1 file changed, 2 insertions(+)
 
 diff --git a/libswscale/x86/yuv2rgb.c b/libswscale/x86/yuv2rgb.c
-index c12e88cbb5..4791e5b93a 100644
+index 2291c84e53..d4e23dce45 100644
 --- a/libswscale/x86/yuv2rgb.c
 +++ b/libswscale/x86/yuv2rgb.c
-@@ -70,6 +70,7 @@ av_cold SwsFunc ff_yuv2rgb_init_x86(SwsContext *c)
+@@ -243,6 +243,7 @@ av_cold SwsFunc ff_yuv2rgb_init_x86(SwsInternal *c)
  #if HAVE_X86ASM
      int cpu_flags = av_get_cpu_flags();
  
 +#if HAVE_SSSE3
      if (EXTERNAL_SSSE3(cpu_flags)) {
-         switch (c->dstFormat) {
+         switch (c->opts.dst_format) {
          case AV_PIX_FMT_RGB32:
-@@ -98,6 +99,7 @@ av_cold SwsFunc ff_yuv2rgb_init_x86(SwsContext *c)
-             return yuv420_rgb15_ssse3;
+@@ -275,6 +276,7 @@ av_cold SwsFunc ff_yuv2rgb_init_x86(SwsInternal *c)
+ #endif
          }
      }
 +#endif
  
-     if (EXTERNAL_MMXEXT(cpu_flags)) {
-         switch (c->dstFormat) {
+ #endif /* HAVE_X86ASM */
+     return NULL;
 -- 
 2.26.2
 

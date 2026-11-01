@@ -10,19 +10,19 @@ Corresponding kodi bug: https://github.com/xbmc/xbmc/issues/15704
 Downloaded from Kodi ffmpeg repo:
 https://github.com/xbmc/FFmpeg/commit/2c6b3f357331e203ad87214984661c40704aceb7
 
-Patch was sent upstream:
-http://ffmpeg.org/pipermail/ffmpeg-devel/2019-March/240863.html
+Upstream: http://ffmpeg.org/pipermail/ffmpeg-devel/2019-March/240863.html
 
-Signed-off-by: Bernd Kuhls <bernd.kuhls@t-online.de>
+[Bernd: rebased for 9.0]
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  libavcodec/vaapi_h264.c | 5 +++++
  1 file changed, 5 insertions(+)
 
 diff --git a/libavcodec/vaapi_h264.c b/libavcodec/vaapi_h264.c
-index dd2a6571604..e521a05c4ff 100644
+index 7f00da09fc..01bbb42dbd 100644
 --- a/libavcodec/vaapi_h264.c
 +++ b/libavcodec/vaapi_h264.c
-@@ -314,6 +314,11 @@ static int vaapi_h264_end_frame(AVCodecContext *avctx)
+@@ -323,6 +323,11 @@ static int vaapi_h264_end_frame(AVCodecContext *avctx)
      H264SliceContext *sl = &h->slice_ctx[0];
      int ret;
  
@@ -34,3 +34,6 @@ index dd2a6571604..e521a05c4ff 100644
      ret = ff_vaapi_decode_issue(avctx, pic);
      if (ret < 0)
          goto finish;
+-- 
+2.47.3
+

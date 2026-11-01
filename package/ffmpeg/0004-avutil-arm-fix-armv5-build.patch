@@ -1,0 +1,47 @@
+From d79bcb8ff738af8d15021cbe746c23cc245e03d6 Mon Sep 17 00:00:00 2001
+From: Bernd Kuhls <bernd@kuhls.net>
+Date: Fri, 30 Oct 2026 08:52:16 +0100
+Subject: [PATCH] avutil/arm: fix armv5 build
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/471db1d323aaed50ff922f0da76ecc8e45c4e817
+
+added armv6 optimizations and guarded the include with
+
+  #elif ARCH_ARM && HAVE_ARMV6
+
+but guarded the code only with
+
+  #elif ARCH_ARM
+
+causing a build error with armv5 toolchains:
+
+libavutil/pixelutils.c: In function ‘av_pixelutils_get_sad_fn’:
+libavutil/pixelutils.c:102:5: error: implicit declaration of function
+ ‘ff_pixelutils_sad_init_arm’ [-Wimplicit-function-declaration]
+
+Upstream: https://code.ffmpeg.org/FFmpeg/FFmpeg/commit/6d1bfd760916ab52814b950692d1c1635d29f3c7
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ libavutil/pixelutils.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libavutil/pixelutils.c b/libavutil/pixelutils.c
+index 869af809eb..7631469163 100644
+--- a/libavutil/pixelutils.c
++++ b/libavutil/pixelutils.c
+@@ -30,7 +30,7 @@
+ 
+ #if ARCH_AARCH64 && HAVE_NEON
+ #include "aarch64/pixelutils.h"
+-#elif ARCH_ARM && HAVE_ARMV6
++#elif ARCH_ARM
+ #include "arm/pixelutils.h"
+ #elif ARCH_MIPS && HAVE_MSA
+ #include "mips/pixelutils.h"
+-- 
+2.47.3
+
