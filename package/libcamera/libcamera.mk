@@ -5,7 +5,7 @@
 ################################################################################
 
 LIBCAMERA_SITE = https://gitlab.freedesktop.org/camera/libcamera.git
-LIBCAMERA_VERSION = v0.7.1
+LIBCAMERA_VERSION = v0.7.2-167-g8fe1f45140bace32677b1f7b9a17ae3b4fa85a59
 LIBCAMERA_SITE_METHOD = git
 LIBCAMERA_DEPENDENCIES = \
 	host-openssl \
