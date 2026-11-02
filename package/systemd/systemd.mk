@@ -19,7 +19,7 @@
 # - Diff sysusers.d with the previous version
 # - Diff factory/etc/nsswitch.conf with the previous version
 #   (details are often sprinkled around in README and manpages)
-SYSTEMD_VERSION = 258.12
+SYSTEMD_VERSION = 259.10
 SYSTEMD_SITE = $(call github,systemd,systemd,v$(SYSTEMD_VERSION))
 SYSTEMD_LICENSE = \
 	LGPL-2.1+, \
@@ -55,7 +55,6 @@ SYSTEMD_DEPENDENCIES = \
 	host-gperf \
 	host-python-jinja2 \
 	kmod \
-	libcap \
 	libxcrypt \
 	util-linux-libs \
 	$(TARGET_NLS_DEPENDENCIES)
@@ -65,6 +64,7 @@ SYSTEMD_SELINUX_MODULES = systemd udev xdg
 SYSTEMD_PROVIDES = libudev udev
 
 SYSTEMD_CONF_OPTS = \
+	-Dagetty-path=/usr/bin/agetty \
 	-Dbpf-framework=disabled \
 	-Dcreate-log-dirs=false \
 	-Ddbus-interfaces-dir=no \
@@ -78,9 +78,11 @@ SYSTEMD_CONF_OPTS = \
 	-Dima=false \
 	-Dinstall-tests=false \
 	-Dipe=false \
+	-Djournal-storage-default=persistent \
 	-Dkexec-path=/usr/sbin/kexec \
 	-Dkmod-path=/usr/bin/kmod \
 	-Dldconfig=false \
+	-Dlibc=glibc \
 	-Dlibfido2=disabled \
 	-Dlibmount=enabled \
 	-Dlink-boot-shared=true \
@@ -97,6 +99,8 @@ SYSTEMD_CONF_OPTS = \
 	-Dsetfont-path=/usr/bin/setfont \
 	-Dsplit-bin=true \
 	-Dsulogin-path=/usr/sbin/sulogin \
+	-Dswapoff-path=/usr/sbin/swapoff \
+	-Dswapon-path=/usr/sbin/swapon \
 	-Dsystem-gid-max=999 \
 	-Dsystem-uid-max=999 \
 	-Dsysupdated=disabled \
@@ -172,13 +176,6 @@ SYSTEMD_DEPENDENCIES += elfutils
 SYSTEMD_CONF_OPTS += -Delfutils=enabled
 else
 SYSTEMD_CONF_OPTS += -Delfutils=disabled
-endif
-
-ifeq ($(BR2_PACKAGE_IPTABLES),y)
-SYSTEMD_DEPENDENCIES += iptables
-SYSTEMD_CONF_OPTS += -Dlibiptc=enabled
-else
-SYSTEMD_CONF_OPTS += -Dlibiptc=disabled
 endif
 
 # Both options can't be selected at the same time so prefer libidn2
@@ -539,6 +536,7 @@ endif
 ifeq ($(BR2_PACKAGE_SYSTEMD_POLKIT),y)
 SYSTEMD_CONF_OPTS += -Dpolkit=enabled
 SYSTEMD_DEPENDENCIES += polkit
+SYSTEMD_POLKIT_USER = - - empower -1 * - - - Privileged access to polkit actions
 else
 SYSTEMD_CONF_OPTS += -Dpolkit=disabled
 endif
@@ -709,6 +707,7 @@ define SYSTEMD_USERS
 	$(SYSTEMD_NETWORKD_USER)
 	$(SYSTEMD_RESOLVED_USER)
 	$(SYSTEMD_TIMESYNCD_USER)
+	$(SYSTEMD_POLKIT_USER)
 endef
 
 define SYSTEMD_INSTALL_NSSCONFIG_HOOK
@@ -935,13 +934,13 @@ HOST_SYSTEMD_CONF_OPTS = \
 	-Dkmod=disabled \
 	-Dldconfig=false \
 	-Dlibarchive=disabled \
+	-Dlibc=glibc \
 	-Dlibcryptsetup-plugins=disabled \
 	-Dlibcryptsetup=disabled \
 	-Dlibcurl=disabled \
 	-Dlibfido2=disabled \
 	-Dlibidn2=disabled \
 	-Dlibidn=disabled \
-	-Dlibiptc=disabled \
 	-Dlibmount=enabled \
 	-Dlocaled=false \
 	-Dlog-message-verification=disabled \
@@ -1009,7 +1008,6 @@ HOST_SYSTEMD_DEPENDENCIES = \
 	$(BR2_COREUTILS_HOST_DEPENDENCY) \
 	host-util-linux \
 	host-patchelf \
-	host-libcap \
 	host-libxcrypt \
 	host-gperf \
 	host-python-jinja2 \
