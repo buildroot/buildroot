@@ -6,7 +6,9 @@
 
 # When updating systemd, take care of the following:
 # - Check if the requirements have changed (see README), in particular
-#   arch and headers
+#   arch and headers. Use the "recommended baseline" to choose
+#   BR2_TOOLCHAIN_HEADERS_AT_LEAST_..., upstream rejects issues about
+#   build failures with older versions.
 # - If yes, propagate the dependencies to BR2_INIT_SYSTEMD
 # - If the required kernel options have changed, update the Config.in
 #   help text and the list of KCONFIG_ENABLE_OPT.
@@ -19,7 +21,7 @@
 # - Diff sysusers.d with the previous version
 # - Diff factory/etc/nsswitch.conf with the previous version
 #   (details are often sprinkled around in README and manpages)
-SYSTEMD_VERSION = 260.6
+SYSTEMD_VERSION = 261.4
 SYSTEMD_SITE = $(call github,systemd,systemd,v$(SYSTEMD_VERSION))
 SYSTEMD_LICENSE = \
 	LGPL-2.1+, \
@@ -77,6 +79,7 @@ SYSTEMD_CONF_OPTS = \
 	-Dfuzz-tests=false \
 	-Didn=true \
 	-Dima=false \
+	-Dimds=disabled \
 	-Dinstall-tests=false \
 	-Dipe=false \
 	-Djournal-storage-default=persistent \
@@ -103,6 +106,7 @@ SYSTEMD_CONF_OPTS = \
 	-Dsulogin-path=/usr/sbin/sulogin \
 	-Dswapoff-path=/usr/sbin/swapoff \
 	-Dswapon-path=/usr/sbin/swapon \
+	-Dsysinstall=false \
 	-Dsystem-gid-max=999 \
 	-Dsystem-uid-max=999 \
 	-Dsysupdated=disabled \
@@ -926,6 +930,7 @@ HOST_SYSTEMD_CONF_OPTS = \
 	-Dhwdb=true \
 	-Didn=false \
 	-Dima=false \
+	-Dimds=disabled \
 	-Dimportd=disabled \
 	-Dinitrd=false \
 	-Dinstall-tests=false \
@@ -979,6 +984,7 @@ HOST_SYSTEMD_CONF_OPTS = \
 	-Dsplit-bin=true \
 	-Dstoragetm=false \
 	-Dsysext=false \
+	-Dsysinstall=false \
 	-Dsysupdate=disabled \
 	-Dsysupdated=disabled \
 	-Dsysusers=false \
