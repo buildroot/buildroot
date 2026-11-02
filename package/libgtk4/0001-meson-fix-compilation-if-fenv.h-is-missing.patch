@@ -1,0 +1,119 @@
+From e0f3bec0fdf037dffb0bd6570c00a6de37c1fef3 Mon Sep 17 00:00:00 2001
+From: Thomas Devoogdt <thomas@devoogdt.com>
+Date: Fri, 15 Nov 2024 08:22:23 +0100
+Subject: [PATCH] meson: fix compilation if fenv.h is missing
+
+../gtk/gtkcssnumbervalue.c:29:10: fatal error: fenv.h: No such file or directory
+   29 | #include <fenv.h>
+      |
+
+Upstream: https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/7925
+Signed-off-by: Thomas Devoogdt <thomas@devoogdt.com>
+---
+ gtk/gtkcssnumbervalue.c | 59 ++++++++++++++++++++++++++++++++---------
+ meson.build             |  1 +
+ 2 files changed, 48 insertions(+), 12 deletions(-)
+
+diff --git a/gtk/gtkcssnumbervalue.c b/gtk/gtkcssnumbervalue.c
+index 1181c1a802..03cf30262a 100644
+--- a/gtk/gtkcssnumbervalue.c
++++ b/gtk/gtkcssnumbervalue.c
+@@ -26,7 +26,9 @@
+ #include "gtkcssstyleprivate.h"
+ #include "gtkprivate.h"
+ 
++#ifdef HAVE_FENV_H
+ #include <fenv.h>
++#endif
+ 
+ #define RAD_TO_DEG(x) ((x) * 180.0 / G_PI)
+ #define DEG_TO_RAD(x) ((x) * G_PI / 180.0)
+@@ -1846,13 +1848,25 @@ gtk_css_dimension_value_is_zero (const GtkCssValue *value)
+   return value->dimension.value == 0;
+ }
+ 
+-static double
+-_round (guint mode, double a, double b)
++#ifdef HAVE_FENV_H
++static inline double
++_round_fenv (int mode, double a, double b)
+ {
+-  int old_mode;
+-  int modes[] = { FE_TONEAREST, FE_UPWARD, FE_DOWNWARD, FE_TOWARDZERO };
+   double result;
++  int old_mode;
+ 
++  old_mode = fegetround ();
++  fesetround (mode);
++  result = nearbyint (a/b) * b;
++  fesetround (old_mode);
++
++  return result;
++}
++#endif
++
++static double
++_round (guint mode, double a, double b)
++{
+   if (b == 0)
+     return NAN;
+ 
+@@ -1880,14 +1894,35 @@ _round (guint mode, double a, double b)
+         }
+     }
+ 
+-  old_mode = fegetround ();
+-  fesetround (modes[mode]);
+-
+-  result = nearbyint (a/b) * b;
+-
+-  fesetround (old_mode);
+-
+-  return result;
++  switch (mode)
++    {
++    case ROUND_NEAREST:
++#ifdef FE_TONEAREST
++      return _round_fenv (FE_TONEAREST, a, b);
++#else
++      return round (a/b) * b;
++#endif
++    case ROUND_UP:
++#ifdef FE_UPWARD
++      return _round_fenv (FE_UPWARD, a, b);
++#else
++      return (((a/b) >= 0) ? ceil (a/b) : floor (a/b)) * b;
++#endif
++    case ROUND_DOWN:
++#ifdef FE_DOWNWARD
++      return _round_fenv (FE_DOWNWARD, a, b);
++#else
++      return (((a/b) >= 0) ? floor (a/b) : ceil (a/b)) * b;
++#endif
++    case ROUND_TO_ZERO:
++#ifdef FE_TOWARDZERO
++      return _round_fenv (FE_TOWARDZERO, a, b);
++#else
++      return (((a/b) >= 0) ? floor (a/b) : ceil (a/b)) * b;
++#endif
++    default:
++      g_assert_not_reached ();
++    }
+ }
+ 
+ static double
+diff --git a/meson.build b/meson.build
+index f8a6d35e3c..ca8e63b93d 100644
+--- a/meson.build
++++ b/meson.build
+@@ -198,6 +198,7 @@ cdata.set_quoted('SYMBOL_VISIBILITY', get_option('symbol-visibility'))
+ 
+ check_headers = [
+   'dev/evdev/input.h',
++  'fenv.h',
+   'ftw.h',
+   'linux/input.h',
+   'sys/mman.h',
+-- 
+2.43.0
+
