@@ -19,7 +19,7 @@
 # - Diff sysusers.d with the previous version
 # - Diff factory/etc/nsswitch.conf with the previous version
 #   (details are often sprinkled around in README and manpages)
-SYSTEMD_VERSION = 259.10
+SYSTEMD_VERSION = 260.6
 SYSTEMD_SITE = $(call github,systemd,systemd,v$(SYSTEMD_VERSION))
 SYSTEMD_LICENSE = \
 	LGPL-2.1+, \
@@ -66,6 +66,7 @@ SYSTEMD_PROVIDES = libudev udev
 SYSTEMD_CONF_OPTS = \
 	-Dagetty-path=/usr/bin/agetty \
 	-Dbpf-framework=disabled \
+	-Dcompat-sysv-interfaces=false \
 	-Dcreate-log-dirs=false \
 	-Ddbus-interfaces-dir=no \
 	-Ddbus=disabled \
@@ -83,6 +84,7 @@ SYSTEMD_CONF_OPTS = \
 	-Dkmod-path=/usr/bin/kmod \
 	-Dldconfig=false \
 	-Dlibc=glibc \
+	-Dlibcrypt=enabled \
 	-Dlibfido2=disabled \
 	-Dlibmount=enabled \
 	-Dlink-boot-shared=true \
@@ -104,8 +106,6 @@ SYSTEMD_CONF_OPTS = \
 	-Dsystem-gid-max=999 \
 	-Dsystem-uid-max=999 \
 	-Dsysupdated=disabled \
-	-Dsysvinit-path= \
-	-Dsysvrcnd-path= \
 	-Dtests=false \
 	-Dtmpfiles=true \
 	-Dukify=disabled \
@@ -178,15 +178,11 @@ else
 SYSTEMD_CONF_OPTS += -Delfutils=disabled
 endif
 
-# Both options can't be selected at the same time so prefer libidn2
 ifeq ($(BR2_PACKAGE_LIBIDN2),y)
 SYSTEMD_DEPENDENCIES += libidn2
-SYSTEMD_CONF_OPTS += -Dlibidn2=enabled -Dlibidn=disabled
-else ifeq ($(BR2_PACKAGE_LIBIDN),y)
-SYSTEMD_DEPENDENCIES += libidn
-SYSTEMD_CONF_OPTS += -Dlibidn=enabled -Dlibidn2=disabled
+SYSTEMD_CONF_OPTS += -Dlibidn2=enabled
 else
-SYSTEMD_CONF_OPTS += -Dlibidn=disabled -Dlibidn2=disabled
+SYSTEMD_CONF_OPTS += -Dlibidn2=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBSECCOMP),y)
@@ -445,7 +441,9 @@ SYSTEMD_CONF_OPTS += -Dmachined=false -Dnss-mymachines=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD_IMPORTD),y)
-SYSTEMD_CONF_OPTS += -Dimportd=enabled
+SYSTEMD_CONF_OPTS += \
+	-Dimportd=enabled \
+	-Ddefault-oci-registry=docker.io
 else
 SYSTEMD_CONF_OPTS += -Dimportd=disabled
 endif
@@ -905,6 +903,7 @@ HOST_SYSTEMD_CONF_OPTS = \
 	-Dbootloader=disabled \
 	-Dbpf-framework=disabled \
 	-Dbzip2=disabled \
+	-Dcompat-sysv-interfaces=false \
 	-Dcoredump=false \
 	-Dcreate-log-dirs=false \
 	-Dcreate-log-dirs=false \
@@ -935,12 +934,12 @@ HOST_SYSTEMD_CONF_OPTS = \
 	-Dldconfig=false \
 	-Dlibarchive=disabled \
 	-Dlibc=glibc \
+	-Dlibcrypt=enabled \
 	-Dlibcryptsetup-plugins=disabled \
 	-Dlibcryptsetup=disabled \
 	-Dlibcurl=disabled \
 	-Dlibfido2=disabled \
 	-Dlibidn2=disabled \
-	-Dlibidn=disabled \
 	-Dlibmount=enabled \
 	-Dlocaled=false \
 	-Dlog-message-verification=disabled \
@@ -983,7 +982,6 @@ HOST_SYSTEMD_CONF_OPTS = \
 	-Dsysupdate=disabled \
 	-Dsysupdated=disabled \
 	-Dsysusers=false \
-	-Dsysvinit-path='' \
 	-Dtests=false \
 	-Dtimedated=false \
 	-Dtimesyncd=false \

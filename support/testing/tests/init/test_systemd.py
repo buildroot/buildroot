@@ -32,7 +32,7 @@ class InitSystemSystemdBase(InitSystemBase):
         self.check_init("/lib/systemd/systemd")
 
         # Test there is no tainted flag.
-        output, ret = self.emulator.run("systemctl --no-pager status")
+        output, ret = self.emulator.run("NO_COLOR=1 systemctl --no-pager status")
         self.assertEqual(ret, 0, f"'systemctl status' failed with exit code {ret}, with:\n{output}")
         try:
             # 'support-ended' tainted flag is only set based on the
@@ -45,7 +45,11 @@ class InitSystemSystemdBase(InitSystemBase):
                 for line in output
                 if line.strip().startswith("Tainted: ")
             ][0]
-            raise RuntimeError(f"Tainted flags: {tainted_flags}")
+            # The prebuilt kernel is version 5.10, which is the lower
+            # bound for systemd support as of v260. Ignore
+            # "old-kernel" taint as long as it is the only flag.
+            if tainted_flags != "old-kernel":
+                raise RuntimeError(f"Tainted flags: {tainted_flags}")
         except IndexError:
             # No tainted flag \o/
             pass
