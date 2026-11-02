@@ -1,0 +1,47 @@
+From 30c746265ebde29806dba77c92fb1fd3803cbf5c Mon Sep 17 00:00:00 2001
+From: "tb@openbsd.org" <tb@openbsd.org>
+Date: Tue, 3 Dec 2024 15:53:51 +0000
+Subject: [PATCH] upstream: Remove redundant field of definition check
+
+This will allow us to get rid of EC_GROUP_method_of() in the near future.
+
+ok djm
+
+OpenBSD-Commit-ID: b4a3d2e00990cf5c2ec6881c21ddca67327c2df8
+Upstream: https://github.com/openssh/openssh-portable/commit/30c746265ebde29806dba77c92fb1fd3803cbf5c
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ sshkey.c | 13 -------------
+ 1 file changed, 13 deletions(-)
+
+diff --git a/sshkey.c b/sshkey.c
+index 73fb89ac27ed..ab80752b8d0b 100644
+--- a/sshkey.c
++++ b/sshkey.c
+@@ -2705,14 +2705,6 @@ sshkey_ec_validate_public(const EC_GROUP *group, const EC_POINT *public)
+ 	 * EC_POINT_oct2point then the caller will need to explicitly check.
+ 	 */
+ 
+-	/*
+-	 * We shouldn't ever hit this case because bignum_get_ecpoint()
+-	 * refuses to load GF2m points.
+-	 */
+-	if (EC_METHOD_get_field_type(EC_GROUP_method_of(group)) !=
+-	    NID_X9_62_prime_field)
+-		goto out;
+-
+ 	/* Q != infinity */
+ 	if (EC_POINT_is_at_infinity(group, public))
+ 		goto out;
+@@ -2812,11 +2804,6 @@ sshkey_dump_ec_point(const EC_GROUP *group, const EC_POINT *point)
+ 		fprintf(stderr, "%s: BN_new failed\n", __func__);
+ 		goto out;
+ 	}
+-	if (EC_METHOD_get_field_type(EC_GROUP_method_of(group)) !=
+-	    NID_X9_62_prime_field) {
+-		fprintf(stderr, "%s: group is not a prime field\n", __func__);
+-		goto out;
+-	}
+ 	if (EC_POINT_get_affine_coordinates_GFp(group, point,
+ 	    x, y, NULL) != 1) {
+ 		fprintf(stderr, "%s: EC_POINT_get_affine_coordinates_GFp\n",
