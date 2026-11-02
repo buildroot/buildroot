@@ -1,0 +1,86 @@
+From f91cb6274e5b13342091a934fadeeb39ea9613d0 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Thu, 29 Oct 2026 12:46:52 +0100
+Subject: [PATCH] fix(esp_hosted_ng): Fix build for kernel 7.3
+
+With commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=914781c72813989b512609a51f8abb68417f722d
+argument u64 *cookie changed into u64 cookie for mgmt_tx callback.
+So let's deal with it when Linux version >= 7.3.0.
+
+With commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4ab9b637b94a
+probe_client callback has been renamed to probe_peer.
+So let's disable probe_client when Linux version >= 7.3.0.
+
+Upstream: https://github.com/espressif/esp-hosted-linux/pull/6
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ host/esp_cfg80211.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/host/esp_cfg80211.c b/host/esp_cfg80211.c
+index 2edd523..ff61de5 100644
+--- a/host/esp_cfg80211.c
++++ b/host/esp_cfg80211.c
+@@ -1190,7 +1190,12 @@ static int esp_cfg80211_mgmt_tx(struct wiphy *wiphy, struct wireless_dev *wdev,
+ #else
+ 				struct cfg80211_mgmt_tx_params *params,
+ #endif
+-		u64 *cookie)
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(7, 3, 0)
++				u64 cookie
++#else
++				u64 *cookie
++#endif
++)
+ {
+ 	struct esp_wifi_device *priv = NULL;
+ 
+@@ -1207,8 +1212,11 @@ static int esp_cfg80211_mgmt_tx(struct wiphy *wiphy, struct wireless_dev *wdev,
+ 		esp_err("empty priv\n");
+ 		return -EINVAL;
+ 	}
+-
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(7, 3, 0)
++	return cmd_mgmt_request(priv, params, &cookie);
++#else
+ 	return cmd_mgmt_request(priv, params, cookie);
++#endif
+ }
+ 
+ static int esp_cfg80211_set_ap_chanwidth(struct wiphy *wiphy,
+@@ -2444,12 +2452,18 @@ static void esp_cfg80211_mgmt_frame_registrations(struct wiphy *wiphy,
+ }
+ #endif
+ 
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(7, 3, 0))
++static int esp_cfg80211_probe_peer(struct wiphy *wiphy, struct net_device *dev,
++                                  const u8 *peer, u64 cookie)
++#else
+ static int esp_cfg80211_probe_client(struct wiphy *wiphy, struct net_device *dev,
+                                   const u8 *peer, u64 *cookie)
++#endif
+ {
+ 	return -EOPNOTSUPP;
+ }
+ 
++
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(7, 1, 0))
+ static int esp_cfg80211_del_station(struct wiphy *wiphy, struct wireless_dev *wdev,
+ 					struct station_del_parameters *params)
+@@ -2675,7 +2689,11 @@ static struct cfg80211_ops esp_cfg80211_ops = {
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 8, 0))
+ 	.update_mgmt_frame_registrations = esp_cfg80211_mgmt_frame_registrations,
+ #endif
++#if (LINUX_VERSION_CODE >= KERNEL_VERSION(7, 3, 0))
++	.probe_peer = esp_cfg80211_probe_peer,
++#else
+ 	.probe_client = esp_cfg80211_probe_client,
++#endif
+ 	.del_station = esp_cfg80211_del_station,
+ 	.add_station = esp_cfg80211_add_station,
+ 	.change_station = esp_cfg80211_change_station,
+-- 
+2.47.3
+
