@@ -17,12 +17,19 @@ LIBGTK4_INSTALL_STAGING = YES
 LIBGTK4_DEPENDENCIES = \
 	host-pkgconf \
 	host-libgtk4 \
+	cairo \
 	gdk-pixbuf \
 	graphene \
+	harfbuzz \
+	jpeg \
+	libdrm \
 	libepoxy \
+	libfribidi \
 	libglib2 \
+	libpng \
 	librsvg \
 	pango \
+	tiff \
 	$(TARGET_NLS_DEPENDENCIES)
 
 LIBGTK4_CONF_OPTS = \
@@ -46,7 +53,17 @@ LIBGTK4_CONF_OPTS += -Dintrospection=disabled
 endif
 
 ifeq ($(BR2_PACKAGE_LIBGTK4_X11),y)
-LIBGTK4_DEPENDENCIES += xlib_libXcursor xlib_libXi xlib_libXinerama
+LIBGTK4_DEPENDENCIES += \
+	fontconfig \
+	xlib_libX11 \
+	xlib_libXcursor \
+	xlib_libXdamage \
+	xlib_libXext \
+	xlib_libXfixes \
+	xlib_libXi \
+	xlib_libXinerama \
+	xlib_libXrandr \
+	xlib_libXrender
 LIBGTK4_CONF_OPTS += -Dx11-backend=true
 else
 LIBGTK4_CONF_OPTS += -Dx11-backend=false
