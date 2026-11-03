@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-COMPOSER_VERSION = 2.5.8
+COMPOSER_VERSION = 2.11.1
 COMPOSER_SOURCE = composer-$(COMPOSER_VERSION).phar
 # Here, we pass a dummy URL parameter in order to control the name the file
 # will have once downloaded.
