@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-EFL_VERSION = 1.28.1
+EFL_VERSION = 1.29.0
 EFL_SOURCE = efl-$(EFL_VERSION).tar.xz
 EFL_SITE = https://download.enlightenment.org/rel/libs/efl
 EFL_LICENSE = BSD-2-Clause, LGPL-2.1+, GPL-2.0+, FTL, MIT
@@ -120,6 +120,13 @@ EFL_CONF_OPTS += -Daudio=true
 EFL_DEPENDENCIES += libsndfile
 else
 EFL_CONF_OPTS += -Daudio=false
+endif
+
+ifeq ($(BR2_PACKAGE_PIPEWIRE),y)
+EFL_CONF_OPTS += -Dpipewire=true
+EFL_DEPENDENCIES += pipewire
+else
+EFL_CONF_OPTS += -Dpipewire=false
 endif
 
 ifeq ($(BR2_PACKAGE_PULSEAUDIO),y)
