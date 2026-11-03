@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RTL8189ES_VERSION = 0a5d04114fac3c9f48a343cb905fbb6a3f9f5df5
+RTL8189ES_VERSION = f4712611578312fcd67795a0d43d78eb70378238
 RTL8189ES_SITE = $(call github,jwrdegoede,rtl8189ES_linux,$(RTL8189ES_VERSION))
 RTL8189ES_LICENSE = GPL-2.0
 
