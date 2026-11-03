@@ -1,5 +1,7 @@
 config BR2_PACKAGE_HOST_SWUGENERATOR
 	bool "host swugenerator"
+	select BR2_PACKAGE_HOST_PYTHON3
+	select BR2_PACKAGE_HOST_PYTHON3_XZ
 	help
 	  A host tool to generate SWU update package for SWUpdate.
 
