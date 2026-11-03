@@ -1,0 +1,44 @@
+From 5962ca083112c45eb3d903a21fc9fcf2e42fead4 Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Mon, 2 Nov 2026 22:42:54 +0100
+Subject: [PATCH] seccomp: fix the build with kernel headers older than 5.9
+
+openat2, faccessat2 and close_range were added in Linux 5.6, 5.8 and
+5.9. With older kernel headers, libseccomp maps them to undefined
+__NR_* macros:
+
+  seccomp.c:59:52: error: '__NR_openat2' undeclared (first use in this function)
+
+Only add the ENOSYS rules when the syscall numbers are defined, like
+it is already done for other syscalls.
+
+Assisted-by: Claude:claude-opus-5-5
+Upstream: sent to file@astron.com on 2026-11-03, Message-Id <20261103050039.3844049-2-yegorslists@googlemail.com>
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ src/seccomp.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/seccomp.c b/src/seccomp.c
+index ea27a3a8..376e09b0 100644
+--- a/src/seccomp.c
++++ b/src/seccomp.c
+@@ -214,9 +214,15 @@ enable_sandbox(int flags, int action)
+ 	ALLOW_RULE(writev);
+ 
+ 	/* Newer variants we don't use. ENOSYS lets glibc fall back. */
++#ifdef __NR_openat2
+ 	ERRNO_RULE(openat2);
++#endif
++#ifdef __NR_faccessat2
+ 	ERRNO_RULE(faccessat2);
++#endif
++#ifdef __NR_close_range
+ 	ERRNO_RULE(close_range);
++#endif
+ 
+ 
+ #if 0
+-- 
+2.34.1
+
