@@ -1,0 +1,67 @@
+From cf60007b5b35ba81d148f20bebd8a0f1d847f5ed Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@gmail.com>
+Date: Mon, 2 Nov 2026 15:50:24 +0100
+Subject: [PATCH] (xmlsec-build) correctly pass crypto cflags to fuzzer
+ programs (#1443)
+
+Upstream: https://github.com/lsh123/xmlsec/commit/cf60007b5b35ba81d148f20bebd8a0f1d847f5ed
+Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+---
+ apps/Makefile.am | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/apps/Makefile.am b/apps/Makefile.am
+index 8b3fda22fc0b..a3f3086aee8a 100644
+--- a/apps/Makefile.am
++++ b/apps/Makefile.am
+@@ -140,6 +140,7 @@ xmlsec_fuzzer_CFLAGS = \
+ 	-I../include \
+ 	-I$(top_srcdir)/include \
+ 	$(XMLSEC_DEFINES) \
++	$(XMLSEC_CRYPTO_CFLAGS) \
+ 	$(LIBXML_CFLAGS) \
+ 	$(NULL)
+ 
+@@ -205,7 +206,8 @@ xmlsec_dsig_verify_fuzzer_CFLAGS = \
+ 	-I../include \
+ 	-I$(top_srcdir)/include \
+ 	$(XMLSEC_DEFINES) \
+-	$(XMLSEC_OPENSSL_CFLAGS) \
++	$(XMLSEC_CRYPTO_CFLAGS) \
++	$(CRYPTO_INCLUDES) \
+ 	$(LIBXML_CFLAGS) \
+ 	$(NULL)
+ 
+@@ -240,7 +242,8 @@ xmlsec_keyinfo_fuzzer_CFLAGS = \
+ 	-I../include \
+ 	-I$(top_srcdir)/include \
+ 	$(XMLSEC_DEFINES) \
+-	$(XMLSEC_OPENSSL_CFLAGS) \
++	$(XMLSEC_CRYPTO_CFLAGS) \
++	$(CRYPTO_INCLUDES) \
+ 	$(LIBXML_CFLAGS) \
+ 	$(NULL)
+ 
+@@ -275,7 +278,8 @@ xmlsec_keyload_fuzzer_CFLAGS = \
+ 	-I../include \
+ 	-I$(top_srcdir)/include \
+ 	$(XMLSEC_DEFINES) \
+-	$(XMLSEC_OPENSSL_CFLAGS) \
++	$(XMLSEC_CRYPTO_CFLAGS) \
++	$(CRYPTO_INCLUDES) \
+ 	$(LIBXML_CFLAGS) \
+ 	$(NULL)
+ 
+@@ -310,7 +314,8 @@ xmlsec_enc_fuzzer_CFLAGS = \
+ 	-I../include \
+ 	-I$(top_srcdir)/include \
+ 	$(XMLSEC_DEFINES) \
+-	$(XMLSEC_OPENSSL_CFLAGS) \
++	$(XMLSEC_CRYPTO_CFLAGS) \
++	$(CRYPTO_INCLUDES) \
+ 	$(LIBXML_CFLAGS) \
+ 	$(NULL)
+ 
+-- 
+2.56.0
+

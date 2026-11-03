@@ -1,0 +1,42 @@
+From 23a3a4b7005aa073c08c189c9389eacbd4f4d787 Mon Sep 17 00:00:00 2001
+From: lsh123 <aleksey@aleksey.com>
+Date: Tue, 27 Oct 2026 17:50:54 -0400
+Subject: [PATCH] Fix no-des build error in fuzzers (#1413)
+
+Upstream: https://github.com/lsh123/xmlsec/commit/23a3a4b7005aa073c08c189c9389eacbd4f4d787
+Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+---
+ apps/oss-fuzz/xmlsec_enc_target.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/apps/oss-fuzz/xmlsec_enc_target.c b/apps/oss-fuzz/xmlsec_enc_target.c
+index 05ce8219aab6..7b21573399d6 100644
+--- a/apps/oss-fuzz/xmlsec_enc_target.c
++++ b/apps/oss-fuzz/xmlsec_enc_target.c
+@@ -104,9 +104,20 @@ static int load_sym_keys(void) {
+     int i;
+ 
+     for (i = 0; i < G_SYM_NKEYS; ++i) {
+-        xmlSecKeyDataId id = g_sym_keys[i].is_des ?
+-            xmlSecOpenSSLKeyDataDesId :
+-            xmlSecOpenSSLKeyDataAesId;
++        xmlSecKeyDataId id = xmlSecKeyDataIdUnknown;
++        if (g_sym_keys[i].is_des == 1) {
++#ifndef XMLSEC_NO_DES
++            id = xmlSecOpenSSLKeyDataDesId;
++#endif /* XMLSEC_NO_DES */
++        } else {
++#ifndef XMLSEC_NO_AES
++            id = xmlSecOpenSSLKeyDataAesId;
++#endif /* XMLSEC_NO_AES */
++        }
++        if (id == xmlSecKeyDataIdUnknown) {
++            /* skip test if algorithm is not supported */
++            continue;
++        }
+         xmlSecKeyPtr key = xmlSecKeyReadMemory(id,
+             (const xmlSecByte*)g_sym_keys[i].material,
+             g_sym_keys[i].size);
+-- 
+2.56.0
+

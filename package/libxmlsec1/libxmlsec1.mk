@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBXMLSEC1_VERSION = 1.3.12
+LIBXMLSEC1_VERSION = 1.3.13
 LIBXMLSEC1_SOURCE = xmlsec1-$(LIBXMLSEC1_VERSION).tar.gz
 LIBXMLSEC1_SITE = https://github.com/lsh123/xmlsec/releases/download/$(LIBXMLSEC1_VERSION)
 LIBXMLSEC1_LICENSE = MIT
@@ -20,7 +20,8 @@ LIBXMLSEC1_CONF_OPTS = \
 	--without-gnutls \
 	--without-gcrypt \
 	--without-nss \
-	--disable-des
+	--disable-des \
+	--disable-hardening
 
 # xmlsec_unit_tests needs xmlDebugDumpDocument() from libxml2 which is not
 # present in buildroot because libxml2 is build with -without-debug
