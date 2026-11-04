@@ -146,6 +146,15 @@ endif
 
 comment "Legacy options removed in 2026.11"
 
+config BR2_PACKAGE_HTPDATE
+	bool "htpdate has been removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_HTTPDATE
+	help
+	  htpdate is in maintenance mode upstream, and its users are
+	  advised to migrate to its successor, httpdate, which is
+	  selected instead.
+
 config BR2_PACKAGE_MESA3D_OPENCL
 	bool "Mesa3D OpenCL support is now provided by RustiCL"
 	select BR2_LEGACY
