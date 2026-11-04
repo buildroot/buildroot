@@ -1,4 +1,4 @@
-From b53a2758ac431bc2493a460e6c886561e2397518 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
 Date: Wed, 22 Feb 2017 17:23:42 -0800
 Subject: [PATCH] Add an option to disable the tk module
@@ -11,7 +11,7 @@ Signed-off-by: Samuel Martin <s.martin49@gmail.com>
 Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 [ Adam Duskett: ported to Python 3.10.0 ]
 Signed-off-by: Adam Duskett <aduskett@gmail.com>
-[ Bernd Kuhls: ported to Python 3.14.2]
+[ Bernd Kuhls: ported to Python 3.15.2]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 [ Adam Duskett: ported to Python 3.12.1 ]
 Signed-off-by: Adam Duskett <adam.duskett@amarulasolutions.com>
@@ -25,10 +25,10 @@ Signed-off-by: Vincent Fazio <vfazio@xes-inc.com>
  2 files changed, 12 insertions(+), 3 deletions(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index c8f7ab1e6a9..2c91d0dda71 100644
+index 6ddced5a68d..c1e78f2a3dc 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2571,7 +2571,6 @@ LIBSUBDIRS=	asyncio \
+@@ -2657,7 +2657,6 @@ LIBSUBDIRS=	asyncio \
  		site-packages \
  		string \
  		sysconfig \
@@ -36,7 +36,7 @@ index c8f7ab1e6a9..2c91d0dda71 100644
  		tomllib \
  		turtledemo \
  		unittest \
-@@ -2681,7 +2680,6 @@ TESTSUBDIRS=	idlelib/idle_test \
+@@ -2791,7 +2790,6 @@ TESTSUBDIRS=	idlelib/idle_test \
  		test/test_pyrepl \
  		test/test_string \
  		test/test_sqlite3 \
@@ -44,7 +44,7 @@ index c8f7ab1e6a9..2c91d0dda71 100644
  		test/test_tomllib \
  		test/test_tomllib/data \
  		test/test_tomllib/data/invalid \
-@@ -2703,7 +2701,6 @@ TESTSUBDIRS=	idlelib/idle_test \
+@@ -2814,7 +2812,6 @@ TESTSUBDIRS=	idlelib/idle_test \
  		test/test_tools \
  		test/test_tools/i18n_data \
  		test/test_tools/msgfmt_data \
@@ -52,7 +52,7 @@ index c8f7ab1e6a9..2c91d0dda71 100644
  		test/test_unittest \
  		test/test_unittest/namespace_test_pkg \
  		test/test_unittest/namespace_test_pkg/bar \
-@@ -2730,6 +2727,11 @@ TESTSUBDIRS=	idlelib/idle_test \
+@@ -2841,6 +2838,11 @@ TESTSUBDIRS=	idlelib/idle_test \
  		test/xmltestdata/c14n-20 \
  		test/zipimport_data
  
@@ -65,10 +65,10 @@ index c8f7ab1e6a9..2c91d0dda71 100644
  
  ifeq (@PYDOC@,yes)
 diff --git a/configure.ac b/configure.ac
-index e8e201206bc..840976ec1bd 100644
+index f9381b83b37..fa4b3492987 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4808,6 +4808,13 @@ AC_ARG_ENABLE(pydoc,
+@@ -4999,6 +4999,13 @@ AC_ARG_ENABLE(pydoc,
  	AS_HELP_STRING([--disable-pydoc], [disable pydoc]),
  	[ PYDOC="${enableval}" ], [ PYDOC=yes ])
  

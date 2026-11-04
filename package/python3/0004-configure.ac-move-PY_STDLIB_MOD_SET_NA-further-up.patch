@@ -1,4 +1,4 @@
-From 930c4763ac46d180880615eceeb68698e9b35e85 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Date: Tue, 6 Feb 2024 22:46:59 +0100
 Subject: [PATCH] configure.ac: move PY_STDLIB_MOD_SET_NA further up
@@ -11,17 +11,17 @@ Upstream: N/A
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 [ Vincent Fazio: ported to Python 3.13.2 ]
 Signed-off-by: Vincent Fazio <vfazio@gmail.com>
-[ Bernd Kuhls: ported to Python 3.14.2]
+[ Bernd Kuhls: ported to Python 3.15.2]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  configure.ac | 13 ++++++-------
  1 file changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 5395e82384b..ec9a24c5311 100644
+index e5c6ef48f7e..1ad30f4a929 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -95,6 +95,12 @@ AC_DEFUN([PY_CHECK_EMSCRIPTEN_PORT], [
+@@ -101,6 +101,12 @@ AC_DEFUN([PY_CHECK_EMSCRIPTEN_PORT], [
    AS_VAR_POPDEF([py_libs])
  ])
  
@@ -34,7 +34,7 @@ index 5395e82384b..ec9a24c5311 100644
  AC_SUBST([BASECPPFLAGS])
  if test "$srcdir" != . -a "$srcdir" != "$(pwd)"; then
      # If we're building out-of-tree, we need to make sure the following
-@@ -7701,13 +7707,6 @@ if test -n "$_PYTHREAD_NAME_MAXLEN"; then
+@@ -8105,13 +8111,6 @@ if test -n "$_PYTHREAD_NAME_MAXLEN"; then
  fi
  AC_SUBST([_PYTHREAD_NAME_MAXLEN])
  

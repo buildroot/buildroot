@@ -1,4 +1,4 @@
-From 8f6beca556599479705444af7cc7c49b2b964af8 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Date: Tue, 6 Feb 2024 22:12:20 +0100
 Subject: [PATCH] Add option to disable the sqlite3 module
@@ -14,7 +14,7 @@ Signed-off-by: Adam Duskett <aduskett@gmail.com>
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 [ Vincent Fazio: ported to Python 3.13.2 ]
 Signed-off-by: Vincent Fazio <vfazio@gmail.com>
-[ Bernd Kuhls: ported to Python 3.14.2]
+[ Bernd Kuhls: ported to Python 3.15.0]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  Makefile.pre.in | 5 ++++-
@@ -22,18 +22,18 @@ Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
  2 files changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/Makefile.pre.in b/Makefile.pre.in
-index 2197bb18434..c8f7ab1e6a9 100644
+index c994e44f46e..6ddced5a68d 100644
 --- a/Makefile.pre.in
 +++ b/Makefile.pre.in
-@@ -2569,7 +2569,6 @@ LIBSUBDIRS=	asyncio \
- 		pathlib \
+@@ -2655,7 +2655,6 @@ LIBSUBDIRS=	asyncio \
+ 		profiling/sampling/_vendor/d3-flame-graph/4.1.3 \
  		re \
  		site-packages \
 -		sqlite3 \
  		string \
  		sysconfig \
  		tkinter \
-@@ -2741,6 +2740,10 @@ ifeq (@IDLE@,yes)
+@@ -2852,6 +2851,10 @@ ifeq (@IDLE@,yes)
  LIBSUBDIRS += idlelib idlelib/Icons
  endif
  
@@ -45,10 +45,10 @@ index 2197bb18434..c8f7ab1e6a9 100644
  
  .PHONY: libinstall
 diff --git a/configure.ac b/configure.ac
-index ec9a24c5311..e8e201206bc 100644
+index 1ad30f4a929..f9381b83b37 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -4795,6 +4795,13 @@ AS_VAR_IF([posix_threads], [stub], [
+@@ -4986,6 +4986,13 @@ AS_VAR_IF([posix_threads], [stub], [
    AC_DEFINE([HAVE_PTHREAD_STUBS], [1], [Define if platform requires stubbed pthreads support])
  ])
  
