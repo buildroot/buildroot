@@ -146,6 +146,16 @@ endif
 
 comment "Legacy options removed in 2026.11"
 
+config BR2_LINUX_KERNEL_LATEST_CIP_RT_VERSION
+	bool "Latest CIP RT SLTS version has been removed"
+	select BR2_LEGACY
+	help
+	  The CIP RT SLTS kernel option has been removed. CIP does not
+	  provide a separate real-time kernel for its 6.12 SLTS series,
+	  as PREEMPT_RT is part of mainline Linux since 6.12. Use the
+	  latest CIP SLTS version and enable CONFIG_PREEMPT_RT in the
+	  kernel configuration instead.
+
 config BR2_PACKAGE_HTPDATE
 	bool "htpdate has been removed"
 	select BR2_LEGACY

@@ -74,10 +74,8 @@ config BR2_LINUX_KERNEL_LATEST_5_10
 	select BR2_LINUX_KERNEL_LATEST_SERIES
 
 config BR2_LINUX_KERNEL_LATEST_CIP_VERSION
-	bool "Latest CIP SLTS version (5.10.254-cip72)"
-	# Support was introduced in Linux 5.19
-	depends on !BR2_loongarch64
-	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10 if BR2_KERNEL_HEADERS_AS_KERNEL
+	bool "Latest CIP SLTS version (6.12.114-cip34)"
+	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_6_12 if BR2_KERNEL_HEADERS_AS_KERNEL
 	select BR2_LINUX_KERNEL_LATEST_SERIES
 	help
 	  CIP launched in the spring of 2016 to address the needs of
@@ -91,23 +89,12 @@ config BR2_LINUX_KERNEL_LATEST_CIP_VERSION
 	  implementation of software building blocks that meet
 	  these requirements.
 
-	  The CIP community plans to maintain 5.10 for security and
+	  The CIP community plans to maintain 6.12 for security and
 	  bug fixes for more than 10 years.
 
-	  https://www.cip-project.org
-
-config BR2_LINUX_KERNEL_LATEST_CIP_RT_VERSION
-	bool "Latest CIP RT SLTS version (5.10.254-cip72-rt32)"
-	# Support was introduced in Linux 5.19
-	depends on !BR2_loongarch64
-	select BR2_TOOLCHAIN_HEADERS_AT_LEAST_5_10 if BR2_KERNEL_HEADERS_AS_KERNEL
-	select BR2_LINUX_KERNEL_LATEST_SERIES
-	help
-	  Same as the CIP version, but this is the PREEMPT_RT realtime
-	  variant.
-
-	  The CIP community plans to maintain 5.10 for security and
-	  bug fixes for more than 10 years.
+	  CIP does not provide a separate real-time kernel for 6.12:
+	  PREEMPT_RT is part of mainline Linux since 6.12, enable
+	  CONFIG_PREEMPT_RT in the kernel configuration to use it.
 
 	  https://www.cip-project.org
 
@@ -189,8 +176,7 @@ config BR2_LINUX_KERNEL_VERSION
 	default "6.1.191" if BR2_LINUX_KERNEL_LATEST_6_1
 	default "5.15.224" if BR2_LINUX_KERNEL_LATEST_5_15
 	default "5.10.273" if BR2_LINUX_KERNEL_LATEST_5_10
-	default "5.10.254-cip72" if BR2_LINUX_KERNEL_LATEST_CIP_VERSION
-	default "5.10.254-cip72-rt32" if BR2_LINUX_KERNEL_LATEST_CIP_RT_VERSION
+	default "6.12.114-cip34" if BR2_LINUX_KERNEL_LATEST_CIP_VERSION
 	default BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE \
 		if BR2_LINUX_KERNEL_CUSTOM_VERSION
 	default "custom" if BR2_LINUX_KERNEL_CUSTOM_TARBALL
