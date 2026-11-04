@@ -1,0 +1,11 @@
+config BR2_PACKAGE_HTTPDATE
+	bool "httpdate"
+	depends on BR2_USE_MMU # daemon()
+	select BR2_PACKAGE_LIBCURL
+	help
+	  httpdate synchronizes the system time using the Date header
+	  of HTTP and HTTPS servers, which is useful on networks where
+	  NTP is blocked but web access is permitted. It is the
+	  successor of htpdate.
+
+	  https://github.com/twekkel/httpdate

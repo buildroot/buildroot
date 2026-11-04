@@ -1,0 +1,12 @@
+[Unit]
+Description=httpdate daemon
+After=network.target
+
+[Service]
+Type=simple
+Environment=HTTPDATE_ARGS="-s https://www.google.com"
+EnvironmentFile=-/etc/default/httpdate
+ExecStart=/usr/bin/httpdate -F $HTTPDATE_ARGS
+
+[Install]
+WantedBy=multi-user.target
