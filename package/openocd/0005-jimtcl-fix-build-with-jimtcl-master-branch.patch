@@ -1,0 +1,64 @@
+From fe0080478b9e76a4b6b64186b7b705726ac55848 Mon Sep 17 00:00:00 2001
+From: Antonio Borneo <borneo.antonio@gmail.com>
+Date: Sat, 28 Sep 2024 17:58:51 +0200
+Subject: [PATCH] jimtcl: fix build with jimtcl master branch
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Current jimtcl release 0.83 has been tagged on 2024-08-28 and the
+new 0.84 is on the way.
+
+The change [1] merged in jimtcl branch 'master' for 0.84 breaks
+the build of OpenOCD.
+OpenOCD releases are not frequent and jimtcl is now by default an
+external build dependency. The release of jimtcl 0.84 could force
+OpenOCD to deliver a fix release to support it.
+
+Anticipate the change [1] by detecting it at compile time, without
+relying on jimtcl version, and providing an alternative code.
+
+Link: https://github.com/msteveb/jimtcl/commit/5669e84aad22 [1]
+Change-Id: I61bf100d447083258aea222aaf15608b7cbe2e57
+Signed-off-by: Antonio Borneo <borneo.antonio@gmail.com>
+Reviewed-on: https://review.openocd.org/c/openocd/+/8956
+Tested-by: jenkins
+Reviewed-by: Andrzej Sierżęga <asier70@gmail.com>
+
+Upstream: https://github.com/openocd-org/openocd/commit/fe0080478b9e76a4b6b64186b7b705726ac55848
+
+[Yegor: refresh context for 0.12.0]
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ src/helper/command.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/src/helper/command.c b/src/helper/command.c
+index ca66cf7..31964d5 100644
+--- a/src/helper/command.c
++++ b/src/helper/command.c
+@@ -48,17 +48,22 @@ static int help_del_command(struct command_context *cmd_ctx, const char *cmd_nam
+ /* set of functions to wrap jimtcl internal data */
+ static inline bool jimcmd_is_proc(Jim_Cmd *cmd)
+ {
++#if defined(JIM_CMD_ISPROC)
++	// JIM_VERSION >= 84
++	return cmd->flags & JIM_CMD_ISPROC;
++#else
+ 	return cmd->isproc;
++#endif
+ }
+ 
+ bool jimcmd_is_oocd_command(Jim_Cmd *cmd)
+ {
+-	return !cmd->isproc && cmd->u.native.cmdProc == jim_command_dispatch;
++	return !jimcmd_is_proc(cmd) && cmd->u.native.cmdProc == jim_command_dispatch;
+ }
+ 
+ void *jimcmd_privdata(Jim_Cmd *cmd)
+ {
+-	return cmd->isproc ? NULL : cmd->u.native.privData;
++	return jimcmd_is_proc(cmd) ? NULL : cmd->u.native.privData;
+ }
+ 
+ static void tcl_output(void *privData, const char *file, unsigned line,
