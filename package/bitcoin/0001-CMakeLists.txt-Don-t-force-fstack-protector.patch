@@ -8,6 +8,7 @@ not, for example to support toolchains that don't have SSP support.
 
 Upstream: N/A Buildroot specific
 
+[Bernd: rebased for 32.1]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 ---
  CMakeLists.txt | 1 -
@@ -17,7 +18,7 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 892f30d94b..93ccbf71ec 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -532,7 +532,6 @@ else()
+@@ -551,7 +551,6 @@ else()
    unset(cxx_supports_fortify_source)
  
    try_append_cxx_flags("-Wstack-protector" TARGET core_interface SKIP_LINK)

@@ -4,13 +4,13 @@
 #
 ################################################################################
 
-BITCOIN_VERSION = 31.1
+BITCOIN_VERSION = 32.1
 BITCOIN_SITE = https://bitcoincore.org/bin/bitcoin-core-$(BITCOIN_VERSION)
 BITCOIN_LICENSE = MIT
 BITCOIN_LICENSE_FILES = COPYING
 BITCOIN_CPE_ID_VENDOR = bitcoin
 BITCOIN_CPE_ID_PRODUCT = bitcoin_core
-BITCOIN_DEPENDENCIES = host-pkgconf boost libevent
+BITCOIN_DEPENDENCIES = host-pkgconf boost
 BITCOIN_SUPPORTS_IN_SOURCE_BUILD = NO
 BITCOIN_MAKE_ENV = BITCOIN_GENBUILD_NO_GIT=1
 BITCOIN_CONF_OPTS = \
