@@ -1,0 +1,106 @@
+From 95a1f238ce3a75eca4555a97f643e6980facc1ea Mon Sep 17 00:00:00 2001
+From: Bob Halley <halley@dnspython.org>
+Date: Sat, 26 Sep 2026 13:38:07 -0700
+Subject: [PATCH] Limit decompression to a chain length of at most 16 pointers.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+A maliciously crafted DNS message may cause dns.name.from_wire_parser() to use excessive CPU for DNS name decompression. Applications which process untrusted DNS wire form messages with dnspython may be degraded or DoS'd by the extra CPU use required.
+
+Credit:
+
+Evgenios Gkritsis, Department of Informatics, University of Piraeus & Athena Research Center, Greece
+Constantinos Patsakis, Department of Informatics, University of Piraeus & Athena Research Center, Greece
+George Stergiopoulos, Department of Informatics, Athens University of Economics and Business, Greece
+
+(cherry picked from commit b485e460c266540a1a09ca6d8d1d7b685b1d3023)
+Signed-off-by: Raphaël Mélotte <raphael.melotte@mind.be>
+CVE: CVE-2026-114605
+Upstream: https://github.com/rthalley/dnspython/commit/b485e460c266540a1a09ca6d8d1d7b685b1d3023
+---
+ dns/name.py        | 11 ++++++++++-
+ tests/test_name.py | 22 ++++++++++++++++++++++
+ 2 files changed, 32 insertions(+), 1 deletion(-)
+
+diff --git a/dns/name.py b/dns/name.py
+index f79f0d0f..0b2bf35e 100644
+--- a/dns/name.py
++++ b/dns/name.py
+@@ -86,6 +86,10 @@ class BadPointer(dns.exception.FormError):
+     """A DNS compression pointer points forward instead of backward."""
+ 
+ 
++class PointerChainTooLong(dns.exception.FormError):
++    """A DNS compression pointer chain was too long."""
++
++
+ class BadLabelType(dns.exception.FormError):
+     """The label type in DNS name wire format is unknown."""
+ 
+@@ -1064,9 +1068,10 @@ def from_text(
+     return Name(labels)
+ 
+ 
+-# we need 'dns.wire.Parser' quoted as dns.name and dns.wire depend on each other.
++MAX_COMPRESSION_POINTER_CHAIN = 16
+ 
+ 
++# we need 'dns.wire.Parser' quoted as dns.name and dns.wire depend on each other.
+ def from_wire_parser(parser: "dns.wire.Parser") -> Name:
+     """Convert possibly compressed wire format into a Name.
+ 
+@@ -1082,6 +1087,7 @@ def from_wire_parser(parser: "dns.wire.Parser") -> Name:
+ 
+     labels = []
+     biggest_pointer = parser.current
++    hops = 0
+     with parser.restore_furthest():
+         count = parser.get_uint8()
+         while count != 0:
+@@ -1092,6 +1098,9 @@ def from_wire_parser(parser: "dns.wire.Parser") -> Name:
+                 if current >= biggest_pointer:
+                     raise BadPointer
+                 biggest_pointer = current
++                hops += 1
++                if hops > MAX_COMPRESSION_POINTER_CHAIN:
++                    raise PointerChainTooLong
+                 parser.seek(current)
+             else:
+                 raise BadLabelType
+diff --git a/tests/test_name.py b/tests/test_name.py
+index 96c03459..f4bb860f 100644
+--- a/tests/test_name.py
++++ b/tests/test_name.py
+@@ -739,6 +739,28 @@ class NameTestCase(unittest.TestCase):
+ 
+         self.assertRaises(dns.name.BadLabelType, bad)
+ 
++    def testCompressionChainLength(self):
++        # We're going to decode some wire starting two bytes from the end.  At this
++        # position is a pointer which points to four bytes from the end, and it points
++        # to one 6 bytes from the end, etc., until finally the 16th pointer points at
++        # offset zero, which is the root label followed by a byte of padding.  After
++        # all of this useless pointer hopping, we should get the root name.
++        w = b"\x00\x00\xc0\x00\xc0\x02\xc0\x04\xc0\x06\xc0\x08\xc0\x0a\xc0\x0c\xc0\x0e\xc0\x10\xc0\x12\xc0\x14\xc0\x16\xc0\x18\xc0\x1a\xc0\x1c\xc0\x1e"
++        self.assertEqual(len(w), 34)
++        starts = [c for c in w if c == 0xC0]
++        self.assertEqual(len(starts), dns.name.MAX_COMPRESSION_POINTER_CHAIN)
++
++        def bad():
++            # Now we make the wire one pointer longer, which is too long!
++            w1 = w + b"\xc0\x20"
++            self.assertEqual(len(w1), 36)
++            starts = [c for c in w1 if c == 0xC0]
++            self.assertEqual(len(starts), dns.name.MAX_COMPRESSION_POINTER_CHAIN + 1)
++            dns.name.from_wire(w1, 34)
++
++        self.assertEqual(dns.name.from_wire(w, 32)[0], dns.name.from_text("."))
++        self.assertRaises(dns.name.PointerChainTooLong, bad)
++
+     def testParent1(self):
+         n = dns.name.from_text("foo.bar.")
+         self.assertEqual(n.parent(), dns.name.from_text("bar."))
+-- 
+2.54.0
+
