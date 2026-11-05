@@ -1,0 +1,113 @@
+From 5b72148221405de22589011e9f56247468a2c51a Mon Sep 17 00:00:00 2001
+From: Fiona Klute <fiona.klute@gmx.de>
+Date: Thu, 15 Oct 2026 18:25:16 +0200
+Subject: [PATCH] Do not set FTS.fts_statp to NULL, fix segfault
+
+Glibc always allocates fts_statp since commit
+99303f387179332d64e5ee34a6b58e82a523bae5 ("io: Use gnulib fts
+implementation (BZ 22944, BZ 20331)"), and expects it to be allocated,
+including using fts_statp->st_size to indicate whether fts_read should
+stat the entry (see fts_set_stat_required() in io/fts.c). The
+structure is reused, and with that setting fts_statp to NULL causes a
+segfault on a following call that tries to set a field in fts_statp.
+
+Instead of setting fts_statp to NULL and checking for that, check for
+FTS_NOSTAT and fts_info values indicating that fts_statp is undefined,
+and leave fts_statp alone if either is true.
+
+Program to reproduce the problem with glibc versions newer than the
+commit mentioned above (pass at least one directory on the command
+line, files do not trigger the segfault):
+
+int main(int argc, char **argv) {
+	if (!argv[1]) {
+		printf("no parameters!\n");
+		exit(1);
+	}
+
+	FTS *fts = fts_open(&(argv[1]), FTS_NOSTAT | FTS_PHYSICAL, NULL);
+	if (!fts) {
+		perror("fts_open() failed");
+		exit(2);
+	}
+
+	for (FTSENT *ftsent = fts_read(fts); ftsent != NULL; ftsent = fts_read(fts)) {
+		printf("seen: %s\n", ftsent->fts_accpath);
+	}
+	if (errno != 0)
+		perror("fts_read() failed");
+
+	if (fts_close(fts) < 0) {
+		perror("fts_close() failed");
+		exit(3);
+	}
+	return 0;
+}
+
+Signed-off-by: Fiona Klute <fiona.klute@gmx.de>
+Upstream: https://salsa.debian.org/clint/fakeroot/-/commit/322d274c0899c82167794142ad2cd3e1a6e5ef07
+---
+
+ libfakeroot.c         |  9 ++++-----
+ libfakeroot_inode64.c | 11 ++++-------
+ 2 files changed, 8 insertions(+), 12 deletions(-)
+
+diff --git a/libfakeroot.c b/libfakeroot.c
+index 69e2f6f..4a00fb8 100644
+--- a/libfakeroot.c
++++ b/libfakeroot.c
+@@ -2151,10 +2151,8 @@ FTSENT *fts_read(FTS *ftsp) {
+   }
+ #endif /* LIBFAKEROOT_DEBUGGING */
+   r=next_fts_read(ftsp);
+-  if (r && ((ftsp->fts_options & FTS_NOSTAT)
+-            || r->fts_info == FTS_NS || r->fts_info == FTS_NSOK))
+-    r->fts_statp = NULL;  /* Otherwise fts_statp may be a random pointer */
+-  if(r && r->fts_statp) {  /* Should we bother checking fts_info here? */
++  if (r && !(ftsp->fts_options & FTS_NOSTAT
++             || r->fts_info == FTS_NS || r->fts_info == FTS_NSOK)) {
+     SEND_GET_STAT(r->fts_statp, _STAT_VER);
+   }
+ 
+@@ -2173,7 +2171,8 @@ FTSENT *fts_children(FTS *ftsp, int options) {
+ #endif /* LIBFAKEROOT_DEBUGGING */
+   first=next_fts_children(ftsp, options);
+   for(r = first; r; r = r->fts_link) {
+-    if(r && r->fts_statp) {  /* Should we bother checking fts_info here? */
++    if (r && !(ftsp->fts_options & FTS_NOSTAT
++               || r->fts_info == FTS_NS || r->fts_info == FTS_NSOK)) {
+       SEND_GET_STAT(r->fts_statp, _STAT_VER);
+     }
+   }
+diff --git a/libfakeroot_inode64.c b/libfakeroot_inode64.c
+index ba5802c..e5aecbd 100644
+--- a/libfakeroot_inode64.c
++++ b/libfakeroot_inode64.c
+@@ -112,12 +112,8 @@ FTSENT *fts_read$INODE64(FTS *ftsp) {
+   }
+ #endif /* LIBFAKEROOT_DEBUGGING */
+   r=next_fts_read$INODE64(ftsp);
+-#ifdef __APPLE__
+-  if (r && ((ftsp->fts_options & FTS_NOSTAT)
+-            || r->fts_info == FTS_NS || r->fts_info == FTS_NSOK))
+-    r->fts_statp = NULL;  /* Otherwise fts_statp may be a random pointer */
+-#endif
+-  if(r && r->fts_statp) {  /* Should we bother checking fts_info here? */
++  if (r && !(ftsp->fts_options & FTS_NOSTAT
++             || r->fts_info == FTS_NS || r->fts_info == FTS_NSOK)) {
+     send_get_stat64((struct stat64 *)r->fts_statp);
+   }
+ 
+@@ -136,7 +132,8 @@ FTSENT *fts_children$INODE64(FTS *ftsp,
+ #endif /* LIBFAKEROOT_DEBUGGING */
+   first=next_fts_children$INODE64(ftsp, options);
+   for(r = first; r; r = r->fts_link) {
+-    if(r->fts_statp) {  /* Should we bother checking fts_info here? */
++    if (!(ftsp->fts_options & FTS_NOSTAT
++          || r->fts_info == FTS_NS || r->fts_info == FTS_NSOK)) {
+       send_get_stat64((struct stat64 *)r->fts_statp);
+     }
+   }
+-- 
+2.55.0
+
