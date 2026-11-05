@@ -4,7 +4,8 @@
 #
 ################################################################################
 
-MINIZIP_ZLIB_VERSION = 1.3.1
+# When updating the version here, please also update the libzlib package
+MINIZIP_ZLIB_VERSION = 1.4
 MINIZIP_ZLIB_SOURCE = zlib-$(MINIZIP_ZLIB_VERSION).tar.xz
 MINIZIP_ZLIB_SITE = http://www.zlib.net
 MINIZIP_ZLIB_LICENSE = Zlib
