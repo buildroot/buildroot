@@ -26,7 +26,7 @@ TI_K3_R5_LOADER_SITE_METHOD = svn
 TI_K3_R5_LOADER_SOURCE = u-boot-$(TI_K3_R5_LOADER_VERSION).tar.gz
 else
 # Handle stable official U-Boot versions
-TI_K3_R5_LOADER_SITE = https://ftp.denx.de/pub/u-boot
+TI_K3_R5_LOADER_SITE = https://git.u-boot-project.org/u-boot/u-boot/-/releases/v$(TI_K3_R5_LOADER_VERSION)/downloads
 TI_K3_R5_LOADER_SOURCE = u-boot-$(TI_K3_R5_LOADER_VERSION).tar.bz2
 endif
 
