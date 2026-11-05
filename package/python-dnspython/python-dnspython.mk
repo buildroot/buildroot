@@ -11,5 +11,8 @@ PYTHON_DNSPYTHON_LICENSE = ISC
 PYTHON_DNSPYTHON_LICENSE_FILES = LICENSE
 PYTHON_DNSPYTHON_SETUP_TYPE = hatch
 
+# 0001-limit-decompression-to-a-chain-length-of-at-most-16-pointers.patch
+PYTHON_DNSPYTHON_IGNORE_CVES += CVE-2026-114605
+
 $(eval $(python-package))
 $(eval $(host-python-package))
