@@ -42,6 +42,8 @@ endif
 # https://github.com/numpy/numpy/blob/v1.26.4/numpy/core/meson.build#L376-L455
 ifeq ($(BR2_arcle),y)
 PYTHON_NUMPY_LONGDOUBLE_FORMAT = IEEE_DOUBLE_LE
+else ifeq ($(BR2_arceb),y)
+PYTHON_NUMPY_LONGDOUBLE_FORMAT = IEEE_DOUBLE_BE
 else ifeq ($(BR2_aarch64),y)
 PYTHON_NUMPY_LONGDOUBLE_FORMAT = IEEE_QUAD_LE
 else ifeq ($(BR2_aarch64_be),y)
