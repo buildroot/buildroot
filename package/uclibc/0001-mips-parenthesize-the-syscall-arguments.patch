@@ -1,0 +1,185 @@
+From bbc1470d5d1c0f206cfdc3e9ebf60f6fd9cd3961 Mon Sep 17 00:00:00 2001
+From: ramin <lordrasmus@gmail.com>
+Date: Sat, 7 Nov 2026 12:04:15 +0100
+Subject: [PATCH] mips: parenthesize the syscall arguments
+
+The register setup in internal_syscallN cast each argument without
+parentheses, (ARG_TYPE) arg2.  An argument like "value ? &itv32 : NULL"
+then reads ((long) value) ? &itv32 : NULL, and the pointer goes into a
+long without a cast.  With UCLIBC_USE_TIME64 on 32-bit mips the build
+stops in getitimer, sched_rr_get_interval, timer_gettime and
+timerfd_gettime:
+
+  error: initialization of 'long int' from 'struct __itimerval32_struct *'
+  makes integer from pointer without a cast [-Wint-conversion]
+
+Upstream: https://github.com/wbx-github/uclibc-ng/commit/bbc1470d5d1c0f206cfdc3e9ebf60f6fd9cd3961
+Signed-off-by: Ramin Moussavi <lordrasmus@gmail.com>
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+---
+ libc/sysdeps/linux/mips/bits/syscalls.h | 72 ++++++++++++-------------
+ 1 file changed, 36 insertions(+), 36 deletions(-)
+
+diff --git a/libc/sysdeps/linux/mips/bits/syscalls.h b/libc/sysdeps/linux/mips/bits/syscalls.h
+index ee569ee22..10d759a71 100644
+--- a/libc/sysdeps/linux/mips/bits/syscalls.h
++++ b/libc/sysdeps/linux/mips/bits/syscalls.h
+@@ -85,7 +85,7 @@
+ 									\
+ 	{								\
+ 	register ARG_TYPE __v0 __asm__("$2") ncs_init;			\
+-	register ARG_TYPE __a0 __asm__("$4") = (ARG_TYPE) arg1;		\
++	register ARG_TYPE __a0 __asm__("$4") = (ARG_TYPE) (arg1);		\
+ 	register ARG_TYPE __a3 __asm__("$7");				\
+ 	__asm__ __volatile__ (						\
+ 	".set\tnoreorder\n\t"						\
+@@ -107,8 +107,8 @@
+ 									\
+ 	{								\
+ 	register ARG_TYPE __v0 __asm__("$2") ncs_init;			\
+-	register ARG_TYPE __a0 __asm__("$4") = (ARG_TYPE) arg1;		\
+-	register ARG_TYPE __a1 __asm__("$5") = (ARG_TYPE) arg2;		\
++	register ARG_TYPE __a0 __asm__("$4") = (ARG_TYPE) (arg1);		\
++	register ARG_TYPE __a1 __asm__("$5") = (ARG_TYPE) (arg2);		\
+ 	register ARG_TYPE __a3 __asm__("$7");				\
+ 	__asm__ __volatile__ (						\
+ 	".set\tnoreorder\n\t"						\
+@@ -130,9 +130,9 @@
+ 									\
+ 	{								\
+ 	register ARG_TYPE __v0 __asm__("$2") ncs_init;			\
+-	register ARG_TYPE __a0 __asm__("$4") = (ARG_TYPE) arg1;		\
+-	register ARG_TYPE __a1 __asm__("$5") = (ARG_TYPE) arg2;		\
+-	register ARG_TYPE __a2 __asm__("$6") = (ARG_TYPE) arg3;		\
++	register ARG_TYPE __a0 __asm__("$4") = (ARG_TYPE) (arg1);		\
++	register ARG_TYPE __a1 __asm__("$5") = (ARG_TYPE) (arg2);		\
++	register ARG_TYPE __a2 __asm__("$6") = (ARG_TYPE) (arg3);		\
+ 	register ARG_TYPE __a3 __asm__("$7");				\
+ 	__asm__ __volatile__ (						\
+ 	".set\tnoreorder\n\t"						\
+@@ -154,10 +154,10 @@
+ 									\
+ 	{								\
+ 	register ARG_TYPE __v0 __asm__("$2") ncs_init;			\
+-	register ARG_TYPE __a0 __asm__("$4") = (ARG_TYPE) arg1;		\
+-	register ARG_TYPE __a1 __asm__("$5") = (ARG_TYPE) arg2;		\
+-	register ARG_TYPE __a2 __asm__("$6") = (ARG_TYPE) arg3;		\
+-	register ARG_TYPE __a3 __asm__("$7") = (ARG_TYPE) arg4;		\
++	register ARG_TYPE __a0 __asm__("$4") = (ARG_TYPE) (arg1);		\
++	register ARG_TYPE __a1 __asm__("$5") = (ARG_TYPE) (arg2);		\
++	register ARG_TYPE __a2 __asm__("$6") = (ARG_TYPE) (arg3);		\
++	register ARG_TYPE __a3 __asm__("$7") = (ARG_TYPE) (arg4);		\
+ 	__asm__ __volatile__ (						\
+ 	".set\tnoreorder\n\t"						\
+ 	cs_init								\
+@@ -187,10 +187,10 @@
+ 	int* array = FORCE_FRAME_POINTER;				\
+ 	{								\
+ 	register long __v0 __asm__("$2") ncs_init;			\
+-	register long __a0 __asm__("$4") = (long) arg1;			\
+-	register long __a1 __asm__("$5") = (long) arg2;			\
+-	register long __a2 __asm__("$6") = (long) arg3;			\
+-	register long __a3 __asm__("$7") = (long) arg4;			\
++	register long __a0 __asm__("$4") = (long) (arg1);			\
++	register long __a1 __asm__("$5") = (long) (arg2);			\
++	register long __a2 __asm__("$6") = (long) (arg3);			\
++	register long __a3 __asm__("$7") = (long) (arg4);			\
+ 	__asm__ __volatile__ (						\
+ 	".set\tnoreorder\n\t"						\
+ 	"subu\t$29, 32\n\t"                                             \
+@@ -202,7 +202,7 @@
+ 	".set\treorder"						        \
+ 	: "=r" (__v0), "+r" (__a3)					\
+ 	: input, "r" (__a0), "r" (__a1), "r" (__a2),			\
+-	  "r" ((long)arg5), "r" (array)					\
++	  "r" ((long) (arg5)), "r" (array)					\
+ 	: __SYSCALL_CLOBBERS);						\
+ 	err = __a3;							\
+ 	_sys_result = __v0;						\
+@@ -217,10 +217,10 @@
+ 	int* array = FORCE_FRAME_POINTER;				\
+ 	{								\
+ 	register long __v0 __asm__("$2") ncs_init;			\
+-	register long __a0 __asm__("$4") = (long) arg1;			\
+-	register long __a1 __asm__("$5") = (long) arg2;			\
+-	register long __a2 __asm__("$6") = (long) arg3;			\
+-	register long __a3 __asm__("$7") = (long) arg4;			\
++	register long __a0 __asm__("$4") = (long) (arg1);			\
++	register long __a1 __asm__("$5") = (long) (arg2);			\
++	register long __a2 __asm__("$6") = (long) (arg3);			\
++	register long __a3 __asm__("$7") = (long) (arg4);			\
+ 	__asm__ __volatile__ (						\
+ 	".set\tnoreorder\n\t"                                           \
+ 	"subu\t$29, 32\n\t"                                             \
+@@ -233,7 +233,7 @@
+ 	".set\treorder"						        \
+ 	: "=r" (__v0), "+r" (__a3)					\
+ 	: input, "r" (__a0), "r" (__a1), "r" (__a2),			\
+-	  "r" ((long)arg5), "r" ((long)arg6), "r" (array)		\
++	  "r" ((long) (arg5)), "r" ((long) (arg6)), "r" (array)		\
+ 	: __SYSCALL_CLOBBERS);						\
+ 	err = __a3;							\
+ 	_sys_result = __v0;						\
+@@ -248,10 +248,10 @@
+ 	int* array = FORCE_FRAME_POINTER;				\
+ 	{								\
+ 	register long __v0 __asm__("$2") ncs_init;			\
+-	register long __a0 __asm__("$4") = (long) arg1;			\
+-	register long __a1 __asm__("$5") = (long) arg2;			\
+-	register long __a2 __asm__("$6") = (long) arg3;			\
+-	register long __a3 __asm__("$7") = (long) arg4;			\
++	register long __a0 __asm__("$4") = (long) (arg1);			\
++	register long __a1 __asm__("$5") = (long) (arg2);			\
++	register long __a2 __asm__("$6") = (long) (arg3);			\
++	register long __a3 __asm__("$7") = (long) (arg4);			\
+ 	__asm__ __volatile__ (						\
+ 	".set\tnoreorder\n\t"						\
+ 	"subu\t$29, 32\n\t"                                             \
+@@ -265,7 +265,7 @@
+ 	".set\treorder"							\
+ 	: "=r" (__v0), "+r" (__a3)					\
+ 	: input, "r" (__a0), "r" (__a1), "r" (__a2),			\
+-	  "r" ((long)arg5), "r" ((long)arg6), "r" ((long)arg7),		\
++	  "r" ((long) (arg5)), "r" ((long) (arg6)), "r" ((long) (arg7)),		\
+ 	  "r" (array)							\
+ 	: __SYSCALL_CLOBBERS);						\
+ 	err = __a3;							\
+@@ -290,11 +290,11 @@
+ 									\
+ 	{								\
+ 	register ARG_TYPE __v0 __asm__("$2") ncs_init;			\
+-	register ARG_TYPE __a0 __asm__("$4") = (ARG_TYPE) arg1; 	\
+-	register ARG_TYPE __a1 __asm__("$5") = (ARG_TYPE) arg2; 	\
+-	register ARG_TYPE __a2 __asm__("$6") = (ARG_TYPE) arg3; 	\
+-	register ARG_TYPE __a3 __asm__("$7") = (ARG_TYPE) arg4; 	\
+-	register ARG_TYPE __a4 __asm__("$8") = (ARG_TYPE) arg5; 	\
++	register ARG_TYPE __a0 __asm__("$4") = (ARG_TYPE) (arg1); 	\
++	register ARG_TYPE __a1 __asm__("$5") = (ARG_TYPE) (arg2); 	\
++	register ARG_TYPE __a2 __asm__("$6") = (ARG_TYPE) (arg3); 	\
++	register ARG_TYPE __a3 __asm__("$7") = (ARG_TYPE) (arg4); 	\
++	register ARG_TYPE __a4 __asm__("$8") = (ARG_TYPE) (arg5); 	\
+ 	__asm__ __volatile__ ( 						\
+ 	".set\tnoreorder\n\t" 						\
+ 	cs_init								\
+@@ -315,12 +315,12 @@
+ 									\
+ 	{								\
+ 	register ARG_TYPE __v0 __asm__("$2") ncs_init;			\
+-	register ARG_TYPE __a0 __asm__("$4") = (ARG_TYPE) arg1; 	\
+-	register ARG_TYPE __a1 __asm__("$5") = (ARG_TYPE) arg2; 	\
+-	register ARG_TYPE __a2 __asm__("$6") = (ARG_TYPE) arg3; 	\
+-	register ARG_TYPE __a3 __asm__("$7") = (ARG_TYPE) arg4; 	\
+-	register ARG_TYPE __a4 __asm__("$8") = (ARG_TYPE) arg5; 	\
+-	register ARG_TYPE __a5 __asm__("$9") = (ARG_TYPE) arg6; 	\
++	register ARG_TYPE __a0 __asm__("$4") = (ARG_TYPE) (arg1); 	\
++	register ARG_TYPE __a1 __asm__("$5") = (ARG_TYPE) (arg2); 	\
++	register ARG_TYPE __a2 __asm__("$6") = (ARG_TYPE) (arg3); 	\
++	register ARG_TYPE __a3 __asm__("$7") = (ARG_TYPE) (arg4); 	\
++	register ARG_TYPE __a4 __asm__("$8") = (ARG_TYPE) (arg5); 	\
++	register ARG_TYPE __a5 __asm__("$9") = (ARG_TYPE) (arg6); 	\
+ 	__asm__ __volatile__ ( 						\
+ 	".set\tnoreorder\n\t" 						\
+ 	cs_init								\
+-- 
+2.47.3
+
