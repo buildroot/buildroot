@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-ED_VERSION = 1.22.5
+ED_VERSION = 1.22.6
 ED_SITE = $(BR2_GNU_MIRROR)/ed
 ED_SOURCE = ed-$(ED_VERSION).tar.lz
 ED_LICENSE = GPL-2.0+
