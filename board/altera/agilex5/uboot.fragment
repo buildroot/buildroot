@@ -1,0 +1,4 @@
+CONFIG_USE_BOOTARGS=y
+CONFIG_BOOTARGS="console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait"
+CONFIG_USE_BOOTCOMMAND=y
+CONFIG_BOOTCOMMAND="if fatload mmc 0:1 ${loadaddr} ghrd.core.rbf; then fpga load 0 ${loadaddr} ${filesize}; bridge enable; fi; mmc rescan; fatload mmc 0:1 82000000 Image; fatload mmc 0:1 86000000 socfpga_agilex5_socdk.dtb; setenv bootargs console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait; booti 0x82000000 - 0x86000000"
