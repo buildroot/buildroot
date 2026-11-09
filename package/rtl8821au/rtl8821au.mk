@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RTL8821AU_VERSION = bb26b6b06c47b79c17426ef186f44a608dbed7a0
+RTL8821AU_VERSION = 3eee07cb78dd0bc9a89b7fe383e467403efb3b97
 RTL8821AU_SITE = $(call github,benetti-engineering,rtl8821au,$(RTL8821AU_VERSION))
 RTL8821AU_LICENSE = GPL-2.0
 RTL8821AU_LICENSE_FILES = LICENSE
