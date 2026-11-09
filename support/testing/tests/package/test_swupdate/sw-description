@@ -1,0 +1,16 @@
+software =
+{
+	version = "1.0.0";
+	description = "Buildroot runtime test update";
+
+	files: (
+		{
+			filename = "swupdate-test.txt";
+			path = "/tmp/swupdate-test/swupdate-test.txt";
+			type = "rawfile";
+			properties = {
+				create-destination = "true";
+			};
+		}
+	);
+}
