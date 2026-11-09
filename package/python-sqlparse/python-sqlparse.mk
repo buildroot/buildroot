@@ -13,4 +13,7 @@ PYTHON_SQLPARSE_LICENSE_FILES = LICENSE
 PYTHON_SQLPARSE_CPE_ID_VENDOR = sqlparse_project
 PYTHON_SQLPARSE_CPE_ID_PRODUCT = sqlparse
 
+# 0001-Escape-backslashes-in-output-formatters.patch
+PYTHON_SQLPARSE_IGNORE_CVES += CVE-2026-59894
+
 $(eval $(python-package))

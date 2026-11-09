@@ -1,0 +1,49 @@
+From 53ff44b53e27cff78259acc1af015506fea60f63 Mon Sep 17 00:00:00 2001
+From: Andi Albrecht <albrecht.andi@gmail.com>
+Date: Mon, 29 Jun 2026 08:29:32 +0200
+Subject: [PATCH] Escape backslashes in output formatters.
+
+CVE: CVE-2026-59894
+Upstream: https://github.com/andialbrecht/sqlparse/commit/53ff44b53e27cff78259acc1af015506fea60f63
+[thomas: backport: 
+  - stripped tests and changelog
+]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ sqlparse/filters/output.py | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/sqlparse/filters/output.py b/sqlparse/filters/output.py
+index 253537e..697ebc3 100644
+--- a/sqlparse/filters/output.py
++++ b/sqlparse/filters/output.py
+@@ -61,9 +61,11 @@ class OutputPythonFilter(OutputFilter):
+                     yield sql.Token(T.Whitespace, after_lb)
+                 continue
+ 
+-            # Token has escape chars
+-            elif "'" in token.value:
+-                token.value = token.value.replace("'", "\\'")
++            # Escape backslashes before quotes so a backslash preceding a
++            # quote cannot break out of the generated string literal
++            # (GHSA-3496-9g83-7v6x).
++            else:
++                token.value = token.value.replace('\\', '\\\\').replace("'", "\\'")
+ 
+             # Put the token
+             yield sql.Token(T.Text, token.value)
+@@ -110,9 +112,11 @@ class OutputPHPFilter(OutputFilter):
+                     yield sql.Token(T.Whitespace, after_lb)
+                 continue
+ 
+-            # Token has escape chars
+-            elif '"' in token.value:
+-                token.value = token.value.replace('"', '\\"')
++            # Escape backslashes before quotes so a backslash preceding a
++            # quote cannot break out of the generated string literal
++            # (GHSA-3496-9g83-7v6x).
++            else:
++                token.value = token.value.replace('\\', '\\\\').replace('"', '\\"')
+ 
+             # Put the token
+             yield sql.Token(T.Text, token.value)
