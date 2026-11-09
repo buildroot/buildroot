@@ -18,17 +18,7 @@ diff --git a/chromium/third_party/protobuf/python/google/protobuf/internal/pytho
 index 803ae848493..a1954ce88c9 100755
 --- a/chromium/third_party/protobuf/python/google/protobuf/internal/python_message.py
 +++ b/chromium/third_party/protobuf/python/google/protobuf/internal/python_message.py
-@@ -55,9 +55,6 @@ import struct
- import sys
- import weakref
- 
--import six
--from six.moves import range
--
- # We use "as" to avoid name collisions with variables.
- from google.protobuf.internal import api_implementation
- from google.protobuf.internal import containers
-@@ -467,7 +464,7 @@ def _ReraiseTypeErrorWithFieldName(message_name, field_name):
+@@ -466,7 +466,7 @@ def _ReraiseTypeErrorWithFieldName(message_name, field_name):
      exc = TypeError('%s for field %s.%s' % (str(exc), message_name, field_name))
  
    # re-raise possibly-amended exception with original traceback:
@@ -37,7 +27,7 @@ index 803ae848493..a1954ce88c9 100755
  
  
  def _AddInitMethod(message_descriptor, cls):
-@@ -480,7 +477,7 @@ def _AddInitMethod(message_descriptor, cls):
+@@ -479,7 +479,7 @@ def _AddInitMethod(message_descriptor, cls):
      enum_type with the same name.  If the value is not a string, it's
      returned as-is.  (No conversion or bounds-checking is done.)
      """
