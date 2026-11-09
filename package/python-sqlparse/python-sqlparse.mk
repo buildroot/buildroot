@@ -16,4 +16,7 @@ PYTHON_SQLPARSE_CPE_ID_PRODUCT = sqlparse
 # 0001-Escape-backslashes-in-output-formatters.patch
 PYTHON_SQLPARSE_IGNORE_CVES += CVE-2026-59894
 
+# 0002-fix-escape-dollar-signs-in-PHP-output-format.patch
+PYTHON_SQLPARSE_IGNORE_CVES += CVE-2026-112307
+
 $(eval $(python-package))
