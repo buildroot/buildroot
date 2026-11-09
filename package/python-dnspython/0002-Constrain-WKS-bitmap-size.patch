@@ -1,0 +1,48 @@
+From 388db14ee9923288f6e73f86e482c77706e59d73 Mon Sep 17 00:00:00 2001
+From: Bob Halley <halley@dnspython.org>
+Date: Tue, 3 Nov 2026 12:01:13 -0800
+Subject: [PATCH] Constrain WKS bitmap size.
+
+(cherry picked from commit a62e1be066da0ed71b5b59f37435bb17cfa0070f)
+
+CVE: GHSA-vvf4-9x63-8xvv
+Upstream: https://github.com/rthalley/dnspython/commit/388db14ee9923288f6e73f86e482c77706e59d73
+[thomas: backport
+  - stripped tests and changelog
+  - adjust context to 2.7.0, this version does not have the to_styled_text() method
+]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ dns/rdtypes/IN/WKS.py | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/dns/rdtypes/IN/WKS.py b/dns/rdtypes/IN/WKS.py
+index 881a7849..365dee61 100644
+--- a/dns/rdtypes/IN/WKS.py
++++ b/dns/rdtypes/IN/WKS.py
+@@ -44,6 +44,10 @@ class WKS(dns.rdata.Rdata):
+         self.address = self._as_ipv4_address(address)
+         self.protocol = self._as_uint8(protocol)
+         self.bitmap = self._as_bytes(bitmap)
++        if len(self.bitmap) > 8192:
++            raise ValueError(
++                "service bitmap must be between 0 and 8192 bytes inclusive"
++            )
+ 
+     def to_text(self, origin=None, relativize=True, **kw):
+         bits = []
+@@ -77,11 +81,12 @@ class WKS(dns.rdata.Rdata):
+                 else:
+                     protocol_text = "tcp"
+                 serv = socket.getservbyname(value, protocol_text)
++            if serv < 0 or serv > 65535:
++                raise ValueError("service must be between 0 and 65535 inclusive")
+             i = serv // 8
+             l = len(bitmap)
+             if l < i + 1:
+-                for _ in range(l, i + 1):
+-                    bitmap.append(0)
++                bitmap.extend(bytes(i + 1 - l))
+             bitmap[i] = bitmap[i] | (0x80 >> (serv % 8))
+         bitmap = dns.rdata._truncate_bitmap(bitmap)
+         return cls(rdclass, rdtype, address, protocol, bitmap)
