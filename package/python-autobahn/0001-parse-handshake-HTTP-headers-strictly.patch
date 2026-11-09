@@ -1,0 +1,167 @@
+From eb679b75ec34d92bfc0f169cf4af71163a7b128a Mon Sep 17 00:00:00 2001
+From: Tobias Oberstein <tobias.oberstein@gmail.com>
+Date: Tue, 3 Nov 2026 21:12:11 +0100
+Subject: [PATCH] #2034: GREEN - parse handshake HTTP headers strictly
+
+parseHttpHeader no longer uses str.splitlines(), which also split on VT,
+FF, FS, GS, RS, NEL and on a bare CR or LF, so a peer could make autobahn
+see header lines (e.g. X-Forwarded-For) that a front proxy treats as part
+of a header value.
+
+Now (RFC 9112 / RFC 9110), with the whole header block rejected
+(ValueError) otherwise:
+
+- lines are separated by CRLF only; a bare CR or LF is invalid;
+- a bare LF is rejected deliberately, although RFC 9112 2.2 allows
+  accepting it as a line end (a front proxy may not split on it);
+- no obs-fold; field name is a token, directly followed by the colon;
+- field values: VCHAR, obs-text, SP, HTAB only; trimmed of SP/HTAB only
+  (str.strip() also stripped NEL/NBSP);
+- no control characters in the status line;
+- a header line without a colon is rejected (was skipped silently).
+
+The client handshake and the proxy CONNECT now catch parse errors and fail
+the handshake / the proxy connect, like the server already did (HTTP 400).
+
+Tests: bare-LF comment, plus 2 tests (line without colon, empty name).
+Changelog: 26.11.1 entry (behaviour change).
+
+Local: twisted cpy311 417 OK / 28 skipped, pypy311 416 OK / 29 skipped;
+asyncio cpy311 383 passed, pypy311 382 passed (baseline + 47 new tests);
+ruff + ty 0.0.89 clean.
+
+Expected CI result: GREEN.
+
+Note: This work was completed with AI assistance (Claude Code).
+
+CVE: GHSA-2gqc-mwv3-66rp
+Upstream: https://github.com/crossbario/autobahn-python/commit/364b6d6dbad127f6aed8a51494755027bf968fc3
+[thomas: 
+  - remove tests and changelog
+  - 24.4.2 has not type annotation and uses string with single-quote: `'`
+]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ autobahn/websocket/protocol.py | 76 ++++++++++++++++++++++++++--------
+ 1 file changed, 58 insertions(+), 18 deletions(-)
+
+diff --git a/autobahn/websocket/protocol.py b/autobahn/websocket/protocol.py
+index c4ef43f8..02ff926c 100755
+--- a/autobahn/websocket/protocol.py
++++ b/autobahn/websocket/protocol.py
+@@ -31,6 +31,7 @@ import struct
+ import random
+ import os
+ import pickle
++import re
+ import copy
+ import json
+ import time
+@@ -252,6 +253,18 @@ class FrameHeader(object):
+         self.mask = mask
+ 
+ 
++# RFC 9110 section 5.1: field-name = token
++_HTTP_FIELD_NAME = re.compile(r"[!#$%&'*+\-.^_`|~0-9A-Za-z]+")
++
++# RFC 9110 section 5.5: a field value is made of VCHAR, obs-text (0x80-0xFF), SP
++# and HTAB. This matches any other character, i.e. CR, LF, NUL and all other
++# controls (CTL) and DEL.
++_HTTP_FIELD_VALUE_INVALID = re.compile(r"[\x00-\x08\x0a-\x1f\x7f]")
++
++# any control character (including HTAB) and DEL, not allowed in the start line
++_HTTP_START_LINE_INVALID = re.compile(r"[\x00-\x1f\x7f]")
++
++
+ def parseHttpHeader(data):
+     """
+     Parses the beginning of a HTTP request header (the data up to the \n\n line) into a pair
+@@ -273,27 +286,48 @@ def parseHttpHeader(data):
+     #   - http://tools.ietf.org/html/rfc5987
+     #   - https://github.com/crossbario/autobahn-python/issues/533
+     #
+-    raw = data.decode('iso-8859-1').splitlines()
+-    http_status_line = raw[0].strip()
++    text = data.decode('iso-8859-1')
++
++    # strip the terminating empty line; do NOT use str.splitlines(), which also
++    # splits on VT, FF, FS, GS, RS, NEL and on a bare CR or LF (#2034)
++    if text.endswith('\r\n\r\n'):
++        text = text[:-4]
++    elif text.endswith('\r\n'):
++        text = text[:-2]
++    raw = text.split('\r\n')
++
++    http_status_line = raw[0]
++    if _HTTP_START_LINE_INVALID.search(http_status_line):
++        raise ValueError('invalid character in HTTP status line')
++    http_status_line = http_status_line.strip(' ')
++
+     http_headers = {}
+     http_headers_cnt = {}
+     for h in raw[1:]:
++        if h[:1] in (' ', '\t'):
++            raise ValueError('obsolete line folding in HTTP header')
+         i = h.find(":")
+-        if i > 0:
+-            # HTTP header keys are case-insensitive
+-            key = h[:i].strip().lower()
+-            value = h[i + 1:].strip()
+-
+-            # handle HTTP headers split across multiple lines
+-            if key in http_headers:
+-                http_headers[key] += ', {}'.format(value)
+-                http_headers_cnt[key] += 1
+-            else:
+-                http_headers[key] = value
+-                http_headers_cnt[key] = 1
++        if i < 0:
++            raise ValueError('HTTP header line without colon')
++        name = h[:i]
++        if not _HTTP_FIELD_NAME.fullmatch(name):
++            raise ValueError('invalid HTTP header field name')
++        # strip optional whitespace (OWS = SP / HTAB) only: str.strip() would
++        # also strip obs-text such as NEL or NBSP
++        value = h[i + 1:].strip(' \t')
++        if _HTTP_FIELD_VALUE_INVALID.search(value):
++            raise ValueError('invalid character in HTTP header field value')
++
++        # HTTP header keys are case-insensitive
++        key = name.lower()
++
++        # handle HTTP headers split across multiple lines
++        if key in http_headers:
++            http_headers[key] += ', {}'.format(value)
++            http_headers_cnt[key] += 1
+         else:
+-            # skip bad HTTP header
+-            pass
++            http_headers[key] = value
++            http_headers_cnt[key] = 1
+     return http_status_line, http_headers, http_headers_cnt
+ 
+ 
+@@ -3521,7 +3555,10 @@ class WebSocketClientProtocol(WebSocketProtocol):
+ 
+             # extract HTTP status line and headers
+             #
+-            (http_status_line, http_headers, http_headers_cnt) = parseHttpHeader(http_response_data)
++            try:
++                (http_status_line, http_headers, http_headers_cnt) = parseHttpHeader(http_response_data)
++            except Exception as e:
++                return self.failProxyConnect("Error during parsing of HTTP status line / response headers : {0}".format(e))
+ 
+             # validate proxy connect response
+             #
+@@ -3726,7 +3763,10 @@ class WebSocketClientProtocol(WebSocketProtocol):
+ 
+             # extract HTTP status line and headers
+             #
+-            (self.http_status_line, self.http_headers, http_headers_cnt) = parseHttpHeader(self.http_response_data)
++            try:
++                (self.http_status_line, self.http_headers, http_headers_cnt) = parseHttpHeader(self.http_response_data)
++            except Exception as e:
++                return self.failHandshake("Error during parsing of HTTP status line / response headers : {0}".format(e))
+ 
+             # validate WebSocket opening handshake server response
+             #
