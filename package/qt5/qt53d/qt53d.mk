@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT53D_VERSION = 208f5835e6c2415c9dc5cbe92bba83aa28bab7ea
+QT53D_VERSION = c3892c3ee3c0a2b8a050d0a1532f34806636eade
 QT53D_SITE = $(QT5_SITE)/qt3d/-/archive/$(QT53D_VERSION)
 QT53D_SOURCE = qt3d-$(QT53D_VERSION).tar.bz2
 QT53D_DEPENDENCIES = qt5declarative

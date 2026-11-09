@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5LOCATION_VERSION = ba48a8b5cedd157d972c08d371ac2581db166bf7
+QT5LOCATION_VERSION = 81f560be2274958011c255efa1d2d573874bed11
 QT5LOCATION_SITE = $(QT5_SITE)/qtlocation
 QT5LOCATION_SITE_METHOD = git
 QT5LOCATION_GIT_SUBMODULES = YES
