@@ -98,7 +98,12 @@ define ZSTD_INSTALL_TARGET_CMDS
 		DESTDIR=$(TARGET_DIR) -C $(@D)/lib $(ZSTD_INSTALL_LIBS)
 endef
 
-HOST_ZSTD_OPTS += PREFIX=$(HOST_DIR)
+# Disable auto-detection of optional compression libraries.
+HOST_ZSTD_OPTS += \
+	PREFIX=$(HOST_DIR) \
+	HAVE_ZLIB=0 \
+	HAVE_LZMA=0 \
+	HAVE_LZ4=0
 HOST_ZSTD_ENV = $(HOST_MAKE_ENV) $(HOST_CONFIGURE_OPTS)
 
 # We are a ccache dependency, so we can't use ccache
