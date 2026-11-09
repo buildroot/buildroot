@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5LOTTIE_VERSION = 27ed5a3c95a0810a96fac2a8661ea94d8ea3c44e
+QT5LOTTIE_VERSION = 5f1be885cf4ee0f1eb5400bf0c5d138818fc01d0
 QT5LOTTIE_SITE = $(QT5_SITE)/qtlottie/-/archive/$(QT5LOTTIE_VERSION)
 QT5LOTTIE_SOURCE = qtlottie-$(QT5LOTTIE_VERSION).tar.bz2
 QT5LOTTIE_DEPENDENCIES = qt5declarative
