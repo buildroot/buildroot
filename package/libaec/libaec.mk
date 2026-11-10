@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBAEC_VERSION = 1.1.7
+LIBAEC_VERSION = 1.1.8
 LIBAEC_SITE = https://github.com/Deutsches-Klimarechenzentrum/libaec/releases/download/v$(LIBAEC_VERSION)
 LIBAEC_LICENSE = BSD-2-Clause
 LIBAEC_LICENSE_FILES = LICENSE.txt
