@@ -14,6 +14,8 @@ LIBCURL_LICENSE = curl
 LIBCURL_LICENSE_FILES = COPYING
 LIBCURL_CPE_ID_VENDOR = haxx
 LIBCURL_INSTALL_STAGING = YES
+# 0001-build-auto-detect-explicit_bzero-in-configure.patch
+LIBCURL_AUTORECONF = YES
 
 # Likewise, there is no compiler on the target, so libcurl-option (to
 # generate C code) isn't very useful
