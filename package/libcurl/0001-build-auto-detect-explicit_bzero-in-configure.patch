@@ -1,0 +1,235 @@
+From e55a7ff40ebe1974735205135dfb3bf9e3db269b Mon Sep 17 00:00:00 2001
+From: Viktor Szakats <commit@vsz.me>
+Date: Mon, 9 Nov 2026 19:24:43 +0100
+Subject: [PATCH] build: auto-detect `explicit_bzero()` in configure
+
+Replacing compile-time auto-detection. Mainly due to MUSL, which offers
+no means to detect its presence or version via the preprocessor,
+requiring costly configure-time detection.
+
+After this patch `explicit_bzero()` is used with MUSL 1.1.20+
+(2018-09-04), and potentially more platforms which wasn't expliticly
+opted-in previously.
+
+This in turn avoids this link-time error, and suspect toolchain bug,
+when falling back to the local memzero, combined with LoongArch ld
+2.45.1 + gcc 16.2.0:
+```
+gcc/loongarch64-buildroot-linux-musl/16.2.0/.../loongarch64-buildroot-linux-musl/bin/ld: read-only segment has dynamic relocations
+```
+Ref: https://autobuild.buildroot.org/results/558c08d552920e45628254bdc029518120a35ae1
+
+Reported-by: Yegor Yefremov
+Fixes #23844
+Follow-up to 982e2e8c75f157940ef100f59dea94c4eb607058 #21989
+Follow-up to 066478f6346a2d987a9ecc3bd3bf45764d69c1c4 #21598
+
+Closes #23866
+
+Upstream: https://github.com/curl/curl/commit/e55a7ff40ebe1974735205135dfb3bf9e3db269b
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ CMake/unix-cache.cmake     |  9 +++++
+ CMakeLists.txt             |  5 ++-
+ configure.ac               |  6 +++-
+ lib/cf-socket.c            |  4 +++
+ lib/curl_config-cmake.h.in |  3 ++
+ lib/curl_setup.h           | 15 +++------
+ m4/curl-functions.m4       | 67 ++++++++++++++++++++++++++++++++++++++
+ 7 files changed, 96 insertions(+), 13 deletions(-)
+
+diff --git a/CMake/unix-cache.cmake b/CMake/unix-cache.cmake
+index b6b544442046..468bd3e4dc01 100644
+--- a/CMake/unix-cache.cmake
++++ b/CMake/unix-cache.cmake
+@@ -69,6 +69,15 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR
+        CMAKE_SYSTEM_NAME STREQUAL "NetBSD")
+   set(HAVE_EVENTFD 1)
+ endif()
++if(CYGWIN OR
++   CMAKE_SYSTEM_NAME STREQUAL "Linux" OR  # glibc 2.25+, MUSL 1.1.20+
++   CMAKE_SYSTEM_NAME STREQUAL "DragonFlyBSD" OR  # 5.6+
++   CMAKE_SYSTEM_NAME STREQUAL "FreeBSD" OR  # 11 r272673+
++   CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")  # 5.5+
++  set(HAVE_EXPLICIT_BZERO 1)
++elseif(APPLE)
++  set(HAVE_EXPLICIT_BZERO 0)
++endif()
+ if(ANDROID AND ANDROID_PLATFORM_LEVEL GREATER_EQUAL 34)
+   set(HAVE_MEMSET_EXPLICIT 1)
+ endif()
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a9df7a21bc3c..23f21dd37d47 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1739,7 +1739,10 @@ if(NOT WIN32)
+ 
+   check_symbol_exists("memset_s" "string.h" HAVE_MEMSET_S)
+   if(NOT HAVE_MEMSET_S)
+-    check_function_exists("memset_explicit" HAVE_MEMSET_EXPLICIT)
++    check_symbol_exists("explicit_bzero" "string.h" HAVE_EXPLICIT_BZERO)
++    if(NOT HAVE_EXPLICIT_BZERO)
++      check_function_exists("memset_explicit" HAVE_MEMSET_EXPLICIT)
++    endif()
+   endif()
+ endif()
+ 
+diff --git a/configure.ac b/configure.ac
+index d6a542311116..ebefb158a27f 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -4242,7 +4242,11 @@ if test "$curl_cv_native_windows" != "yes"; then
+ 
+   CURL_CHECK_FUNC_MEMSET_S
+   if test "$curl_cv_func_memset_s" = "no"; then
+-    AC_CHECK_FUNCS([memset_explicit])
++    dnl Use complex detection to avoid misdetection on old Linux.
++    CURL_CHECK_FUNC_EXPLICIT_BZERO
++    if test "$curl_cv_func_explicit_bzero" = "no"; then
++      AC_CHECK_FUNCS([memset_explicit])
++    fi
+   fi
+ fi
+ 
+diff --git a/lib/cf-socket.c b/lib/cf-socket.c
+index 97b5fa89d219..9073274ba0c2 100644
+--- a/lib/cf-socket.c
++++ b/lib/cf-socket.c
+@@ -59,6 +59,10 @@
+ #include <inet.h>
+ #endif
+ 
++#ifdef __DragonFly__
++#include <sys/param.h>  /* for __DragonFly_version */
++#endif
++
+ #include "urldata.h"
+ #include "curl_trc.h"
+ #include "if2ip.h"
+diff --git a/lib/curl_config-cmake.h.in b/lib/curl_config-cmake.h.in
+index 45c5de970dce..dbbbd04fdfb8 100644
+--- a/lib/curl_config-cmake.h.in
++++ b/lib/curl_config-cmake.h.in
+@@ -234,6 +234,9 @@
+ /* Define to 1 if you have the `opendir' function. */
+ #cmakedefine HAVE_OPENDIR 1
+ 
++/* Define to 1 if you have the explicit_bzero function. */
++#cmakedefine HAVE_EXPLICIT_BZERO 1
++
+ /* Define to 1 if you have the memset_explicit (C23) function. */
+ #cmakedefine HAVE_MEMSET_EXPLICIT 1
+ 
+diff --git a/lib/curl_setup.h b/lib/curl_setup.h
+index d4d0f25bfe24..504b21210352 100644
+--- a/lib/curl_setup.h
++++ b/lib/curl_setup.h
+@@ -1638,9 +1638,8 @@ typedef struct sockaddr_un {
+ #endif
+ 
+ /* For FreeBSD it is included from curl/curl.h */
+-#if defined(__DragonFly__) || defined(__OpenBSD__) || defined(__NetBSD__)
+-#include <sys/param.h>  /* for __DragonFly_version, OpenBSD,
+-                           __NetBSD_Version__ */
++#ifdef __NetBSD__
++#include <sys/param.h>  /* for __NetBSD_Version__ */
+ #endif
+ 
+ /* NetBSD before 6.1 did not set SS_NBIO for SOCK_NONBLOCK. */
+@@ -1660,16 +1659,10 @@ typedef struct sockaddr_un {
+ #endif
+ #elif defined(HAVE_MEMSET_S)
+ #define curlx_memzero_low(buf, size)  (void)memset_s(buf, size, 0, size)
++#elif defined(HAVE_EXPLICIT_BZERO)
++#define curlx_memzero_low(buf, size)  explicit_bzero(buf, size)
+ #elif defined(HAVE_MEMSET_EXPLICIT)
+ #define curlx_memzero_low(buf, size)  (void)memset_explicit(buf, 0, size)
+-#elif defined(__CYGWIN__) || \
+-  (defined(__NEWLIB__) && !defined(__CLIB2__)) || \
+-  (defined(__GLIBC__) && \
+-    (__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 25))) || \
+-  (defined(__DragonFly__) && __DragonFly_version >= 500600 /* 5.6+ */) || \
+-  (defined(__FreeBSD__) && __FreeBSD_version >= 1100037 /* 11.0+ */) || \
+-  (defined(__OpenBSD__) && OpenBSD >= 201405 /* 5.5+ */)
+-#define curlx_memzero_low(buf, size)  explicit_bzero(buf, size)
+ #elif defined(__NetBSD__) && __NetBSD_Version__ >= 702000000 /* 7.2+ */
+ #define curlx_memzero_low(buf, size)  (void)explicit_memset(buf, 0, size)
+ #endif
+diff --git a/m4/curl-functions.m4 b/m4/curl-functions.m4
+index 64046a834afb..2edbdf0fb5f4 100644
+--- a/m4/curl-functions.m4
++++ b/m4/curl-functions.m4
+@@ -3956,6 +3956,73 @@ AC_DEFUN([CURL_CHECK_FUNC_MEMSET_S], [
+   fi
+ ])
+ 
++dnl CURL_CHECK_FUNC_EXPLICIT_BZERO
++dnl -------------------------------------------------
++dnl Verify if explicit_bzero is available.
++
++AC_DEFUN([CURL_CHECK_FUNC_EXPLICIT_BZERO], [
++
++  tst_links_explicit_bzero="unknown"
++  tst_proto_explicit_bzero="unknown"
++  tst_compile_explicit_bzero="unknown"
++
++  AC_MSG_CHECKING([if explicit_bzero can be linked])
++  AC_LINK_IFELSE([
++    AC_LANG_FUNC_LINK_TRY([explicit_bzero])
++  ],[
++    AC_MSG_RESULT([yes])
++    tst_links_explicit_bzero="yes"
++  ],[
++    AC_MSG_RESULT([no])
++    tst_links_explicit_bzero="no"
++  ])
++
++  if test "$tst_links_explicit_bzero" = "yes"; then
++    AC_MSG_CHECKING([if explicit_bzero is prototyped])
++    AC_EGREP_CPP([explicit_bzero],[
++      $curl_includes_string
++    ],[
++      AC_MSG_RESULT([yes])
++      tst_proto_explicit_bzero="yes"
++    ],[
++      AC_MSG_RESULT([no])
++      tst_proto_explicit_bzero="no"
++    ])
++  fi
++
++  if test "$tst_proto_explicit_bzero" = "yes"; then
++    AC_MSG_CHECKING([if explicit_bzero is compilable])
++    AC_COMPILE_IFELSE([
++      AC_LANG_PROGRAM([[
++        $curl_includes_string
++      ]],[[
++        char buf[2];
++        explicit_bzero(buf, sizeof(buf));
++      ]])
++    ],[
++      AC_MSG_RESULT([yes])
++      tst_compile_explicit_bzero="yes"
++    ],[
++      AC_MSG_RESULT([no])
++      tst_compile_explicit_bzero="no"
++    ])
++  fi
++
++  AC_MSG_CHECKING([if explicit_bzero might be used])
++  if test "$tst_links_explicit_bzero" = "yes" &&
++     test "$tst_proto_explicit_bzero" = "yes" &&
++     test "$tst_compile_explicit_bzero" = "yes" &&
++     test "x$curl_disallow_explicit_bzero" != "xyes"; then
++    AC_MSG_RESULT([yes])
++    AC_DEFINE_UNQUOTED(HAVE_EXPLICIT_BZERO, 1,
++      [Define to 1 if you have the explicit_bzero function.])
++    curl_cv_func_explicit_bzero="yes"
++  else
++    AC_MSG_RESULT([no])
++    curl_cv_func_explicit_bzero="no"
++  fi
++])
++
+ dnl CURL_RUN_IFELSE
+ dnl -------------------------------------------------
+ dnl Wrapper macro to use instead of AC_RUN_IFELSE. It
