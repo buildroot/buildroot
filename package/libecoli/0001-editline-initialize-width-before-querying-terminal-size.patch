@@ -1,0 +1,56 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Tue, 10 Nov 2026 23:53:35 +0100
+Subject: [PATCH] editline: initialize width before querying terminal size
+
+ec_editline_term_size() only writes the width and height outputs when
+both el_get(EL_GETTC) calls succeed. ec_editline_complete() and
+ec_editline_interact() ignore its return value and do not initialize
+width beforehand, so an indeterminate value is used (clamped to 50..100)
+when the terminal capabilities cannot be retrieved.
+
+With GCC 15 and -Ofast, this is detected and breaks the build because
+of -Werror:
+
+  ../src/editline.c: In function 'ec_editline_complete':
+  ../src/editline.c:304:22: error: 'width' may be used uninitialized [-Werror=maybe-uninitialized]
+  ../src/editline.c: In function 'ec_editline_interact':
+  ../src/editline.c:657:22: error: 'width' may be used uninitialized [-Werror=maybe-uninitialized]
+
+Default width to 80 columns, as the other ec_editline_term_size()
+callers already do.
+
+Link: https://autobuild.buildroot.org/results/a0a7e17f1a76588932a8a7f8db35a832d540cc69
+Fixes: bc90312a4285 ("editline: split in 2 files")
+Upstream: https://github.com/rjarry/libecoli/pull/43
+Assisted-by: Claude:claude-opus-5-5
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ src/editline.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/editline.c b/src/editline.c
+index d286135..0751194 100644
+--- a/src/editline.c
++++ b/src/editline.c
+@@ -301,7 +301,7 @@ int ec_editline_complete(struct editline *el, int c)
+ 	struct ec_comp *cmpl = NULL;
+ 	char *append = NULL;
+ 	unsigned int height;
+-	unsigned int width;
++	unsigned int width = 80;
+ 	size_t comp_count;
+ 	void *clientdata;
+ 	char *line = NULL;
+@@ -654,7 +654,7 @@ int ec_editline_interact(
+ 	const struct ec_node *node;
+ 	size_t char_idx = 0;
+ 	unsigned int height;
+-	unsigned int width;
++	unsigned int width = 80;
+ 	char *line = NULL;
+ 	ssize_t n;
+ 	FILE *out;
+-- 
+2.34.1
+
