@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-RTL8723DS_VERSION = 122a574f780da32bb0de760bf089a3a9ec1e8f87
+RTL8723DS_VERSION = 83191afe47af29d622701bab24020e2dc8b0fc48
 RTL8723DS_SITE = $(call github,benetti-engineering,rtl8723ds,$(RTL8723DS_VERSION))
 RTL8723DS_LICENSE = GPL-2.0
 RTL8723DS_LICENSE_FILES = COPYING
