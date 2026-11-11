@@ -1,0 +1,41 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Wed, 11 Nov 2026 09:13:45 +0100
+Subject: [PATCH] pasm: fix ppCleanup() call with too many arguments
+
+ppCleanup() takes no arguments, but main() calls it as ppCleanup(Pass).
+This went unnoticed because pasm.h declares it with an empty parameter
+list. Since GCC 15 defaults to C23, where "()" means "no parameters",
+the build fails:
+
+  pasm.c:437:9: error: too many arguments to function 'ppCleanup'; expected 0, have 1
+    437 |         ppCleanup(Pass);
+        |         ^~~~~~~~~ ~~~~
+  pasm.h:576:6: note: declared here
+    576 | void ppCleanup();
+
+Drop the extra argument.
+
+Upstream: https://github.com/beagleboard/am335x_pru_package/pull/73
+Assisted-by: Claude:claude-opus-5-5
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ pru_sw/utils/pasm_source/pasm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/pru_sw/utils/pasm_source/pasm.c b/pru_sw/utils/pasm_source/pasm.c
+index f8051ff..06fa9bc 100644
+--- a/pru_sw/utils/pasm_source/pasm.c
++++ b/pru_sw/utils/pasm_source/pasm.c
+@@ -434,7 +434,7 @@ USAGE:
+         CloseSourceFile( mainsource );
+ 
+         /* Cleanup the PP and DOT modules */
+-        ppCleanup(Pass);
++        ppCleanup();
+         DotCleanup(Pass);
+ 
+         if( Pass==1 )
+-- 
+2.34.1
+
