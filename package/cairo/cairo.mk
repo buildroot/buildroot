@@ -24,6 +24,11 @@ ifeq ($(BR2_TOOLCHAIN_HAS_THREADS),)
 CAIRO_CFLAGS += -DCAIRO_NO_MUTEX=1
 endif
 
+# Use the old reload pass instead of LRA to work around an ICE
+ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_125410),y)
+CAIRO_CFLAGS += -mno-lra
+endif
+
 # cairo can use C++11 atomics when available, so we need to link with
 # libatomic for the architectures who need libatomic.
 ifeq ($(BR2_TOOLCHAIN_HAS_LIBATOMIC),y)

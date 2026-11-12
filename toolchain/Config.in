@@ -249,6 +249,15 @@ config BR2_TOOLCHAIN_HAS_GCC_BUG_111001
 		   BR2_OPTIMIZE_2 || \
 		   BR2_OPTIMIZE_3
 
+# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=125410
+# ICE: on hppa: in extract_insn, at recog.cc:2892 during RTL pass:
+# reload, with LRA, which is the default since gcc 16.
+# This bug exists in gcc = 16.1.0 and gcc = 16.2.0
+config BR2_TOOLCHAIN_HAS_GCC_BUG_125410
+	bool
+	default y if BR2_hppa
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_16
+
 config BR2_TOOLCHAIN_HAS_NATIVE_RPC
 	bool
 
