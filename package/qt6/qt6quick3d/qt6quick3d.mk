@@ -21,8 +21,8 @@ QT6QUICK3D_LICENSE_FILES = \
 	src/3rdparty/meshoptimizer/LICENSE.md \
 	src/3rdparty/tinyexr/LICENSE \
 	src/3rdparty/xatlas/LICENSE \
-	src/helpers/GODOT_LICENSE.txt \
-	src/runtimerender/GODOT_LICENSE.txt
+	src/helpers/LICENSE.GODOT.txt \
+	src/runtimerender/LICENSE.GODOT.txt
 
 QT6QUICK3D_CONF_OPTS = \
 	-DQT_HOST_PATH=$(HOST_DIR) \

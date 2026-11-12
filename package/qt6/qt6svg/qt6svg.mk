@@ -17,7 +17,7 @@ QT6SVG_CPE_ID_PRODUCT = qtsvg
 
 QT6SVG_LICENSE = \
 	GPL-2.0+ or LGPL-3.0, \
-	GPL-3.0 with exception (tools), \
+	GPL-3.0 (tools), \
 	GFDL-1.3 (docs), \
 	BSD-3-Clause
 
@@ -26,8 +26,7 @@ QT6SVG_LICENSE_FILES = \
 	LICENSES/GFDL-1.3-no-invariants-only.txt \
 	LICENSES/GPL-2.0-only.txt \
 	LICENSES/GPL-3.0-only.txt \
-	LICENSES/LGPL-3.0-only.txt \
-	LICENSES/Qt-GPL-exception-1.0.txt
+	LICENSES/LGPL-3.0-only.txt
 
 QT6SVG_CONF_OPTS = \
 	-DQT_HOST_PATH=$(HOST_DIR) \
