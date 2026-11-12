@@ -18,7 +18,7 @@ ifeq ($(BR2_TOOLCHAIN_HAS_GCC_BUG_85180),y)
 PRBOOM_CFLAGS += -O0
 endif
 
-ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_15),y)
+ifeq ($(BR2_TOOLCHAIN_GCC_AT_LEAST_14),y)
 PRBOOM_CFLAGS += -std=gnu18
 endif
 
