@@ -1,0 +1,34 @@
+From 506dcaf8d5ca99b626ea7ddf35f4a5f0ff71ff4c Mon Sep 17 00:00:00 2001
+From: Lucas de Castro Borges <lucas@gnuabordo.com.br>
+Date: Tue, 22 Sep 2026 18:01:06 -0300
+Subject: [PATCH] Fix string formatting for state_entry_time
+
+state_entry_time is time_t data type, time_t has changed the
+data size to 64bits due to year 2038 problem, then to avoid string format
+issue the type had been casted to intmax_t and switch from long(l) to
+intmax_t(j) because long has the minimum size of 32bits and the mininum size
+for time_t is 64bits.
+
+Signed-off-by: Lucas de Castro Borges <lucas@gnuabordo.com.br>
+Upstream: https://github.com/intel/thermal_daemon/commit/506dcaf8d5ca99b626ea7ddf35f4a5f0ff71ff4c
+Signed-off-by: Pieterjan Camerlynck <p.camerlynck@televic.com>
+---
+ src/thd_gddv.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/thd_gddv.cpp b/src/thd_gddv.cpp
+index dc82eb3..303f786 100644
+--- a/src/thd_gddv.cpp
++++ b/src/thd_gddv.cpp
+@@ -1738,7 +1738,7 @@ int cthd_gddv::evaluate_condition(struct condition& condition) {
+ 			return ret;
+ 
+ 		if (condition.time) {
+-			thd_log_debug("time condition matched %ld \n", condition.state_entry_time);
++			thd_log_debug("time condition matched %jd\n", (intmax_t)condition.state_entry_time);
+ 			if (condition.state_entry_time == 0) {
+ 				condition.state_entry_time = time(nullptr);
+ 				return THD_ERROR;
+-- 
+2.56.0
+

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-THERMALD_VERSION = 2.5.6
+THERMALD_VERSION = 2.5.13
 THERMALD_SITE = $(call github,intel,thermal_daemon,v$(THERMALD_VERSION))
 # fetched from Github, with no configure script
 THERMALD_AUTORECONF = YES
@@ -13,11 +13,10 @@ THERMALD_DEPENDENCIES = \
 	$(TARGET_NLS_DEPENDENCIES) \
 	host-autoconf-archive \
 	dbus \
-	dbus-glib \
 	libevdev \
+	libglib2 \
 	libxml2 \
-	upower \
-	xz
+	upower
 # tools are GPL-3.0+ but are not added to the target
 THERMALD_LICENSE = GPL-2.0+
 THERMALD_LICENSE_FILES = COPYING
