@@ -343,12 +343,6 @@ else
 SYSTEMD_CONF_OPTS += -Dselinux=disabled
 endif
 
-ifneq ($(BR2_PACKAGE_LIBGCRYPT)$(BR2_PACKAGE_LIBOPENSSL),)
-SYSTEMD_CONF_OPTS += -Ddefault-dnssec=allow-downgrade
-else
-SYSTEMD_CONF_OPTS += -Ddefault-dnssec=no
-endif
-
 ifeq ($(BR2_PACKAGE_SYSTEMD_HWDB),y)
 SYSTEMD_CONF_OPTS += -Dhwdb=true
 define SYSTEMD_BUILD_HWDB
@@ -597,13 +591,15 @@ ifeq ($(BR2_PACKAGE_LIBOPENSSL),y)
 SYSTEMD_CONF_OPTS += \
 	-Dopenssl=enabled \
 	-Ddns-over-tls=openssl \
-	-Ddefault-dns-over-tls=opportunistic
+	-Ddefault-dns-over-tls=opportunistic \
+	-Ddefault-dnssec=allow-downgrade
 SYSTEMD_DEPENDENCIES += openssl
 else
 SYSTEMD_CONF_OPTS += \
 	-Dopenssl=disabled \
 	-Ddns-over-tls=false \
-	-Ddefault-dns-over-tls=no
+	-Ddefault-dns-over-tls=no \
+	-Ddefault-dnssec=no
 endif
 
 ifeq ($(BR2_PACKAGE_SYSTEMD_TIMESYNCD),y)
