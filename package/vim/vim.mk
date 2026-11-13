@@ -75,7 +75,7 @@ VIM_POST_INSTALL_TARGET_HOOKS += VIM_INSTALL_VI_SYMLINK
 
 HOST_VIM_DEPENDENCIES = host-ncurses
 HOST_VIM_CONF_OPTS = \
-	--with-tlib=ncurses \
+	--with-tlib=ncursesw \
 	--enable-gui=no \
 	--without-x \
 	--disable-acl \
