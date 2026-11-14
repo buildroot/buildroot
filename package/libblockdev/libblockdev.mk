@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBBLOCKDEV_VERSION = 3.5.0
+LIBBLOCKDEV_VERSION = 3.6.0
 LIBBLOCKDEV_SITE = https://github.com/storaged-project/libblockdev/releases/download/$(LIBBLOCKDEV_VERSION)
 LIBBLOCKDEV_LICENSE = LGPL-2.1
 LIBBLOCKDEV_LICENSE_FILES = LICENSE
@@ -27,7 +27,7 @@ LIBBLOCKDEV_CONF_OPTS = \
 	--without-tools
 
 ifeq ($(BR2_PACKAGE_LIBBLOCKDEV_CRYPTO),y)
-LIBBLOCKDEV_DEPENDENCIES += cryptsetup keyutils
+LIBBLOCKDEV_DEPENDENCIES += cryptsetup keyutils lvm2
 LIBBLOCKDEV_CONF_OPTS += --with-crypto
 else
 LIBBLOCKDEV_CONF_OPTS += --without-crypto

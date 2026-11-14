@@ -28,6 +28,7 @@ config BR2_PACKAGE_LIBBLOCKDEV_CRYPTO
 	depends on BR2_TOOLCHAIN_HAS_SYNC_4 # cryptsetup -> json-c
 	select BR2_PACKAGE_CRYPTSETUP
 	select BR2_PACKAGE_KEYUTILS
+	select BR2_PACKAGE_LVM2 # devmapper
 
 config BR2_PACKAGE_LIBBLOCKDEV_FS
 	bool "filesystem"
