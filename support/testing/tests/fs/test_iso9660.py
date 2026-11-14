@@ -4,6 +4,7 @@ import infra.basetest
 
 BASIC_CONFIG = \
     """
+    BR2_i386=y
     BR2_x86_core2=y
     BR2_TOOLCHAIN_EXTERNAL=y
     BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_X86_CORE2_GLIBC_STABLE=y
