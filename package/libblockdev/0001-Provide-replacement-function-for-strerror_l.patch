@@ -1,4 +1,4 @@
-From 3d198be196bdc59ba332b87d8c2959de0b9160d2 Mon Sep 17 00:00:00 2001
+From 3cddbb1e225b4361fdec9c79799bdc35270c1f7a Mon Sep 17 00:00:00 2001
 From: Giulio Benetti <giulio.benetti@benettiengineering.com>
 Date: Sat, 20 Jan 2024 13:29:28 +0100
 Subject: [PATCH] Provide replacement function for strerror_l()
@@ -11,7 +11,7 @@ Upstream: N/A since it's due uclibc only
 
 Signed-off-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
 Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
-[Giulio: ported to version 3.0, 3.1 and 3.5]
+[Giulio: ported to version 3.0, 3.1, 3.5 and 3.6]
 ---
  configure.ac          | 2 ++
  src/utils/dev_utils.c | 1 +
@@ -20,7 +20,7 @@ Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
  4 files changed, 8 insertions(+)
 
 diff --git a/configure.ac b/configure.ac
-index e5d65d8b..507fa854 100644
+index c129e1a..6a48df1 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -123,6 +123,8 @@ AC_CHECK_HEADERS([dlfcn.h string.h unistd.h sys/fcntl.h sys/ioctl.h linux/random
@@ -33,11 +33,11 @@ index e5d65d8b..507fa854 100644
      AS_HELP_STRING([--with-escrow], [support escrow @<:@default=yes@:>@]),
      [],
 diff --git a/src/utils/dev_utils.c b/src/utils/dev_utils.c
-index 89a54b4c..b4be5b44 100644
+index 8587bed..619cc30 100644
 --- a/src/utils/dev_utils.c
 +++ b/src/utils/dev_utils.c
-@@ -23,6 +23,7 @@
- #include <errno.h>
+@@ -24,6 +24,7 @@
+ #include <stdlib.h>
  
  #include "dev_utils.h"
 +#include "utils.h"
@@ -45,7 +45,7 @@ index 89a54b4c..b4be5b44 100644
  /**
   * bd_utils_dev_utils_error_quark: (skip)
 diff --git a/src/utils/module.c b/src/utils/module.c
-index 11e139f8..c8b124e0 100644
+index f36579e..edeaaf0 100644
 --- a/src/utils/module.c
 +++ b/src/utils/module.c
 @@ -28,6 +28,7 @@
@@ -57,7 +57,7 @@ index 11e139f8..c8b124e0 100644
  
  /**
 diff --git a/src/utils/utils.h b/src/utils/utils.h
-index 801a8b6e..b2bdf0d0 100644
+index 801a8b6..b2bdf0d 100644
 --- a/src/utils/utils.h
 +++ b/src/utils/utils.h
 @@ -9,6 +9,10 @@
