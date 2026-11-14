@@ -21,7 +21,7 @@ BASIC_CONFIG = \
 
 def test_mount_internal_external(emulator, builddir, internal=True):
     img = os.path.join(builddir, "images", "rootfs.iso9660")
-    emulator.boot(arch="i386", options=["-cdrom", img])
+    emulator.boot(arch="i386", options=["-cpu", "core2duo", "-cdrom", img])
     emulator.login()
 
     if internal:
