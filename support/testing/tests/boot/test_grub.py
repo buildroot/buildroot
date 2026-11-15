@@ -29,7 +29,7 @@ class TestGrubi386BIOS(infra.basetest.BRTest):
 
     def test_run(self):
         hda = os.path.join(self.builddir, "images", "disk.img")
-        self.emulator.boot(arch="i386", options=["-hda", hda])
+        self.emulator.boot(arch="i386", options=["-cpu", "core2duo", "-hda", hda])
         self.emulator.login()
 
 
