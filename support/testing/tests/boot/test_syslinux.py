@@ -4,6 +4,7 @@ import infra.basetest
 class TestSysLinuxBase(infra.basetest.BRTest):
     x86_toolchain_config = \
         """
+        BR2_i386=y
         BR2_x86_i686=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN_X86_I686_GLIBC_BLEEDING_EDGE=y
