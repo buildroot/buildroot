@@ -9,6 +9,7 @@ GLXINFO_TIMEOUT = 120
 class TestGlxinfo(infra.basetest.BRTest):
     config = \
         """
+        BR2_i386=y
         BR2_x86_core2=y
         BR2_TOOLCHAIN_EXTERNAL=y
         BR2_TOOLCHAIN_EXTERNAL_BOOTLIN=y
