@@ -49,6 +49,13 @@ ifeq ($(BR2_ARM_INSTRUCTIONS_THUMB),y)
 MUSL_EXTRA_CFLAGS += -marm
 endif
 
+# The powerpc64 assembly code assumes TOC-based C code, but gcc
+# generates pc-relative code by default for POWER10 and later, which
+# makes linking libc.so fail.
+ifeq ($(BR2_powerpc_power10)$(BR2_powerpc_power11),y)
+MUSL_EXTRA_CFLAGS += -mno-pcrel
+endif
+
 define MUSL_CONFIGURE_CMDS
 	(cd $(@D); \
 		$(TARGET_CONFIGURE_OPTS) \
