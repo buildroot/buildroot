@@ -13,6 +13,10 @@ LIBBLOCKDEV_DEPENDENCIES = host-pkgconf libglib2 kmod udev
 # 0001-Provide-replacement-function-for-strerror_l.patch
 LIBBLOCKDEV_AUTORECONF = YES
 
+# 0002-fs-Reject-NTFS-labels-starting-with-a-dash.patch
+# 0003-fs-Prevent-VFAT-labels-from-being-interpreted-as-options.patch
+LIBBLOCKDEV_IGNORE_CVES += CVE-2026-111581
+
 LIBBLOCKDEV_CONF_OPTS = \
 	--disable-introspection \
 	--with-loop \

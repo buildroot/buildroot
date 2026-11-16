@@ -1,0 +1,49 @@
+From 4ef6b2b4798a46566fe8815eaabd163205be20bd Mon Sep 17 00:00:00 2001
+From: Vojtech Trefny <vtrefny@redhat.com>
+Date: Tue, 3 Nov 2026 15:39:58 +0100
+Subject: [PATCH] fs: Reject NTFS labels starting with a dash
+
+Fixes CVE-2026-111581.
+
+CVE: CVE-2026-111581
+Upstream: https://github.com/storaged-project/libblockdev/commit/4ef6b2b4798a46566fe8815eaabd163205be20bd
+[thomas: drop tests and backport context]
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+---
+ src/plugins/fs/ntfs.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/src/plugins/fs/ntfs.c b/src/plugins/fs/ntfs.c
+index 424f606..78b56d0 100644
+--- a/src/plugins/fs/ntfs.c
++++ b/src/plugins/fs/ntfs.c
+@@ -221,6 +221,9 @@ gboolean bd_fs_ntfs_set_label (const gchar *device, const gchar *label, GError *
+     if (!check_deps (&avail_deps, DEPS_NTFSLABEL_MASK, deps, DEPS_LAST, &deps_check_lock, error))
+         return FALSE;
+ 
++    if (!bd_fs_ntfs_check_label (label, error))
++        return FALSE;
++
+     return bd_utils_exec_and_report_error (args, NULL, error);
+ }
+ 
+@@ -235,6 +238,19 @@ gboolean bd_fs_ntfs_set_label (const gchar *device, const gchar *label, GError *
+  * Tech category: always available
+  */
+ gboolean bd_fs_ntfs_check_label (const gchar *label, GError **error) {
++    if (!label) {
++        g_set_error_literal (error, BD_FS_ERROR, BD_FS_ERROR_LABEL_INVALID,
++                             "Label cannot be NULL.");
++        return FALSE;
++    }
++
++    /* ntfslabel does not reliably support '--' to terminate option parsing. */
++    if (label[0] == '-') {
++        g_set_error_literal (error, BD_FS_ERROR, BD_FS_ERROR_LABEL_INVALID,
++                             "Label for NTFS filesystem cannot start with '-'.");
++        return FALSE;
++    }
++
+     if (strlen (label) > 128) {
+         g_set_error (error, BD_FS_ERROR, BD_FS_ERROR_LABEL_INVALID,
+                      "Label for NTFS filesystem must be at most 128 characters long.");
