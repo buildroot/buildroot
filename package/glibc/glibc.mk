@@ -7,7 +7,7 @@
 # Generate version string using:
 #   git describe --match 'glibc-*' --abbrev=40 origin/release/MAJOR.MINOR/master | cut -d '-' -f 2-
 # When updating the version, please also update localedef
-GLIBC_VERSION = 2.41-167-gf247c0a2fb5b3e48a771d2d23efc9a45c64e957d
+GLIBC_VERSION = 2.41-174-g92b93a3bc26c9f56e8347bc47ec047f9639fc6da
 GLIBC_SITE = https://gitlab.com/gnutools/glibc.git
 GLIBC_SITE_METHOD = git
 
@@ -86,6 +86,12 @@ GLIBC_IGNORE_CVES += CVE-2026-77117
 
 # Fixed by glibc-2.41-158-gec116a0fbedcc860631e525e70b409cf295f27da
 GLIBC_IGNORE_CVES += CVE-2026-80489
+
+# Fixed by 2.41-173-gbbdd55995f66a155ac043a49a8084e2414f96cde
+GLIBC_IGNORE_CVES += CVE-2026-84243
+
+# Fixed by 2.41-174-g92b93a3bc26c9f56e8347bc47ec047f9639fc6da
+GLIBC_IGNORE_CVES += CVE-2026-100290
 
 # glibc is part of the toolchain so disable the toolchain dependency
 GLIBC_ADD_TOOLCHAIN_DEPENDENCY = NO
