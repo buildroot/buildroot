@@ -1,3 +1,207 @@
+2025.02.20, released November 17, 2026
+
+	Important / security related fixes:
+
+	bind: CVE-2026-19630, CVE-2026-94300, CVE-2026-96888, CVE-2026-97313
+	brotli: CVE-2026-111497, GHSA-9v8h-qqgm-4m35
+	c-ares: CVE-2026-33630, GHSA-6wfj-rwm7-3542, GHSA-97vq-4mxv-7vhm,
+	  GHSA-cfcv-8v2j-qj6r, GHSA-fqh5-3x7m-wp44, GHSA-grv7-fq5q-9vfc,
+	  GHSA-jv8r-gqr9-68wj, GHSA-mw23-pfg6-2x9r, GHSA-ph6c-3cvx-mq6v,
+	  GHSA-pj7p-v3cw-hq66, GHSA-pjmc-gx33-gc76, GHSA-rf6g-ww74-97qh,
+	  GHSA-v33j-65h4-4ch8, GHSA-wpr3-8q3r-4q8c, GHSA-wrgc-prmw-27xh
+	composer: (no CVE assigned)
+	containerd: CVE-2026-53493, CVE-2026-53495, GHSA-hc94-p972-ch66,
+	  GHSA-rp3h-jf77-q9p4
+	cups: CVE-2026-105326, CVE-2026-55453, CVE-2026-55467, CVE-2026-55480,
+	  CVE-2026-61702, CVE-2026-87875, CVE-2026-87876
+	expat: CVE-2026-113351, CVE-2026-115506, CVE-2026-117610,
+	  CVE-2026-118370
+	firewalld: CVE-2026-4948
+	fluidsynth: CVE-2026-58264, CVE-2026-61714
+	go: CVE-2026-111943
+	grpc: (no CVE assigned)
+	imagemagick: CVE-2025-55154, CVE-2026-106564, CVE-2026-106565,
+	  CVE-2026-106566, CVE-2026-106567, CVE-2026-106568, CVE-2026-106569,
+	  CVE-2026-106570, CVE-2026-106571, CVE-2026-106572, CVE-2026-106573,
+	  CVE-2026-106574, CVE-2026-106575, CVE-2026-106576, CVE-2026-106577,
+	  CVE-2026-106578, CVE-2026-106579, CVE-2026-106580, CVE-2026-107208,
+	  CVE-2026-107209, CVE-2026-107210, CVE-2026-34238, CVE-2026-62363,
+	  CVE-2026-62946, CVE-2026-64685, GHSA-233r-2p53-wqf5,
+	  GHSA-27m9-54jx-fgvq, GHSA-2fgx-26mg-j4f4, GHSA-2h6m-67xh-cm4p,
+	  GHSA-2pc3-3339-3qc9, GHSA-2vwg-3g4g-qprm, GHSA-2w4h-697j-4vrm,
+	  GHSA-2wwj-grp2-3fp5, GHSA-3429-f84m-8qhw, GHSA-3j4w-pvxj-fpjc,
+	  GHSA-3pf7-cjfr-3fpq, GHSA-3rjr-534c-8v67, GHSA-422r-8c97-xcg4,
+	  GHSA-462x-739v-qvq2, GHSA-4fq9-vrx7-gv92, GHSA-4gg2-hfgh-6f5c,
+	  GHSA-4h52-f5gr-2w2h, GHSA-4jv7-q6xw-6f4x, GHSA-4mwf-mggw-29vp,
+	  GHSA-4wfv-467j-fqh9, GHSA-5222-mhv9-26rg, GHSA-528x-2384-jmxp,
+	  GHSA-54hm-vrmh-75qj, GHSA-54rx-5x9g-g465, GHSA-58h4-rwr6-wj72,
+	  GHSA-5j8x-vq8c-vrp9, GHSA-5jf2-9gcp-q234, GHSA-5jwm-r7f4-4m53,
+	  GHSA-5m9j-96ff-j6qc, GHSA-5rg6-j44q-q892, GHSA-5v9f-r478-x7vx,
+	  GHSA-67p3-xhc7-g797, GHSA-69jx-j2x2-g5w4, GHSA-6p6q-wfrv-ffhh,
+	  GHSA-6rvv-36hw-5rgf, GHSA-6xcw-8jvx-wh63, GHSA-6xf5-c3jx-rp39,
+	  GHSA-7438-vh5v-v52h, GHSA-79p5-w6jv-r997, GHSA-7f2w-c8wf-xvf8,
+	  GHSA-7hjx-392p-f8cm, GHSA-7q74-r26w-fwcx, GHSA-7r5g-p7ff-jgcp,
+	  GHSA-7rgw-xg25-prjm, GHSA-83w9-w85j-h9jc, GHSA-89wq-f8f6-2j2v,
+	  GHSA-8ghq-p369-g395, GHSA-8w9c-hj38-8pf9, GHSA-8x3v-wr32-qqh4,
+	  GHSA-8xmr-6q99-c4x8, GHSA-92p2-h75x-hg82, GHSA-92rw-c5mw-27v4,
+	  GHSA-93x9-jq8c-cwcc, GHSA-9f9w-84g3-vp2c, GHSA-9hqg-c52m-2h83,
+	  GHSA-9p7q-63hw-mcr4, GHSA-9x6f-98x9-rx6g, GHSA-c2qq-jqw7-q4mx,
+	  GHSA-c764-55gw-gj6c, GHSA-chf5-8rv9-gjqr, GHSA-cvgp-q487-j22w,
+	  GHSA-cvhv-g4rq-3hmw, GHSA-cvxf-g9w2-7mcx, GHSA-f2r2-qw7g-3c8x,
+	  GHSA-f32c-2v6j-wvh5, GHSA-f983-243h-9x4r, GHSA-fp46-842c-2v83,
+	  GHSA-g568-j2hh-jr58, GHSA-g5j8-ff59-wp88, GHSA-g6p6-3ggg-3w7j,
+	  GHSA-gr4q-6v79-qj3g, GHSA-gwj6-pm7x-3r63, GHSA-h22j-f9xw-xjjm,
+	  GHSA-h3qx-937j-245g, GHSA-h499-883p-vph8, GHSA-h9f8-qmvx-p39m,
+	  GHSA-h9g3-4qvr-rx8h, GHSA-hg5r-hf2p-g9xq, GHSA-hpjv-7vmp-f58w,
+	  GHSA-hvwf-wmm6-hvc3, GHSA-j2rp-5r6m-f7x8, GHSA-j39j-wmxg-j8mv,
+	  GHSA-j657-rmv3-4m94, GHSA-jjp4-3fwf-393j, GHSA-jph3-37cg-79wg,
+	  GHSA-jvjm-9f73-fhpq, GHSA-m2p5-qpx9-5mx6, GHSA-m938-565c-h9qf,
+	  GHSA-m9c7-gf3j-hx6h, GHSA-m9p2-wqc3-mj22, GHSA-mf84-8w53-2f2c,
+	  GHSA-mqmp-r5jh-jx7w, GHSA-p58q-7cv7-7w3m, GHSA-p6j5-2qwh-6486,
+	  GHSA-pj4h-g4pf-66v3, GHSA-pmqj-84pr-qc7c, GHSA-pp97-v3gv-9vh4,
+	  GHSA-pv8x-gq6w-gp4r, GHSA-pwpf-8799-94cj, GHSA-q66g-3m63-78mh,
+	  GHSA-q6h4-6f2h-8hfq, GHSA-qq8x-fq3x-43h4, GHSA-qr53-hc3p-fc62,
+	  GHSA-r868-pmwh-fv2c, GHSA-rm4p-xqw3-f45f, GHSA-rvv7-5mh8-vcfc,
+	  GHSA-v2x3-wpmg-c4w6, GHSA-v45j-x8p4-3mh4, GHSA-v5f5-4v9x-p3f2,
+	  GHSA-v86v-4xf8-xjq4, GHSA-v9q4-cm37-q2jm, GHSA-vcjj-32hg-qpx5,
+	  GHSA-vj7g-384h-64fv, GHSA-vm77-q83h-5fhg, GHSA-vmj6-qx38-9gf5,
+	  GHSA-vv56-wmgw-m36w, GHSA-vxwm-jfjc-3r4x, GHSA-w288-jj5x-hhvp,
+	  GHSA-w68r-6fmr-cvg4, GHSA-w6hf-vvx5-4qmj, GHSA-wvfx-g9wq-253w,
+	  GHSA-wxw6-98rj-hjfr, GHSA-x258-xjqf-6j3f, GHSA-x3j8-cjwr-m4pv,
+	  GHSA-x48p-6655-8qgv, GHSA-x8g2-7r3w-h44p, GHSA-xv2g-79vc-75qf,
+	  GHSA-xxrx-rjp3-27rj
+	iperf3: CVE-2025-54349, CVE-2025-54350, CVE-2025-54351,
+	  CVE-2026-101276, CVE-2026-101283, CVE-2026-102253, CVE-2026-71217,
+	  CVE-2026-71218, GHSA-8xx8-qrh3-q8mq, GHSA-r6x8-74x9-5mc9,
+	  GHSA-xjwm-4pfw-49g2
+	libarchive: (no CVE assigned)
+	libcurl: CVE-2026-107928, CVE-2026-107929, CVE-2026-86410,
+	  CVE-2026-86412, CVE-2026-86413, CVE-2026-86414, CVE-2026-86415,
+	  CVE-2026-87861, CVE-2026-87862, CVE-2026-87863, CVE-2026-87865,
+	  CVE-2026-87866, CVE-2026-92386, CVE-2026-92387, CVE-2026-92388,
+	  CVE-2026-92389, CVE-2026-92390, CVE-2026-92391, CVE-2026-92392,
+	  CVE-2026-94265, CVE-2026-94266
+	libglib2: CVE-2026-58016
+	libheif: GHSA-2g6j-vhr6-6wrj, GHSA-35mc-3887-rr37, GHSA-3gwx-cjv4-jr74,
+	  GHSA-48p4-gj45-w9v6, GHSA-6fqc-p7r8-2g36, GHSA-73j7-gvm9-x8q6,
+	  GHSA-74mj-m37q-h3q9, GHSA-7qm8-hj35-269r, GHSA-86ch-j429-fpr2,
+	  GHSA-8p2c-9wv4-rx4p, GHSA-9rpf-2x22-78m9, GHSA-fcmw-5764-7rq8,
+	  GHSA-fpr5-xpfr-vcq3, GHSA-gff5-3vgr-p8h2, GHSA-h4h8-qgvc-m7r2,
+	  GHSA-hhg3-fxg7-3gxw, GHSA-hpg4-g2gc-pq42, GHSA-hqpw-h8p6-22q9,
+	  GHSA-hvwh-xpj6-ph5x, GHSA-jx54-6rm6-2cgj, GHSA-pfcm-ffqg-84hx,
+	  GHSA-q7mw-2fmm-5q94, GHSA-r9cg-w542-g7hj, GHSA-rcqc-842v-m26h,
+	  GHSA-v5rj-g4wv-j5w3, GHSA-vv35-6hxg-95x8, GHSA-xwcv-cp39-m2w4
+	libnss: (no CVE assigned)
+	libressl: CVE-2025-9230
+	liburiparser: CVE-2026-48841
+	libzlib: (no CVE assigned), CVE-2026-85091
+	minizip-zlib: (no CVE assigned)
+	mupdf: CVE-2025-46206, CVE-2025-71382, CVE-2026-40505
+	musl: CVE-2026-107891
+	nginx: CVE-2026-15176, CVE-2026-42533, CVE-2026-56434, CVE-2026-60005,
+	  CVE-2026-90439, CVE-2026-93479, CVE-2026-95101, CVE-2026-97205,
+	  CVE-2026-97629
+	nodejs: CVE-2026-105481, CVE-2026-105482, CVE-2026-106069,
+	  CVE-2026-106073, CVE-2026-106074, CVE-2026-111497
+	ntpsec: CVE-2026-102483, CVE-2026-102484, CVE-2026-102485,
+	  CVE-2026-102486
+	openssh: CVE-2026-106583, CVE-2026-123158
+	p11-kit: CVE-2026-13757, CVE-2026-18938, GHSA-6x8p-h5fj-5ppr,
+	  GHSA-p2wm-69qx-x25w
+	parted: CVE-2026-89085, CVE-2026-89088
+	patch: CVE-2026-115207
+	perl-mozilla-ca: (no CVE assigned)
+	pppd: CVE-2026-75883, CVE-2026-85495
+	python-autobahn: GHSA-2gqc-mwv3-66rp
+	python-botocore: (no CVE assigned)
+	python-brotli: CVE-2026-111497
+	python-certifi: (no CVE assigned)
+	python-django: CVE-2026-108147, CVE-2026-111211, CVE-2026-111362,
+	  CVE-2026-113593, CVE-2026-114582, CVE-2026-15307, CVE-2026-15337,
+	  CVE-2026-15830, CVE-2026-15920, CVE-2026-48588, CVE-2026-53877,
+	  CVE-2026-53878, CVE-2026-77050, CVE-2026-84429, CVE-2026-87890,
+	  CVE-2026-87975
+	python-dnspython: CVE-2026-114605, GHSA-vvf4-9x63-8xvv
+	python-grpcio: (no CVE assigned)
+	python-httplib2: (no CVE assigned)
+	python-sqlparse: CVE-2026-112307, CVE-2026-59894, GHSA-3496-9g83-7v6x,
+	  GHSA-457h-p88w-wq8p
+	python-twisted: CVE-2023-44487, CVE-2026-115774, CVE-2026-115775,
+	  CVE-2026-115776, CVE-2026-115778, CVE-2026-115877, CVE-2026-83813
+	python3: CVE-2024-3220, CVE-2026-102633, CVE-2026-114583,
+	  CVE-2026-115557, CVE-2026-77214
+	qt6svg: CVE-2025-10728, CVE-2025-10729
+	rsync: CVE-2026-119741
+	sofia-sip: CVE-2026-110658
+	suricata: CVE-2024-45795, CVE-2024-45796, CVE-2024-45797,
+	  CVE-2024-47187, CVE-2024-47188, CVE-2024-47522, CVE-2024-55605,
+	  CVE-2024-55626, CVE-2024-55627, CVE-2024-55628, CVE-2024-55629,
+	  CVE-2025-29915, CVE-2025-29916, CVE-2025-29917, CVE-2025-29918,
+	  CVE-2025-53537, CVE-2025-53538, CVE-2025-59147, CVE-2025-59148,
+	  CVE-2025-59149, CVE-2025-59150, CVE-2025-64330, CVE-2025-64331,
+	  CVE-2025-64332, CVE-2025-64333, CVE-2025-64334, CVE-2025-64335,
+	  CVE-2025-64344, CVE-2026-22258, CVE-2026-22259, CVE-2026-22260,
+	  CVE-2026-22261, CVE-2026-22262, CVE-2026-22263, CVE-2026-22264,
+	  CVE-2026-31931, CVE-2026-31932, CVE-2026-31933, CVE-2026-31934,
+	  CVE-2026-31935, CVE-2026-31937, CVE-2026-45747, CVE-2026-45751,
+	  CVE-2026-45752, CVE-2026-45759, CVE-2026-45761, CVE-2026-45762,
+	  CVE-2026-45763, CVE-2026-45764, CVE-2026-45765, CVE-2026-45766,
+	  CVE-2026-45767, CVE-2026-45768, CVE-2026-45769, CVE-2026-45770,
+	  CVE-2026-46352, CVE-2026-46387, CVE-2026-57222, CVE-2026-57224,
+	  CVE-2026-57227, CVE-2026-57228, CVE-2026-57229, CVE-2026-63446,
+	  CVE-2026-63447, CVE-2026-63448, CVE-2026-63449, CVE-2026-63450,
+	  CVE-2026-63451, CVE-2026-63452
+	swtpm: CVE-2026-75900
+	tor: (no CVE assigned)
+
+	Toolchain:
+
+	- gcc: handle GCC bug 104820, Add microblaze frame unwinding fix to v14
+	- linux-headers: Bump to 5.10.274, 5.15.225, 6.1.192, 6.6.162, 6.12.117
+	- toolchain-external-bootlin:: fix ARMv7 EABIhf toolchains condition
+	- uclibc: Backport several upstream fixes
+
+	Infrastructure updates/fixes:
+
+	- bump-stable-kernel-versions: fix newline in commit message
+	- runtime tests: add runtime test for easydbus
+	- fix patching of libtool 2.6.0
+	- genrandconfig: fix crash if BR2_LINUX_KERNEL_IMAGE_TARGET_CUSTOM was
+	  selected
+	- genrandconfig: rework how secondary targets are handled
+	- runtime tests: use host entropy for ARMv7 emulation
+	- golang-package: add BR2_GOPROXY for primary download location of Go
+	  vendoring
+	- generate-cyclonedx: support Python 3.8
+	- runtime tests: add runtime test for fluent-bit
+	- golang-package: fix handling of ARM Thumb with CGo
+	- autobuilders: use HTTPS for custom toolchain downloads
+	- runtime tests: add runtime test for snappy
+	- runtime tests: add runtime test for swugenerator
+	- runtime tests: use HTTPS for downloads
+	- genrandconfig: exclude fmlib and fmc
+
+	Updated defconfigs: /acmesystems_acqua_a5_*, lafrite, mender_x86_64_efi
+
+	Updated / fixed packages: 18xx-ti-utils, avrdude, bind, bpftool,
+	  brotli, c-ares, composer, containerd, cpuinfo, cups, dante,
+	  docker-cli, docker-engine, domoticz, expat, ffmpeg, firewalld,
+	  fluidsynth, fmlib, gauche, gcc, go, gobject-introspection, grpc,
+	  imagemagick, iperf3, iwd, jimtcl, kodi, libabseil-cpp, libaio,
+	  libarchive, libcurl, libepoxy, libfm, libfribidi, libglib2, libgtk4,
+	  libheif, libnss, libressl, libselinux, libsoup3, libssh, libtpms,
+	  liburiparser, libzlib, linux, linux-headers, linux-tools,
+	  minizip-zlib, mupdf, musl, ncftp, network-manager, newt, nginx,
+	  nodejs, ntpsec, openssh, p11-kit, parted, patch, pcmanfm,
+	  perl-mozilla-ca, perl-net-ssleay, pppd, python-autobahn,
+	  python-botocore, python-brotli, python-certifi, python-django,
+	  python-dnspython, python-grpcio, python-httplib2, python-numpy,
+	  python-pip, python-sqlparse, python-twisted, python3, qt6, qt6svg,
+	  rsync, rtai, rtl8188eu, rtl8812au-aircrack-ng, sofia-sip, suricata,
+	  swtpm, sysprof, toolchain-external-bootlin:, tor, uclibc, valgrind,
+	  webrtc-audio-processing, wolfssl, x265, xxhash
+
+
 2025.02.19, released October 22, 2026
 
 	Changes with potentially large impact:
