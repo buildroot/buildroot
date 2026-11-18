@@ -192,6 +192,10 @@ config BR2_PACKAGE_FREESCALE_IMX_HAS_VIV_GPU
 		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8X || \
 		BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8DXL
 
+config BR2_PACKAGE_FREESCALE_IMX_HAS_MALI_GPU
+	bool
+	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX95
+
 config BR2_PACKAGE_FREESCALE_IMX_HAS_ELE
 	bool
 	default y if BR2_PACKAGE_FREESCALE_IMX_PLATFORM_IMX8ULP || \
@@ -231,5 +235,6 @@ source "package/freescale-imx/imx-gpu-g2d/Config.in"
 source "package/freescale-imx/imx-gpu-viv/Config.in"
 source "package/freescale-imx/kernel-module-imx-gpu-viv/Config.in"
 endif
+source "package/freescale-imx/mali-imx/Config.in"
 
 endif
