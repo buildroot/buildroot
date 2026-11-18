@@ -159,6 +159,18 @@ define MTD_INSTALL_TARGET_CMDS
 	$(foreach f,$(MTD_TARGETS_y), \
 		$(INSTALL) -D -m 0755 $(@D)/$(f) $(TARGET_DIR)/usr/sbin/$(notdir $(f))
 	)
+	$(if $(BR2_PACKAGE_MTD_UBITESTS), \
+		$(INSTALL) -D -m 0755 $(@D)/tests/ubi-tests/runubitests.sh $(TARGET_DIR)/usr/libexec/mtd-utils/runubitests.sh
+		$(INSTALL) -D -m 0755 $(@D)/io_basic $(TARGET_DIR)/usr/libexec/mtd-utils/io_basic
+		$(INSTALL) -D -m 0755 $(@D)/io_paral $(TARGET_DIR)/usr/libexec/mtd-utils/io_paral
+		$(INSTALL) -D -m 0755 $(@D)/io_read $(TARGET_DIR)/usr/libexec/mtd-utils/io_read
+		$(INSTALL) -D -m 0755 $(@D)/io_update $(TARGET_DIR)/usr/libexec/mtd-utils/io_update
+		$(INSTALL) -D -m 0755 $(@D)/mkvol_bad $(TARGET_DIR)/usr/libexec/mtd-utils/mkvol_bad
+		$(INSTALL) -D -m 0755 $(@D)/mkvol_basic $(TARGET_DIR)/usr/libexec/mtd-utils/mkvol_basic
+		$(INSTALL) -D -m 0755 $(@D)/mkvol_paral $(TARGET_DIR)/usr/libexec/mtd-utils/mkvol_paral
+		$(INSTALL) -D -m 0755 $(@D)/rsvol $(TARGET_DIR)/usr/libexec/mtd-utils/rsvol
+		$(INSTALL) -D -m 0755 $(@D)/volrefcnt $(TARGET_DIR)/usr/libexec/mtd-utils/volrefcnt
+	)
 endef
 
 # Those libraries are not installed by "make install", but are needed
