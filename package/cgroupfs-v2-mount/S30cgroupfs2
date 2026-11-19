@@ -2,10 +2,14 @@
 
 DAEMON=cgroupfs2
 
+# shellcheck source=/dev/null
+[ -r "/etc/default/$DAEMON" ] && . "/etc/default/$DAEMON"
+
 start() {
 	printf 'Mounting %s: ' "${DAEMON}"
 	mkdir -p /sys/fs/cgroup
-	mount -t cgroup2 none /sys/fs/cgroup
+	mount -t cgroup2 ${MOUNT_OPTS:+-o "${MOUNT_OPTS}"} \
+		none /sys/fs/cgroup
 	status=$?
 	if [ "$status" -eq 0 ]; then
 		echo "OK"

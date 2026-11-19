@@ -5,6 +5,10 @@ config BR2_PACKAGE_CGROUPFS_V2_MOUNT
 	help
 	  Mount the cgroup v2 hierarchy filesystem.
 
+	  To use non-default mount options, set MOUNT_OPTS in
+	  /etc/default/cgroupfs2. If set, the value will be passed to
+	  the -o option of the mount command.
+
 comment "cgroupfs-v2-mount is incompatible with cgroupfs-mount"
 	depends on !BR2_INIT_SYSTEMD
 	depends on BR2_PACKAGE_CGROUPFS_MOUNT
