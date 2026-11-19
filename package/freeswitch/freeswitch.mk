@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FREESWITCH_VERSION = 1.11.3
+FREESWITCH_VERSION = 1.11.4
 FREESWITCH_SOURCE = freeswitch-$(FREESWITCH_VERSION).-release.tar.xz
 FREESWITCH_SITE = https://files.freeswitch.org/freeswitch-releases
 # 0004-sac-openssl.m4-probe-TLS_method-to-detect-libssl-Ope.patch
@@ -29,6 +29,8 @@ FREESWITCH_DEPENDENCIES = \
 	host-pkgconf \
 	jpeg \
 	libcurl \
+	libminiupnpc \
+	libnatpmp \
 	openssl \
 	pcre2 \
 	spandsp \
