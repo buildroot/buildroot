@@ -1,0 +1,49 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Yegor Yefremov <yegorslists@googlemail.com>
+Date: Thu, 19 Nov 2026 10:43:49 +0100
+Subject: [PATCH] configure.ac: check for utmp.h even with --disable-utmp
+
+On Linux, login_tty() is declared in utmp.h. With --disable-utmp,
+which is required with musl, utmp.h is not checked for and thus not
+included, while login_tty() is still found and used by launcher.c. With
+GCC 14 and later, this breaks the build:
+
+  shellinabox/launcher.c:899:5: error: implicit declaration of function 'login_tty' [-Wimplicit-function-declaration]
+
+HAVE_UTMP_H only controls the inclusion of utmp.h, the login records
+depend on HAVE_UTMPX_H. So check for utmp.h unconditionally.
+
+Upstream: dead (last commit in 2019)
+Signed-off-by: Yegor Yefremov <yegorslists@googlemail.com>
+---
+ configure.ac | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 05ab1bb..234ce32 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -34,6 +34,11 @@ dnl Check for header files that do not exist on all platforms
+ AC_CHECK_HEADERS([libutil.h pthread.h pty.h strings.h syslog.h sys/prctl.h \
+                   sys/uio.h util.h])
+ 
++dnl On Linux, login_tty() is declared in utmp.h, so check for it even when
++dnl utmp support is disabled. HAVE_UTMP_H only controls the inclusion of the
++dnl header, the login records themselves depend on HAVE_UTMPX_H.
++AC_CHECK_HEADERS([utmp.h])
++
+ dnl Most systems require linking against libutil.so in order to get login_tty()
+ AC_CHECK_FUNCS(login_tty, [],
+                [AC_CHECK_LIB(util, login_tty,
+@@ -147,7 +152,7 @@ AC_ARG_ENABLE(utmp,
+                                            be disabled.])
+ 
+ if test "x$enable_utmp" != xno; then
+-  AC_CHECK_HEADERS([utmp.h utmpx.h])
++  AC_CHECK_HEADERS([utmpx.h])
+ 
+   dnl Even if utmpx.h exists, not all systems have support for updwtmpx()
+   AC_TRY_LINK([#include <utmp.h>],
+-- 
+2.34.1
+
