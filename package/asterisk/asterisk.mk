@@ -6,7 +6,7 @@
 
 # When bumping asterisk's version, verify that the versions of pjsip,
 # libjwt and sounds below are still matching.
-ASTERISK_VERSION = 22.11.0
+ASTERISK_VERSION = 24.0.0
 # Use the github mirror: it's an official mirror maintained by Digium, and
 # provides tarballs, which the main Asterisk git tree (behind Gerrit) does not.
 ASTERISK_SITE = https://github.com/asterisk/asterisk/releases/download/$(ASTERISK_VERSION)
@@ -23,12 +23,12 @@ ASTERISK_EXTRA_DOWNLOADS = \
 	$(ASTERISK_PJSIP_URL)/pjproject-2.17.tar.bz2 \
 	$(ASTERISK_LIBJWT_URL)/libjwt-1.15.3.tar.gz
 
-ASTERISK_LICENSE = GPL-2.0, BSD-3-Clause (SHA1, resample), BSD-4-Clause (db1-ast)
+ASTERISK_LICENSE = GPL-2.0, BSD-3-Clause (SHA1, resample), BSD-4-Clause (dns header struct)
 ASTERISK_LICENSE_FILES = \
 	COPYING \
 	main/sha1.c \
 	codecs/speex/speex_resampler.h \
-	utils/db1-ast/include/db.h
+	main/dns.c
 
 ASTERISK_CPE_ID_VENDOR = sangoma
 ASTERISK_SELINUX_MODULES = asterisk
