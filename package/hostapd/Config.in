@@ -75,6 +75,15 @@ config BR2_PACKAGE_HOSTAPD_WPA3
 	help
 	  Enable WPA3 support including OWE, SAE, DPP
 
+config BR2_PACKAGE_HOSTAPD_WNM
+	bool "Enable WNM (Wireless Network Management)"
+	depends on BR2_PACKAGE_HOSTAPD_HAS_WIFI_DRIVERS
+	help
+	  Enable support for Wireless Network Management (IEEE 802.11v)
+	  on the AP side. This enables features such as BSS Transition
+	  Management which allows the AP to suggest or request a station
+	  to move to another BSS.
+
 config BR2_PACKAGE_HOSTAPD_VLAN
 	bool "Enable VLAN support"
 	default y
