@@ -35,24 +35,24 @@ class TestUsbIp(infra.basetest.BRTest):
     def test_run(self):
         img = os.path.join(self.builddir, "images", "rootfs.cpio.gz")
         kern = os.path.join(self.builddir, "images", "Image")
-        # We add a USB keyboard and mouse devices for the test.
+        # We add a USB keyboard for the test, which has ID 0627:0001
+        # and shows up in "lsusb" as "QEMU Tablet".
         self.emulator.boot(arch="aarch64",
                            kernel=kern,
                            kernel_cmdline=["console=ttyAMA0"],
                            options=["-M", "virt", "-cpu", "cortex-a57", "-m", "256M",
                                     "-initrd", img,
                                     "-device", "usb-ehci,id=ehci",
-                                    "-device", "usb-kbd,bus=ehci.0",
-                                    "-device", "usb-mouse,bus=ehci.0"])
+                                    "-device", "usb-kbd,bus=ehci.0"])
         self.emulator.login()
 
         # We check the program can execute.
         self.assertRunOk("usbipd --version")
 
-        # We check "lsusb" sees exactly one QEMU USB Keyboard.
+        # We check "lsusb" sees exactly one device with ID 0627:0001.
         out, ret = self.emulator.run("lsusb")
         self.assertEqual(ret, 0)
-        kbd_count = "\n".join(out).count("QEMU USB Keyboard")
+        kbd_count = "\n".join(out).count("ID 0627:0001")
         self.assertEqual(kbd_count, 1)
 
         # The daemon is not running yet. Listing remote devices is
@@ -64,7 +64,7 @@ class TestUsbIp(infra.basetest.BRTest):
 
         # The daemon is started. Listing remote devices is now
         # expected to succeed, but with an empty list (since we did
-        # not exported any device yet).
+        # not export any device yet).
         out, ret = self.emulator.run("usbip list --remote=127.0.0.1")
         self.assertEqual(ret, 0)
         self.assertIn("no exportable devices found", "\n".join(out))
@@ -95,9 +95,10 @@ class TestUsbIp(infra.basetest.BRTest):
         # Wait a bit, to let the new keyboard be detected.
         time.sleep(1)
 
-        # We check "lsusb" now sees exactly two QEMU USB Keyboards
-        # (the original one, and a second one created by usbip).
+        # We check "lsusb" now sees exactly two devices with ID
+        # 0627:0001 (the original one, and a second one created by
+        # usbip).
         out, ret = self.emulator.run("lsusb")
         self.assertEqual(ret, 0)
-        kbd_count = "\n".join(out).count("QEMU USB Keyboard")
+        kbd_count = "\n".join(out).count("ID 0627:0001")
         self.assertEqual(kbd_count, 2)
