@@ -14,8 +14,23 @@ config BR2_PACKAGE_GROUT
 	select BR2_PACKAGE_NUMACTL
 	select BR2_PACKAGE_LIBECOLI
 	select BR2_PACKAGE_LIBMNL
+	select BR2_PACKAGE_LIBPCAP
 	help
 	  Graph router based on DPDK
+
+if BR2_PACKAGE_GROUT
+
+config BR2_PACKAGE_GROUT_GRTCPDUMP
+	bool "grtcpdump"
+	select BR2_PACKAGE_BASH # runtime
+	select BR2_PACKAGE_BUSYBOX_SHOW_OTHERS # bash
+	select BR2_PACKAGE_JQ # runtime
+	select BR2_PACKAGE_TCPDUMP # runtime
+	help
+	  Install grtcpdump, a tcpdump wrapper for grout
+	  interfaces. It needs bash, jq and tcpdump at runtime.
+
+endif
 
 comment "grout needs a glibc toolchain w/ dynamic library, threads, wchar, gcc >= 13, headers >= 4.19"
 	depends on BR2_USE_MMU
