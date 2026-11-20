@@ -1,0 +1,70 @@
+From 8201708234efe3ce182beaac42cee84166bea78b Mon Sep 17 00:00:00 2001
+From: Waldemar Brodkorb <wbx@openadk.org>
+Date: Fri, 20 Nov 2026 05:37:52 +0100
+Subject: [PATCH] renameat2: add new syscall wrapper
+
+Upstream: https://github.com/wbx-github/uclibc-ng/commit/8201708234efe3ce182beaac42cee84166bea78b
+Signed-off-by: Waldemar Brodkorb <wbx@openadk.org>
+---
+ include/stdio.h                       | 16 ++++++++++++++++
+ libc/sysdeps/linux/common/renameat2.c | 21 +++++++++++++++++++++
+ 2 files changed, 37 insertions(+)
+ create mode 100644 libc/sysdeps/linux/common/renameat2.c
+
+diff --git a/include/stdio.h b/include/stdio.h
+index a48fa9b78..5069bc65e 100644
+--- a/include/stdio.h
++++ b/include/stdio.h
+@@ -157,6 +157,22 @@ extern int renameat (int __oldfd, const char *__old, int __newfd,
+ libc_hidden_proto(renameat)
+ #endif
+ 
++#ifdef __USE_GNU
++/* Flags for renameat2.  */
++# define RENAME_NOREPLACE (1 << 0)
++# define AT_RENAME_NOREPLACE 0x0001
++# define RENAME_EXCHANGE (1 << 1)
++# define AT_RENAME_EXCHANGE 0x0002
++# define RENAME_WHITEOUT (1 << 2)
++# define AT_RENAME_WHITEOUT 0x0004
++
++/* Rename file OLD relative to OLDFD to NEW relative to NEWFD, with
++   additional flags.  */
++extern int renameat2 (int __oldfd, const char *__old, int __newfd,
++		      const char *__new, unsigned int __flags) __THROW;
++libc_hidden_proto(renameat2)
++#endif
++
+ __BEGIN_NAMESPACE_STD
+ /* Create a temporary file and open it read/write.
+ 
+diff --git a/libc/sysdeps/linux/common/renameat2.c b/libc/sysdeps/linux/common/renameat2.c
+new file mode 100644
+index 000000000..efab4e019
+--- /dev/null
++++ b/libc/sysdeps/linux/common/renameat2.c
+@@ -0,0 +1,21 @@
++/*
++ * renameat2() for uClibc-ng
++ * Licensed under the LGPL v2.1, see the file COPYING.LIB in this tarball.
++ */
++
++#include <stdio.h>
++#include <fcntl.h>
++#include <sysdep.h>
++#include <errno.h>
++
++int
++renameat2 (int oldfd, const char *old, int newfd, const char *new, unsigned int flags)
++{
++#ifdef __NR_renameat2
++  return INLINE_SYSCALL (renameat2, 5, oldfd, old, newfd, new, flags);
++#else
++  __set_errno(ENOSYS);
++  return -1;
++#endif
++}
++libc_hidden_def (renameat2)
+-- 
+2.47.3
+
