@@ -1,0 +1,13 @@
+comment "rtl8812au needs a Linux kernel to be built"
+	depends on !BR2_s390x
+	depends on !BR2_LINUX_KERNEL
+
+config BR2_PACKAGE_RTL8812AU
+	bool "rtl8812au"
+	depends on !BR2_s390x
+	depends on BR2_LINUX_KERNEL
+	help
+	  Realtek RTL8812AU USB wifi driver, based on Realtek's
+	  v5.13.6 (20210820) release.
+
+	  https://github.com/cybersnow02/8812au-20210820

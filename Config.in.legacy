@@ -146,6 +146,15 @@ endif
 
 comment "Legacy options removed in 2027.02"
 
+config BR2_PACKAGE_RTL8812AU_AIRCRACK_NG
+	bool "rtl8812au-aircrack-ng has been renamed to rtl8812au"
+	select BR2_LEGACY
+	select BR2_PACKAGE_RTL8812AU
+	help
+	  The rtl8812au-aircrack-ng package has been renamed to
+	  rtl8812au and now uses the 8812au-20210820 driver from
+	  https://github.com/cybersnow02/8812au-20210820.
+
 config BR2_PACKAGE_PYTHON_DBUS_NEXT
 	bool "python-dbus-next has been removed"
 	select BR2_LEGACY
