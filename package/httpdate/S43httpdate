@@ -13,7 +13,7 @@ start() {
 	# httpdate does not write a pidfile, so run it in the foreground
 	# and let start-stop-daemon background it and write it.
 	# shellcheck disable=SC2086 # we need the word splitting
-	start-stop-daemon -S -q -b -m -p "$PIDFILE" -x "/usr/bin/$DAEMON" \
+	start-stop-daemon -S -q -b -m -p "$PIDFILE" -x "/usr/sbin/$DAEMON" \
 		-- -F $HTTPDATE_ARGS
 	status=$?
 	if [ "$status" -eq 0 ]; then

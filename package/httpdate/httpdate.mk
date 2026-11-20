@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HTTPDATE_VERSION = 1.0.1
+HTTPDATE_VERSION = 1.0.2
 HTTPDATE_SITE = $(call github,twekkel,httpdate,v$(HTTPDATE_VERSION))
 HTTPDATE_LICENSE = GPL-2.0+
 HTTPDATE_LICENSE_FILES = LICENSE
@@ -12,7 +12,7 @@ HTTPDATE_DEPENDENCIES = host-pkgconf libcurl
 
 define HTTPDATE_BUILD_CMDS
 	$(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) -C $(@D) \
-		LIBS="`$(PKG_CONFIG_HOST_BINARY) --libs libcurl` -lm"
+		LIBS="`$(PKG_CONFIG_HOST_BINARY) --libs libcurl`"
 endef
 
 define HTTPDATE_INSTALL_TARGET_CMDS
