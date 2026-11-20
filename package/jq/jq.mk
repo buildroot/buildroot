@@ -10,6 +10,10 @@ JQ_LICENSE = MIT (code), ICU (decNumber), CC-BY-3.0 (documentation), \
 	BSD-2-Clause (strptime)
 JQ_LICENSE_FILES = COPYING
 JQ_CPE_ID_VENDOR = jqlang
+
+# Fixed in 1.8.2, NVD database entry not up-to-date
+JQ_IGNORE_CVES += CVE-2026-44777
+
 JQ_INSTALL_STAGING = YES
 
 # uses c99 specific features
