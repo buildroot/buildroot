@@ -84,6 +84,16 @@ config BR2_PACKAGE_HOSTAPD_WNM
 	  Management which allows the AP to suggest or request a station
 	  to move to another BSS.
 
+config BR2_PACKAGE_HOSTAPD_MBO
+	bool "Enable MBO (Multiband Operation)"
+	depends on BR2_PACKAGE_HOSTAPD_HAS_WIFI_DRIVERS
+	select BR2_PACKAGE_HOSTAPD_WNM
+	help
+	  Enable support for MBO (Multiband Operation, Wi-Fi Agile
+	  Multiband). This facilitates efficient use of the frequency
+	  bands available to the AP, enabling band steering of stations
+	  toward the most suitable band.
+
 config BR2_PACKAGE_HOSTAPD_VLAN
 	bool "Enable VLAN support"
 	default y
