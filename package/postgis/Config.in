@@ -9,6 +9,7 @@ config BR2_PACKAGE_POSTGIS
 	select BR2_PACKAGE_PROJ
 	select BR2_PACKAGE_LIBXML2
 	select BR2_PACKAGE_LIBICONV if !BR2_ENABLE_LOCALE
+	select BR2_PACKAGE_GMP
 	help
 	  PostGIS is a spatial database extender for PostgreSQL
 	  object-relational database. It adds support for
