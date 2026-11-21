@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CHAWAN_VERSION = 0.5.1
+CHAWAN_VERSION = 0.5.2
 CHAWAN_SITE = https://git.sr.ht/~bptato/chawan/archive
 CHAWAN_SOURCE = v$(CHAWAN_VERSION).tar.gz
 CHAWAN_LICENSE = Unlicense
