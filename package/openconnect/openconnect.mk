@@ -6,7 +6,11 @@
 
 OPENCONNECT_VERSION = 9.21
 OPENCONNECT_SITE = https://www.infradead.org/openconnect/download
-OPENCONNECT_DEPENDENCIES = host-pkgconf libxml2 zlib
+OPENCONNECT_DEPENDENCIES = \
+	host-pkgconf \
+	libxml2 \
+	zlib \
+	$(TARGET_NLS_DEPENDENCIES)
 OPENCONNECT_LICENSE = LGPL-2.1
 OPENCONNECT_LICENSE_FILES = COPYING.LGPL
 OPENCONNECT_CPE_ID_VENDOR = infradead
@@ -28,6 +32,12 @@ OPENCONNECT_DEPENDENCIES += lz4
 OPENCONNECT_CONF_OPTS += --with-lz4
 else
 OPENCONNECT_CONF_OPTS += --without-lz4
+endif
+
+ifeq ($(BR2_SYSTEM_ENABLE_NLS),y)
+OPENCONNECT_CONF_OPTS += --enable-nls
+else
+OPENCONNECT_CONF_OPTS += --disable-nls
 endif
 
 $(eval $(autotools-package))
