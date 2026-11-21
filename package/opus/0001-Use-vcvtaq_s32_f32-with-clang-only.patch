@@ -1,0 +1,33 @@
+From 8b2a9c07506fdfed0eb5f66e60ace653e30540ca Mon Sep 17 00:00:00 2001
+From: Michele Comignano <mcdev@playlinux.net>
+Date: Tue, 16 Jun 2026 00:37:05 +0200
+Subject: [PATCH] Use vcvtaq_s32_f32 with clang only
+
+While intrinsics vcvtaq_s32_f32 is present according to ARM docs,
+gcc doesn't make it available.
+The fix, ensure its only used when compiling with clang which is
+known to propertly make it available.
+
+Upstream: https://gitlab.xiph.org/xiph/opus/-/merge_requests/193
+
+Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
+---
+ celt/arm/mathops_arm.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/celt/arm/mathops_arm.h b/celt/arm/mathops_arm.h
+index b1f91699..3be61b23 100644
+--- a/celt/arm/mathops_arm.h
++++ b/celt/arm/mathops_arm.h
+@@ -37,7 +37,7 @@
+ 
+ static inline int32x4_t vroundf(float32x4_t x)
+ {
+-#  if defined(__aarch64__) || (defined(__ARM_ARCH) && __ARM_ARCH >= 8)
++#  if defined(__aarch64__) || (defined(__ARM_ARCH) && __ARM_ARCH >= 8 && defined(__clang__))
+     return vcvtaq_s32_f32(x);
+ #  else
+     uint32x4_t sign = vandq_u32(vreinterpretq_u32_f32(x), vdupq_n_u32(0x80000000));
+-- 
+2.47.3
+
