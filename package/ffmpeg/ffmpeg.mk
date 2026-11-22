@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FFMPEG_VERSION = 9.0.2
+FFMPEG_VERSION = 9.1
 FFMPEG_SOURCE = ffmpeg-$(FFMPEG_VERSION).tar.xz
 FFMPEG_SITE = https://ffmpeg.org/releases
 FFMPEG_INSTALL_STAGING = YES
@@ -17,7 +17,7 @@ FFMPEG_LICENSE_FILES += COPYING.GPLv2
 endif
 
 FFMPEG_EXTRA_DOWNLOADS = \
-	https://github.com/xbmc/xbmc/raw/refs/tags/22.0rc1-Piers/tools/depends/target/ffmpeg/001-ffmpeg-all-libpostproc-plugin.patch
+	https://github.com/xbmc/xbmc/raw/a46dcf90a422347d2264767afc18410f5de6c864/tools/depends/target/ffmpeg/001-ffmpeg-all-libpostproc-plugin.patch
 
 define FFMPEG_APPLY_POSTPROC_PATCH
 	$(APPLY_PATCHES) $(@D) $(FFMPEG_DL_DIR) \

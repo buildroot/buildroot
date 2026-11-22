@@ -9,7 +9,7 @@ Fixes https://trac.ffmpeg.org/ticket/9138
 
 Upstream: http://ffmpeg.org/pipermail/ffmpeg-devel/2021-June/281272.html
 
-[Bernd: rebased for 9.0]
+[Bernd: rebased for 9.1]
 Signed-off-by: Bernd Kuhls <bernd@kuhls.net>
 [Dario: make the patch to be applied with fuzz factor 0]
 Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
@@ -22,7 +22,7 @@ diff --git a/configure b/configure
 index 374bd5c151..fbb108506d 100755
 --- a/configure
 +++ b/configure
-@@ -2480,6 +2480,7 @@ HEADERS_LIST="
+@@ -2450,6 +2450,7 @@ HEADERS_LIST="
      malloc_h
      poll_h
      pthread_np_h
@@ -30,7 +30,7 @@ index 374bd5c151..fbb108506d 100755
      sys_hwprobe_h
      sys_param_h
      sys_resource_h
-@@ -7088,6 +7089,7 @@ check_func_headers VideoToolbox/VideoToolbox.h VTPixelTransferSessionCreate -fra
+@@ -6980,6 +6981,7 @@ check_func_headers VideoToolbox/VideoToolbox.h VTPixelTransferSessionCreate -fra
  check_func_headers VideoToolbox/VideoToolbox.h VTPixelRotationSessionCreate -framework VideoToolbox
  check_headers windows.h
  check_headers asm/types.h
