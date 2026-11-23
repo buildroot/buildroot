@@ -1,0 +1,240 @@
+From 782f9dc2ce27356faff25214c7d855919c4d6979 Mon Sep 17 00:00:00 2001
+Message-ID: <782f9dc2ce27356faff25214c7d855919c4d6979.1795420648.git.yann.morin@orange.com>
+From: "Yann E. MORIN" <yann.morin@orange.com>
+Date: Mon, 23 Nov 2026 08:57:15 +0100
+Subject: [PATCH] Revert "cmake: Use cjson provided find package"
+
+This reverts commit 18a436c9cf5c2f35494249382449bf4f52c55787.
+
+Revert because of an issue with cJSON:
+    https://github.com/DaveGamble/cJSON/issues/1094
+    https://github.com/DaveGamble/cJSON/pull/812
+    https://github.com/DaveGamble/cJSON/pull/1112
+
+Upstream: N/A
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+
+---
+ CMakeLists.txt                               |  2 +-
+ apps/mosquitto_ctrl/CMakeLists.txt           |  2 +-
+ client/CMakeLists.txt                        |  2 +-
+ cmake/FindcJSON.cmake                        | 50 ++++++++++++++++++++
+ libcommon/CMakeLists.txt                     |  2 +-
+ plugins/dynamic-security/CMakeLists.txt      |  2 +-
+ plugins/persist-sqlite/CMakeLists.txt        |  2 +-
+ src/CMakeLists.txt                           |  2 +-
+ test/apps/ctrl/CMakeLists.txt                |  2 +-
+ test/mock/apps/mosquitto_ctrl/CMakeLists.txt |  2 +-
+ test/mock/lib/CMakeLists.txt                 |  2 +-
+ test/mock/libcommon/CMakeLists.txt           |  2 +-
+ test/unit/CMakeLists.txt                     |  2 +-
+ 13 files changed, 62 insertions(+), 12 deletions(-)
+ create mode 100644 cmake/FindcJSON.cmake
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 231db869..6fd827e7 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -52,7 +52,7 @@ include(GNUInstallDirs)
+ include(CMakePushCheckState)
+ include(CheckSourceCompiles)
+ 
+-find_package(cJSON CONFIG REQUIRED)
++find_package(cJSON REQUIRED)
+ find_package(argon2)
+ 
+ option_env(INC_MEMTRACK "Include memory tracking support?" ON)
+diff --git a/apps/mosquitto_ctrl/CMakeLists.txt b/apps/mosquitto_ctrl/CMakeLists.txt
+index 750a9029..ffcd4bc8 100644
+--- a/apps/mosquitto_ctrl/CMakeLists.txt
++++ b/apps/mosquitto_ctrl/CMakeLists.txt
+@@ -96,7 +96,7 @@ if(WITH_TLS)
+ 	  	common-options
+ 		libmosquitto_common
+ 		OpenSSL::SSL
+-		cjson
++		cJSON
+ 	)
+ 
+ 	if(WITH_THREADING)
+diff --git a/client/CMakeLists.txt b/client/CMakeLists.txt
+index 91600136..48c273f7 100644
+--- a/client/CMakeLists.txt
++++ b/client/CMakeLists.txt
+@@ -34,7 +34,7 @@ if (WITH_THREADING AND NOT WIN32)
+ endif()
+ 
+ if(CJSON_FOUND)
+-	target_link_libraries(client-common INTERFACE cjson)
++	target_link_libraries(client-common INTERFACE cJSON)
+ endif()
+ 
+ if(WITH_STATIC_LIBRARIES)
+diff --git a/cmake/FindcJSON.cmake b/cmake/FindcJSON.cmake
+new file mode 100644
+index 00000000..2d89c1a7
+--- /dev/null
++++ b/cmake/FindcJSON.cmake
+@@ -0,0 +1,50 @@
++INCLUDE( FindPackageHandleStandardArgs )
++
++# Checks an environment variable; note that the first check
++# does not require the usual CMake $-sign.
++IF( DEFINED ENV{CJSON_DIR} )
++	SET( CJSON_DIR "$ENV{CJSON_DIR}" )
++ENDIF()
++
++FIND_PATH(
++		CJSON_INCLUDE_DIR
++		cjson/cJSON.h
++	HINTS
++		CJSON_DIR
++)
++
++FIND_LIBRARY( CJSON_LIBRARY
++	NAMES cjson
++	HINTS ${CJSON_DIR}
++)
++
++FIND_PACKAGE_HANDLE_STANDARD_ARGS( cJSON DEFAULT_MSG
++	CJSON_INCLUDE_DIR CJSON_LIBRARY
++)
++
++IF( CJSON_FOUND )
++	SET( CJSON_INCLUDE_DIRS ${CJSON_INCLUDE_DIR} )
++	SET( CJSON_LIBRARIES ${CJSON_LIBRARY} )
++
++	MARK_AS_ADVANCED(
++		CJSON_LIBRARY
++		CJSON_INCLUDE_DIR
++		CJSON_DIR
++	)
++
++	add_library(cJSON SHARED IMPORTED)
++	set_target_properties(cJSON
++		PROPERTIES
++			INTERFACE_INCLUDE_DIRECTORIES "${CJSON_INCLUDE_DIRS}"
++	)
++
++	set_target_properties(cJSON
++		PROPERTIES
++			IMPORTED_LOCATION "${CJSON_LIBRARY}"
++			IMPORTED_IMPLIB "${CJSON_LIBRARY}"
++	)
++ELSE()
++	SET( CJSON_DIR "" CACHE STRING
++		"An optional hint to a directory for finding `cJSON`"
++	)
++ENDIF()
+diff --git a/libcommon/CMakeLists.txt b/libcommon/CMakeLists.txt
+index 169a1a9a..1cb2d577 100644
+--- a/libcommon/CMakeLists.txt
++++ b/libcommon/CMakeLists.txt
+@@ -53,7 +53,7 @@ target_include_directories(libmosquitto_common
+ target_link_libraries(libmosquitto_common
+ 	PUBLIC
+ 		common-options
+-		cjson
++		cJSON
+ )
+ 
+ if(ARGON2_FOUND)
+diff --git a/plugins/dynamic-security/CMakeLists.txt b/plugins/dynamic-security/CMakeLists.txt
+index 28c573c1..d607a190 100644
+--- a/plugins/dynamic-security/CMakeLists.txt
++++ b/plugins/dynamic-security/CMakeLists.txt
+@@ -30,7 +30,7 @@ if(WITH_TLS)
+ 
+ 	set(LINKLIST
+ 		libmosquitto_common
+-		cjson
++		cJSON
+ 		OpenSSL::SSL
+ 	)
+ 
+diff --git a/plugins/persist-sqlite/CMakeLists.txt b/plugins/persist-sqlite/CMakeLists.txt
+index 086fbfc7..bc585f36 100644
+--- a/plugins/persist-sqlite/CMakeLists.txt
++++ b/plugins/persist-sqlite/CMakeLists.txt
+@@ -25,7 +25,7 @@ if(SQLITE3_FOUND)
+ 
+ 	set(LINKLIST
+ 		libmosquitto_common
+-		cjson
++		cJSON
+ 		SQLite::SQLite3
+ 	)
+ 
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 313a9ff1..9b875051 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -274,7 +274,7 @@ if(WIN32)
+ 	target_link_libraries(mosquitto PRIVATE ws2_32)
+ endif()
+ 
+-target_link_libraries(mosquitto PRIVATE cjson)
++target_link_libraries(mosquitto PRIVATE cJSON)
+ 
+ target_include_directories(mosquitto
+ 	PUBLIC
+diff --git a/test/apps/ctrl/CMakeLists.txt b/test/apps/ctrl/CMakeLists.txt
+index f0cae96d..9ec02c90 100644
+--- a/test/apps/ctrl/CMakeLists.txt
++++ b/test/apps/ctrl/CMakeLists.txt
+@@ -39,7 +39,7 @@ function(add_ctrl_shell_test TEST_NAME)
+ 		GTest::gmock_main
+ 		editline_mock
+ 		pthread_mock
+-		cjson
++		cJSON
+ 		libmosquitto_common
+ 	)
+ 	gtest_discover_tests(${TEST_NAME})
+diff --git a/test/mock/apps/mosquitto_ctrl/CMakeLists.txt b/test/mock/apps/mosquitto_ctrl/CMakeLists.txt
+index 8e5d8535..0ee1cd24 100644
+--- a/test/mock/apps/mosquitto_ctrl/CMakeLists.txt
++++ b/test/mock/apps/mosquitto_ctrl/CMakeLists.txt
+@@ -16,5 +16,5 @@ if(WITH_CTRL_SHELL AND EDITLINE_FOUND)
+ 			${mosquitto_SOURCE_DIR}/test/mock
+ 			${mosquitto_SOURCE_DIR}/test/mock/apps/mosquitto_ctrl
+ 	)
+-	target_link_libraries(ctrl_shell_mock PRIVATE cjson GTest::gmock)
++	target_link_libraries(ctrl_shell_mock PRIVATE cJSON GTest::gmock)
+ endif()
+diff --git a/test/mock/lib/CMakeLists.txt b/test/mock/lib/CMakeLists.txt
+index 8c3ec3f9..56e590fc 100644
+--- a/test/mock/lib/CMakeLists.txt
++++ b/test/mock/lib/CMakeLists.txt
+@@ -25,4 +25,4 @@ target_include_directories(libmosquitto_mock
+         ${mosquitto_SOURCE_DIR}/test/mock
+         ${mosquitto_SOURCE_DIR}/test/mock/lib
+ )
+-target_link_libraries(libmosquitto_mock PRIVATE cjson GTest::gmock)
++target_link_libraries(libmosquitto_mock PRIVATE cJSON GTest::gmock)
+diff --git a/test/mock/libcommon/CMakeLists.txt b/test/mock/libcommon/CMakeLists.txt
+index 704eeb0a..1a693779 100644
+--- a/test/mock/libcommon/CMakeLists.txt
++++ b/test/mock/libcommon/CMakeLists.txt
+@@ -22,4 +22,4 @@ target_include_directories(libmosquitto_common_mock
+         ${mosquitto_SOURCE_DIR}/test/mock
+         ${mosquitto_SOURCE_DIR}/test/mock/lib
+ )
+-target_link_libraries(libmosquitto_common_mock PRIVATE cjson GTest::gmock)
++target_link_libraries(libmosquitto_common_mock PRIVATE cJSON GTest::gmock)
+diff --git a/test/unit/CMakeLists.txt b/test/unit/CMakeLists.txt
+index 52a46313..d8c4be36 100644
+--- a/test/unit/CMakeLists.txt
++++ b/test/unit/CMakeLists.txt
+@@ -13,7 +13,7 @@ target_include_directories(common-unit-test-header
+ target_link_libraries(common-unit-test-header
+     INTERFACE
+         common-options
+-        cjson
++        cJSON
+         CUnit::CUnit
+ )
+ 
+-- 
+2.43.0
+

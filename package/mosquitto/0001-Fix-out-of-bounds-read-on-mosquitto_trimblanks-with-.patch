@@ -1,0 +1,43 @@
+From bc8bfae7a735bb941128beeeb34f71a96a5d0551 Mon Sep 17 00:00:00 2001
+Message-ID: <bc8bfae7a735bb941128beeeb34f71a96a5d0551.1795419891.git.yann.morin@orange.com>
+From: "Roger A. Light" <roger@atchoo.org>
+Date: Thu, 19 Nov 2026 00:22:57 +0000
+Subject: [PATCH] Fix out of bounds read on mosquitto_trimblanks with empty
+ string.
+
+Upstream: https://github.com/eclipse-mosquitto/mosquitto/commit/bc8bfae7a735bb941128beeeb34f71a96a5d0551
+[yann.morin@orange.com: drop the Changelog.txt entry]
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+
+---
+ libcommon/file_common.c | 7 ++++++-
+ 2 files changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/libcommon/file_common.c b/libcommon/file_common.c
+index 9d03a36a..2a361b7f 100644
+--- a/libcommon/file_common.c
++++ b/libcommon/file_common.c
+@@ -263,6 +263,7 @@ FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
+ char *mosquitto_trimblanks(char *str)
+ {
+ 	char *endptr;
++	size_t slen;
+ 
+ 	if(str == NULL){
+ 		return NULL;
+@@ -271,7 +272,11 @@ char *mosquitto_trimblanks(char *str)
+ 	while(isspace((unsigned char)str[0])){
+ 		str++;
+ 	}
+-	endptr = &str[strlen(str)-1];
++	slen = strlen(str);
++	if(slen == 0){
++		return str;
++	}
++	endptr = &str[slen-1];
+ 	while(endptr > str && isspace((unsigned char)endptr[0])){
+ 		endptr[0] = '\0';
+ 		endptr--;
+-- 
+2.43.0
+

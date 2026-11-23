@@ -1,0 +1,38 @@
+From 7ae66ca5cf5e75dca18ba2f6cbdd21453c8e51a5 Mon Sep 17 00:00:00 2001
+Message-ID: <7ae66ca5cf5e75dca18ba2f6cbdd21453c8e51a5.1795419891.git.yann.morin@orange.com>
+In-Reply-To: <bc8bfae7a735bb941128beeeb34f71a96a5d0551.1795419891.git.yann.morin@orange.com>
+References: <bc8bfae7a735bb941128beeeb34f71a96a5d0551.1795419891.git.yann.morin@orange.com>
+From: "Roger A. Light" <roger@atchoo.org>
+Date: Thu, 19 Nov 2026 00:27:52 +0000
+Subject: [PATCH] Fix mosquitto_fgets incorrectly incrementing its counter on
+ failure.
+
+Upstream: https://github.com/eclipse-mosquitto/mosquitto/commit/7ae66ca5cf5e75dca18ba2f6cbdd21453c8e51a5
+[yann.morin@orange.com: drop the Changelog.txt entry]
+Signed-off-by: Yann E. MORIN <yann.morin@orange.com>
+
+---
+ libcommon/file_common.c | 4 ++--
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/libcommon/file_common.c b/libcommon/file_common.c
+index 2a361b7f..ed3e8b74 100644
+--- a/libcommon/file_common.c
++++ b/libcommon/file_common.c
+@@ -318,11 +318,11 @@ char *mosquitto_fgets(char **buf, int *buflen, FILE *stream)
+ 
+ 		/* No EOL char found, so extend buffer */
+ 		offset = (*buflen)-1;
+-		*buflen += 1000;
+-		newbuf = realloc(*buf, (size_t)*buflen);
++		newbuf = realloc(*buf, (size_t)(*buflen + 1000));
+ 		if(!newbuf){
+ 			return NULL;
+ 		}
++		*buflen += 1000;
+ 		*buf = newbuf;
+ 	}while(1);
+ }
+-- 
+2.43.0
+
