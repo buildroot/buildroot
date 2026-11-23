@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Thomas Perale <thomas.perale@mind.be>
+Date: Mon, 9 Nov 2026 12:00:00 +0100
+Subject: [PATCH] Revert "[6.0.x] Bumped minimum setuptools version to 83."
+
+This reverts upstream commit ff44d788e16ecc5971a1cfbff9cd7bee54390e50.
+
+Buildroot provides an older setuptools version and no Django code depends
+setuptools 83 feature.
+
+See https://autobuild.buildroot.org/results/151/151b4da72e5d11dae3953043383d7e0a95a6538f/build-end.log
+
+Upstream: N/A
+Signed-off-by: Thomas Perale <thomas.perale@mind.be>
+[Marcus: target django 6.0.x]
+Signed-off-by: Marcus Hoffmann <buildroot@bubu1.eu>
+---
+ pyproject.toml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/pyproject.toml b/pyproject.toml
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -1,5 +1,5 @@
+ [build-system]
+-requires = ["setuptools>=83"]
++requires = ["setuptools>=77.0.3"]
+ build-backend = "setuptools.build_meta"
+ 
+ [project]
