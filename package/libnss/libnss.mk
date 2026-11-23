@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LIBNSS_VERSION = 3.133
+LIBNSS_VERSION = 3.134
 LIBNSS_SOURCE = nss-$(LIBNSS_VERSION).tar.gz
 LIBNSS_SITE = https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_$(subst .,_,$(LIBNSS_VERSION))_RTM/src
 LIBNSS_DISTDIR = dist
@@ -54,6 +54,7 @@ LIBNSS_BUILD_VARS = \
 	NSS_DISABLE_GTESTS=1 \
 	NSS_USE_SYSTEM_SQLITE=1 \
 	NATIVE_CC="$(HOSTCC)" \
+	CCC="$(TARGET_CXX)" \
 	OS_ARCH="Linux" \
 	OS_RELEASE="2.6" \
 	OS_TEST=$(BR2_PACKAGE_LIBNSS_ARCH) \
@@ -102,8 +103,8 @@ define LIBNSS_INSTALL_STAGING_CMDS
 	$(INSTALL) -m 755 -t $(STAGING_DIR)/usr/lib/ \
 		$(@D)/$(LIBNSS_DISTDIR)/lib/*.so
 	$(INSTALL) -m 755 -d $(STAGING_DIR)/usr/include/nss
-	$(INSTALL) -m 644 -t $(STAGING_DIR)/usr/include/nss \
-		$(@D)/$(LIBNSS_DISTDIR)/public/nss/*
+	cp -rL $(@D)/$(LIBNSS_DISTDIR)/public/nss/* \
+		$(STAGING_DIR)/usr/include/nss/
 	$(INSTALL) -m 755 -t $(STAGING_DIR)/usr/lib/ \
 		$(@D)/$(LIBNSS_DISTDIR)/lib/*.a
 	$(INSTALL) -D -m 0644 $(TOPDIR)/package/libnss/nss.pc.in \
@@ -116,8 +117,8 @@ define LIBNSS_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 755 -t $(TARGET_DIR)/usr/lib/ \
 		$(@D)/$(LIBNSS_DISTDIR)/lib/*.so
 	$(INSTALL) -m 755 -d $(TARGET_DIR)/usr/include/nss
-	$(INSTALL) -m 644 -t $(TARGET_DIR)/usr/include/nss \
-		$(@D)/$(LIBNSS_DISTDIR)/public/nss/*
+	cp -rL $(@D)/$(LIBNSS_DISTDIR)/public/nss/* \
+		$(TARGET_DIR)/usr/include/nss/
 	$(INSTALL) -m 755 -t $(TARGET_DIR)/usr/lib/ \
 		$(@D)/$(LIBNSS_DISTDIR)/lib/*.a
 	$(INSTALL) -D -m 0644 $(TOPDIR)/package/libnss/nss.pc.in \
@@ -135,6 +136,7 @@ HOST_LIBNSS_BUILD_VARS = \
 	NS_USE_GCC=1 \
 	NSS_DISABLE_GTESTS=1 \
 	NSS_USE_SYSTEM_SQLITE=1 \
+	CCC="$(HOSTCXX)" \
 	SQLITE_INCLUDE_DIR=$(HOST_DIR)/include \
 	ZLIB_INCLUDE_DIR=$(HOST_DIR)/include \
 	NSS_ENABLE_WERROR=0 \
@@ -163,8 +165,8 @@ define HOST_LIBNSS_INSTALL_CMDS
 	$(INSTALL) -m 755 -t $(HOST_DIR)/lib/ \
 		$(@D)/$(LIBNSS_DISTDIR)/lib/*.so
 	$(INSTALL) -m 755 -d $(HOST_DIR)/include/nss
-	$(INSTALL) -m 644 -t $(HOST_DIR)/include/nss \
-		$(@D)/$(LIBNSS_DISTDIR)/public/nss/*
+	cp -rL $(@D)/$(LIBNSS_DISTDIR)/public/nss/* \
+		$(HOST_DIR)/include/nss/
 	$(INSTALL) -m 755 -t $(HOST_DIR)/lib/ \
 		$(@D)/$(LIBNSS_DISTDIR)/lib/*.a
 	$(INSTALL) -D -m 0644 $(TOPDIR)/package/libnss/nss.pc.in \
