@@ -33,9 +33,8 @@ else
 CAPNPROTO_CONF_OPTS += --without-openssl
 endif
 
-# musl doesn't support getcontext/setcontext
-ifeq ($(BR2_TOOLCHAIN_USES_MUSL),y)
-CAPNPROTO_CONF_ENV += CXXFLAGS="$(TARGET_CXXFLAGS) -DKJ_USE_FIBERS=0"
+ifeq ($(BR2_PACKAGE_LIBUCONTEXT),y)
+CAPNPROTO_DEPENDENCIES += libucontext
 endif
 
 $(eval $(autotools-package))
