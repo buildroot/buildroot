@@ -11,6 +11,14 @@ ZIC_STRIP_COMPONENTS = 0
 ZIC_LICENSE = Public domain
 ZIC_LICENSE_FILES = LICENSE
 
+define ZIC_BUILD_CMDS
+	$(TARGET_MAKE_ENV) $(MAKE) $(TARGET_CONFIGURE_OPTS) -C $(@D) zic
+endef
+
+define ZIC_INSTALL_TARGET_CMDS
+	$(INSTALL) -D -m 755 $(@D)/zic $(TARGET_DIR)/usr/sbin/zic
+endef
+
 define HOST_ZIC_BUILD_CMDS
 	$(HOST_MAKE_ENV) $(MAKE) $(HOST_CONFIGURE_OPTS) -C $(@D) zic
 endef
@@ -20,6 +28,7 @@ define HOST_ZIC_INSTALL_CMDS
 	$(INSTALL) -D -m 644 $(@D)/tzfile.h $(HOST_DIR)/include/tzfile.h
 endef
 
+$(eval $(generic-package))
 $(eval $(host-generic-package))
 
 ZIC = $(HOST_DIR)/sbin/zic
