@@ -56,4 +56,4 @@ SD card is no longer supported on this board. In this configuration, the
 bootloader is loaded from SPI NOR flash, while the SD card contains the
 Linux kernel, device trees and root filesystem.
 
-https://docs.u-boot.org/en/v2026.07/board/starfive/visionfive2.html#zero-stage-program-loader
+https://docs.u-boot-project.org/en/v2026.07/board/starfive/visionfive2.html#zero-stage-program-loader
