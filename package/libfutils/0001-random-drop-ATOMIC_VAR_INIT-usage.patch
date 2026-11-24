@@ -1,0 +1,47 @@
+From d79dd390211e9509c769662b11fe0c2857d6d3f2 Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Tue, 24 Nov 2026 17:08:31 +0100
+Subject: [PATCH] random: drop ATOMIC_VAR_INIT() usage
+
+ATOMIC_VAR_INIT() has been deprecated in C17 and removed in C23, so with
+gcc >= 16 (that defaults to -std=gnu23) <stdatomic.h> doesn't provide it
+anymore and the build fails with:
+
+src/random.c:338:31: error: implicit declaration of function 'ATOMIC_VAR_INIT'; did you mean 'ATOMIC_FLAG_INIT'? [-Wimplicit-function-declaration]
+src/random.c:338:31: error: initializer element is not constant
+
+Since C17 an atomic object with static storage duration can be
+initialized directly, so let's do that and drop the local fallback
+definition of ATOMIC_VAR_INIT() too.
+
+Upstream: https://github.com/Parrot-Developers/libfutils/pull/2
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ src/random.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/src/random.c b/src/random.c
+index 7c6a9a5..4236489 100644
+--- a/src/random.c
++++ b/src/random.c
+@@ -92,8 +92,6 @@ ULOG_DECLARE_TAG(futils_random);
+ 
+ #if !defined(HAVE_STDATOMIC) && defined(__GNUC__)
+ 
+-#define ATOMIC_VAR_INIT(v) (v)
+-
+ /* codecheck_ignore[NEW_TYPEDEFS] */
+ typedef unsigned int atomic_uint;
+ 
+@@ -335,7 +333,7 @@ struct pool {
+ 	uint8_t buffer[512];
+ };
+ 
+-static atomic_uint seed_era = ATOMIC_VAR_INIT(1); /* current seed era */
++static atomic_uint seed_era = 1; /* current seed era */
+ 
+ #ifdef HAVE_THREAD_LOCAL
+ 
+-- 
+2.47.3
+
