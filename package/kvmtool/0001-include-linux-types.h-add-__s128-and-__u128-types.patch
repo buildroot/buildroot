@@ -1,0 +1,43 @@
+From 3dbb804b934a58ed38e83025c963e97db58d8ebf Mon Sep 17 00:00:00 2001
+From: Giulio Benetti <giulio.benetti@benettiengineering.com>
+Date: Tue, 24 Nov 2026 17:09:57 +0100
+Subject: [PATCH] include/linux/types.h: add __s128 and __u128 types
+
+kvmtool's include/linux/types.h shadows the kernel UAPI <linux/types.h>,
+so the __s128/__u128 types it provides are missing. Starting with Linux
+7.x headers, arm64 <asm/sigcontext.h> and <asm/ptrace.h> use __u128
+instead of __uint128_t, so building kvmtool against them, where
+<signal.h> pulls <asm/sigcontext.h> in, fails with:
+
+.../sysroot/usr/include/asm/sigcontext.h:81:9: error: unknown type name '__u128'; did you mean '__u32'?
+   81 |         __u128 vregs[32];
+      |         ^~~~~~
+
+So let's add the __s128 and __u128 types the same way the kernel UAPI
+<linux/types.h> does.
+
+Upstream: https://lore.kernel.org/kvm/20261124163248.782815-1-giulio.benetti@benettiengineering.com/
+Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+---
+ include/linux/types.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/include/linux/types.h b/include/linux/types.h
+index 5e20f10..039174c 100644
+--- a/include/linux/types.h
++++ b/include/linux/types.h
+@@ -17,6 +17,11 @@ typedef __s16 s16;
+ typedef __u8  u8;
+ typedef __s8  s8;
+ 
++#ifdef __SIZEOF_INT128__
++typedef __signed__ __int128 __s128 __attribute__((aligned(16)));
++typedef unsigned __int128 __u128 __attribute__((aligned(16)));
++#endif
++
+ #ifdef __CHECKER__
+ #define __bitwise__ __attribute__((bitwise))
+ #else
+-- 
+2.47.3
+
