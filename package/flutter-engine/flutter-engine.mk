@@ -75,6 +75,7 @@ FLUTTER_ENGINE_CONF_OPTS = \
 	--embedder-for-target \
 	--linux-cpu $(FLUTTER_ENGINE_TARGET_ARCH) \
 	--no-build-embedder-examples \
+	--no-build-glfw-shell \
 	--no-clang-static-analyzer \
 	--no-enable-unittests \
 	--no-goma \
@@ -128,13 +129,6 @@ endif
 ifeq ($(BR2_PACKAGE_HAS_LIBGLES),y)
 FLUTTER_ENGINE_DEPENDENCIES += libgles
 FLUTTER_ENGINE_CONF_OPTS += --enable-impeller-3d
-endif
-
-ifeq ($(BR2_PACKAGE_LIBGLFW),y)
-FLUTTER_ENGINE_DEPENDENCIES += libglfw
-FLUTTER_ENGINE_CONF_OPTS += --build-glfw-shell
-else
-FLUTTER_ENGINE_CONF_OPTS += --no-build-glfw-shell
 endif
 
 ifeq ($(BR2_PACKAGE_LIBGTK3),y)
