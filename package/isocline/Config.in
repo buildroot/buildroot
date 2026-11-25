@@ -1,0 +1,13 @@
+config BR2_PACKAGE_ISOCLINE
+	bool "isocline"
+	depends on !BR2_STATIC_LIBS
+	help
+	  Isocline is a pure C library that can be used as an
+	  alternative to the GNU readline library. It provides
+	  multi-line editing, history, completion and syntax
+	  highlighting.
+
+	  https://github.com/daanx/isocline
+
+comment "isocline needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS

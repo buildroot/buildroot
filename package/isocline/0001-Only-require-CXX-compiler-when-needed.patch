@@ -1,0 +1,55 @@
+From a811b3dc38d296b5e4dc76ab2b932cf196795d47 Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Sat, 22 Aug 2026 16:58:05 +0200
+Subject: [PATCH] Only require CXX compiler when needed
+
+isocline is a pure C library and only requires a C++ compiler when
+IC_USE_CXX=ON.
+
+Unconditionally enabling CXX in project() makes the configure step fail
+for C-only toolchains. This was exposed while integrating isocline into
+Buildroot by running:
+
+  $ utils/test-pkg -p isocline -T br-arm-basic
+
+which fails during the CMake configure step with:
+
+  -- Check for working CXX compiler: /bin/false - broken
+  CMake Error at CMakeTestCXXCompiler.cmake:60 (message):
+    The C++ compiler "/bin/false" is not able to compile a simple test
+    program.
+  Call Stack (most recent call first):
+    CMakeLists.txt:5 (project)
+
+Do not enable CXX in project() unless IC_USE_CXX=ON.
+
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://github.com/daanx/isocline/pull/54
+---
+ CMakeLists.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 11aff09bba58..a679098c97f7 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -2,7 +2,7 @@
+ # Copyright (c) 2021, Daan Leijen
+ # -----------------------------------------------------------------------------
+ cmake_minimum_required(VERSION 3.10)
+-project(libisocline C CXX ASM)
++project(libisocline C ASM)
+ 
+ set(CMAKE_C_STANDARD   99)
+ set(CMAKE_CXX_STANDARD 11)
+@@ -44,6 +44,7 @@ if(IC_SEPARATE_OBJS)
+ endif()
+ 
+ if(IC_USE_CXX)
++  enable_language(CXX)
+   set(IC_COMPILER_ID "${CMAKE_CXX_COMPILER_ID}")
+   set_source_files_properties(${ic_sources}         PROPERTIES LANGUAGE CXX )
+   set_source_files_properties(${ic_example_sources} PROPERTIES LANGUAGE CXX )
+-- 
+2.43.0
+
