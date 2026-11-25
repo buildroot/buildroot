@@ -1,0 +1,13 @@
+config BR2_PACKAGE_CANVENIENT
+	bool "canvenient"
+	depends on !BR2_STATIC_LIBS
+	select BR2_PACKAGE_LIBSOCKETCAN
+	help
+	  CANvenient is a portable CAN abstraction library
+	  supporting several driver backends. On Linux it is
+	  implemented on top of SocketCAN.
+
+	  https://github.com/CANopenTerm/CANvenient
+
+comment "canvenient needs a toolchain w/ dynamic library"
+	depends on BR2_STATIC_LIBS

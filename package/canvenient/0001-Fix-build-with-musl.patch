@@ -1,0 +1,43 @@
+From 46ac90d46b7773a804cd0bbaf71fa487bcc4cca8 Mon Sep 17 00:00:00 2001
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Sat, 22 Aug 2026 17:38:47 +0200
+Subject: [PATCH] Fix build with musl
+
+This was exposed while integrating the package into Buildroot and
+testing its compilation with a musl-based toolchain:
+
+  CANvenient_SocketCAN.c: In function 'socketcan_open':
+  CANvenient_SocketCAN.c:186:24: error: storage size of 'tv' isn't known
+    186 |         struct timeval tv;
+        |                        ^~
+  CANvenient_SocketCAN.c: In function 'socketcan_recv':
+  CANvenient_SocketCAN.c:364:36: error: invalid application of 'sizeof' to incomplete type 'struct timeval'
+    364 |     char ctrlmsg[CMSG_SPACE(sizeof(struct timeval))];
+        |                                    ^~~~~~
+  CANvenient_SocketCAN.c:406:28: error: invalid use of undefined type 'const struct timeval'
+    406 |             *timestamp = tv->tv_sec * 1000000ULL + tv->tv_usec;
+        |                            ^~
+
+Include <sys/time.h> to fix the build.
+
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Upstream: https://github.com/CANopenTerm/CANvenient/commit/46ac90d46b7773a804cd0bbaf71fa487bcc4cca8
+---
+ src/drivers/CANvenient_SocketCAN.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/drivers/CANvenient_SocketCAN.c b/src/drivers/CANvenient_SocketCAN.c
+index d4db584ff51d..fb356b8f227f 100644
+--- a/src/drivers/CANvenient_SocketCAN.c
++++ b/src/drivers/CANvenient_SocketCAN.c
+@@ -20,6 +20,7 @@ void socketcan_close(int index);
+ #include <dirent.h>
+ #include <fcntl.h>
+ #include <sys/ioctl.h>
++#include <sys/time.h>
+ #include <net/if.h>
+ #include <linux/can.h>
+ #include <linux/can/raw.h>
+-- 
+2.43.0
+
