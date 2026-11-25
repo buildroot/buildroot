@@ -40,6 +40,8 @@ define HOST_SUNXI_TOOLS_INSTALL_CMDS
 	$(HOST_MAKE_ENV) $(MAKE) CROSS_COMPILE="" CC="$(HOSTCC)" \
 		PREFIX=$(HOST_DIR) EXTRA_CFLAGS="$(HOST_CFLAGS)" \
 		LDFLAGS="$(HOST_LDFLAGS)" -C $(@D) install-tools install-misc
+	$(INSTALL) -D -m 0644 $(@D)/bin/fel-sdboot.sunxi \
+		$(BINARIES_DIR)/fel-sdboot.sunxi
 endef
 
 define SUNXI_TOOLS_BUILD_CMDS
