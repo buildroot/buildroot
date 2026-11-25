@@ -1,0 +1,27 @@
+config BR2_PACKAGE_CANOPENTERM
+	bool "canopenterm"
+	depends on BR2_PACKAGE_SDL3_ARCH_SUPPORTS # sdl3
+	depends on BR2_INSTALL_LIBSTDCPP # pocketpy
+	depends on BR2_PACKAGE_LUA
+	depends on BR2_TOOLCHAIN_HAS_THREADS # sdl3
+	depends on BR2_USE_WCHAR # sdl3
+	depends on !BR2_STATIC_LIBS # canvenient, isocline, pocketpy, sdl3
+	select BR2_PACKAGE_CANVENIENT
+	select BR2_PACKAGE_CJSON
+	select BR2_PACKAGE_INIH
+	select BR2_PACKAGE_ISOCLINE
+	select BR2_PACKAGE_POCKETPY
+	select BR2_PACKAGE_READLINE
+	select BR2_PACKAGE_SDL3
+	help
+	  CANopenTerm is an open-source tool for developing,
+	  testing, and analyzing CANopen CC networks and
+	  devices.
+
+	  https://github.com/CANopenTerm/CANopenTerm
+
+comment "canopenterm needs a toolchain w/ C++, threads, wchar, dynamic library"
+	depends on BR2_PACKAGE_SDL3_ARCH_SUPPORTS
+	depends on BR2_PACKAGE_LUA
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS \
+		|| !BR2_USE_WCHAR || BR2_STATIC_LIBS
