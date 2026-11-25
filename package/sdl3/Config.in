@@ -1,5 +1,12 @@
+config BR2_PACKAGE_SDL3_ARCH_SUPPORTS
+	bool
+	default y
+	# Invalid size of the SDL_alignment_test struct on m68k
+	depends on !BR2_m68k
+
 config BR2_PACKAGE_SDL3
 	bool "sdl3"
+	depends on BR2_PACKAGE_SDL3_ARCH_SUPPORTS
 	depends on !BR2_STATIC_LIBS
 	depends on BR2_USE_WCHAR
 	depends on BR2_TOOLCHAIN_HAS_THREADS
@@ -78,4 +85,5 @@ comment "OpenGL ES support needs an OpenGL ES provider"
 endif
 
 comment "sdl3 needs a toolchain w/ dynamic library, threads, wchar"
+	depends on BR2_PACKAGE_SDL3_ARCH_SUPPORTS
 	depends on BR2_STATIC_LIBS || !BR2_TOOLCHAIN_HAS_THREADS || !BR2_USE_WCHAR
