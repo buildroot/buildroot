@@ -15,5 +15,8 @@ PYTHON_SETUPTOOLS_SETUP_TYPE = pep517
 PYTHON_SETUPTOOLS_DEPENDENCIES = host-python-wheel
 HOST_PYTHON_SETUPTOOLS_DEPENDENCIES = host-python-wheel
 
+# 0002-Normalize-Unicode-form-when-matching-MANIFEST.in-pa.patch
+PYTHON_SETUPTOOLS_IGNORE_CVES += CVE-2026-59890
+
 $(eval $(python-package))
 $(eval $(host-python-package))
