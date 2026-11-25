@@ -1,0 +1,9 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+
+#include "sun8i-h3-nanopi-neo-air.dts"
+
+/* USB OTG port in peripheral mode, for "ums" */
+&usb_otg {
+	dr_mode = "peripheral";
+	status = "okay";
+};
