@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FONT_AWESOME_VERSION = 7.2.0
+FONT_AWESOME_VERSION = 7.3.1
 FONT_AWESOME_SITE = $(call github,FortAwesome,Font-Awesome,$(FONT_AWESOME_VERSION))
 FONT_AWESOME_LICENSE = OFL-1.1 (fonts), MIT (code), CC-BY-4.0 (icons)
 FONT_AWESOME_LICENSE_FILES = LICENSE.txt
