@@ -37,7 +37,16 @@ start() {
 		echo "OK"
 	else
 		echo "FAIL"
+		return "$status"
 	fi
+	# start-stop-daemon returns before udevd listens to kernel events.
+	# Wait for it, or the events triggered below may get lost.
+	i=0
+	while ! udevadm control --start-exec-queue 2>/dev/null; do
+		i=$((i + 1))
+		[ "$i" -lt 50 ] || break
+		sleep 0.1
+	done
 	udevadm trigger --type=subsystems --action=add
 	udevadm trigger --type=devices --action=add
 	udevadm settle --timeout=$SETTLE_TIMEOUT || echo "udevadm settle failed"
