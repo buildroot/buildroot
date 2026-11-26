@@ -1,0 +1,53 @@
+From: Valerie Snyder <valsnyde@cisco.com>
+Date: Tue, 29 Sep 2026 14:19:53 -0400
+Subject: libclamav_rust: Treat log messages as data (#151)
+
+Rust log records are fully formatted before they are passed to
+variadic C logging functions. Passing a rendered record as the C
+format string lets percent directives consume nonexistent variadic
+arguments.
+
+Use a fixed "%s" format for every Rust-to-C log level and pass the
+rendered record as data.
+
+Reported by Feng Xue.
+
+CLAM-3062
+
+---
+Upstream: https://github.com/Cisco-Talos/clamav/commit/ed00680f2d838ee27fc1bbe00298fa26e0cb980f
+CVE: CVE-2026-76422
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ libclamav_rust/src/logging.rs | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/libclamav_rust/src/logging.rs b/libclamav_rust/src/logging.rs
+index 6968746b57..c9c092b490 100644
+--- a/libclamav_rust/src/logging.rs
++++ b/libclamav_rust/src/logging.rs
+@@ -40,19 +40,20 @@ impl log::Log for ClamLogger {
+         if self.enabled(record.metadata()) {
+             let msg = CString::new(format!("{}\n", record.args())).unwrap();
+             let ptr = msg.as_ptr();
++            let format = b"%s\0".as_ptr() as *const c_char;
+
+             match record.level() {
+                 Level::Debug => unsafe {
+-                    sys::cli_dbgmsg_no_inline(ptr);
++                    sys::cli_dbgmsg_no_inline(format, ptr);
+                 },
+                 Level::Error => unsafe {
+-                    sys::cli_errmsg(ptr);
++                    sys::cli_errmsg(format, ptr);
+                 },
+                 Level::Info => unsafe {
+-                    sys::cli_infomsg_simple(ptr);
++                    sys::cli_infomsg_simple(format, ptr);
+                 },
+                 Level::Warn => unsafe {
+-                    sys::cli_warnmsg(ptr);
++                    sys::cli_warnmsg(format, ptr);
+                 },
+                 _ => {}
+             }

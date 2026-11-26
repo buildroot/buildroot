@@ -1,0 +1,367 @@
+From: Valerie Snyder <valsnyde@cisco.com>
+Date: Tue, 29 Sep 2026 15:00:39 -0400
+Subject: libclamav: Enforce XAR gzip extraction limits before writing (#159)
+
+Track cumulative decompressed output and enforce MaxFileSize and
+MaxScanSize before writing data to temporary files.
+
+Stop extracting XAR members when MaxFiles is reached, propagate timeout
+and MaxFiles exits, and preserve XAR's zlib-wrapped deflate handling.
+
+Add regression tests for multi-buffer extraction, exact MaxFileSize output,
+aggregate MaxScanSize, and MaxFiles member stopping.
+
+CLAM-3094
+Reported-by: DieHardMan 300 <keenusuwannabut@gmail.com>
+
+Co-authored-by: John Humlick <15677335+jhumlick@users.noreply.github.com>
+
+---
+Upstream: https://github.com/Cisco-Talos/clamav/commit/4aa9c426ff873b88233cb196eda338ecdf6f78b0
+CVE: CVE-2026-76516
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ libclamav/xar.c                 |  94 ++++++++++++++++--
+ unit_tests/clamscan/xar_test.py | 164 ++++++++++++++++++++++++++++++++
+ 2 files changed, 250 insertions(+), 8 deletions(-)
+
+diff --git a/libclamav/xar.c b/libclamav/xar.c
+index a4fac0b3a6..ff0c735516 100644
+--- a/libclamav/xar.c
++++ b/libclamav/xar.c
+@@ -658,8 +658,12 @@ int cli_scanxar(cli_ctx *ctx)
+     /* Walk the TOC XML and extract files */
+     fd      = -1;
+     tmpname = NULL;
+-    while (CL_SUCCESS == (rc = xar_get_toc_data_values(reader, &length, &offset, &size, &encoding,
+-                                                       &a_cksum, &a_hash, &e_cksum, &e_hash))) {
++    while (1) {
++        rc = xar_get_toc_data_values(reader, &length, &offset, &size, &encoding,
++                                     &a_cksum, &a_hash, &e_cksum, &e_hash);
++        if (rc != CL_SUCCESS)
++            break;
++
+         int do_extract_cksum = 1;
+         unsigned char *blockp;
+         void *a_sc, *e_sc;
+@@ -674,6 +678,11 @@ int cli_scanxar(cli_ctx *ctx)
+                 goto exit_reader;
+         }
+
++        /* Do not create or extract another member after a file-count limit. */
++        rc = cli_checklimits("cli_scanxar", ctx, 0, 0, 0);
++        if (rc == CL_ETIMEOUT || rc == CL_EMAXFILES || ctx->abort_scan)
++            goto exit_reader;
++
+         at = offset + hdr.toc_length_compressed + hdr.size;
+
+         if ((rc = cli_gentempfd(ctx->sub_tmpdir, &tmpname, &fd)) != CL_SUCCESS) {
+@@ -690,7 +699,11 @@ int cli_scanxar(cli_ctx *ctx)
+
+         switch (encoding) {
+             case CL_TYPE_GZ:
+-                /* inflate gzip directly because file segments do not contain magic */
++            {
++                uint64_t out_size = 0;
++
++                /* Inflate XAR's zlib-wrapped deflate stream directly because file
++                 * segments do not contain magic. */
+                 memset(&strm, 0, sizeof(strm));
+                 if ((rc = inflateInit(&strm)) != Z_OK) {
+                     cli_dbgmsg("cli_scanxar: InflateInit failed: %d\n", rc);
+@@ -713,7 +726,9 @@ int cli_scanxar(cli_ctx *ctx)
+                     at += bytes;
+                     strm.avail_in = avail_in = bytes;
+                     do {
+-                        int inf, outsize = 0;
++                        cl_error_t limitret;
++                        int inf;
++                        size_t writelen;
+                         unsigned char buff[FILEBUFF];
+                         strm.avail_out = sizeof(buff);
+                         strm.next_out  = buff;
+@@ -727,17 +742,72 @@ int cli_scanxar(cli_ctx *ctx)
+
+                         bytes = sizeof(buff) - strm.avail_out;
+
++                        if (out_size > UINT64_MAX - bytes) {
++                            cli_dbgmsg("cli_scanxar: decompressed output size overflow.\n");
++                            rc = CL_EMAXSIZE;
++                            break;
++                        }
++
++                        writelen = bytes;
++                        limitret = cli_checklimits("cli_scanxar", ctx, out_size + bytes, 0, 0);
++                        if (limitret == CL_EMAXSIZE) {
++                            uint64_t allowed = writelen;
++
++                            if (ctx->engine->maxfilesize) {
++                                uint64_t remaining = (out_size < ctx->engine->maxfilesize) ?
++                                                         (ctx->engine->maxfilesize - out_size) :
++                                                         0;
++                                if (remaining < allowed)
++                                    allowed = remaining;
++                            }
++
++                            if (ctx->engine->maxscansize) {
++                                /* cli_checklimits() receives cumulative member output. */
++                                uint64_t remaining_scan =
++                                    (ctx->scansize < ctx->engine->maxscansize) ?
++                                        (ctx->engine->maxscansize - ctx->scansize) :
++                                        0;
++                                uint64_t remaining_output =
++                                    (out_size < remaining_scan) ? (remaining_scan - out_size) : 0;
++                                if (remaining_output < allowed)
++                                    allowed = remaining_output;
++                            }
++
++                            cli_dbgmsg("cli_scanxar: trimming gzip output to size limits (" STDu64
++                                       " vs " STDu64 ").\n",
++                                       out_size + bytes, out_size + allowed);
++                            writelen = (size_t)allowed;
++                            do_extract_cksum = 0;
++                        } else if (limitret != CL_CLEAN) {
++                            rc = limitret;
++                            break;
++                        }
++
+                         if (e_hash_ctx != NULL)
+-                            xar_hash_update(e_hash_ctx, buff, bytes, e_hash);
++                            xar_hash_update(e_hash_ctx, buff, writelen, e_hash);
+
+-                        if (cli_writen(fd, buff, bytes) == (size_t)-1) {
++                        if (writelen && cli_writen(fd, buff, writelen) == (size_t)-1) {
+                             cli_dbgmsg("cli_scanxar: cli_writen error file %s.\n", tmpname);
+                             inflateEnd(&strm);
+                             rc = CL_EWRITE;
+                             goto exit_tmpfile;
+                         }
+-                        outsize += sizeof(buff) - strm.avail_out;
+-                        if (cli_checklimits("cli_scanxar", ctx, outsize, 0, 0) != CL_CLEAN) {
++                        out_size += writelen;
++                        if (writelen != bytes) {
++                            /*
++                             * This member will not be scanned because it exceeded a
++                             * size limit. Reserve the bytes written against the
++                             * aggregate scan-size budget so subsequent members cannot
++                             * reuse the same MaxScanSize allowance.
++                             */
++                            if (ctx->engine->maxscansize) {
++                                if (ctx->scansize >= ctx->engine->maxscansize ||
++                                    out_size >= ctx->engine->maxscansize - ctx->scansize)
++                                    ctx->scansize = ctx->engine->maxscansize;
++                                else
++                                    ctx->scansize += out_size;
++                            }
++                            rc = CL_EMAXSIZE;
+                             break;
+                         }
+                         if (inf == Z_STREAM_END) {
+@@ -755,6 +825,7 @@ int cli_scanxar(cli_ctx *ctx)
+
+                 inflateEnd(&strm);
+                 break;
++            }
+             case CL_TYPE_7Z:
+ #define CLI_LZMA_OBUF_SIZE 1024 * 1024
+ #define CLI_LZMA_HDR_SIZE LZMA_PROPS_SIZE + 8
+@@ -908,6 +979,13 @@ int cli_scanxar(cli_ctx *ctx)
+                 }
+         } /* end of switch */
+
++        if (ctx->abort_scan || rc == CL_ETIMEOUT || rc == CL_EMAXFILES)
++            goto exit_tmpfile;
++
++        if (rc == CL_EMAXSIZE && ctx->engine->maxscansize &&
++            ctx->scansize >= ctx->engine->maxscansize)
++            goto exit_tmpfile;
++
+         if (a_hash_ctx != NULL) {
+             xar_hash_final(a_hash_ctx, a_hash_result, a_hash);
+             a_hash_ctx = NULL;
+diff --git a/unit_tests/clamscan/xar_test.py b/unit_tests/clamscan/xar_test.py
+index 06993b52df..445e9a5c1d 100644
+--- a/unit_tests/clamscan/xar_test.py
++++ b/unit_tests/clamscan/xar_test.py
+@@ -8,6 +8,7 @@
+ import re
+ import struct
+ import sys
++import tempfile
+ import zlib
+ from pathlib import Path
+
+@@ -77,6 +78,10 @@ def scan_xar(self, testfile, limits, path_db=None):
+         )
+         return self.execute_command(command)
+
++    @staticmethod
++    def xar_compress(data):
++        return zlib.compress(data)
++
+     def test_declared_large_actual_small_toc_is_scanned(self):
+         self.step_name('Test XAR limits use the actual TOC size')
+
+@@ -151,3 +156,162 @@ def test_incomplete_toc_stream_is_not_scanned(self):
+             output.out,
+             unexpected=['XAR_TOC_TEST.UNOFFICIAL FOUND'],
+         )
++
++    def test_gzip_extraction_respects_maxfilesize(self):
++        self.step_name('Verify that XAR gzip extraction does not write beyond MaxFileSize')
++
++        maxfilesize = 64 * 1024
++        payload = b'A' * (1024 * 1024)
++        compressed = self.xar_compress(payload)
++        toc = (
++            b'<?xml version="1.0" encoding="UTF-8"?>'
++            b'<xar><toc><file><name>payload.bin</name><type>file</type><data>'
++            + '<length>{}</length>'.format(len(compressed)).encode()
++            + b'<offset>0</offset>'
++            + '<size>{}</size>'.format(len(payload)).encode()
++            + b'<encoding style="application/x-gzip"/>'
++            + b'</data></file></toc></xar>'
++        )
++        testfile = TC.path_tmp / 'xar-gzip-maxfilesize.xar'
++        compressed_toc = zlib.compress(toc)
++        testfile.write_bytes(
++            struct.pack(
++                '>IHHQQI',
++                0x78617221,
++                28,
++                0,
++                len(compressed_toc),
++                len(toc),
++                0,
++            )
++            + compressed_toc
++            + compressed
++        )
++
++        tempdir = Path(tempfile.mkdtemp(prefix='xar-gzip-maxfilesize-', dir=TC.path_tmp))
++        output = self.scan_xar(
++            testfile,
++            '--max-filesize=64K --max-scansize=16M --alert-exceeds-max=no '
++            '--leave-temps --tempdir={}'.format(tempdir),
++        )
++
++        assert output.ec == 0
++        tempfiles = [path for path in tempdir.rglob('*') if path.is_file()]
++        assert tempfiles
++        extracted = [path for path in tempfiles if path.stat().st_size == maxfilesize]
++        assert len(extracted) == 1
++        assert extracted[0].read_bytes() == b'A' * maxfilesize
++
++    def test_gzip_extraction_respects_aggregate_maxscansize(self):
++        self.step_name('Verify that XAR gzip extraction counts truncated members against MaxScanSize')
++
++        maxfilesize = 64 * 1024
++        maxscansize = 96 * 1024
++        payload = b'A' * (1024 * 1024)
++        compressed_members = [self.xar_compress(payload) for _ in range(2)]
++        toc_entries = []
++        offset = 0
++        for index, compressed in enumerate(compressed_members):
++            toc_entries.append(
++                (
++                    f'<file><name>payload{index}.bin</name><type>file</type><data>'
++                    f'<length>{len(compressed)}</length>'
++                    f'<offset>{offset}</offset>'
++                    f'<size>{len(payload)}</size>'
++                    '<encoding style="application/x-gzip"/></data></file>'
++                ).encode()
++            )
++            offset += len(compressed)
++
++        toc = (
++            b'<?xml version="1.0" encoding="UTF-8"?>'
++            + b'<xar><toc>'
++            + b''.join(toc_entries)
++            + b'</toc></xar>'
++        )
++        compressed_toc = zlib.compress(toc)
++        testfile = TC.path_tmp / 'xar-gzip-maxscansize.xar'
++        testfile.write_bytes(
++            struct.pack(
++                '>IHHQQI',
++                0x78617221,
++                28,
++                0,
++                len(compressed_toc),
++                len(toc),
++                0,
++            )
++            + compressed_toc
++            + b''.join(compressed_members)
++        )
++
++        tempdir = Path(tempfile.mkdtemp(prefix='xar-gzip-maxscansize-', dir=TC.path_tmp))
++        output = self.scan_xar(
++            testfile,
++            '--max-filesize=64K --max-scansize=96K --alert-exceeds-max=no '
++            '--leave-temps --tempdir={}'.format(tempdir),
++        )
++
++        assert output.ec == 0
++        extracted = [
++            path for path in tempdir.rglob('*') if path.is_file() and path.stat().st_size > 1024
++        ]
++        assert len(extracted) == 2
++        total_extracted = sum(path.stat().st_size for path in extracted)
++        assert maxfilesize < total_extracted <= maxscansize
++        assert all(path.read_bytes() == b'A' * path.stat().st_size for path in extracted)
++        assert max(path.stat().st_size for path in extracted) == maxfilesize
++
++    def test_gzip_extraction_respects_maxfiles(self):
++        self.step_name('Verify that XAR gzip extraction stops at MaxFiles')
++
++        payloads = (b'A' * 4096, b'B' * 4096)
++        compressed_members = [self.xar_compress(payload) for payload in payloads]
++        toc_entries = []
++        offset = 0
++        for index, (payload, compressed) in enumerate(zip(payloads, compressed_members)):
++            toc_entries.append(
++                (
++                    f'<file><name>payload{index}.bin</name><type>file</type><data>'
++                    f'<length>{len(compressed)}</length>'
++                    f'<offset>{offset}</offset>'
++                    f'<size>{len(payload)}</size>'
++                    '<encoding style="application/x-gzip"/></data></file>'
++                ).encode()
++            )
++            offset += len(compressed)
++
++        toc = (
++            b'<?xml version="1.0" encoding="UTF-8"?>'
++            + b'<xar><toc>'
++            + b''.join(toc_entries)
++            + b'</toc></xar>'
++        )
++        compressed_toc = zlib.compress(toc)
++        testfile = TC.path_tmp / 'xar-gzip-maxfiles.xar'
++        testfile.write_bytes(
++            struct.pack(
++                '>IHHQQI',
++                0x78617221,
++                28,
++                0,
++                len(compressed_toc),
++                len(toc),
++                0,
++            )
++            + compressed_toc
++            + b''.join(compressed_members)
++        )
++
++        tempdir = Path(tempfile.mkdtemp(prefix='xar-gzip-maxfiles-', dir=TC.path_tmp))
++        output = self.scan_xar(
++            testfile,
++            '--max-files=3 --alert-exceeds-max=no --leave-temps --tempdir={}'.format(tempdir),
++        )
++
++        assert output.ec == 0
++        extracted = [
++            path for path in tempdir.rglob('*') if path.is_file() and path.read_bytes() in payloads
++        ]
++        assert len(extracted) == 1
++        assert extracted[0].read_bytes() == payloads[0]

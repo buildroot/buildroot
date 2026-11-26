@@ -1,0 +1,42 @@
+From: Valerie Snyder <valsnyde@cisco.com>
+Date: Tue, 29 Sep 2026 14:26:59 -0400
+Subject: libclammspack: Validate LZX match offsets before narrowing (#144)
+
+The LZX decoder narrows an unsigned wrapped-window distance to int
+before checking it against the window size. Crafted repeated offsets
+can narrow to a negative value, bypass the check, and cause an
+out-of-bounds copy.
+
+Check the unsigned distance first, then cast only a value bounded by
+the window size.
+
+Reported by Feng Xue and XGPT of ThreatBook.
+
+CLAM-3085
+
+---
+Upstream: https://github.com/Cisco-Talos/clamav/commit/eb4490921668724378b6284458fc9737746468a5
+CVE: CVE-2026-76421
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ libclammspack/mspack/lzxd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libclammspack/mspack/lzxd.c b/libclammspack/mspack/lzxd.c
+index f498dba95e..fa37f5339d 100644
+--- a/libclammspack/mspack/lzxd.c
++++ b/libclammspack/mspack/lzxd.c
+@@ -627,11 +627,11 @@ int lzxd_decompress(struct lzxd_stream *lzx, off_t out_bytes) {
+                 return lzx->error = MSPACK_ERR_DECRUNCH;
+               }
+               /* j = length from match offset to end of window */
+-              j = match_offset - window_posn;
+-              if (j > (int) lzx->window_size) {
++              if ((match_offset - window_posn) > lzx->window_size) {
+                 D(("match offset beyond window boundaries"))
+                 return lzx->error = MSPACK_ERR_DECRUNCH;
+               }
++              j = (int) (match_offset - window_posn);
+               runsrc = &window[lzx->window_size - j];
+               if (j < i) {
+                 /* if match goes over the window edge, do two copy runs */

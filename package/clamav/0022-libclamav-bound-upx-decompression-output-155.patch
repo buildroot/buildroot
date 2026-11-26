@@ -1,0 +1,469 @@
+From: Valerie Snyder <valsnyde@cisco.com>
+Date: Tue, 29 Sep 2026 14:28:09 -0400
+Subject: libclamav: Bound UPX decompression output (#155)
+
+UPX decoder attempts share a destination buffer while passing its
+logical content length by pointer. A successful NRV decode can enlarge
+that length before the LZMA detector runs a second decoder against the
+same allocation, allowing a crafted executable to write beyond the
+heap buffer.
+
+Try explicit LZMA stub signatures before heuristic NRV fallbacks and
+stop after the first decoded stream. Pass the immutable allocation
+capacity through the decoder and PE rebuild paths, validate it before
+decoding, and bound rebuilt section copies against both decoded input
+and physical destination before allocating the rebuilt image.
+
+Require complete LZMA output, propagate rebuilt image lengths, clear
+failed LZMA output before decoder fallback, account for its skipped
+source prefix, and decode NRV back-reference offsets without signed
+left-shift overflow.
+
+Reported by Feng Xue.
+
+CLAM-3092
+
+---
+Upstream: https://github.com/Cisco-Talos/clamav/commit/1e2dfc870d29f90cf469870bfef5d6be44a85151
+CVE: CVE-2026-76430
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ libclamav/pe.c  | 126 +++++++++++++++++++++++++++++++-----------------
+ libclamav/upx.c |  83 ++++++++++++++++++++-----------
+ libclamav/upx.h |  10 ++--
+ 3 files changed, 142 insertions(+), 77 deletions(-)
+
+diff --git a/libclamav/pe.c b/libclamav/pe.c
+index c894ec7ca8..682d62e793 100644
+--- a/libclamav/pe.c
++++ b/libclamav/pe.c
+@@ -2770,7 +2770,8 @@ int cli_scanpe(cli_ctx *ctx)
+     size_t bytes;
+     unsigned int i, j, found, upx_success = 0, err;
+     unsigned int ssize = 0, dsize = 0, corrupted_cur;
+-    int (*upxfn)(const char *, uint32_t, char *, uint32_t *, uint32_t, uint32_t, uint32_t) = NULL;
++    uint32_t dest_capacity = 0;
++    int (*upxfn)(const char *, uint32_t, char *, uint32_t *, uint32_t, uint32_t, uint32_t, uint32_t) = NULL;
+     const char *src                                                                        = NULL;
+     char *dest                                                                             = NULL;
+     int ndesc;
+@@ -3795,7 +3796,7 @@ int cli_scanpe(cli_ctx *ctx)
+
+         CLI_UNPSIZELIMITS("cli_scanpe: UPX", MAX(dsize, ssize));
+
+-        if (ssize <= 0x19 || dsize <= ssize || dsize > CLI_MAX_ALLOCATION) {
++        if (ssize <= 0x19 || dsize <= ssize || dsize > CLI_MAX_ALLOCATION - UPX_REBUILD_HEADROOM) {
+             cli_dbgmsg("cli_scanpe: UPX: Size mismatch or dsize too big (ssize: %d, dsize: %d)\n", ssize, dsize);
+             cli_exe_info_destroy(peinfo);
+             return CL_CLEAN;
+@@ -3807,24 +3808,84 @@ int cli_scanpe(cli_ctx *ctx)
+             return CL_EREAD;
+         }
+
+-        if ((dest = (char *)cli_max_calloc(dsize + 8192, sizeof(char))) == NULL) {
++        dest_capacity = dsize + UPX_REBUILD_HEADROOM;
++        if ((dest = (char *)cli_max_calloc(dest_capacity, sizeof(char))) == NULL) {
+             cli_exe_info_destroy(peinfo);
+             return CL_EMEM;
+         }
+
++        /*
++         * Prefer the explicit LZMA stub signatures over the heuristic NRV
++         * detection below. A non-negative decompressor result means that the
++         * stream was decoded, even if rebuilding a PE around the decoded data
++         * failed, so no other decoder may reuse the destination afterward.
++         */
++        if (cli_memstr(UPX_LZMA2, 20, epbuff + 0x2f, 20)) {
++            uint32_t strictdsize = cli_readint32(epbuff + 0x21), skew = 0;
++            int upx_result;
++            cli_dbgmsg("cli_scanpe: UPX: Looks like an LZMA2 decompression routine\n");
++            if (ssize > 0x15 && epbuff[0] == '\x60' && epbuff[1] == '\xbe') {
++                // TODO Add EC32
++                skew = cli_readint32(epbuff + 2) - peinfo->sections[i + 1].rva - peinfo->pe_opt.opt32.ImageBase;
++                if (skew != 0x15)
++                    skew = 0;
++            }
++
++            if (strictdsize && strictdsize <= dsize) {
++                upx_result = upx_inflatelzma(src + skew, ssize - skew, dest, &strictdsize, dest_capacity, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep, 0x20003);
++                if (upx_result >= 0) {
++                    dsize       = strictdsize;
++                    upx_success = 1;
++                } else {
++                    /*
++                     * Restore the destination to its initial zeroed state before
++                     * trying another decoder.
++                     */
++                    memset(dest, 0, strictdsize);
++                }
++            }
++        } else if (cli_memstr(UPX_LZMA1_FIRST, 8, epbuff + 0x39, 8) && cli_memstr(UPX_LZMA1_SECOND, 8, epbuff + 0x45, 8)) {
++            uint32_t strictdsize = cli_readint32(epbuff + 0x2b), skew = 0;
++            uint32_t properties = cli_readint32(epbuff + 0x41);
++            int upx_result;
++            cli_dbgmsg("cli_scanpe: UPX: Looks like an LZMA1 decompression routine\n");
++            if (ssize > 0x15 && epbuff[0] == '\x60' && epbuff[1] == '\xbe') {
++                // TODO Add EC32
++                skew = cli_readint32(epbuff + 2) - peinfo->sections[i + 1].rva - peinfo->pe_opt.opt32.ImageBase;
++                if (skew != 0x15)
++                    skew = 0;
++            }
++
++            if (strictdsize && strictdsize <= dsize) {
++                upx_result = upx_inflatelzma(src + skew, ssize - skew, dest, &strictdsize, dest_capacity, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep, properties);
++                if (upx_result >= 0) {
++                    dsize       = strictdsize;
++                    upx_success = 1;
++                } else {
++                    /*
++                     * Restore the destination to its initial zeroed state before
++                     * trying another decoder.
++                     */
++                    memset(dest, 0, strictdsize);
++                }
++            }
++        }
++
+         /* try to detect UPX code */
+-        if (cli_memstr(UPX_NRV2B, 24, epbuff + 0x69, 13) || cli_memstr(UPX_NRV2B, 24, epbuff + 0x69 + 8, 13)) {
+-            cli_dbgmsg("cli_scanpe: UPX: Looks like a NRV2B decompression routine\n");
+-            upxfn = upx_inflate2b;
+-        } else if (cli_memstr(UPX_NRV2D, 24, epbuff + 0x69, 13) || cli_memstr(UPX_NRV2D, 24, epbuff + 0x69 + 8, 13)) {
+-            cli_dbgmsg("cli_scanpe: UPX: Looks like a NRV2D decompression routine\n");
+-            upxfn = upx_inflate2d;
+-        } else if (cli_memstr(UPX_NRV2E, 24, epbuff + 0x69, 13) || cli_memstr(UPX_NRV2E, 24, epbuff + 0x69 + 8, 13)) {
+-            cli_dbgmsg("cli_scanpe: UPX: Looks like a NRV2E decompression routine\n");
+-            upxfn = upx_inflate2e;
+-        }
+-
+-        if (upxfn) {
++        if (!upx_success) {
++            if (cli_memstr(UPX_NRV2B, 24, epbuff + 0x69, 13) || cli_memstr(UPX_NRV2B, 24, epbuff + 0x69 + 8, 13)) {
++                cli_dbgmsg("cli_scanpe: UPX: Looks like a NRV2B decompression routine\n");
++                upxfn = upx_inflate2b;
++            } else if (cli_memstr(UPX_NRV2D, 24, epbuff + 0x69, 13) || cli_memstr(UPX_NRV2D, 24, epbuff + 0x69 + 8, 13)) {
++                cli_dbgmsg("cli_scanpe: UPX: Looks like a NRV2D decompression routine\n");
++                upxfn = upx_inflate2d;
++            } else if (cli_memstr(UPX_NRV2E, 24, epbuff + 0x69, 13) || cli_memstr(UPX_NRV2E, 24, epbuff + 0x69 + 8, 13)) {
++                cli_dbgmsg("cli_scanpe: UPX: Looks like a NRV2E decompression routine\n");
++                upxfn = upx_inflate2e;
++            }
++        }
++
++        if (!upx_success && upxfn) {
+             int skew = cli_readint32(epbuff + 2) - EC32(peinfo->pe_opt.opt32.ImageBase) - peinfo->sections[i + 1].rva;
+
+             if (epbuff[1] != '\xbe' || skew <= 0 || skew > 0xfff) {
+@@ -3838,11 +3899,11 @@ int cli_scanpe(cli_ctx *ctx)
+             }
+
+             /* Try skewed first (skew may be zero) */
+-            if (upxfn(src + skew, ssize - skew, dest, &dsize, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep - skew) >= 0) {
++            if (upxfn(src + skew, ssize - skew, dest, &dsize, dest_capacity, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep - skew) >= 0) {
+                 upx_success = 1;
+             }
+             /* If skew not successful and non-zero, try no skew */
+-            else if (skew && (upxfn(src, ssize, dest, &dsize, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep) >= 0)) {
++            else if (skew && (upxfn(src, ssize, dest, &dsize, dest_capacity, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep) >= 0)) {
+                 upx_success = 1;
+             }
+
+@@ -3853,7 +3914,7 @@ int cli_scanpe(cli_ctx *ctx)
+         }
+
+         if (!upx_success && upxfn != upx_inflate2b) {
+-            if (upx_inflate2b(src, ssize, dest, &dsize, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep) == -1 && upx_inflate2b(src + 0x15, ssize - 0x15, dest, &dsize, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep - 0x15) == -1) {
++            if (upx_inflate2b(src, ssize, dest, &dsize, dest_capacity, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep) == -1 && upx_inflate2b(src + 0x15, ssize - 0x15, dest, &dsize, dest_capacity, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep - 0x15) == -1) {
+
+                 cli_dbgmsg("cli_scanpe: UPX: NRV2B decompressor failed\n");
+             } else {
+@@ -3863,7 +3924,7 @@ int cli_scanpe(cli_ctx *ctx)
+         }
+
+         if (!upx_success && upxfn != upx_inflate2d) {
+-            if (upx_inflate2d(src, ssize, dest, &dsize, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep) == -1 && upx_inflate2d(src + 0x15, ssize - 0x15, dest, &dsize, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep - 0x15) == -1) {
++            if (upx_inflate2d(src, ssize, dest, &dsize, dest_capacity, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep) == -1 && upx_inflate2d(src + 0x15, ssize - 0x15, dest, &dsize, dest_capacity, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep - 0x15) == -1) {
+
+                 cli_dbgmsg("cli_scanpe: UPX: NRV2D decompressor failed\n");
+             } else {
+@@ -3873,7 +3934,7 @@ int cli_scanpe(cli_ctx *ctx)
+         }
+
+         if (!upx_success && upxfn != upx_inflate2e) {
+-            if (upx_inflate2e(src, ssize, dest, &dsize, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep) == -1 && upx_inflate2e(src + 0x15, ssize - 0x15, dest, &dsize, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep - 0x15) == -1) {
++            if (upx_inflate2e(src, ssize, dest, &dsize, dest_capacity, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep) == -1 && upx_inflate2e(src + 0x15, ssize - 0x15, dest, &dsize, dest_capacity, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep - 0x15) == -1) {
+                 cli_dbgmsg("cli_scanpe: UPX: NRV2E decompressor failed\n");
+             } else {
+                 upx_success = 1;
+@@ -3881,31 +3942,6 @@ int cli_scanpe(cli_ctx *ctx)
+             }
+         }
+
+-        if (cli_memstr(UPX_LZMA2, 20, epbuff + 0x2f, 20)) {
+-            uint32_t strictdsize = cli_readint32(epbuff + 0x21), skew = 0;
+-            if (ssize > 0x15 && epbuff[0] == '\x60' && epbuff[1] == '\xbe') {
+-                // TODO Add EC32
+-                skew = cli_readint32(epbuff + 2) - peinfo->sections[i + 1].rva - peinfo->pe_opt.opt32.ImageBase;
+-                if (skew != 0x15)
+-                    skew = 0;
+-            }
+-
+-            if (strictdsize <= dsize)
+-                upx_success = upx_inflatelzma(src + skew, ssize - skew, dest, &strictdsize, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep, 0x20003) >= 0;
+-        } else if (cli_memstr(UPX_LZMA1_FIRST, 8, epbuff + 0x39, 8) && cli_memstr(UPX_LZMA1_SECOND, 8, epbuff + 0x45, 8)) {
+-            uint32_t strictdsize = cli_readint32(epbuff + 0x2b), skew = 0;
+-            uint32_t properties = cli_readint32(epbuff + 0x41);
+-            if (ssize > 0x15 && epbuff[0] == '\x60' && epbuff[1] == '\xbe') {
+-                // TODO Add EC32
+-                skew = cli_readint32(epbuff + 2) - peinfo->sections[i + 1].rva - peinfo->pe_opt.opt32.ImageBase;
+-                if (skew != 0x15)
+-                    skew = 0;
+-            }
+-
+-            if (strictdsize <= dsize)
+-                upx_success = upx_inflatelzma(src + skew, ssize - skew, dest, &strictdsize, peinfo->sections[i].rva, peinfo->sections[i + 1].rva, peinfo->vep, properties) >= 0;
+-        }
+-
+         if (!upx_success) {
+             cli_dbgmsg("cli_scanpe: UPX: All decompressors failed\n");
+             free(dest);
+diff --git a/libclamav/upx.c b/libclamav/upx.c
+index 3971936ab3..37fbbe802a 100644
+--- a/libclamav/upx.c
++++ b/libclamav/upx.c
+@@ -117,14 +117,14 @@ static char *checkpe(char *dst, uint32_t dsize, char *pehdr, uint32_t *valign, u
+
+ /* PE from UPX */
+
+-static int pefromupx(const char *src, uint32_t ssize, char *dst, uint32_t *dsize, uint32_t ep, uint32_t upx0, uint32_t upx1, uint32_t *magic, uint32_t dend)
++static int pefromupx(const char *src, uint32_t ssize, char *dst, uint32_t *dsize, uint32_t dst_capacity, uint32_t ep, uint32_t upx0, uint32_t upx1, uint32_t *magic, uint32_t dend)
+ {
+     char *imports, *sections = NULL, *pehdr = NULL, *newbuf;
+     unsigned int sectcnt = 0, upd = 1;
+     uint32_t realstuffsz = 0, valign = 0;
+     uint32_t foffset = 0xd0 + 0xf8;
+
+-    if ((dst == NULL) || (src == NULL))
++    if ((dst == NULL) || (src == NULL) || (dsize == NULL) || (*dsize > dst_capacity))
+         return 0;
+
+     while ((valign = magic[sectcnt++])) {
+@@ -187,6 +187,10 @@ static int pefromupx(const char *src, uint32_t ssize, char *dst, uint32_t *dsize
+     if (!pehdr) {
+         uint32_t rebsz = PESALIGN(dend, 0x1000);
+         cli_dbgmsg("UPX: no luck - brutally crafting a reasonable PE\n");
++        if (dst_capacity < 0x200 || rebsz > dst_capacity - 0x200) {
++            cli_dbgmsg("UPX: rebuilt PE exceeds destination capacity\n");
++            return 0;
++        }
+         if (!(newbuf = (char *)cli_max_calloc(rebsz + 0x200, sizeof(char)))) {
+             cli_dbgmsg("UPX: malloc failed - giving up rebuild\n");
+             return 0;
+@@ -231,6 +235,11 @@ static int pefromupx(const char *src, uint32_t ssize, char *dst, uint32_t *dsize
+         sections += 0x28;
+     }
+
++    if (foffset > dst_capacity) {
++        cli_dbgmsg("UPX: wrong raw size - giving up rebuild\n");
++        return 0;
++    }
++
+     cli_writeint32(pehdr + 8, 0x4d414c43);
+     cli_writeint32(pehdr + 0x3c, valign);
+
+@@ -252,7 +261,7 @@ static int pefromupx(const char *src, uint32_t ssize, char *dst, uint32_t *dsize
+         }
+
+         offset3 = (uint32_t)cli_readint32(sections + 12);
+-        if (offset3 - upx0 > *dsize) {
++        if (offset3 < upx0 || offset3 - upx0 > *dsize || offset2 > *dsize - (offset3 - upx0)) {
+             free(newbuf);
+             return 1;
+         }
+@@ -263,11 +272,6 @@ static int pefromupx(const char *src, uint32_t ssize, char *dst, uint32_t *dsize
+     /* CBA restoring the imports they'll look different from the originals anyway... */
+     /* ...and yeap i miss the icon too :P */
+
+-    if (foffset > *dsize + 8192) {
+-        cli_dbgmsg("UPX: wrong raw size - giving up rebuild\n");
+-        free(newbuf);
+-        return 0;
+-    }
+     memcpy(dst, newbuf, foffset);
+     *dsize = foffset;
+     free(newbuf);
+@@ -293,14 +297,34 @@ static int doubleebx(const char *src, uint32_t *myebx, uint32_t *scur, uint32_t
+     return (oldebx >> 31);
+ }
+
++/**
++ * Decode a UPX back-reference offset without signed left-shift overflow.
++ *
++ * @param backbytes The 24-bit prefix decoded from the bit stream.
++ * @param next      The final byte of the encoded offset.
++ * @return The decoded two's-complement offset.
++ */
++static int32_t decode_backbytes(uint32_t backbytes, uint8_t next)
++{
++    uint32_t decoded = ~((backbytes << 8) | next);
++
++    if (decoded <= INT32_MAX)
++        return (int32_t)decoded;
++
++    return -((int32_t)(UINT32_MAX - decoded)) - 1;
++}
++
+ /* [inflate] */
+
+-int upx_inflate2b(const char *src, uint32_t ssize, char *dst, uint32_t *dsize, uint32_t upx0, uint32_t upx1, uint32_t ep)
++int upx_inflate2b(const char *src, uint32_t ssize, char *dst, uint32_t *dsize, uint32_t dst_capacity, uint32_t upx0, uint32_t upx1, uint32_t ep)
+ {
+     int32_t backbytes, unp_offset = -1;
+     uint32_t backsize, myebx = 0, scur = 0, dcur = 0, i, magic[] = {0x108, 0x110, 0xd5, 0};
+     int oob;
+
++    if (src == NULL || dst == NULL || dsize == NULL || *dsize > dst_capacity)
++        return -1;
++
+     while (1) {
+         while ((oob = doubleebx(src, &myebx, &scur, ssize)) == 1) {
+             if (scur >= ssize || dcur >= *dsize)
+@@ -333,9 +357,7 @@ int upx_inflate2b(const char *src, uint32_t ssize, char *dst, uint32_t *dsize, u
+                 return -1;
+             if (backbytes & 0xff000000)
+                 return -1;
+-            backbytes <<= 8;
+-            backbytes += (unsigned char)(src[scur++]);
+-            backbytes ^= 0xffffffff;
++            backbytes = decode_backbytes((uint32_t)backbytes, (uint8_t)src[scur++]);
+
+             if (!backbytes)
+                 break;
+@@ -377,15 +399,18 @@ int upx_inflate2b(const char *src, uint32_t ssize, char *dst, uint32_t *dsize, u
+         dcur += backsize;
+     }
+
+-    return pefromupx(src, ssize, dst, dsize, ep, upx0, upx1, magic, dcur);
++    return pefromupx(src, ssize, dst, dsize, dst_capacity, ep, upx0, upx1, magic, dcur);
+ }
+
+-int upx_inflate2d(const char *src, uint32_t ssize, char *dst, uint32_t *dsize, uint32_t upx0, uint32_t upx1, uint32_t ep)
++int upx_inflate2d(const char *src, uint32_t ssize, char *dst, uint32_t *dsize, uint32_t dst_capacity, uint32_t upx0, uint32_t upx1, uint32_t ep)
+ {
+     int32_t backbytes, unp_offset = -1;
+     uint32_t backsize, myebx = 0, scur = 0, dcur = 0, i, magic[] = {0x11c, 0x124, 0};
+     int oob;
+
++    if (src == NULL || dst == NULL || dsize == NULL || *dsize > dst_capacity)
++        return -1;
++
+     while (1) {
+         while ((oob = doubleebx(src, &myebx, &scur, ssize)) == 1) {
+             if (scur >= ssize || dcur >= *dsize)
+@@ -425,9 +450,7 @@ int upx_inflate2d(const char *src, uint32_t ssize, char *dst, uint32_t *dsize, u
+                 return -1;
+             if (backbytes & 0xff000000)
+                 return -1;
+-            backbytes <<= 8;
+-            backbytes += (unsigned char)(src[scur++]);
+-            backbytes ^= 0xffffffff;
++            backbytes = decode_backbytes((uint32_t)backbytes, (uint8_t)src[scur++]);
+
+             if (!backbytes)
+                 break;
+@@ -471,15 +494,18 @@ int upx_inflate2d(const char *src, uint32_t ssize, char *dst, uint32_t *dsize, u
+         dcur += backsize;
+     }
+
+-    return pefromupx(src, ssize, dst, dsize, ep, upx0, upx1, magic, dcur);
++    return pefromupx(src, ssize, dst, dsize, dst_capacity, ep, upx0, upx1, magic, dcur);
+ }
+
+-int upx_inflate2e(const char *src, uint32_t ssize, char *dst, uint32_t *dsize, uint32_t upx0, uint32_t upx1, uint32_t ep)
++int upx_inflate2e(const char *src, uint32_t ssize, char *dst, uint32_t *dsize, uint32_t dst_capacity, uint32_t upx0, uint32_t upx1, uint32_t ep)
+ {
+     int32_t backbytes, unp_offset = -1;
+     uint32_t backsize, myebx = 0, scur = 0, dcur = 0, i, magic[] = {0x128, 0x130, 0};
+     int oob;
+
++    if (src == NULL || dst == NULL || dsize == NULL || *dsize > dst_capacity)
++        return -1;
++
+     for (;;) {
+         while ((oob = doubleebx(src, &myebx, &scur, ssize))) {
+             if (oob == -1)
+@@ -517,9 +543,7 @@ int upx_inflate2e(const char *src, uint32_t ssize, char *dst, uint32_t *dsize, u
+                 return -1;
+             if (backbytes & 0xff000000)
+                 return -1;
+-            backbytes <<= 8;
+-            backbytes += (unsigned char)(src[scur++]);
+-            backbytes ^= 0xffffffff;
++            backbytes = decode_backbytes((uint32_t)backbytes, (uint8_t)src[scur++]);
+
+             if (!backbytes)
+                 break;
+@@ -574,15 +598,18 @@ int upx_inflate2e(const char *src, uint32_t ssize, char *dst, uint32_t *dsize, u
+         dcur += backsize;
+     }
+
+-    return pefromupx(src, ssize, dst, dsize, ep, upx0, upx1, magic, dcur);
++    return pefromupx(src, ssize, dst, dsize, dst_capacity, ep, upx0, upx1, magic, dcur);
+ }
+
+-int upx_inflatelzma(const char *src, uint32_t ssize, char *dst, uint32_t *dsize, uint32_t upx0, uint32_t upx1, uint32_t ep, uint32_t properties)
++int upx_inflatelzma(const char *src, uint32_t ssize, char *dst, uint32_t *dsize, uint32_t dst_capacity, uint32_t upx0, uint32_t upx1, uint32_t ep, uint32_t properties)
+ {
+     struct CLI_LZMA l;
+     uint32_t magic[] = {0xb16, 0xb1e, 0};
+     unsigned char fake_lzmahdr[5];
+
++    if (src == NULL || dst == NULL || dsize == NULL || *dsize == 0 || *dsize > dst_capacity || ssize <= 2)
++        return -1;
++
+     memset(&l, 0, sizeof(l));
+     cli_writeint32(fake_lzmahdr + 1, *dsize);
+     uint8_t lc = properties & 0xff;
+@@ -595,18 +622,18 @@ int upx_inflatelzma(const char *src, uint32_t ssize, char *dst, uint32_t *dsize,
+     l.next_in     = fake_lzmahdr;
+     l.avail_in    = 5;
+     if (cli_LzmaInit(&l, *dsize) != LZMA_RESULT_OK)
+-        return 0;
+-    l.avail_in  = ssize;
++        return -1;
++    l.avail_in  = ssize - 2;
+     l.avail_out = *dsize;
+     l.next_in   = (unsigned char *)src + 2;
+     l.next_out  = (unsigned char *)dst;
+
+-    if (cli_LzmaDecode(&l) == LZMA_RESULT_DATA_ERROR) {
++    if (cli_LzmaDecode(&l) != LZMA_STREAM_END || l.avail_out != 0) {
+         /*     __asm__ __volatile__("int3"); */
+         cli_LzmaShutdown(&l);
+         return -1;
+     }
+     cli_LzmaShutdown(&l);
+
+-    return pefromupx(src, ssize, dst, dsize, ep, upx0, upx1, magic, *dsize);
++    return pefromupx(src, ssize, dst, dsize, dst_capacity, ep, upx0, upx1, magic, *dsize);
+ }
+diff --git a/libclamav/upx.h b/libclamav/upx.h
+index 988be9bb1c..ebc4facd5b 100644
+--- a/libclamav/upx.h
++++ b/libclamav/upx.h
+@@ -24,9 +24,11 @@
+
+ #include "clamav-types.h"
+
+-int upx_inflate2b(const char *, uint32_t, char *, uint32_t *, uint32_t, uint32_t, uint32_t);
+-int upx_inflate2d(const char *, uint32_t, char *, uint32_t *, uint32_t, uint32_t, uint32_t);
+-int upx_inflate2e(const char *, uint32_t, char *, uint32_t *, uint32_t, uint32_t, uint32_t);
+-int upx_inflatelzma(const char *, uint32_t, char *, uint32_t *, uint32_t, uint32_t, uint32_t, uint32_t);
++#define UPX_REBUILD_HEADROOM 8192U
++
++int upx_inflate2b(const char *, uint32_t, char *, uint32_t *, uint32_t, uint32_t, uint32_t, uint32_t);
++int upx_inflate2d(const char *, uint32_t, char *, uint32_t *, uint32_t, uint32_t, uint32_t, uint32_t);
++int upx_inflate2e(const char *, uint32_t, char *, uint32_t *, uint32_t, uint32_t, uint32_t, uint32_t);
++int upx_inflatelzma(const char *, uint32_t, char *, uint32_t *, uint32_t, uint32_t, uint32_t, uint32_t, uint32_t);
+
+ #endif

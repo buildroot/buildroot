@@ -1,0 +1,33 @@
+From: Valerie Snyder <valsnyde@cisco.com>
+Date: Tue, 29 Sep 2026 14:25:59 -0400
+Subject: libclamav: Enforce OLE2 property recursion limit (#157)
+
+OLE2 file properties may reference child properties. The file-child traversal did not increment rec_level, allowing a long acyclic chain to bypass MaxRecursion and exhaust the native stack.
+
+Increment the recursion level for file children, matching root and directory child traversal so every recursive edge is bounded.
+
+Reported by Nebula Security.
+
+CLAM-3071
+
+---
+Upstream: https://github.com/Cisco-Talos/clamav/commit/53b94c5bb7c0174d01674512c56ef22c43a9fca3
+CVE: CVE-2026-76417
+Signed-off-by: Titouan Christophe <titouan.christophe@mind.be>
+---
+ libclamav/ole2_extract.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libclamav/ole2_extract.c b/libclamav/ole2_extract.c
+index 49df851055..73dd23ff2b 100644
+--- a/libclamav/ole2_extract.c
++++ b/libclamav/ole2_extract.c
+@@ -753,7 +753,7 @@ static int ole2_walk_property_tree(ole2_header_t *hdr, const char *dir, int32_t
+                     cli_dbgmsg("OLE2: filesize exceeded\n");
+                 }
+                 if ((int)(prop_block[idx].child) != -1) {
+-                    ret = ole2_walk_property_tree(hdr, dir, prop_block[idx].child, handler, rec_level, file_count, ctx, scansize, handler_ctx);
++                    ret = ole2_walk_property_tree(hdr, dir, prop_block[idx].child, handler, rec_level + 1, file_count, ctx, scansize, handler_ctx);
+                     if (ret != CL_SUCCESS) {
+                         ole2_list_delete(&node_list);
+                         return ret;

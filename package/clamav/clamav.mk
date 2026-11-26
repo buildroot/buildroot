@@ -63,6 +63,36 @@ CLAMAV_IGNORE_CVES += CVE-2026-20347
 # 0014-libclamav-enforce-xar-limits-against-inflated-toc-size.patch
 CLAMAV_IGNORE_CVES += CVE-2026-20348
 
+# 0015-libclamav-rust-treat-log-messages-as-data-151.patch
+CLAMAV_IGNORE_CVES += CVE-2026-76422
+
+# 0016-libclamav-fix-url-canonicalization-buffer-bounds-142.patch
+CLAMAV_IGNORE_CVES += CVE-2026-76411
+
+# 0017-libclamav-validate-yc-buffer-offsets-154.patch
+CLAMAV_IGNORE_CVES += CVE-2026-76415
+
+# 0018-libclammspack-bound-chm-directory-traversal-152.patch
+CLAMAV_IGNORE_CVES += CVE-2026-76414
+
+# 0019-libclamav-validate-installshield-file-tables-156.patch
+CLAMAV_IGNORE_CVES += CVE-2026-76416
+
+# 0020-libclamav-enforce-ole2-property-recursion-limit-157.patch
+CLAMAV_IGNORE_CVES += CVE-2026-76417
+
+# 0021-libclammspack-validate-lzx-match-offsets-before-narrowing-144.patch
+CLAMAV_IGNORE_CVES += CVE-2026-76421
+
+# 0022-libclamav-bound-upx-decompression-output-155.patch
+CLAMAV_IGNORE_CVES += CVE-2026-76430
+
+# 0023-libclamav-enforce-xar-gzip-extraction-limits-before-writing-159.patch
+CLAMAV_IGNORE_CVES += CVE-2026-76516
+
+# 0024-libclamav-bound-ole2-property-traversal-161.patch
+CLAMAV_IGNORE_CVES += CVE-2026-76515
+
 CLAMAV_DEPENDENCIES = \
 	bzip2 \
 	host-pkgconf \
