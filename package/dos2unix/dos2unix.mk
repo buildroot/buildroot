@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-DOS2UNIX_VERSION = 7.5.5
+DOS2UNIX_VERSION = 7.5.7
 DOS2UNIX_SITE = https://waterlander.net/dos2unix/files
 DOS2UNIX_LICENSE = BSD-2-Clause
 DOS2UNIX_LICENSE_FILES = COPYING.txt
