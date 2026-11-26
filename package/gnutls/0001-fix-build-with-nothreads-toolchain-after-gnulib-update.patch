@@ -1,0 +1,75 @@
+From 1a149254ee82a50dc9633fc60a94df1a480a124f Mon Sep 17 00:00:00 2001
+From: Marcus Hoffmann <buildroot@bubu1.eu>
+Date: Wed, 25 Nov 2026 19:05:00 +0100
+Subject: [PATCH] fix build with nothreads toolchain after gnulib update
+
+Gnulib made including glthread/once.h from glthread/lock.h conditional
+in [1]. This was synced to gnutls in [2] and first released in
+gnutls 3.8.14, so starting from there the build fails with a
+nothreads toolchain:
+
+    In file included from rnd.c:26:
+    ./../locks.h:77:9: error: unknown type name 'gl_once_t'
+       77 | typedef gl_once_t *gnutls_once_t;
+            |         ^~~~~~~~~
+    record.c:2181:8: error: 'errno' undeclared (first use in this function)
+
+Gnutls directly uses gl_once_t from once.h, so include it from
+lib/locks.h. Additionally two .c files relied on getting errno.h
+through gnulib's lock.h, which the same gnulib commit moved to the
+corresponding .c file, so it's no longer visible to use. Include
+errno.h directly here.
+
+[1] https://gitlab.com/libidn/gnulib-mirror/-/commit/250881c4f839e18737a1d6d807337a76015cc722
+[2] https://gitlab.com/gnutls/gnutls/-/commit/2635e27c1845f656f0a502854065f8b23ec2957f
+
+Upstream: https://gitlab.com/gnutls/gnutls/-/merge_requests/2192
+Reported-by: Bernd Kuhls <bernd@kuhls.net>
+[Drop bootstrap.conf hunk from upstream patch that's not relevant for
+building from release tarball]
+Signed-off-by: Marcus Hoffmann <buildroot@bubu1.eu>
+---
+ lib/kx.c     | 1 +
+ lib/locks.h  | 1 +
+ lib/record.c | 1 +
+ 3 files changed, 3 insertions(+)
+
+diff --git a/lib/kx.c b/lib/kx.c
+index 4f417a20a..aa940f3e1 100644
+--- a/lib/kx.c
++++ b/lib/kx.c
+@@ -36,6 +36,7 @@
+ #include "state.h"
+ #include "datum.h"
+ #include "mbuffers.h"
++#include <errno.h>
+ 
+ /* This file contains important thing for the TLS handshake procedure.
+  */
+diff --git a/lib/locks.h b/lib/locks.h
+index 0e6275bb0..160e65598 100644
+--- a/lib/locks.h
++++ b/lib/locks.h
+@@ -27,6 +27,7 @@
+ #include "gnutls_int.h"
+ #include "system.h"
+ #include "glthread/lock.h"
++#include "glthread/once.h"
+ 
+ extern mutex_init_func gnutls_mutex_init;
+ extern mutex_deinit_func gnutls_mutex_deinit;
+diff --git a/lib/record.c b/lib/record.c
+index 67b0f7c55..dd3eec4f4 100644
+--- a/lib/record.c
++++ b/lib/record.c
+@@ -55,6 +55,7 @@
+ #include <xsize.h>
+ #include "locks.h"
+ #include "system/ktls.h"
++#include <errno.h>
+ #include <intprops.h>
+ 
+ struct tls_record_st {
+ 	uint16_t header_size;
+-- 
+2.56.1
