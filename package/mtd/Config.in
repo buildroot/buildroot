@@ -15,6 +15,7 @@ config BR2_PACKAGE_MTD_JFFS_UTILS
 
 config BR2_PACKAGE_MTD_UBIFS_UTILS
 	bool
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_LIBOPENSSL_ENGINES if BR2_PACKAGE_LIBOPENSSL
 	select BR2_PACKAGE_UTIL_LINUX
 	select BR2_PACKAGE_UTIL_LINUX_LIBUUID
@@ -60,7 +61,11 @@ config BR2_PACKAGE_MTD_FLASH_UNLOCK
 
 config BR2_PACKAGE_MTD_FSCKUBIFS
 	bool "fsck.ubifs"
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_MTD_UBIFS_UTILS
+
+comment "fsck.ubifs needs a toolchain w/ threads"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS
 
 config BR2_PACKAGE_MTD_FTL_CHECK
 	bool "ftl_check"
@@ -81,7 +86,11 @@ config BR2_PACKAGE_MTD_MKFSJFFS2
 
 config BR2_PACKAGE_MTD_MKFSUBIFS
 	bool "mkfs.ubifs"
+	depends on BR2_TOOLCHAIN_HAS_THREADS
 	select BR2_PACKAGE_MTD_UBIFS_UTILS
+
+comment "mkfs.ubifs needs a toolchain w/ threads"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS
 
 config BR2_PACKAGE_MTD_MTD_DEBUG
 	bool "mtd_debug"
